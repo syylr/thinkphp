@@ -17,39 +17,42 @@
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
 // $Id$
+
 /**
  +------------------------------------------------------------------------------
- * 项目入口文件
+ * 
  +------------------------------------------------------------------------------
- * @package    Core
- * @link       http://www.fcs.org.cn
- * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
- * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @package  core
+ * @author liu21st <liu21st@gmail.com>
+ * @version  $Id$
  +------------------------------------------------------------------------------
  */
+import("@.Action.CommonAction");
+class IndexAction extends CommonAction 
+{
+    // 首页
+    function index() 
+    {
 
-$GLOBALS['_beginTime'] = array_sum(split(' ', microtime()));
-define('FCS_PATH', '../FCS');
-define('WEB_ROOT','../');
+        // 获取最新发表
+        if(!Session::is_set('lastArticleList')) {
+            $dao = D("ArticleDao");
+            $list  = $dao->findAll('type=1','','*','cTime desc','0,5');     	  
+            Session::set('lastArticleList',$list);
+        }else {
+        	$list  = Session::get('lastArticleList');    
+        }
+        $this->assign('lastArticles',$list);
 
-//定义项目名称，如果不定义，默认为入口文件名称
-define('APP_NAME', 'Admin');
-define('APP_PATH', '.');
-// 加载配置文件 
-require("../config.php");
-// 加载FCS框架公共入口文件 
-require("../FCS/FCS.php");
-//实例化一个网站应用实例
 
-$App = new App(); 
-//应用程序初始化
-$App->init();
+        $this->display();
+        return ;
+    }    
 
-//启动应用程序
-$App->exec();
+    function _404() 
+    {
+    	$this->display(TEMPLATE_PATH.'/Public/404'.TEMPLATE_SUFFIX);
+    }
 
-if(SHOW_RUN_TIME) {
-echo '<div style="text-align:center;width:100%">Process: '.number_format((array_sum(split(' ', microtime())) - $GLOBALS['_beginTime']), 6).'s</div>';
-}
+}//end class
 ?>

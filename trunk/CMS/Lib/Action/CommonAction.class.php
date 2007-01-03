@@ -17,39 +17,50 @@
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
 // $Id$
+
 /**
  +------------------------------------------------------------------------------
- * 项目入口文件
+ * 
  +------------------------------------------------------------------------------
- * @package    Core
- * @link       http://www.fcs.org.cn
- * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
- * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @package  core
+ * @author liu21st <liu21st@gmail.com>
+ * @version  $Id$
  +------------------------------------------------------------------------------
  */
+class CommonAction extends Action 
+{
+    // 公共方法
+    function _initialize() 
+    {
+        // 获取页面
+        if(!Session::is_set('PageList')) {
+            $dao = D("ArticleDao");
+            $list  = $dao->findAll('type=2 and status=3','','*','seqNo');       	
+            Session::set('PageList',$list);
+        }else {
+   	        $list  = Session::get('PageList');
+        }
+        $this->assign('pages',$list);
 
-$GLOBALS['_beginTime'] = array_sum(split(' ', microtime()));
-define('FCS_PATH', '../FCS');
-define('WEB_ROOT','../');
+        parent::_initialize();
+    }    
 
-//定义项目名称，如果不定义，默认为入口文件名称
-define('APP_NAME', 'Admin');
-define('APP_PATH', '.');
-// 加载配置文件 
-require("../config.php");
-// 加载FCS框架公共入口文件 
-require("../FCS/FCS.php");
-//实例化一个网站应用实例
+    // 发表评论
+    function comment() 
+    {
+        $dao = D("CommentDao");
+    	$vo  =  $dao->createVo();
+        $vo->cTime  =  time();
+        $vo->status   = 1;
+        $vo->ip = $_SERVER['REMOTE_ADDR'];
+        $vo->agent   =  $_SERVER["HTTP_USER_AGENT"];
+        $result  =  $dao->add($vo);
+        if($result) {
+            $this->success('评论发布成功！');
+        }else {
+        	$this->error('评论保存失败！');
+        }
+    }
 
-$App = new App(); 
-//应用程序初始化
-$App->init();
-
-//启动应用程序
-$App->exec();
-
-if(SHOW_RUN_TIME) {
-echo '<div style="text-align:center;width:100%">Process: '.number_format((array_sum(split(' ', microtime())) - $GLOBALS['_beginTime']), 6).'s</div>';
-}
+}//end class
 ?>

@@ -1,0 +1,26 @@
+ <tagLib name="html" />
+<include file="../Public/header" />
+<div id="main_container">
+	<div id="left_content">
+	<ul style="padding:8px;margin:3px 0px">
+	<volist id="vo" name="top">
+	<li><B>[ 置顶 ] <A HREF="__URL__/article/id/{$vo.id}">{$vo.title|ubb}</A></B> by {$vo.userId|getUserName} on {$vo.cTime|toDate='Y-m-d'}
+	</volist>
+	</ul>
+
+	<volist id="vo" name="list">
+	<div class="article" >
+	<h2 class="title"><A HREF="__APP__/Blog/article/id/{$vo.id}">{$vo.title|ubb}</A> </h2>
+	<div class="info">Posted by {$vo.userId|getUserName}  In <A HREF="__APP__/Blog/category/id/{$vo.categoryId}">{$vo.categoryId|getCategoryName}</A> on {$vo.cTime|toDate='Y-m-d'} | <A HREF="__APP__/Blog/article/id/{$vo.id}#comments">{$vo.commentCount} comments</A> </div>
+	<div class="content">
+    <p>{$vo.content|ubb}</p>
+	</div><P>
+	</div>
+	</volist>
+    <present name="page"><div class="page">{$page}</div></present>
+
+</div>
+<include file="../Public/middle" />
+<include file="../Public/right" />   
+</div>
+<include file="../Public/footer" />            
