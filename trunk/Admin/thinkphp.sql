@@ -530,7 +530,7 @@ INSERT INTO `thinkphp_node` (`id`, `name`, `title`, `status`, `remark`, `seqNo`,
 (17, 'Page', '页面管理', 1, '', 4, 1, 2, 0),
 (18, 'PlugIn', '插件管理', 1, '', 15, 1, 2, 0),
 (19, 'Index', '首页', 1, '', NULL, 2, 2, 0),
-(20, 'Article', '文章查看', 1, '的反对法', NULL, 2, 2, 0),
+(20, 'Article', '文章查看', 1, '', NULL, 2, 2, 0),
 (21, 'add', '新增', 1, '', NULL, 3, 3, 0),
 (22, 'insert', '插入', 1, '', NULL, 3, 3, 0),
 (23, 'edit', '编辑', 1, '', NULL, 3, 3, 0),
@@ -547,8 +547,7 @@ INSERT INTO `thinkphp_node` (`id`, `name`, `title`, `status`, `remark`, `seqNo`,
 (34, 'setModule', '模块授权保存', 1, '', NULL, 5, 3, 0),
 (35, 'setAction', '操作授权保存', 1, '', NULL, 5, 3, 0),
 (36, 'sindex', '目录列表', 1, '', NULL, 11, 3, 0),
-(37, 'select', '附件挑选', 1, '', NULL, 9, 3, 0),
-(38, 'Document', '文档管理', 1, '', 5, 1, 2, 0);
+(37, 'select', '附件挑选', 1, '', NULL, 9, 3, 0);
 
 
 -- --------------------------------------------------------
