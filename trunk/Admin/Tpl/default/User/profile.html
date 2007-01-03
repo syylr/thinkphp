@@ -1,0 +1,82 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var curFileNum = 0;
+var rowsnum=0;  //记录行数
+var rindex="";       //列索引
+function addRow(){   
+	curFileNum++;
+	rowsnum++;
+    var arow=tbl.insertRow();
+	var td = arow.insertCell();
+	td.innerHTML='<div class="impBtn  fLeft" ><INPUT TYPE="file"  name="file'+ curFileNum +'" class="file bgcolor1 large"> </div><IMG SRC="../Public/images/limit.gif" WIDTH="20" HEIGHT="20" onclick="javascript:deleteRow()" align="absmiddle" onfocus="javascript:getObject(this)" style="cursor:hand" BORDER="0" ALT="删除"> ';
+	td.align="center"
+	//addFileForm.num.value=rowsnum;
+}
+function deleteRow(){
+	if(tbl.rows.length>0){
+		tbl.deleteRow(rindex); //删除当前行
+		rowsnum--;    
+	}else{
+		return;
+	}
+	rindex="";
+}
+function getObject(obj){ 
+	rindex=obj.parentElement.parentElement.rowIndex;/*当前行对象*/
+}
+
+//-->
+</SCRIPT>
+<div id="main" class="main" >
+<div class="content">
+<div style="width:60%;float:left">
+<fieldset id="querybox" >
+<legend style="color:gray">编辑资料</legend>
+<div id="result" class="result none"></div>
+<FORM METHOD=POST id="form1" >
+<TABLE cellpadding=3 cellspacing=3>
+<TR>
+	<TD class="tRight" >昵称：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeft" NAME="nickname" value="{$vo.nickname}"></TD>
+</TR>
+<TR>
+	<TD class="tRight">验证码：</TD>
+	<TD class="tLeft"><INPUT TYPE="text" class="small bLeftRequire" NAME="verify" value="{$vo.verify}"></TD>
+</TR>
+<TR>
+	<TD class="tRight" >邮箱：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeft" NAME="email" value="{$vo.email}"></TD>
+</TR>
+<TR>
+	<TD class="tRight" >URL：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="large bLeft"  NAME="url" value="{$vo.url}"></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">备  注：</TD>
+	<TD class="tLeft"><TEXTAREA class="bLeft large" NAME="remark" ROWS="5" COLS="35">{$vo.remark}</TEXTAREA></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD ><INPUT TYPE="hidden" name="id" value="{$vo.id}" >
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+	<INPUT TYPE="button" value="保 存" onclick="sendForm('form1','__URL__/update/','tips')" class="button fLeft hMargin small">
+	<INPUT TYPE="reset" class="button small hMargin fLeft" value="清 空" >
+	</TD>
+</TR>
+</TABLE>
+</FORM>
+</fieldset>
+</div>
+<div style="float:left;width:38%">
+<fieldset >
+<legend >修改密码</legend>
+
+</fieldset>
+</div>
+
+</div>
+</div>
+<include file="../Public/footer" />

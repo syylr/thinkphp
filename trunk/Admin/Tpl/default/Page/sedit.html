@@ -1,0 +1,47 @@
+<tagLib name="html" />
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<TITLE>ThinkCMS 系统管理平台 By FCS {$FCS.version}</TITLE>
+<html:link type="css" href ="../Public/css/FCS.css" />
+<html:link type="js" href ="../Public/js/Common.js" />
+<html:import type="js" file="Js.Base" /> 
+<html:import type="js" file="Js.prototype" /> 
+<html:import type="js" file="Js.mootools" /> 
+<html:import type="js" file="Js.Ajax.SmartAjax" /> 
+<html:import type="js" file="Js.Util.Calendar" /> 
+<html:import type="js" file="Js.Form.CheckForm" /> 
+<html:import type="js" file="Js.Util.SwfObject" /> 
+<body style="margin:0">
+<div class="content">
+<div id="result" class="result none"></div>
+<FORM METHOD=POST id="form1" >
+<TABLE cellpadding=3 cellspacing=3 width="100%">
+<TR>
+	<TD class="tRight" >标题：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="large bLeftRequire"  check='Require' warning="标题不能为空" NAME="title" value="{$vo.title}"></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">内容：</TD>
+	<TD class="tLeft"><html:editor type="smart"  id="editor" name="content" style="width:328px;height:145px"  content="{$vo.content}" /></TD>
+</TR>
+<TR>
+	<TD class="tRight">评论：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft"  NAME="commentStatus">
+	<option value="1" <equal name="vo" property="commentStatus" value="1">selected</equal>>开放</option>
+	<option value="0" <equal name="vo" property="commentStatus" value="0">selected</equal>>关闭</option>
+	</SELECT></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD >
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+	<INPUT TYPE="hidden" name="id" value="{$vo.id}">
+	<div class=" fLeft "><INPUT TYPE="button" value="保 存" onclick="sendForm('form1','__URL__/update/','tips')" class="small button"></div>
+	<hR class="cBoth medium" style="text-align:left" size=1><div class=" fLeft"><INPUT TYPE="button" onclick="parent.location='__URL__/edit/id/{$vo.id}'" class="button medium" value="高级模式" ></div>
+	</TD>
+</TR>
+</TABLE>
+</FORM>
+</div>

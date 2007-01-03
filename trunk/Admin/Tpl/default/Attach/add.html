@@ -1,0 +1,64 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<div id="main" class="main" >
+<div class="content">
+<div class="title">新增附件 [ <A HREF="__URL__">返回列表</A> ]</div>
+<div id="result" class="result none"></div>
+	<div style="margin:12px;padding:6px">
+	<form id="upload" METHOD=POST action="__URL__/insert/" onsubmit="return CheckForm(this);" enctype="multipart/form-data" target="iframeUpload">
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+	<iframe name="iframeUpload" src="" width="350" height="35" frameborder=0  SCROLLING="no" style="display:none"></iframe>
+
+	<INPUT TYPE="hidden" name="_uploadFileResult" value="result">
+	<INPUT TYPE="hidden" name="_uploadFormId" value="upload">
+	<INPUT TYPE="hidden" name="_uploadFileSize" value="-1">
+	<INPUT TYPE="hidden" name="_uploadFileType" value="bmp,jpg,gif,png,doc,rar,zip">
+	<INPUT TYPE="hidden" name="_uploadSavePath" value="{$FCS.WEB_ROOT}Public/Uploads/" >
+	<div class="fLeft hMargin"><INPUT TYPE="button" value="增 加" onclick="addRow();" class="button small"></div>
+	<div class="fLeft hMargin"><INPUT TYPE="submit" value="上 传" onclick="uploading();" class="button medium"></div>
+	<BR class="cBoth">
+	<TABLE id='tbl'></TABLE>
+	</form>
+	</div>
+</div>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var curFileNum = 0;
+var rowsnum=0;  //记录行数
+var rindex="";       //列索引
+var tbl	=	$('tbl');
+function addRow(){   
+	curFileNum++;
+	rowsnum++;
+    var row=tbl.insertRow(-1);
+	//var td = arow.insertCell();
+	var cell = document.createElement("td");
+	cell.innerHTML='<div class="impBtn  fLeft" ><INPUT TYPE="file"  name="file'+ curFileNum +'" class="file  huge"></div><div class="fLeft hMargin"><INPUT TYPE="button" value="删 除" onfocus="javascript:getObject(this)" onclick="deleteRow();" class="button"></div> ';
+	cell.align="center"
+	row.appendChild(cell); 
+	//addFileForm.num.value=rowsnum;
+}
+function deleteRow(){
+	if(tbl.rows.length>0){
+		tbl.deleteRow(rindex); //删除当前行
+		rowsnum--;    
+	}else{
+		return;
+	}
+	rindex="";
+}
+function getObject(obj){ 
+	rindex=obj.parentElement.parentElement.rowIndex;/*当前行对象*/
+}
+
+function uploading(msg){
+	$('result').style.display = 'block';
+	$('result').innerHTML	=	'<IMG SRC="../Public/images/ajaxloading.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="" align="absmiddle"> 文件上传中～';
+	return true;
+}
+addRow();
+//-->
+</SCRIPT>
+</div>
+<include file="../Public/footer" />

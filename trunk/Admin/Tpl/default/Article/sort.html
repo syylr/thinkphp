@@ -1,0 +1,66 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<div id="main" class="main" >
+<div class="content">
+<div class="title"> 页面排序</div>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function saveSort(){
+sl.ok();
+sendForm('form1','__URL__/saveSort/','result');
+}
+//-->
+</SCRIPT>
+<div id="result" class="result none"></div>
+<html:link type="js" href="../Public/js/SortSelect.js" />
+<FORM METHOD=POST name = 'form1' >
+<html:sort source="sortList" title="页面排序" size="15" show="title" />
+<div align="center">
+<TABLE class="order" cellpadding=0 cellspacing=0 width="350">
+<tr><td height="5" colspan="2" class="topTd" ></td></tr>
+<TR>
+	<Th colspan=2 align="center"><div class="fLeft"><input name="search" type="text"></div>
+<html:imageBtn value="查询" click="sl.Search()" style="button " /></Th>
+</TR>
+<TR >
+	<TD width="75%" align="right">
+	<div class="solid">
+	<SELECT class="multiSelect" name="sort" size="15">
+	<?php $i=1; ?>
+<voList name="sortList" id="page" >
+<option value="{$page.id}"><?php echo $i++; ?>.{$page.title}</option>
+</voList>
+</SELECT></div></TD>
+	<TD width="20" valign="top">
+	<div style="margin-top:20px">
+	<html:imageBtn value="第一" click="sl.fnFirst()" style="button " />
+<html:imageBtn value="上移" click="sl.sortUp()" style="button " />
+<html:imageBtn value="下移" click="sl.sortDown()" style="button " />
+<html:imageBtn value="最后" click="sl.fnEnd()" style="button " />
+<div class="fLeft vMargin"><INPUT TYPE="text" NAME="jumpNum" size="3"></div>
+<html:imageBtn value="跳转" click="sl.jump()" style="button " />
+</div>
+</TD>
+</TR>
+<TR>
+	<TD colspan=2 align="center">
+	<div style="width:85%"><INPUT TYPE="hidden" name="seqNoList">
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" VALUE="1">
+<html:imageBtn name="save" value="确定" click="saveSort()" style="button " /> 
+<html:imageBtn name="reset" type="reset" value="取消" click="history.back()" style="button " />
+</div>
+</TD>
+</TR>
+<tr><td height="5" colspan="2" class="topTd" ></td></tr>
+</TABLE>
+</div>
+</FORM>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var sl = new SortSelect('form1','sort','search','jumpNum');
+//-->
+</SCRIPT>
+</div>
+</div>
+<include file="../Public/footer" />
