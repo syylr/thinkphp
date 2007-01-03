@@ -37,7 +37,7 @@ define('WEB_ROOT','../');
 define('APP_NAME', 'Admin');
 define('APP_PATH', '.');
 // 加载配置文件 
-require("../config.php");
+require("./config.php");
 // 加载FCS框架公共入口文件 
 require("../FCS/FCS.php");
 //实例化一个网站应用实例
