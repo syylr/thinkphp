@@ -23,7 +23,7 @@ if(!defined('E_STRICT'))  define('E_STRICT',2048);
 
 /**
  +------------------------------------------------------------------------------
- * FCS PHP4 兼容函数库
+ * ThinkPHP PHP4 兼容函数库
  +------------------------------------------------------------------------------
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>

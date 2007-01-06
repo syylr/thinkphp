@@ -20,7 +20,7 @@
 
 /**
  +------------------------------------------------------------------------------
- * FCS公共函数库
+ * ThinkPHP公共函数库
  +------------------------------------------------------------------------------
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
@@ -99,11 +99,29 @@ RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
  * @return void
  +----------------------------------------------------------
  */
-function halt($e) {
+function halt($error) {
+    $e = array();
     if(DEBUG_MODE){
         //调试模式下输出错误信息
-        if(!is_array($e)) {
-            $e['message'] = $e;
+        if(!is_array($error)) {
+            $trace = debug_backtrace();
+            $e['message'] = $error;
+            $e['file'] = $trace[0]['file'];
+            $e['class'] = $trace[0]['class'];
+            $e['function'] = $trace[0]['function'];
+            $e['line'] = $trace[0]['line'];
+            $traceInfo='';
+            $time = date("y-m-d H:i:m");
+            foreach($trace as $t)
+            {
+                $traceInfo .= '['.$time.'] '.$t['file'].' ('.$t['line'].') ';
+                $traceInfo .= $t['class'].$t['type'].$t['function'].'(';
+                $traceInfo .= implode(', ', $t['args']);
+                $traceInfo .=")<br/>";
+            }
+            $e['trace']  = $traceInfo;
+        }else {
+        	$e = $error;
         }
         include(FCS_PATH.'/Lib/FCS/Exception/FCSException.tpl.php');
     }
@@ -119,46 +137,6 @@ function halt($e) {
     }
     exit;    	
 }
-/*
-function halt($e) {
-    //如果配置文件还没有加载，则使用exit方法输出错误
-    if(!defined('TEMPLATE_NAME')) {
-        if(is_array($e)) {
-            include(FCS_PATH.'/Lib/FCS/Exception/FCSException.tpl.php');
-            exit();
-        }else {
-            exit($e);
-        }
-    }
-
-    //读取错误模板文件
-    $tpl    =   get_instance_of('Template');
-    if(DEBUG_MODE){//调试模式下输出错误信息
-        if(!file_exists(TEMPLATE_PATH.'/Public/debug.html')) {
-            include(FCS_PATH.'/Lib/FCS/Exception/FCSException.tpl.php');
-            exit();
-        }
-        if(!is_array($e)){//抛出异常
-        	$e['message'] = $e;
-        }
-        $tpl->assign("e",$e);
-        $tpl->display(TEMPLATE_PATH.'/Public/debug.html');
-
-    }else {//否则定向到错误页面
-        if(ERROR_PAGE!=''){
-            redirect(ERROR_PAGE); 
-        }else {
-            $e['message'] = ERROR_MESSAGE;
-            if(!file_exists(TEMPLATE_PATH.'/Public/error.html')) {
-                include(FCS_PATH.'/Lib/FCS/Exception/FCSException.tpl.php');
-                exit();
-            }
-            $tpl->assign("e",$e);
-            $tpl->display(TEMPLATE_PATH.'/Public/error.html');
-        }
-    }
-    exit;    	
-}*/
 
 /**
  +----------------------------------------------------------
