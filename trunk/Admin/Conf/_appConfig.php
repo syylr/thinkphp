@@ -6,7 +6,6 @@
 */
 if (!defined('FCS_PATH')) exit();
 define('WEB_TITLE','FCS 轻量级面向对象的PHP开发框架'); 
-define('WEB_DOMAIN','com.addwe'); 
 define('DEBUG_MODE',true); 
 define('WEB_LOG_RECORD',true); 
 define('LOG_FILE_SIZE',2097152); 
@@ -79,15 +78,11 @@ define('SHARE_MEM_SIZE',1048576);
 define('PAGE_NUMBERS',5); 
 define('VAR_PAGE','p'); 
 define('BIG_2_GB',false); 
-define('THUMB_DIR',FCS_PATH.'/Thumb/'); 
 define('SHOW_RUN_TIME',TRUE); 
 define('TMPL_DENY_FUNC_LIST','echo,exit'); 
 define('TMPL_L_DELIM','{'); 
 define('TMPL_R_DELIM','}'); 
 define('TAGLIB_BEGIN','<'); 
 define('TAGLIB_END','>');
-define('RPC_TYPE','PHPRPC'); 
-define('RPC_SERVER',''); 
-define('RPC_ENCRYPT',TRUE); 
 //配置文件定义结束
 ?>

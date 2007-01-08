@@ -56,7 +56,7 @@ PHP 4.3.0 以上
 MySql 4.1.0 以上
 
 [目录结构]
-┎━FCS 框架系统目录
+┎━ThinkPHP 框架系统目录
 ┃  ┝ Common	公共文件目录
 ┃  ┝ Lang	语言包目录
 ┃  ┝ PlugIns	内置插件目录
@@ -82,7 +82,7 @@ MySql 4.1.0 以上
 ┃  ┗ Uploads	公共上传目录
 
 [安装说明]
-把FCS、Admin、Public目录直接上传（或拷贝到）服务器web目录下面
+把ThinkPHP、Admin、Public目录直接上传（或拷贝到）服务器web目录下面
 导入Admin目录下面的thinkphp.sql数据库脚本到mysql数据库
 （如果是mysql4.1以下版本，请修改thinkphp.sql文件，把DEFAULT CHARSET=utf8去掉）
 注意示例程序mysql保存数据采用utf-8编码，请注意mysql相应设置。
