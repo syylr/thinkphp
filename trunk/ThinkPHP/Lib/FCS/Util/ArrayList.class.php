@@ -229,27 +229,7 @@ class ArrayList extends Base
 
     function toJson() 
     {
-        $json = '';
-        foreach ($this->getIterator() as $element)
-        {
-            if(is_array($element)) {
-                $temp   = '';
-                foreach($element as $key=>$val) {
-            		 $temp .= "\"$val\",";
-                }         
-                $json .= '['.substr($temp,0,-1).'],';
-
-            }elseif(is_object($element)) {
-                $temp   = '';
-            	foreach($element as $key=>$val) {
-                     $temp .= "\"$key\"".':'."\"$val\",";
-                }         
-                $json .= '{'.substr($temp,0,-1).'}';
-            }else {
-            	$json .=  "\"$element\",";
-            }
-        }
-        return '['.substr($json,0,-1).']';
+        return json_encode($this->_elements);
     }
 
     /**
