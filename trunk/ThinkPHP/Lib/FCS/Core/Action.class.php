@@ -432,11 +432,12 @@ class Action extends Base
      */
     function error($errorMsg,$ajax=false) 
     {
-    	$this->assign('error',$errorMsg);
-        if($ajax) {
-        	$this->assign('ajax',$ajax);
+        if($ajax || $this->get('ajax')) {
+        	$this->ajaxReturn('',$errorMsg);
+        }else {
+            $this->assign('error',$errorMsg);
+            $this->forward();        	
         }
-        $this->forward();
     }
 
     /**
@@ -453,13 +454,47 @@ class Action extends Base
      */
     function success($message,$ajax=false) 
     {
-    	$this->assign('message',$message);
-        if($ajax) {
-        	$this->assign('ajax',$ajax);
+        if($ajax || $this->get('ajax')) {
+        	$this->ajaxReturn('',$message);
+        }else {
+        	$this->assign('message',$message);
+            $this->forward();
         }
-        $this->forward();
+        
     }
 
+    /**
+     +----------------------------------------------------------
+     * Ajax方式返回数据到客户端
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param mixed $data 要返回的数据
+     * @param String $info 提示信息
+     * @param String $status 返回状态
+     +----------------------------------------------------------
+     * @return void 
+     +----------------------------------------------------------
+     */
+    function ajaxReturn($data='',$info='',$status='') 
+    {
+        header("Content-Type:text/html; charset=utf-8");
+        $result  =  array();
+        if($info=='') {
+            if($this->get('error')) { 
+                $info =  $this->get('error');
+            }else {
+                $info =   $this->get('message');
+            }         	
+        }
+        if($status == '') {
+        	$status  = $this->get('error')?0:1;
+        }
+        $result['status']  =  $status;
+   	    $result['info'] =  $info;
+        $result['data'] = $data;
+        exit(json_encode($result));
+    }
     /**
      +----------------------------------------------------------
      * Action跳转 支持指定模块和延时跳转
@@ -524,18 +559,12 @@ class Action extends Base
     function _dispatch_jump() 
     {
         if($this->get('ajax') ) {
-            header("Content-Type:text/html; charset=utf-8");
             // 用于Ajax附件上传 显示信息
             if($this->get('_ajax_upload_')) {
+                header("Content-Type:text/html; charset=utf-8");
             	exit($this->get('_ajax_upload_'));
-            }
-        	//如果使用Ajax方式
-            if($this->get('error')) { 
-                //发送错误信息
-                exit('<div style="color:#FF0000"><IMG SRC="'.APP_PUBLIC_URL.'/images/update.gif" align="absmiddle" BORDER="0"> '.$this->get('error').'</div>');
             }else {
-                // 发送成功信息
-            	exit('<div style="color:#0033FF"><IMG SRC="'.APP_PUBLIC_URL.'/images/ok.gif" align="absmiddle" BORDER="0">  '.$this->get('message').'</div>');
+            	$this->ajaxReturn();
             }
         }
         // 普通方式跳转
@@ -598,7 +627,6 @@ class Action extends Base
         }
         $dao    =   $this->getDaoClass();
         $this->_list($dao,$map);
-
         return;
     }
 
@@ -999,6 +1027,26 @@ class Action extends Base
             //设置附件关联数据表
             $module =  $_POST['_uploadFileTable']; 
         }
+        if(!empty($_POST['_uploadRecordId'])) {
+            //设置附件关联记录ID
+            $id =  $_POST['_uploadRecordId']; 
+        }
+        if(!empty($_POST['_uploadUserId'])) {
+            //设置附件关联记录ID
+            $userId =  $_POST['_uploadUserId']; 
+        }
+        if(!empty($_POST['_uploadImgThumb'])) {
+            //设置需要生成缩略图，仅对图像文件有效
+            $upload->thumb =  $_POST['_uploadImgThumb']; 
+        }
+        if(!empty($_POST['_uploadThumbMaxWidth'])) {
+            //设置缩略图最大宽度
+            $upload->thumbMaxWidth =  $_POST['_uploadThumbMaxWidth']; 
+        }
+        if(!empty($_POST['_uploadThumbMaxHeight'])) {
+            //设置缩略图最大高度
+            $upload->thumbMaxHeight =  $_POST['_uploadThumbMaxHeight']; 
+        }
         $uploadReplace =  false;
         if(isset($_POST['_uploadReplace']) && 1==$_POST['_uploadReplace']) {
             //设置附件是否覆盖
@@ -1027,7 +1075,7 @@ class Action extends Base
                 //记录模块信息
                 $file['module']     =   $module;
                 $file['recordId']   =   $id;
-                $file['userId']     =   Session::is_set(USER_AUTH_KEY)?Session::get(USER_AUTH_KEY):-1;
+                $file['userId']     =   Session::is_set(USER_AUTH_KEY)?Session::get(USER_AUTH_KEY):$userId;
                 //保存附件信息到数据库
                 if($uploadReplace ) {
                     $vo  =  $attachDao->find("module='".$module."' and recordId='".$id."'");
