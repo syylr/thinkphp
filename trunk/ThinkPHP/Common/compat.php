@@ -559,4 +559,85 @@ if(!function_exists('scandir')) {
    }
 }
 
+if (!function_exists('json_encode')) {
+     function format_json_value(&$value) 
+    {
+        if(is_int($value)) {
+            $value = intval($value);
+        } else if(is_float($value)) {
+            $value = floatval($value);
+        } else if(defined($value) && $value === null) {
+            $value = strval(constant($value));
+        } else if(is_string($value)) {
+            $value = '"'.addslashes($value).'"';
+        }
+        return $value;
+    }
+
+    function json_encode($data) 
+    {
+    	if(is_object($data)) {
+            //对象转换成数组
+            $data = get_object_vars($data);
+        }else if(!is_array($data)) {
+        	// 普通格式直接输出
+            return format_json_value($data);
+        }
+        // 判断是否关联数组
+        if(empty($data) || is_numeric(implode('',array_keys($data)))) {
+        	$assoc  =  false;
+        }else {
+        	$assoc  =  true;
+        }
+        // 组装 Json字符串
+        $json = $assoc ? '{' : '[' ;
+        foreach($data as $key=>$val) {
+            if(!is_null($val)) {
+                if($assoc) {
+                    $json .= "\"$key\":".json_encode($val).",";
+                }else {
+                    $json .= json_encode($val).",";
+                }            	
+            }
+        }
+        if(strlen($json)>1) {// 加上判断 防止空数组
+        	$json  = substr($json,0,-1);
+        }
+        $json .= $assoc ? '}' : ']' ;
+        return $json;
+    }
+}
+
+if (!function_exists('json_decode')) {
+    function json_decode($json,$assoc=false) 
+    {
+        // 目前不支持二维数组或对象
+        $begin  =  substr($json,0,1) ;
+        if(!in_array($begin,array('{','['))) {
+            // 不是对象或者数组直接返回
+        	return $json;
+        }
+        $parse = substr($json,1,-1);
+        $data  = explode(',',$parse);
+        if($flag = $begin =='{' ) {
+        	// 转换成PHP对象
+            $result   = new stdClass();
+            foreach($data as $val) {
+            	$item    = explode(':',$val);
+                $key =  substr($item[0],1,-1);
+                $result->$key = json_decode($item[1],$assoc);
+            }
+            if($assoc) {
+                $result   = get_object_vars($result);
+            }
+        }else {
+        	// 转换成PHP数组
+            $result   = array();
+            foreach($data as $val) {
+            	$result[]  =  json_decode($val,$assoc);
+            }
+        }
+        return $result;
+    }
+}
 ?>
