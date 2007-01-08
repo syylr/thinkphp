@@ -115,8 +115,6 @@ function hiddenSysInfo(){
 Web服务端口:<?php echo $_SERVER['SERVER_PORT']?><BR>
 服务器管理员:<a href="mailto:<?php echo $_SERVER['SERVER_ADMIN']?>"><?php echo $_SERVER['SERVER_ADMIN']?></a><BR>
 剩余空间&nbsp;diskfreespace:<?php echo round((@disk_free_space(".")/(1024*1024)),2)?>M<BR>
-<?php if (!IS_WIN):?>
-内存使用状况: 物理内存：共<?php echo $sysInfo['memTotal']?>M, 已使用<?php echo $sysInfo['memUsed']?>M, 空闲<?php echo $sysInfo['memFree']?>M, 使用率					<?php echo $sysInfo['memPercent']?>	%	<?php echo bar($sysInfo['memPercent'])?>SWAP区：共<?php echo $sysInfo['swapTotal']?>M, 已使用				<?php echo $sysInfo['swapUsed']?>M, 空闲<?php echo $sysInfo['swapFree']?>M, 使用率<?php echo $sysInfo['swapPercent']?>	%	<?php echo bar($sysInfo['swapPercent'])?><BR>
 系统平均负载:<?php echo $sysInfo['loadAvg']?><BR>
 <?php endif;?>
 PHP运行方式:<?php echo php_sapi_name()?><BR>
@@ -135,13 +133,6 @@ magic_quotes_gpc:<?php echo (1===get_magic_quotes_gpc())?YES:NO?><BR>
 magic_quotes_runtime:<?php echo (1===get_magic_quotes_runtime())?YES:NO?><BR>
 被禁用的函数&nbsp;disable_functions:<?php echo (""==($disFuns=get_cfg_var("disable_functions")))?"无":str_replace(",","<br />",$disFuns)?><BR>
 PHP信息&nbsp;PHPINFO:<?php echo (false!==eregi("phpinfo",$disFuns))?NO:"<a href='__URL__/phpinfo/' target='_blank' class='static'>PHPINFO</a>"?><BR>
-<?php $isMail = (false !== function_exists("mail"))?"":" disabled";?>
-MAIL邮件发送测试<BR>
-收信地址:<input type="text" name="mailReceiver" <?php echo $isMail;?> class="medium" />
-					&nbsp;<input type="submit" class="button" value="SENDMAIL" <?php echo $isMail;?> name="act" /><BR>
-函数支持状况<BR>
-函数名称:<input type="text" name="funName" class="medium" />
-					&nbsp;<input type="submit" value="FUNCTION_CHECK" class="button" /><BR>
 </div><div style="float:left;width:35%">
 拼写检查 ASpell Library:<?=isfun("aspell_check_raw")?><BR>
 高精度数学运算 BCMath:<?=isfun("bcadd")?><BR>
@@ -182,9 +173,9 @@ Socket支持:<?=isfun("socket_accept")?><BR>
 </div>
 <!-- 网站资源 -->
 <fieldset id="querybox" >
-<legend style="color:gray">FCS 资源站点</legend>
-<B>官方BLOG：</B><A HREF="http://fcs.org.cn/blog" target="_blank">http://fcs.org.cn/blog</A><BR>
-<B>SVN地址：</B><A HREF="http://fcs.org.cn/svn/trunk/" target="_blank">http://fcs.org.cn/svn/trunk/</A><BR>
+<legend style="color:gray">ThinkPHP 资源站点</legend>
+<B>官方网站：</B><A HREF="http://thinkphp.cn/" target="_blank">http://thinkphp.cn</A><BR>
+<B>SVN地址：</B><A HREF="https://thinkphp.googlecode.com/svn/trunk/" target="_blank">https://thinkphp.googlecode.com/svn/trunk/</A><BR>
 <B>TopThink：</B><A HREF="http://www.topthink.com.cn" target="_blank">http://www.topthink.com.cn</A>
 </fieldset>
 </div>
