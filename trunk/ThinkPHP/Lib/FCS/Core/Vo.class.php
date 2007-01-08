@@ -141,21 +141,16 @@ class Vo extends Base
      */
     function toJson($fields=array()) 
     {
-        $vars = get_object_vars($this);
-        $json = '{';
-        if(empty($fields)) {
-        	$allFields = true;
-        }else {
-        	$allFields = false;
+        if(!empty($fields)) {
+            $array   = $this->toArray();
+        	foreach( $array as $key=>$val) {
+        		if(!in_array($key,$fields)) {
+        			unset($array[$key]);
+        		}
+        	}
+            return json_encode($array);
         }
-        foreach($vars as $key=>$val) {
-            if($allFields || in_array($key,$fields)) {
-            	$json .= "\"$key\"".':'."\"$val\",";
-            }
-        }
-        $json  = substr($json,0,-1);
-        $json .= '}';
-        return $json;	
+        return json_encode($this);
     }
     
     /**
