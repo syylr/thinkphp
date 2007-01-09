@@ -58,7 +58,7 @@ class Image extends Base
     function getImageInfo($img) {
         $imageInfo = getimagesize($img);
         if( $imageInfo!== false) {
-            $imageType = image_type_to_extension($imageInfo[2]);
+            $imageType = substr(image_type_to_extension($imageInfo[2]),1);
             $imageSize = filesize($img);
             $info = array(
                 "width"=>$imageInfo[0],
@@ -138,7 +138,7 @@ class Image extends Base
      * @throws FcsException
      +----------------------------------------------------------
      */
-    function thumb($image,$type='',$filename='',$maxWidth=200,$maxHeight=50,$position='',$interlace=true) 
+    function thumb($image,$type='',$filename='',$maxWidth=200,$maxHeight=50,$interlace=true) 
     {
         // 获取原图信息
         $info  = Image::getImageInfo($image); 
@@ -146,7 +146,6 @@ class Image extends Base
             $srcWidth  = $info['width'];
             $srcHeight = $info['height'];
             $type = empty($type)?$info['type']:$type;
-            $position   = empty($position)?THUMB_DIR:$position;
             $interlace  =  $interlace? 1:0;
             unset($info);
             $scale = min($maxWidth/$srcWidth, $maxHeight/$srcHeight); // 计算缩放比例
@@ -176,8 +175,8 @@ class Image extends Base
 
             // 生成图片
             $imageFun = 'image'.($type=='jpg'?'jpeg':$type);
-            $filename  = empty($filename)? basename($image,'.'.$type).'_thumb.' : $filename;
-            $imageFun($thumbImg,$position.$filename.$type); 
+            $filename  = empty($filename)? dirname($image).'/'.basename($image,'.'.$type).'_thumb.'.$type : $filename;
+            $imageFun($thumbImg,$filename); 
             ImageDestroy($thumbImg);
          }
     }

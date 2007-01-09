@@ -69,6 +69,10 @@ class UploadFile extends Base
      */
     var $allowTypes = array();
 
+    var $thumb   =  false;
+    var $thumbMaxWidth;
+    var $thumbMaxHeight;
+
     /**
      +----------------------------------------------------------
      * 上传文件保存路径
@@ -89,7 +93,7 @@ class UploadFile extends Base
      * @access private
      +----------------------------------------------------------
      */
-    var $saveRule = 'create_guid';
+    var $saveRule = 'uniqid';
 
     /**
      +----------------------------------------------------------
@@ -169,6 +173,15 @@ class UploadFile extends Base
         $filename = $this->savePath.$file['savename'];
         if(!move_uploaded_file($file['tmp_name'], $filename)) {
             return false;
+        }
+        if($this->thumb) {
+        	// 生成图像缩略图
+            import("ORG.Util.Image");
+            $image =  Image::getImageInfo($filename);
+            if(false !== $image) {
+            	//是图像文件生成缩略图
+                Image::thumb($filename,'','',$this->thumbMaxWidth,$this->thumbMaxHeight);
+            }
         }
         return true;
     }
