@@ -29,12 +29,18 @@
  +------------------------------------------------------------------------------
  */
 
+// 创建Ajax提示div
+
+
 var SmartAjax = {
 	method:'POST',			//发送方法
 	bComplete:false,			//是否完成
 	updateTip:'update...',	//更新提示信息
 	updateEffect:'',			//更新效果
 	responseMethod:'text',	//返回类型 text eval
+	target:'',
+	response:'',
+	returnFunction:'',
 	activeRequestCount:0,
 	// Ajax连接初始化
 	getTransport: function() {
@@ -45,16 +51,25 @@ var SmartAjax = {
 		) || false;
 	},
 	loading:function (target){
+		$(target).style.display = 'block';
 		$(target).innerHTML = this.updateTip ;
 	},
 	// 发送Ajax请求
 	send:function(url,pars,target,response,effect,intervals)
 	{
 		var xmlhttp = this.getTransport();
+		if (target == undefined || target == '')
+		{
+			target = this.target ;
+		}
 		this.loading(target);
 		this.activeRequestCount++;
 		this.bComplete = false;
 		if (effect == undefined)	effect = this.updateEffect;
+		if (response == undefined || response == '')
+		{
+			response = this.response;
+		}
 		try {
 			if (this.method == "GET")
 			{
@@ -105,12 +120,10 @@ var SmartAjax = {
 					{
 						_self.bComplete = true;
 						_self.activeRequestCount--;
-						if (response==undefined)
+						if (response == undefined || response == '')
 						{
-							// 使用默认的处理
 							_self.handleAjaxResponse(xmlhttp);
 						}else {
-							// 使用自定义处理方法
 							(response).apply(this,[xmlhttp]);
 						}
 						if (!isNaN(intervals) && intervals >0)	// 是否定时执行
