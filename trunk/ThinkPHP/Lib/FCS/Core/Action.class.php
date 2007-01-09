@@ -433,7 +433,7 @@ class Action extends Base
     function error($errorMsg,$ajax=false) 
     {
         if($ajax || $this->get('ajax')) {
-        	$this->ajaxReturn('',$errorMsg);
+        	$this->ajaxReturn('',$errorMsg,0);
         }else {
             $this->assign('error',$errorMsg);
             $this->forward();        	
@@ -455,7 +455,7 @@ class Action extends Base
     function success($message,$ajax=false) 
     {
         if($ajax || $this->get('ajax')) {
-        	$this->ajaxReturn('',$message);
+        	$this->ajaxReturn('',$message,1);
         }else {
         	$this->assign('message',$message);
             $this->forward();
@@ -487,7 +487,7 @@ class Action extends Base
                 $info =   $this->get('message');
             }         	
         }
-        if($status == '') {
+        if($status === '') {
         	$status  = $this->get('error')?0:1;
         }
         $result['status']  =  $status;
