@@ -25,13 +25,15 @@ var ThinkAjax = {
 	updateTip:'数据处理中～',	//更新提示信息
 	updateEffect:{'opacity': [0,0.7]},			//更新效果
 	target:'ThinkAjaxResult',
+	showTip:true,
 	activeRequestCount:0,
 	// Ajax连接初始化
 	getTransport: function() {
 		return Try.these(
+		 function() {return new XMLHttpRequest()},
 		  function() {return new ActiveXObject('Msxml2.XMLHTTP')},
-		  function() {return new ActiveXObject('Microsoft.XMLHTTP')},
-		  function() {return new XMLHttpRequest()}
+		  function() {return new ActiveXObject('Microsoft.XMLHTTP')}
+		 
 		) || false;
 	},
 	loading:function (target,effect){
@@ -51,7 +53,8 @@ var ThinkAjax = {
 		if (1 == $return.status)
 		{
 				// 显示成功提示
-				$(target).innerHTML	= '<div style="color:#3333FF;font-weight:bold"><IMG SRC="'+PUBLIC+'/images/ok.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" align="absmiddle"> '+$return.info+'</div>';
+				if (this.showTip)
+				$(target).innerHTML	= '<div style="color:#3333FF;font-weight:bold">'+$return.info+'</div>';
 				// 处理返回数据
 				// 需要在客户端定义ajaxReturn方法
 				if (response == undefined)
@@ -65,19 +68,24 @@ var ThinkAjax = {
 				}
 
 			}else {
+				if (this.showTip)
 				// 显示错误信息
-				$(target).innerHTML	= '<div style="color:#FF0000;font-weight:bold"><IMG SRC="'+PUBLIC+'/images/update.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" align="absmiddle"> '+$return.info+'</div>';
+				$(target).innerHTML	= '<div style="color:#FF0000;font-weight:bold">'+$return.info+'</div>';
 			}
 			// 提示信息停留5秒
 			window.setTimeout(function (){$(target).style.display='none';},5000);
 	},
 	// 发送Ajax请求
-	send:function(url,pars,response,target,effect,intervals)
+	send:function(url,pars,response,target,effect)
 	{
 		var xmlhttp = this.getTransport();
 		if (target == undefined)	target = this.target;
 		if (effect == undefined)	effect = this.updateEffect;
-		this.loading(target,effect);
+		if (this.showTip)
+		{
+			this.loading(target,effect);
+		}
+		
 		this.activeRequestCount++;
 		this.bComplete = false;
 		try {
@@ -100,10 +108,6 @@ var ThinkAjax = {
 						_self.bComplete = true;
 						_self.activeRequestCount--;
 						_self.ajaxResponse(xmlhttp,target,response);
-						if (!isNaN(intervals) && intervals >0)	// 是否定时执行
-						{	
-							window.setTimeout(function (){_self.send(url,pars,response,target,effect,intervals)},intervals);
-						}
 					}
 				}
 			}
@@ -140,6 +144,7 @@ var ThinkAjax = {
 	// 定制执行Ajax操作
 	repeat:function(url,vars,intervals,response,target,effect)
 	{
-		this.send(url,vars,response,target,effect,intervals);
+		var _self = this;
+		myTimer = window.setInterval(function (){_self.send(url,vars,response,target,effect)},intervals);
 	}
 }
