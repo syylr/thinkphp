@@ -69,7 +69,7 @@ class Dispatcher extends Base
      */
     function init() 
     {
-        if(URL_MODEL == URL_REWRITE || checkModRewrite() ) {
+        if(URL_MODEL == URL_REWRITE ) {
             //当前项目地址
             define('PHP_FILE',dirname(_PHP_FILE_));
         }else {
