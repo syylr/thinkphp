@@ -447,6 +447,39 @@ class Dao extends Base
 
     /**
      +----------------------------------------------------------
+     * 根据某个字段得到一条记录
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $field 字段名称
+     * @param mixed $value 字段的值
+     * @param string $table  数据表名
+     * @param string $fields 字段名，默认为*
+     +----------------------------------------------------------
+     * @return Vo
+     +----------------------------------------------------------
+     * @throws FcsException
+     +----------------------------------------------------------
+     */
+    function getBy($field,$value,$table='',$fields='*')
+    {
+        $table  = empty($table)?$this->getRealTableName():$table;
+        $rs     = $this->db->find($field."='{$value}'",$table,$fields);
+        if($rs->size()＝＝1) {
+            $vo  =  $this->rsToVo($rs->get(0));
+            return $vo;
+        }elseif($rs->size()>1) {
+        	$volist  =  $this->rsToVoList($rs);
+            return $volist;
+        }
+        else {
+            return false;
+        }        	
+    }
+
+    /**
+     +----------------------------------------------------------
      * 根据条件得到一条记录
      * 
      +----------------------------------------------------------
