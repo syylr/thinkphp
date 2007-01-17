@@ -465,15 +465,19 @@ class Dao extends Base
     function getBy($field,$value,$table='',$fields='*')
     {
         $table  = empty($table)?$this->getRealTableName():$table;
-        $rs     = $this->db->find($field."='{$value}'",$table,$fields);
-        if($rs->size()＝＝1) {
-            $vo  =  $this->rsToVo($rs->get(0));
-            return $vo;
-        }elseif($rs->size()>1) {
-        	$volist  =  $this->rsToVoList($rs);
-            return $volist;
+        if(DATA_CACHE_ON) {//启用动态数据缓存
+        	$vo  =  $this->getCacheVo('',$field.'_'.$value);
+            if(false !== $vo) {
+            	return $vo;
+            }
         }
-        else {
+        $rs     = $this->db->find($field."='{$value}'",$table,$fields);
+        if($rs->size()>0) {
+                $vo  =  $this->rsToVo($rs->get(0));
+                if(DATA_CACHE_ON) 
+                    $this->CacheVo($vo,$field.'_'.$value);
+                return $vo;
+        }else {
             return false;
         }        	
     }
