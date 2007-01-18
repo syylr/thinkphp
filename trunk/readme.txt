@@ -1,4 +1,4 @@
-// +----------------------------------------------------------------------+
+﻿// +----------------------------------------------------------------------+
 // | ThinkPHP                                                             |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
@@ -78,15 +78,12 @@ MySql 4.1.0 以上
 ┃  ┗ Uploads	上传文件目录
 ┃
 ┝━Public 网站公共目录
-┃  ┗ Js	FCS JS类库目录
+┃  ┗ Js	ThinkPHP JS类库目录
 ┃  ┗ Uploads	公共上传目录
 
 [安装说明]
-把ThinkPHP、Admin、Public目录直接上传（或拷贝到）服务器web目录下面
-导入Admin目录下面的thinkphp.sql数据库脚本到mysql数据库
-（如果是mysql4.1以下版本，请修改thinkphp.sql文件，把DEFAULT CHARSET=utf8去掉）
-注意示例程序mysql保存数据采用utf-8编码，请注意mysql相应设置。
-修改Admin/下面的配置文件config.php设置好数据库访问信息
+把ThinkPHP、Admin、CMS、Public目录和相关文件直接上传（或拷贝到）服务器web目录下面
+修改安装根目录下面的配置文件config.php设置好数据库访问信息
 如果是Unix类环境，请保证下面目录可写（设置为777）
 Admin目录下面的
 Cache 
@@ -94,8 +91,12 @@ Conf
 Temp
 Logs
 Uploads
+导入Admin目录下面的thinkphp.sql数据库脚本到mysql数据库
+（如果是mysql4.1以下版本，请修改thinkphp.sql文件，把DEFAULT CHARSET=utf8去掉）
+注意示例程序mysql保存数据采用utf-8编码，请注意mysql相应设置。
 
-配置完成后运行 Admin目录下面的index.php文件就可以运行示例项目。
+配置完成后运行 根目录下面的index.php文件就可以运行示例项目。
+注意：第一次运行请到后台管理点击插件管理，生成插件缓存。
 后台初始登录帐户名 admin 
 密码 admin 
 验证码0 对应的字母
