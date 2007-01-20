@@ -22,10 +22,13 @@ document.write("<div id='ThinkAjaxResult' class='ThinkAjax' style='position:abso
 var ThinkAjax = {
 	method:'POST',			//发送方法
 	bComplete:false,			//是否完成
-	updateTip:'数据处理中～',	//更新提示信息
+	updateTip:'数据处理中～',	//后台处理中提示信息
 	updateEffect:{'opacity': [0,0.7]},			//更新效果
-	target:'ThinkAjaxResult',
-	showTip:true,
+	target:'ThinkAjaxResult',	//提示信息对象
+	showTip:true,	 // 是否显示提示信息，默认开启
+	status:0, //返回状态码
+	info:'',	//返回信息
+	data:'',	//返回数据
 	activeRequestCount:0,
 	// Ajax连接初始化
 	getTransport: function() {
@@ -49,31 +52,29 @@ var ThinkAjax = {
 		$(target).innerHTML = this.updateTip ;
 	},
 	ajaxResponse:function(request,target,response){
+		// 获取ThinkPHP后台返回Ajax信息和数据
+		// 此格式为ThinkPHP专用格式
 		$return =  eval('(' + request.responseText + ')');
-		if (1 == $return.status)
+		this.status = $return.status;
+		this.info	 =	 $return.info;
+		this.data = $return.data;
+		// 显示提示信息
+		if (this.showTip)
+		$(target).innerHTML	= this.info;
+		// 处理返回数据
+		// 需要在客户端定义ajaxReturn方法
+		if (response == undefined)
 		{
-				// 显示成功提示
-				if (this.showTip)
-				$(target).innerHTML	= '<div style="color:#3333FF;font-weight:bold">'+$return.info+'</div>';
-				// 处理返回数据
-				// 需要在客户端定义ajaxReturn方法
-				if (response == undefined)
-				{
-					try	{(ajaxReturn).apply(this,[$return.data]);}
-					catch (e){}
-					 
-				}else {
-					try	{ (response).apply(this,[$return.data]);}
-					catch (e){}
-				}
-
-			}else {
-				if (this.showTip)
-				// 显示错误信息
-				$(target).innerHTML	= '<div style="color:#FF0000;font-weight:bold">'+$return.info+'</div>';
-			}
-			// 提示信息停留5秒
-			window.setTimeout(function (){$(target).style.display='none';},5000);
+			try	{(ajaxReturn).apply(this,[this.data,this.status,this.info]);}
+			catch (e){}
+			 
+		}else {
+			try	{ (response).apply(this,[this.data,this.status,this.info]);}
+			catch (e){}
+		}
+		// 提示信息停留5秒
+		if (this.showTip)
+		window.setTimeout(function (){$(target).style.display='none';},5000);
 	},
 	// 发送Ajax请求
 	send:function(url,pars,response,target,effect)
