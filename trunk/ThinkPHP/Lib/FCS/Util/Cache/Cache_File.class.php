@@ -120,32 +120,7 @@ class Cache_File extends Cache
         return $this->options['temp'].$this->prefix.md5($name).'.php';
     }
 
-    /**
-     +----------------------------------------------------------
-     * 验证缓存是否有效
-     * 
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param string $name 缓存变量名
-     +----------------------------------------------------------
-     * @return boolen
-     +----------------------------------------------------------
-     */
-    function valid($name)
-    {
-        $filename  = $this->filename($name);
-        if (!$this->isConnected() || !file_exists($filename)) {
-           return false;
-        }
-        if($this->expire != -1 && time() > filemtime($filename) + $this->expire) { 
-            //缓存过期删除缓存文件
-            unlink($filename);
-            return false;
-        }else
-            return true;
-    }
-
+    
     /**
      +----------------------------------------------------------
      * 读取缓存
@@ -159,20 +134,26 @@ class Cache_File extends Cache
      */
     function get($name)
     {
-        if (!$this->valid($name)) {
-            return false;
-        }
         $filename   =   $this->filename($name);
+        if (!$this->isConnected() || !file_exists($filename)) {
+           return false;
+        }
         $content    =   file_get_contents($filename);
         if( false !== $content) {
+            $expire  =  substr($content,strlen(CACHE_SERIAL_HEADER), 6);
+            if($expire != -1 && time() > filemtime($filename) + $expire) { 
+                //缓存过期删除缓存文件
+                unlink($filename);
+                return false;
+            }
             if(DATA_CACHE_CHECK) {//开启数据校验
-                $check  =  substr($content,strlen(CACHE_SERIAL_HEADER), 32);
-                $content   =  substr($content,strlen(CACHE_SERIAL_HEADER)+32, -strlen(CACHE_SERIAL_FOOTER));
+                $check  =  substr($content,strlen(CACHE_SERIAL_HEADER)+6, 32);
+                $content   =  substr($content,strlen(CACHE_SERIAL_HEADER)+6+32, -strlen(CACHE_SERIAL_FOOTER));
                 if($check != md5($content)) {//校验错误
                     return false;
                 }
             }else {
-            	$content   =  substr($content,strlen(CACHE_SERIAL_HEADER), -strlen(CACHE_SERIAL_FOOTER));
+            	$content   =  substr($content,strlen(CACHE_SERIAL_HEADER)+6, -strlen(CACHE_SERIAL_FOOTER));
             }
             if(DATA_CACHE_COMPRESS && function_exists('gzcompress')) {
                 //启用数据压缩
@@ -198,8 +179,11 @@ class Cache_File extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    function set($name, $value)
+    function set($name, $value,$expire='')
     {
+        if(empty($expire)) {
+        	$expire =  $this->expire;
+        }
         $filename   =   $this->filename($name);
         $data   =   serialize($value);
         if( DATA_CACHE_COMPRESS && function_exists('gzcompress')) {
@@ -211,7 +195,7 @@ class Cache_File extends Cache
         }else {
         	$check  =  '';
         }
-        $data    = CACHE_SERIAL_HEADER.$check.$data.CACHE_SERIAL_FOOTER;
+        $data    = CACHE_SERIAL_HEADER.sprintf('%06d',$expire).$check.$data.CACHE_SERIAL_FOOTER;
         $result  =   file_put_contents($filename,$data);
         if($result) {
             clearstatcache();
