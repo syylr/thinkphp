@@ -1,4 +1,4 @@
-﻿// +----------------------------------------------------------------------+
+// +----------------------------------------------------------------------+
 // | ThinkPHP                                                             |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
@@ -35,10 +35,10 @@ ThinkPHP功能特色
 集成RBAC权限访问控制插件，让您的权限控制很简单 
 强大的插件功能，轻松扩展，灵活部署 
 除错和日志功能让你调试更方便 
-AJAX支持，内置SmartAjax类库
+AJAX支持，内置SmartAjax和ThinkAjax类库
 
 官方网站： http://thinkphp.cn
-官方支持Blog：http://thinkphp.cn/blog
+官方支持Blog：http://thinkphp.cn/index.php/Blog
 SVN地址：http://thinkphp.googlecode.com/svn/trunk/
 
 [具备条件]
@@ -61,10 +61,10 @@ MySql 4.1.0 以上
 ┃  ┝ Lang	语言包目录
 ┃  ┝ PlugIns	内置插件目录
 ┃  ┗ Lib	应用类库目录
-┃     ┝ FCS	基类库目录
+┃     ┝ Think   基类库目录
 ┃     ┗ ORG	ORG类库包
 ┃
-┝━Admin 示例项目
+┝━HOME 示例项目
 ┃  ┝ Cache	模版缓存目录
 ┃  ┝ Common	公共文件目录
 ┃  ┝ Conf	项目配置目录
@@ -81,30 +81,14 @@ MySql 4.1.0 以上
 ┃  ┗ Js	ThinkPHP JS类库目录
 ┃  ┗ Uploads	公共上传目录
 
-[安装说明]
-把ThinkPHP、Admin、CMS、Public目录和相关文件直接上传（或拷贝到）服务器web目录下面
-修改安装根目录下面的配置文件config.php设置好数据库访问信息
-如果是Unix类环境，请保证下面目录可写（设置为777）
-Admin目录下面的
-Cache 
-Conf
-Temp
-Logs
-Uploads
-导入Admin目录下面的thinkphp.sql数据库脚本到mysql数据库
-（如果是mysql4.1以下版本，请修改thinkphp.sql文件，把DEFAULT CHARSET=utf8去掉）
-注意示例程序mysql保存数据采用utf-8编码，请注意mysql相应设置。
-
-配置完成后运行 根目录下面的index.php文件就可以运行示例项目。
-注意：第一次运行请到后台管理点击插件管理，生成插件缓存。
-后台初始登录帐户名 admin 
-密码 admin 
-验证码0 对应的字母
-
 
 [版本更新]
 +------------------------+
-|0.9.5 版本更新            |
+|0.9.6 版本更新          |
++------------------------+
+
++------------------------+
+|0.9.5 版本更新          |
 +------------------------+
 插件管理
 项目配置管理
