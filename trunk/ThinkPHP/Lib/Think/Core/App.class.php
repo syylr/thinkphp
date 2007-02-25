@@ -432,6 +432,8 @@ class App extends Base
                 }
                 if(!class_exists($moduleClass,false)) {
                     //仍然没有发现模块类，抛出异常
+                    $this->forward('_404','Index');
+                    return ;
                     throw_exception(_MODULE_NOT_EXIST_.MODULE_NAME);
                 }
             }
@@ -471,8 +473,6 @@ class App extends Base
             	$moduleAction = $_action[APP_NAME.'_'.'public'][$moduleAction];
             }
             if(!is_callable($moduleAction)) {
-                $this->forward('_404','Index');
-                return ;
                 // 如果定义操作无法调用 抛出异常
                 throw_exception(_ERROR_ACTION_.ACTION_NAME);            	
             }
