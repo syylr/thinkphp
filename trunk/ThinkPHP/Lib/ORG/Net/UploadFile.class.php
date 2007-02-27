@@ -134,17 +134,25 @@ class UploadFile extends Base
      * @access public 
      +----------------------------------------------------------
      */
-    function __construct($allowExts=array(),$allowTypes=array(),
+    function __construct($allowExts='',$allowTypes='',
                             $savePath=UPLOAD_PATH,$saveRule='')
     {
         if($maxSize && is_numeric($maxSize)) {
             $this->maxSize = $maxSize;
         }
         if(!empty($allowExts)) {
-            $this->allowExts = $allowExts;
+            if(is_array($allowExts)) {
+            	$this->allowExts = array_map('strtolower',$allowExts);
+            }else {
+            	$this->allowExts = explode(',',strtolower($allowExts));
+            }
         }
         if(!empty($allowTypes)) {
-            $this->allowTypes = $allowTypes;
+            if(is_array($allowTypes)) {
+            	$this->allowTypes = array_map('strtolower',$allowTypes);
+            }else {
+            	$this->allowTypes = explode(',',strtolower($allowTypes));
+            }
         }
         if(!empty($saveRule)) {
             $this->saveRule = $saveRule;
@@ -375,7 +383,7 @@ class UploadFile extends Base
     function checkType($type) 
     {
         if(!empty($this->allowTypes)) {
-            return in_array($type,$this->allowTypes);
+            return in_array(strtolower($type),$this->allowTypes);
         }
         return true;
     }
@@ -383,20 +391,20 @@ class UploadFile extends Base
 
     /**
      +----------------------------------------------------------
-     * 检查上传的文件类型是否合法
+     * 检查上传的文件后缀是否合法
      * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param string $type 数据
+     * @param string $ext 后缀名
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    function checkExt($type) 
+    function checkExt($ext) 
     {
         if(!empty($this->allowExts)) {
-            return in_array($type,$this->allowExts);
+            return in_array(strtolower($ext),$this->allowExts);
         }
         return true;
     }
