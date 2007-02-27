@@ -626,10 +626,7 @@ class Action extends Base
             $this->assign('jumpUrl','javascript:window.close();');
         }
     	$this->display($templateFile);
-        // 退出前显示页面运行时间
-        if(SHOW_RUN_TIME) {
-            echo '<div style="text-align:center;width:100%">Process: '.number_format((array_sum(split(' ', microtime())) - $GLOBALS['_beginTime']), 6).'s</div>'; 
-        }            
+       
         // 中止执行  避免出错后继续执行
         exit ;       
     }
@@ -852,7 +849,7 @@ class Action extends Base
             if(!empty($_FILES)) {//如果有文件上传
                 //调用上传操作上传文件
                 //并且保存附件信息到数据库
-                $this->_upload(MODULE_NAME,$id);
+                $this->_upload($dao->getTableName(),$id);
             }
             //成功提示
             $this->assign("message",_INSERT_SUCCESS_);
@@ -900,9 +897,9 @@ class Action extends Base
 
         //读取附件信息
         $attachDao = D('AttachDao');
-        $attachs = $attachDao->findAll("module='".MODULE_NAME."' and recordId='$id'");
+        $attachs = $attachDao->findAll("module='".$dao->getTableName()."' and recordId='$id'");
         //模板变量赋值
-        $this->assign("attach",$attachs);
+        $this->assign("attachs",$attachs);
         $this->assign('vo',$vo);
         if($this->get('ajax')) {
         	$this->ajaxReturn($vo);
@@ -1067,6 +1064,8 @@ class Action extends Base
         if(!empty($_POST['_uploadUserId'])) {
             //设置附件关联记录ID
             $userId =  $_POST['_uploadUserId']; 
+        }else {
+        	$userId = Session::is_set(USER_AUTH_KEY)?Session::get(USER_AUTH_KEY):0;
         }
         if(!empty($_POST['_uploadImgThumb'])) {
             //设置需要生成缩略图，仅对图像文件有效
@@ -1119,7 +1118,7 @@ class Action extends Base
                     //记录模块信息
                     $file['module']     =   $module;
                     $file['recordId']   =   $id;
-                    $file['userId']     =   Session::is_set(USER_AUTH_KEY)?Session::get(USER_AUTH_KEY):$userId;
+                    $file['userId']     =   $userId;
                     //保存附件信息到数据库
                     if($uploadReplace ) {
                         $vo  =  $attachDao->find("module='".$module."' and recordId='".$id."'");
@@ -1212,6 +1211,60 @@ class Action extends Base
         $this->assign('_ajax_upload_',$show);   
         return ;
    	}
+
+      /**
+     +----------------------------------------------------------
+     * 下载附件
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws FcsException
+     +----------------------------------------------------------
+     */
+    function download()
+    {
+        import("ORG.Net.Http");
+        import('@.Dao.AttachDao');
+        $id         =   $_GET['id'];
+        $dao        =   new AttachDao();
+        $attach	    =   $dao->getById($id);
+        if($attach) {
+            $filename   =   $attach->savepath.$attach->savename;
+            if(is_file($filename)) {
+                Http::download($filename);
+            }        	
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 默认删除附件操作
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     * @throws FcsException
+     +----------------------------------------------------------
+     */
+    function delAttach()
+    {
+        //删除指定记录
+        import("@.Dao.AttachDao");
+        $dao        = new AttachDao();
+        $id         = $_REQUEST[$dao->pk];
+        $condition = $dao->pk.' in ('.$id.')'; 
+        if($dao->delete($condition)){
+            $this->assign("message",_DELETE_SUCCESS_);
+        }else {
+            $this->assign('error',  _DELETE_FAIL_);
+        }
+        $this->forward();
+    }
 
     /**
      +----------------------------------------------------------
