@@ -29,7 +29,6 @@
  * @version    $Id$
  +------------------------------------------------------------------------------
  */
-$GLOBALS['_beginTime'] = array_sum(split(' ', microtime()));
 define('THINK_PATH', './ThinkPHP');
 define('WEB_ROOT','.');
 
@@ -40,17 +39,11 @@ define('APP_PATH', './HOME');
 // 加载FCS框架公共入口文件 
 require(THINK_PATH."/ThinkPHP.php");
 //实例化一个网站应用实例
-echo '<div style="text-align:center;width:100%">Process: '.number_format((array_sum(split(' ', microtime())) - $GLOBALS['_beginTime']), 6).'s</div>';
 $App = new App(); 
-debug_start('init');
+
 //应用程序初始化
 $App->init();
-debug_end('init');
-debug_start('run');
+
 //启动应用程序
 $App->exec();
-debug_end('run');
-if(SHOW_RUN_TIME) {
-echo '<div style="text-align:center;width:100%">Process: '.number_format((array_sum(split(' ', microtime())) - $GLOBALS['_beginTime']), 6).'s</div>';
-}
 ?>

@@ -175,8 +175,12 @@ class Template extends Base
         $content = auto_charset($content,TEMPLATE_CHARSET,$charset);
         // 输出过滤
         $content = apply_filter('ob_content',$content);
+        $runtime   = number_format((array_sum(split(' ', microtime())) - $GLOBALS['_beginTime']), 6);
         //输出缓存内容
         echo $content;
+        if(SHOW_RUN_TIME )  {
+            echo '<div style="text-align:center;width:100%">Process: '.$runtime.'s</div>';
+        }
         return ;
     }
 
