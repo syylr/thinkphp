@@ -677,7 +677,7 @@ class Dao extends Base
     function getCount($condition='',$table='')
     {
         $table = empty($table)?$this->getRealTableName():$table;
-        $fields = 'count('.$this->pk.') as count';
+        $fields = 'count(*) as count';
         $rs = $this->db->find($condition,$table,$fields);
         return $this->getCol($rs,'count');
     }
