@@ -218,7 +218,7 @@ if (!function_exists('file_get_contents')){
 if (!function_exists('com_create_guid')){
     /**
      +----------------------------------------------------------
-     * 生成一个GUID 
+     * 生成一个GUID 适用window和*nix
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -624,7 +624,7 @@ if(!function_exists('scandir')) {
                        $files[] = $file;
                    }
                }
-               closedir($dir);
+               closedir($dirlist);
                ($sortorder == 0) ? asort($files) : rsort($files); // arsort was replaced with rsort
                $_list[$dir] = $files;
                return $files;           	
