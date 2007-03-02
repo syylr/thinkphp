@@ -885,7 +885,7 @@ function get_plugins($path=PLUGIN_PATH,$app=APP_NAME,$ext='.php')
         }
        return $plugins[$app];    	
     }else {
-    	return $result;
+    	return array();
     }
 
 }
