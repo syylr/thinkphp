@@ -252,7 +252,7 @@ Class Db_Mysql extends Db{
             throw_exception($this->error());
             return False;
         }
-        if($this->resultType==1){
+        if($this->resultType== DATA_TYPE_VO){
             // 返回对象集
             $this->result = @mysql_fetch_object($this->queryID);
             $stat = is_object($this->result);
@@ -287,7 +287,7 @@ Class Db_Mysql extends Db{
         }
         if($this->numRows >0) {
             if(mysql_data_seek($this->queryID,$seek)){
-                if($this->resultType==1){
+                if($this->resultType== DATA_TYPE_VO){
                     //返回对象集
                     $result = mysql_fetch_object($this->queryID);
                 }else{
@@ -324,9 +324,9 @@ Class Db_Mysql extends Db{
         //返回数据集
         $result = array();
         if($this->numRows >0) {
-            if(!is_null($resultType)){ $resultType   =  $this->resultType ; }
+            if(is_null($resultType)){ $resultType   =  $this->resultType ; }
              for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType==1){
+                if($resultType== DATA_TYPE_VO){
                     //返回对象集
                     $result[$i] = mysql_fetch_object($this->queryID);
                 }else{

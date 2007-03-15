@@ -191,7 +191,7 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      */
-    var $resultType = 1;
+    var $resultType = DATA_RESULT_TYPE;
 
     /**
      +----------------------------------------------------------
@@ -492,7 +492,7 @@ class Db extends Base
                         
                     }else {
                         //对字符串类型字段采用模糊匹配
-                        if(preg_match('/(\w*)(title|name|content|value|remark|company|address)(\w*)/i',$key)) {
+                        if(preg_match('/(\w*)(title|name|content|value|remark|city|company|address)(\w*)/i',$key)) {
                             $val = '%'.$val.'%';
                             $whereStr .= "like ".$this->fieldFormat($val);
                         }
