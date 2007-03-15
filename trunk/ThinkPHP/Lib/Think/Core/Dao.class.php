@@ -73,6 +73,8 @@ class Dao extends Base
      */
     var $cacheQuery =   true;
 
+    // 返回元数据类型
+    var $resultType =  DATA_RESULT_TYPE;
 
     //+----------------------------------------
     //|    数据表
@@ -144,12 +146,13 @@ class Dao extends Base
      * @param boolean $autoIncrement  是否自动增长
      +----------------------------------------------------------
      */
-    function __construct($appPrefix='',$tableName='',$pk='',$autoIncrement=true)
+    function __construct($appPrefix='',$tableName='',$pk='',$autoIncrement=true,$returnType='')
     {
         $this->db = DB::getInstance();
         if(!empty($appPrefix))  $this->appPrefix    =   $appPrefix;
         if(!empty($tableName))  $this->tableName    =   $tableName;
         if(!empty($pk))         $this->pk = $pk;
+        if(!empty($returnType))         $this->returnType = $returnType;
         if(is_bool($autoIncrement))   $this->autoIncrement = $autoIncrement;
 
         //自动加载所需的Vo类文件
@@ -197,6 +200,7 @@ class Dao extends Base
         }
         $table = empty($table)?$this->getRealTableName():$table;
         if(FALSE === $this->db->add($map,$table)){
+            
             $this->error = _OPERATION_WRONG_;
             return false;
         }else {
@@ -1003,11 +1007,17 @@ class Dao extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function rsToVo($result,$voClass='') 
+    function rsToVo($result,$voClass='',$resultType='') 
     {
-        $voClass    = !empty($voClass)? $voClass : $this->getVo();
-        $vo = new $voClass($result); 
-        return auto_charset($vo,DB_CHARSET,TEMPLATE_CHARSET);
+        $resultType = !empty($resultType)? $resultType : $this->resultType ;
+        if($resultType== DATA_TYPE_VO) {
+            $voClass    = !empty($voClass)? $voClass : $this->getVo();
+            $vo = new $voClass($result);         	
+            return auto_charset($vo,DB_CHARSET,TEMPLATE_CHARSET);
+        }else{
+        	return auto_charset($result,DB_CHARSET,TEMPLATE_CHARSET);
+        }
+       
     }
 
     /**
@@ -1025,19 +1035,25 @@ class Dao extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function rsToVoList($resultSet,$voClass='') 
+    function rsToVoList($resultSet,$voClass='',$resultType='') 
     {
-        $voClass    =   !empty($voClass)? $voClass : $this->getVo();
-        $voList     = new VoList();
-        foreach ($resultSet->toArray() as $result)
-        {
-            if(!empty($result)){
-                import("@.Vo.".$voClass);
-                $vo     = new $voClass($result);
-                $voList->add($vo);
-            }
-        }  
-        return auto_charset($voList,DB_CHARSET,TEMPLATE_CHARSET);
+        $resultType = !empty($resultType)? $resultType : $this->resultType ;
+        if($resultType== DATA_TYPE_VO ) {
+            $voClass    =   !empty($voClass)? $voClass : $this->getVo();
+            $voList     = new VoList();
+            foreach ($resultSet->toArray() as $result)
+            {
+                if(!empty($result)){
+                    import("@.Vo.".$voClass);
+                    $vo     = new $voClass($result);
+                    $voList->add($vo);
+                }
+            }  
+            return auto_charset($voList,DB_CHARSET,TEMPLATE_CHARSET);        	
+        }else {
+            return auto_charset($resultSet->toArray(),DB_CHARSET,TEMPLATE_CHARSET);  
+        }
+
     }
     /**
      +----------------------------------------------------------
