@@ -34,6 +34,7 @@ define('CACHE_SERIAL_HEADER','<?php\\n//');
 define('CACHE_SERIAL_FOOTER','\\n?>'); 
 define('CONFIG_FILE_TYPE','Define'); 
 define('SHARE_MEM_SIZE','1048576'); 
+define('DATA_RESULT_TYPE',1);
 define('DATA_CACHE_ON','0'); 
 define('DATA_CACHE_TIME','1000'); 
 define('DATA_CACHE_COMPRESS','0'); 
