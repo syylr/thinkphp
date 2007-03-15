@@ -71,7 +71,7 @@ class TagLib_Cx extends TagLib
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function _include($attr) 
@@ -98,7 +98,7 @@ class TagLib_Cx extends TagLib
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function _comment($attr) 
@@ -245,6 +245,15 @@ class TagLib_Cx extends TagLib
 
         //if($this->tpl->get($name)){
             $parseStr  =  '<?php if(isset($'.$name.')): ?>';
+            $parseStr  .= '<?php if (is_array($'.$name.')): ?>';
+            $parseStr  .= '<?php if(count($'.$name.')==0 ) echo "'.$empty.'" ?>';
+            if(!empty($length)) {
+                $parseStr  .= '<?php $'.$name.'= array_slice($'.$name.','.$offset.','.$length.') ?>';
+            }
+            $parseStr .= '<?php foreach($'.$name.' as $'.$id.'): ?>';
+            $parseStr .= $content;
+            $parseStr .= '<?php endforeach; ?>';
+            $parseStr  .= '<?php else: ?>';
             $parseStr  .= '<?php if($'.$name.'->size()==0 ) echo "'.$empty.'" ?>';
             if(!empty($length)) {
                 $parseStr  .= '<?php $'.$name.'= $'.$name.'->getRange('.$offset.','.$length.') ?>';
@@ -252,7 +261,7 @@ class TagLib_Cx extends TagLib
             $parseStr .= '<?php foreach($'.$name.'->toArray() as $'.$id.'): ?>';
             $parseStr .= $content;//$this->tpl->parse($content);
             $parseStr .= '<?php endforeach; ?>';
-            $parseStr .=  '<?php endif; ?>';
+            $parseStr .=  '<?php endif;endif; ?>';
             $_voListParseCache[$cacheVoListId] = $parseStr;
         //}
         
@@ -261,7 +270,6 @@ class TagLib_Cx extends TagLib
         }
         return ;
     }
-
 
     /**
      +----------------------------------------------------------
@@ -286,10 +294,14 @@ class TagLib_Cx extends TagLib
         $tag        = $this->parseXmlAttr($attr,'vo');
         $name       = $tag['name'];
         $property   = $tag['property'];
+        $key =  $tag['key'];
         $format     = isset($tag['format'])?$tag['format']:'';
         $function   = $tag['function'];
-        
-        $var = '$'.$name.'->'.$property;
+        if(!empty($property)) {
+        	$var = '$'.$name.'->'.$property;
+        }else {
+        	$var = '$'.$name.'["'.$property.'"]';
+        }
         if(!empty($format)) {
             $var = $this->format($var,$format);
         }
@@ -646,7 +658,7 @@ class TagLib_Cx extends TagLib
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function format($var,$format) 
