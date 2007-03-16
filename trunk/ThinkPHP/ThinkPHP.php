@@ -51,6 +51,4 @@ import("Think.Core.Vo");
 import("Think.Core.Dao");
 import("Think.Core.Action");
 
-//加载日志处理类
-import("Think.Util.Log");	
 ?>
