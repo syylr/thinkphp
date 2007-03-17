@@ -35,17 +35,6 @@ import("Think.Util.HashMap");
  */
 class Vo extends Base
 {
-
-    /**
-     +----------------------------------------------------------
-     * 额外的vo信息 toMap的时候会自动过滤
-     +----------------------------------------------------------
-     * @var Array
-     * @access protected
-     +----------------------------------------------------------
-     */
-    var $_info  =   array();                
-
     /**
      +----------------------------------------------------------
      * 架构函数
@@ -62,8 +51,8 @@ class Vo extends Base
             //把Map对象或者关联数组转换成Vo的属性
             if( is_instance_of($data,'HashMap')){
                 $data = $data->toArray();
-            }elseif( is_instance_of($data,'Base')) {
-                $data = $data->__toArray();
+            }elseif( is_object($data)) {
+                $data = get_object_vars($data);
             }
             if(is_array($data)) {
                 foreach($data as $key=>$val) {
@@ -88,7 +77,7 @@ class Vo extends Base
     {
         $vars = get_object_vars($this);
         foreach($vars as $key=>$val) {
-            if(is_null($val) || is_array($val) || ($strict && !property_exists($this,$key))) {
+            if(is_null($val) || substr($key,0,1)=='_' || ($strict && !property_exists($this,$key))) {
                     unset($vars[$key]);	
             }
         }
@@ -113,20 +102,25 @@ class Vo extends Base
         return substr($this->__toString(),0,-2).'Dao';
     }
 
-
     /**
      +----------------------------------------------------------
      * 把Vo对象转换为数组
-     * 
+     * 过滤特殊属性和空值
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    function toArray() 
+    function toArray($fields=array()) 
     {
-        return $this->__toArray();
+        $array   = $this->__toArray();
+        foreach( $array as $key=>$val) {
+            if( (!empty($fields) && !in_array($key,$fields)) ||  is_null($val) || substr($key,0,1)=='_' ) {
+                unset($array[$key]);
+            }                
+        }   
+        return $array;
     }
 
 
@@ -142,16 +136,7 @@ class Vo extends Base
      */
     function toJson($fields=array()) 
     {
-        if(!empty($fields)) {
-            $array   = $this->toArray();
-        	foreach( $array as $key=>$val) {
-        		if(!in_array($key,$fields)) {
-        			unset($array[$key]);
-        		}
-        	}
-            return json_encode($array);
-        }
-        return json_encode($this);
+        return json_encode($this->toArray($fields));
     }
     
     /**
@@ -168,5 +153,7 @@ class Vo extends Base
     {
         return $this->__toArray() == $this->__toOraArray();
     }
+
+
 };
 ?>
