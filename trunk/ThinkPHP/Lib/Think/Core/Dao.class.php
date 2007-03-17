@@ -22,6 +22,10 @@ import("Think.Db.Db");
 import("Think.Util.Cache");
 import("Think.Core.VoList");
 
+define('HAS_ONE',1);
+define('HAS_MANY',2);
+define('MANY_TO_MANY',3);
+
 /**
  +------------------------------------------------------------------------------
  * 数据访问基础类
@@ -63,6 +67,8 @@ class Dao extends Base
      */
     var $autoIncrement =   true;
 
+    // 是否自动连接表关联
+    var $autoLink = false;
     /**
      +----------------------------------------------------------
      * 父键名
@@ -200,7 +206,6 @@ class Dao extends Base
         }
         $table = empty($table)?$this->getRealTableName():$table;
         if(FALSE === $this->db->add($map,$table)){
-            
             $this->error = _OPERATION_WRONG_;
             return false;
         }else {
@@ -439,6 +444,9 @@ class Dao extends Base
         $rs     = $this->db->find($pk."='{$id}'",$table,$fields);
         if($rs->size()>0) {
                 $vo  =  $this->rsToVo($rs->get(0));
+                if($this->autoLink) {
+                    $vo  =  $this->getRelation($vo);
+                }
                 if(DATA_CACHE_ON) 
                     $this->CacheVo($vo,$id);
                 return $vo;
@@ -477,6 +485,9 @@ class Dao extends Base
         $rs     = $this->db->find($field."='{$value}'",$table,$fields);
         if($rs->size()>0) {
                 $vo  =  $this->rsToVo($rs->get(0));
+                if($this->autoLink) {
+                    $vo  =  $this->getRelation($vo);
+                }
                 if(DATA_CACHE_ON) 
                     $this->CacheVo($vo,$field.'_'.$value);
                 return $vo;
@@ -515,11 +526,108 @@ class Dao extends Base
         $rs = $this->db->find($condition,$table,$fields,NULL,NULL,NULL,NULL,$cache);
         if($rs->size()>0) {
             $vo  =  $this->rsToVo($rs->get(0));
+            if($this->autoLink) {
+            	$vo  =  $this->getRelation($vo);
+            }
             if(DATA_CACHE_ON)
                 $this->cacheVo($vo,$identify);
             return $vo;
         }else {
             return false;
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取返回数据的关联记录
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param mixed $result  返回数据
+     * @param string $relation  关联信息
+     * @param string $voClass 指定vo类 
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getRelation($result,$type='',$name='') 
+    {
+        if(is_array($result)) {
+            $voClass    =   $this->getVo();
+            $vo   = new $voClass();        	
+        }else {
+        	$vo  =  &$result;
+        }
+        if(!empty($vo->_link)) {
+            foreach($vo->_link as $val) {
+                if(empty($type) || $val['mapping_type']==$type) {
+                    $mappingType = $val['mapping_type'];
+                    $mappingVo  = $val['class_name'];
+                    $mappingFk   =  $val['foreign_key'];
+                    if(empty($mappingFk)) {
+                    	$mappingFk  =  $this->getTableName().'_id';
+                    }
+                    $mappingName =  $val['mapping_name'];
+                    $mappingFields = $val['mapping_fields'];
+                    $mappingCondition = $val['condition'];
+                    if(empty($mappingCondition)) {
+                        $pk   =  is_array($result)? $result[$this->pk]:$result->{$this->pk};
+                        $mappingCondition = "$mappingFk={$pk}";
+                    }
+                    if(empty($name) || $mappingName == $name) {
+                        $dao = D($mappingVo);
+                        switch($mappingType) {
+                            case HAS_ONE:
+                            case BELONGS_TO:
+                                $relation   =  $dao->find($mappingCondition,'',$mappingFields);
+                                break;
+                            case HAS_MANY:
+                                $mappingOrder =  $val['mapping_order'];
+                                $mappingLimit =  $val['mapping_limit'];
+                                $relation   =  $dao->findAll($mappingCondition,'',$mappingFields,$mappingOrder,$mappingLimit);
+                                break;
+                            case MANY_TO_MANY:
+                                $mappingOrder =  $val['mapping_order'];
+                                $mappingLimit =  $val['mapping_limit'];
+                                $mappingRelationFk = $val['relation_foreign_key'];
+                                if(empty($mappingRelationFk)) {
+                                	$mappingRelationFk   = $dao->getTableName().'_id';
+                                }
+                                $mappingRelationTable  =  $val['relation_table'];
+                                if(empty($mappingRelationTable)) {
+                                	$mappingRelationTable  =  $this->getRelationTableName($dao);
+                                }
+                                $sql  = 'select b.* from '.$mappingRelationTable.' as a ,'.$dao->getRealTableName()." as b where a.{$mappingRelationFk}=b.{$dao->pk} and  a.{$mappingFk}={$pk} ";
+                                if(!empty($mappingOrder)) {
+                                	$sql .= ' ORDER BY '.$mappingOrder;
+                                }
+                                if(!empty($mappingLimit)) {
+                                	$sql .= ' LIMIT '.$mappingLimit;
+                                }
+                                $rs   =  $this->query($sql);
+                                $relation   =  $dao->rsToVoList($rs);
+                                break;
+                        }
+                        is_array($result)?
+                            $result[$mappingName] = $relation :
+                            $result->{$mappingName} = $relation;
+                     }                	
+                }
+            }
+        }
+        return $result;
+    }
+
+    function xFind($type='',$name='',$condition='',$table=NULL,$fields='*') 
+    {
+    	$vo = $this->find($condition,$table,$fields);
+        if(!$vo) {
+        	return false;
+        }else {
+            return $this->getRelation($vo,$type,$name);        	
         }
     }
 
@@ -635,7 +743,7 @@ class Dao extends Base
     {
         $result    =   $this->find($condition,$table);
         if(!empty($result)) {
-            return $result->$field;
+            return is_array($result)? $result[$field]:$result->{$field};
         }else {
             return null;
         }
@@ -659,8 +767,8 @@ class Dao extends Base
     function getCol($rs,$col) 
     {
         $result =   $rs->get(0);
-        $count  =   is_array($result)? $result[$col]:$result->{$col};
-        return empty($count)?0:$count;    	
+        $field  =   is_array($result)? $result[$col]:$result->{$col};
+        return empty($filed)? NULL : $field;    	
     }
 
     /**
@@ -678,12 +786,16 @@ class Dao extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getCount($condition='',$table='')
+    function getCount($condition='',$field='*',$table='')
     {
         $table = empty($table)?$this->getRealTableName():$table;
-        $fields = 'count(*) as count';
+        $fields = 'count('.$field.') as count';
         $rs = $this->db->find($condition,$table,$fields);
-        return $this->getCol($rs,'count');
+        if($rs->size()>0) {
+        	return $this->getCol($rs,'count');
+        }else {
+        	return 0;
+        }
     }
 
     /**
@@ -756,58 +868,6 @@ class Dao extends Base
         $fields = 'SUM('.$field.') as sum';
         $rs = $this->db->find($condition,$table,$fields);
         return $this->getCol($rs,'sum');
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 根据条件禁用表数据
-     * 
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param mixed $condition 删除条件
-     * @param string $table  数据表名
-     +----------------------------------------------------------
-     * @return boolen
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-    function forbid($condition,$table='')
-    {
-        $table = empty($table)?$this->getRealTableName():$table;
-        if(FALSE === $this->db->execute('update '.$table.' set status=0 where status=1 and ('.$condition.')')){
-            $this->error =  _OPERATION_WRONG_;
-            return false;
-        }else {
-            return True;
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 根据条件禁用表数据
-     * 
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param mixed $condition 删除条件
-     * @param string $table  数据表名
-     +----------------------------------------------------------
-     * @return boolen
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-    function resume($condition,$table='')
-    {
-        $table = empty($table)?$this->getRealTableName():$table;
-        if(FALSE === $this->db->execute('update '.$table.' set status=1 where status=0 and ('.$condition.')')){
-            $this->error =  _OPERATION_WRONG_;
-            return false;
-        }else {
-            return True;
-        }
     }
 
     /**
@@ -1121,6 +1181,26 @@ class Dao extends Base
 
     /**
      +----------------------------------------------------------
+     * 得到完整的数据表名
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    function getRelationTableName($relationDao)
+    {
+        $realtionTable  = !empty($this->appPrefix) ? $this->appPrefix.'_' : '';
+        $realtionTable .= !empty($this->modPrefix) ? $this->modPrefix.'_' : '';    
+        $realtionTable .= !empty($this->tableName) ? $this->tableName : strtolower(substr($this->__toString(),0,-3));
+        $realtionTable .= '_'.strtolower(substr($relationDao->__toString(),0,-3));
+        $realtionTable    =   '`'.$realtionTable.'`';
+        return $realtionTable;
+    }
+
+    /**
+     +----------------------------------------------------------
      * 得到基本表名
      * 
      +----------------------------------------------------------
@@ -1136,7 +1216,7 @@ class Dao extends Base
         if($this->tableName){
             return $this->tableName;
         }else 
-            return substr($this->__toString(),0,-3);
+            return strtolower(substr($this->__toString(),0,-3));
     }
 
     /**
@@ -1207,7 +1287,7 @@ class Dao extends Base
      */
     function getVo()
     {
-        return $this->getTableName().'Vo';
+        return ucwords($this->getTableName()).'Vo';
     }
 
     /**
