@@ -191,7 +191,7 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      */
-    var $resultType = DATA_RESULT_TYPE;
+    var $resultType = 0;
 
     /**
      +----------------------------------------------------------
