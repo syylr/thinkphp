@@ -769,7 +769,7 @@ class Dao extends Base
     {
         $result =   $rs->get(0);
         $field  =   is_array($result)? $result[$col]:$result->{$col};
-        return empty($filed)? NULL : $field;    	
+        return empty($field)? NULL : $field;    	
     }
 
     /**
