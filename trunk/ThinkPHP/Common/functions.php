@@ -171,6 +171,7 @@ function redirect($url,$time=0,$msg='')
     if(empty($msg)) {
         $msg    =   "系统将在{$time}秒之后自动跳转到{$url}！";
     }
+    header('Content-Type: text/html; charset=' . OUTPUT_CHARSET);
     if (!headers_sent()) {
         // redirect
         if(0===$time) {
