@@ -482,17 +482,17 @@ class Db extends Base
             if(is_instance_of($where,'HashMap')){
                 $it = $where->getIterator();
                 foreach ($it as $key=>$val){
-                    $whereStr .= "`$key` ";
+                    $whereStr .= "$key ";
                     if(is_array($val)) {
                         if(preg_match('/(EQ|NEQ|GT|EGT|LT|ELT|LIKE)/i',$val[0])) {
                             $whereStr .= $this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
                         }else {
-                        	$whereStr .= '>='.$this->fieldFormat($val[0]).' AND `'.$key.'` <='.$this->fieldFormat($val[1]);
+                        	$whereStr .= '>='.$this->fieldFormat($val[0]).' AND '.$key.' <='.$this->fieldFormat($val[1]);
                         }
                         
                     }else {
                         //对字符串类型字段采用模糊匹配
-                        if(preg_match('/(\w*)(title|name|content|value|remark|city|company|address)(\w*)/i',$key)) {
+                        if(preg_match('/(\w*)(title|name|content|value|remark|company|address)(\w*)/i',$key)) {
                             $val = '%'.$val.'%';
                             $whereStr .= "like ".$this->fieldFormat($val);
                         }
@@ -510,12 +510,12 @@ class Db extends Base
         if(is_array($where)){
             //支持数组作为条件
             foreach ($where as $key=>$val){
-                    $whereStr .= "`$key` ";
+                    $whereStr .= "$key ";
                     if(is_array($val)) {
                         if(preg_match('/(EQ|NEQ|GT|EGT|LT|ELT|LIKE)/i',$val[0])) {
                             $whereStr .= $this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
                         }else {
-                        	$whereStr .= '>='.$this->fieldFormat($val[0]).' AND `'.$key.'` <='.$this->fieldFormat($val[1]);
+                        	$whereStr .= '>='.$this->fieldFormat($val[0]).' AND '.$key.' <='.$this->fieldFormat($val[1]);
                         }                        
                     }else {
                         if(preg_match('/(\w*)(title|name|content|value|remark|company|address)(\w*)/i',$key)) {
@@ -648,12 +648,16 @@ class Db extends Base
     function parseFields($fields)
     {
         if(is_array($fields)) {
-            array_walk($fields, array($this, 'addSpecialChar'));
+            if(false !== strpos(strtoupper(DB_TYPE),'MYSQL')) {
+                array_walk($fields, array($this, 'addSpecialChar'));
+            }
             $fieldsStr = implode(',', $fields);
         }else if(is_string($fields) && !empty($fields)) {
             if( false === strpos($fields,'`') ) {
                 $fields = explode(',',$fields);
-            	array_walk($fields, array($this, 'addSpecialChar'));
+                if(false !== strpos(strtoupper(DB_TYPE),'MYSQL')) {
+            	    array_walk($fields, array($this, 'addSpecialChar'));
+                }
                 $fieldsStr = implode(',', $fields);
             }else {
             	$fieldsStr = $fields;
@@ -718,7 +722,7 @@ class Db extends Base
         if(is_array($sets)){
             foreach ($sets as $key=>$val){
                 if(!is_null($val)){//过滤空值元素
-                    $setsStr .= "`$key` = ".$this->fieldFormat($val).",";
+                    $setsStr .= "$key = ".$this->fieldFormat($val).",";
                 }
             }
             $setsStr = substr($setsStr,0,-1);
@@ -1063,7 +1067,10 @@ class Db extends Base
             }
         }*/
         $fields = array_keys($map);
-        array_walk($fields, array($this, 'addSpecialChar'));
+        if(false !== strpos(strtoupper(DB_TYPE),'MYSQL')) {
+        	array_walk($fields, array($this, 'addSpecialChar'));
+        }
+        
         $values = array_Values($map);
         $fieldsStr = implode(',', array_keys($map));
         array_walk($values, array($this, 'fieldFormat'));
