@@ -1175,7 +1175,7 @@ class Dao extends Base
             $realTableName  = !empty($this->appPrefix) ? $this->appPrefix.'_' : '';
             $realTableName .= !empty($this->modPrefix) ? $this->modPrefix.'_' : '';    
             $realTableName .= !empty($this->tableName) ? $this->tableName : strtolower(substr($this->__toString(),0,-3));
-            $this->realTableName    =   '`'.$realTableName.'`';
+            $this->realTableName    =   $realTableName;
         }
         return $this->realTableName;
     }
@@ -1196,7 +1196,7 @@ class Dao extends Base
         $realtionTable .= !empty($this->modPrefix) ? $this->modPrefix.'_' : '';    
         $realtionTable .= !empty($this->tableName) ? $this->tableName : strtolower(substr($this->__toString(),0,-3));
         $realtionTable .= '_'.strtolower(substr($relationDao->__toString(),0,-3));
-        $realtionTable    =   '`'.$realtionTable.'`';
+        $realtionTable    =   $realtionTable;
         return $realtionTable;
     }
 
