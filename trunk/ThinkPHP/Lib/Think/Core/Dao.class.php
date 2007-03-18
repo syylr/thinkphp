@@ -23,8 +23,9 @@ import("Think.Util.Cache");
 import("Think.Core.VoList");
 
 define('HAS_ONE',1);
-define('HAS_MANY',2);
-define('MANY_TO_MANY',3);
+define('BELONGS_TO',2);
+define('HAS_MANY',3);
+define('MANY_TO_MANY',4);
 
 /**
  +------------------------------------------------------------------------------
