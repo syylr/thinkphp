@@ -398,6 +398,7 @@ class App extends Base
             $content .= ";\n\r?>";
             file_put_contents(CONFIG_PATH.APP_NAME.'_plugins.php',$content);              
         }
+
         //加载有效插件文件
         foreach($plugins as $key=>$val) {
             include_cache($val['file']);
@@ -473,8 +474,13 @@ class App extends Base
             	$moduleAction = $_action[APP_NAME.'_'.'public'][$moduleAction];
             }
             if(!is_callable($moduleAction)) {
-                // 如果定义操作无法调用 抛出异常
-                throw_exception(_ERROR_ACTION_.ACTION_NAME);            	
+                // 检查是否存在模版 如果有直接输出模版
+                if(file_exists(TMPL_FILE_NAME)) {
+                	$module->display();
+                }else {
+                    // 如果定义操作无法调用 抛出异常
+                    throw_exception(_ERROR_ACTION_.ACTION_NAME);                    	
+                }
             }
             //执行操作方法
             call_user_func($moduleAction);
