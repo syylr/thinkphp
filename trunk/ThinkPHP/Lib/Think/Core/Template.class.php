@@ -153,16 +153,17 @@ class Template extends Base
         if(''==$templateFile) {
             $templateFile = TMPL_FILE_NAME;
         }        
+        // 检查模版文件
+        if(!file_exists($templateFile))
+            $templateFile =  dirname(TMPL_FILE_NAME).'/'.$templateFile;
+        if(!file_exists($templateFile)){
+            throw_exception(_TEMPLATE_NOT_EXIST_);        
+        }
         // 模版变量过滤
         $this->tVar = apply_filter('template_var',$this->tVar);
         //根据不同模版引擎进行处理
         if('PHP'==strtoupper(TMPL_ENGINE_TYPE) || ''== TMPL_ENGINE_TYPE ) {
         	//使用PHP模版
-            if(!file_exists($templateFile))
-                $templateFile =  dirname(TMPL_FILE_NAME).'/'.$templateFile;
-            if(!file_exists($templateFile)){
-                throw_exception(_TEMPLATE_NOT_EXIST_);        
-            }
             include_once ($templateFile);
         }else {
         	// 使用外挂模版引擎
