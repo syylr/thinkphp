@@ -574,12 +574,12 @@ class Dao extends Base
                     $mappingName =  $val['mapping_name'];
                     $mappingFields = $val['mapping_fields'];
                     $mappingCondition = $val['condition'];
+                    $dao = D($mappingVo);
                     if(empty($mappingCondition)) {
-                        $pk   =  is_array($result)? $result[$this->pk]:$result->{$this->pk};
-                        $mappingCondition = "$mappingFk={$pk}";
+                        $fk   =  is_array($result)? $result[$mappingFk]:$result->{$mappingFk};
+                        $mappingCondition = "{$dao->pk}={$fk}";
                     }
                     if(empty($name) || $mappingName == $name) {
-                        $dao = D($mappingVo);
                         switch($mappingType) {
                             case HAS_ONE:
                             case BELONGS_TO:
