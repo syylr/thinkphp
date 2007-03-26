@@ -68,7 +68,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function loadTemplate ($tmplTemplateFile='',$charset=OUTPUT_CHARSET)
@@ -110,7 +110,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function buildAllTemplate($tmplPath=TMPL_PATH) 
@@ -148,7 +148,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function compiler ( $tmplContent,$charset=OUTPUT_CHARSET)
@@ -191,7 +191,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function checkCache($tmplTemplateFile)
@@ -224,7 +224,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function cleanCache($filename) 
@@ -246,7 +246,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function cleanDir($cacheDir=CACHE_PATH) 
@@ -283,7 +283,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function parse($content)
@@ -432,7 +432,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function parseTag($tagStr){
@@ -493,7 +493,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function parseVar($varStr){
@@ -518,21 +518,24 @@ class  ThinkTemplate extends Base
             }
             elseif(strpos($var,'.')!== false) {
                 //支持 {$var.property} 方式输出对象的属性
+                $var  =  str_replace('.','->',$var);
+                $name = "$".$var;
                 $vars = explode('.',$var);
                 $var  = $vars[0];
-                $name = "$$vars[0]->$vars[1]";
+
             }
             elseif(strpos($var,'[')!== false) {
                 //支持 {$var['key']} 方式输出数组
+                $name = "$".$var;
                 preg_match('/(.+?)\[(.+?)\]/is',$var,$match);
                 $var = $match[1];
-                $name = "$$match[1][$match[2]]";
+
             }
             else {
                 $name = "$$var";
             }
             //检测变量是否有定义，防止输出Notice错误
-            if(substr($var,0,4)!='Think.' && !isset($this->tVar[$var]) && !isset($var) ) 
+            if(substr($var,0,6)!='Think.' && !isset($this->tVar[$var]) && !isset($var) ) 
                 $varExists = false;
             //对变量使用函数
             if(count($varArray)>0) {
@@ -563,7 +566,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function parseVarFunction($name,$varArray){
@@ -602,7 +605,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function parseThinkVar($varStr){
@@ -649,7 +652,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function parseVo($name,$val){
@@ -680,7 +683,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function ParseVoList($name,$content){
@@ -708,7 +711,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function parseInclude($tmplPublicName){

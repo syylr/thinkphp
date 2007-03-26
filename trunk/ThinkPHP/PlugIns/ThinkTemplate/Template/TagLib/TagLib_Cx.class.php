@@ -138,7 +138,9 @@ class TagLib_Cx extends TagLib
         $empty      = isset($tag['empty'])?$tag['empty']:'';
         $offset     = isset($tag['offset'])?$tag['offset']:0;
         $length     = isset($tag['length'])?$tag['length']:'';
-
+        if(strpos($name,'.')) {
+        	$name  =  str_replace('.','->',$name);
+        }
        // if($this->tpl->get($name)){
             $parseStr  =  '<?php if(isset($'.$name.')): ?>';
             if(!empty($offset)) {
@@ -185,6 +187,9 @@ class TagLib_Cx extends TagLib
         $format     = isset($tag['format'])?$tag['format']:'';
         $function   = isset($tag['function'])?$tag['function']:'';
         
+        if(strpos($name,'.')) {
+        	$name  =  str_replace('.','->',$name);
+        }
         if(!empty($property)) {
             $name = '$'.$name.'->'.$property;
         }elseif(!empty($key)) {
@@ -242,26 +247,29 @@ class TagLib_Cx extends TagLib
         $id         = isset($tag['id'])?$tag['id']:$name;
         $offset     = isset($tag['offset'])?$tag['offset']:0;
         $length     = isset($tag['length'])?$tag['length']:'';
-
+        if(strpos($name,'.')) {
+        	$name  =  str_replace('.','->',$name);
+        }
         //if($this->tpl->get($name)){
             $parseStr  =  '<?php if(isset($'.$name.')): ?>';
             $parseStr  .= '<?php if (is_array($'.$name.')): ?>';
-            $parseStr  .= '<?php if(count($'.$name.')==0 ) echo "'.$empty.'" ?>';
+            $parseStr  .= '<?php if(count($'.$name.')==0 ) echo "'.$empty.'"; ?>';
             if(!empty($length)) {
                 $parseStr  .= '<?php $'.$name.'= array_slice($'.$name.','.$offset.','.$length.') ?>';
             }
             $parseStr .= '<?php foreach($'.$name.' as $'.$id.'): ?>';
             $parseStr .= $content;
             $parseStr .= '<?php endforeach; ?>';
-            $parseStr  .= '<?php else: ?>';
-            $parseStr  .= '<?php if($'.$name.'->size()==0 ) echo "'.$empty.'" ?>';
+            $parseStr  .= '<?php endif; ?>';
+            $parseStr  .= '<?php if (is_object($'.$name.')): ?>';
+            $parseStr  .= '<?php if($'.$name.'->size()==0 ) echo "'.$empty.'"; ?>';
             if(!empty($length)) {
                 $parseStr  .= '<?php $'.$name.'= $'.$name.'->getRange('.$offset.','.$length.') ?>';
             }
             $parseStr .= '<?php foreach($'.$name.'->toArray() as $'.$id.'): ?>';
             $parseStr .= $content;//$this->tpl->parse($content);
             $parseStr .= '<?php endforeach; ?>';
-            $parseStr .=  '<?php endif;endif; ?>';
+            $parseStr .=  '<?php endif;endif?>';
             $_voListParseCache[$cacheVoListId] = $parseStr;
         //}
         
@@ -269,6 +277,11 @@ class TagLib_Cx extends TagLib
             return $parseStr;
         }
         return ;
+    }
+
+    function _sublist($attr,$content) 
+    {
+    	return $this->_volist($attr,$content);
     }
 
     /**
@@ -297,10 +310,15 @@ class TagLib_Cx extends TagLib
         $key =  $tag['key'];
         $format     = isset($tag['format'])?$tag['format']:'';
         $function   = $tag['function'];
+        if(strpos($name,'.')) {
+        	$name  =  str_replace('.','->',$name);
+        }
         if(!empty($property)) {
         	$var = '$'.$name.'->'.$property;
+        }elseif(!empty($key)) {
+        	$var = '$'.$name.'["'.$key.'"]';
         }else {
-        	$var = '$'.$name.'["'.$property.'"]';
+        	$var = '$'.$name;
         }
         if(!empty($format)) {
             $var = $this->format($var,$format);
@@ -334,19 +352,21 @@ class TagLib_Cx extends TagLib
     function _var($attr) 
     {
         $tag        = $this->parseXmlAttr($attr,'var');
-        $var        = $tag['name'];
+        $name        = $tag['name'];
         $format     = $tag['format'];
         $function   = $tag['function'];
-        
-        $var = '$'.$var;
+        if(strpos($name,'.')) {
+        	$name  =  str_replace('.','->',$name);
+        }        
+        $name = '$'.$name;
         if(!empty($format)) {
-            $var = $this->format($var,$format);
+            $name = $this->format($name,$format);
         }
         if(!empty($function)) {
             $function = explode('|',$function);
-            $var = $this->tpl->parseVarFunction($var,$function);
+            $var = $this->tpl->parseVarFunction($name,$function);
         }
-        $parseStr = !empty($var)?'<?php echo '.$var.' ?>':'';
+        $parseStr = !empty($var)?'<?php echo '.$name.' ?>':'';
         return $parseStr;
     }
 
@@ -354,6 +374,9 @@ class TagLib_Cx extends TagLib
     {
         $tag        = $this->parseXmlAttr($attr,'isset');
         $name       = $tag['name'];
+        if(strpos($name,'.')) {
+        	$name  =  str_replace('.','->',$name);
+        }
         $property   = $tag['property'];
         $key        = $tag['key'];
         if(!empty($property)) {
@@ -405,7 +428,9 @@ class TagLib_Cx extends TagLib
         $key        = $tag['key'];
         $value      = $tag['value'];
         $function   = $tag['function'];
-
+        if(strpos($name,'.')) {
+        	$name  =  str_replace('.','->',$name);
+        }
         if(!empty($property)) {
             $name = '$'.$name.'->'.$property;
         }
@@ -450,7 +475,9 @@ class TagLib_Cx extends TagLib
         $key        = $tag['key'];
         $value      = $tag['value'];
         $function   = $tag['function'];
-
+        if(strpos($name,'.')) {
+        	$name  =  str_replace('.','->',$name);
+        }
         if(!empty($property)) {
             $name = '$'.$name.'->'.$property;
         }
@@ -491,6 +518,9 @@ class TagLib_Cx extends TagLib
         $name  = $tag['name'];
         $property   = $tag['property'];
         $key        = $tag['key'];
+        if(strpos($name,'.')) {
+        	$name  =  str_replace('.','->',$name);
+        }
         if(!empty($property)) {
             $name = '$'.$name.'->'.$property;
         }
@@ -525,6 +555,9 @@ class TagLib_Cx extends TagLib
         $name  = $tag['name'];
         $property   = $tag['property'];
         $key        = $tag['key'];
+        if(strpos($name,'.')) {
+        	$name  =  str_replace('.','->',$name);
+        }
         if(!empty($property)) {
             $name = '$'.$name.'->'.$property;
         }

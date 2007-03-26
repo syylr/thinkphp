@@ -38,6 +38,23 @@
 </tag>
 
 <tag>
+<name>sublist</name>
+<bodycontent>true</bodycontent>
+<attribute>
+<name>name</name>
+<required>true</required>
+</attribute>
+<attribute>
+<name>id</name>
+<required>false</required>
+</attribute>
+<attribute>
+<name>empty</name>
+<required>false</required>
+</attribute>
+</tag>
+
+<tag>
 <name>iterate</name>
 <bodycontent>true</bodycontent>
 <attribute>
