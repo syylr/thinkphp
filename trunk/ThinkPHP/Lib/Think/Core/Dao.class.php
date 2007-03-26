@@ -575,9 +575,22 @@ class Dao extends Base
                     $mappingFields = $val['mapping_fields'];
                     $mappingCondition = $val['condition'];
                     $dao = D($mappingVo);
+                    if($mappingVo==$result->getVoName()) {
+                        // 自引用
+                        $mappingParentKey = !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
+                    }
                     if(empty($mappingCondition)) {
                         $fk   =  is_array($result)? $result[$mappingFk]:$result->{$mappingFk};
-                        $mappingCondition = "{$dao->pk}={$fk}";
+                        if(empty($mappingParentKey)) {
+                        	$mappingCondition = "{$dao->pk}={$fk}";
+                        }else {
+                            if($mappingType== BELONGS_TO) {
+                                $parentKey   =  is_array($result)? $result[$mappingParentKey]:$result->{$mappingParentKey};
+                            	$mappingCondition = "{$dao->pk}={$parentKey}";
+                            }else {
+                            	$mappingCondition = "{$mappingParentKey}={$fk}";
+                            }
+                        }
                     }
                     if(empty($name) || $mappingName == $name) {
                         switch($mappingType) {
