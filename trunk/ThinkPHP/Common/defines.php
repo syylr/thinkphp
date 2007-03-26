@@ -69,7 +69,6 @@ if (!defined('ADMIN_PATH')) define('ADMIN_PATH', APP_PATH.'/../Admin/');
 define('TMPL_PATH',APP_PATH.'/'.TMPL_DIR.'/'); 
 define('HTML_PATH',APP_PATH.'/'.HTML_DIR.'/'); //
 define('LIB_PATH',         APP_PATH.'/'.LIB_DIR.'/'); //
-define('TAG_PATH',       APP_PATH.'/'.TAGS_DIR.'/'); //
 define('CACHE_PATH',   APP_PATH.'/'.CACHE_DIR.'/'); //
 define('CONFIG_PATH',  APP_PATH.'/'.CONF_DIR.'/'); //
 define('LOG_PATH',       APP_PATH.'/'.LOG_DIR.'/'); //
