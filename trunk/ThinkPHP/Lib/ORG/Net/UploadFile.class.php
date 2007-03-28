@@ -134,10 +134,10 @@ class UploadFile extends Base
      * @access public 
      +----------------------------------------------------------
      */
-    function __construct($allowExts='',$allowTypes='',
+    function __construct($maxSize='',$allowExts='',$allowTypes='',
                             $savePath=UPLOAD_PATH,$saveRule='')
     {
-        if($maxSize && is_numeric($maxSize)) {
+        if(!empty($maxSize) && is_numeric($maxSize)) {
             $this->maxSize = $maxSize;
         }
         if(!empty($allowExts)) {
