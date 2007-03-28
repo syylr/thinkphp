@@ -250,6 +250,22 @@ imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，�
         Image::output($im,$type);
     }
 
+    /**
+     +----------------------------------------------------------
+     * 把图像转换成字符显示
+     * 
+     +----------------------------------------------------------
+     * @static
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $image  要显示的图像
+     * @param string $type  图像类型，默认自动获取
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
     function showASCIIImg($image,$type='') 
     {
         $info  = Image::getImageInfo($image); 
@@ -293,45 +309,6 @@ imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，�
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function buildAdvImageVerify($key,$type='png',$width=100,$height=45) 
-    {
-        $rand = build_count_rand(10,1,3);
-        $verify  =  '';
-        for($i=0; $i<strlen($key); $i++) {
-        	$verify .=  $rand[$key[$i]];
-        }
-        $_SESSION['verify']= md5($verify);
-        $randval   =  implode('',$rand);
-        $width = ($length*9+10)>$width?$length*9+10:$width;
-        if ( $type!='gif' && function_exists('imagecreatetruecolor')) {
-            $im = imagecreatetruecolor($width,$height);
-        }else {
-            $im = imagecreate($width,$height);
-        }
-        $r = Array(225,255,255,223);
-        $g = Array(225,236,237,255);
-        $b = Array(225,236,166,125);
-        $key = mt_rand(0,3);
-
-        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]);    //背景色（随机）
-        $borderColor = ImageColorAllocate($im, 0, 0, 0);                    //边框色
-        $pointColor = ImageColorAllocate($im, 0, 255, 255);                    //点颜色
-
-        imagefilledrectangle($im, 0, 0, $width - 1, $height - 1, $backColor);
-        imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
-        $stringColor1 = ImageColorAllocate($im, 255,51,153);
-        $stringColor2 = ImageColorAllocate($im, 65,65,65);
-        for($i=0;$i<=10;$i++){
-            $pointX = mt_rand(2,$width-2);
-            $pointY = mt_rand(2,$height-2);
-            imagesetpixel($im, $pointX, $pointY, $pointColor);
-        }
-
-        imagestring($im, 5, 5, 3, $randval, $stringColor1);
-        imagestring($im, 5, 5, 25, '0123456789', $stringColor2);
-        Image::output($im,$type);
-    }
-
     function showAdvVerify($type='png',$width=180,$height=40) 
     {
         $verifyCodeRandArray = build_count_rand(10,1,3);
@@ -350,8 +327,8 @@ imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，�
 
         $key = rand(0,3);
 
-        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]); //璉春︹繦诀
-        $borderColor = ImageColorAllocate($im, 0, 0, 0);				  //娩︹
+        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]); 
+        $borderColor = ImageColorAllocate($im, 0, 0, 0);	
 
         imagefilledrectangle($im, 0, 0, $width - 1, $height - 1, $backColor);
         imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
@@ -366,8 +343,8 @@ imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，�
         imagestring($im, 5, 5, 1, "0 1 2 3 4 5 6 7 8 9", $stringColor1);
         imagestring($im, 5, 5, 20, $letter, $stringColor2);
         Image::output($im,$type);
-	
     }
+
     /**
      +----------------------------------------------------------
      * 生成UPC-A条形码
@@ -418,7 +395,7 @@ imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，�
         }else {
             $im = imagecreate($lw*95+30,$hi+30);
         }
-        $fg = ImageColorAllocate($img, 0, 0, 0); 
+        $fg = ImageColorAllocate($im, 0, 0, 0); 
         $bg = ImageColorAllocate($im, 255, 255, 255); 
         ImageFilledRectangle($im, 0, 0, $lw*95+30, $hi+30, $bg); 
         $shift=10; 
