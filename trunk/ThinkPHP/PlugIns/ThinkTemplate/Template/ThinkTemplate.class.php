@@ -468,9 +468,6 @@ class  ThinkTemplate extends Base
             case 'VO':
                 $parseStr = $this->parseVo($args[0],$args[1]);
                 break;
-            case 'VOLIST':
-                $parseStr = $this->parseVoList($args[0],$args[1]);
-                break;
             //这里扩展其它标签
             //…………
             default:
@@ -669,35 +666,6 @@ class  ThinkTemplate extends Base
          }
          $parseStr = '<?php echo '.$parseStr.' ?>';
          return  $parseStr;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 解析VoList对象
-     * 
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param string $name Vo对象名
-     * @param string $val  标签属性
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-    function ParseVoList($name,$content){
-         $name = trim($name);
-         $content  = trim($content);
-            $volist = $this->get($name);
-            $parseStr .= '<?php foreach($'.$name.'->toArray() as $_'.$name.'): ?>';
-            foreach ($volist->get(0) as $property=>$val){
-                $content = str_replace('$'.$property,'<?php echo $_'.$name.'->'.$property.' ?>',$content);
-            }
-            $parseStr .= $content;
-            $parseStr .= '<?php end foreach; ?>';
-
-        return  $parseStr;
     }
 
     /**
