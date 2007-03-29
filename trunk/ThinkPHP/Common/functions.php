@@ -724,6 +724,7 @@ function is_instance_of($object, $className)
         return is_a($object, $className);
    }
    else{
+       $is = false;
        include ('_instanceof.php');
        return $is;
    }
