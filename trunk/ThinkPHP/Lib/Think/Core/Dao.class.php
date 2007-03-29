@@ -575,7 +575,7 @@ class Dao extends Base
                     $mappingFields = $val['mapping_fields'];
                     $mappingCondition = $val['condition'];
                     $dao = D($mappingVo);
-                    if($mappingVo==$result->getVoName()) {
+                    if(strtoupper($mappingVo)==strtoupper($this->getTableName())) {
                         // 自引用
                         $mappingParentKey = !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
                     }
@@ -614,7 +614,7 @@ class Dao extends Base
                                 if(empty($mappingRelationTable)) {
                                 	$mappingRelationTable  =  $this->getRelationTableName($dao);
                                 }
-                                $sql  = 'select b.* from '.$mappingRelationTable.' as a ,'.$dao->getRealTableName()." as b where a.{$mappingRelationFk}=b.{$dao->pk} and  a.{$mappingFk}={$pk} ";
+                                $sql  = 'SELECT b.* FROM '.$mappingRelationTable.' AS a ,'.$dao->getRealTableName()." AS b where a.{$mappingRelationFk}=b.{$dao->pk} AND  a.{$mappingFk}={$pk} ";
                                 if(!empty($mappingOrder)) {
                                 	$sql .= ' ORDER BY '.$mappingOrder;
                                 }
