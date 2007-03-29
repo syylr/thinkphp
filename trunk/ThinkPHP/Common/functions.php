@@ -287,23 +287,34 @@ function system_out($msg)
  * @return string
  +----------------------------------------------------------
  */
-function dump($var, $label=null, $echo=true)
+function dump($var, $label=null, $strict=true,$echo=true)
 {
     $label = ($label===null) ? '' : rtrim($label) . ' ';
-    ob_start();
-    var_dump($var);
-    $output = ob_get_clean();
-    if(!extension_loaded('xdebug')) {
-        $output = preg_replace("/\]\=\>\n(\s+)/m", "] => ", $output);
-        $output = '<pre>'
-                . $label
-                . htmlentities($output, ENT_QUOTES,OUTPUT_CHARSET)
-                . '</pre>';    	
+    if(!$strict) {
+        if (ini_get('html_errors')) {
+            $output = print_r($var, true);
+            $output = "<pre>".$label.htmlspecialchars($output,ENT_QUOTES,OUTPUT_CHARSET)."</pre>";
+        } else {
+            $output = $label . " : " . print_r($var, true);
+        }    	
+    }else {
+        ob_start();
+        var_dump($var);
+        $output = ob_get_clean();
+        if(!extension_loaded('xdebug')) {
+            $output = preg_replace("/\]\=\>\n(\s+)/m", "] => ", $output);
+            $output = '<pre>'
+                    . $label
+                    . htmlspecialchars($output, ENT_QUOTES,OUTPUT_CHARSET)
+                    . '</pre>';    	
+        }    	
     }
     if ($echo) {
         echo($output);
+        return null;
+    }else {
+    	return $output;
     }
-    return $output;
 }
 
 /**
