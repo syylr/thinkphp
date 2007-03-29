@@ -27,7 +27,7 @@
  * @version    $Id$
  +------------------------------------------------------------------------------
  */
-$GLOBALS['_beginTime'] = array_sum(split(' ', microtime()));
+$GLOBALS['_beginTime'] = array_sum(explode(' ', microtime()));
 //ThinkPHP系统目录定义
 if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
     
