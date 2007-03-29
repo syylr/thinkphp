@@ -600,6 +600,7 @@ if( !function_exists('memory_get_usage') )
 {
    function memory_get_usage()
    {
+       $output = array ();
        $pid = getmypid();
        if ( IS_WIN ) 
        {
