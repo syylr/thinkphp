@@ -113,17 +113,41 @@ class Template extends Base
 
     /**
      +----------------------------------------------------------
-     * 加载模板和页面输出
+     * 加载模板和页面输出 可以返回输出内容
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
      * @param string $templateFile 模板文件名 留空为自动获取
-     * @param string $varPrefix 模板变量前缀 
+     * @param string $charset 模板输出字符集
+     * @param string $contentType 输出类型
+     * @param string $varPrefix 模板变量前缀  
+     +----------------------------------------------------------
+     * @return mixed 
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function display($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='')
+    {
+        $this->fetch($templateFile,$charset,$contentType,$varPrefix,true);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 加载模板和页面输出
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $templateFile 模板文件名 留空为自动获取
+     * @param string $charset 模板输出字符集
+     * @param string $contentType 输出类型
+     * @param string $varPrefix 模板变量前缀      
+     * @param string $display 是否输出 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function fetch($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='',$display=false) 
     {
         if(null===$templateFile) {
             // 使用null参数作为模版名直接返回不做任何输出
@@ -178,11 +202,13 @@ class Template extends Base
         $content = apply_filter('ob_content',$content);
         $runtime   = number_format((array_sum(split(' ', microtime())) - $GLOBALS['_beginTime']), 6);
         //输出缓存内容
-        echo $content;
-        if(SHOW_RUN_TIME )  {
-            echo '<div style="text-align:center;width:100%">Process: '.$runtime.'s</div>';
+        define('THINK_RUNTIME',$runtime);
+        if($display) {
+            echo $content;
+            return null;
+        }else {
+        	return $content;
         }
-        return ;
     }
 
 }//
