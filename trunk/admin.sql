@@ -99,7 +99,7 @@ CREATE TABLE `think_config` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=44 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
 
 -- 
 -- 导出表中的数据 `think_config`
@@ -278,7 +278,7 @@ INSERT INTO `think_node` (`id`, `name`, `title`, `status`, `remark`, `seqNo`, `p
 CREATE TABLE `think_plugin` (
   `id` mediumint(8) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL,
-  `author` varchar(50) NOT NULL,
+  `author` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `status` tinyint(1) unsigned NOT NULL,
   `version` varchar(10) NOT NULL,
@@ -339,7 +339,7 @@ CREATE TABLE `think_user` (
   KEY `childId` (`childId`),
   KEY `status` (`status`),
   KEY `verify` (`verify`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='聊天用户表' AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- 
 -- 导出表中的数据 `think_user`
