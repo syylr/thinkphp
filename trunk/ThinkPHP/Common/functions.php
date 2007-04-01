@@ -1281,4 +1281,11 @@ function build_count_rand ($number,$length=4,$mode=1) {
         $rand = array_slice(array_unique ($rand),0,$number);    	
         return $rand;
 }
+
+function mk_dir($dir, $mode = 0755)
+{
+  if (is_dir($dir) || @mkdir($dir,$mode)) return TRUE;
+  if (!mk_dir(dirname($dir),$mode)) return FALSE;
+  return @mkdir($dir,$mode);
+}
 ?>
