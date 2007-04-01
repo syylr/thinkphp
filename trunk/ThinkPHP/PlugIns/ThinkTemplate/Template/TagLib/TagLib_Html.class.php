@@ -533,7 +533,7 @@ class TagLib_Html extends TagLib
                 $parseStr .= '<Th>';
             }
             $showname[2] = isset($showname[2])?$showname[2]:$showname[0];
-            $parseStr .= '<A HREF="javascript:sortBy(\''.$property[0].'\',\'{$sort}\',\''.ACTION_NAME.'\')" title="按照'.$showname[2].'<var name=\'sortType\' />">'.$showname[0].'<equal name="order" value="'.$property[0].'" ><IMG SRC="../public/images/<var name=\'sortImg\' />.gif" WIDTH="12" HEIGHT="17" BORDER="0" align="absmiddle"></equal></A></Th>';
+            $parseStr .= '<A HREF="javascript:sortBy(\''.$property[0].'\',\'{$sort}\',\''.ACTION_NAME.'\')" title="按照'.$showname[2].'<var name=\'sortType\' />">'.$showname[0].'<equal name="order" value="'.$property[0].'" ><IMG SRC="../public/images/{$sortImg}.gif" WIDTH="12" HEIGHT="17" BORDER="0" align="absmiddle"></equal></A></Th>';
         }
         if(!empty($action)) {//如果指定显示操作功能列
             $parseStr .= '<th >操作</th>';
