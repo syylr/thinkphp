@@ -259,13 +259,6 @@ class NodeAction extends AdminAction
                 $this->buildModule($parent->name,$node->name);
                 $this->success('模块创建成功！');
             	break;
-            case 2:// 操作节点
-            	// 获取所属项目节点
-                $parent = $dao->getById($node->pid);
-                // 创建模块类文件
-                $this->buildModule($parent->name,$node->name);
-                $this->success('模块创建成功！');
-            	break;
             default:
                 $this->error('只有项目和模块可以创建!');
         }
