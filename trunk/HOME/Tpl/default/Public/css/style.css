@@ -117,14 +117,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* 文件间距 */
 .space{letter-spacing:4px;}
-/**
- +------------------------------------------------------------------------------
- | 表单样式定义
- +------------------------------------------------------------------------------
- */
-
-
-
+a,a:visited{text-decoration:none;color:#174B73;}
+a:hover{ color:#FF6600;border-bottom:1px solid #3366FF;}
 
  /**
  +------------------------------------------------------------------------------
@@ -165,17 +159,7 @@ div.nav {
 	font: normal bold normal 14px Tahoma,Verdana, Helvetica, Arial, sans-serif;
 }
 
-div.nav A {
-	color:white;
-	font: normal normal normal 14px Tahoma,Verdana, Helvetica, Arial, sans-serif;
-	text-decoration: none;
-}
 
-div.nav A:hover {
-	border-bottom: 1px dotted;
-	text-decoration: none;
-	color:silver;
-}
 
 .menu {
 	clear:both;
@@ -294,3 +278,35 @@ span sup{
 .content{margin:8px;padding:6px}
 ul{margin:8px}
 li{margin:8px;padding:3px}
+
+.topicList li 
+{
+	list-style:none;
+	margin: 0.1em 3px;
+	padding: 0.4em ;	
+	background:#f9fcfc ;
+    border:1px solid #eee;
+}
+
+.topicList li.head
+{
+    background:#f9fcfc url(../images/idx_sbg1.gif) ;
+}
+.topicList li.top
+{
+    background:#E3FFC8
+}
+
+.topicList li.recommend
+{
+    background:#FFFFCE ;
+}
+
+.topicList li.alt 
+{
+    background:#FFFFE6 ;
+}
+.topicList li.add
+{
+    background:#A9FF53 ;
+}

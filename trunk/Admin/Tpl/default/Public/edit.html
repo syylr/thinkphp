@@ -1,0 +1,84 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var curFileNum = 0;
+var rowsnum=0;  //记录行数
+var rindex="";       //列索引
+function addRow(){   
+	curFileNum++;
+	rowsnum++;
+    var arow=tbl.insertRow();
+	var td = arow.insertCell();
+	td.innerHTML='<div class="impBtn  fLeft" ><INPUT TYPE="file"  name="file'+ curFileNum +'" class="file bgcolor1 large"> </div><IMG SRC="../Public/images/limit.gif" WIDTH="20" HEIGHT="20" onclick="javascript:deleteRow()" align="absmiddle" onfocus="javascript:getObject(this)" style="cursor:hand" BORDER="0" ALT="删除"> ';
+	td.align="center"
+	//addFileForm.num.value=rowsnum;
+}
+function deleteRow(){
+	if(tbl.rows.length>0){
+		tbl.deleteRow(rindex); //删除当前行
+		rowsnum--;    
+	}else{
+		return;
+	}
+	rindex="";
+}
+function getObject(obj){ 
+	rindex=obj.parentElement.parentElement.rowIndex;/*当前行对象*/
+}
+function notice(name){
+	switch (name)
+	{
+	case 'nickname':	showTip('用户昵称');break;
+	case 'verify':		showTip('登录验证码');break;
+	case 'remark':		showTip('备注信息');break;
+	}
+}
+function uploadComplete(id,name){
+	$('photo').innerHTML	=	'<IMG SRC="__PUBLIC__/Images/girl/'+name+'" class="shadow" style="border:1pt solid gray" BORDER="0" width="130" height="179" ALT="" align="absmiddle">';
+}
+function uploading(msg){
+	$('result').style.display = 'block';
+	$('result').innerHTML	=	'<IMG SRC="../Public/images/ajaxloading.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="" align="absmiddle"> 文件上传中～';
+	return true;
+}
+//-->
+</SCRIPT>
+<div id="main" class="main" >
+<div class="content">
+<div id="result" class="result none"></div>
+<div class="title">编辑资料</div>
+<div class="fLeft">
+<div id="tips"  class="tips"  > 修改资料信息，注意红色标注的字段为必填字段。</div>
+</div>
+<div class="fLeft" style="width:60%;float:left">
+<FORM METHOD=POST  id="form1" >
+<TABLE cellpadding=3 cellspacing=3>
+<TR>
+	<TD class="tRight" >昵称：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeft" onfocus="notice('nickname')" NAME="nickname" value="{$vo.nickname}"></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">备  注：</TD>
+	<TD class="tLeft"><TEXTAREA class="large bLeft" NAME="remark" onfocus="notice('remark')" ROWS="5" COLS="57">{$vo.remark}</TEXTAREA></TD>
+</TR>
+<TR>
+	<TD class="tRight" >验证码：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeftRequire" onfocus="notice('verify')" NAME="verify" check='Number' warning="验证码为数字" value="{$vo.verify}"></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD class="center"><div style="width:85%">
+	<INPUT TYPE="hidden" name="id" value="{$vo.id}">
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+	<div class="impBtn fLeft"><INPUT TYPE="button" value="保存" onclick="sendForm('form1','__URL__/change/','tips')" class="save imgButton"></div>
+	<div class="impBtn fRig"><INPUT TYPE="reset" class="reset imgButton" value="清空" ></div>
+	</div></TD>
+</TR>
+</TABLE>
+</FORM>
+</div>
+</div>
+</div>
+<include file="../Public/footer" />

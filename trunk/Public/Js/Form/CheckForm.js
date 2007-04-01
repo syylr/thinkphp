@@ -66,23 +66,13 @@
 				{
 					//验证不通过,弹出提示warning
 					//els[i].styles.border = '1pt solid orange';
-					if ($(target))
+					if (target==undefined)
 					{
-						var arrayPageSize = getPageSize();
-						var arrayPageScroll = getPageScroll();
-						$(target).style.display = 'block';
-						$(target).style.top = (arrayPageScroll[1] + 'px');
-						$(target).style.right = '0px';
-						var myFx = new Fx.Style(target, 'opacity',{duration:100}).custom(0,0.7);
-						$(target).innerHTML	=	'<IMG SRC="'+PUBLIC+'/Images/use.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" align="absmiddle"><span style="color:red"> '+els[i].warning+'</span>';
-						// 提示信息停留5秒
-						this.intval = window.setTimeout(function (){
-							var myFx = new Fx.Style(target, 'opacity',{duration:600}).custom(1,0);
-							//$(target).style.display='none';
-							},5000);
-					}else {
 						alert(els[i].warning);
+					}else {
+						$(target).innerHTML	=	els[i].warning;
 					}
+
 					//该表单元素取得焦点,用通用返回函数
 					GoBack(els[i]);
 					return false;
@@ -166,32 +156,27 @@
 	//单多下拉菜单,取得焦点
 	function GoBack(el)
 	{
-		try
+		//取得表单元素的类型
+		var sType = el.type;
+		switch(sType)
 		{
-			//取得表单元素的类型
-			var sType = el.type;
-			switch(sType)
-			{
-				case "text":
-				case "hidden":
-				case "password":
-				case "file":
-				case "textarea": 
-					el.focus();
-					var rng = el.createTextRange(); 
-					rng.collapse(false); 
-					rng.select();
-				case "checkbox":
-				case "radio": 
-					var els = document.getElementsByName(el.name);
-					els[0].focus();
-				case "select-one":
-				case "select-multiple":
-					el.focus();
-			}			
+			case "text":
+			case "hidden":
+			case "password":
+			case "file":
+			case "textarea": 
+				el.focus();
+				var rng = el.createTextRange(); 
+				rng.collapse(false); 
+				rng.select();
+			case "checkbox":
+			case "radio": 
+				var els = document.getElementsByName(el.name);
+				els[0].focus();
+			case "select-one":
+			case "select-multiple":
+				el.focus();
 		}
-		catch (e)		{		}
-
 	}
 
 

@@ -29,5 +29,5 @@
  */
 
 //	版本信息
-define('THINK_VERSION', '0.9.6');
+define('THINK_VERSION', '0.9.7');
 ?>

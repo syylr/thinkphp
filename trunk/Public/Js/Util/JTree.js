@@ -34,6 +34,7 @@ function treeNode(){
 }
 function JTree(pParent,xmlFile,pExpand){
 	this.PICPATH	=	"JTree/"	//图片文件所在的文件夹，可见public，可改变。
+	
 	var self		=this;	//相当于一个引用，指向自己。JTree.
 	//-----------------------------------------------------------------------------
 	//不可见private。
