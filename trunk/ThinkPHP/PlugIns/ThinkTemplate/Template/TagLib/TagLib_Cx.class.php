@@ -551,7 +551,7 @@ class TagLib_Cx extends TagLib
      */
     function _notpresent($attr,$content) 
     {
-        $tag  = $this->parseXmlAttr($attr,'notpresent');
+        $tag  = $this->parseXmlAttr($attr,'present');
         $name  = $tag['name'];
         $property   = $tag['property'];
         $key        = $tag['key'];
@@ -657,9 +657,9 @@ class TagLib_Cx extends TagLib
 
     /**
      +----------------------------------------------------------
-     * display标签解析 
+     * access标签解析 
      * 如果有模块和操作权限则输出，默认为当前模块和操作
-     * 格式： <display module="" action="" >content</display>
+     * 格式： <access module="" action="" >content</access>
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -669,15 +669,37 @@ class TagLib_Cx extends TagLib
      * @return string|void
      +----------------------------------------------------------
      */
-    function _display($attr,$content) 
+    function _access($attr,$content) 
     {
-        $tag		= $this->parseXmlAttr($attr,'session');
+        $tag		= $this->parseXmlAttr($attr,'access');
         $module		= $tag['module']?$tag['module']:MODULE_NAME;
 		$action		= $tag['action']?$tag['action']:ACTION_NAME;
-        $parseStr  = '<?php if(in_array("'.$module.'",Session::get("_moduleList")) && in_array("'.$action.'",Session::get("_actionList"))): ?>'.$content.'<?php endif; ?>';
+        $parseStr = '<?php $accessList = Session::get("_ACCESS_LIST"); if(Session::is_setLocal("administrator") || isset($accessList[strtoupper(APP_NAME)][strtoupper("'.$module.'")][strtoupper("'.$action.'")])) : ?>'.$content.'<?php endif; ?>';
         return $parseStr;
     }
 
+    /**
+     +----------------------------------------------------------
+     * noaccess标签解析 
+     * 如果没有模块和操作权限则输出，默认为当前模块和操作
+     * 格式： <noaccess module="" action="" >content</noaccess>
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string|void
+     +----------------------------------------------------------
+     */
+    function _noaccess($attr,$content) 
+    {
+        $tag		= $this->parseXmlAttr($attr,'access');
+        $module		= $tag['module']?$tag['module']:MODULE_NAME;
+		$action		= $tag['action']?$tag['action']:ACTION_NAME;
+        $parseStr = '<?php $accessList = Session::get("_ACCESS_LIST"); if(!Session::is_setLocal("administrator") &&  !isset($accessList[strtoupper(APP_NAME)][strtoupper("'.$module.'")][strtoupper("'.$action.'")])) : ?>'.$content.'<?php endif; ?>';
+        return $parseStr;
+    }
 
     /**
      +----------------------------------------------------------

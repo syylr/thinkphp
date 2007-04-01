@@ -188,7 +188,20 @@
 </tag>
 
 <tag>
-<name>display</name>
+<name>access</name>
+<bodycontent>true</bodycontent>
+<attribute>
+<name>module</name>
+<required>false</required>
+</attribute>
+<attribute>
+<name>action</name>
+<required>false</required>
+</attribute>
+</tag>
+
+<tag>
+<name>noaccess</name>
 <bodycontent>true</bodycontent>
 <attribute>
 <name>module</name>
