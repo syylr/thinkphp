@@ -551,7 +551,7 @@ class TagLib_Cx extends TagLib
      */
     function _notpresent($attr,$content) 
     {
-        $tag  = $this->parseXmlAttr($attr,'present');
+        $tag  = $this->parseXmlAttr($attr,'notpresent');
         $name  = $tag['name'];
         $property   = $tag['property'];
         $key        = $tag['key'];
@@ -629,7 +629,7 @@ class TagLib_Cx extends TagLib
      */
     function _nosession($attr,$content) 
     {
-        $tag  = $this->parseXmlAttr($attr,'session');
+        $tag  = $this->parseXmlAttr($attr,'nosession');
         $name  = $tag['name'];
 		if(strpos($name,'|')) {
 			$array	=	explode('|',$name);
@@ -694,7 +694,7 @@ class TagLib_Cx extends TagLib
      */
     function _noaccess($attr,$content) 
     {
-        $tag		= $this->parseXmlAttr($attr,'access');
+        $tag		= $this->parseXmlAttr($attr,'noaccess');
         $module		= $tag['module']?$tag['module']:MODULE_NAME;
 		$action		= $tag['action']?$tag['action']:ACTION_NAME;
         $parseStr = '<?php $accessList = Session::get("_ACCESS_LIST"); if(!Session::is_setLocal("administrator") &&  !isset($accessList[strtoupper(APP_NAME)][strtoupper("'.$module.'")][strtoupper("'.$action.'")])) : ?>'.$content.'<?php endif; ?>';
