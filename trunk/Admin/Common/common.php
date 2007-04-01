@@ -295,4 +295,37 @@ function getUser($id)
 	Session::set('user',$user);
     return $name;	
 }
+
+/**
+ +----------------------------------------------------------
+ * 生成一定数量的随机数，并且不重复
+ +----------------------------------------------------------
+ * @param integer $number 数量
+ * @param string $len 长度
+ * @param string $type 字串类型 
+ * 0 字母 1 数字 其它 混合
+ +----------------------------------------------------------
+ * @return string
+ +----------------------------------------------------------
+ */
+function build_count_rand ($number,$length=4,$mode=1) { 
+        if($mode==1 && $length<strlen($number) ) {
+            //不足以生成一定数量的不重复数字
+    		return false;        	
+        }
+        $rand   =  array();
+        for($i=0; $i<$number; $i++) {
+            $rand[] =   rand_string($length,$mode);
+        }
+        $unqiue = array_unique($rand);
+        if(count($unqiue)==count($rand)) {
+            return $rand;
+        }
+        $count   = count($rand)-count($unqiue);
+        for($i=0; $i<$count*3; $i++) {
+            $rand[] =   rand_string($length,$mode);
+        }
+        $rand = array_slice(array_unique ($rand),0,$number);    	
+        return $rand;
+}
 ?>
