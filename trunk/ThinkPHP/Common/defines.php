@@ -86,7 +86,7 @@ define('IS_IIS',strstr($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') ? 1 : 0);
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_LINUX',strstr(PHP_OS, 'Linux') ? 1 : 0 );
 define('IS_FREEBSD',strstr(PHP_OS, 'FreeBSD') ? 1 : 0 );
-define('NOW',time() );
+define('NOW_TIME',time() );
 
 // 	调试和Log设置
 define('WEB_LOG_ERROR',0);
