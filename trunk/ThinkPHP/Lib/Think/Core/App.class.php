@@ -433,8 +433,6 @@ class App extends Base
                 }
                 if(!class_exists($moduleClass,false)) {
                     //仍然没有发现模块类，抛出异常
-                    $this->forward('_404','Index');
-                    return ;
                     throw_exception(_MODULE_NOT_EXIST_.MODULE_NAME);
                 }
             }
