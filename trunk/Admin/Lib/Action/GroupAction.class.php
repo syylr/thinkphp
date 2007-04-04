@@ -303,7 +303,6 @@ class GroupAction extends AdminAction
         if(!empty($appId)) {
             $this->assign("selectAppId",$appId);
         	//读取当前项目的授权模块列表
-            $dao    =  new NodeDao();
             $list         =  $groupDao->getGroupModuleList($groupId,$appId);
             $moduleList   =  $list->getCol('id,title');
             $this->assign("moduleList",$moduleList);
