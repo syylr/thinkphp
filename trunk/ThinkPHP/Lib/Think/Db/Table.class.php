@@ -75,7 +75,7 @@ class Table extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkException
      +----------------------------------------------------------
      */
     function build($tableName='',$dbName=DB_NAME,$prefix= DB_PREFIX) 
@@ -112,7 +112,7 @@ class Table extends Base
      +----------------------------------------------------------
      * @return Void
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkException
      +----------------------------------------------------------
      */
     function tableToVo($name,$voClass='',$filename='') 
@@ -128,7 +128,7 @@ class Table extends Base
             $content .= " * 生成时间".date('Y-m-d l H:m:s')."\n";
             $content .= " +------------------------------------------------------------------------------\n";
             $content .= " */\n";
-            $content .= "class ".$voClass." extends Vo \n {\n";
+            $content .= "class ".$voClass." extends Vo \n{\n";
             $content .= "    //+----------------------------------------\n";
             $content .= "    //| 数据模型 数据表字段名 \n";
             $content .= "    //+----------------------------------------\n";
@@ -162,7 +162,7 @@ class Table extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkException
      +----------------------------------------------------------
      */
     function tableToDao($name,$daoClass='',$filename='') 
@@ -176,7 +176,7 @@ class Table extends Base
             $content .= " * 生成时间".date('Y-m-d l H:m:s')."\n";
             $content .= " +------------------------------------------------------------------------------\n";
             $content .= " */\n";
-            $content .= "class ".$daoClass." extends Dao \n {\n";
+            $content .= "class ".$daoClass." extends Dao \n{\n";
             $content .= "    //+----------------------------------------\n";
             $content .= "    //| 在下面添加需要的数据访问方法 \n";
             $content .= "    //+----------------------------------------\n";
@@ -198,7 +198,7 @@ class Table extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkException
      +----------------------------------------------------------
      */
     function tableToAction($name,$actionClass='',$filename='') 
@@ -212,7 +212,7 @@ class Table extends Base
             $content .= " * 生成时间".date('Y-m-d l H:m:s')."\n";
             $content .= " +------------------------------------------------------------------------------\n";
             $content .= " */\n";
-            $content .= "class ".$actionClass." extends Action \n {\n";
+            $content .= "class ".$actionClass." extends Action \n{\n";
             $content .= "    //+----------------------------------------\n";
             $content .= "    //| 在下面添加需要的控制器方法 \n";
             $content .= "    //+----------------------------------------\n";
