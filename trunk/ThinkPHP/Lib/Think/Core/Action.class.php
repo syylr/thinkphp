@@ -393,8 +393,9 @@ class Action extends Base
      +----------------------------------------------------------
      * @param string $templateFile 指定要调用的模板文件
      * 默认为空 由系统自动定位模板文件
-     * @param string $varPrefix 模板变量前缀
      * @param string $charset 输出编码
+     * @param string $contentType 输出类型
+     * @param string $varPrefix 模板变量前缀
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -402,6 +403,28 @@ class Action extends Base
     function display($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='')
     {
         $this->tpl->display($templateFile,$charset,$contentType,$varPrefix);
+    }
+
+    /**
+     +----------------------------------------------------------
+     *  获取输出页面内容
+     * 调用内置的模板引擎fetch方法，
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $templateFile 指定要调用的模板文件
+     * 默认为空 由系统自动定位模板文件
+     * @param string $charset 输出编码
+     * @param string $contentType 输出类型
+     * @param string $varPrefix 模板变量前缀
+     * @param string $display 是否直接显示
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    function fetch($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='',$display=false)
+    {
+        $this->tpl->fetch($templateFile,$charset,$contentType,$varPrefix,$display);
     }
 
     /**
@@ -721,16 +744,10 @@ class Action extends Base
         //创建分页对象
         if(!empty($_REQUEST['listRows'])) {
         	$listRows  =  $_REQUEST['listRows'];
+        }else {
+        	$listRows  =  '';
         }
         $p          = new Page($count,$listRows);
-        /*
-        $identify   =  to_guid_string($map).$p->nowPage;
-        $voList = $this->getCacheVoList($dao->getVo(),$identify);
-        if(false === $voList) {
-            //分页查询数据
-            $voList     = $dao->findAll($map,'','*',$order.' '.$sort,$p->firstRow.','.$p->listRows);        
-            $this->cacheVoList($voList,$identify);
-        }*/
         //分页查询数据
         $voList     = $dao->findAll($map,'','*',$order.' '.$sort,$p->firstRow.','.$p->listRows);  
         //分页跳转的时候保证查询条件
