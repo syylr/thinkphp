@@ -1173,6 +1173,7 @@ class Dao extends Base
         if(isset($vo->_validate)) {
             // 如果设置了Vo验证
             // 则进行数据验证
+            import("ORG.Text.Validation");
             $validation = Validation::getInstance();
             foreach($vo->_validate as $key=>$val) {
                 if(!$validation->check($vo->{$val[0]},$val[1])) {
