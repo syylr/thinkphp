@@ -1169,6 +1169,22 @@ class Dao extends Base
                 $vo->$name = $val;
             }
         }
+        // Vo验证
+        if(isset($vo->_validate)) {
+            // 如果设置了Vo验证
+            // 则进行数据验证
+            $validation = Validation::getInstance();
+            foreach($vo->_validate as $key=>$val) {
+                if(!$validation->check($vo->{$val[0]},$val[1])) {
+                    $this->error    =   $val[2];
+                    return false;
+                }                
+            }
+        }
+        if($resultType != DATA_TYPE_VO ) {
+            // 返回数组
+            $vo  =  $vo->toArray();
+        }        
         return $vo;
     }
 
