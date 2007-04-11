@@ -1247,7 +1247,7 @@ class Dao extends Base
         if($this->tableName){
             return $this->tableName;
         }else 
-            return strtolower(substr($this->__toString(),0,-3));
+            return substr($this->__toString(),0,-3);
     }
 
     /**
@@ -1318,7 +1318,7 @@ class Dao extends Base
      */
     function getVo()
     {
-        return ucwords($this->getTableName()).'Vo';
+        return $this->getTableName().'Vo';
     }
 
     /**
