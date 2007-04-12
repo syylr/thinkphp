@@ -446,7 +446,12 @@ class TagLib_Cx extends TagLib
             $function = explode('|',$function);
             $name = $this->tpl->parseVarFunction($name,$function);
         }
-        $parseStr = '<?php if('.$name.'=="'.$value.'"): ?>';
+        if('$' == substr($value,0,1)) {
+        	$value  =  str_replace('.','->',$value);
+            $parseStr = '<?php if('.$name.'=='.$value.'): ?>';
+        }else {
+            $parseStr = '<?php if('.$name.'=="'.$value.'"): ?>';        	
+        }
         $parseStr .= $content.'<?php endif; ?>';
 
         return $parseStr;
@@ -493,7 +498,12 @@ class TagLib_Cx extends TagLib
             $function = explode('|',$function);
             $name = $this->tpl->parseVarFunction($name,$function);
         }
-        $parseStr  = '<?php if('.$name.'!="'.$value.'"): ?>';
+        if('$' == substr($value,0,1)) {
+        	$value  =  str_replace('.','->',$value);
+            $parseStr = '<?php if('.$name.'!='.$value.'): ?>';
+        }else {
+            $parseStr = '<?php if('.$name.'!="'.$value.'"): ?>';        	
+        }
         $parseStr .= $content.'<?php endif; ?>';
         return $parseStr;
     }
