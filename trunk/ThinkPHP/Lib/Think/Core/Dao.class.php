@@ -1182,7 +1182,7 @@ class Dao extends Base
                 }                
             }
         }
-        if($resultType != DATA_TYPE_VO ) {
+        if($resultType == DATA_TYPE_ARRAY ) {
             // 返回数组
             $vo  =  $vo->toArray();
         }        
