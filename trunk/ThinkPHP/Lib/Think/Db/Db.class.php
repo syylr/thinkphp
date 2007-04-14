@@ -482,6 +482,9 @@ class Db extends Base
             if(is_instance_of($where,'HashMap')){
                 $it = $where->getIterator();
                 foreach ($it as $key=>$val){
+                    if(false !== strpos(strtoupper(DB_TYPE),'MYSQL')) {
+                        $key = "`$key`";
+                    }
                     $whereStr .= "$key ";
                     if(is_array($val)) {
                         if(preg_match('/(EQ|NEQ|GT|EGT|LT|ELT|LIKE)/i',$val[0])) {
@@ -510,6 +513,9 @@ class Db extends Base
         if(is_array($where)){
             //支持数组作为条件
             foreach ($where as $key=>$val){
+                    if(false !== strpos(strtoupper(DB_TYPE),'MYSQL')) {
+                        $key = "`$key`";
+                    }
                     $whereStr .= "$key ";
                     if(is_array($val)) {
                         if(preg_match('/(EQ|NEQ|GT|EGT|LT|ELT|LIKE)/i',$val[0])) {
@@ -534,7 +540,6 @@ class Db extends Base
             //支持String作为条件 如使用 > like 等
             $whereStr = $where; 
         }
-
         return empty($whereStr)?'':' WHERE '.$whereStr;
     }
 
