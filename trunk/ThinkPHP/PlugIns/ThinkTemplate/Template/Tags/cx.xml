@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <taglib>
 <shortname>cx</shortname>
-<classpath>FCS.Util.TagLib.cx</classpath>
+<classpath>Think.Util.TagLib.cx</classpath>
 <tag>
 <name>include</name>
 <bodycontent>empty</bodycontent>
@@ -35,6 +35,18 @@
 <name>empty</name>
 <required>false</required>
 </attribute>
+<attribute>
+<name>offset</name>
+<required>false</required>
+</attribute>
+<attribute>
+<name>length</name>
+<required>false</required>
+</attribute>
+<attribute>
+<name>key</name>
+<required>false</required>
+</attribute>
 </tag>
 
 <tag>
@@ -50,6 +62,18 @@
 </attribute>
 <attribute>
 <name>empty</name>
+<required>false</required>
+</attribute>
+<attribute>
+<name>offset</name>
+<required>false</required>
+</attribute>
+<attribute>
+<name>length</name>
+<required>false</required>
+</attribute>
+<attribute>
+<name>key</name>
 <required>false</required>
 </attribute>
 </tag>
@@ -71,6 +95,10 @@
 </attribute>
 <attribute>
 <name>length</name>
+<required>false</required>
+</attribute>
+<attribute>
+<name>key</name>
 <required>false</required>
 </attribute>
 </tag>

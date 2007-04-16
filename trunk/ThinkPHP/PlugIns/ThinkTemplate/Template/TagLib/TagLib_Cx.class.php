@@ -138,16 +138,19 @@ class TagLib_Cx extends TagLib
         $empty      = isset($tag['empty'])?$tag['empty']:'';
         $offset     = isset($tag['offset'])?$tag['offset']:0;
         $length     = isset($tag['length'])?$tag['length']:'';
+		$key			=	isset($tag['key'])?$tag['key']:'i';
         if(strpos($name,'.')) {
         	$name  =  str_replace('.','->',$name);
         }
        // if($this->tpl->get($name)){
             $parseStr  =  '<?php if(isset($'.$name.')): ?>';
+			$parseStr	.= '<?php $'.$key.' = 0; ?>';
             if(!empty($offset)) {
                 $parseStr  .= '<?php $'.$name.'= array_slice($'.$name.','.$offset.','.$length.') ?>';
             }
             $parseStr .= '<?php if( count($'.$name.')==0 ) echo "'.$empty.'" ?>';
             $parseStr .= '<?php foreach($'.$name.' as $key=>$'.$id.'): ?>';
+			$parseStr .= '<?php ++$'.$key.';?>';
             $parseStr .= $this->tpl->parse($content);
             $parseStr .= '<?php endforeach; ?>';
             $parseStr .=  '<?php endif; ?>';
@@ -247,17 +250,20 @@ class TagLib_Cx extends TagLib
         $id         = isset($tag['id'])?$tag['id']:$name;
         $offset     = isset($tag['offset'])?$tag['offset']:0;
         $length     = isset($tag['length'])?$tag['length']:'';
+		$key			=	isset($tag['key'])?$tag['key']:'i';
         if(strpos($name,'.')) {
         	$name  =  str_replace('.','->',$name);
         }
         //if($this->tpl->get($name)){
             $parseStr  =  '<?php if(isset($'.$name.')): ?>';
+			$parseStr	.= '<?php $'.$key.' = 0; ?>';
             $parseStr  .= '<?php if (is_array($'.$name.')): ?>';
             $parseStr  .= '<?php if(count($'.$name.')==0 ) echo "'.$empty.'"; ?>';
             if(!empty($length)) {
                 $parseStr  .= '<?php $'.$name.'= array_slice($'.$name.','.$offset.','.$length.') ?>';
             }
             $parseStr .= '<?php foreach($'.$name.' as $'.$id.'): ?>';
+			$parseStr .= '<?php ++$'.$key.';?>';
             $parseStr .= $content;
             $parseStr .= '<?php endforeach; ?>';
             $parseStr  .= '<?php endif; ?>';
@@ -267,6 +273,7 @@ class TagLib_Cx extends TagLib
                 $parseStr  .= '<?php $'.$name.'= $'.$name.'->getRange('.$offset.','.$length.') ?>';
             }
             $parseStr .= '<?php foreach($'.$name.'->toArray() as $'.$id.'): ?>';
+			$parseStr .= '<?php ++$'.$key.';?>';
             $parseStr .= $content;//$this->tpl->parse($content);
             $parseStr .= '<?php endforeach; ?>';
             $parseStr .=  '<?php endif;endif?>';
@@ -498,7 +505,7 @@ class TagLib_Cx extends TagLib
             $function = explode('|',$function);
             $name = $this->tpl->parseVarFunction($name,$function);
         }
-        if('$' == substr($value,0,1)) {
+       if('$' == substr($value,0,1)) {
         	$value  =  str_replace('.','->',$value);
             $parseStr = '<?php if('.$name.'!='.$value.'): ?>';
         }else {
