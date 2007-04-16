@@ -262,7 +262,7 @@ class TagLib_Cx extends TagLib
             if(!empty($length)) {
                 $parseStr  .= '<?php $'.$name.'= array_slice($'.$name.','.$offset.','.$length.') ?>';
             }
-            $parseStr .= '<?php foreach($'.$name.' as $'.$id.'): ?>';
+            $parseStr .= '<?php foreach($'.$name.' as $key=>$'.$id.'): ?>';
 			$parseStr .= '<?php ++$'.$key.';?>';
             $parseStr .= $content;
             $parseStr .= '<?php endforeach; ?>';
@@ -272,7 +272,7 @@ class TagLib_Cx extends TagLib
             if(!empty($length)) {
                 $parseStr  .= '<?php $'.$name.'= $'.$name.'->getRange('.$offset.','.$length.') ?>';
             }
-            $parseStr .= '<?php foreach($'.$name.'->toArray() as $'.$id.'): ?>';
+            $parseStr .= '<?php foreach($'.$name.'->toArray() as $key=>$'.$id.'): ?>';
 			$parseStr .= '<?php ++$'.$key.';?>';
             $parseStr .= $content;//$this->tpl->parse($content);
             $parseStr .= '<?php endforeach; ?>';
