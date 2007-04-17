@@ -277,7 +277,7 @@ class TagLib extends Config_Xml
         $array  = array_change_key_case($array['tag']);
         $attrs	= $this->getTagAttrList($tag);
         foreach($attrs as $val) {
-            if($val['required']!='true'  && !isset($array[$val['name']])) {
+            if($val['required']!='false'  && !isset($array[$val['name']])) {
                 $array[$val['name']] = '';
             }
         }

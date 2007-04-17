@@ -6,14 +6,6 @@
 <TR class="row" >
 	<th class="tCenter space"><IMG SRC="../Public/images/gohome.gif" WIDTH="15" HEIGHT="14" BORDER="0" ALT="" align="absmiddle"> 模块导航<session name="userId"> [ <A HREF="__APP__/Node/sort/pid/{$Think.APP_NAME|getAppId}">排序 </A> ]</session></th>
 </TR>
-<session name="girlId">
-<TR class="row " >
-	<TD><IMG SRC="../Public/images/comment.gif" WIDTH="9" HEIGHT="9" BORDER="0" align="absmiddle" ALT=""> <A HREF="__APP__/Index/">登录房间</A></TD>
-</TR>
-<TR class="row " >
-	<TD><IMG SRC="../Public/images/comment.gif" WIDTH="9" HEIGHT="9" BORDER="0" align="absmiddle" ALT=""> <A HREF="__APP__/Public/record/">视频录制</A></TD>
-</TR>
-</session>
 <iterate id="item" name="menu" >
 <notequal name="item['name']" function="strtolower" value="public" >
 <notequal name="item['name']" function="strtolower" value="index" >
