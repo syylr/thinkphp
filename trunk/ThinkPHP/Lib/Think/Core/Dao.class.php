@@ -137,6 +137,9 @@ class Dao extends Base
      */
     var $error;        
 
+	var $auto_save_relations = false;
+	var $auto_delete_relations = false;
+	var $auto_add_relations = false;
 
     /**
      +----------------------------------------------------------
@@ -208,6 +211,10 @@ class Dao extends Base
             $this->error = _OPERATION_WRONG_;
             return false;
         }else {
+			// 保存关联记录
+			if ($this->auto_add_relations){
+				$this->opRelation('ADD',$data);
+			}
             //成功后返回插入ID
             return $this->db->getLastInsID();
         }
@@ -232,8 +239,11 @@ class Dao extends Base
     function addAll($dataList,$table=null,$pk='')
     {
         if(is_object($dataList) && is_instance_of($dataList,'VoList')){
-            $it = $dataList->getIterator();
-        }
+            $dataList = $dataList->getIterator();
+        }elseif(!is_array($dataList)) {
+            $this->error = _DATA_TYPE_INVALID_;
+			return false;
+		}
         //启用事务操作
         $this->startTrans();
         foreach ($it as $data){
@@ -274,6 +284,15 @@ class Dao extends Base
         elseif(is_instance_of($data,'HashMap')) {
             $map    = $data;
         }
+		elseif(is_instance_of($data,'VoList')){
+			//启用事务操作
+			$this->startTrans();
+			foreach ($data as $val){
+				$result   =  $this->save($val,$table);
+			}
+			$this->commit();
+			return $result;
+		}
         else {
             $this->error = _DATA_TYPE_INVALID_;
             return false;
@@ -289,8 +308,67 @@ class Dao extends Base
             $this->error = _OPERATION_WRONG_;
             return false;
         }else {
+			// 保存关联记录
+			if ($this->auto_save_relations){
+				$this->opRelation('SAVE',$data);
+			}
             return True;
         }
+    }
+
+    // 操作关联数据
+    function opRelation($opType,$data,$type='',$name='') 
+    {
+        if(is_array($data)) {
+            $voClass    =   $this->getVo();
+            $vo   = new $voClass();        	
+        }else {
+        	$vo  =  &$data;
+        }    
+		$result	=	false;
+        if(!empty($vo->_link)) {
+            foreach($vo->_link as $val) {
+                if(empty($type) || $val['mapping_type']==$type) {
+                    $mappingType = $val['mapping_type'];
+                    $mappingVo  = $val['class_name'];
+                    $mappingFk   =  $val['foreign_key'];
+                    if(empty($mappingFk)) {
+                    	$mappingFk  =  $this->getTableName().'_id';
+                    }
+                    $mappingName =  $val['mapping_name'];
+                    $mappingCondition = $val['condition'];
+                    if(empty($mappingCondition)) {
+                        $pk   =  is_array($data)? $data[$this->pk]:$data->{$this->pk};
+                        $mappingCondition = "$mappingFk={$pk}";
+                    }
+                    if( empty($name) || $mappingName == $name) {
+                        $dao = D($mappingVo);
+						$mappingData	=	is_array($data)?$data[$mappingName]:$data->$mappingName;
+						if(!empty($mappingData)) {
+							switch($mappingType) {
+								case HAS_ONE:
+								case HAS_MANY:
+									switch (strtoupper($opType)){
+										case 'ADD'	 :	// 增加关联数据
+											$result   =  $dao->add($mappingData);
+											break;
+										case 'SAVE' :	// 更新关联数据
+											$result   =  $dao->save($mappingData,'',$mappingCondition);
+											break;
+										case 'DEL' :	// 删除关联数据
+											$result   =  $dao->delete($mappingCondition);
+											break;
+										default:
+											return false;
+									}
+									break;
+							}
+						}
+                     }                	
+                }
+            }
+        }      
+		return $result;
     }
 
     /**
@@ -358,6 +436,10 @@ class Dao extends Base
             $this->error =  _OPERATION_WRONG_;
             return false;
         }else {
+			// 删除关联记录
+			if ($this->auto_delete_relations){
+				$this->opRelation('DEL',$data);
+			}
             //返回删除记录个数
             return $result;
         }
@@ -441,7 +523,7 @@ class Dao extends Base
         }
         $pk     = $pk?$pk:$this->pk;
         $rs     = $this->db->find($pk."='{$id}'",$table,$fields);
-        if($rs->size()>0) {
+        if($rs && $rs->size()>0) {
                 $vo  =  $this->rsToVo($rs->get(0),'','',$relation);
                 if(DATA_CACHE_ON) 
                     $this->CacheVo($vo,$id);
@@ -479,7 +561,7 @@ class Dao extends Base
             }
         }
         $rs     = $this->db->find($field."='{$value}'",$table,$fields);
-        if($rs->size()>0) {
+        if($rs && $rs->size()>0) {
                 $vo  =  $this->rsToVo($rs->get(0),'','',$relation);
                 if(DATA_CACHE_ON) 
                     $this->CacheVo($vo,$field.'_'.$value);
@@ -1140,7 +1222,7 @@ class Dao extends Base
     function rsToVoList($resultSet,$voClass='',$resultType='',$relation=false) 
     {
         $resultType = !empty($resultType)? $resultType : $this->resultType ;
-       if( $relation ) {
+       if( $relation) {
            $type = isset($relation['type'])?$relation['type']:'';
            $name   =  isset($relation['name'])?$relation['name']:'';
        }
