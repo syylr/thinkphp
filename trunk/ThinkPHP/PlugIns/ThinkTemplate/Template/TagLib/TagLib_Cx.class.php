@@ -139,6 +139,7 @@ class TagLib_Cx extends TagLib
         $offset     = isset($tag['offset'])?$tag['offset']:0;
         $length     = isset($tag['length'])?$tag['length']:'';
 		$key			=	isset($tag['key'])?$tag['key']:'i';
+		$odd			=	isset($tag['odd'])?$tag['odd']:'odd';
         if(strpos($name,'.')) {
         	$name  =  str_replace('.','->',$name);
         }
@@ -151,6 +152,7 @@ class TagLib_Cx extends TagLib
             $parseStr .= '<?php if( count($'.$name.')==0 ) echo "'.$empty.'" ?>';
             $parseStr .= '<?php foreach($'.$name.' as $key=>$'.$id.'): ?>';
 			$parseStr .= '<?php ++$'.$key.';?>';
+			$parseStr .= '<?php $odd = (($'.$key.' % 2 )==0)?>';
             $parseStr .= $this->tpl->parse($content);
             $parseStr .= '<?php endforeach; ?>';
             $parseStr .=  '<?php endif; ?>';
@@ -251,6 +253,7 @@ class TagLib_Cx extends TagLib
         $offset     = isset($tag['offset'])?$tag['offset']:0;
         $length     = isset($tag['length'])?$tag['length']:'';
 		$key			=	isset($tag['key'])?$tag['key']:'i';
+		$odd			=	isset($tag['odd'])?$tag['odd']:'odd';
         if(strpos($name,'.')) {
         	$name  =  str_replace('.','->',$name);
         }
@@ -264,6 +267,7 @@ class TagLib_Cx extends TagLib
             }
             $parseStr .= '<?php foreach($'.$name.' as $key=>$'.$id.'): ?>';
 			$parseStr .= '<?php ++$'.$key.';?>';
+			$parseStr .= '<?php $odd = (($'.$key.' % 2 )==0)?>';
             $parseStr .= $content;
             $parseStr .= '<?php endforeach; ?>';
             $parseStr  .= '<?php endif; ?>';
@@ -274,6 +278,7 @@ class TagLib_Cx extends TagLib
             }
             $parseStr .= '<?php foreach($'.$name.'->toArray() as $key=>$'.$id.'): ?>';
 			$parseStr .= '<?php ++$'.$key.';?>';
+			$parseStr .= '<?php $odd = (($'.$key.' % 2 )==0)?>';
             $parseStr .= $content;//$this->tpl->parse($content);
             $parseStr .= '<?php endforeach; ?>';
             $parseStr .=  '<?php endif;endif?>';
