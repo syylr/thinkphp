@@ -81,32 +81,25 @@ class Dao extends Base
     // 返回元数据类型
     var $resultType =  DATA_RESULT_TYPE;
 
-    //+----------------------------------------
-    //|    数据表
-    //| 数据表由<项目名_模块名_表名> 三部分组成
-    //| appPrefix_modPrefix_table
-    //+----------------------------------------
-
     /**
      +----------------------------------------------------------
-     * 项目前缀
+     * 数据表前缀
      +----------------------------------------------------------
      * @var string
      * @access protected
      +----------------------------------------------------------
      */
-    var $appPrefix	=	DB_PREFIX;            
+    var $tablePrefix	=	DB_PREFIX;            
 
     /**
      +----------------------------------------------------------
-     * 模块前缀
+     * 数据表后缀
      +----------------------------------------------------------
      * @var string
      * @access protected
      +----------------------------------------------------------
      */
-    var $modPrefix;            
-
+	var $tableSuffix = '';
     /**
      +----------------------------------------------------------
      * 数据表名
@@ -141,6 +134,9 @@ class Dao extends Base
 	var $auto_delete_relations = false;
 	var $auto_add_relations = false;
 
+	var $auto_create_timestamps = array('create_at','create_on','cTime');
+	var $auto_update_timestamps = array('update_at','update_on','mTime');
+
     /**
      +----------------------------------------------------------
      * 架构函数 取得DB类的实例对象
@@ -148,16 +144,16 @@ class Dao extends Base
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param string $appPrefix 数据库前缀
+     * @param string $tablePrefix 数据库前缀
      * @param string $tableName 数据表名
      * @param string $pk  主键名
      * @param boolean $autoIncrement  是否自动增长
      +----------------------------------------------------------
      */
-    function __construct($appPrefix='',$tableName='',$pk='',$autoIncrement=true,$returnType='')
+    function __construct($tablePrefix='',$tableName='',$pk='',$autoIncrement=true,$returnType='')
     {
         $this->db = DB::getInstance();
-        if(!empty($appPrefix))  $this->appPrefix    =   $appPrefix;
+        if(!empty($tablePrefix))  $this->tablePrefix    =   $tablePrefix;
         if(!empty($tableName))  $this->tableName    =   $tableName;
         if(!empty($pk))         $this->pk = $pk;
         if(!empty($returnType))         $this->returnType = $returnType;
@@ -1296,9 +1292,34 @@ class Dao extends Base
             $val = isset($_POST[$name])?$_POST[$name]:$_GET[$name];
             //保证赋值有效
             if(!is_null($val) && property_exists($vo,$name)){
+				// 首先保证表单赋值
                 $vo->$name = $val;
-            }
+            }elseif(	(strtolower($type) == "add" && in_array($name,$this->auto_create_timestamps)) || 
+						(strtolower($type) == "edit" && in_array($name,$this->auto_update_timestamps)) ){ 
+				// 自动保存时间戳
+				$vo->$name = time();
+			}
         }
+
+		// Vo自动填充
+		if(!empty($vo->_auto)) {
+			foreach ($vo->_auto as $auto){
+				if(property_exists($vo,$auto[0])) {
+					if(empty($auto[2])) $auto[2] = 'ADD';// 默认为新增的时候自动填充
+					if( (strtolower($type) == "add"  && $auto[2] == 'ADD') || 	(strtolower($type) == "edit"  && $auto[2] == 'UPDATE') || $auto[2] == 'ALL') 
+					{
+						if( function_exists($auto[1])) {
+							// 如果定义为函数则调用
+							$vo->{$auto[0]} = $auto[1]();
+						}else {
+							// 否则作为字符串处理
+							$vo->{$auto[0]} = $auto[1];
+						}
+					}
+				}
+			}
+		}
+
         // 属性验证
         if(isset($vo->_validate)) {
             // 如果设置了Vo验证
@@ -1332,9 +1353,9 @@ class Dao extends Base
     function getRealTableName()
     {
         if(empty($this->realTableName)) {
-            $realTableName  = !empty($this->appPrefix) ? $this->appPrefix.'_' : '';
-            $realTableName .= !empty($this->modPrefix) ? $this->modPrefix.'_' : '';    
+            $realTableName  = !empty($this->tablePrefix) ? $this->tablePrefix.'_' : '';
             $realTableName .= !empty($this->tableName) ? $this->tableName : strtolower(substr($this->__toString(),0,-3));
+            $realTableName .= !empty($this->tableSuffix) ? '_'.$this->tableSuffix : '';    
             $this->realTableName    =   $realTableName;
         }
         return $this->realTableName;
@@ -1352,12 +1373,11 @@ class Dao extends Base
      */
     function getRelationTableName($relationDao)
     {
-        $realtionTable  = !empty($this->appPrefix) ? $this->appPrefix.'_' : '';
-        $realtionTable .= !empty($this->modPrefix) ? $this->modPrefix.'_' : '';    
-        $realtionTable .= !empty($this->tableName) ? $this->tableName : strtolower(substr($this->__toString(),0,-3));
-        $realtionTable .= '_'.strtolower(substr($relationDao->__toString(),0,-3));
-        $realtionTable    =   $realtionTable;
-        return $realtionTable;
+        $relationTable  = !empty($this->tablePrefix) ? $this->tablePrefix.'_' : '';
+        $relationTable .= !empty($this->tableName) ? $this->tableName : strtolower(substr($this->__toString(),0,-3));
+        $relationTable .= '_'.strtolower(substr($relationDao->__toString(),0,-3));
+        $relationTable .= !empty($this->tableSuffix) ? '_'.$this->tableSuffix : '';    
+        return $relationTable;
     }
 
     /**
