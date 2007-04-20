@@ -1286,6 +1286,9 @@ class Dao extends Base
             $pk         = $pk?$pk:$this->pk;
             $value      = isset($_GET[$pk])?$_GET[$pk]:$_POST[$pk];
             $vo         = $dao->getById($value);
+			if(!$vo) {
+				return false;
+			}
         }
         //给Vo对象赋值
         foreach ( $vo->__varList() as $name){
