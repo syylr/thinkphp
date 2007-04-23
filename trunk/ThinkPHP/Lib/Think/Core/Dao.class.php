@@ -815,7 +815,7 @@ class Dao extends Base
      */
     function execute($sql)
     {
-        if(empty($sql)) {
+        if(!empty($sql)) {
             $result =   $this->db->execute($sql);
             return $result;
         }else {
