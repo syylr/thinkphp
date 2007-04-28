@@ -558,7 +558,7 @@ class Action extends Base
      * @return void
      +----------------------------------------------------------
      */
-    function forward($action='_dispatch_jump',$module=MODULE_NAME,$exit=false,$delay=0)
+    function forward($action='_dispatch_jump',$module=MODULE_NAME,$app=APP_NAME,$exit=false,$delay=0)
     {
         if(!empty($delay)) {
             //指定延时跳转 单位为秒
@@ -571,7 +571,7 @@ class Action extends Base
             if( MODULE_NAME!= $module) {
                 // 跳转执行指定模块的操作
                 $moduleClass = $module.'Action';
-                import(APP_NAME.'.Action.'.$moduleClass);
+                import($app.'.Action.'.$moduleClass);
                 $class  = & new $moduleClass();
                 call_user_func(array(&$class,$action));
             }else {
