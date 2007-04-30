@@ -93,7 +93,9 @@ Author URI: http://blog.liu21st.com/
             }
             $cacheInfo   = array_map('strtoupper',$array['tag']);
             $cache->set(MODULE_NAME.'_'.ACTION_NAME.'_CACHE',$cacheInfo,-1);
-        }
+        }else 
+			$cacheInfo = array('type'=>'', 'default'=>'');
+
         if($cacheInfo['type']=='PART') {
             // 部分视图缓存 分两种情况 
             $cacheData    = array();
