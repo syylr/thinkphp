@@ -58,7 +58,7 @@ Class Db_Pdo extends Db{
 			$this->dsn = $config['pdodsn'];
 		}
 		if(empty($config['pdoparms'])) {
-			$this->parms = defined('DB_PDO_DSN')?DB_PDO_DSN:'';
+			$this->parms = defined('DB_PDO_PARMS')?DB_PDO_PARMS:'';
 		}else {
 			$this->parms = $config['pdoparms'];
 		}
