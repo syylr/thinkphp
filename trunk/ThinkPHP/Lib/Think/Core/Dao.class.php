@@ -367,6 +367,55 @@ class Dao extends Base
 		return $result;
     }
 
+	// 保存多对多中间表
+	function saveHabtm($data,$name,$relationData) {
+        if(is_array($data)) {
+            $voClass    =   $this->getVo();
+            $vo   = new $voClass($data);        	
+        }elseif(is_instance_of($data,'Vo')){
+        	$vo  =  &$data;
+        }
+		$result	=	false;
+		if(!empty($vo->_link)) {
+			// 存在关联
+			foreach ($vo->_link as $val){
+				if($val['mapping_type']==MANY_TO_MANY && $val['mapping_name'] == $name) {
+					// habtm 关联
+                    $mappingVo  = $val['class_name'];
+                    $mappingFk   =  $val['foreign_key'];
+                    if(empty($mappingFk)) {
+                    	$mappingFk  =  $this->getTableName().'_id';
+                    }
+					$dao = D($mappingVo);
+					$mappingRelationFk = $val['relation_foreign_key'];
+					if(empty($mappingRelationFk)) {
+						$mappingRelationFk   = $dao->getTableName().'_id';
+					}
+					$mappingRelationTable  =  $val['relation_table'];
+					if(empty($mappingRelationTable)) {
+						$mappingRelationTable  =  $this->getRelationTableName($dao);
+					}
+					if(is_array($relationData)) {
+						$relationData	=	implode(',',$relationData);
+					}
+			        $this->startTrans();
+					// 删除关联表数据
+					$this->db->remove($mappingFk.'='.$vo->{$this->pk},$mappingRelationTable);
+					// 插入关联表数据
+					$sql  = 'INSERT INTO '.$mappingRelationTable.' ('.$mappingFk.','.$mappingRelationFk.') SELECT a.'.$this->pk.',b.'.$dao->pk.' FROM '.$this->getRealTableName().' AS a ,'.$dao->getRealTableName()." AS b where a.".$this->pk.' ='. $vo->{$this->pk}.' AND  b.'.$dao->pk.' IN ('.$relationData.") ";	
+					$result	=	$dao->execute($sql);
+					if($result) {
+				        // 提交事务
+				        $this->commit();
+					}else {
+						// 事务回滚
+						$this->rollback();
+					}
+				}
+			}
+		}
+		return $result;
+	}
     /**
      +----------------------------------------------------------
      * 删除数据
@@ -669,9 +718,9 @@ class Dao extends Base
                         $mappingParentKey = !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
                     }
                     if(empty($mappingCondition)) {
-                        $fk   =  is_array($result)? $result[$mappingFk]:$result->{$mappingFk};
+                        $fk   =  is_array($result)? $result[$this->pk]:$result->{$this->pk};
                         if(empty($mappingParentKey)) {
-                        	$mappingCondition = "{$dao->pk}={$fk}";
+                        	$mappingCondition = "{$mappingFk}={$fk}";
                         }else {
                             if($mappingType== BELONGS_TO) {
                                 $parentKey   =  is_array($result)? $result[$mappingParentKey]:$result->{$mappingParentKey};
@@ -869,7 +918,7 @@ class Dao extends Base
         if(!empty($rs)) {
             $result =   $rs->get(0);
             $field  =   is_array($result)? $result[$col]:$result->{$col};
-            return empty($field)? NULL : $field;         	
+            return $field;         	
         }else {
         	return NULL;
         }
