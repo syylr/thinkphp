@@ -754,7 +754,7 @@ class Dao extends Base
                                 if(empty($mappingRelationTable)) {
                                 	$mappingRelationTable  =  $this->getRelationTableName($dao);
                                 }
-								$sql = "SELECT b.* FROM {$mappingRelationTable} AS a, {$mappingDao->getRealTableName()} AS b WHERE a.{$mappingRelationFk} = b.{$dao->pk} AND a.{$mappingCondition}";
+								$sql = "SELECT b.* FROM {$mappingRelationTable} AS a, ".$mappingDao->getRealTableName()." AS b WHERE a.{$mappingRelationFk} = b.{$dao->pk} AND a.{$mappingCondition}";
                                 if(!empty($mappingOrder)) {
                                 	$sql .= ' ORDER BY '.$mappingOrder;
                                 }
