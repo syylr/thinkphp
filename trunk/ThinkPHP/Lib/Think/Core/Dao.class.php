@@ -684,8 +684,8 @@ class Dao extends Base
      * @access public 
      +----------------------------------------------------------
      * @param mixed $result  返回数据
-     * @param string $relation  关联信息
-     * @param string $voClass 指定vo类 
+     * @param string $type  关联类型
+     * @param string $name 关联名称
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
@@ -754,7 +754,7 @@ class Dao extends Base
                                 if(empty($mappingRelationTable)) {
                                 	$mappingRelationTable  =  $this->getRelationTableName($dao);
                                 }
-                                $sql  = 'SELECT b.* FROM '.$mappingRelationTable.' AS a ,'.$dao->getRealTableName()." AS b where a.{$mappingRelationFk}=b.{$dao->pk} AND  a.{$mappingFk}={$pk} ";
+								$sql = "SELECT b.* FROM {$mappingRelationTable} AS a, {$mappingDao->getRealTableName()} AS b WHERE a.{$mappingRelationFk} = b.{$dao->pk} AND a.{$mappingCondition}";
                                 if(!empty($mappingOrder)) {
                                 	$sql .= ' ORDER BY '.$mappingOrder;
                                 }
