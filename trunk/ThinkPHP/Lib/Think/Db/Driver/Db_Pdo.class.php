@@ -372,8 +372,8 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      */
     function getTables($dbName='') { 
-        $this->_query('SHOW TABLES');
-        $result =   $this->getAll();
+        $result = $this->_query('SHOW TABLES');
+		$result = $result->toArray();
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
