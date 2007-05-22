@@ -357,7 +357,7 @@ class UploadFile extends Base
         }else {
             if(function_exists($rule)) {
                 //使用函数生成一个唯一文件标识号
-            	$saveName = $rule();
+            	$saveName = $rule("");
             }else {
                 //使用给定的文件名作为标识号
             	$saveName = $rule;
