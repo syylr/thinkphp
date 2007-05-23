@@ -414,11 +414,19 @@ function get_instance_of($className,$method='',$args=array())
  */
 function __autoload($classname)
 {
-    $autoLoad = array('@.Vo','Admin.Vo');
-    foreach($autoLoad as $val){
-        if( import($val.'.'.$classname) )    return;
-    }
-    halt("不能自动载入".$classname." 类库。");
+	if(substr($classname,-2)=='Vo') {
+		import('@.Vo.'.$classname);
+		return;
+	}else if(substr($classname,-3)=="Dao") {
+		import('@.Dao.'.$classname);
+		return;
+	}else {
+		if(import("Think.Util.".$classname)) {
+			return;
+		}else {
+			halt("无法加载".$classname."类库");
+		}
+	}
 }
 
 /**
