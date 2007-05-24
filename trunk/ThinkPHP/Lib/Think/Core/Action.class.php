@@ -96,7 +96,6 @@ class Action extends Base
                 $this->error($this->error);
             }
         }
-
         return ;
     }
 
@@ -362,7 +361,7 @@ class Action extends Base
     function getDaoClass() 
     {
         $daoClass   = $this->getDao();
-        $dao        = new $daoClass();
+        $dao        = D($daoClass);
         return $dao;
     }
 
@@ -422,9 +421,9 @@ class Action extends Base
      * @return void
      +----------------------------------------------------------
      */
-    function fetch($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='',$display=false)
+    function fetch($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='')
     {
-        $this->tpl->fetch($templateFile,$charset,$contentType,$varPrefix,$display);
+        return $this->tpl->fetch($templateFile,$charset,$contentType,$varPrefix,false);
     }
 
     /**
@@ -527,19 +526,16 @@ class Action extends Base
         }
         if($info=='') {
             if($this->get('error')) { 
-                $info =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/update.gif" align="absmiddle" BORDER="0"> <span style="color:red">'.$this->get('error').'</span>';                	
-            }else {
-                if($this->get('message')) {
-                    $info =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/ok.gif" align="absmiddle" BORDER="0"> <span style="color:blue">'.$this->get('message').'</span>';                	
-                }
+                $info =   $this->get('error');                	
+            }elseif($this->get('message')) {
+                $info =   $this->get('message');                	
             }         	
-        }else {
-            if($status==1) { 
-                $info =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/ok.gif" align="absmiddle" BORDER="0"> <span style="color:blue">'.$info.'</span>';
-            }else {
-                $info =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/update.gif" align="absmiddle" BORDER="0"> <span style="color:red">'.$info.'</span>';
-            }          	
         }
+        if($status==1) { 
+            $info =   ' <span style="color:blue">'.$info.'</span>';
+        }else {
+            $info =   ' <span style="color:red">'.$info.'</span>';
+        }  
         $result['status']  =  $status;
    	    $result['info'] =  $info;
         $result['data'] = $data;
@@ -673,7 +669,9 @@ class Action extends Base
             $this->_filter($map);
         }
         $dao    =   $this->getDaoClass();
-        $this->_list($dao,$map);
+        if(!empty($dao)) {
+        	$this->_list($dao,$map);
+        }
         return;
     }
 
@@ -819,7 +817,9 @@ class Action extends Base
 
         //保存新增数据对象
         $dao        = $this->getDaoClass();
-        $this->_insert($dao);
+        if(!empty($dao)) {
+        	$this->_insert($dao);
+        }
     }
 
     /**
@@ -836,10 +836,17 @@ class Action extends Base
     function _insert($dao) 
     {
         $vo = $dao->createVo();
+        if(false === $vo) {
+        	$this->error($dao->error);
+        }
         //保存当前Vo对象
         $id = $dao->add($vo);
         if($id) { //保存成功
-            $vo->{$dao->pk} =   $id;
+            if(is_array($vo)) {
+            	$vo[$dao->pk]  =  $id;
+            }else {
+                $vo->{$dao->pk} =   $id;            	
+            }
             // 缓存数据对象
             $this->cacheVo($vo,$id);
             if(SAVE_PARENT_VO && 0!==strcasecmp(get_parent_class($vo),'Vo')) {
@@ -900,26 +907,28 @@ class Action extends Base
         if(empty($dao)) {
         	$dao    = $this->getDaoClass();
         }
-        $id     = $_REQUEST[$dao->pk];
-        // 判断是否存在缓存Vo
-        $vo=$this->getCacheVo($this->getVo(),$id);
-        if(false === $vo) {
-   	        $vo     = $dao->find($dao->pk."='$id'");
-            if(!$vo) {
-                throw_exception(_SELECT_NOT_EXIST_);
+        if(!empty($dao)) {
+            $id     = $_REQUEST[$dao->pk];
+            // 判断是否存在缓存Vo
+            $vo=$this->getCacheVo($this->getVo(),$id);
+            if(false === $vo) {
+                $vo     = $dao->find($dao->pk."='$id'");
+                if(!$vo) {
+                    throw_exception(_SELECT_NOT_EXIST_);
+                }
+                // 缓存Vo对象，便于下次显示
+                $this->cacheVo($vo,$vo->{$dao->pk});
             }
-            // 缓存Vo对象，便于下次显示
-            $this->cacheVo($vo,$vo->{$dao->pk});
-        }
-
-        //读取附件信息
-        $attachDao = D('AttachDao');
-        $attachs = $attachDao->findAll("module='".$dao->getTableName()."' and recordId='$id'");
-        //模板变量赋值
-        $this->assign("attachs",$attachs);
-        $this->assign('vo',$vo);
-        if($this->get('ajax')) {
-        	$this->ajaxReturn($vo);
+            $this->assign('vo',$vo);
+            if($this->get('ajax')) {
+                $this->ajaxReturn($vo);
+            }
+            //读取附件信息
+            $attachDao = D('AttachDao');
+            $attachs = $attachDao->findAll("module='".$dao->getTableName()."' and recordId='$id'");
+            if($attachs) {
+            	$this->assign("attachs",$attachs);
+            }
         }
         $this->display();
         return;
@@ -966,7 +975,9 @@ class Action extends Base
 
         //更新数据对象
         $dao    = $this->getDaoClass();
-        $this->_update($dao);
+        if(!empty($dao)) {
+        	$this->_update($dao);
+        }
     }
 
     /**
@@ -1246,7 +1257,7 @@ class Action extends Base
         import("ORG.Net.Http");
         import('@.Dao.AttachDao');
         $id         =   $_GET['id'];
-        $dao        =   new AttachDao();
+        $dao        =   D("Attach");
         $attach	    =   $dao->getById($id);
         if($attach) {
             $filename   =   $attach->savepath.$attach->savename;
@@ -1298,17 +1309,19 @@ class Action extends Base
     {
         //删除指定记录
         $dao        = $this->getDaoClass();
-        $id         = $_REQUEST[$dao->pk];
-        if(isset($id)) {
-            $condition = $dao->pk.' in ('.$id.')'; 
-            if($dao->delete($condition)){
-                $this->assign("message",_DELETE_SUCCESS_);
-                $this->assign("jumpUrl",$this->getReturnUrl());
+        if(!empty($dao)) {
+            $id         = $_REQUEST[$dao->pk];
+            if(isset($id)) {
+                $condition = $dao->pk.' in ('.$id.')'; 
+                if($dao->delete($condition)){
+                    $this->assign("message",_DELETE_SUCCESS_);
+                    $this->assign("jumpUrl",$this->getReturnUrl());
+                }else {
+                    $this->error(_DELETE_FAIL_);
+                }        	
             }else {
-                $this->error(_DELETE_FAIL_);
+                $this->error('非法操作');
             }        	
-        }else {
-        	$this->error('非法操作');
         }
         $this->forward();
     }
