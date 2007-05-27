@@ -27,11 +27,13 @@
  * @version    $Id$
  +------------------------------------------------------------------------------
  */
+
+//记录开始运行时间
 $GLOBALS['_beginTime'] = array_sum(explode(' ', microtime()));
 //ThinkPHP系统目录定义
 if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
-    
-//加载系统定义文件和公共函数库
+
+//加载系统定义文件和系统函数库
 require_once(THINK_PATH."/Common/defines.php");
 require_once(THINK_PATH."/Common/functions.php");
 
@@ -50,5 +52,5 @@ import("Think.Core.App");
 import("Think.Core.Vo");
 import("Think.Core.Dao");
 import("Think.Core.Action");
-
+$GLOBALS['_loadTime'] = array_sum(explode(' ', microtime()));
 ?>
