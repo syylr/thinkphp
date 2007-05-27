@@ -149,10 +149,14 @@ class Template extends Base
      */
     function fetch($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='',$display=false) 
     {
+		$startTime = array_sum(explode(' ', microtime()));
         if(null===$templateFile) {
             // 使用null参数作为模版名直接返回不做任何输出
         	return ;
         }
+        // 网页字符编码
+        header("Content-Type:".$contentType."; charset=".$charset);
+        header("Cache-control: private");  //支持页面回跳
         // 设置输出缓存
         ini_set('output_buffering',4096);
         if(COMPRESS_PAGE) {//开启页面压缩输出
@@ -166,10 +170,8 @@ class Template extends Base
         apply_filter('ob_init');
         //页面缓存
        	ob_start(); 
+
         ob_implicit_flush(0); 
-        // 网页字符编码
-        header("Content-Type:".$contentType."; charset=".$charset);
-        header("Cache-control: private");  //支持页面回跳
         // 缓存开启后执行的过滤
         apply_filter('ob_start');
         // 模版文件名过滤
@@ -185,6 +187,7 @@ class Template extends Base
         }
         // 模版变量过滤
         $this->tVar = apply_filter('template_var',$this->tVar);
+
         //根据不同模版引擎进行处理
         if('PHP'==strtoupper(TMPL_ENGINE_TYPE) || ''== TMPL_ENGINE_TYPE ) {
         	//使用PHP模版
@@ -201,9 +204,10 @@ class Template extends Base
         // 输出过滤
         $content = apply_filter('ob_content',$content);
         if($display) {
+			$endTime = array_sum(explode(' ', microtime()));
             echo $content;
             if(SHOW_RUN_TIME) {
-            echo '<div style="text-align:center;width:100%">Process: '.number_format((array_sum(split(' ', microtime())) - $GLOBALS['_beginTime']), 6).'s</div>';
+            echo '<div style="text-align:center;width:100%">Process: '.number_format(($endTime - $GLOBALS['_beginTime']), 6).'s ( Load:'.number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 6).'s Init:'.number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 6).'s Run:'.number_format(($startTime  -$GLOBALS['_initTime'] ), 6).'s Template:'.number_format(($endTime - $startTime), 6).'s )</div>';
             }
             return null;
         }else {
