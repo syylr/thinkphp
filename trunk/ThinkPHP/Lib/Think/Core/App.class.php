@@ -160,7 +160,7 @@ class App extends Base
 
         // 应用初始化插件
         apply_filter('app_init');
-
+		$GLOBALS['_initTime'] = array_sum(explode(' ', microtime()));
         return ;
     }
 
@@ -497,7 +497,6 @@ class App extends Base
         }
         // 执行应用结束过滤器
         apply_filter('app_end');
-
         // 写入错误日志
         if(WEB_LOG_RECORD)
             system_out(trim(implode('',$this->debug)));
