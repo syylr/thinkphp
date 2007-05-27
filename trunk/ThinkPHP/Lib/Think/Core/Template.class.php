@@ -207,7 +207,7 @@ class Template extends Base
 			$endTime = array_sum(explode(' ', microtime()));
             echo $content;
             if(SHOW_RUN_TIME) {
-            echo '<div style="text-align:center;width:100%">Process: '.number_format(($endTime - $GLOBALS['_beginTime']), 6).'s ( Load:'.number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 6).'s Init:'.number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 6).'s Run:'.number_format(($startTime  -$GLOBALS['_initTime'] ), 6).'s Template:'.number_format(($endTime - $startTime), 6).'s )</div>';
+            echo '<div style="text-align:center;width:100%">Process: '.number_format(($endTime - $GLOBALS['_beginTime']), 3).'s ( Load:'.number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3).'s Init:'.number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3).'s Exec:'.number_format(($startTime  -$GLOBALS['_initTime'] ), 3).'s Template:'.number_format(($endTime - $startTime), 3).'s )</div>';
             }
             return null;
         }else {
