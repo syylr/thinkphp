@@ -549,6 +549,8 @@ class Action extends Base
      +----------------------------------------------------------
      * @param mixed $action 要跳转的Action 默认为_dispatch_jump
      * @param string $module 要跳转的Module 默认为当前模块
+     * @param string $app 要跳转的App 默认为当前项目
+     * @param boolean $exit  是否继续执行
      * @param integer $delay 延时跳转的时间 单位为秒
      +----------------------------------------------------------
      * @return void
@@ -581,6 +583,26 @@ class Action extends Base
         	return ;
         }
     }
+
+    /**
+     +----------------------------------------------------------
+     * Action跳转 支持指定模块和延时跳转
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param mixed $action 要跳转的Action 
+     * @param string $module 要跳转的Module 默认为当前模块
+     * @param string $app 要跳转的App 默认为当前项目
+     * @param integer $delay 延时跳转的时间 单位为秒
+     * @param string $msg 跳转显示信息
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+	function redirect($action,$module=MODULE_NAME,$app=APP_NAME,$delay=0,$msg='') {
+		$url	=	str_replace(APP_NAME,$app,__APP__).'/'.$module.'/'.$action;
+		redirect($url,$delay,$msg);
+	}
 
     /**
      +----------------------------------------------------------
