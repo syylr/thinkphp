@@ -476,8 +476,13 @@ class App extends Base
                 if(file_exists(TMPL_FILE_NAME)) {
                 	$module->display();
                 }else {
-                    // 如果定义操作无法调用 抛出异常
-                    throw_exception(_ERROR_ACTION_.ACTION_NAME);                    	
+					// 如果定义了_empty操作 则调用
+					if(method_exists($module,'_empty')) {
+						$module->_empty();
+					}else {
+						// 如果定义操作无法调用 抛出异常
+						throw_exception(_ERROR_ACTION_.ACTION_NAME);       
+					}                   	
                 }
             }
             //执行操作方法
