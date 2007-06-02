@@ -463,9 +463,9 @@ function include_cache($filename)
 {
     static $_importFiles = array();
     if(file_exists($filename)){
-        if (!isset($_importFiles[strtolower(basename($filename))])) {
+        if (!isset($_importFiles[$filename])) {
             include($filename);
-            $_importFiles[strtolower(basename($filename))] = true;
+            $_importFiles[$filename] = true;
             //$GLOBALS['LoadFile']++;//统计加载文件数
             return true;
         }
@@ -487,9 +487,9 @@ function require_cache($filename)
 {
     static $_importFiles = array();
     if(file_exists($filename)){
-        if (!isset($_importFiles[strtolower(basename($filename))])) {
+        if (!isset($_importFiles[$filename])) {
             require($filename);
-            $_importFiles[strtolower(basename($filename))] = true;
+            $_importFiles[$filename] = true;
             //$GLOBALS['LoadFile']++;//统计加载文件数
             return true;
         }
