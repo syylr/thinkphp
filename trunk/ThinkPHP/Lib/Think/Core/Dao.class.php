@@ -1037,6 +1037,52 @@ class Dao extends Base
 
     /**
      +----------------------------------------------------------
+     * 查询符合条件的第N条记录
+     * 0 表示第一条记录 -1 表示最后一条记录
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param integer $position 记录位置
+     * @param mixed $condition 条件
+     * @param string $table  数据表名
+     * @param string $fields 字段名，默认为*
+     * @param boolean $relation 是否读取关联
+     +----------------------------------------------------------
+     * @return Vo | null
+     +----------------------------------------------------------
+     */
+    function getN($position=0,$condition='',$table=NULL,$fields='*',$relation=false)
+    {
+        $table  = empty($table)?$this->getRealTableName():$table;
+        $rs = $this->db->find($condition,$table,$fields,NULL,NULL,NULL,NULL);
+        if($rs && $rs->size()>0) {
+			if($position<0) {
+				// 逆序查找
+				$position = $rs->size()-abs($position);
+			}
+			if($position<$rs->size()) {
+				$vo  =  $this->rsToVo($rs->get($position),'','',$relation);
+				return $vo;
+			}else {
+				return null;
+			}
+        }else {
+            return null;
+        }
+    }
+
+	// 获取第一条记录
+	function getFirst($condition='',$table=NULL,$fields='*',$relation=false) {
+		return $this->getN(0,$condition,$table,$fields,$relation);
+	}
+
+	// 获取最后一条记录
+	function getLast($condition='',$table=NULL,$fields='*',$relation=false) {
+		return $this->getN(-1,$condition,$table,$fields,$relation);
+	}
+
+    /**
+     +----------------------------------------------------------
      * 缓存VoList对象
      * 
      +----------------------------------------------------------
