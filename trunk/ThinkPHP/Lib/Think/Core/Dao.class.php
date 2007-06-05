@@ -202,6 +202,8 @@ class Dao extends Base
             //删除主键属性 由数据库自动生成
             $map->remove($pk?$pk:$this->pk); 
         }
+		// 增加对数据库映射字段和属性不同的支持
+		$map	=	$this->dealMap($map);
         $table = empty($table)?$this->getRealTableName():$table;
         if(FALSE === $this->db->add($map,$table)){
             $this->error = _OPERATION_WRONG_;
@@ -215,6 +217,22 @@ class Dao extends Base
             return $this->db->getLastInsID();
         }
     }
+
+	// 对保存到数据库的Map对象进行处理
+	// 增加对数据库映射字段和属性不同的支持
+	function dealMap($map,$vo=NULL) {
+		if(empty($vo)) {
+			$voClass = $this->getVo();
+			$vo = new $voClass();
+		}
+		if(isset($vo->_map)) {
+			foreach ($vo->_map as $key=>$val){
+				$map->put($val,$map->get($key));
+				$map->remove($key);
+			}
+		}
+		return $map;
+	}
 
     /**
      +----------------------------------------------------------
@@ -293,12 +311,14 @@ class Dao extends Base
             $this->error = _DATA_TYPE_INVALID_;
             return false;
         }
-
+		
         $pk     = $pk?$pk:$this->pk;
         if($map->containsKey($pk)) {
             $where  = $pk."=".$map->get($pk);
             $map->remove($pk);         	
         }
+		// 增加对数据库映射字段和属性不同的支持
+		$map	=	$this->dealMap($map);		
         $table = empty($table)?$this->getRealTableName():$table;
         if(FALSE === $this->db->save($map,$table,$where,$limit,$order)){
             $this->error = _OPERATION_WRONG_;
@@ -471,6 +491,7 @@ class Dao extends Base
             $map    = $data;
         }
         if(!empty($map)) {
+			$map	=	$this->dealMap($map);
             $pk     = $pk?$pk:$this->pk;
             $where  = $pk."=".$map->get($pk);            
         }else {

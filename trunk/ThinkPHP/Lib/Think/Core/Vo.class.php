@@ -22,8 +22,6 @@ define('Think_CACHE_NO',      -1);   //不缓存
 define('Think_CACHE_DYNAMIC', 1);   //动态缓存
 define('Think_CACHE_STATIC',  2);   //静态缓存（永久缓存）
 
-import("Think.Util.HashMap");
-
 /**
  +------------------------------------------------------------------------------
  * 数据对象类
@@ -33,6 +31,7 @@ import("Think.Util.HashMap");
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
+import("Think.Util.HashMap");
 class Vo extends Base
 {
     /**
@@ -56,8 +55,15 @@ class Vo extends Base
             }
             if(is_array($data)) {
                 foreach($data as $key=>$val) {
-                    if(false===$strict || ($strict && property_exists($this,$key)))
+                    if(false===$strict || ($strict && property_exists($this,$key)) )
                         $this->$key = $val; 
+					// 增加对数据库映射字段和属性不同的支持
+					if(isset($this->_map) ){
+						$_key = array_search($key,$this->_map);
+						if($_key !== false) {
+							$this->$_key = $val;
+						}
+					}
                 }        	
             }        	
         }
