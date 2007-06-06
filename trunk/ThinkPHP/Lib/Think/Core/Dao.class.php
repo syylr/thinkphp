@@ -260,7 +260,7 @@ class Dao extends Base
 		}
         //启用事务操作
         $this->startTrans();
-        foreach ($it as $data){
+        foreach ($dataList as $data){
             $this->add($data,$table,$pk);
         }
         //提交
