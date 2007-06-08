@@ -30,6 +30,7 @@
 
 //记录开始运行时间
 $GLOBALS['_beginTime'] = array_sum(explode(' ', microtime()));
+
 //ThinkPHP系统目录定义
 if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
 
@@ -43,14 +44,16 @@ require_once(THINK_PATH."/Common/functions.php");
 
 //加载ThinkPHP基类
 import("Think.Core.Base");
-
 //加载异常处理类
 import("Think.Exception.ThinkException");
-
+// 加载语言类
+import("Think.Util.Language");
 //加载Think核心类
 import("Think.Core.App");
 import("Think.Core.Vo");
 import("Think.Core.Dao");
 import("Think.Core.Action");
+
+// 记录加载文件时间
 $GLOBALS['_loadTime'] = array_sum(explode(' ', microtime()));
 ?>

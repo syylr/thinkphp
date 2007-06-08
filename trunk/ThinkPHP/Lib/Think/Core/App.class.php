@@ -301,12 +301,17 @@ class App extends Base
         // 定义当前语言
         define('LANG_SET',$langSet);
 
+		// 加载框架语言包
+		$language = Language::getInstance();
         // 读取系统语言包
-        if (!include_cache(THINK_PATH.'/Lang/'.LANG_SET.'.php'))    
-        	include_cache(THINK_PATH.'/Lang/zh-cn.php');            
-
+        if (!file_exists(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
+			$language->load(THINK_PATH.'/Lang/'.LANG_SET.'.php');
+		}else{
+			$language->load(THINK_PATH.'/Lang/zh-cn.php');       
+		}
+        	     
         // 读取项目语言包
-        include_cache(LANG_PATH.'/'.LANG_SET.'.php');  
+        $language->load(LANG_PATH.'/'.LANG_SET.'.php');  
 
         return ;
     }
