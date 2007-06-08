@@ -515,11 +515,10 @@ class  ThinkTemplate extends Base
             }
             elseif(strpos($var,'.')!== false) {
                 //支持 {$var.property} 方式输出对象的属性
+				$vars = explode('.',$var);
                 $var  =  str_replace('.','->',$var);
                 $name = "$".$var;
-                $vars = explode('.',$var);
                 $var  = $vars[0];
-
             }
             elseif(strpos($var,'[')!== false) {
                 //支持 {$var['key']} 方式输出数组
@@ -621,6 +620,7 @@ class  ThinkTemplate extends Base
                 case 'ENV':$parseStr = '$_ENV[\''.$vars[2].'\']';break;
                 case 'REQUEST':$parseStr = '$_REQUEST[\''.$vars[2].'\']';break;
                 case 'CONST':$parseStr = strtoupper($vars[2]);break;
+                case 'LANG':$parseStr = 'L("'.$vars[2].'")';break;
                 default:break;
             }
         }else if(count($vars)==2){
