@@ -1257,6 +1257,12 @@ function V($voClassName,$data=NULL)
     return $vo;
 }
 
+// 获取某个变量的当前语言定义
+function L($name) {
+	$lang = Language::getInstance();
+	return $lang->get($name);
+}
+
 /**
  +----------------------------------------------------------
  * 生成一定数量的随机数，并且不重复
