@@ -284,7 +284,7 @@ class PublicAction extends AdminAction
             $this->assign('error','旧密码不符或者用户名错误！');
         }else {
         	$map->put('password',$_POST['password']);
-            $map->put('id',$vo['id']);
+            $map->put('id',$vo->id);
             $user = new UserVo($map);
             $result = $dao->save($user);
             if($result) {
