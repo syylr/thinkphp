@@ -138,7 +138,7 @@ class TagLib_Cx extends TagLib
         $empty      = isset($tag['empty'])?$tag['empty']:'';
         $offset     = isset($tag['offset'])?$tag['offset']:0;
         $length     = isset($tag['length'])?$tag['length']:'';
-		$key			=	isset($tag['key'])?$tag['key']:'i';
+		$key			=	!empty($tag['key'])?$tag['key']:'i';
 		$odd			=	isset($tag['odd'])?$tag['odd']:'odd';
         if(strpos($name,'.')) {
         	$name  =  str_replace('.','->',$name);
@@ -220,7 +220,6 @@ class TagLib_Cx extends TagLib
         return ;
     }
 
-
     /**
      +----------------------------------------------------------
      * VoList标签解析 
@@ -252,7 +251,7 @@ class TagLib_Cx extends TagLib
         $id         = isset($tag['id'])?$tag['id']:$name;
         $offset     = isset($tag['offset'])?$tag['offset']:0;
         $length     = isset($tag['length'])?$tag['length']:'';
-		$key			=	isset($tag['key'])?$tag['key']:'i';
+		$key			=	!empty($tag['key'])?$tag['key']:'i';
 		$odd			=	isset($tag['odd'])?$tag['odd']:'odd';
         if(strpos($name,'.')) {
         	$name  =  str_replace('.','->',$name);
@@ -291,6 +290,19 @@ class TagLib_Cx extends TagLib
         return ;
     }
 
+    /**
+     +----------------------------------------------------------
+     * sublist标签解析 
+     * 和volist用法一致
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
     function _sublist($attr,$content) 
     {
     	return $this->_volist($attr,$content);
@@ -346,7 +358,6 @@ class TagLib_Cx extends TagLib
         }
         return ;
     }
-
 
     /**
      +----------------------------------------------------------
@@ -417,6 +428,121 @@ class TagLib_Cx extends TagLib
 
         return $parseStr;  	
     }
+
+    /**
+     +----------------------------------------------------------
+     * if标签解析 
+     * 格式： 
+     * <if condition=" $a eq 1" >
+     * <elseif condition="$a eq 2" />
+     * <else />
+     * </if>
+	 * 表达式支持 eq neq gt egt lt elt == > >= < <= or and || &&
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	function _if($attr,$content) {
+		$tag = $this->parseXmlAttr($attr,'if');
+		$condition = $this->parseCondition($tag['condition']); 
+        $parseStr .= '<?php if('.$condition.'): ?>'.$content.'<?php endif; ?>';
+
+        return $parseStr;
+	}
+
+    /**
+     +----------------------------------------------------------
+     * else标签解析 
+     * 格式：见if标签
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	function _elseif($attr,$content) {
+		$tag = $this->parseXmlAttr($attr,'elseif');
+		$condition = $this->parseCondition($tag['condition']); 
+        $parseStr .= '<?php elseif('.$condition.'): ?>';
+
+        return $parseStr;
+	}
+
+    /**
+     +----------------------------------------------------------
+     * else标签解析 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	function _else($attr) {
+        $parseStr = '<?php else: ?>';
+        return $parseStr;
+	}
+
+    /**
+     +----------------------------------------------------------
+     * switch标签解析 
+     * 格式： 
+     * <switch name="$a.name" >
+     * <case value="1" break="false">1</case>
+     * <case value="2" >2</case>
+     * </switch>
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	function _switch($attr,$content) {
+		$tag = $this->parseXmlAttr($attr,'switch');
+		$name = $tag['name']; 
+		if(strpos($name,'.')!== false) {
+             $name  =  str_replace('.','->',$name);
+		}
+        $parseStr .= '<?php switch('.$name.'): ?>'.$content.'<?php endswitch;?>';
+
+        return $parseStr;
+	}
+
+    /**
+     +----------------------------------------------------------
+     * case标签解析 需要配合switch才有效
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	function _case($attr,$content) {
+		$tag = $this->parseXmlAttr($attr,'case');
+		$value = $tag['value']; 
+		$break = $tag['break'];
+		if(!isset($break)) $break = true;
+        $parseStr = '<?php case '.$value.' : ?>'.$content;
+		if($break) {
+			$parseStr .= '<?php break;?>';
+		}
+        return $parseStr;
+	}
 
     /**
      +----------------------------------------------------------

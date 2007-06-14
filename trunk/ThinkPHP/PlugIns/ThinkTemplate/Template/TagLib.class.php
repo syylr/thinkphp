@@ -51,7 +51,7 @@ class TagLib extends Config_Xml
      * @access protected
      +----------------------------------------------------------
      */
-    var $xml;
+    var $xml = '';
 
     /**
      +----------------------------------------------------------
@@ -61,7 +61,7 @@ class TagLib extends Config_Xml
      * @access protected
      +----------------------------------------------------------
      */
-    var $tagLib;
+    var $tagLib ='';
 
     /**
      +----------------------------------------------------------
@@ -71,7 +71,7 @@ class TagLib extends Config_Xml
      * @access protected
      +----------------------------------------------------------
      */
-    var $tagList;
+    var $tagList = array();
 
     /**
      +----------------------------------------------------------
@@ -81,7 +81,7 @@ class TagLib extends Config_Xml
      * @access protected
      +----------------------------------------------------------
      */
-    var $parse;
+    var $parse = array();
 
     /**
      +----------------------------------------------------------
@@ -91,7 +91,7 @@ class TagLib extends Config_Xml
      * @access protected
      +----------------------------------------------------------
      */
-    var $valid;
+    var $valid = false;
 
     /**
      +----------------------------------------------------------
@@ -103,7 +103,7 @@ class TagLib extends Config_Xml
      */
     var $tpl;
 
-
+	var $comparison = array('eq'=>'==','neq'=>'!=','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=');
 
     /**
      +----------------------------------------------------------
@@ -119,7 +119,6 @@ class TagLib extends Config_Xml
     {
         return get_instance_of(__CLASS__);
     }
-
 
     /**
      +----------------------------------------------------------
@@ -137,8 +136,19 @@ class TagLib extends Config_Xml
         }else {
             $this->xml = dirname(__FILE__).'/Tags/'.$tagLib.'.xml';
         }
+		$this->load();
     }
 
+	function load() {
+		$xml = file_get_contents($this->xml);
+		$array = $this->xmlToArray($xml);
+		if($array !== false) {
+			$this->parse = $array;
+			$this->valid = true;
+		}else{
+			$this->valid = false;
+		}
+	}
 
     /**
      +----------------------------------------------------------
@@ -152,24 +162,13 @@ class TagLib extends Config_Xml
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function valid() 
     {
-        if(is_file($this->xml)) {
-            $xml = file_get_contents($this->xml);
-            $array = $this->xmlToArray($xml);
-            if($array !== false) {
-                $this->parse = $array;
-                return true;
-            }else {
-            	return false;
-            }
-        }
-        return false;
+		return $this->valid;
     }
-
 
     /**
      +----------------------------------------------------------
@@ -180,14 +179,13 @@ class TagLib extends Config_Xml
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function getTagLib() 
     {
         return $this->tagLib;
     }
-
 
     /**
      +----------------------------------------------------------
@@ -198,12 +196,12 @@ class TagLib extends Config_Xml
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function getTagList() 
     {
-        if(!isset($this->tagList)) {
+        if(empty($this->tagList)) {
             $tags = $this->parse['tag'];
             $list = array();
             foreach($tags as $tag) {
@@ -215,10 +213,8 @@ class TagLib extends Config_Xml
             }
             $this->tagList = $list;
         }
-
         return $this->tagList;
     }
-
 
     /**
      +----------------------------------------------------------
@@ -229,7 +225,7 @@ class TagLib extends Config_Xml
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws FcsException
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function getTagAttrList($tagName) 
@@ -277,13 +273,29 @@ class TagLib extends Config_Xml
         $array  = array_change_key_case($array['tag']);
         $attrs	= $this->getTagAttrList($tag);
         foreach($attrs as $val) {
-            if($val['required']!='false'  && !isset($array[$val['name']])) {
+            if( !isset($array[$val['name']])) {
                 $array[$val['name']] = '';
             }
         }
         return $array;
     }
 
+    /**
+     +----------------------------------------------------------
+     * 解析条件表达式
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $condition 表达式标签内容
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+	function parseCondition($condition) {
+		$condition = str_ireplace(array_keys($this->comparison),array_values($this->comparison),$condition);
+
+		return $condition;
+	}
     /**
      +----------------------------------------------------------
      * 日期格式化 
@@ -306,7 +318,6 @@ class TagLib extends Config_Xml
         return $tmplContent;
     }
 
-
     /**
      +----------------------------------------------------------
      * 字符串格式化 
@@ -324,7 +335,6 @@ class TagLib extends Config_Xml
         $tmplContent = 'sprintf("'.$format.'", '.$var.')';
         return $tmplContent;
     }
-
 
     /**
      +----------------------------------------------------------

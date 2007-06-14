@@ -367,7 +367,7 @@ class  ThinkTemplate extends Base
     function parseTagLib($tagLib,&$content,$hide=false) 
     {
         $tLib = new TagLib($tagLib);
-        if($tLib->valid()) {
+        if($tLib->valid()) { 
             //如果标签库有效则取出支持标签列表
             $tagList =  $tLib->getTagList();
             //遍历标签列表进行模板标签解析
@@ -414,8 +414,8 @@ class  ThinkTemplate extends Base
         $content = trim($content);
         $tlClass = 'TagLib_'.ucwords(strtolower($tagLib));
         $parse = '_'.$tag;
-        $tl = new $tlClass($this);
-        if($tl->valid()) {
+        $tl =  & new $tlClass($this);
+        if($tl->valid()) {	
             return $tl->$parse($attr,$content);
         }
     }
