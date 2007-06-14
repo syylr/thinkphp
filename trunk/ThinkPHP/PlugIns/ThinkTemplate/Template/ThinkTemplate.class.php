@@ -379,11 +379,11 @@ class  ThinkTemplate extends Base
                 }
                 $endTag = $startTag;
                 if($tag['content'] !='empty') {//闭合标签解析
-                    $content = preg_replace('/'.TAGLIB_BEGIN.$startTag.'\s(.+?)'.TAGLIB_END.'(.+?)'.TAGLIB_BEGIN.'\/'.$endTag.TAGLIB_END.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+                    $content = preg_replace('/'.TAGLIB_BEGIN.$startTag.'\s(.*?)'.TAGLIB_END.'(.+?)'.TAGLIB_BEGIN.'\/'.$endTag.TAGLIB_END.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
                     
                 }else {//开放标签解析
                     //$content = preg_replace('/'.TAGLIB_BEGIN.$startTag.'\s(.+?)'.TAGLIB_END.''.TAGLIB_BEGIN.'\/'.$endTag.TAGLIB_END.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-                    $content = preg_replace('/'.TAGLIB_BEGIN.$startTag.'\s(.+?)\/'.TAGLIB_END.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+                    $content = preg_replace('/'.TAGLIB_BEGIN.$startTag.'\s(.*?)\/'.TAGLIB_END.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
                 }
             }
         }
