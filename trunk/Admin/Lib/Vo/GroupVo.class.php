@@ -36,7 +36,7 @@ class GroupVo extends Vo
     var $id;                    //编号
     var $name;                  //姓名
 	var $ename;					//英文标识
-    var $parentId;              //上级编号
+    var $pid;              //上级编号
     var $status;                //状态
     var $remark;                //描述
     var $requireRate;
