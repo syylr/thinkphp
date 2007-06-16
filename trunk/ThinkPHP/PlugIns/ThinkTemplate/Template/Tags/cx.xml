@@ -12,6 +12,11 @@
 </tag>
 
 <tag>
+<name>php</name>
+<bodycontent>true</bodycontent>
+</tag>
+
+<tag>
 <name>comment</name>
 <bodycontent>empty</bodycontent>
 <attribute>
@@ -41,10 +46,6 @@
 <tag>
 <name>else</name>
 <bodycontent>empty</bodycontent>
-<attribute>
-<name>condition</name>
-<required>false</required>
-</attribute>
 </tag>
 
 <tag>
@@ -63,6 +64,11 @@
 <name>value</name>
 <required>true</required>
 </attribute>
+</tag>
+
+<tag>
+<name>default</name>
+<bodycontent>empty</bodycontent>
 </tag>
 
 <tag>

@@ -108,6 +108,26 @@ class TagLib_Cx extends TagLib
 
     /**
      +----------------------------------------------------------
+     * php标签解析
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+	function _php($attr,$content) {
+		$parseStr = '<?php '.$content.' ?>';
+		return $parseStr;
+	}
+
+    /**
+     +----------------------------------------------------------
      * iterator标签解析 
      * 输出iterator变量的值，需要配合write标签
      * 格式： 
@@ -492,6 +512,7 @@ class TagLib_Cx extends TagLib
         return $parseStr;
 	}
 
+
     /**
      +----------------------------------------------------------
      * switch标签解析 
@@ -499,6 +520,7 @@ class TagLib_Cx extends TagLib
      * <switch name="$a.name" >
      * <case value="1" break="false">1</case>
      * <case value="2" >2</case>
+     * <default />other
      * </switch>
      +----------------------------------------------------------
      * @access public 
@@ -541,6 +563,24 @@ class TagLib_Cx extends TagLib
 		if($break) {
 			$parseStr .= '<?php break;?>';
 		}
+        return $parseStr;
+	}
+
+    /**
+     +----------------------------------------------------------
+     * default标签解析 需要配合switch才有效
+	 * 使用： <default />ddfdf
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	function _default($attr) {
+        $parseStr = '<?php default: ?>';
         return $parseStr;
 	}
 
