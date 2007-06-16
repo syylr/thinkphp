@@ -289,6 +289,14 @@ class Action extends Base
         $guid   = strtoupper($voClass).'_'.$id;
         //Vo对象缓存
         $vo      =  $this->getCacheData($guid);
+
+		// 乐观锁记录
+		$dao = $this->getDaoClass();
+		if($dao->lock_optimistically) {
+			$lock = is_array($vo)? $vo[$dao->lock_optimistically]:$vo->{$dao->lock_optimistically};
+			Session::set($guid.'_lock_version',$lock);
+		}
+
         return $vo;
     }
 

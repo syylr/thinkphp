@@ -130,10 +130,15 @@ class Dao extends Base
      */
     var $error;        
 
-	var $auto_save_relations = false;
-	var $auto_delete_relations = false;
-	var $auto_add_relations = false;
+	// 乐观锁
+	var $lock_optimistically = 'lock_version';
 
+	
+	var $auto_save_relations = false;		// 自动关联保存
+	var $auto_delete_relations = false;	// 自动关联删除
+	var $auto_add_relations = false;		// 自动关联增加
+
+	// 自动写入时间戳
 	var $auto_create_timestamps = array('create_at','create_on','cTime');
 	var $auto_update_timestamps = array('update_at','update_on','mTime');
 
@@ -205,6 +210,16 @@ class Dao extends Base
 		// 增加对数据库映射字段和属性不同的支持
 		$map	=	$this->dealMap($map);
         $table = empty($table)?$this->getRealTableName():$table;
+
+		// 记录乐观锁
+		if($this->lock_optimistically && !$map->get($this->lock_optimistically) ) {
+			$voClass = $this->getVo();
+			$vo =  new $voClass();
+			if(property_exists($vo,$this->lock_optimistically)) {
+				$map->put($this->lock_optimistically,0);
+			}
+		}
+
         if(FALSE === $this->db->add($map,$table)){
             $this->error = _OPERATION_WRONG_;
             return false;
@@ -314,12 +329,41 @@ class Dao extends Base
 		
         $pk     = $pk?$pk:$this->pk;
         if($map->containsKey($pk)) {
-            $where  = $pk."=".$map->get($pk);
+			$id	=	$map->get($pk);
+            $where  = $pk."=".$id;
             $map->remove($pk);         	
         }
 		// 增加对数据库映射字段和属性不同的支持
 		$map	=	$this->dealMap($map);		
         $table = empty($table)?$this->getRealTableName():$table;
+
+		// 检查乐观锁
+		$guid   = strtoupper($this->getVo()).'_'.$id;
+		if($this->lock_optimistically && Session::is_set($guid.'_lock_version')) {
+			$lock_version = Session::get($guid.'_lock_version');
+			if(!empty($where)) {
+				$vo = $this->find($where,$table,$this->lock_optimistically);
+			}else {
+				$vo = $this->find($map,$table,$this->lock_optimistically);
+			}
+			Session::set($guid.'_lock_version',$lock_version);
+			$curr_version = is_array($vo)?$vo[$this->lock_optimistically]:$vo->{$this->lock_optimistically};
+			if(isset($curr_version)) {
+				if($curr_version>0 && $lock_version != $curr_version) {
+					// 记录已经更新
+					$this->error = '记录已经更新';
+					return false;
+				}else{
+					// 更新乐观锁
+					$save_version = $map->get($this->lock_optimistically);
+					if($save_version != $lock_version+1) {
+						$map->put($this->lock_optimistically,$lock_version+1);
+					}
+					Session::set($guid.'_lock_version',$lock_version+1);
+				}
+			}
+		}
+
         if(FALSE === $this->db->save($map,$table,$where,$limit,$order)){
             $this->error = _OPERATION_WRONG_;
             return false;
@@ -1257,6 +1301,7 @@ class Dao extends Base
             $cache  =  Cache::getInstance();
             $vo       = $cache->get($guid);        	
         }
+		$this->cacheLockVersion($vo);
         return $vo;
     }
 
@@ -1284,6 +1329,18 @@ class Dao extends Base
         return $voList;
     }
 
+	// 记录乐观锁
+	function cacheLockVersion($vo) {
+		// 记录乐观锁
+		if($this->lock_optimistically) {
+			$lock = is_array($vo)? $vo[$this->lock_optimistically]:$vo->{$this->lock_optimistically};
+			$id	=	is_array($vo)? $vo[$this->pk]:$vo->{$this->pk};
+			if(isset($lock) && isset($id)) {
+				Session::set(strtoupper($this->getVo()).'_'.$id.'_lock_version',$lock);
+			}
+		}
+	}
+
     /**
      +----------------------------------------------------------
      * 把一条查询结果转换为Vo对象
@@ -1308,6 +1365,8 @@ class Dao extends Base
         }else{
         	$vo  =  $result;
         }
+		$this->cacheLockVersion($vo);
+
        if( $relation ) {
            $type = isset($relation['type'])?$relation['type']:'';
            $name   =  isset($relation['name'])?$relation['name']:'';
@@ -1397,15 +1456,21 @@ class Dao extends Base
             $vo = new $voClass(); //新建Vo对象
         } else { //编辑
             //根据编号获取Vo对象
-            $daoClass   = substr($voClass,0,-2).'Dao';
-            $dao        = D($daoClass);
-            $pk         = $pk?$pk:$this->pk;
-            $value      = isset($_GET[$pk])?$_GET[$pk]:$_POST[$pk];
-            $vo         = $dao->getById($value);
-			if(!$vo) {
+            //$daoClass   = substr($voClass,0,-2).'Dao';
+            //$dao        = D($daoClass);
+			//$vo         = $dao->getById($value);
+    		$table	= empty($table)?$this->getRealTableName():$table;
+            $pk       = $pk?$pk:$this->pk;
+            $value   = isset($_GET[$pk])?$_GET[$pk]:$_POST[$pk];
+			$rs		= $this->db->find($pk."='{$value}'",$table);
+			if($rs && $rs->size()>0) {
+				$voClass    = !empty($voClass)? $voClass : $this->getVo();
+				$vo = new $voClass($rs->get(0)); 
+			}else {
 				return false;
-			}
+			}  
         }
+
         //给Vo对象赋值
         foreach ( $vo->__varList() as $name){
             $val = isset($_POST[$name])?$_POST[$name]:$_GET[$name];
@@ -1417,6 +1482,13 @@ class Dao extends Base
 						(strtolower($type) == "edit" && in_array($name,$this->auto_update_timestamps)) ){ 
 				// 自动保存时间戳
 				$vo->$name = time();
+			}elseif($this->lock_optimistically && $name==$this->lock_optimistically ){
+				// 自动保存乐观锁
+				if(strtolower($type) == "add" ) {
+					$vo->{$name} = 0;
+				}else {
+					$vo->{$name} += 1 ;
+				}
 			}
         }
 
