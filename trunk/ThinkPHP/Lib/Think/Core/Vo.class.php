@@ -79,10 +79,13 @@ class Vo extends Base
      * @param Dao $dao Dao对象
      +----------------------------------------------------------
      */
-	function create($data,$dao=NULL) {
+	function create($data='',$dao=NULL) {
 		if(empty($dao)) {
 			$daoClass = $this->getDao();
 			$dao	=	D($daoClass);
+		}
+		if(empty($data)) {
+			$data	 =	 $this->toMap();
 		}
 		return $dao->add($data);
 	}
