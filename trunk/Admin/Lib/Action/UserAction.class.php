@@ -97,6 +97,7 @@ class UserAction extends AdminAction
         if(isset($_POST['password'])) {
                $_POST['password']      =   md5($_POST['password']);
         }
+		$_POST['registerTime'] = time();
         return ;
     }
 
