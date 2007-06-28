@@ -1,0 +1,76 @@
+
+<tagLib name="html" />
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<TITLE>资源库挑选</TITLE>
+<html:link type="css" href ="../Public/css/FCS.css" />
+<html:import type="js" file="Js.prototype" /> 
+<html:import type="js" file="Js.mootools" /> 
+<html:import type="js" file="Js.Ajax.SmartAjax" /> 
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function ok(){
+	returnValue=$('imageUrl').value;
+	window.close(); 
+}
+function MouseClick( src )
+{
+    window.returnValue = src;
+    window.close();
+}
+function uploading(msg){
+	$('result').style.display = 'block';
+	$('result').innerHTML	=	'<IMG SRC="../Public/images/ajaxloading.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="" align="absmiddle"> 文件上传中～';
+	return true;
+}
+function uploadComplete(id,name){
+	$('source').innerHTML	+=	'<IMG SRC="__PUBLIC__/Uploads/'+name+'" onmouseover="this.style.borderColor=\'red\';this.style.filter=\'alpha(opacity=100)\';"  onmouseout="this.style.borderColor=\'gray\';this.style.filter=\'alpha(opacity=80)\';" style="filter:alpha(opacity=80);cursor:hand;border:1pt solid gray;margin:3px" onclick="MouseClick(this.src)"  BORDER="0" width="45" height="45" ALT="" align="absmiddle">';
+	window.setTimeout(function (){ $('result').style.display = 'none'; },2000);
+	
+}
+//-->
+</SCRIPT>
+<base target="_self" />
+</HEAD>
+
+<BODY style="margin:5px;">
+<div id="result" class="result none"></div>
+<fieldset id="querybox" >
+<legend style="color:gray">直接输入图片地址：</legend>
+<div class="fLeft hMargin"> <input name="imageUrl"  type="text" class="large"></div>
+<input type="button" value="选 择" onclick="ok()" class="submit " />
+</fieldset>
+<fieldset id="querybox" >
+<legend style="color:gray">上传图片到资源库：[ jpg,gif,png ]</legend>
+<div class="fLeft hMargin vMargin">
+<form id="upload" METHOD=POST action="__URL__/insert/" enctype="multipart/form-data" target="iframeUpload">
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+	<iframe name="iframeUpload" src="" width="350" height="35" frameborder=0  SCROLLING="no" style="display:none"></iframe>
+	<INPUT TYPE="hidden" name="_uploadFileResult" value="result">
+	<INPUT TYPE="hidden" name="_uploadFormId" value="upload">
+	<INPUT TYPE="hidden" name="_uploadFileSize" value="-1">
+	<INPUT TYPE="hidden" name="_uploadFileTable" value="{$FCS.get.module}">
+	<INPUT TYPE="hidden" name="_uploadFileType" value="jpg,gif,png">
+	<INPUT TYPE="hidden" name="_uploadSavePath" value="{$FCS.WEB_ROOT}Public/Uploads/" >
+	<INPUT TYPE="hidden" name="_uploadResponse" value="uploadComplete">
+	<INPUT TYPE="hidden" name="_uploadImgThumb" value="0">
+	<INPUT TYPE="hidden" name="_uploadThumbMaxWidth" value="80">
+	<INPUT TYPE="hidden" name="_uploadThumbMaxHeight" value="100">
+	<INPUT TYPE="hidden" name="_uploadThumbSuffix" value="_s">
+	<div class="hMargin fLeft"><div class="impBtn" ><INPUT TYPE="file"  name="file" class="file bgcolor1 large"> </div></div>
+	<div class="fLeft hMargin"><INPUT TYPE="submit" value="上 传" onclick="uploading();" class="submit "></div>
+	</form></div>
+</fieldset>
+
+<fieldset id="querybox" >
+<legend style="color:gray">选择资源库图片： [ <A HREF="__URL__/select/">所 有</A> ]</legend>
+<div style="clear:both;overflow:auto;width:100%;margin:5px 2px;height:165px;" id="source">
+<voList name="list" id="attach" >
+<IMG SRC="__PUBLIC__/Uploads/{$attach.savename}" onmouseover="this.style.borderColor='red';this.style.filter='alpha(opacity=100)';"  onmouseout="this.style.borderColor='gray';this.style.filter='alpha(opacity=80)';" style="filter:alpha(opacity=80);cursor:hand;border:1pt solid gray;margin:3px" onclick="MouseClick(this.src)" BORDER="0" class="shadow" width="45" height="45" ALT="{$attach.name} {$attach.size|byte_format}" align="middle">
+</voList>
+</div>
+</fieldset>
+</body>
+</html>

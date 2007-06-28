@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="ThinkPHP {$Think.version}" />
+<meta name="robots" content="all" />
+<meta name="author" content="liu21st | www.topthink.com.cn" />
+<meta name="Copyright" content="Copyright (c) 2007 thinkPHP.cn" />
+<link rel='stylesheet' type='text/css' href='../Public/css/style.css'>
+<TITLE>ThinkPHP 开源的PHP应用开发框架</TITLE>
+<style>
+body{font: normal normal normal 14px Tahoma;}
+a,a:visited{text-decoration:none;color:#174B73;}
+a:hover{ color:#FF6600;border-bottom:1px dotted #3366FF;}
+</style>
+<div style="margin:8px">
+<div class="title" style="width:90%">多语言支持和切换 </div>
+<div style="margin:6px;padding:6px">
+多语言的切换变量可以设置，默认的设置是采用 l 。例如 <B>?l=zh-tw</B> 就可以切换到繁体语言包显示。<P>
+<div style="float:left;width:75%;background:#ECFFD9;border:1px solid silver;margin:6px 0px;padding:6px">
+语言包文件的定义方式，采用下面的格式<P>
+return Array(<BR>
+	'app_lang_1'=>'开源的中文WEB应用开发框架',<BR>
+	'app_lang_2'=>'做国内最好的PHP开源框架',<BR>
+);<BR>
+</div>
+<p style="clear:both"/>
+下面的内容采用了多语言的显示，请进行切换查看 [ <A HREF="?l=zh-cn">简体中文</A> | <A HREF="?l=zh-tw">繁體中文</A> | <A HREF="?l=en-us">英文</A> ]<P>
+<div style="border:1px solid silver;background:#FFFFCC;padding:6px;float:left;width:75%;color:red;font-weight:bold">{$Think.lang.app_lang_1}  <P>{$Think.lang.app_lang_2}</div>
+</div>
+
+</div>

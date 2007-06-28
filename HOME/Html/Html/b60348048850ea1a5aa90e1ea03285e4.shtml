@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="ThinkPHP 0.9.8" />
+<meta name="robots" content="all" />
+<meta name="author" content="liu21st | www.topthink.com.cn" />
+<meta name="Copyright" content="Copyright (c) 2007 thinkPHP.cn" />
+<link rel='stylesheet' type='text/css' href='/hello/HOME/Tpl/default/Public/css/style.css'>
+<TITLE>ThinkPHP 开源的PHP应用开发框架</TITLE>
+<style>
+body{font: normal normal normal 14px Tahoma;}
+a,a:visited{text-decoration:none;color:#174B73;}
+a:hover{ color:#FF6600;border-bottom:1px dotted #3366FF;}
+</style>
+<div style="margin:8px">
+<div class="title" style="width:90%">静态页面显示 [ <A HREF="javascript:location.reload()">刷新页面</A> ]</div>
+<div style="margin:6px;padding:6px">
+在运行之前，请检查是否启用了静态缓存插件。当前模块的静态缓存时间设置为30秒。
+在页面开启了运行时间显示，如果您看不到下面的执行时间显示，则表示当前已经属于静态页面。
+并且在页面显示了时间戳，您可以检查是否有及时更新。请点击刷新页面查看效果。<P>
+<div style="border:1px solid silver;background:#FFFFCC;padding:6px">时间戳显示：<span style="color:red;font-weight:bold">1182875127</span></div>
+</div>
+</div>

@@ -1,0 +1,55 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div class="menu"><include file="../Public/menu" /></div>
+<div class="main" >
+<div class="content">
+<H2>查看用户：</H2><HR>
+<INPUT TYPE="hidden" name="id" value="{$vo.id}">
+<TABLE cellpadding=0 cellspacing=0 >
+<TR>
+	<TD class="tRight" width="15%">用户名：</TD>
+	<TD class="tLeft" width="45%">{$vo.name}</TD>
+	<TD class="tLeft" width="40%"></TD>
+</TR>
+<TR>
+	<TD class="tRight" width="15%">帐号：</TD>
+	<TD class="tLeft" width="45%">{$vo.account}</TD>
+	<TD class="tLeft" width="40%"></TD>
+</TR>
+<TR>
+	<TD class="tRight">密码：</TD>
+	<TD class="tLeft"><INPUT TYPE="text" class="medium bLeft" NAME="password"></TD>
+	<TD class="tLeft"></TD>
+</TR>
+<TR>
+	<TD class="tRight">重复密码：</TD>
+	<TD class="tLeft"><INPUT TYPE="text" class="medium bLeft" NAME="password" ></TD>
+	<TD class="tLeft"></TD>
+</TR>
+<TR>
+	<TD class="tRight">手机号码：</TD>
+	<TD class="tLeft">{$vo.mobile}</TD>
+	<TD class="tLeft"></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">备  注：</TD>
+	<TD class="tLeft"><TEXTAREA class="large bLeft" NAME="remark" ROWS="5" COLS="57">{$vo.remark}</TEXTAREA></TD>
+	<TD class="tLeft tTop"></TD>
+</TR>
+<TR>
+	<TD class="tRight tMiddle">文件上传：</TD>
+	<TD class="tLeft"><div class="impBtn fLeft" ><INPUT TYPE="file" value="保存" class="file large"></div></TD>
+	<TD class="tLeft tTop"></TD>
+</TR>
+<TR>
+	<TD ><INPUT TYPE="hidden" name="registerTime" value="<var name="a" function="time" />"></TD>
+	<TD class="center"><div style="width:85%"><INPUT TYPE="hidden" name="status" value="1" >
+	<div class="impBtn fLeft"><INPUT TYPE="submit" value="保存" class="save imgButton"></div>
+	<div class="impBtn fRig"><INPUT TYPE="button" class="reset imgButton" value="返回" ></div>
+	</div></TD>
+	<TD ></TD>
+</TR>
+</TABLE>
+</div>
+</div>
+<include file="../Public/footer" />
