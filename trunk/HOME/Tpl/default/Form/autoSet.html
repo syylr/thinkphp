@@ -1,0 +1,46 @@
+<taglib name="html" />
+<html:import type="js" file="Js.Base" /> 
+<html:import type="js" file="Js.prototype" /> 
+<html:import type="js" file="Js.mootools" /> 
+<html:import type="js" file="Js.Ajax.ThinkAjax" /> 
+<div style="margin:15px;padding:12px;float:left;width:450px;font: normal normal normal 14px Tahoma;border:1px solid gray;background:#FFFFCC;">
+表单自动填充<P>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+ThinkAjax.updateTip = '<IMG SRC="../Public/images/ajaxloading.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="" align="absmiddle"> <span style="color:#FF0000">表单验证中...</span>';
+	function sendForm(){
+		if ($('result').innerHTML != '')
+		{
+		$('result').innerHTML = '';
+		}
+		ThinkAjax.sendForm('form','__URL__/formCheck/','','show'); 
+	}
+
+//-->
+</SCRIPT>
+<FORM METHOD=POST id="form" >
+	姓名：<INPUT TYPE="text" NAME="name" style="width:150px" value=""> <BR>
+	年龄：<INPUT TYPE="text" NAME="age" style="width:150px" value=""><BR>
+	邮箱：<INPUT TYPE="text" NAME="email" style="width:150px" value=""><BR>
+	密码：<INPUT TYPE="password" NAME="password" style="width:150px" ><BR>
+	性别：<INPUT TYPE="radio" NAME="sex" value="帅哥">帅哥<INPUT TYPE="radio" NAME="sex" value="靓女">靓女<BR>
+	星座：<SELECT NAME="magic" >
+		<OPTION VALUE="" >选择
+		<OPTION VALUE="双鱼座">双鱼座
+		<OPTION VALUE="水瓶座">水瓶座
+		<OPTION VALUE="白羊座" >白羊座
+		<OPTION VALUE="金牛座">金牛座
+		<OPTION VALUE="双子座">双子座
+		<OPTION VALUE="巨蟹座">巨蟹座
+		<OPTION VALUE="狮子座">狮子座
+		<OPTION VALUE="处女座">处女座
+		<OPTION VALUE="天秤座">天秤座
+		<OPTION VALUE="天蝎座">天蝎座
+		<OPTION VALUE="射手座">射手座
+		<OPTION VALUE="魔羯座">魔羯座
+	</SELECT>
+	<HR>
+ <P><INPUT TYPE="button" onclick="sendForm()" style="border:1px solid gray ;width:120px;cursor:hand;background:url(../Public/images/idx_btnbg.gif);padding:3px" value="提交表单"> <span id="show" style="margin:8px;font: bold  14px Tahoma"></span>
+	<INPUT TYPE="hidden" NAME="ajax" value="1">
+</FORM>
+</div>

@@ -1,0 +1,16 @@
+<taglib name="html" />
+<html:link type="css" href ="../Public/css/style.css" />
+<html:import type="js" file="Js.Base" /> 
+<html:import type="js" file="Js.prototype" /> 
+<html:import type="js" file="Js.mootools" /> 
+<html:import type="js" file="Js.Ajax.ThinkAjax" /> 
+<html:import type="js" file="Js.UbbEditor" />
+<div style="margin:8px">
+<div class="title">新增留言 [ <A HREF="__URL__">返回列表</A> ]</div>
+<div style="margin:15px;padding:12px;float:left;width:450px;font: normal normal normal 14px Tahoma;border:1px solid gray;background:#FFFFCC;">
+<P>
+<?php $i = $beginRow; ?> <volist id="vo" name="list"> <LI id="comment_{$comment.id}" class="<?php if ( ($i++ % 2 )==0): ?>alt<?php endif;?>" > <A name="{$vo.id}"></A> <div style="color:{$i|rand_color};border-left:2px solid #006600;padding:0px 3px"> {$vo.author} {$i} 楼 <A HREF="javascript:dealTopic('delComment',{$vo.id})">删除评论</A></div> <div style="background:white;border:1px dashed silver;padding:6px;margin:8px">{$vo.content|ubb|nl2br}</div> </volist> <li ><div class="tRight">{$page}</div> </ul> <A name="reply"></A> 
+<FORM METHOD=POST id="comment_form" action="__URL__/insert/"> <ul class="newTopic" style="width:570px"> 
+<li style="border:none">我要留言： <li style="height:26px;padding:0px;"> <SCRIPT LANGUAGE="JavaScript"> showTool();  </SCRIPT> <li style="padding:0px"><TEXTAREA id="UBBEditor" NAME="content" check="Require" warning="评论内容必须" style="width:545px;height:250px" ></TEXTAREA></li> <li style="padding:3px;"><SCRIPT LANGUAGE="JavaScript">  showEmot(); </SCRIPT></li> <li style="padding:4px"><div class="fLeft hMargin">输入图片中的数字： <INPUT TYPE="text" check="Require" warning="验证码必须输入" NAME="verify" class="small"> <IMG SRC="__APP__/Public/verify/" id="verifyImg" BORDER="0" ALT="" align="absmiddle"> <A HREF="javascript:fleshVerify()">刷新</A></div> <INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1" >  <INPUT TYPE="hidden" name="module" value="Topic">  <INPUT TYPE="button" class="submit hMargin"  value="发表留言"><INPUT TYPE="reset" class="submit hMargin " value="取消发表" ></li> </ul></FORM><P> </div> 
+</div>
+</div>

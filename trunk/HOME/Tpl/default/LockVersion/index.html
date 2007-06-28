@@ -1,0 +1,16 @@
+<taglib name="html" />
+<html:link type="css" href ="../Public/css/style.css" />
+<html:import type="js" file="Js.Base" /> 
+<html:import type="js" file="Js.prototype" /> 
+<html:import type="js" file="Js.mootools" /> 
+<html:import type="js" file="Js.Ajax.ThinkAjax" /> 
+<div style="margin:8px">
+<div class="title">乐观锁演示 </div>
+<div style="margin:15px;padding:12px;float:left;width:90%;font: normal normal normal 14px Tahoma;border:1px solid gray;background:#FFFFCC;">
+如果一个系统依赖于数据库的悲观锁来进行事务隔离，有时是不现实的。
+比如从数据库中取出数据，在页面展现给用户，用户修改，数据库提交。用户修改的动作可能需要很长时间，那么这一活动就不能够放在数据库的一个事务里边，而是应该取出数据，更新数据分别在一个事务中进行。<P>
+
+如果在数据更新的时候，其他的事务之前已经更新过，这时如果不予理睬，那么以前的更新将会丢失。所以更合理的做法是，能够检测出数据是否是被其他事务更新过的。方法是采用version，类似于cvs的version的概念。也就是所谓的乐观锁。<P>
+
+下面的演示我们在不同的浏览器里面操作同一个记录，URL地址是 <B><span style="color:#FF3300">__APP__/Time/edit/id/1</span></B>。这样做的目的是为了保证SESSION不同。请分别用ie和其它浏览器打开两个修改窗口，然后在各自的页面进行修改和保存操作来查看效果。在操作之前，请确保在自动写入时间戳的演示里面有增加记录。<A HREF="__APP__/Time/edit/id/1" target="_blank">用IE打开编辑</A>  用<A HREF="__APP__/Time/edit/id/1" target="_blank">其它浏览器（例如多窗口浏览器，请打开浏览器后再输入地址）打开</A>编辑。当你在第二个窗口进行保存操作的时候会看到记录已更新的提示。这个时候，必须先刷新页面才能进行修改和保存。
+</div>
