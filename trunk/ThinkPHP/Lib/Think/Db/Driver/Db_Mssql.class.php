@@ -123,6 +123,7 @@ Class Db_Mssql extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->queryTimes ++;
+		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->queryID = @mssql_query($this->queryStr, $this->linkID);
         if ( !$this->queryID ) {
@@ -166,6 +167,7 @@ Class Db_Mssql extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->writeTimes ++;
+		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         if ( !mssql_query($this->queryStr, $this->linkID) ) {
             throw_exception($this->error());

@@ -51,7 +51,6 @@ class Cache_Db extends Cache
     /**
      +----------------------------------------------------------
      * 架构函数
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -77,7 +76,6 @@ class Cache_Db extends Cache
     /**
      +----------------------------------------------------------
      * 是否连接
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -93,7 +91,6 @@ class Cache_Db extends Cache
     /**
      +----------------------------------------------------------
      * 读取缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -105,6 +102,7 @@ class Cache_Db extends Cache
     function get($name)
     {
         $name  =  addslashes($name);
+		$this->Q(1);
         $result  =  $this->db->getRow('select `data`,`datacrc`,`datasize` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' and `expire` !=-1 and `expire`<'.time().' limit 0,1');
         if(false !== $result ) {
             if(is_object($result)) {
@@ -131,7 +129,6 @@ class Cache_Db extends Cache
     /**
      +----------------------------------------------------------
      * 写入缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -146,6 +143,7 @@ class Cache_Db extends Cache
     {
         $data   =   serialize($value);
         $name  =  addslashes($name);
+		$this->W(1);
         if( C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
             //数据压缩
             $data   =   gzcompress($data,3);

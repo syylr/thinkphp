@@ -1,0 +1,51 @@
+<tagLib name="html" />
+<html:link type="css" href ="../Public/css/style.css" />
+<style>
+body{font: normal normal normal 14px Tahoma;}
+a,a:visited{text-decoration:none;color:#174B73;}
+a:hover{ color:#FF6600;border-bottom:1px dotted #3366FF;}
+</style>
+<html:import type="js" file="Js.Base" /> 
+<html:import type="js" file="Js.prototype" /> 
+<html:import type="js" file="Js.mootools" /> 
+<html:import type="js" file="Js.Ajax.ThinkAjax" /> 
+<div id="main_container">
+<div id="left_content" style="float:left;width:95%;margin:6px 5px">
+	<div style="border:1pt solid gray;padding:10px;background:#FFFFCC;margin:6px;"><span style="color:red;font-weight:bold">Think@PHP {$Think.version} 更新说明</span>  [ <A HREF="__APP__/Index/default" >返回首页</A> ]</div>
+	<div style="border:1px solid silver;margin:5px;padding:5px"><P>
+      0.9.8版本是ThinkPHP又一次飞跃和进步，除了众多功能方面的更新，新版还涉及到很多细节的完善和调整，在功能、效率、速度和负载能力上面均有进一步的提高，完全可以满足应用开发的需求。<P>
+
+　　<B>最新版本相对0.9.7版本新增加的<span style="color:red">五大特性</span></B>：
+	<OL>
+		<LI><B>配置灵活</B>：惯例配置的引入赋予更加灵活和简单的配置
+      <LI><B>URL路由</B>：增加URL路由模式，让你的URL路由更轻松，URL更简单
+      <LI><B>负载增强</B>：通过读取浏览器缓存防刷新机制
+      <LI><B>多人安全</B>：乐观锁机制保证多人操作的数据冲突
+      <LI><B>数据支持</B>：增加PDO支持，提供更完善的数据库支持
+      </OL><P>
+
+      <B>其它的一些功能增加和完善</B>：
+	<OL>
+	<LI>完善模板引擎标签支持（控制更方便）
+　　<LI>多语言支持的改进（定义更加方便）
+　　<LI>数据库延迟连接，避免额外的连接开销
+　　<LI>增加数据库字段和Vo属性不同的支持     
+　　<LI>Vo增加create方法（可以快速保存VO对象）
+　　<LI>Dao增加getN方法 （最方便的数据查询方法）
+　　<LI>增加空操作定义（在找不到相应操作的情况下执行）
+　　<LI>Ajax返回在原来的JSON格式外增加XML支持（便于其它的Ajax类库使用）
+　　<LI>Action类增加redirect方法（用于页面跳转）
+　　<LI>完善运行消耗显示，包括详细的运行时间和数据库读写、缓存读写次数，以及内存开销显示（可分别设置显示）
+　　<LI>App类增加run方法（入口文件的写法更简化）
+　　<LI>Vo自动验证的完善（提供更加灵活的验证）
+       <LI>增加Cookie静态封装类
+　　<LI>基础方法的优化和完善（改进和优化了多个系统方法）
+　　<LI>更加纯净的Vo对象创建和更新（返回的VO对象不再有多余的特殊属性）
+　　<LI>修正了很多用户反馈的错误
+	</OL>
+
+　　新版还增加了示例中心，提供了一些基本的入门例子，让新手入门更方便。更多的综合示例会陆续补充到示例中心，请关注官方的更新。<P>
+    
+</div>
+
+</div>

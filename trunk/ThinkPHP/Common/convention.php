@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: AdminAction.class.php 78 2007-04-01 04:29:15Z liu21st $
+// $Id$
 
 /**
  +------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ $_default_config = array(
 	'LIMIT_RESFLESH_ON'=>false,				// 默认关闭防刷新机制
 	'LIMIT_REFLESH_TIMES'=>3,					// 页面防刷新时间 默认3秒
 	'DISPATCH_NAME'=>'ThinkDispatcher',	// 默认的Dispatcher名称
-	'URL_MODEL'=>1,	// URL模式 0 普通模式 1 PATHINFO 2 REWRITE
+	'URL_MODEL'=>1,	// URL模式 0 普通模式 1 PATHINFO 2 REWRITE 3 路由模式
 	'DEBUG_MODE'=>true,	 // 调试模式默认开启
 	'ERROR_MESSAGE'=>'您浏览的页面暂时发生了错误！请稍后在试～',
 	'ERROR_PAGE'=>'',
@@ -45,6 +45,7 @@ $_default_config = array(
 	'PATH_DEPR'=>',',			
 	'VAR_MODULE'=>'m',			// 默认模块获取变量
 	'VAR_ACTION'=>'a',			// 默认操作获取变量
+	'VAR_ROUTER'=>'r',			// 默认路由获取变量
 	'VAR_FILE'=>'f',					// 默认文件变量
 	'VAR_PAGE'=>'p',				// 默认分页跳转变量
 	'VAR_LANGUAGE'=>'l',		// 默认语言切换变量
@@ -94,6 +95,10 @@ $_default_config = array(
 	'CACHE_SERIAL_FOOTER'=>"\n?".">",		// 文件缓存结束标记
 	'SHARE_MEM_SIZE'=>1048576,		// 共享内存分配大小
 	'SHOW_RUN_TIME'=>false,			// 运行时间显示
+	'SHOW_ADV_TIME'=>false,			// 显示详细的运行时间
+	'SHOW_DB_TIMES'=>false,				// 显示数据库查询和写入次数
+	'SHOW_CACHE_TIMES'=>false,		// 显示缓存操作次数
+	'SHOW_USE_MEM'=>false,				// 显示内存开销
 	'TMPL_DENY_FUNC_LIST'=>'echo,exit',	// 模板引擎禁用函数
 	'TMPL_L_DELIM'=>'{',			// 模板引擎普通标签开始标记
 	'TMPL_R_DELIM'=>'}',			// 模板引擎普通标签结束标记

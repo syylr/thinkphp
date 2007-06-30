@@ -32,7 +32,6 @@ class Cache_Eaccelerator extends Cache
     /**
      +----------------------------------------------------------
      * 架构函数
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -45,7 +44,6 @@ class Cache_Eaccelerator extends Cache
     /**
      +----------------------------------------------------------
      * 读取缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -56,6 +54,7 @@ class Cache_Eaccelerator extends Cache
      */
      function get($name)
      {
+		$this->Q(1);
          return eaccelerator_get($name);
      }
 
@@ -63,7 +62,6 @@ class Cache_Eaccelerator extends Cache
     /**
      +----------------------------------------------------------
      * 写入缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -75,6 +73,7 @@ class Cache_Eaccelerator extends Cache
      */
      function set($name, $value, $ttl = null)
      {
+		$this->W(1);
         if(isset($ttl) && is_int($ttl))
             $expire = $ttl;
         else 

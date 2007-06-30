@@ -127,6 +127,7 @@ Class Db_Pgsql extends Db{
         }
         $this->queryStr = $this->escape_string($this->queryStr);
         $this->queryTimes ++;
+		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->queryID = pg_query($this->linkID,$this->queryStr );
         if ( !$this->queryID ) {
@@ -172,6 +173,7 @@ Class Db_Pgsql extends Db{
 
         $this->queryStr = $this->escape_string($this->queryStr);
         $this->writeTimes ++;
+		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         if ( !pg_query($this->linkID,$this->queryStr) ) {
             throw_exception($this->error());

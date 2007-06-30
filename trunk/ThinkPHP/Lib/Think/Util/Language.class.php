@@ -20,7 +20,7 @@
 
 /**
  +------------------------------------------------------------------------------
- * 语言包原理类
+ * 语言包处理类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
@@ -91,7 +91,11 @@ class Language extends Base
 	}
 
 	function __get($name) {
-		return $this->_lang[$name];
+		if(isset($this->_lang[$name])) {
+			return $this->_lang[$name];
+		}else{
+			return null;
+		}
 	}
 }
 ?>

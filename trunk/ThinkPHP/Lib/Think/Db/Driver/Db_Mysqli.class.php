@@ -132,6 +132,7 @@ Class Db_Mysqli extends Db{
 
         $this->escape_string($this->queryStr);
         $this->queryTimes ++;
+		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->queryID = mysqli_query($this->linkID,$this->queryStr );
         if ( !$this->queryID ) {
@@ -175,6 +176,7 @@ Class Db_Mysqli extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->writeTimes ++;
+		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         if ( !mysqli_query($this->linkID,$this->queryStr) ) {
             throw_exception($this->error());

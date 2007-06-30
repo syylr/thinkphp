@@ -112,6 +112,7 @@ Class Db_Sqlite extends Db
         if ( $this->queryID ) {    $this->free();    }
         $this->escape_string($this->queryStr);
         $this->queryTimes ++;
+		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
 
         $this->queryID = sqlite_query($this->linkID,$this->queryStr);
@@ -156,6 +157,7 @@ Class Db_Sqlite extends Db
         }
         $this->queryStr = $this->escape_string($this->queryStr);
         $this->writeTimes ++;
+		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         if ( !sqlite_exec($this->linkID,$this->queryStr) ) {
             throw_exception($this->error());

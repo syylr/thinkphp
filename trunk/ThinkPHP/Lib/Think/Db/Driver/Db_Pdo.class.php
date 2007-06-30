@@ -127,6 +127,7 @@ Class Db_Pdo extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->queryTimes++;
+		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->PDOStatement = $this->pdo->prepare($this->queryStr);
 		$result	=	$this->PDOStatement->execute();
@@ -171,6 +172,7 @@ Class Db_Pdo extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->writeTimes++;
+		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
 		$result	=	$this->pdo->exec($this->queryStr);
         if ( !$result) {

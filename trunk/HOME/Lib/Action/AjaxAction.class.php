@@ -29,7 +29,6 @@ class AjaxAction extends Action
 
 	// Ajax方式返回创建数据
 	function ajaxResult() {
-		sleep(1); // 为了显示加载效果，延时1秒
 		$dao = D("Form");
 		$vo	=	$dao->createVo('add','',$_POST['type']);
 		if($vo) {

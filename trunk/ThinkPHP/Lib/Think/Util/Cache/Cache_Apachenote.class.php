@@ -33,7 +33,6 @@ class Cache_Apachenote extends Cache
     /**
      +----------------------------------------------------------
      * 架构函数
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -72,7 +71,6 @@ class Cache_Apachenote extends Cache
     /**
      +----------------------------------------------------------
      * 读取缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -90,7 +88,7 @@ class Cache_Apachenote extends Cache
          for ($data = ''; !feof($this->handler);) {
              $data .= fread($this->handler, 4096);
          }
-
+		$this->Q(1);
          $this->close();
          return $data === '' ? '' : unserialize($data);
      }
@@ -109,7 +107,8 @@ class Cache_Apachenote extends Cache
      */
     function set($name, $value)
     {
-        $this->open();
+		$this->W(1);
+		$this->open();
         $value = serialize($value);
         $s = 'S' . pack('NN', strlen($name), strlen($value)) . $name . $value;
 

@@ -206,8 +206,11 @@ class Action extends Base
 		// 乐观锁记录
 		$dao = $this->getDaoClass();
 		if($dao->lock_optimistically) {
-			$lock = is_array($vo)? $vo[$dao->lock_optimistically]:$vo->{$dao->lock_optimistically};
-			Session::set($guid.'_lock_version',$lock);
+			if(is_array($vo) && isset($vo[$dao->lock_optimistically])) {
+				Session::set($guid.'_lock_version',$vo[$dao->lock_optimistically]);
+			}elseif(isset($vo->{$dao->lock_optimistically})){
+				Session::set($guid.'_lock_version',$vo->{$dao->lock_optimistically});
+			}
 		}
         return $vo;
     }
@@ -649,7 +652,6 @@ class Action extends Base
         //自动引入同名VO类
         import(APP_NAME.'.Vo.'.$vo);
         $vars       = get_class_vars($vo);
-
         foreach($vars as $key=>$val) {
             if(isset($_REQUEST[$key]) && $_REQUEST[$key]!='') {
                 $map->put($key,$_REQUEST[$key]);
