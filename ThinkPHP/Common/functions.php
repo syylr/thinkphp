@@ -395,19 +395,19 @@ function get_instance_of($className,$method='',$args=array())
     static $_instance = array();
     if (!isset($_instance[$className])) {
         if(class_exists($className)){
-            $o = & new $className();
+            $o = new $className();
             if(method_exists($o,$method)){
                 if(!empty($args)) {
                 	$_instance[$className] = call_user_func_array(array(&$o, $method), $args);;
                 }else {
-                	$_instance[$className] = $o->$method();
+                	$_instance[$className] = &$o->$method();
                 }
             }
             else 
-                $_instance[$className] = $o;
+                $_instance[$className] = &$o;
         }
         else 
-            halt(_CLASS_NOT_EXIST_);
+            halt(L('_CLASS_NOT_EXIST_'));
     }
     return $_instance[$className];
 }
@@ -1007,7 +1007,11 @@ function get_plugin_info($plugin_file) {
     }else {
     	$author_name = '';
     }
-	return array ('file'=>$plugin_file,'name' => trim($plugin_name[1]), 'uri' => trim($plugin_uri[1]), 'description' => trim($description[1]), 'author' => trim($author_name), 'version' => $version);
+	$plug_url = '';
+	if(!empty($plugin_uri)) {
+		$plug_url = $plugin_uri[1];
+	}
+	return array ('file'=>$plugin_file,'name' => trim($plugin_name[1]), 'uri' => trim($plug_url), 'description' => trim($description[1]), 'author' => trim($author_name), 'version' => $version);
 }
 
 /**

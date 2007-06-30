@@ -547,7 +547,6 @@ class  ThinkTemplate extends Base
                 $name = "$".$var;
                 preg_match('/(.+?)\[(.+?)\]/is',$var,$match);
                 $var = $match[1];
-
             }
             else {
                 $name = "$$var";

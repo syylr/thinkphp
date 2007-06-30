@@ -36,6 +36,10 @@ if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
 
 //加载系统定义文件和系统函数库
 require_once(THINK_PATH."/Common/defines.php");
+// 记录内存初始使用
+if(MEMORY_LIMIT_ON) {
+	 $GLOBALS['_startUseMems'] = memory_get_usage();
+}
 require_once(THINK_PATH."/Common/functions.php");
 
 //如果PHP4导入兼容函数库

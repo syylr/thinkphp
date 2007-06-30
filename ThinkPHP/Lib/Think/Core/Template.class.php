@@ -40,6 +40,7 @@ class Template extends Base
      */
     var $tVar        =  array();
 
+	// 使用的模板引擎类型
 	var $type	=	'';
 
    /**
@@ -201,15 +202,39 @@ class Template extends Base
         // 输出过滤
         $content = apply_filter('ob_content',$content);
         if($display) {
-			$endTime = array_sum(explode(' ', microtime()));
-			$total_run_time	=	number_format(($endTime - $GLOBALS['_beginTime']), 3);
-			$_load_time	=	number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3);
-			$_init_time	=	number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3);
-			$_exec_time	=	number_format(($startTime  -$GLOBALS['_initTime'] ), 3);
-			$_parse_time	=	number_format(($endTime - $startTime), 3);
+			if(C('SHOW_RUN_TIME')) {
+				// 显示运行时间
+				$endTime = array_sum(explode(' ', microtime()));
+				$total_run_time	=	number_format(($endTime - $GLOBALS['_beginTime']), 3);
+				$show_time	=	'Process: '.$total_run_time.'s ';
+				if(C('SHOW_ADV_TIME')) {
+					// 显示详细运行时间
+					$_load_time	=	number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3);
+					$_init_time	=	number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3);
+					$_exec_time	=	number_format(($startTime  -$GLOBALS['_initTime'] ), 3);
+					$_parse_time	=	number_format(($endTime - $startTime), 3);
+					$show_time .= '( Load:'.$_load_time.'s Init:'.$_init_time.'s Exec:'.$_exec_time.'s Template:'.$_parse_time.'s )';
+				}
+				if(C('SHOW_DB_TIMES')) {
+					// 显示数据库操作次数
+					$db	=	Db::getInstance();
+					$show_time .= ' | DB :'.$db->Q().' queries '.$db->W().' writes ';
+				}
+				if(C('SHOW_CACHE_TIMES')) {
+					// 显示数据库操作次数
+					$cache	=	Cache::getInstance();
+					$show_time .= ' | Cache :'.$cache->Q().' gets '.$cache->W().' writes ';
+				}
+				if(MEMORY_LIMIT_ON && C('SHOW_USE_MEM')) {
+					// 显示内存开销
+					$startMem    =  array_sum(split(' ', $GLOBALS['_startUseMems']));
+					$endMem     =  array_sum(split(' ', memory_get_usage()));
+					$show_time .= ' | UseMem:'. number_format(($endMem - $startMem)/1024).' kb';
+				}
+			}
             echo $content; 
 			if(C('SHOW_RUN_TIME')) {
-            echo '<div  class="think_run_time">Process: '.$total_run_time.'s ( Load:'.$_load_time.'s Init:'.$_init_time.'s Exec:'.$_exec_time.'s Template:'.$_parse_time.'s )</div>';
+	            echo '<div  class="think_run_time">'.$show_time.'</div>';
             }
             return null;
         }else {

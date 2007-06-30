@@ -38,7 +38,7 @@ ThinkAjax.send('__URL__/resetPwd/','ajax=1&id={$vo.id}&password='+encodeURICompo
 <FORM METHOD=POST id="form1" >
 <TR>
 	<TD class="tRight" >用户名：</TD>
-	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeftRequire" onfocus="notice('name')" check='^\S+$' warning="用户名不能为空,且不能含有空格" NAME="name" value="{$vo.name}"> {$vo.type|getUserType}</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeftRequire" onfocus="notice('name')" check='^\S+$' warning="用户名不能为空,且不能含有空格" NAME="name" value="{$vo.name}"></TD>
 </TR>
 <TR>
 	<TD class="tRight" >昵称：</TD>

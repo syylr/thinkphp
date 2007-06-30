@@ -32,7 +32,6 @@ class Cache_Sqlite extends Cache
     /**
      +----------------------------------------------------------
      * 架构函数
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -64,7 +63,6 @@ class Cache_Sqlite extends Cache
     /**
      +----------------------------------------------------------
      * 是否连接
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -79,7 +77,6 @@ class Cache_Sqlite extends Cache
     /**
      +----------------------------------------------------------
      * 读取缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -90,7 +87,8 @@ class Cache_Sqlite extends Cache
      */
     function get($name)
     {
-        $name   = sqlite_escape_string($name);
+		$this->Q(1);
+		$name   = sqlite_escape_string($name);
         $sql = 'SELECT '.$this->options['value'].
                ' FROM '.$this->options['table'].
                ' WHERE '.$this->options['var'].'=\''.$name.'\' AND '.$this->options['expire'].'!=-1 AND '.$this->options['expire'].'<'.time().
@@ -110,7 +108,6 @@ class Cache_Sqlite extends Cache
     /**
      +----------------------------------------------------------
      * 写入缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -122,6 +119,7 @@ class Cache_Sqlite extends Cache
      */
     function set($name, $value,$expireTime=0)
     {
+		$this->Q(1);
         $expire =  !empty($expireTime)? $expireTime : C('DATA_CACHE_TIME');
         $name  = sqlite_escape_string($name);
         $value = sqlite_escape_string(serialize($value));

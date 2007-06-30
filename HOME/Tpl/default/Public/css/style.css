@@ -469,4 +469,4 @@ a,a:visited{text-decoration:none;color:#174B73;}
 a:hover{ color:#FF6600;border-bottom:1px dotted #3366FF;}
 
 .think_run_time
-{text-align:center;width:100%}
+{text-align:center;width:100%;border:1px solid gray}

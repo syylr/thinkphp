@@ -16,12 +16,13 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: AdminAction.class.php 78 2007-04-01 04:29:15Z liu21st $
+// $Id$
 
  //支持的URL模式
 define('URL_COMMON',      0);   //普通模式
 define('URL_PATHINFO',    1);   //PATHINFO模式
 define('URL_REWRITE',     2);   //REWRITE模式
+define('URL_ROUTER',     3);   // URL路由模式
 
 class ThinkDispatcher extends Base
 {//类定义开始
@@ -47,7 +48,7 @@ class ThinkDispatcher extends Base
         }
         if($urlMode == URL_PATHINFO || $urlMode == URL_REWRITE) {
             // PATHINFO REWRITE模式下面
-            if ($_GET) {
+            if (!empty($_GET)) {
                 // 2006-8-20 完善pathinfo和get方式共存的问题
                 $_GET  =  array_merge (ThinkDispatcher :: getPathInfo(),$_GET);
                 // 设置默认模块和操作
@@ -83,7 +84,50 @@ class ThinkDispatcher extends Base
                 //保证$_REQUEST正常取值
                 $_REQUEST = array_merge($_POST,$_GET);
             }
-        }else {
+        }elseif($urlMode == URL_ROUTER){
+			// URL路由模式
+			$paths = explode('/',trim($_SERVER['PATH_INFO'],'/'));
+			// 获取路由名称
+			$routeName = array_shift($paths);	
+			if(!empty($_GET) && isset($_GET[C('VAR_ROUTER')])) {
+				$routeName	=	$_GET[C('VAR_ROUTER')];
+				unset($_GET[C('VAR_ROUTER')]);
+			}
+			// 获取路由解析参数 不解析get方式传递的参数
+			$ruoteVar = array();
+			$count	=	count($paths);
+			for($i=0;$i<$count;$i++) {
+				$routeVar[]	=	array_shift($paths);
+			}
+
+			// 搜索路由映射 把路由名称解析为对应的模块和操作
+			// 如果找不到匹配的路由设置 则采用默认的模块和操作
+			if(file_exists(CONFIG_PATH.'_routes.php')) {
+				// 读取路由规则文件
+				$routes = include CONFIG_PATH.'_routes.php';
+				if(!is_array($router)) {
+					$routes	=	$_routes;
+				}
+				if(isset($routes[$routeName])) {
+					// 读取当前路由名称的路由规则
+					$route = $routes[$routeName];
+					define('MODULE_NAME',$route[0]);	// 获取当前模块名
+					define('ACTION_NAME',$route[1]);	// 获取当前操作名
+					//	获取当前路由参数对应的变量
+					$vars	 =	 explode(',',$route[2]);
+					for($i=0;$i<count($routeVar);$i++) {
+						$_GET[$vars[$i]]	 =	 $routeVar[$i];	
+					}
+					if(isset($route[3])) {
+						// 路由里面本身包含固定参数 形式为 a=111&b=222
+						parse_str($route[3],$params);
+						$_GET	=	array_merge($_GET,$params);
+					}
+					//保证$_REQUEST正常取值
+					$_REQUEST = array_merge($_POST,$_GET);
+				}
+			}
+		}else {
             //如果是URL_COMMON 模式
             if(isset($_SERVER['PATH_INFO']) ) {
                 $pathinfo = ThinkDispatcher :: getPathInfo(); 
@@ -135,7 +179,7 @@ class ThinkDispatcher extends Base
      * 获得PATH_INFO信息
      +----------------------------------------------------------
      */
-    function getPathInfo($index='')
+    function getPathInfo()
     {
         $pathInfo = array();
         if(isset($_SERVER['PATH_INFO'])) {

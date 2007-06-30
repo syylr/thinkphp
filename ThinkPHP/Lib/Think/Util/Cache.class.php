@@ -128,7 +128,6 @@ class Cache extends Base
     /**
      +----------------------------------------------------------
      * 取得缓存类实例
-     * 
      +----------------------------------------------------------
      * @static
      * @access public 
@@ -144,5 +143,24 @@ class Cache extends Base
         return get_instance_of(__CLASS__,'connect',$param);
     }
 
+	// 读取缓存次数
+	function Q($times='') {
+		static $_times = 0;
+		if(empty($times)) {
+			return $_times;
+		}else{
+			$_times++;
+		}
+	}
+
+	// 写入缓存次数
+	function W($times='') {
+		static $_times = 0;
+		if(empty($times)) {
+			return $_times;
+		}else{
+			$_times++;
+		}
+	}
 }//类定义结束
 ?>

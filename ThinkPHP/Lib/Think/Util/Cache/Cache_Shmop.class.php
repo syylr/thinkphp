@@ -32,7 +32,6 @@ class Cache_Shmop extends Cache
     /**
      +----------------------------------------------------------
      * 架构函数
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -58,7 +57,6 @@ class Cache_Shmop extends Cache
     /**
      +----------------------------------------------------------
      * 读取缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -69,6 +67,7 @@ class Cache_Shmop extends Cache
      */
     function get($name = false)
     {
+		$this->Q(1);
         $id = shmop_open($this->handler, 'c', 0600, 0);
         if ($id !== false) {
             $ret = unserialize(shmop_read($id, 0, shmop_size($id)));
@@ -96,7 +95,6 @@ class Cache_Shmop extends Cache
     /**
      +----------------------------------------------------------
      * 写入缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -108,6 +106,7 @@ class Cache_Shmop extends Cache
      */
     function set($name, $value)
     {
+		$this->W(1);
         $lh = $this->_lock();
         $val = $this->get();
         if (!is_array($val)) {

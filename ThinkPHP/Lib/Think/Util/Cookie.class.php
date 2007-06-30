@@ -16,34 +16,44 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: AdminAction.class.php 78 2007-04-01 04:29:15Z liu21st $
+// $Id$
 
-class Cookie extends Base {
+define('COOKIE_PREFIX',      'THINK_');
+/**
+ +------------------------------------------------------------------------------
+ * Cookie 静态封装类 
+ +------------------------------------------------------------------------------
+ * @author    liu21st <liu21st@gmail.com>
+ * @version   $Id$
+ +------------------------------------------------------------------------------
+ */
+class Cookie extends Base
+{
 	// 判断Cookie是否存在
 	function is_set($name) {
-		return isset($_COOKIE['Think'][$name]);
+		return isset($_COOKIE[COOKIE_PREFIX][$name]);
 	}
 
 	// 获取某个Cookie值
 	function get($name) {
-		return $_COOKIE['Think'][$name];
+		return $_COOKIE[COOKIE_PREFIX][$name];
 	}
 
 	// 设置某个Cookie值
 	function set($name,$value,$timeout='') {
-		setcookie('Think['.$name.']', $value);
-		$_COOKIE['Think'][$name]	=	$value;
+		setcookie(COOKIE_PREFIX.'['.$name.']', $value,$timeout);
+		$_COOKIE[COOKIE_PREFIX][$name]	=	$value;
 	}
 
 	// 删除某个Cookie值
 	function delete($name) {
-		setcookie('Think['.$name.']', "", time() - 3600);
-		unset($_COOKIE['Think'][$name]);
+		setcookie(COOKIE_PREFIX.'['.$name.']', "", time() - 3600);
+		unset($_COOKIE[COOKIE_PREFIX][$name]);
 	}
 	
 	// 清空Cookie值
 	function clear() {
-		unset($_COOKIE['Think']);
+		unset($_COOKIE[COOKIE_PREFIX]);
 	}
 }
 ?>

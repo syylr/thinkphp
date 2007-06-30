@@ -115,6 +115,7 @@ Class Db_Oracle extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->queryTimes ++;
+		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->queryID = OCI_Parse($this->linkID,$this->queryStr);
         if ( !$this->queryID ) {
@@ -162,6 +163,7 @@ Class Db_Oracle extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->writeTimes ++;
+		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         if ( !OCI_Parse($this->linkID,$this->queryStr) ) {
             throw_exception($this->error());

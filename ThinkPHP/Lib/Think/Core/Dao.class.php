@@ -160,7 +160,7 @@ class Dao extends Base
      */
     function __construct($tablePrefix='',$tableName='',$pk='',$autoIncrement=true,$resultType='')
     {
-        $this->db = DB::getInstance();
+        $this->db = Db::getInstance();
         if(!empty($tablePrefix))  $this->tablePrefix    =   $tablePrefix;
 		else $this->tablePrefix = C('DB_PREFIX');
         if(!empty($tableName))  $this->tableName    =   $tableName;
@@ -229,12 +229,19 @@ class Dao extends Base
             $this->error = L('_OPERATION_WRONG_');
             return false;
         }else {
+			$insertId	=	$this->db->get('lastInsID');
 			// 保存关联记录
 			if ($this->auto_add_relations){
+				if(empty($pk)) $pk	=	$this->pk;
+				if(is_array($data)) {
+					$data[$pk]	 =	 $insertId;
+				}else{
+					$data->$pk = $insertId;
+				}
 				$this->opRelation('ADD',$data);
 			}
             //成功后返回插入ID
-            return $this->db->getLastInsID();
+            return $insertId;
         }
     }
 
@@ -1462,7 +1469,7 @@ class Dao extends Base
 
         //给Vo对象赋值
         foreach ( $vo->__varList() as $name){
-            $val = isset($_POST[$name])?$_POST[$name]:$_GET[$name];
+            $val = isset($_REQUEST[$name])?$_REQUEST[$name]:null;
             //保证赋值有效
             if(!is_null($val) && property_exists($vo,$name)){
 				// 首先保证表单赋值
@@ -1538,6 +1545,7 @@ class Dao extends Base
 			unset($vo->_auto);
 		}
 		if(isset($vo->_link))  unset($vo->_link);
+		if(isset($vo->_info))  unset($vo->_info);
 		if(is_null($resultType))	$resultType = $this->resultType;
 
         if($resultType == DATA_TYPE_ARRAY ) {
