@@ -229,7 +229,7 @@ class Dao extends Base
             $this->error = L('_OPERATION_WRONG_');
             return false;
         }else {
-			$insertId	=	$this->db->get('lastInsID');
+			$insertId	=	$this->db->getLastInsID();
 			// 保存关联记录
 			if ($this->auto_add_relations){
 				if(empty($pk)) $pk	=	$this->pk;
