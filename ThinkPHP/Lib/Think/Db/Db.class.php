@@ -1120,5 +1120,28 @@ class Db extends Base
 		}
 	}
 
+    // +----------------------------------------
+    // |    get set 方法
+    // +----------------------------------------
+    function getAutoFree() {return $this->autoFree;}
+    function getAutoCommit() {return $this->autoCommit;}
+    function getPconnect() {return $this->pconnect;}
+    function getDebug() {return $this->debug;}
+
+    //只读属性获取
+    function getDbType() {return $this->dbType;}
+    function getDbVersion() {return $this->dbVersion;}
+    function getResult()  {return $this->result;}
+    function getFields()  {return $this->fields;}
+    function getLastInsID()  {return $this->lastInsID;}
+    function getNumCols() {return $this->numCols;}
+    function getNumRows() {return $this->numRows;}
+    function getQueryTimes() { return $this->queryTimes;  }
+    function getWriteTimes() { return $this->writeTimes;  }
+
+    function setAutoFree($autofree) {$this->autoFree = $autofree;}
+    function setAutoCommit($autocommit) {$this->autoCommit = $autocommit;}
+    function setPconnect($pconnect) {$this->pconnect = $pconnect;}
+    function setDebug($debug) {$this->debug = $debug;}
 }//类定义结束
 ?>
