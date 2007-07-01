@@ -301,11 +301,9 @@ CREATE TABLE `think_plugin` (
 
 CREATE TABLE `think_session` (
   `id` int(11) unsigned NOT NULL auto_increment,
-  `cachekey` varchar(255) character set utf8 NOT NULL,
-  `expire` int(11) NOT NULL,
-  `data` blob,
-  `datasize` int(11) default NULL,
-  `datacrc` varchar(32) character set utf8 default NULL,
+  `session_id` varchar(255) character set utf8 NOT NULL,
+  `session_expires` int(11) NOT NULL,
+  `session_data` blob,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
