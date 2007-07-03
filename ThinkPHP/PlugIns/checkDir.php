@@ -1,7 +1,7 @@
 <?php 
     /*
     Plugin Name: checkDir
-    Plugin URI: http://fcs.org.cn
+    Plugin URI: http://thinkphp.cn
     Description: 目录检查插件
     Author: 流年
     Version: 1.0

@@ -1,7 +1,7 @@
 <?php 
     /*
     Plugin Name: varFilter 
-    Plugin URI: http://fcs.org.cn
+    Plugin URI: http://thinkphp.cn
     Description: 变量安全过滤插件
     Author: 流年
     Version: 1.0
