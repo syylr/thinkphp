@@ -1,7 +1,7 @@
 <?php 
 /*
 Plugin Name: htmlCache
-Plugin URI: http://fcs.org.cn/
+Plugin URI: http://thinkphp.cn
 Description: 静态缓存支持，根据REQUEST_URI 访问生成静态文件
 Author: 流年
 Version: 1.0

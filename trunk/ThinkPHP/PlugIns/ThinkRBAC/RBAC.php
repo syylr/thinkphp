@@ -1,7 +1,7 @@
 <?php 
 /*
 Plugin Name: ThinkRBAC
-Plugin URI: http://fcs.org.cn/
+Plugin URI: http://thinkphp.cn
 Description: 基于角色的权限认证， 在需要获取用户权限的地方添加接口方法，需要数据库的支持
 Author: 流年
 Version: 1.0
