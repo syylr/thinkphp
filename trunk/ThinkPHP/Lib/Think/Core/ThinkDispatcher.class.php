@@ -35,10 +35,6 @@ class ThinkDispatcher extends Base
     function dispatch() 
     {
         $urlMode  =  C('URL_MODEL');
-        if(empty($urlMode)) {
-            //如果没有定义 URL_MODEL 默认采用URL_PATHINFO 方式
-        	$urlMode = URL_PATHINFO ;
-        }
         if($urlMode == URL_REWRITE ) {
             //当前项目地址
             define('PHP_FILE',dirname(_PHP_FILE_));
