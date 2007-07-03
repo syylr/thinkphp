@@ -535,103 +535,6 @@ function get_include_contents($filename)
 
 /**
  +----------------------------------------------------------
- * 压缩PHP文件内容和简单加密
- +----------------------------------------------------------
- * @param string $filename 文件名
- * @param boolean $strip 是否去除代码空白和注释
- +----------------------------------------------------------
- * @return false|integer 返回加密文件的字节大小
- +----------------------------------------------------------
- */
-function encode_file_contents($filename,$strip=true) 
-{
-    $type = strtolower(substr(strrchr($filename, '.'),1));
-    if('php'==$type && is_file($filename) && is_writeable($filename)) {
-        // 如果是PHP文件 并且可写 则进行压缩
-    	$contents  =  file_get_contents($filename);
-        // 判断文件是否已经被加密
-        $pos = strpos($contents,'/*Protected by ThinkPHP Cryptation*/');
-        if( false === $pos  || $pos>100 ) {
-            if($strip) {
-                // 去除PHP文件注释和空白，减少文件大小
-                $contents  =  php_strip_whitespace($filename);            	
-            }
-            // 去除PHP头部和尾部标识
-            $headerPos   =  strpos($contents,'<?php');
-            $footerPos    =  strrpos($contents,'?>');
-            $contents  =  substr($contents,$headerPos+5,$footerPos-$headerPos);
-            // 对文件内容进行加密存储
-            $encode   =  base64_encode(gzdeflate($contents));
-            $encode   = '<?php'." /*Protected by ThinkPHP Cryptation*/\n\$cryptCode='".$encode."';eval(gzinflate(base64_decode(\$cryptCode)));\n /*Reverse engineering is illegal and strictly prohibited - (C) ThinkPHP Cryptation 2006*/\n?>";
-            // 重新写入加密内容
-            return file_put_contents($filename,$encode);
-        } 
-    }
-    return false;
-}
-/**
- +----------------------------------------------------------
- * 去掉PHP文件的注释和空白
- +----------------------------------------------------------
- * @param string $filename 文件名
- +----------------------------------------------------------
- * @return void
- +----------------------------------------------------------
- */
-function strip_file_contents($filename) 
-{
-    $type = strtolower(substr(strrchr($filename, '.'),1));
-    if('php'==$type && is_file($filename) && is_writeable($filename)) {	
-        // 去除PHP文件注释和空白，减少文件大小
-        $contents  =  php_strip_whitespace($filename); 
-        return file_put_contents($filename,$contents);                
-    }
-}
-/**
- +----------------------------------------------------------
- * 把目录下面的PHP文件去掉注释和空白
- +----------------------------------------------------------
- * @param string $path 路径
- +----------------------------------------------------------
- * @return void
- +----------------------------------------------------------
- */
-function strip_dir($path) 
-{
-        if(substr($path, -1) != "/")    $path .= "/";
-        $dir=glob($path."*"); 
-        foreach($dir as $key=>$val) { 
-            if(is_dir($val)) { 
-                strip_dir($val); 
-            } else{
-                strip_file_contents($val);
-            } 
-        } 	
-}
-
-/**
- +----------------------------------------------------------
- * 压缩文件夹下面的PHP文件
- +----------------------------------------------------------
- * @param string $path 路径
- +----------------------------------------------------------
- * @return void
- +----------------------------------------------------------
- */
-function encode_dir($path) { 
-    if(substr($path, -1) != "/")    $path .= "/";
-    $dir=glob($path."*"); 
-    foreach($dir as $key=>$val) { 
-        if(is_dir($val)) { 
-            encode_dir($val); 
-        } else{
-            encode_file_contents($val);
-        } 
-    } 
-} 
-
-/**
- +----------------------------------------------------------
  * 导入所需的类库 支持目录和* 同java的Import
  * 本函数有缓存功能 
  +----------------------------------------------------------
@@ -706,8 +609,8 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
             //导入目录下的指定类库文件
             return require_cache($classfile);          	
       }
-  
 } 
+
 /**
  +----------------------------------------------------------
  * 文件追加写入 
@@ -1578,96 +1481,21 @@ function S($name,$value='',$type='') {
 	return $value;
 }
 
-function sort_by($array,  $keyname = null, $sortby='asc') {
-   $myarray = $inarray = array();    
-   # First store the keyvalues in a seperate array
-   foreach ($array as $i => $befree) { 
-       $myarray[$i] = $array[$i][$keyname];
-   }
-   # Sort the new array by
-   switch ($sortby) {
-   case 'asc':
-   # Sort an array and maintain index association...
-   asort($myarray); 
-   break;
-   case 'arsort':
-   # Sort an array in reverse order and maintain index association 
-   arsort($myarray); 
-   break;
-   case 'natcasesor':
-   # Sort an array using a case insensitive "natural order" algorithm
-   natcasesort($myarray); 
-   break;
-   }
-   # Rebuild the old array
-   foreach ( $myarray as $key=> $befree) {
-       $inarray[] = $array[$key];
-   }
-   return $inarray;
-} 
-
-/**
- +----------------------------------------------------------
- * 代码加亮
- +----------------------------------------------------------
- * @param String  $str 要高亮显示的字符串 或者 文件名
- * @param Boolean $show 是否输出
- +----------------------------------------------------------
- * @return String
- +----------------------------------------------------------
- */
-function highlight_code($str,$number=true,$show=false)
-{
-    if(file_exists($str)) {
-        $str    =   file_get_contents($str);
-    }
-    $str  =  stripslashes(trim($str));
-    // The highlight string function encodes and highlights 
-    // brackets so we need them to start raw 
-    $str = str_replace(array('&lt;', '&gt;'), array('<', '>'), $str);
-
-    // Replace any existing PHP tags to temporary markers so they don't accidentally
-    // break the string out of PHP, and thus, thwart the highlighting.
-
-    $str = str_replace(array('&lt;?php', '?&gt;',  '\\'), array('phptagopen', 'phptagclose', 'backslashtmp'), $str);
-        
-    // The highlight_string function requires that the text be surrounded
-    // by PHP tags.  Since we don't know if A) the submitted text has PHP tags,
-    // or B) whether the PHP tags enclose the entire string, we will add our
-    // own PHP tags around the string along with some markers to make replacement easier later
-
-    $str = '<?php //tempstart'."\n".$str.'//tempend ?>'; // <?
-
-    // All the magic happens here, baby!
-    $str = highlight_string($str, TRUE);
-
-    // Prior to PHP 5, the highlight function used icky font tags
-    // so we'll replace them with span tags.	
-    if (abs(phpversion()) < 5)
-    {
-        $str = str_replace(array('<font ', '</font>'), array('<span ', '</span>'), $str);
-        $str = preg_replace('#color="(.*?)"#', 'style="color: \\1"', $str);
-    }
-
-    // Remove our artificially added PHP
-    $str = preg_replace("#\<code\>.+?//tempstart\<br />\</span\>#is", "<code>\n", $str);
-    $str = preg_replace("#\<code\>.+?//tempstart\<br />#is", "<code>\n", $str);
-    $str = preg_replace("#//tempend.+#is", "</span>\n</code>", $str);
-
-    // Replace our markers back to PHP tags.
-    $str = str_replace(array('phptagopen', 'phptagclose', 'backslashtmp'), array('&lt;?php', '?&gt;', '\\'), $str); //<?
-    $line   =   explode("<br />", rtrim(ltrim($str,'<code>'),'</code>'));
-    $result =   '<div class="code"><ol>';
-    foreach($line as $key=>$val) {
-        $result .=  '<li>'.$val.'</li>';
-    }
-    $result .=  '</ol></div>';
-    $result = str_replace("\n", "", $result);
-    if( $show!== false) {
-        echo($result);
-    }else {
-        return $result;
-    }
+// 快速创建一个对象实例
+function I($class,$baseUrl = '',$ext='.class.php') {
+	static $_class = array();
+	if(isset($_class[$baseUrl.$class])) {
+		return $_class[$baseUrl.$class];
+	}
+	$class_strut = explode(".",$class);
+	$className	=	array_pop($class_strut);
+	if($className != '*') {
+		import($class,$baseUrl,$ext,false);
+		$_class[$baseUrl.$class] = & new $className();
+		return $_class[$baseUrl.$class];
+	}else {
+		return false;
+	}
 }
 
 // xml编码
