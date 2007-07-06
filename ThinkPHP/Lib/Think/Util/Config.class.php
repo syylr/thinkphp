@@ -16,14 +16,14 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Config.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
- * 配置文件管理类
+ * 配置文件读取类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Config.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Config extends Base
@@ -70,10 +70,16 @@ class Config extends Base
     var $_connect;
 
 
-	// 实例化
-    function getInstance() 
+    /**
+     +----------------------------------------------------------
+     * 架构函数
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     */
+    function __construct()
     {
-        return get_instance_of(__CLASS__);
     }
 
 
@@ -84,8 +90,8 @@ class Config extends Base
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param mixed $config 配置数据
-     * @param string $type  配置类型 默认自动判断
+     * @param mixed $name 数据
+     * @param string $filename  数据表名
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -111,11 +117,11 @@ class Config extends Base
         if(require_cache ($configClassPath.$confClass . '.class.php')){
             $con = & new $confClass($config);
             if(!$con->connect()){
-                throw_exception(L('_CONFIG_FILE_INVALID_'));
+                throw_exception(_CONFIG_FILE_INVALID_);
             }
             return $con;
         }else {
-            throw_exception(L('_CONFIG_TYPE_INVALID_'));
+            throw_exception(_CONFIG_TYPE_INVALID_);
         }
     }
 
@@ -139,9 +145,7 @@ class Config extends Base
         return $this->_config[$name];
     }
 
-	function __get($name) {
-		return $this->get($name);
-	}
+
     /**
      +----------------------------------------------------------
      * 设置配置项
@@ -164,19 +168,21 @@ class Config extends Base
         return $previous;
     }
 
-	function __set($name,$value) {
-		return $this->set($name,$value);
-	}
 
-	// 追加配置项目
-	function append($array,$override=true) {
-		if($override) {
-			// 覆盖模式追加
-			$this->_config = array_merge($this->_config,array_change_key_case($array));
-		}else{
-			$this->_config = array_merge(array_change_key_case($array),$this->_config);
-		}
-	}
+    /**
+     +----------------------------------------------------------
+     * 转换成字符串
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    function toString() 
+    {
+        
+    }
 
     /**
      +----------------------------------------------------------
@@ -193,8 +199,7 @@ class Config extends Base
     function toArray($filename='') 
     {
         if(!empty($filename) && file_exists(dirname($filename))) {
-            $content  = "<?php\n";
-			$content .= "if (!defined('THINK_PATH')) exit();\n";
+            $content  = "<?php\n\r";
             $content .= "return ".var_export($this->_config,true);
             $content .= ";\n\r?>";
             file_put_contents($filename,$content);

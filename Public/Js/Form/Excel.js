@@ -25,7 +25,7 @@
  * @link       http://www.fcs.org.cn
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: Excel.js 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 function Excel(tableId){

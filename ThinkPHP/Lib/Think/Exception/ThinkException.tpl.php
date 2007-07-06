@@ -43,12 +43,10 @@ h2{
 </head>
 <body>
 <div class="notice">
-<?php if(isset($e['file'])) {?>
 <h2>系统发生错误 </h2>
 <div >您可以选择 [ <A HREF="<?php echo($_SERVER['PHP_SELF'])?>">重试</A> ] [ <A HREF="javascript:history.back()">返回</A> ] 或者 [ <A HREF="<?php echo(__APP__);?>">回到首页</A> ]</div>
 <p><strong>错误位置:</strong>　FILE: <span class="red"><?php echo $e['file'] ;?></span>　LINE: <span class="red"><?php echo $e['line'];?></span></p>
 <p class="title">[错误信息]</p>
-<?php }?>
 <p class="message"><?php echo $e['message'];?></p>
 <?php if(isset($e['trace'])) {?>
 <p class="title">[TRACE]</p>

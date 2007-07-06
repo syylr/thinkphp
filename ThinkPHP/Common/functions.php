@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: functions.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
@@ -24,17 +24,9 @@
  +------------------------------------------------------------------------------
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: functions.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
-
-function mk_dir($dir, $mode = 0755)
-{
-  if (is_dir($dir) || @mkdir($dir,$mode)) return TRUE;
-  if (!make_dir(dirname($dir),$mode)) return FALSE;
-  return @mkdir($dir,$mode);
-}
-
 /**
  +----------------------------------------------------------
  * 检测浏览器语言
@@ -44,17 +36,17 @@ function mk_dir($dir, $mode = 0755)
  */
 function detect_browser_language()
 {
-    if ( isset($_GET[C('VAR_LANGUAGE')]) ) {
-        $langSet = $_GET[C('VAR_LANGUAGE')];
-        setcookie('Think_'.C('VAR_LANGUAGE'),$langSet,time()+3600,'/');
+    if ( isset($_GET[VAR_LANGUAGE]) ) {
+        $langSet = $_GET[VAR_LANGUAGE];
+        setcookie('Think_'.VAR_LANGUAGE,$langSet,time()+3600,'/');
     } else {
-        if ( !isset($_COOKIE['Think_'.C('VAR_LANGUAGE')]) ) {
+        if ( !isset($_COOKIE['Think_'.VAR_LANGUAGE]) ) {
             preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
             $langSet = $matches[1];
-            setcookie('Think_'.C('VAR_LANGUAGE'),$langSet,time()+3600,'/');
+            setcookie('Think_'.VAR_LANGUAGE,$langSet,time()+3600,'/');
         }
         else {
-            $langSet = $_COOKIE['Think_'.C('VAR_LANGUAGE')];
+            $langSet = $_COOKIE['Think_'.VAR_LANGUAGE];
         }
     }
     return $langSet;
@@ -123,7 +115,7 @@ function get_client_ip(){
  */
 function halt($error) {
     $e = array();
-    if(C('DEBUG_MODE')){
+    if(DEBUG_MODE){
         //调试模式下输出错误信息
         if(!is_array($error)) {
             $trace = debug_backtrace();
@@ -150,11 +142,10 @@ function halt($error) {
     else 
     {
         //否则定向到错误页面
-		$error_page	=	C('ERROR_PAGE');
-        if(!empty($error_page)){
-            redirect($error_page); 
+        if(ERROR_PAGE!=''){
+            redirect(ERROR_PAGE); 
         }else {
-            $e['message'] = C('ERROR_MESSAGE');
+            $e['message'] = ERROR_MESSAGE;
             include(THINK_PATH.'/Lib/Think/Exception/ThinkException.tpl.php');
         }
     }
@@ -182,7 +173,6 @@ function redirect($url,$time=0,$msg='')
     }
     if (!headers_sent()) {
         // redirect
-        header("Content-Type:text/html; charset=".C('OUTPUT_CHARSET'));
         if(0===$time) {
         	header("Location: ".$url); 
         }else {
@@ -281,7 +271,7 @@ function debug_end($label='')
  */
 function system_out($msg)
 {
-    if(C('WEB_LOG_RECORD') && !empty($msg))
+    if(defined('WEB_LOG_RECORD') && !empty($msg))
         Log::Write($msg,WEB_LOG_DEBUG);
 }
 
@@ -296,34 +286,23 @@ function system_out($msg)
  * @return string
  +----------------------------------------------------------
  */
-function dump($var, $label=null, $strict=true,$echo=true)
+function dump($var, $label=null, $echo=true)
 {
     $label = ($label===null) ? '' : rtrim($label) . ' ';
-    if(!$strict) {
-        if (ini_get('html_errors')) {
-            $output = print_r($var, true);
-            $output = "<pre>".$label.htmlspecialchars($output,ENT_QUOTES,C('OUTPUT_CHARSET'))."</pre>";
-        } else {
-            $output = $label . " : " . print_r($var, true);
-        }    	
-    }else {
-        ob_start();
-        var_dump($var);
-        $output = ob_get_clean();
-        if(!extension_loaded('xdebug')) {
-            $output = preg_replace("/\]\=\>\n(\s+)/m", "] => ", $output);
-            $output = '<pre>'
-                    . $label
-                    . htmlspecialchars($output, ENT_QUOTES,C('OUTPUT_CHARSET'))
-                    . '</pre>';    	
-        }    	
+    ob_start();
+    var_dump($var);
+    $output = ob_get_clean();
+    if(!extension_loaded('xdebug')) {
+        $output = preg_replace("/\]\=\>\n(\s+)/m", "] => ", $output);
+        $output = '<pre>'
+                . $label
+                . htmlentities($output, ENT_QUOTES,OUTPUT_CHARSET)
+                . '</pre>';    	
     }
     if ($echo) {
         echo($output);
-        return null;
-    }else {
-    	return $output;
     }
+    return $output;
 }
 
 /**
@@ -337,9 +316,7 @@ function dump($var, $label=null, $strict=true,$echo=true)
  * @return string
  +----------------------------------------------------------
  */
-function auto_charset($fContents,$from='',$to=''){
-	if(empty($from)) $from = C('TEMPLATE_CHARSET');
-	if(empty($to))  $to	=	C('OUTPUT_CHARSET');
+function auto_charset($fContents,$from=TEMPLATE_CHARSET,$to=OUTPUT_CHARSET){
     if( strtoupper($from) === strtoupper($to) || empty($fContents) || (is_scalar($fContents) && !is_string($fContents)) ){
         //如果编码相同或者非字符串标量则不转换
         return $fContents;
@@ -347,10 +324,11 @@ function auto_charset($fContents,$from='',$to=''){
     $from   =  strtoupper($from)=='UTF8'? 'utf-8':$from;
     $to       =  strtoupper($to)=='UTF8'? 'utf-8':$to;
     if(is_string($fContents) ) {
-		if(function_exists('mb_convert_encoding')){
-            return mb_convert_encoding ($fContents, $to, $from);
-        }elseif(function_exists('iconv')){
+        if(function_exists('iconv')){
             Return iconv($from,$to,$fContents);
+        }
+        elseif(function_exists('mb_convert_encoding')){
+            return mb_convert_encoding ($fContents, $to, $from);
         }else{
             halt(_NO_AUTO_CHARSET_);
             return $fContents;
@@ -395,19 +373,19 @@ function get_instance_of($className,$method='',$args=array())
     static $_instance = array();
     if (!isset($_instance[$className])) {
         if(class_exists($className)){
-            $o = new $className();
+            $o = & new $className();
             if(method_exists($o,$method)){
                 if(!empty($args)) {
                 	$_instance[$className] = call_user_func_array(array(&$o, $method), $args);;
                 }else {
-                	$_instance[$className] = &$o->$method();
+                	$_instance[$className] = $o->$method();
                 }
             }
             else 
-                $_instance[$className] = &$o;
+                $_instance[$className] = $o;
         }
         else 
-            halt(L('_CLASS_NOT_EXIST_'));
+            halt(_CLASS_NOT_EXIST_);
     }
     return $_instance[$className];
 }
@@ -424,24 +402,11 @@ function get_instance_of($className,$method='',$args=array())
  */
 function __autoload($classname)
 {
-	// 自动加载当前项目的Vo类和Dao类
-	if(substr($classname,-2)=='Vo') {
-		import('@.Vo.'.$classname);
-	}else if(substr($classname,-3)=="Dao") {
-		import('@.Dao.'.$classname);
-	}else {
-		// 根据自动加载路径设置进行尝试搜索
-		if(C('AUTO_LOAD_PATH')) {
-			$paths	=	explode(',',C('AUTO_LOAD_PATH'));
-			foreach ($paths as $path){
-				if(import($path.$classname)) {
-					// 如果加载类成功则返回
-					return ;
-				}
-			}
-		}
-	}
-	return ;
+    $autoLoad = array('@.Vo','Admin.Vo');
+    foreach($autoLoad as $val){
+        if( import($val.'.'.$classname) )    return;
+    }
+    halt("不能自动载入".$classname." 类库。");
 }
 
 /**
@@ -478,9 +443,10 @@ function include_cache($filename)
 {
     static $_importFiles = array();
     if(file_exists($filename)){
-        if (!isset($_importFiles[$filename])) {
+        if (!isset($_importFiles[strtolower(basename($filename))])) {
             include($filename);
-            $_importFiles[$filename] = true;
+            $_importFiles[strtolower(basename($filename))] = true;
+            //$GLOBALS['LoadFile']++;//统计加载文件数
             return true;
         }
         return false;
@@ -501,10 +467,9 @@ function require_cache($filename)
 {
     static $_importFiles = array();
     if(file_exists($filename)){
-        if (!isset($_importFiles[$filename])) {
-			//echo $filename.'<br/>';
+        if (!isset($_importFiles[strtolower(basename($filename))])) {
             require($filename);
-            $_importFiles[$filename] = true;
+            $_importFiles[strtolower(basename($filename))] = true;
             //$GLOBALS['LoadFile']++;//统计加载文件数
             return true;
         }
@@ -531,6 +496,64 @@ function get_include_contents($filename)
         return $contents; 
     } 
     return false; 
+} 
+
+/**
+ +----------------------------------------------------------
+ * 压缩PHP文件内容和简单加密
+ +----------------------------------------------------------
+ * @param string $filename 文件名
+ * @param boolean $strip 是否去除代码空白和注释
+ +----------------------------------------------------------
+ * @return false|integer 返回加密文件的字节大小
+ +----------------------------------------------------------
+ */
+function encode_file_contents($filename,$strip=true) 
+{
+    $type = strtolower(substr(strrchr($filename, '.'),1));
+    if('php'==$type && is_file($filename) && is_writeable($filename)) {
+        // 如果是PHP文件 并且可写 则进行压缩
+    	$contents  =  file_get_contents($filename);
+        // 判断文件是否已经被加密
+        $pos = strpos($contents,'/*Protected by Think Cryptation*/');
+        if( false === $pos  || $pos>100 ) {
+            if($strip) {
+                // 去除PHP文件注释和空白，减少文件大小
+                $contents  =  php_strip_whitespace($filename);            	
+            }
+            // 去除PHP头部和尾部标识
+            $headerPos   =  strpos($contents,'<?php');
+            $footerPos    =  strrpos($contents,'?>');
+            $contents  =  substr($contents,$headerPos+5,$footerPos-$headerPos);
+            // 对文件内容进行加密存储
+            $encode   =  base64_encode(gzdeflate($contents));
+            $encode   = '<?php'." /*Protected by Think Cryptation*/\n\$cryptCode='".$encode."';eval(gzinflate(base64_decode(\$cryptCode)));\n /*Reverse engineering is illegal and strictly prohibited - (C) Think Cryptation 2006*/\n?>";
+            // 重新写入加密内容
+            return file_put_contents($filename,$encode);
+        } 
+    }
+    return false;
+}
+
+/**
+ +----------------------------------------------------------
+ * 压缩文件夹下面的PHP文件
+ +----------------------------------------------------------
+ * @param string $path 路径
+ +----------------------------------------------------------
+ * @return void
+ +----------------------------------------------------------
+ */
+function encode_dir($path) { 
+    if(substr($path, -1) != "/")    $path .= "/";
+    $dir=glob($path."*"); 
+    foreach($dir as $key=>$val) { 
+        if(is_dir($val)) { 
+            encode_dir($val); 
+        } else{
+            encode_file_contents($val);
+        } 
+    } 
 } 
 
 /**
@@ -604,37 +627,30 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
                     }
                }           	
            }
+           /*
+           $dir = dir($tmp_base_class);
+           while (false !== ($entry = $dir->read())) {
+                //如果是特殊目录继续
+                if($entry == "." || $entry == "..")   continue;
+                //如果是目录 ，并且定义了导入子目录，则递归调用import
+                if( is_dir($tmp_base_class.'/'.$entry)){    
+                    if ($subdir)  import('*',$tmp_base_class.'/'.$entry.'/',$appName,$ext,$subdir);
+                }else{    
+                    //导入类库文件 后缀默认为 class.php
+                    if(strpos($entry, $ext)){
+                        require_cache($tmp_base_class.'/'.$entry);
+                    }
+                }
+           }
+           $dir->close(); */
            return true;
       }else{
             //导入目录下的指定类库文件
             return require_cache($classfile);          	
       }
+  
 } 
 
-/**
- +----------------------------------------------------------
- * 文件追加写入 
- +----------------------------------------------------------
- * @param string $filename 文件名
- * @param string $data 数据
- +----------------------------------------------------------
- * @return boolean
- +----------------------------------------------------------
- */
-function file_add_contents($filename,$data) 
-{
-        $len = strlen($data);
-        if ( $len > 0 ) {
-            $fp = fopen($filename, 'ab'); 
-            flock($fp, LOCK_EX);
-            $filesize =   fwrite($fp, $data,$len); 
-            flock($fp, LOCK_UN);
-            fclose($fp); 
-            return true;
-        }else {
-        	return false;
-        }
-}
 /**
  +----------------------------------------------------------
  * import方法的别名 
@@ -684,11 +700,9 @@ function getIterator($values)
 {
     if(version_compare(PHP_VERSION, '5.0.0', '<')){
         //PHP4下面的ArrayObject模拟了Iterator接口
-		import("Think.Util.ArrayObject");
         return new ArrayObject($values);
     }else {
         //ListIterator在PHP5中实现了Iterator接口
-		import("Think.Util.ListIterator");
         return new ListIterator($values);
     }
 }
@@ -709,7 +723,6 @@ function is_instance_of($object, $className)
         return is_a($object, $className);
    }
    else{
-       $is = false;
        include ('_instanceof.php');
        return $is;
    }
@@ -872,7 +885,7 @@ function get_plugins($path=PLUGIN_PATH,$app=APP_NAME,$ext='.php')
         }
        return $plugins[$app];    	
     }else {
-    	return array();
+    	return $result;
     }
 
 }
@@ -910,11 +923,7 @@ function get_plugin_info($plugin_file) {
     }else {
     	$author_name = '';
     }
-	$plug_url = '';
-	if(!empty($plugin_uri)) {
-		$plug_url = $plugin_uri[1];
-	}
-	return array ('file'=>$plugin_file,'name' => trim($plugin_name[1]), 'uri' => trim($plug_url), 'description' => trim($description[1]), 'author' => trim($author_name), 'version' => $version);
+	return array ('file'=>$plugin_file,'name' => trim($plugin_name[1]), 'uri' => trim($plugin_uri[1]), 'description' => trim($description[1]), 'author' => trim($author_name), 'version' => $version);
 }
 
 /**
@@ -1035,11 +1044,7 @@ function add_compiler($tag,$compiler)
 function use_compiler($tag) 
 {
 	$args = array_slice(func_get_args(), 1);
-	if(is_callable($GLOBALS['template_compiler'][strtoupper($tag)])) {
-		call_user_func_array($GLOBALS['template_compiler'][strtoupper($tag)],$args);    
-	}else{
-		throw_exception('模板引擎错误：'.C('TMPL_ENGINE_TYPE'));
-	}
+    call_user_func_array($GLOBALS['template_compiler'][strtoupper($tag)],$args);    
     return ;
 }
 /**
@@ -1128,61 +1133,6 @@ function apply_filter($tag,$string='')
 
 /**
  +----------------------------------------------------------
- * 字符串截取，支持中文和其他编码
- +----------------------------------------------------------
- * @param string $fStr 需要转换的字符串
- * @param string $fStart 开始位置
- * @param string $fLen 截取长度
- * @param string $fCode 编码格式
- * @param string $show 截断显示字符
- +----------------------------------------------------------
- * @return string
- +----------------------------------------------------------
- */
-function msubstr (&$fStr, $fStart, $fLen, $fCode = "utf-8",$show='...') {
-    if(function_exists('mb_substr')) {
-        if(mb_strlen($fStr,$fCode)>$fLen) {
-            return mb_substr ($fStr,$fStart,$fLen,$fCode).$show;
-        }
-        return mb_substr ($fStr,$fStart,$fLen,$fCode);
-    }else if(function_exists('iconv_substr')) {
-        if(iconv_strlen($fStr,$fCode)>$fLen) {
-            return iconv_substr ($fStr,$fStart,$fLen,$fCode).$show;
-        }
-        return iconv_substr ($fStr,$fStart,$fLen,$fCode);
-    }
-
-    $fCode = strtolower($fCode);
-    switch ($fCode) {
-        case "utf-8" : 
-            preg_match_all("/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|\xe0[\xa0-\xbf][\x80-\xbf]|[\xe1-\xef][\x80-\xbf][\x80-\xbf]|\xf0[\x90-\xbf][\x80-\xbf][\x80-\xbf]|[\xf1-\xf7][\x80-\xbf][\x80-\xbf][\x80-\xbf]/", $fStr, $ar);  
-            if(func_num_args() >= 3) {  
-                if (count($ar[0])>$fLen) {
-                    return join("",array_slice($ar[0],$fStart,$fLen)).$show; 
-                }
-                return join("",array_slice($ar[0],$fStart,$fLen)); 
-            } else {  
-                return join("",array_slice($ar[0],$fStart)); 
-            } 
-            break;
-        default:
-            $fStart = $fStart*2;
-            $fLen   = $fLen*2;
-            $strlen = strlen($fStr);
-            for ( $i = 0; $i < $strlen; $i++ ) {
-                if ( $i >= $fStart && $i < ( $fStart+$fLen ) ) {
-                    if ( ord(substr($fStr, $i, 1)) > 129 ) $tmpstr .= substr($fStr, $i, 2);
-                    else $tmpstr .= substr($fStr, $i, 1);
-                }
-                if ( ord(substr($fStr, $i, 1)) > 129 ) $i++;
-            }
-            if ( strlen($tmpstr) < $strlen ) $tmpstr .= $show;
-            Return $tmpstr;
-    }
-}
-
-/**
- +----------------------------------------------------------
  * 产生随机字串，可用来自动生成密码 默认长度6位 字母和数字混合
  +----------------------------------------------------------
  * @param string $len 长度 
@@ -1224,80 +1174,6 @@ function rand_string($len=6,$type='',$addChars='') {
 
 /**
  +----------------------------------------------------------
- * 生成一定数量的随机数，并且不重复
- +----------------------------------------------------------
- * @param integer $number 数量
- * @param string $len 长度
- * @param string $type 字串类型 
- * 0 字母 1 数字 其它 混合
- +----------------------------------------------------------
- * @return string
- +----------------------------------------------------------
- */
-function build_count_rand ($number,$length=4,$mode=1) { 
-        if($mode==1 && $length<strlen($number) ) {
-            //不足以生成一定数量的不重复数字
-    		return false;        	
-        }
-        $rand   =  array();
-        for($i=0; $i<$number; $i++) {
-            $rand[] =   rand_string($length,$mode);
-        }
-        $unqiue = array_unique($rand);
-        if(count($unqiue)==count($rand)) {
-            return $rand;
-        }
-        $count   = count($rand)-count($unqiue);
-        for($i=0; $i<$count*3; $i++) {
-            $rand[] =   rand_string($length,$mode);
-        }
-        $rand = array_slice(array_unique ($rand),0,$number);    	
-        return $rand;
-}
-
-/**
- +----------------------------------------------------------
- *  带格式生成随机字符 支持批量生成 
- *  但可能存在重复
- +----------------------------------------------------------
- * @param string $format 字符格式
- *     # 表示数字 * 表示字母和数字 $ 表示字母
- * @param integer $number 生成数量
- +----------------------------------------------------------
- * @return string | array
- +----------------------------------------------------------
- */
-function build_format_rand($format,$number=1) 
-{
-    $str  =  array();
-    $length =  strlen($format);
-    for($j=0; $j<$number; $j++) {
-        $strtemp   = '';
-        for($i=0; $i<$length; $i++) {
-            $char = substr($format,$i,1);
-            switch($char){
-                case "*"://字母和数字混合
-                    $strtemp   .= rand_string(1);
-                    break;
-                case "#"://数字
-                    $strtemp  .= rand_string(1,1);
-                    break;
-                case "$"://大写字母
-                    $strtemp .=  rand_string(1,2);
-                    break;
-                default://其他格式均不转换
-                    $strtemp .=   $char;
-                    break;
-           }
-        } 
-        $str[] = $strtemp;
-    }
-    
-    return $number==1? $strtemp : $str ;
-}
-
-/**
- +----------------------------------------------------------
  * 获取一定范围内的随机数字 位数不足补零
  +----------------------------------------------------------
  * @param integer $min 最小值
@@ -1325,22 +1201,6 @@ function build_verify ($length=4,$mode=1) {
 
 /**
  +----------------------------------------------------------
- * stripslashes扩展 可用于数组 
- +----------------------------------------------------------
- * @param mixed $value 变量
- +----------------------------------------------------------
- * @return mixed
- +----------------------------------------------------------
- */
-if(!function_exists('stripslashes_deep')) {
-    function stripslashes_deep($value) {
-       $value = is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value);
-       return $value;
-    }	
-}
-
-/**
- +----------------------------------------------------------
  * 获取Dao对象的缩略方法
  +----------------------------------------------------------
  * @param string $daoClassName Dao对象名称
@@ -1350,23 +1210,13 @@ if(!function_exists('stripslashes_deep')) {
  */
 function D($daoClassName) 
 {
-	static $_dao = array();
     if(!strpos($daoClassName,'Dao')) {
     	$daoClassName =  $daoClassName.'Dao';
     }
-	if(isset($_dao[$daoClassName])) {
-		return $_dao[$daoClassName];
-	}
 	import("@.Dao.".$daoClassName);
-    if(class_exists($daoClassName)) {
-        $dao = new $daoClassName();
-		$_dao[$daoClassName] =	$dao;
-        return $dao;    	
-    }else {
-    	return false;
-    }
+    $dao = new $daoClassName();
+    return $dao;
 }
-
 /**
  +----------------------------------------------------------
  * 获取Vo对象的缩略方法
@@ -1378,147 +1228,13 @@ function D($daoClassName)
  */
 function V($voClassName,$data=NULL) 
 {
-	static $_vo = array();
     if(!strpos($voClassName,'Vo')) {
     	$voClassName =  $voClassName.'Vo';
     }
-	$guid	=	to_guid_string($data);
-	if(isset($_vo[$voClassName.$guid])) {
-		return $_vo[$voClassName.$guid];
-	}
 	import("@.Vo.".$voClassName);
-    if(class_exists($voClassName)) {
-        $vo = new $voClassName($data);
-		$_vo[$voClassName.$guid] =	$vo;
-        return $vo;    	
-    }else {
-    	return false;
-    }
+    $vo = new $voClassName($data);
+    return $vo;
 }
 
-// 获取语言定义
-function L($name='',$value=null) {
-	static $_lang = array();
-	if(!is_null($value)) {
-		$prev	=	$_lang[strtolower($name)];
-		$_lang[strtolower($name)]	=	$value;
-		return $prev;
-	}
-	if(empty($name)) {
-		return $_lang;
-	}
-	if(is_array($name)) {
-		$_lang = array_merge($_lang,$name);
-		return;
-	}
-	if(isset($_lang[strtolower($name)])) {
-		return $_lang[strtolower($name)];
-	}
 
-	$lang = Language::getInstance();
-	$_lang[strtolower($name)] = $lang->get(strtolower($name));
-	return $_lang[strtolower($name)];
-}
-
-// 获取配置值
-function C($name='',$value=null) {
-	static $_config = array();
-	if(!is_null($value)) {
-		$prev	=	$_config[strtolower($name)];
-		$_config[strtolower($name)]	=	$value;
-		return $prev;
-	}
-	if(empty($name)) {
-		return $_config;
-	}
-	// 缓存全部配置值
-	if(is_array($name)) {
-		$_config = array_merge($_config,$name);
-		return $_config;
-	}
-	if(isset($_config[strtolower($name)])) {
-		return $_config[strtolower($name)];
-	}
-	if(defined($name)) {
-		$_config[strtolower($name)]	=	constant($name);
-		return constant($name);
-	}
-
-	import('Think.Util.Config');
-	$config = Config::getInstance();
-	$_config[strtolower($name)]	=	$config->get(strtolower($name));
-	return $_config[strtolower($name)];
-}
-
-// 缓存设置和读取
-function S($name,$value='',$type='') {
-	static $_cache = array();
-	if('' !== $value) {
-        //取得缓存对象实例
-        $cache  = Cache::getInstance($type);
-		if(is_null($value)) {
-			// 删除缓存
-			$result	=	$cache->rm($name);
-			if($result) {
-				unset($_cache[$type.'_'.$name]);
-			}
-			return $result;
-		}else{
-			// 缓存数据
-			$cache->set($name,$value);
-			$_cache[$type.'_'.$name]	 =	 $value;
-		}
-		return ;
-	}
-	if(isset($_cache[$type.'_'.$name])) {
-		return $_cache[$type.'_'.$name];
-	}
-	// 取得缓存实例
-	$cache  = Cache::getInstance($type);
-	// 获取缓存数据
-	$value      =  $cache->get($name);
-	$_cache[$type.'_'.$name]	 =	 $value;
-	return $value;
-}
-
-// 快速创建一个对象实例
-function I($class,$baseUrl = '',$ext='.class.php') {
-	static $_class = array();
-	if(isset($_class[$baseUrl.$class])) {
-		return $_class[$baseUrl.$class];
-	}
-	$class_strut = explode(".",$class);
-	$className	=	array_pop($class_strut);
-	if($className != '*') {
-		import($class,$baseUrl,$ext,false);
-		$_class[$baseUrl.$class] = & new $className();
-		return $_class[$baseUrl.$class];
-	}else {
-		return false;
-	}
-}
-
-// xml编码
-function xml_encode($data,$encoding='utf-8',$root="think") {
-	$xml = '<?xml version="1.0" encoding="'.$encoding.'"?>';
-	$xml.= '<'.$root.'>';
-	$xml.= dataToXml($data);   
-	$xml.= '</'.$root.'>'; 
-	return $xml;
-}
-
-function dataToXml($data) {
-	if(is_object($data)) {
-		$data = get_object_vars($data);
-	}
-	$xml = '';
-	foreach($data as $key=>$val) {
-		is_numeric($key) && $key="item id=\"$key\"";
-		$xml.="<$key>";
-		$xml.=(is_array($val)||is_object($val))?dataToXml($val):$val;
-		list($key,)=explode(' ',$key);
-		$xml.="</$key>";
-	}
-	return $xml;
-}
 ?>

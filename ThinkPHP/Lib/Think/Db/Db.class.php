@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: Db.class.php 53 2007-03-17 15:15:42Z liu21st $
+// $Id: Db.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 import("Think.Db.ResultSet");
 import("Think.Util.Cache");
@@ -27,11 +27,61 @@ import("Think.Util.Cache");
  +------------------------------------------------------------------------------
  * @package   Db
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id: Db.class.php 53 2007-03-17 15:15:42Z liu21st $
+ * @version   $Id: Db.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Db extends Base
 {
+
+    /**
+     +----------------------------------------------------------
+     * 数据库用户名
+     +----------------------------------------------------------
+     * @var sting
+     * @access protected
+     +----------------------------------------------------------
+     */
+    var $username    = NULL;
+
+    /**
+     +----------------------------------------------------------
+     * 数据库密码
+     +----------------------------------------------------------
+     * @var sting
+     * @access protected
+     +----------------------------------------------------------
+     */
+    var $password    = NULL;
+
+    /**
+     +----------------------------------------------------------
+     * 数据库名
+     +----------------------------------------------------------
+     * @var sting
+     * @access protected
+     +----------------------------------------------------------
+     */
+    var $database    = NULL;
+
+    /**
+     +----------------------------------------------------------
+     * 数据库服务器地址
+     +----------------------------------------------------------
+     * @var sting
+     * @access protected
+     +----------------------------------------------------------
+     */
+    var $hostname    = NULL;
+
+    /**
+     +----------------------------------------------------------
+     * 主机端口
+     +----------------------------------------------------------
+     * @var sting
+     * @access protected
+     +----------------------------------------------------------
+     */
+    var $hostport    = NULL;
 
     /**
      +----------------------------------------------------------
@@ -91,7 +141,7 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      */
-    var $pconnect     = false;
+    var $pconnect     = True;
 
     /**
      +----------------------------------------------------------
@@ -141,7 +191,7 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      */
-    var $resultType = DATA_TYPE_ARRAY;
+    var $resultType = 1;
 
     /**
      +----------------------------------------------------------
@@ -231,7 +281,7 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      */
-    var $linkID  = null;
+    var $linkID  = 0;
 
     /**
      +----------------------------------------------------------
@@ -241,16 +291,29 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      */
-    var $queryID = null;
+    var $queryID = 0;
 
-	// 是否已经连接数据库
-	var $connected = false;
-
-	// 数据库连接参数配置
-	var $config = '';
-
-	// 数据库表达式
+    /**
+     +----------------------------------------------------------
+     * 当前查询ID
+     +----------------------------------------------------------
+     * @var resultSet
+     * @access protected
+     +----------------------------------------------------------
+     */
     var $comparison = array('eq'=>'=','neq'=>'!=','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','like'=>'like');
+
+    /**
+     +----------------------------------------------------------
+     * 架构函数
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     */
+    function __construct()
+    {
+    }
 
     /**
      +----------------------------------------------------------
@@ -266,7 +329,7 @@ class Db extends Base
     function getInstance() 
     {
         $args = func_get_args();
-        return get_instance_of(__CLASS__,'factory',$args);
+        return get_instance_of(__CLASS__,'connect',$args);
     }
 
     /**
@@ -283,7 +346,7 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function &factory($db_config='')
+    function &connect($db_config='')
     {
         // 读取数据库配置
         if ( is_string($db_config) && !empty($db_config) ) {
@@ -292,12 +355,12 @@ class Db extends Base
         }else if(empty($db_config)){
             // 如果配置为空，读取配置文件设置
             $db_config = array (
-                'dbms'     => C('DB_TYPE'), 
-                'username' => C('DB_USER'), 
-                'password' => C('DB_PWD'), 
-                'hostname' => C('DB_HOST'), 
-                'hostport' => C('DB_PORT'), 
-                'database' => C('DB_NAME'),
+                'dbms'     => DB_TYPE, 
+                'username' => DB_USER, 
+                'password' => DB_PWD, 
+                'hostname' => DB_HOST, 
+                'hostport' => DB_PORT, 
+                'database' => DB_NAME
             );
         }
         // 数据库类型
@@ -313,19 +376,21 @@ class Db extends Base
         }
         // 检查驱动类
         if(class_exists($dbClass)) {
+            // 存在数据库驱动类
+            // 尝试进行数据库连接
             $db = & new $dbClass($db_config);
-			$db->dbType = $this->dbType;
+            $db->dbType = $this->dbType;
+            if(!$db->connect()){
+                // 连接失败
+                throw_exception(_NOT_LOAD_DB_.': ' . $db_config['dbms']);
+            }
         }else {
             // 类没有定义
-            throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
+            throw_exception(_NOT_SUPPORT_DB_.': ' . $db_config['dbms']);
         }
+
         return $db;
     }
-
-	// 判断是否连接
-	function connected() {
-		return $this->connected;
-	}
 
     /**
      +----------------------------------------------------------
@@ -373,6 +438,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * table分析
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -394,6 +460,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * where分析
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -415,15 +482,12 @@ class Db extends Base
             if(is_instance_of($where,'HashMap')){
                 $it = $where->getIterator();
                 foreach ($it as $key=>$val){
-                    if(false !== strpos(strtoupper(DB_TYPE),'MYSQL')) {
-                        $key = "`$key`";
-                    }
-                    $whereStr .= "$key ";
+                    $whereStr .= "`$key` ";
                     if(is_array($val)) {
                         if(preg_match('/(EQ|NEQ|GT|EGT|LT|ELT|LIKE)/i',$val[0])) {
                             $whereStr .= $this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
                         }else {
-                        	$whereStr .= '>='.$this->fieldFormat($val[0]).' AND '.$key.' <='.$this->fieldFormat($val[1]);
+                        	$whereStr .= '>='.$this->fieldFormat($val[0]).' AND `'.$key.'` <='.$this->fieldFormat($val[1]);
                         }
                         
                     }else {
@@ -446,15 +510,12 @@ class Db extends Base
         if(is_array($where)){
             //支持数组作为条件
             foreach ($where as $key=>$val){
-                    if(false !== strpos(strtoupper(C('DB_TYPE')),'MYSQL')) {
-                        $key = "`$key`";
-                    }
-                    $whereStr .= "$key ";
+                    $whereStr .= "`$key` ";
                     if(is_array($val)) {
                         if(preg_match('/(EQ|NEQ|GT|EGT|LT|ELT|LIKE)/i',$val[0])) {
                             $whereStr .= $this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
                         }else {
-                        	$whereStr .= '>='.$this->fieldFormat($val[0]).' AND '.$key.' <='.$this->fieldFormat($val[1]);
+                        	$whereStr .= '>='.$this->fieldFormat($val[0]).' AND `'.$key.'` <='.$this->fieldFormat($val[1]);
                         }                        
                     }else {
                         if(preg_match('/(\w*)(title|name|content|value|remark|company|address)(\w*)/i',$key)) {
@@ -473,6 +534,7 @@ class Db extends Base
             //支持String作为条件 如使用 > like 等
             $whereStr = $where; 
         }
+
         return empty($whereStr)?'':' WHERE '.$whereStr;
     }
 
@@ -480,6 +542,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * order分析
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -503,6 +566,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * limit分析
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -548,6 +612,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * having分析
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -569,6 +634,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * fields分析
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -582,16 +648,12 @@ class Db extends Base
     function parseFields($fields)
     {
         if(is_array($fields)) {
-            if(false !== strpos(strtoupper(C('DB_TYPE')),'MYSQL')) {
-                array_walk($fields, array($this, 'addSpecialChar'));
-            }
+            array_walk($fields, array($this, 'addSpecialChar'));
             $fieldsStr = implode(',', $fields);
         }else if(is_string($fields) && !empty($fields)) {
             if( false === strpos($fields,'`') ) {
                 $fields = explode(',',$fields);
-                if(false !== strpos(strtoupper(C('DB_TYPE')),'MYSQL')) {
-            	    array_walk($fields, array($this, 'addSpecialChar'));
-                }
+            	array_walk($fields, array($this, 'addSpecialChar'));
                 $fieldsStr = implode(',', $fields);
             }else {
             	$fieldsStr = $fields;
@@ -604,6 +666,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * value分析
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -628,6 +691,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * set分析
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -650,15 +714,11 @@ class Db extends Base
                 $sets = $sets->toArray();
             }
         }
-        $sets    = auto_charset($sets,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
+        $sets    = auto_charset($sets,OUTPUT_CHARSET,DB_CHARSET);
         if(is_array($sets)){
             foreach ($sets as $key=>$val){
                 if(!is_null($val)){//过滤空值元素
-					if(false !== strpos(strtoupper(C('DB_TYPE')),'MYSQL')) {
-	                    $setsStr .= "`$key` = ".$this->fieldFormat($val).",";
-					}else {
-	                    $setsStr .= "$key = ".$this->fieldFormat($val).",";
-					}
+                    $setsStr .= "`$key` = ".$this->fieldFormat($val).",";
                 }
             }
             $setsStr = substr($setsStr,0,-1);
@@ -671,6 +731,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * 字段格式化
+     * 
      +----------------------------------------------------------
      * @static
      * @access public 
@@ -725,6 +786,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * 是否为数据库查询操作
+     * 
      +----------------------------------------------------------
      * @static
      * @access public 
@@ -752,6 +814,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * 获得一条查询记录的某个字段数据
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -799,7 +862,7 @@ class Db extends Base
         if(!empty($sql)) {
             $this->queryStr = $sql;
         }
-        if(C('DB_CACHE_ON') && $cache) {// 启用数据库缓存
+        if(DB_CACHE_ON && $cache) {// 启用数据库缓存
             $guid   =   md5($this->queryStr);
             //取得缓存实例
             $cache = Cache::getInstance();
@@ -827,16 +890,16 @@ class Db extends Base
         }
         // 进行查询
         $data = $this->_query();
-        if(C('DB_CACHE_ON')){
+        if(DB_CACHE_ON){
             //如果启用数据库缓存则重新缓存
             $rowNums    =   $this->numRows;  //总的记录数
-            if($rowNums > C('DB_CACHE_MAX')) {
+            if($rowNums > DB_CACHE_MAX) {
                 //如果记录数超过设置范围，多文件缓存，
                 //避免serialize超时
-                $length =   ceil($rowNums / C('DB_CACHE_MAX'));   //缓存文件数
+                $length =   ceil($rowNums / DB_CACHE_MAX);   //缓存文件数
                 for($i=0; $i<$length; $i++) {
                     //依次缓存
-                    $cache->set($guid.'_'.$i,$data->range(C('DB_CACHE_MAX') * $i,C('DB_CACHE_MAX')));
+                    $cache->set($guid.'_'.$i,$data->range(DB_CACHE_MAX * $i,DB_CACHE_MAX));
                 }
                 //记录缓存文件数目
                 $cache->set($guid.'_count',$length);                        
@@ -852,6 +915,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * 数据库操作方法
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -870,7 +934,6 @@ class Db extends Base
         return $this->_execute($sql);
     }
 
-	// 自动判断进行查询或者执行操作
     function autoExec($sql='') 
     {
         if(empty($sql)) {
@@ -882,10 +945,10 @@ class Db extends Base
         	$this->query($sql);
         }
     }
-
     /**
      +----------------------------------------------------------
      * 查找记录 
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -905,6 +968,7 @@ class Db extends Base
      */
     function find($where,$tables,$fields='*',$order=NULL,$limit=NULL,$group=NULL,$having=NULL,$cache=true)
     {
+
         $this->queryStr = 'SELECT '.$this->parseFields($fields)
                         .' FROM '.$tables
                         .$this->parseWhere($where)
@@ -918,12 +982,14 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * 查找记录 
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
      * @param mixed $where 数据
      * @param string $tables  数据表名
      * @param string $fields  字段名
+     * @param boolean $cache 是否缓存
      +----------------------------------------------------------
      * @return resultSet
      +----------------------------------------------------------
@@ -932,6 +998,7 @@ class Db extends Base
      */
     function count($where,$tables,$fields='count(id) as count')
     {
+
         $this->queryStr = 'SELECT '.$fields 
                         .' FROM '.$tables
                         .$this->parseWhere($where);
@@ -966,6 +1033,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * 插入记录
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -981,18 +1049,23 @@ class Db extends Base
     {
         if(!is_array($map)) {
             if(!is_instance_of($map,'HashMap')){
-                throw_exception(L('_DATA_TYPE_INVALID_'));
+                throw_exception(_DATA_TYPE_INVALID_);
             }
             $map    = $map->toArray();        	
         }
         //转换数据库编码
-        $map    = auto_charset($map,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
+        $map    = auto_charset($map,OUTPUT_CHARSET,DB_CHARSET);
+        //如果某个字段的值为非字符串的NULL，则过滤该字段和值
+        /*
+        foreach ($map as $key=>$val){
+            if(is_null($val)){
+                unset($map[$key]);
+            }
+        }*/
         $fields = array_keys($map);
-        if(false !== strpos(strtoupper(C('DB_TYPE')),'MYSQL')) {
-        	array_walk($fields, array($this, 'addSpecialChar'));
-        }
-        $fieldsStr = implode(',', $fields);
+        array_walk($fields, array($this, 'addSpecialChar'));
         $values = array_Values($map);
+        $fieldsStr = implode(',', array_keys($map));
         array_walk($values, array($this, 'fieldFormat'));
 
         $valuesStr = implode(',', $values);
@@ -1004,6 +1077,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * 删除记录
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -1027,6 +1101,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * 清空表
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -1049,6 +1124,7 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * 更新记录 只支持Map对象保存
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -1066,15 +1142,17 @@ class Db extends Base
     function save($sets,$table,$where,$limit=0,$order='')
     {
         if(!is_instance_of($sets,'HashMap')){
-            throw_exception(L('_DATA_TYPE_INVALID_'));
+            throw_exception(_DATA_TYPE_INVALID_);
         }
         $this->queryStr = 'UPDATE '.$table.' SET '.$this->parseSets($sets).$this->parseWhere($where).$this->parseOrder($order).$this->parseLimit($limit);
+
         return $this->execute();
     }
 
     /**
      +----------------------------------------------------------
      * 查询数据集返回 Array Iterator
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -1086,9 +1164,11 @@ class Db extends Base
         return new resultSet($this->getAll(0));
     }
 
+
     /**
      +----------------------------------------------------------
      * 查询数据集返回 Object Iterator
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -1099,26 +1179,6 @@ class Db extends Base
     {
         return new resultSet($this->getAll(1));
     }
-
-	// 查询次数更新或者查询
-	function Q($times='') {
-		static $_times = 0;
-		if(empty($times)) {
-			return $_times;
-		}else{
-			$_times++;
-		}
-	}
-
-	// 写入次数更新或者查询
-	function W($times='') {
-		static $_times = 0;
-		if(empty($times)) {
-			return $_times;
-		}else{
-			$_times++;
-		}
-	}
 
     // +----------------------------------------
     // |    get set 方法
@@ -1143,5 +1203,7 @@ class Db extends Base
     function setAutoCommit($autocommit) {$this->autoCommit = $autocommit;}
     function setPconnect($pconnect) {$this->pconnect = $pconnect;}
     function setDebug($debug) {$this->debug = $debug;}
+
+
 }//类定义结束
 ?>

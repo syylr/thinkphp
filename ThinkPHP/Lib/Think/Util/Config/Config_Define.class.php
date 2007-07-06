@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Config_Define.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 import('Think.Util.Config');
 /**
@@ -24,7 +24,7 @@ import('Think.Util.Config');
  * 定义配置文件类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Config_Define.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Config_Define extends Config
@@ -40,7 +40,7 @@ class Config_Define extends Config
      */
     function __construct($config)
     {
-        if(file_exists($config)) {
+        if(is_file($config)) {
             $before = get_defined_constants();
             include_once($config);
             $after  = get_defined_constants();

@@ -16,14 +16,14 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Filter_DbSession.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
  * 数据库Session处理过滤器
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Filter_DbSession.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Filter_DbSession extends Base
@@ -37,7 +37,7 @@ class Filter_DbSession extends Base
      * @access protected
      +----------------------------------------------------------
      */
-   var $lifeTime=''; 
+   var $lifeTime=SESSION_EXPIRE; 
     /**
      +----------------------------------------------------------
      * session保存的数据库名
@@ -46,7 +46,7 @@ class Filter_DbSession extends Base
      * @access protected
      +----------------------------------------------------------
      */
-   var $sessionTable='';
+   var $sessionTable=SESSION_TABLE;
 
     /**
      +----------------------------------------------------------
@@ -70,10 +70,9 @@ class Filter_DbSession extends Base
      */
     function open($savePath, $sessName) { 
        // get session-lifetime 
-       $this->lifeTime = C('SESSION_EXPIRE'); 
-	   $this->sessionTable	 =	 C('SESSION_TABLE');
-       $dbHandle = mysql_connect(C('DB_HOST'),C('DB_USER'),C('DB_PWD')); 
-       $dbSel = mysql_select_db(C('DB_NAME'),$dbHandle); 
+       $this->lifeTime = SESSION_EXPIRE; 
+       $dbHandle = mysql_connect(DB_HOST,DB_USER,DB_PWD); 
+       $dbSel = mysql_select_db(DB_NAME,$dbHandle); 
        // return success 
        if(!$dbHandle || !$dbSel) 
            return false; 

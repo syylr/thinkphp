@@ -4,7 +4,7 @@
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
 // +----------------------------------------------------------------------+
-// | Licensed under the Apache License, Version 2.0 (the 'License',      |
+// | Licensed under the Apache License, Version 2.0 (the 'License');      |
 // | you may not use this file except in compliance with the License.     |
 // | You may obtain a copy of the License at                              |
 // | http://www.apache.org/licenses/LICENSE-2.0                           |
@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: zh-cn.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
@@ -25,55 +25,50 @@
  * @package    Core
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: zh-cn.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 
-return Array(
-	//  核心
-	'_PAGE_ERROR'=>			'页面出错',
-	'_MODULE_NOT_EXIST_'=>	'无法加载模块',
-	'_ERROR_ACTION_'=>		'非法操作',
-	'_LANGUAGE_NOT_LOAD_'=>	'无法加载语言包',
-	'_TEMPLATE_NOT_EXIST_'=>	'模板不存在',
-	'_MODULE_'=>'模块',
-	'_ACTION_'=>'操作',
-	'_APP_CONFIG_NOT_EXIST_'=>'项目配置文件不存在！',
-	'_ROUTER_NOT_EXIST_'=>'路由不存在或者没有定义',
-	//  错误提示
+//  核心
+define('_PAGE_ERROR',			'页面出错');
+define('_MODULE_NOT_EXIST_',	'无法加载模块');
+define('_ERROR_ACTION_',		'非法操作');
+define('_LANGUAGE_NOT_LOAD_',	'无法加载语言包');
+define('_TEMPLATE_NOT_EXIST_',	'模板不存在');
+define('_MODULE_','模块');
+define('_ACTION_','操作');
+define('_APP_CONFIG_NOT_EXIST_','项目配置文件不存在！');
+//  错误提示
 
-	'_WAITING_GOTO_EXIST_'=>	'请等待系统转向...',
-	'_OPERATION_FAIL_'=>'操作失败！',
-	'_OPERATION_SUCCESS_'=>'操作成功！',
-	'_INSERT_SUCCESS_'=>'新增成功',
-	'_INSERT_FAIL_'=>'新增失败',
-	'_SELECT_NOT_EXIST_'=>'要编辑的项目不存在！',
-	'_UPDATE_SUCCESS_'=>'更新成功',
-	'_UPDATE_FAIL_'=>'更新失败',
-	'_DELETE_SUCCESS_'=>'删除成功',
-	'_DELETE_FAIL_'=>'删除失败',
-	'_RECORD_HAS_UPDATE_'=>'记录已经更新',
+define('_WAITING_GOTO_EXIST_',	'请等待系统转向...');
+define('_OPERATION_FAIL_','操作失败！');
+define('_OPERATION_SUCCESS_','操作成功！');
+define('_INSERT_SUCCESS_','新增成功');
+define('_INSERT_FAIL_','新增失败');
+define('_SELECT_NOT_EXIST_','要编辑的项目不存在！');
+define('_UPDATE_SUCCESS_','更新成功');
+define('_UPDATE_FAIL_','更新失败');
+define('_DELETE_SUCCESS_','删除成功');
+define('_DELETE_FAIL_','删除失败');
 
-	'_DATA_TYPE_INVALID_'=>'非法数据对象！',
-	'_OPERATION_WRONG_'=>'操作出现错误',
-	'_ERROR_INFO_'=>'错误信息：',
-	'_ERROR_URL_'=>'错误页面：',
-	'_ERROR_TYPE_'=>'错误类型：',
-	'_ERROR_TRACE_'=>'错误跟踪：',
-	'_NOT_LOAD_DB_'=>'无法加载数据库',
-	'_NOT_SUPPORT_DB_'=>'系统暂时不支持数据库',
+define('_DATA_TYPE_INVALID_','非法数据对象！');
+define('_OPERATION_WRONG_','操作出现错误');
+define('_ERROR_INFO_','错误信息：');
+define('_ERROR_URL_','错误页面：');
+define('_ERROR_TYPE_','错误类型：');
+define('_ERROR_TRACE_','错误跟踪：');
+define('_NOT_LOAD_DB_','无法加载数据库');
+define('_NOT_SUPPORT_DB_','系统暂时不支持数据库');
 
-	'_CACHE_TYPE_INVALID_'=>'无法加载缓存类型',
-	'_CONFIG_FILE_INVALID_'=>'无法加载配置文件',
-	'_CONFIG_TYPE_INVALID_'=>'系统不支持该配置文件类型！',
-	'_FILE_NOT_WRITEABLE_'=>'目录（文件）不可写',
+define('_CACHE_TYPE_INVALID_','无法加载缓存类型');
+define('_CONFIG_FILE_INVALID_','无法加载配置文件');
+define('_CONFIG_TYPE_INVALID_','系统不支持该配置文件类型！');
+define('_FILE_NOT_WRITEABLE_','目录（文件）不可写');
 
-	'_NO_AUTO_CHARSET_'=>'您的系统不支持自动编码转换！',
-	'_CLASS_NOT_EXIST_'=>'实例化一个不存在的类！',
-	'_UNSERIALIZE_CLASS_NOT_EXIST_'=>'反序列化的时候缺少类库',
-	//  数据库
-	'_DB_TYPE_NOT_EXIST_'=>	'没有指定数据库类型或该类库不存在！',
-	'_DB_CONNECT_ERROR_'=>	'数据库连接失败！',	
-);
-
+define('_NO_AUTO_CHARSET_','您的系统不支持自动编码转换！');
+define('_CLASS_NOT_EXIST_','实例化一个不存在的类！');
+define('_UNSERIALIZE_CLASS_NOT_EXIST_','反序列化的时候缺少类库');
+//  数据库
+define('_DB_TYPE_NOT_EXIST_',	'没有指定数据库类型或该类库不存在！');
+define('_DB_CONNECT_ERROR_',	'数据库连接失败！');
 ?>

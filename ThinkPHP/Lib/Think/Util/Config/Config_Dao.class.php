@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Config_Dao.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 import('Think.Util.Config');
 /**
@@ -24,7 +24,7 @@ import('Think.Util.Config');
  * 数据库配置文件类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Config_Dao.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Config_Dao extends Config
@@ -40,6 +40,7 @@ class Config_Dao extends Config
      */
     function __construct($config)
     {
+
         import($config);
 		$daoClass	=	substr(strrchr($config, '.'),1);
         $configDao  =   new $daoClass();

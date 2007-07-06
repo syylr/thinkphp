@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: compat.php 33 2007-02-25 07:06:02Z liu21st $
 
 //常量
 if(!defined('E_STRICT'))  define('E_STRICT',2048);
@@ -27,7 +27,7 @@ if(!defined('E_STRICT'))  define('E_STRICT',2048);
  +------------------------------------------------------------------------------
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: compat.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 if (!function_exists('array_diff_key')) {
@@ -218,7 +218,7 @@ if (!function_exists('file_get_contents')){
 if (!function_exists('com_create_guid')){
     /**
      +----------------------------------------------------------
-     * 生成一个GUID 适用window和*nix
+     * 生成一个GUID 
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -600,7 +600,6 @@ if( !function_exists('memory_get_usage') )
 {
    function memory_get_usage()
    {
-       $output = array ();
        $pid = getmypid();
        if ( IS_WIN ) 
        {
@@ -625,7 +624,7 @@ if(!function_exists('scandir')) {
                        $files[] = $file;
                    }
                }
-               closedir($dirlist);
+               closedir($dir);
                ($sortorder == 0) ? asort($files) : rsort($files); // arsort was replaced with rsort
                $_list[$dir] = $files;
                return $files;           	

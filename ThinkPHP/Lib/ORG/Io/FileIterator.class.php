@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: FileIterator.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 if(version_compare(PHP_VERSION, '5.0.0', '<')){
     
@@ -27,7 +27,7 @@ if(version_compare(PHP_VERSION, '5.0.0', '<')){
      * 文件遍历类 PHP4实现
      +------------------------------------------------------------------------------
      * @author    liu21st <liu21st@gmail.com>
-     * @version   $Id$
+     * @version   $Id: FileIterator.class.php 33 2007-02-25 07:06:02Z liu21st $
      +------------------------------------------------------------------------------
      */
     class FileIterator extends ListIterator

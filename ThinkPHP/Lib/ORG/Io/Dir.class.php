@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Dir.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 import("Think.Util.ListIterator");
 /**
@@ -24,7 +24,7 @@ import("Think.Util.ListIterator");
  * DirectoryIterator实现类 PHP5以上内置了DirectoryIterator类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Dir.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Dir extends ListIterator 

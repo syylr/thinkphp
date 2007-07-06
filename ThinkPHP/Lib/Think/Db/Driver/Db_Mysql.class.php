@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Db_Mysql.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 
 /**
@@ -25,7 +25,7 @@
  +------------------------------------------------------------------------------
  * @package   Db
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Db_Mysql.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 Class Db_Mysql extends Db{
@@ -40,13 +40,15 @@ Class Db_Mysql extends Db{
      * @param array $config 数据库配置数组
      +----------------------------------------------------------
      */
-    function __construct($config=''){    
+    function __construct($config){    
         if ( !extension_loaded('mysql') ) {    
             throw_exception('系统不支持mysql');
         }
-		if(!empty($config)) {
-			$this->config	=	$config;
-		}
+        $this->username = $config['username'];
+        $this->password = $config['password'];
+        $this->database = $config['database'];
+        $this->hostname = $config['hostname'];
+        $this->hostport = $config['hostport'];
     }
 
     /**
@@ -59,30 +61,27 @@ Class Db_Mysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function connect($config='') {
+    Function connect() {
         if ( !$this->linkID ) {
-			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'mysql_pconnect':'mysql_connect';
-            $this->linkID = $conn( $config['hostname'] . ':' . $config['hostport'], $config['username'], $config['password']);
+            $this->linkID = $conn( $this->hostname . ':' . $this->hostport, $this->username, $this->password);
 
             if ( !$this->linkID) {
                 throw_exception(mysql_error());
                 return False;
             }
 
-            if ( !mysql_select_db($config['database'], $this->linkID) ) {
+            if ( !mysql_select_db($this->database, $this->linkID) ) {
                 throw_exception($this->error());
                 return False;
             }
             $this->dbVersion = mysql_get_server_info($this->linkID);
             if ($this->dbVersion >= "4.1") { 
                 //使用UTF8存取数据库 需要mysql 4.1.0以上支持
-                mysql_query("SET NAMES '".C('DB_CHARSET')."'", $this->linkID);
+                mysql_query("SET NAMES '".DB_CHARSET."'", $this->linkID);
             }
-			// 标记连接成功
-			$this->connected	=	true;
-            // 注销数据库连接配置信息
-            unset($this->config);
+            //注销数据库安全信息
+            unset($this->username,$this->password,$this->database,$this->hostname,$this->hostport);
         }
         return $this->linkID;
     }
@@ -94,7 +93,7 @@ Class Db_Mysql extends Db{
      * @access public 
      +----------------------------------------------------------
      */
-    function free() {
+    Function free() {
         @mysql_free_result($this->queryID);
         $this->queryID = 0;
     }
@@ -113,8 +112,7 @@ Class Db_Mysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function _query($str='') {
-		if ( !$this->connected ) $this->connect();
+    Function _query($str='') {
         if ( !$this->linkID ) return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
@@ -130,7 +128,6 @@ Class Db_Mysql extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->queryTimes++;
-		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->queryID = mysql_query($this->queryStr, $this->linkID);
         if ( !$this->queryID ) {
@@ -158,8 +155,7 @@ Class Db_Mysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function _execute($str='') {
-		if ( !$this->connected ) $this->connect();
+    Function _execute($str='') {
         if ( !$this->linkID ) return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
@@ -176,7 +172,6 @@ Class Db_Mysql extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->writeTimes++;
-		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         if ( !mysql_query($this->queryStr, $this->linkID) ) {
             //if ( $this->debug ) throw_exception($this->error());
@@ -257,7 +252,7 @@ Class Db_Mysql extends Db{
             throw_exception($this->error());
             return False;
         }
-        if($this->resultType== DATA_TYPE_VO){
+        if($this->resultType==1){
             // 返回对象集
             $this->result = @mysql_fetch_object($this->queryID);
             $stat = is_object($this->result);
@@ -284,7 +279,7 @@ Class Db_Mysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getRow($sql = NULL,$seek=0) {
+    Function getRow($sql = NULL,$seek=0) {
         if (!empty($sql)) $this->_query($sql);
         if ( !$this->queryID ) {
             throw_exception($this->error());
@@ -292,7 +287,7 @@ Class Db_Mysql extends Db{
         }
         if($this->numRows >0) {
             if(mysql_data_seek($this->queryID,$seek)){
-                if($this->resultType== DATA_TYPE_VO){
+                if($this->resultType==1){
                     //返回对象集
                     $result = mysql_fetch_object($this->queryID);
                 }else{
@@ -329,9 +324,9 @@ Class Db_Mysql extends Db{
         //返回数据集
         $result = array();
         if($this->numRows >0) {
-            if(is_null($resultType)){ $resultType   =  $this->resultType ; }
+            if(!is_null($resultType)){ $resultType   =  $this->resultType ; }
              for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType== DATA_TYPE_VO){
+                if($resultType==1){
                     //返回对象集
                     $result[$i] = mysql_fetch_object($this->queryID);
                 }else{

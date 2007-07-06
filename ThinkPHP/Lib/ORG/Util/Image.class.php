@@ -16,14 +16,14 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Image.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
  * 图像操作类库
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Image.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Image extends Base
@@ -152,7 +152,6 @@ class Image extends Base
             $pathinfo = pathinfo($image);
             $type =  $pathinfo['extension'];
             $type = empty($type)?$info['type']:$type;
-			$type = strtolower($type);
             $interlace  =  $interlace? 1:0;
             unset($info);
             $scale = min($maxWidth/$srcWidth, $maxHeight/$srcHeight); // 计算缩放比例
@@ -179,8 +178,8 @@ class Image extends Base
             if('gif'==$type || 'png'==$type) {
                 //imagealphablending($thumbImg, FALSE);//取消默认的混色模式
                 //imagesavealpha($thumbImg,TRUE);//设定保存完整的 alpha 通道信息
-                $background_color  =  ImageColorAllocate($thumbImg,  0,255,0);  //  指派一个绿色  
-				imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，若注释掉该行则输出绿色的图 
+                            $background_color  =  ImageColorAllocate($thumbImg,  0,255,0);  //  指派一个绿色  
+imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，若注释掉该行则输出绿色的图 
             }
 
             // 对jpeg图形设置隔行扫描
@@ -251,22 +250,6 @@ class Image extends Base
         Image::output($im,$type);
     }
 
-    /**
-     +----------------------------------------------------------
-     * 把图像转换成字符显示
-     * 
-     +----------------------------------------------------------
-     * @static
-     * @access public 
-     +----------------------------------------------------------
-     * @param string $image  要显示的图像
-     * @param string $type  图像类型，默认自动获取
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
     function showASCIIImg($image,$type='') 
     {
         $info  = Image::getImageInfo($image); 
@@ -310,6 +293,45 @@ class Image extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
+    function buildAdvImageVerify($key,$type='png',$width=100,$height=45) 
+    {
+        $rand = build_count_rand(10,1,3);
+        $verify  =  '';
+        for($i=0; $i<strlen($key); $i++) {
+        	$verify .=  $rand[$key[$i]];
+        }
+        $_SESSION['verify']= md5($verify);
+        $randval   =  implode('',$rand);
+        $width = ($length*9+10)>$width?$length*9+10:$width;
+        if ( $type!='gif' && function_exists('imagecreatetruecolor')) {
+            $im = imagecreatetruecolor($width,$height);
+        }else {
+            $im = imagecreate($width,$height);
+        }
+        $r = Array(225,255,255,223);
+        $g = Array(225,236,237,255);
+        $b = Array(225,236,166,125);
+        $key = mt_rand(0,3);
+
+        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]);    //背景色（随机）
+        $borderColor = ImageColorAllocate($im, 0, 0, 0);                    //边框色
+        $pointColor = ImageColorAllocate($im, 0, 255, 255);                    //点颜色
+
+        imagefilledrectangle($im, 0, 0, $width - 1, $height - 1, $backColor);
+        imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
+        $stringColor1 = ImageColorAllocate($im, 255,51,153);
+        $stringColor2 = ImageColorAllocate($im, 65,65,65);
+        for($i=0;$i<=10;$i++){
+            $pointX = mt_rand(2,$width-2);
+            $pointY = mt_rand(2,$height-2);
+            imagesetpixel($im, $pointX, $pointY, $pointColor);
+        }
+
+        imagestring($im, 5, 5, 3, $randval, $stringColor1);
+        imagestring($im, 5, 5, 25, '0123456789', $stringColor2);
+        Image::output($im,$type);
+    }
+
     function showAdvVerify($type='png',$width=180,$height=40) 
     {
         $verifyCodeRandArray = build_count_rand(10,1,3);
@@ -328,8 +350,8 @@ class Image extends Base
 
         $key = rand(0,3);
 
-        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]); 
-        $borderColor = ImageColorAllocate($im, 0, 0, 0);	
+        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]); //璉春︹繦诀
+        $borderColor = ImageColorAllocate($im, 0, 0, 0);				  //娩︹
 
         imagefilledrectangle($im, 0, 0, $width - 1, $height - 1, $backColor);
         imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
@@ -344,8 +366,8 @@ class Image extends Base
         imagestring($im, 5, 5, 1, "0 1 2 3 4 5 6 7 8 9", $stringColor1);
         imagestring($im, 5, 5, 20, $letter, $stringColor2);
         Image::output($im,$type);
+	
     }
-
     /**
      +----------------------------------------------------------
      * 生成UPC-A条形码
@@ -396,7 +418,7 @@ class Image extends Base
         }else {
             $im = imagecreate($lw*95+30,$hi+30);
         }
-        $fg = ImageColorAllocate($im, 0, 0, 0); 
+        $fg = ImageColorAllocate($img, 0, 0, 0); 
         $bg = ImageColorAllocate($im, 255, 255, 255); 
         ImageFilledRectangle($im, 0, 0, $lw*95+30, $hi+30, $bg); 
         $shift=10; 

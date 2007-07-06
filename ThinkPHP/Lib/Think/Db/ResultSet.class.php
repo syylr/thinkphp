@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: ResultSet.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 import("Think.Util.ArrayList");
 
@@ -26,7 +26,7 @@ import("Think.Util.ArrayList");
  +------------------------------------------------------------------------------
  * @package   Db
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: ResultSet.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class ResultSet extends ArrayList

@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Cache_File.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 
 /**
@@ -24,7 +24,7 @@
  * 文件类型缓存类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Cache_File.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Cache_File extends Cache
@@ -34,6 +34,7 @@ class Cache_File extends Cache
     /**
      +----------------------------------------------------------
      * 架构函数
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -45,7 +46,7 @@ class Cache_File extends Cache
         }else {
             $this->options['temp'] = TEMP_PATH;
         }
-        $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
+        $this->expire = isset($options['expire'])?$options['expire']:DATA_CACHE_TIME;
         if(!is_dir($this->options['temp'])){
             mkdir($this->options['temp']);
         }
@@ -59,6 +60,7 @@ class Cache_File extends Cache
     /**
      +----------------------------------------------------------
      * 初始化检查
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -87,6 +89,7 @@ class Cache_File extends Cache
     /**
      +----------------------------------------------------------
      * 是否连接
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -101,6 +104,7 @@ class Cache_File extends Cache
     /**
      +----------------------------------------------------------
      * 取得变量的存储文件名
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -134,25 +138,24 @@ class Cache_File extends Cache
         if (!$this->isConnected() || !file_exists($filename)) {
            return false;
         }
-		$this->Q(1);
         $content    =   file_get_contents($filename);
         if( false !== $content) {
-            $expire  =  substr($content,strlen(C('CACHE_SERIAL_HEADER')), 6);
+            $expire  =  substr($content,strlen(CACHE_SERIAL_HEADER), 6);
             if($expire != -1 && time() > filemtime($filename) + $expire) { 
                 //缓存过期删除缓存文件
                 unlink($filename);
                 return false;
             }
-            if(C('DATA_CACHE_CHECK')) {//开启数据校验
-                $check  =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+6, 32);
-                $content   =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+6+32, -strlen(C('CACHE_SERIAL_FOOTER')));
+            if(DATA_CACHE_CHECK) {//开启数据校验
+                $check  =  substr($content,strlen(CACHE_SERIAL_HEADER)+6, 32);
+                $content   =  substr($content,strlen(CACHE_SERIAL_HEADER)+6+32, -strlen(CACHE_SERIAL_FOOTER));
                 if($check != md5($content)) {//校验错误
                     return false;
                 }
             }else {
-            	$content   =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+6, -strlen(C('CACHE_SERIAL_FOOTER')));
+            	$content   =  substr($content,strlen(CACHE_SERIAL_HEADER)+6, -strlen(CACHE_SERIAL_FOOTER));
             }
-            if(C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
+            if(DATA_CACHE_COMPRESS && function_exists('gzcompress')) {
                 //启用数据压缩
                 $content   =   gzuncompress($content);
             }
@@ -178,22 +181,21 @@ class Cache_File extends Cache
      */
     function set($name, $value,$expire='')
     {
-		$this->W(1);
         if(empty($expire)) {
         	$expire =  $this->expire;
         }
         $filename   =   $this->filename($name);
         $data   =   serialize($value);
-        if( C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
+        if( DATA_CACHE_COMPRESS && function_exists('gzcompress')) {
             //数据压缩
             $data   =   gzcompress($data,3);
         }
-        if(C('DATA_CACHE_CHECK')) {//开启数据校验
+        if(DATA_CACHE_CHECK) {//开启数据校验
         	$check  =  md5($data);
         }else {
         	$check  =  '';
         }
-        $data    = C('CACHE_SERIAL_HEADER').sprintf('%06d',$expire).$check.$data.C('CACHE_SERIAL_FOOTER');
+        $data    = CACHE_SERIAL_HEADER.sprintf('%06d',$expire).$check.$data.CACHE_SERIAL_FOOTER;
         $result  =   file_put_contents($filename,$data);
         if($result) {
             clearstatcache();
@@ -232,7 +234,7 @@ class Cache_File extends Cache
      */
     function clear()
     {
-        import("ORG.Io.Dir");
+        import("Think.Util.Dir");
         Dir::del($this->options['temp']);
     }
 

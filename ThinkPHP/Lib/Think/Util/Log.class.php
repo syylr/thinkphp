@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Log.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
@@ -24,12 +24,24 @@
  * 因为异常处理类中包含了日志记录 会导致循环错误
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Log.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 
 class Log extends Base
 {//类定义开始
+
+    /**
+     +----------------------------------------------------------
+     * 架构函数
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     */
+    function __construct()
+    {
+    }
 
     /**
      +----------------------------------------------------------
@@ -63,11 +75,11 @@ class Log extends Base
                 $destination = $file == ''? LOG_PATH.date('y_m_d')."_systemErr.log" : $file;
         }
         if(!is_writable(LOG_PATH)){
-            halt(L('_FILE_NOT_WRITEABLE_').':'.$destination);
+            halt(_FILE_NOT_WRITEABLE_.':'.$destination);
         }
         //检测日志文件大小，超过配置大小则备份日志文件重新生成
         if(file_exists($destination)) {
-            if( floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
+            if( defined('LOG_FILE_SIZE')  && floor(LOG_FILE_SIZE) <= filesize($destination) ){
                   rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
             }        	
         }

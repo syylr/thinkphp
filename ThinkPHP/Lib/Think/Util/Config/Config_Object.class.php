@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Config_Object.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 import('Think.Util.Config');
 /**
@@ -24,7 +24,7 @@ import('Think.Util.Config');
  * 对象配置文件类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Config_Object.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Config_Object extends Config
@@ -42,7 +42,6 @@ class Config_Object extends Config
     {
         if(is_object($config)) {
             $this->_config = get_object_vars($config);
-			unset($config);
             $this->_connect = true;        	
         }else {
         	$this->_connect = false;

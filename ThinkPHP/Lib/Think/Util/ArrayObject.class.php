@@ -16,18 +16,20 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: ArrayObject.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
  * ArrayObject实现类 PHP5以上内置了ArrayObject类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: ArrayObject.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 
 if(!class_exists('ArrayObject')){//PHP5以上内置了ArrayObject类，不需要重新定义
+
+    import("Think.Util.ListIterator");
 
     class ArrayObject extends Base 
     {//类定义开始
@@ -93,7 +95,6 @@ if(!class_exists('ArrayObject')){//PHP5以上内置了ArrayObject类，不需要重新定义
          */
         function getIterator()
         {
-		    import("Think.Util.ListIterator");
              return new ListIterator(get_object_vars($this));
         }
 

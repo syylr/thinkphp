@@ -25,7 +25,7 @@
  * @link       http://www.fcs.org.cn
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id: Base.js 78 2007-04-01 04:29:15Z liu21st $
+ * @version    $Id: Base.js 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 
@@ -118,7 +118,7 @@ function _import(jsFile,basePath)
 	//---------------------------------------------------
 	function PopWindow(pageUrl,WinWidth,WinHeight) 
 	{ 
-	var popwin=window.open(pageUrl,"_blank","scrollbars=yes,toolbar=no,location=no,directories=no,status=no,menubar=no,resizable=no,width="+WinWidth+",height="+WinHeight); 
+	var popwin=window.open(pageUrl,"PopWin","scrollbars=yes,toolbar=no,location=no,directories=no,status=no,menubar=no,resizable=no,width="+WinWidth+",height="+WinHeight); 
 	return false; 
 	} 
 
@@ -176,6 +176,7 @@ function _import(jsFile,basePath)
 	 {
 		 var element = document.createElement(type); 
 		 owner.appendChild(element);
+		 return element;
 	 }
 	 
 	//+---------------------------------------------------
@@ -203,7 +204,7 @@ function _import(jsFile,basePath)
 		 return parastr;
 	}
 
-	function getPageScroll(){
+function getPageScroll(){
 
 	var yScroll;
 
@@ -272,3 +273,53 @@ function getPageSize(){
 	arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight) 
 	return arrayPageSize;
 }
+
+var setOuterHtml = function(s){
+   var range = this.ownerDocument.createRange();
+   range.setStartBefore(this);
+   var fragment = range.createContextualFragment(s);
+   //alert(fragment.xml);
+   this.parentNode.replaceChild(fragment, this);
+};
+
+if(window.HTMLElement) {
+  HTMLElement.prototype.__defineSetter__("outerHTML", setOuterHtml);
+}
+
+var move_obj_x0=0,move_obj_y0=0,move_obj_x1=0,move_obj_y1=0;//(x0,y0)为开始拖动时鼠标的位置(x1,y1)为开始拖动时对象的位置 
+var obj_moveable=false; 
+
+//开始拖动; 
+function startDrag(obj,id) 
+{ 
+    if(event.button==1) 
+    { 
+        obj.setCapture(); 
+        win=document.getElementById(id) 
+        move_obj_x0 = event.clientX; 
+        move_obj_y0 = event.clientY; 
+        move_obj_x1 = parseInt(win.style.left); 
+        move_obj_y1 = parseInt(win.style.top); 
+        obj_moveable = true; 
+    } 
+} 
+//拖动; 
+function drag(id) 
+{ 
+    if(obj_moveable) 
+    { 
+        win=document.getElementById(id) 
+        win.style.left = (move_obj_x1 + event.clientX - move_obj_x0>0)?move_obj_x1 + event.clientX - move_obj_x0:0; 
+        win.style.top = (move_obj_y1 + event.clientY - move_obj_y0>0)?move_obj_y1 + event.clientY - move_obj_y0:0; 
+    } 
+} 
+//停止拖动; 
+function stopDrag(obj,id) 
+{ 
+    if(obj_moveable) 
+    { 
+        obj.releaseCapture(); 
+        obj_moveable = false; 
+    } 
+} 
+

@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Http.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
@@ -24,7 +24,7 @@
  * 提供一系列的Http方法
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Http.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Http extends Base
@@ -50,7 +50,7 @@ class Http extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function download ($filename, $showname='',$content='',$expire=180) {
+    function download ($filename, $showname='',$content='',$expire=31536000) {
         if(file_exists($filename)) {
             $length = filesize($filename);
         }elseif(is_file(UPLOAD_PATH.$filename)) {
@@ -59,7 +59,7 @@ class Http extends Base
         }elseif($content != '') {
             $length = strlen($content);
         }else {
-            throw_exception(L('下载文件不存在！'));
+            throw_exception('下载文件不存在！');
         }
         if(empty($showname)) {
             $showname = $filename;

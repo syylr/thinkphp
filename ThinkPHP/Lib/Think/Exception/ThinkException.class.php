@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: ThinkException.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 import("Think.Util.Log");
 
@@ -30,7 +30,7 @@ if(version_compare(PHP_VERSION, '5.0.0', '<')){
      +------------------------------------------------------------------------------
      * @package   Exception
      * @author    liu21st <liu21st@gmail.com>
-     * @version   $Id$
+     * @version   $Id: ThinkException.class.php 33 2007-02-25 07:06:02Z liu21st $
      +------------------------------------------------------------------------------
      */
     class ThinkException extends Base
