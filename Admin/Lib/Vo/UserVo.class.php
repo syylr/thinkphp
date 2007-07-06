@@ -46,16 +46,9 @@ class UserVo extends Vo
 	var $lastLoginTime;
     var $registerTime;      //注册时间
 
-	var $_auto	 =	 array(
-		array('registerTime','time','ADD'),	//	在新增的时候写入 time()
-		array('password','md5','ALL'),		// 在所有情况下面对password属性使用md5方法
-		);
-
-	var $_validate = array(
-		array('name','/^[a-z]\w{5,}$/i','用户名必须是字母打头，5位以上',1), // MUST_TO_VALIDATE  必须检测
-		array('password','require','密码必须',0), // 只是在表单有设置的时候检测
-		array('verify','is_numeric','验证码必须是数字',0,1), // 在表单有设置的情况下使用is_numeric 函数进行检测 
-		);
+    //+----------------------------------------
+    //|    关联或者视图字段
+    //+----------------------------------------
 
 }//类定义结束
 ?>

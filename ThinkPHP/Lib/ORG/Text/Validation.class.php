@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Validation.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 
 /**
@@ -24,7 +24,7 @@
  * 数据验证类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Validation.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Validation extends Base
@@ -103,7 +103,7 @@ class Validation extends Base
     function check($value,$checkName) 
     {
         $matchRegex = $this->getRegex($checkName);
-        return preg_match($matchRegex,trim($value));
+        return preg_match($matchRegex,$value);
     }
 
 

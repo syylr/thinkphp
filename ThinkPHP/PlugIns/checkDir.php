@@ -22,22 +22,22 @@
         //检测模版缓存目录，并尝试创建
         if(!file_exists(CACHE_PATH)) {
         	if (! @ mkdir(CACHE_PATH))
-				throw_exception(L('模版缓存目录不存在：').CACHE_PATH);
+				throw_exception('模版缓存目录：'.CACHE_PATH.'不存在！');
         }
         //检测数据缓存目录，并尝试创建
         if(!file_exists(TEMP_PATH)) {
         	if (! @ mkdir(TEMP_PATH))
-				throw_exception(L('数据缓存目录不存在：').TEMP_PATH);
+				throw_exception('数据缓存目录：'.TEMP_PATH.'不存在！');
         }
         //检测静态缓存目录，并尝试创建
         if(!file_exists(HTML_PATH)) {
         	if (! @ mkdir(HTML_PATH))
-				throw_exception(L('静态缓存目录不存在：').HTML_PATH);
+				throw_exception('静态缓存目录：'.HTML_PATH.'不存在！');
         }
         //检测日志目录，并尝试创建
         if(!file_exists(LOG_PATH)) {
         	if (! @ mkdir(LOG_PATH))
-				throw_exception(L('日志目录不存在：').LOG_PATH);
+				throw_exception('日志目录：'.LOG_PATH.'不存在！');
         }
         return ;
     }

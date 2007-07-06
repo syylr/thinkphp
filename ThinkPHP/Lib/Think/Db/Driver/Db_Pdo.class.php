@@ -31,6 +31,7 @@
 Class Db_Pdo extends Db{
 
 	var $pdo		= null;
+	var $dsn		= null;
 	var $PDOStatement = null;
 
     /**
@@ -43,12 +44,23 @@ Class Db_Pdo extends Db{
      * @param array $config 数据库配置数组
      +----------------------------------------------------------
      */
-    function __construct($config=''){    
+    function __construct($config){    
         if ( !class_exists('PDO') ) {    
             throw_exception('系统不支持PDO');
         }
-		if(!empty($config)) {
-			$this->config	=	$config;
+        $this->username = $config['username'];
+        $this->password = $config['password'];
+        $this->database = $config['database'];
+        $this->hostname = $config['hostname'];
+		if(empty($config['pdodsn'])) {
+			$this->dsn = defined('DB_PDO_DSN')?DB_PDO_DSN:'';
+		}else {
+			$this->dsn = $config['pdodsn'];
+		}
+		if(empty($config['pdoparms'])) {
+			$this->parms = defined('DB_PDO_PARMS')?DB_PDO_PARMS:'';
+		}else {
+			$this->parms = $config['pdoparms'];
 		}
     }
 
@@ -62,26 +74,18 @@ Class Db_Pdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function connect($config='') {
+    Function connect() {
         if ( !$this->pdo ) {
-			if(empty($config))	$config	=	$this->config;
-			if(empty($config['pdodsn'])) {
-				$config['dsn'] = C('DB_PDO_DSN');
-			}
-			if(empty($config['pdoparms'])) {
-				$config['parms'] = C('DB_PDO_PARMS');
-			}
-            $this->pdo = new PDO( $config['dsn'], $config['username'], $config['password'],$config['parms']);
+            $this->pdo = new PDO( $this->dsn, $this->username, $this->password,$this->parms);
+
             if ( !$this->pdo) {
                 throw_exception('PDO CONNECT ERROR');
                 return False;
             }
-			$this->pdo->exec('SET NAMES '.C('DB_CHARSET'));  
+			$this->pdo->exec('SET NAMES '.DB_CHARSET);  
             $this->dbVersion = $this->pdo->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
-			// 标记连接成功
-			$this->connected	=	true;
-            // 注销数据库连接配置信息
-            unset($this->config);
+            //注销数据库安全信息
+            unset($this->username,$this->password,$this->database,$this->hostname,$this->hostport,$this->dsn,$this->parms);
         }
         return $this->pdo;
     }
@@ -93,7 +97,7 @@ Class Db_Pdo extends Db{
      * @access public 
      +----------------------------------------------------------
      */
-    function free() {
+    Function free() {
         $this->PDOStatement = null;
     }
 
@@ -111,8 +115,7 @@ Class Db_Pdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function _query($str='') {
-		if ( !$this->connected ) $this->connect();
+    Function _query($str='') {
         if ( !$this->pdo ) return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
@@ -127,7 +130,6 @@ Class Db_Pdo extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->queryTimes++;
-		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->PDOStatement = $this->pdo->prepare($this->queryStr);
 		$result	=	$this->PDOStatement->execute();
@@ -156,8 +158,7 @@ Class Db_Pdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function _execute($str='') {
-		if ( !$this->connected ) $this->connect();
+    Function _execute($str='') {
         if ( !$this->pdo ) return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
@@ -172,7 +173,6 @@ Class Db_Pdo extends Db{
         }
         $this->escape_string($this->queryStr);
         $this->writeTimes++;
-		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
 		$result	=	$this->pdo->exec($this->queryStr);
         if ( !$result) {
@@ -279,7 +279,7 @@ Class Db_Pdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getRow($sql = NULL,$seek=0) {
+    Function getRow($sql = NULL,$seek=0) {
         if (!empty($sql)) $this->_query($sql);
         if ( empty($this->PDOStatement) ) {
             throw_exception($this->error());

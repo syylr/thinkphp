@@ -37,7 +37,7 @@ class SystemAction extends AdminAction
         $app = $dao->findAll('status=1 AND level=1');
         $this->assign('app',$app);
         $dao     = D('MemoDao');
-        $labels  = $dao->findall('type="php" AND userId="'.Session::get(C('USER_AUTH_KEY')).'"');
+        $labels  = $dao->findall('type="php" AND userId="'.Session::get(USER_AUTH_KEY).'"');
         $this->assign('labels',$labels);
     	$this->display();
     }
@@ -59,7 +59,7 @@ class SystemAction extends AdminAction
                     $map->put('label',$_POST['label']);
                     $map->put('createTime',time());
                     $map->put('type','php');
-                    $map->put('userId',Session::get(C('USER_AUTH_KEY')));
+                    $map->put('userId',Session::get(USER_AUTH_KEY));
                     $dao->add($map);
                 }  
                 header("Content-Type:text/html; charset=utf-8");

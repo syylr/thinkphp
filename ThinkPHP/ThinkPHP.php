@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: ThinkPHP.php 71 2007-03-29 02:43:53Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
@@ -24,22 +24,15 @@
  +------------------------------------------------------------------------------
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: ThinkPHP.php 71 2007-03-29 02:43:53Z liu21st $
  +------------------------------------------------------------------------------
  */
-
-//记录开始运行时间
 $GLOBALS['_beginTime'] = array_sum(explode(' ', microtime()));
-
 //ThinkPHP系统目录定义
 if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
-
-//加载系统定义文件和系统函数库
+    
+//加载系统定义文件和公共函数库
 require_once(THINK_PATH."/Common/defines.php");
-// 记录内存初始使用
-if(MEMORY_LIMIT_ON) {
-	 $GLOBALS['_startUseMems'] = memory_get_usage();
-}
 require_once(THINK_PATH."/Common/functions.php");
 
 //如果PHP4导入兼容函数库
@@ -58,6 +51,4 @@ import("Think.Core.Vo");
 import("Think.Core.Dao");
 import("Think.Core.Action");
 
-// 记录加载文件时间
-$GLOBALS['_loadTime'] = array_sum(explode(' ', microtime()));
 ?>

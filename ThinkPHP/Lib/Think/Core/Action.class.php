@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Action.class.php 109 2007-04-28 03:27:29Z liu21st $
 
 // 导入引用类库
 import("Think.Core.Template");
@@ -27,7 +27,7 @@ import("Think.Core.Template");
  +------------------------------------------------------------------------------
  * @package  core
  * @author   liu21st <liu21st@gmail.com>
- * @version  $Id$
+ * @version  $Id: Action.class.php 109 2007-04-28 03:27:29Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Action extends Base
@@ -42,7 +42,7 @@ class Action extends Base
      +----------------------------------------------------------
      */
     var $tpl    ;
-
+    var $cache = array();
     /**
      +----------------------------------------------------------
      * 上次错误信息
@@ -53,6 +53,7 @@ class Action extends Base
      */
     var $error    ;
 
+
    /**
      +----------------------------------------------------------
      * 架构函数 取得模板对象实例
@@ -62,7 +63,7 @@ class Action extends Base
      */
     function __construct()
     {
-        //实例化模板类
+        //实例化默认模板类
         $this->tpl = Template::getInstance();    
         //控制器初始化
         $this->_initialize();
@@ -95,7 +96,93 @@ class Action extends Base
                 $this->error($this->error);
             }
         }
+
         return ;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 判断视图缓存是否有效
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param String $id  视图缓存标识
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function viewCacheValid($id) 
+    {
+    	return !empty($this->cache['view'][$id]['status']);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 在不开启数据缓存的情况下
+     * 缓存数据（可以是任何数据类型）
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param mixed $data 要缓存的数据
+     * @param String $identify  缓存标识
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function cacheData($identify,$data) 
+    {
+        //取得缓存对象实例
+        $cache  = Cache::getInstance();
+        //缓存数据
+        $cache->set($identify,$data);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取缓存数据
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param String $identify 缓存标识
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getCacheData($identify) 
+    {
+        // 取得缓存实例
+        $cache  = Cache::getInstance();
+        // 获取缓存数据
+        $data      =  $cache->get($identify);
+        return $data;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 删除数据缓存
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param String $voClass 缓存的Vo类名称
+     * @param String $identify 缓存标识
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function delCacheData($identify) 
+    {
+        //取得缓存实例
+        $cache  = Cache::getInstance();
+        // 删除数据缓存
+        return  $cache->rm($identify);
     }
 
     /**
@@ -117,7 +204,7 @@ class Action extends Base
     {
         $guid   = strtoupper($voList->getVoClass()).'List_'.$identify;
         //VoList对象缓存
-        S($guid,$voList);
+        $this->cacheData($guid,$voList);
     }
 
     /**
@@ -138,7 +225,7 @@ class Action extends Base
     {
         $guid   = strtoupper($voClass).'List_'.$identify;
         // 获取VoList对象缓存
-        $voList      =  S($guid);
+        $voList      =  $this->getCacheData($guid);
         return $voList;
     }
 
@@ -160,7 +247,7 @@ class Action extends Base
     {
         $guid   = strtoupper($voClass).'List_'.$identify;
         // 删除VoList对象缓存
-        return  S($guid,null);
+        return  $this->delCacheData($guid);
     }
 
     /**
@@ -181,7 +268,7 @@ class Action extends Base
     {
         $guid   = strtoupper(get_class($vo)).'_'.$id;
         //Vo对象缓存
-        S($guid,$vo);
+        $this->cacheData($guid,$vo);
     }
 
     /**
@@ -202,16 +289,7 @@ class Action extends Base
     {
         $guid   = strtoupper($voClass).'_'.$id;
         //Vo对象缓存
-        $vo      =  S($guid);
-		// 乐观锁记录
-		$dao = $this->getDaoClass();
-		if($dao->lock_optimistically) {
-			if(is_array($vo) && isset($vo[$dao->lock_optimistically])) {
-				Session::set($guid.'_lock_version',$vo[$dao->lock_optimistically]);
-			}elseif(isset($vo->{$dao->lock_optimistically})){
-				Session::set($guid.'_lock_version',$vo->{$dao->lock_optimistically});
-			}
-		}
+        $vo      =  $this->getCacheData($guid);
         return $vo;
     }
 
@@ -233,7 +311,7 @@ class Action extends Base
     {
         $guid   = strtoupper($voClass).'_'.$id;
         //删除Vo对象缓存
-        return  S($guid,null);
+        return  $this->delCacheData($guid);
     }
 
     /**
@@ -284,7 +362,7 @@ class Action extends Base
     function getDaoClass() 
     {
         $daoClass   = $this->getDao();
-        $dao        = D($daoClass);
+        $dao        = new $daoClass();
         return $dao;
     }
 
@@ -303,7 +381,7 @@ class Action extends Base
      */
     function getReturnUrl() 
     {
-        return __URL__.'?'.C('VAR_MODULE').'='.MODULE_NAME.'&'.C('VAR_ACTION').'='.C('DEFAULT_ACTION');
+        return __URL__.'?'.VAR_MODULE.'='.MODULE_NAME.'&'.VAR_ACTION.'='.DEFAULT_ACTION;
     }
 
     /**
@@ -322,7 +400,7 @@ class Action extends Base
      * @return void
      +----------------------------------------------------------
      */
-    function display($templateFile='',$charset='',$contentType='text/html',$varPrefix='')
+    function display($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='')
     {
         $this->tpl->display($templateFile,$charset,$contentType,$varPrefix);
     }
@@ -344,9 +422,9 @@ class Action extends Base
      * @return void
      +----------------------------------------------------------
      */
-    function fetch($templateFile='',$charset='',$contentType='text/html',$varPrefix='')
+    function fetch($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='',$display=false)
     {
-        return $this->tpl->fetch($templateFile,$charset,$contentType,$varPrefix,false);
+        $this->tpl->fetch($templateFile,$charset,$contentType,$varPrefix,$display);
     }
 
     /**
@@ -440,39 +518,32 @@ class Action extends Base
      * @return void 
      +----------------------------------------------------------
      */
-    function ajaxReturn($data='',$info='',$status='',$type='') 
+    function ajaxReturn($data='',$info='',$status='') 
     {
+        header("Content-Type:text/html; charset=utf-8");
         $result  =  array();
         if($status === '') {
         	$status  = $this->get('error')?0:1;
         }
         if($info=='') {
             if($this->get('error')) { 
-                $info =   $this->get('error');                	
-            }elseif($this->get('message')) {
-                $info =   $this->get('message');                	
+                $info =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/update.gif" align="absmiddle" BORDER="0"> <span style="color:red">'.$this->get('error').'</span>';                	
+            }else {
+                if($this->get('message')) {
+                    $info =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/ok.gif" align="absmiddle" BORDER="0"> <span style="color:blue">'.$this->get('message').'</span>';                	
+                }
             }         	
-        }
-        if($status==1) { 
-            $info =   ' <span style="color:blue">'.$info.'</span>';
         }else {
-            $info =   ' <span style="color:red">'.$info.'</span>';
-        }  
+            if($status==1) { 
+                $info =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/ok.gif" align="absmiddle" BORDER="0"> <span style="color:blue">'.$info.'</span>';
+            }else {
+                $info =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/update.gif" align="absmiddle" BORDER="0"> <span style="color:red">'.$info.'</span>';
+            }          	
+        }
         $result['status']  =  $status;
    	    $result['info'] =  $info;
         $result['data'] = $data;
-		if(empty($type)) $type	=	C('AJAX_RETURN_TYPE');
-		if(strtoupper($type)=='JSON') {
-			// 返回JSON数据格式到客户端 包含状态信息
-			header("Content-Type:text/html; charset=utf-8");
-			exit(json_encode($result));
-		}elseif(strtoupper($type)=='XML'){
-			// 返回xml格式数据
-			header("Content-Type:text/xml; charset=utf-8");
-			exit(xml_encode($result));
-		}else{
-			// TODO 增加其它格式
-		}
+        exit(json_encode($result));
     }
     /**
      +----------------------------------------------------------
@@ -482,8 +553,6 @@ class Action extends Base
      +----------------------------------------------------------
      * @param mixed $action 要跳转的Action 默认为_dispatch_jump
      * @param string $module 要跳转的Module 默认为当前模块
-     * @param string $app 要跳转的App 默认为当前项目
-     * @param boolean $exit  是否继续执行
      * @param integer $delay 延时跳转的时间 单位为秒
      +----------------------------------------------------------
      * @return void
@@ -519,25 +588,6 @@ class Action extends Base
 
     /**
      +----------------------------------------------------------
-     * Action跳转 支持指定模块和延时跳转
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param mixed $action 要跳转的Action 
-     * @param string $module 要跳转的Module 默认为当前模块
-     * @param string $app 要跳转的App 默认为当前项目
-     * @param integer $delay 延时跳转的时间 单位为秒
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-	function redirect($action,$module=MODULE_NAME,$app=APP_NAME,$delay=0,$msg='') {
-		$url	=	str_replace(APP_NAME,$app,__APP__).'/'.$module.'/'.$action;
-		redirect($url,$delay,$msg);
-	}
-
-    /**
-     +----------------------------------------------------------
      * 默认操作定义
      * 
      +----------------------------------------------------------
@@ -568,12 +618,13 @@ class Action extends Base
             }
         }
         // 普通方式跳转
-        $templateFile = TEMPLATE_PATH.'/Public/success'.C('TEMPLATE_SUFFIX');
+        $templateFile = TEMPLATE_PATH.'/Public/success'.TEMPLATE_SUFFIX;
         //样式表文件
+        $this->assign('publicCss',APP_PUBLIC_URL."/css/Think.css");
         if($this->get('error') ) {
-            $msgTitle    =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/warn.gif" align="absmiddle" BORDER="0"> <span class="red">'.L('_OPERATION_FAIL_').'</span>';
+            $msgTitle    =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/warn.gif" align="absmiddle" BORDER="0"> <span class="red">'._OPERATION_FAIL_.'</span>';
         }else {
-            $msgTitle    =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/ok.gif" align="absmiddle" BORDER="0"> <span class="black">'.L('_OPERATION_SUCCESS_').'</span>';
+            $msgTitle    =   '<IMG SRC="'.APP_PUBLIC_URL.'/images/ok.gif" align="absmiddle" BORDER="0"> <span class="black">'._OPERATION_SUCCESS_.'</span>';
         }
         //提示标题
         $this->assign('msgTitle',$msgTitle);
@@ -622,10 +673,7 @@ class Action extends Base
             $this->_filter($map);
         }
         $dao    =   $this->getDaoClass();
-        if(!empty($dao)) {
-        	$this->_list($dao,$map);
-        }
-		$this->display();
+        $this->_list($dao,$map);
         return;
     }
 
@@ -652,11 +700,13 @@ class Action extends Base
         //自动引入同名VO类
         import(APP_NAME.'.Vo.'.$vo);
         $vars       = get_class_vars($vo);
+
         foreach($vars as $key=>$val) {
             if(isset($_REQUEST[$key]) && $_REQUEST[$key]!='') {
                 $map->put($key,$_REQUEST[$key]);
             }
         }
+
         return $map;
     }
 
@@ -685,7 +735,7 @@ class Action extends Base
         if(isset($_REQUEST['sort'])) {
             $sort = $_REQUEST['sort']?'asc':'desc';
         }else {
-            $sort = $asc?'desc':'asc';
+            $sort = $asc?'asc':'desc';
         }
 
         //取得满足条件的记录数
@@ -699,13 +749,12 @@ class Action extends Base
         }
         $p          = new Page($count,$listRows);
         //分页查询数据
-        $voList     = $dao->findAll($map,'','*',$order.' '.$sort,$p->firstRow.','.$p->listRows);
+        $voList     = $dao->findAll($map,'','*',$order.' '.$sort,$p->firstRow.','.$p->listRows);  
         //分页跳转的时候保证查询条件
         $condition  = $map->toArray();
         foreach($condition as $key=>$val) {
             $p->parameter   .=   "$key=$val&";         
         }
-
         //分页显示
         $page       = $p->show();
         //列表排序显示
@@ -719,13 +768,33 @@ class Action extends Base
         $this->assign('sortImg',    $sortImg);
         $this->assign('sortType',   $sortAlt);
         $this->assign("page",       $page);
+        $this->display();
         return ;
     }
 
-	// 默认的新增操作
-	function add() {
-		$this->display();
-	}
+
+    /**
+     +----------------------------------------------------------
+     * 默认新增操作 
+     *
+     * 如果子类的新增操作比较简单可以直接调用，无需再定义add方法
+     * 如果需要额外操作可以重定义操作方法，
+     * 并且在子类中通过parent::add调用
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function add() 
+    {
+        //默认增加操作只是调用模板显示
+        Session::set('ReturnUrl',$_SERVER["HTTP_REFERER"]);
+        $this->display();
+        return ;
+    }
 
     /**
      +----------------------------------------------------------
@@ -750,9 +819,7 @@ class Action extends Base
 
         //保存新增数据对象
         $dao        = $this->getDaoClass();
-        if(!empty($dao)) {
-        	$this->_insert($dao);
-        }
+        $this->_insert($dao);
     }
 
     /**
@@ -769,20 +836,13 @@ class Action extends Base
     function _insert($dao) 
     {
         $vo = $dao->createVo();
-        if(false === $vo) {
-        	$this->error($dao->error);
-        }
         //保存当前Vo对象
         $id = $dao->add($vo);
         if($id) { //保存成功
-            if(is_array($vo)) {
-            	$vo[$dao->pk]  =  $id;
-            }else {
-                $vo->{$dao->pk} =   $id;            	
-            }
+            $vo->{$dao->pk} =   $id;
             // 缓存数据对象
             $this->cacheVo($vo,$id);
-            if(C('SAVE_PARENT_VO') && 0!==strcasecmp(get_parent_class($vo),'Vo')) {
+            if(SAVE_PARENT_VO && 0!==strcasecmp(get_parent_class($vo),'Vo')) {
                 //如果启用保存父类Vo功能
                 //并且父类不是Vo基类，则首先保存父类Vo对象
                 //目前仅支持上一级Vo的保存
@@ -794,7 +854,7 @@ class Action extends Base
                 $extendsDao =   D($daoClass);
                 $parentId   =   $extendsDao->add($extendsVo);
                 if(!$parentId) {
-                    $this->assign('error',  '父类Vo对象'.$extendsVo.L('_INSERT_FAIL_') );
+                    $this->assign('error',  '父类Vo对象'.$extendsVo._INSERT_FAIL_ );
                     $this->forward();
                     return ;
                 }
@@ -809,10 +869,11 @@ class Action extends Base
                 $this->_upload($dao->getTableName(),$id);
             }
             //成功提示
-            $this->assign("message",L('_INSERT_SUCCESS_'));
+            $this->assign("message",_INSERT_SUCCESS_);
+            $this->assign("jumpUrl",Session::get('ReturnUrl'));
         }else { 
             //失败提示
-            $this->assign('error',  L('_INSERT_FAIL_'));
+            $this->assign('error',  _INSERT_FAIL_);
         }
         //页面跳转
         $this->forward();    	
@@ -834,26 +895,31 @@ class Action extends Base
      */
     function edit($dao='')
     {
+        Session::set('ReturnUrl',$_SERVER["HTTP_REFERER"]);
         //取得编辑的Vo对象
         if(empty($dao)) {
         	$dao    = $this->getDaoClass();
         }
-        if(!empty($dao)) {
-            $id     = (int)$_REQUEST[$dao->pk];
-            // 判断是否存在缓存Vo
-            $vo=$this->getCacheVo($this->getVo(),$id);
-            if(false === $vo) {
-                $vo     = $dao->find($dao->pk."='$id'");
-                if(!$vo) {
-                    throw_exception(L('_SELECT_NOT_EXIST_'));
-                }
-                // 缓存Vo对象，便于下次显示
-                $this->cacheVo($vo,is_array($vo)?$vo[$dao->pk]:$vo->{$dao->pk});
+        $id     = $_REQUEST[$dao->pk];
+        // 判断是否存在缓存Vo
+        $vo=$this->getCacheVo($this->getVo(),$id);
+        if(false === $vo) {
+   	        $vo     = $dao->find($dao->pk."='$id'");
+            if(!$vo) {
+                throw_exception(_SELECT_NOT_EXIST_);
             }
-            $this->assign('vo',$vo);
-            if($this->get('ajax')) {
-                $this->ajaxReturn($vo);
-            }
+            // 缓存Vo对象，便于下次显示
+            $this->cacheVo($vo,$vo->{$dao->pk});
+        }
+
+        //读取附件信息
+        $attachDao = D('AttachDao');
+        $attachs = $attachDao->findAll("module='".$dao->getTableName()."' and recordId='$id'");
+        //模板变量赋值
+        $this->assign("attachs",$attachs);
+        $this->assign('vo',$vo);
+        if($this->get('ajax')) {
+        	$this->ajaxReturn($vo);
         }
         $this->display();
         return;
@@ -900,9 +966,7 @@ class Action extends Base
 
         //更新数据对象
         $dao    = $this->getDaoClass();
-        if(!empty($dao)) {
-        	$this->_update($dao);
-        }
+        $this->_update($dao);
     }
 
     /**
@@ -920,16 +984,11 @@ class Action extends Base
     function _update($dao) 
     {
         $vo = $dao->createVo('edit');
-		if(!$vo) {
-			$this->error($dao->error);
-		}
     	$result  = $dao->save($vo);
         if($result) {
-			$id	=	is_array($vo)?$vo[$dao->pk]:$vo->{$dao->pk};
-			$vo	=	$dao->getById($id);
             // 保存成功，更新缓存Vo对象
-            $this->cacheVo($vo,$id);
-            if(C('UPDATE_PARENT_VO') && 0!==strcasecmp(get_parent_class($vo),'Vo')) {
+            $this->cacheVo($vo,$vo->{$dao->pk});
+            if(UPDATE_PARENT_VO && 0!==strcasecmp(get_parent_class($vo),'Vo')) {
                 //如果启用保存父类Vo功能
                 //并且父类不是Vo基类，则首先保存父类Vo对象
                 //目前仅支持上一级Vo的保存
@@ -950,7 +1009,7 @@ class Action extends Base
                 }
                 $parentId   =   $extendsDao->save($extendsVo,'',$map);
                 if(!$parentId) {
-                    $this->assign('error',  '父类Vo对象'.$extendsVo.L('_INSERT_FAIL_') );
+                    $this->assign('error',  '父类Vo对象'.$extendsVo._INSERT_FAIL_ );
                     $this->forward();
                     return ;
                 }
@@ -962,13 +1021,14 @@ class Action extends Base
             if(!empty($_FILES)) {//如果有文件上传
                 //执行默认上传操作
                 //保存附件信息到数据库
-                $this->_upload($dao->getTableName(),is_array($vo)?$vo[$dao->pk]:$vo->{$dao->pk});
+                $this->_upload($dao->getTableName(),$vo->{$dao->pk});
             }
             //成功提示
-            $this->assign("message",L('_UPDATE_SUCCESS_'));
+            $this->assign("message",_UPDATE_SUCCESS_);
+            $this->assign("jumpUrl",Session::get('ReturnUrl'));
         }else {
             //错误提示
-            $this->assign('error', $dao->error);
+            $this->assign('error', _UPDATE_FAIL_);
         }
         //页面跳转
         $this->forward();    	
@@ -1022,7 +1082,7 @@ class Action extends Base
             //设置附件关联记录ID
             $userId =  $_POST['_uploadUserId']; 
         }else {
-        	$userId = Session::is_set(C('USER_AUTH_KEY'))?Session::get(C('USER_AUTH_KEY')):0;
+        	$userId = Session::is_set(USER_AUTH_KEY)?Session::get(USER_AUTH_KEY):0;
         }
         if(!empty($_POST['_uploadImgThumb'])) {
             //设置需要生成缩略图，仅对图像文件有效
@@ -1169,6 +1229,60 @@ class Action extends Base
         return ;
    	}
 
+      /**
+     +----------------------------------------------------------
+     * 下载附件
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws FcsException
+     +----------------------------------------------------------
+     */
+    function download()
+    {
+        import("ORG.Net.Http");
+        import('@.Dao.AttachDao');
+        $id         =   $_GET['id'];
+        $dao        =   new AttachDao();
+        $attach	    =   $dao->getById($id);
+        if($attach) {
+            $filename   =   $attach->savepath.$attach->savename;
+            if(is_file($filename)) {
+                Http::download($filename);
+            }        	
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 默认删除附件操作
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     * @throws FcsException
+     +----------------------------------------------------------
+     */
+    function delAttach()
+    {
+        //删除指定记录
+        import("@.Dao.AttachDao");
+        $dao        = new AttachDao();
+        $id         = $_REQUEST[$dao->pk];
+        $condition = $dao->pk.' in ('.$id.')'; 
+        if($dao->delete($condition)){
+            $this->assign("message",_DELETE_SUCCESS_);
+        }else {
+            $this->assign('error',  _DELETE_FAIL_);
+        }
+        $this->forward();
+    }
+
     /**
      +----------------------------------------------------------
      * 默认删除操作
@@ -1184,18 +1298,17 @@ class Action extends Base
     {
         //删除指定记录
         $dao        = $this->getDaoClass();
-        if(!empty($dao)) {
-            $id         = $_REQUEST[$dao->pk];
-            if(isset($id)) {
-                $condition = $dao->pk.' in ('.$id.')'; 
-                if($dao->delete($condition)){
-                    $this->assign("message",L('_DELETE_SUCCESS_'));
-                }else {
-                    $this->error(L('_DELETE_FAIL_'));
-                }        	
+        $id         = $_REQUEST[$dao->pk];
+        if(isset($id)) {
+            $condition = $dao->pk.' in ('.$id.')'; 
+            if($dao->delete($condition)){
+                $this->assign("message",_DELETE_SUCCESS_);
+                $this->assign("jumpUrl",$this->getReturnUrl());
             }else {
-                $this->error(L('_ERROR_ACTION_'));
+                $this->error(_DELETE_FAIL_);
             }        	
+        }else {
+        	$this->error('非法操作');
         }
         $this->forward();
     }

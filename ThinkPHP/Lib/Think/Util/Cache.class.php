@@ -16,14 +16,14 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Cache.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
  * 缓存类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Cache.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 
@@ -92,6 +92,19 @@ class Cache extends Base
 
     /**
      +----------------------------------------------------------
+     * 架构函数
+     * 
+     +----------------------------------------------------------
+     * @static
+     * @access public 
+     +----------------------------------------------------------
+     */
+    function __construct()
+    {
+    }
+
+    /**
+     +----------------------------------------------------------
      * 连接缓存
      * 
      +----------------------------------------------------------
@@ -108,7 +121,7 @@ class Cache extends Base
     function connect($type='',$options=array())
     {
         if(empty($type)){
-            $type = C('DATA_CACHE_TYPE');
+            $type = DATA_CACHE_TYPE;
         }
         if(Session::is_set('CACHE_'.strtoupper($type))) {
         	$cacheClass   = Session::get('CACHE_'.strtoupper($type));
@@ -120,7 +133,7 @@ class Cache extends Base
         if(class_exists($cacheClass)){
             $cache = &new $cacheClass($options);
         }else {
-            throw_exception(L('_CACHE_TYPE_INVALID_').':'.$type);
+            throw_exception(_CACHE_TYPE_INVALID_.':'.$type);
         }
         return $cache;
     }
@@ -128,6 +141,7 @@ class Cache extends Base
     /**
      +----------------------------------------------------------
      * 取得缓存类实例
+     * 
      +----------------------------------------------------------
      * @static
      * @access public 
@@ -143,24 +157,5 @@ class Cache extends Base
         return get_instance_of(__CLASS__,'connect',$param);
     }
 
-	// 读取缓存次数
-	function Q($times='') {
-		static $_times = 0;
-		if(empty($times)) {
-			return $_times;
-		}else{
-			$_times++;
-		}
-	}
-
-	// 写入缓存次数
-	function W($times='') {
-		static $_times = 0;
-		if(empty($times)) {
-			return $_times;
-		}else{
-			$_times++;
-		}
-	}
 }//类定义结束
 ?>

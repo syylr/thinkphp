@@ -6,11 +6,17 @@ define('WEB_ROOT','../');
 define('APP_NAME', 'Admin');
 define('APP_PATH', '.');
 
-// 加载框架公共入口文件 
+// 加载FCS框架公共入口文件 
 require(THINK_PATH."/ThinkPHP.php");
-require("../config.php");
+
 //实例化一个网站应用实例
-$App = App::getInstance(); 
-// 执行应用程序
-$App->run();
+require("../config.php");
+
+$App = new App(); 
+//应用程序初始化
+$App->init();
+
+//启动应用程序
+$App->exec();
+
 ?>

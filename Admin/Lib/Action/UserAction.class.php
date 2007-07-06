@@ -48,6 +48,12 @@ class UserAction extends AdminAction
         $validation = Validation::getInstance();
 
         //对所有需要验证的数据进行验证
+        if(isset($_POST['name'])) {
+            if(!$validation->check($_POST['name'],'require')) {
+                $this->error    =   '用户名必须是3位以上字母！';
+				return false;
+            }        
+        }
         if(isset($_POST['password']) ) {
             if(!$validation->check($_POST['password'],'require')) {
                 $this->error    =   '密码有误';
@@ -75,12 +81,30 @@ class UserAction extends AdminAction
         return true;
     }
 
+    /**
+     +----------------------------------------------------------
+     * 处理表单提交数据
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    function _operation() 
+    {
+        //对表单提交的密码进行加密
+        if(isset($_POST['password'])) {
+               $_POST['password']      =   md5($_POST['password']);
+        }
+        return ;
+    }
 
     function checkName($return=true) 
     {
         import("ORG.Text.Validation");
         $validation = Validation::getInstance();
-        if(!$validation->check($_POST['name'],'/^[a-z]\w{5,}$/i')) {
+        if(!$validation->check($_POST['name'],'/^[a-z]\w{6,}$/i')) {
             $this->error( '用户名必须是以字母打头，且6位以上！');
         } 
 		$dao = D("UserDao");
@@ -116,6 +140,49 @@ class UserAction extends AdminAction
 
 	}
 
+    /**
+     +----------------------------------------------------------
+     * 触发器定义
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	function _trigger($vo) 
+	{
+		if(ACTION_NAME=='insert') {
+			//新增用户自动加入相应权限组
+			import('@.Dao.GroupDao');
+			$group = new GroupDao();
+			import('@.Dao.UserDao');
+			$dao = new UserDao();
+			if(strtoupper(MODULE_NAME)=='USER') {
+				//自动加入管理员权限组
+				$group->setGroupUser(7,$vo->id);				
+			}elseif(strtoupper(MODULE_NAME)=='AGENCY') {
+				//自动加入代理商权限组
+				$user = $dao->find('type=2 and childId='.$vo->id,'','id');
+				$group->setGroupUser(2,$user->id);				
+			}elseif(strtoupper(MODULE_NAME)=='DEALER') {
+				$user = $dao->find('type=3 and childId='.$vo->id,'','id');
+				if($vo->parentId) {
+				//自动加入主持人经销商权限组
+				$group->setGroupUser(4,$user->id);						
+				}else {
+				//自动加入一级经销商权限组
+				$group->setGroupUser(3,$user->id);						
+				}
+			
+			}elseif(strtoupper(MODULE_NAME)=='GIRL') {
+				//自动加入主持人权限组
+				$user = $dao->find('type=4 and childId='.$vo->id,'','id');
+				$group->setGroupUser(5,$user->id);				
+			}
+		}
+
+	}
 
     function _before_add() 
     {
@@ -201,8 +268,30 @@ class UserAction extends AdminAction
      */
 	function profile() 
 	{
-		if(Session::is_set(C('USER_AUTH_KEY'))) {
-            if(Session::is_set('userId')) {
+		if(Session::is_set(USER_AUTH_KEY)) {
+            if(Session::is_set('agencyId')) {
+                import('@.Dao.AgencyDao');
+                $dao = new AgencyDao();
+                $vo  = $dao->getById(Session::get('agencyId'));
+            }elseif(Session::is_set('providerId')) {
+                import('@.Dao.DealerDao');
+                $dao = new DealerDao();
+                $vo  = $dao->getById(Session::get('providerId'));
+            }elseif(Session::is_set('dealerId')) {
+                import('@.Dao.DealerDao');
+                $dao = new DealerDao();
+                $vo  = $dao->getById(Session::get('dealerId'));
+            }elseif(Session::is_set('girlId')) {
+                import('@.Dao.GirlDao');
+                $dao = new GirlDao();
+                $vo  = $dao->getById(Session::get('girlId'));
+                //读取附件信息
+                import("@.Dao.AttachDao");
+                $attachDao = new AttachDao();
+                $attachs = $attachDao->findAll("module='girl' and recordId=".$vo->id);
+                //模板变量赋值
+                $this->assign("attach",$attachs);
+            }elseif(Session::is_set('userId')) {
                 import('@.Dao.UserDao');
                 $dao = new UserDao();
                 $vo  = $dao->getById(Session::get('userId'));
@@ -230,7 +319,7 @@ class UserAction extends AdminAction
      */
     function password() 
     {
-        if(Session::is_set(C('USER_AUTH_KEY'))) {
+        if(Session::is_set(USER_AUTH_KEY)) {
             $this->assign("login",true);
         }
     	$this->display();
@@ -252,7 +341,7 @@ class UserAction extends AdminAction
     function changePwd() 
     {
         //对表单提交处理进行处理或者增加非表单数据
-        $encoder = C('AUTH_PWD_ENCODER');
+        $encoder = AUTH_PWD_ENCODER;
         $map    =   new HashMap();
         if(!empty($encoder) && function_exists($encoder)) {
             $_POST['password']      =   $encoder($_POST['password']);
@@ -261,8 +350,8 @@ class UserAction extends AdminAction
         $map->put('password',$_POST['oldpassword']);
         if(isset($_POST['name'])) {
             $map->put('name',$_POST['name']);
-        }elseif(Session::is_set(C('USER_AUTH_KEY'))) {
-            $map->put('id',Session::get(C('USER_AUTH_KEY')));
+        }elseif(Session::is_set(USER_AUTH_KEY)) {
+            $map->put('id',Session::get(USER_AUTH_KEY));
         }else {
         	
         }

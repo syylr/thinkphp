@@ -19,13 +19,6 @@
 
 // Ajax for ThinkPHP
 document.write("<div id='ThinkAjaxResult' class='ThinkAjax' ></div>");
-var m = {
-	'\b': '\\b',
-	'\t': '\\t',
-	'\n': '\\n',
-	'\f': '\\f',
-	'\r': '\\r'
-};
 var ThinkAjax = {
 	method:'POST',			//发送方法
 	bComplete:false,			//是否完成
@@ -66,25 +59,15 @@ var ThinkAjax = {
 			myEffect.custom(effect);
 		}
 	},
-
 	ajaxResponse:function(request,target,response){
 		// 获取ThinkPHP后台返回Ajax信息和数据
 		// 此格式为ThinkPHP专用格式
 		//alert(request.responseText);
 		var str	=	request.responseText;
-		/*
+		//alert(str);
 		str	 =	 str.replace(/[\"]/g,'\"');
 		str	 =	 str.replace(/[\']/g,'\'');
-		str	 =	 str.replace(/[\n|\r|\t]/g,'');*/
-		str  = str.replace(/([\x00-\x1f\\"])/g, function (a, b) {
-                    var c = m[b];
-                    if (c) {
-                        return c;
-                    }else{
-						return b;
-					}
-                     }) ;
-		//alert(str);
+		str	 =	 str.replace(/[\n|\r|\t]/g,'');
 		$return =  eval('(' + str + ')');
 		this.status = $return.status;
 		this.info	 =	 $return.info;

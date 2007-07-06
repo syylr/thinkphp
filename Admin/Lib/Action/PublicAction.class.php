@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: PublicAction.class.php 135 2007-06-08 09:58:45Z liu21st $
+// $Id: PublicAction.class.php 78 2007-04-01 04:29:15Z liu21st $
 
 import('@.Action.AdminAction');
 /**
@@ -98,7 +98,7 @@ class PublicAction extends AdminAction
      */
     function login() 
     {
-        if(!Session::is_set(C('USER_AUTH_KEY'))) {
+        if(!Session::is_set(USER_AUTH_KEY)) {
             $this->display();
             return ;
         }else {
@@ -126,7 +126,7 @@ class PublicAction extends AdminAction
      */
     function logout() 
     {
-        if(Session::is_set(C('USER_AUTH_KEY'))) {
+        if(Session::is_set(USER_AUTH_KEY)) {
             
 			$loginId	=	Session::get('loginId');
             Session::clear();
@@ -176,10 +176,10 @@ class PublicAction extends AdminAction
             if($authInfo->password != md5($_POST['password'])) {
             	$this->error('密码错误！');
             }
-            if($authInfo->verify !== $verify) {
+            if($authInfo->verify != $verify) {
             	$this->error('验证码错误！');
             }
-            Session::set(C('USER_AUTH_KEY'),$authInfo->id);
+            Session::set(USER_AUTH_KEY,$authInfo->id);
             Session::set('loginUserName',$authInfo->nickname);
             Session::set('lastLoginTime',$authInfo->lastLoginTime);
             if($authInfo->name=='admin') {
@@ -241,7 +241,7 @@ class PublicAction extends AdminAction
      */
     function password() 
     {
-        if(Session::is_set(C('USER_AUTH_KEY'))) {
+        if(Session::is_set(USER_AUTH_KEY)) {
             $this->assign("login",true);
         }
     	$this->display();
@@ -263,7 +263,7 @@ class PublicAction extends AdminAction
     function changePwd() 
     {
         //对表单提交处理进行处理或者增加非表单数据
-        $encoder = C('AUTH_PWD_ENCODER');
+        $encoder = AUTH_PWD_ENCODER;
         $map    =   new HashMap();
         if(!empty($encoder) && function_exists($encoder)) {
             $_POST['password']      =   $encoder($_POST['password']);
@@ -272,8 +272,8 @@ class PublicAction extends AdminAction
         $map->put('password',$_POST['oldpassword']);
         if(isset($_POST['name'])) {
             $map->put('name',$_POST['name']);
-        }elseif(Session::is_set(C('USER_AUTH_KEY'))) {
-            $map->put('id',Session::get(C('USER_AUTH_KEY')));
+        }elseif(Session::is_set(USER_AUTH_KEY)) {
+            $map->put('id',Session::get(USER_AUTH_KEY));
         }else {
         	
         }
@@ -284,7 +284,7 @@ class PublicAction extends AdminAction
             $this->assign('error','旧密码不符或者用户名错误！');
         }else {
         	$map->put('password',$_POST['password']);
-            $map->put('id',$vo->id);
+            $map->put('id',$vo['id']);
             $user = new UserVo($map);
             $result = $dao->save($user);
             if($result) {
@@ -299,9 +299,9 @@ class PublicAction extends AdminAction
 
 	function edit() 
 	{
-		if(Session::is_set(C('USER_AUTH_KEY'))) {
+		if(Session::is_set(USER_AUTH_KEY)) {
             $dao = D("User");
-            $vo  = $dao->getById(Session::get(C('USER_AUTH_KEY')));
+            $vo  = $dao->getById(Session::get('userId'));
             $this->assign('vo',$vo);
             $this->display();
 					

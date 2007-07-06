@@ -86,7 +86,7 @@ class PlugInAction extends AdminAction
         $content  = "<?php\n\r";
         $content .= "return ".var_export($plugins,true);
         $content .= ";\n\r?>";
-        file_put_contents(WEB_ROOT.$app.'/Conf/_appPlugins.php',$content);     	
+        file_put_contents(WEB_ROOT.$app.'/Conf/'.$app.'_plugins.php',$content);     	
         return ;
     }
 }//类定义结束

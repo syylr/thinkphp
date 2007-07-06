@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: AccessDecisionManager.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
@@ -24,7 +24,7 @@
  +------------------------------------------------------------------------------
  * @package   core
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: AccessDecisionManager.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class AccessDecisionManager extends Base
@@ -47,10 +47,10 @@ class AccessDecisionManager extends Base
      */
     function __construct()
     {
-        $this->roleTable = C('DB_PREFIX').'_group';
-        $this->roleUserTable  =  C('DB_PREFIX').'_groupuser';
-        $this->roleAccessTable=   C('DB_PREFIX').'_access';
-        $this->roleNodeTable    =   C('DB_PREFIX').'_node';
+        $this->roleTable = DB_PREFIX.'_group';
+        $this->roleUserTable  =  DB_PREFIX.'_groupuser';
+        $this->roleAccessTable=   DB_PREFIX.'_access';
+        $this->roleNodeTable    =   DB_PREFIX.'_node';
     }
 
     /**

@@ -2,18 +2,18 @@
 -- version 2.9.0.3
 -- http://www.phpmyadmin.net
 -- 
--- ä¸»æœº: localhost
--- ç”Ÿæˆæ—¥æœŸ: 2007 å¹´ 03 æœˆ 29 æ—¥ 15:40
--- æœåŠ¡å™¨ç‰ˆæœ¬: 5.0.27
--- PHP ç‰ˆæœ¬: 4.4.4
+-- Ö÷»ú: localhost
+-- Éú³ÉÈÕÆÚ: 2007 Äê 03 ÔÂ 29 ÈÕ 15:40
+-- ·şÎñÆ÷°æ±¾: 5.0.27
+-- PHP °æ±¾: 4.4.4
 -- 
--- æ•°æ®åº“: `admin`
+-- Êı¾İ¿â: `admin`
 -- 
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_access`
+-- ±íµÄ½á¹¹ `think_access`
 -- 
 
 CREATE TABLE `think_access` (
@@ -21,7 +21,6 @@ CREATE TABLE `think_access` (
   `nodeId` smallint(6) unsigned NOT NULL,
   `level` tinyint(1) NOT NULL,
   `parentNodeId` smallint(6) NOT NULL,
-  `status` tinyint(1) ,
   KEY `groupId` (`groupId`),
   KEY `nodeId` (`nodeId`),
   KEY `level` (`level`),
@@ -29,14 +28,14 @@ CREATE TABLE `think_access` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_access`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_access`
 -- 
 
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_attach`
+-- ±íµÄ½á¹¹ `think_attach`
 -- 
 
 CREATE TABLE `think_attach` (
@@ -58,17 +57,17 @@ CREATE TABLE `think_attach` (
   KEY `recordId` (`recordId`),
   KEY `userId` (`userId`),
   KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8  ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_attach`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_attach`
 -- 
 
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_cache`
+-- ±íµÄ½á¹¹ `think_cache`
 -- 
 
 CREATE TABLE `think_cache` (
@@ -82,14 +81,14 @@ CREATE TABLE `think_cache` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_cache`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_cache`
 -- 
 
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_config`
+-- ±íµÄ½á¹¹ `think_config`
 -- 
 
 CREATE TABLE `think_config` (
@@ -103,14 +102,14 @@ CREATE TABLE `think_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_config`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_config`
 -- 
 
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_group`
+-- ±íµÄ½á¹¹ `think_group`
 -- 
 
 CREATE TABLE `think_group` (
@@ -120,23 +119,24 @@ CREATE TABLE `think_group` (
   `status` tinyint(1) unsigned default NULL,
   `remark` varchar(255) default NULL,
   `ename` varchar(5) default NULL,
+  `requireRate` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `parentId` (`pid`),
   KEY `ename` (`ename`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_group`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_group`
 -- 
 
-INSERT INTO `think_group` (`id`, `name`, `pid`, `status`, `remark`, `ename`) VALUES 
-(1, 'ç®¡ç†å‘˜', 0, 1, 'å…·æœ‰ç®¡ç†å‘˜æƒé™', NULL),
-(2, 'æ™®é€šç”¨æˆ·', 0, 1, 'æ™®é€šç”¨æˆ·', NULL);
+INSERT INTO `think_group` (`id`, `name`, `pid`, `status`, `remark`, `ename`, `requireRate`) VALUES 
+(1, '¹ÜÀíÔ±', 0, 1, '¾ßÓĞ¹ÜÀíÔ±È¨ÏŞ', NULL, 0),
+(2, 'ÆÕÍ¨ÓÃ»§', 0, 1, 'ÆÕÍ¨ÓÃ»§', NULL, 1);
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_groupuser`
+-- ±íµÄ½á¹¹ `think_groupuser`
 -- 
 
 CREATE TABLE `think_groupuser` (
@@ -147,7 +147,7 @@ CREATE TABLE `think_groupuser` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_groupuser`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_groupuser`
 -- 
 
 INSERT INTO `think_groupuser` (`groupId`, `userId`) VALUES 
@@ -157,7 +157,7 @@ INSERT INTO `think_groupuser` (`groupId`, `userId`) VALUES
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_log`
+-- ±íµÄ½á¹¹ `think_log`
 -- 
 
 CREATE TABLE `think_log` (
@@ -172,14 +172,14 @@ CREATE TABLE `think_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_log`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_log`
 -- 
 
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_login`
+-- ±íµÄ½á¹¹ `think_login`
 -- 
 
 CREATE TABLE `think_login` (
@@ -195,14 +195,14 @@ CREATE TABLE `think_login` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_login`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_login`
 -- 
 
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_memo`
+-- ±íµÄ½á¹¹ `think_memo`
 -- 
 
 CREATE TABLE `think_memo` (
@@ -217,13 +217,13 @@ CREATE TABLE `think_memo` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_memo`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_memo`
 -- 
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_node`
+-- ±íµÄ½á¹¹ `think_node`
 -- 
 
 CREATE TABLE `think_node` (
@@ -243,36 +243,36 @@ CREATE TABLE `think_node` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=28 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_node`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_node`
 -- 
 
 INSERT INTO `think_node` (`id`, `name`, `title`, `status`, `remark`, `seqNo`, `pid`, `level`, `type`) VALUES 
-(1, 'Admin', 'ThinkPHPåå°ç®¡ç†', 1, 'ThinkPHPç¤ºä¾‹ç®¡ç†', 1, 0, 1, 0),
-(3, 'User', 'ç”¨æˆ·ç®¡ç†', 1, '', 6, 1, 2, 0),
-(5, 'Group', 'æƒé™ç®¡ç†', 1, '', 7, 1, 2, 0),
-(6, 'PlugIn', 'æ’ä»¶ç®¡ç†', 1, '', 8, 1, 2, 0),
-(7, 'Node', 'èŠ‚ç‚¹ç®¡ç†', 1, '', 9, 1, 2, 0),
-(8, 'System', 'ç³»ç»Ÿç®¡ç†', 1, '', 10, 1, 2, 0),
-(9, 'DBManager', 'æ•°æ®åº“ç®¡ç†', 1, '', 1, 1, 2, 0),
-(10, 'Public', 'å…¬å…±æ¨¡å—', 1, '', 4, 1, 2, 0),
-(11, 'Index', 'é»˜è®¤æ¨¡å—', 1, '', 3, 1, 2, 0),
-(12, 'add', 'æ–°å¢', 1, '', 1, 10, 3, 0),
-(13, 'insert', 'æ’å…¥', 1, 'æ’å…¥æ“ä½œ', 2, 10, 3, 0),
-(14, 'edit', 'ç¼–è¾‘', 1, 'ç¼–è¾‘æ“ä½œ', 3, 10, 3, 0),
-(15, 'update', 'ä¿å­˜', 1, 'ä¿å­˜æ“ä½œ', 4, 10, 3, 0),
-(16, 'index', 'åˆ—è¡¨', 1, 'é»˜è®¤æ“ä½œ', 5, 10, 3, 0),
-(17, 'forbid', 'ç¦ç”¨', 1, 'ç¦ç”¨æ“ä½œ', 6, 10, 3, 0),
-(18, 'resume', 'æ¢å¤', 1, 'æ¢å¤æ“ä½œ', 7, 10, 3, 0),
-(20, 'Node', 'èŠ‚ç‚¹ç®¡ç†', 1, '', NULL, 19, 2, 0),
-(23, 'user', 'ç”¨æˆ·ç®¡ç†', 1, '', NULL, 21, 2, 0),
-(24, 'HOME', 'é»˜è®¤é¡¹ç›®', 1, '', NULL, 0, 1, 0),
-(25, 'UserType', 'ç”¨æˆ·ç±»å‹', 1, '', 2, 1, 2, 0),
-(27, 'User', 'ç”¨æˆ·ç®¡ç†', 1, '', NULL, 26, 2, 0);
+(1, 'Admin', 'ThinkPHPºóÌ¨¹ÜÀí', 1, 'ThinkPHPÊ¾Àı¹ÜÀí', 1, 0, 1, 0),
+(3, 'User', 'ÓÃ»§¹ÜÀí', 1, '', 6, 1, 2, 0),
+(5, 'Group', 'È¨ÏŞ¹ÜÀí', 1, '', 7, 1, 2, 0),
+(6, 'PlugIn', '²å¼ş¹ÜÀí', 1, '', 8, 1, 2, 0),
+(7, 'Node', '½Úµã¹ÜÀí', 1, '', 9, 1, 2, 0),
+(8, 'System', 'ÏµÍ³¹ÜÀí', 1, '', 10, 1, 2, 0),
+(9, 'DBManager', 'Êı¾İ¿â¹ÜÀí', 1, '', 1, 1, 2, 0),
+(10, 'Public', '¹«¹²Ä£¿é', 1, '', 4, 1, 2, 0),
+(11, 'Index', 'Ä¬ÈÏÄ£¿é', 1, '', 3, 1, 2, 0),
+(12, 'add', 'ĞÂÔö', 1, '', 1, 10, 3, 0),
+(13, 'insert', '²åÈë', 1, '²åÈë²Ù×÷', 2, 10, 3, 0),
+(14, 'edit', '±à¼­', 1, '±à¼­²Ù×÷', 3, 10, 3, 0),
+(15, 'update', '±£´æ', 1, '±£´æ²Ù×÷', 4, 10, 3, 0),
+(16, 'index', 'ÁĞ±í', 1, 'Ä¬ÈÏ²Ù×÷', 5, 10, 3, 0),
+(17, 'forbid', '½ûÓÃ', 1, '½ûÓÃ²Ù×÷', 6, 10, 3, 0),
+(18, 'resume', '»Ö¸´', 1, '»Ö¸´²Ù×÷', 7, 10, 3, 0),
+(20, 'Node', '½Úµã¹ÜÀí', 1, '', NULL, 19, 2, 0),
+(23, 'user', 'ÓÃ»§¹ÜÀí', 1, '', NULL, 21, 2, 0),
+(24, 'HOME', 'Ä¬ÈÏÏîÄ¿', 1, '', NULL, 0, 1, 0),
+(25, 'UserType', 'ÓÃ»§ÀàĞÍ', 1, '', 2, 1, 2, 0),
+(27, 'User', 'ÓÃ»§¹ÜÀí', 1, '', NULL, 26, 2, 0);
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_plugin`
+-- ±íµÄ½á¹¹ `think_plugin`
 -- 
 
 CREATE TABLE `think_plugin` (
@@ -289,33 +289,35 @@ CREATE TABLE `think_plugin` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_plugin`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_plugin`
 -- 
 
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_session`
+-- ±íµÄ½á¹¹ `think_session`
 -- 
 
 CREATE TABLE `think_session` (
   `id` int(11) unsigned NOT NULL auto_increment,
-  `session_id` varchar(255) character set utf8 NOT NULL,
-  `session_expires` int(11) NOT NULL,
-  `session_data` blob,
+  `cachekey` varchar(255) character set utf8 NOT NULL,
+  `expire` int(11) NOT NULL,
+  `data` blob,
+  `datasize` int(11) default NULL,
+  `datacrc` varchar(32) character set utf8 default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_session`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_session`
 -- 
 
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_user`
+-- ±íµÄ½á¹¹ `think_user`
 -- 
 
 CREATE TABLE `think_user` (
@@ -340,17 +342,17 @@ CREATE TABLE `think_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_user`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_user`
 -- 
 
 INSERT INTO `think_user` (`id`, `nickname`, `password`, `name`, `registerTime`, `status`, `remark`, `verify`, `type`, `email`, `childId`, `lastLoginTime`) VALUES 
-(1, 'è¶…çº§ç®¡ç†å‘˜', '21232f297a57a5a743894a0e4a801fc3', 'admin', '1148194044', 1, 'Super Webmaster', '0000', 1, NULL, NULL, '1175151980'),
-(2, 'æµ‹è¯•ç”¨æˆ·', '21232f297a57a5a743894a0e4a801fc3', 'test', '', 1, '', '1111', 1, NULL, NULL, '1174750565');
+(1, '³¬¼¶¹ÜÀíÔ±', '21232f297a57a5a743894a0e4a801fc3', 'admin', '1148194044', 1, 'Super Webmaster', '0000', 1, NULL, NULL, '1175151980'),
+(2, '²âÊÔÓÃ»§', '21232f297a57a5a743894a0e4a801fc3', 'test', '', 1, '', '1111', 1, NULL, NULL, '1174750565');
 
 -- --------------------------------------------------------
 
 -- 
--- è¡¨çš„ç»“æ„ `think_usertype`
+-- ±íµÄ½á¹¹ `think_usertype`
 -- 
 
 CREATE TABLE `think_usertype` (
@@ -363,21 +365,9 @@ CREATE TABLE `think_usertype` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 -- 
--- å¯¼å‡ºè¡¨ä¸­çš„æ•°æ® `think_usertype`
+-- µ¼³ö±íÖĞµÄÊı¾İ `think_usertype`
 -- 
 
 INSERT INTO `think_usertype` (`id`, `name`, `status`, `remark`) VALUES 
-(1, 'åå°ç®¡ç†', 1, 'åå°ç®¡ç†äººå‘˜'),
-(5, 'ä¼šå‘˜', 1, 'ä¼šå‘˜');
-
-
-CREATE TABLE `think_time` (
-  `id` mediumint(5) unsigned NOT NULL auto_increment,
-  `name` varchar(255) NOT NULL,
-  `create_at` int(12) unsigned NOT NULL,
-  `update_at` int(12) unsigned NOT NULL,
-  `password` varchar(32) NOT NULL,
-  `age` smallint(3) unsigned NOT NULL,
-  `email` varchar(255) NOT NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
+(1, 'ºóÌ¨¹ÜÀí', 1, 'ºóÌ¨¹ÜÀíÈËÔ±'),
+(5, '»áÔ±', 1, '»áÔ±');

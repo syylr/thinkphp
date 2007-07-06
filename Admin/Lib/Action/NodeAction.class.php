@@ -62,7 +62,7 @@ class NodeAction extends AdminAction
             
             Session::set('currentNodeId',$map->get('pid'));
             //获取上级节点
-            $dao  = D("Node");
+            $dao  = new NodeDao();
             $vo = $dao->getById($map->get('pid'));
             if($vo) {
                 $this->assign('level',$vo->level+1);
@@ -87,6 +87,11 @@ class NodeAction extends AdminAction
      */
 	function _operation() 
 	{
+       	if(Session::is_set('currentNodeId')) {
+       		$_POST['pid']	=	Session::get('currentNodeId');
+       	}else {
+       		$_POST['pid']	=	0;
+       	}
 		$dao = new NodeDao();
         if(!empty($_POST['id'])) {
         	$result = $dao->find("name='".$_POST['name']."' and id !='".$_POST['id']."' and pid='".$_POST['pid']."'");
@@ -115,16 +120,13 @@ class NodeAction extends AdminAction
      */
 	function add() 
 	{
+
 		$dao	= new NodeDao();
-		if(Session::is_set('currentNodeId')) {
-			$vo = $dao->getById(Session::get('currentNodeId'));
-	        $this->assign('parentNode',$vo->name);
-			$this->assign('level',$vo->level+1);
-			$this->assign('pid',$vo->id);
-		}else{
-			$this->assign('level',1);
-		}
-		$this->display();
+		$vo = $dao->getById(Session::get('currentNodeId'));
+        $this->assign('parentNode',$vo->name);
+		$this->assign('level',$vo->level+1);
+
+		parent::add();
 	}
     // 节点访问权限
     function access() 

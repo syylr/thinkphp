@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: ProviderManager.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
@@ -24,7 +24,7 @@
  +------------------------------------------------------------------------------
  * @package   core
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: ProviderManager.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class ProviderManager extends Base
@@ -83,17 +83,17 @@ class ProviderManager extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function connect($authProvider='') 
     {
         $providerPath = dirname(__FILE__).'/Provider/';
-        $authProvider = empty($authProvider)? C('USER_AUTH_PROVIDER'):$authProvider;
+        $authProvider = empty($authProvider)?USER_AUTH_PROVIDER:$authProvider;
         if (require_cache( $providerPath . $authProvider . '.class.php'))    
                 $provider = & new $authProvider();
         else 
-            throw_exception(L('系统暂时不支持委托方式: ') .$authProvider);
+            throw_exception('系统暂时不支持委托方式: ' .$authProvider);
         return $provider;
     }
 }//类定义结束

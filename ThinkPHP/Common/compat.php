@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: compat.php 73 2007-03-29 02:47:05Z liu21st $
 
 //常量
 if(!defined('E_STRICT'))  define('E_STRICT',2048);
@@ -27,7 +27,7 @@ if(!defined('E_STRICT'))  define('E_STRICT',2048);
  +------------------------------------------------------------------------------
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: compat.php 73 2007-03-29 02:47:05Z liu21st $
  +------------------------------------------------------------------------------
  */
 if (!function_exists('array_diff_key')) {

@@ -86,7 +86,7 @@ Author URI: http://blog.liu21st.com/
             $result = new Config_Xml($xml);
             $array  = $result->toArray();
             if(!isset($array['tag']['time'])) {
-            	$array['tag']['time'] = C('HTML_CACHE_TIME');
+            	$array['tag']['time'] = HTML_CACHE_TIME;
             }
             if(!isset($array['tag']['default'])) {
             	$array['tag']['default'] =  'nocache';
@@ -180,7 +180,7 @@ Author URI: http://blog.liu21st.com/
                 if( !file_exists($cacheFile) || time()>filemtime($cacheFile)+$cacheTime) {
                     // 缓存不存在或者无效，重新生成
                     if( false === file_put_contents($cacheFile,trim($content))) {
-                        throw_exception(L('缓存文件写入失败！'));
+                        throw_exception('缓存文件写入失败！');
                     }
                 }
             }else {
@@ -200,7 +200,7 @@ Author URI: http://blog.liu21st.com/
                             // 缓存不存在或者无效，重新生成
                             if(trim($cacheContent)!='') {
                                 if( false === file_put_contents($cacheFile,trim($cacheContent))) {
-                                    throw_exception(L('缓存文件写入失败！'));
+                                    throw_exception('缓存文件写入失败！');
                                 }                            	
                             }
                         }else {
@@ -213,7 +213,7 @@ Author URI: http://blog.liu21st.com/
                     if( !file_exists($cacheFile) || time()>filemtime($cacheFile)+$cacheTime) {
                         // 缓存不存在或者无效，重新生成
                         if( false === file_put_contents($cacheFile,trim($content))) {
-                            throw_exception(L('缓存文件写入失败！'));
+                            throw_exception('缓存文件写入失败！');
                         }
                     }else {
                         // 读取全局缓存文件

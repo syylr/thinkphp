@@ -16,16 +16,16 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Template.class.php 78 2007-04-01 04:29:15Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
- * 内置模板解析
+ * 内置模板引擎类 解析模板标签并输出
  * 支持缓存和页面压缩
  +------------------------------------------------------------------------------
  * @package  core
  * @author liu21st <liu21st@gmail.com>
- * @version  $Id$
+ * @version  $Id: Template.class.php 78 2007-04-01 04:29:15Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Template extends Base
@@ -40,8 +40,17 @@ class Template extends Base
      */
     var $tVar        =  array();
 
-	// 使用的模板引擎类型
-	var $type	=	'';
+   /**
+     +----------------------------------------------------------
+     * 架构函数
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     */
+    function __construct()
+    {
+
+    }
 
    /**
      +----------------------------------------------------------
@@ -56,14 +65,11 @@ class Template extends Base
         return get_instance_of(__CLASS__);
     }
 
-	// 构造函数
-	function __construct($type='') {
-		if(!empty($type)) {
-			$this->type	=	$type;
-		}else{
-			$this->type	=	strtoupper(C('TMPL_ENGINE_TYPE'));
-		}
-	}
+    /**
+     +----------------------------------------------------------
+     * 模板赋值和显示部分
+     +----------------------------------------------------------
+     */
 
     /**
      +----------------------------------------------------------
@@ -82,6 +88,7 @@ class Template extends Base
    	        $this->tVar[$name] = $value;
         }
     }
+
 
     /**
      +----------------------------------------------------------
@@ -120,7 +127,7 @@ class Template extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function display($templateFile='',$charset='',$contentType='text/html',$varPrefix='')
+    function display($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='')
     {
         $this->fetch($templateFile,$charset,$contentType,$varPrefix,true);
     }
@@ -140,22 +147,15 @@ class Template extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function fetch($templateFile='',$charset='',$contentType='text/html',$varPrefix='',$display=false) 
+    function fetch($templateFile='',$charset=OUTPUT_CHARSET,$contentType='text/html',$varPrefix='',$display=false) 
     {
-		$startTime = array_sum(explode(' ', microtime()));
         if(null===$templateFile) {
             // 使用null参数作为模版名直接返回不做任何输出
         	return ;
         }
-		if(empty($charset)) {
-			$charset = C('OUTPUT_CHARSET');
-		}
-        // 网页字符编码
-        header("Content-Type:".$contentType."; charset=".$charset);
-        header("Cache-control: private");  //支持页面回跳
         // 设置输出缓存
         ini_set('output_buffering',4096);
-        if(C('COMPRESS_PAGE')) {//开启页面压缩输出
+        if(COMPRESS_PAGE) {//开启页面压缩输出
             $zlibCompress   =  ini_get('zlib.output_compression');
             if(empty($zlibCompress) && function_exists('ini_set')) {
                 ini_set( 'zlib.output_compression', 1 );
@@ -167,6 +167,9 @@ class Template extends Base
         //页面缓存
        	ob_start(); 
         ob_implicit_flush(0); 
+        // 网页字符编码
+        header("Content-Type:".$contentType."; charset=".$charset);
+        header("Cache-control: private");  //支持页面回跳
         // 缓存开启后执行的过滤
         apply_filter('ob_start');
         // 模版文件名过滤
@@ -175,66 +178,32 @@ class Template extends Base
             $templateFile = TMPL_FILE_NAME;
         }        
         // 检查模版文件
-        if(!file_exists($templateFile))	$templateFile =  dirname(TMPL_FILE_NAME).'/'.$templateFile;
+        if(!file_exists($templateFile))
+            $templateFile =  dirname(TMPL_FILE_NAME).'/'.$templateFile;
         if(!file_exists($templateFile)){
-            throw_exception(L('_TEMPLATE_NOT_EXIST_'));        
+            throw_exception(_TEMPLATE_NOT_EXIST_);        
         }
         // 模版变量过滤
         $this->tVar = apply_filter('template_var',$this->tVar);
         //根据不同模版引擎进行处理
-        if('PHP'==$this->type || empty($this->type)) {
-        	// 默认使用PHP模版
+        if('PHP'==strtoupper(TMPL_ENGINE_TYPE) || ''== TMPL_ENGINE_TYPE ) {
+        	//使用PHP模版
             include_once ($templateFile);
-        }elseif('THINK'==$this->type){
-			// 使用内置的ThinkTemplate模板引擎
-			import('Think.Template.ThinkTemplate');
-			$tpl = &new ThinkTemplate();
-			$tpl->load($templateFile,$charset,$this->tVar,$varPrefix); 
-		}else {
-            // 通过插件的方式扩展第三方模板引擎
-            use_compiler(C('TMPL_ENGINE_TYPE'),$templateFile,$this->tVar,$charset,$varPrefix);
+        }else {
+        	// 使用外挂模版引擎
+            // 通过插件的方式扩展
+            use_compiler(TMPL_ENGINE_TYPE,$templateFile,$this->tVar,$charset,$varPrefix);
         }
         // 获取并清空缓存
         $content = ob_get_clean();
-
         // 输出编码转换
-        $content = auto_charset($content,C('TEMPLATE_CHARSET'),$charset);
+        $content = auto_charset($content,TEMPLATE_CHARSET,$charset);
         // 输出过滤
         $content = apply_filter('ob_content',$content);
         if($display) {
-			if(C('SHOW_RUN_TIME')) {
-				// 显示运行时间
-				$endTime = array_sum(explode(' ', microtime()));
-				$total_run_time	=	number_format(($endTime - $GLOBALS['_beginTime']), 3);
-				$show_time	=	'Process: '.$total_run_time.'s ';
-				if(C('SHOW_ADV_TIME')) {
-					// 显示详细运行时间
-					$_load_time	=	number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3);
-					$_init_time	=	number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3);
-					$_exec_time	=	number_format(($startTime  -$GLOBALS['_initTime'] ), 3);
-					$_parse_time	=	number_format(($endTime - $startTime), 3);
-					$show_time .= '( Load:'.$_load_time.'s Init:'.$_init_time.'s Exec:'.$_exec_time.'s Template:'.$_parse_time.'s )';
-				}
-				if(C('SHOW_DB_TIMES')) {
-					// 显示数据库操作次数
-					$db	=	Db::getInstance();
-					$show_time .= ' | DB :'.$db->Q().' queries '.$db->W().' writes ';
-				}
-				if(C('SHOW_CACHE_TIMES')) {
-					// 显示数据库操作次数
-					$cache	=	Cache::getInstance();
-					$show_time .= ' | Cache :'.$cache->Q().' gets '.$cache->W().' writes ';
-				}
-				if(MEMORY_LIMIT_ON && C('SHOW_USE_MEM')) {
-					// 显示内存开销
-					$startMem    =  array_sum(split(' ', $GLOBALS['_startUseMems']));
-					$endMem     =  array_sum(split(' ', memory_get_usage()));
-					$show_time .= ' | UseMem:'. number_format(($endMem - $startMem)/1024).' kb';
-				}
-			}
-            echo $content; 
-			if(C('SHOW_RUN_TIME')) {
-	            echo '<div  class="think_run_time">'.$show_time.'</div>';
+            echo $content;
+            if(SHOW_RUN_TIME) {
+            echo '<div style="text-align:center;width:100%">Process: '.number_format((array_sum(split(' ', microtime())) - $GLOBALS['_beginTime']), 6).'s</div>';
             }
             return null;
         }else {

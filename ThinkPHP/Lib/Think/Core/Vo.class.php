@@ -16,11 +16,13 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Vo.class.php 55 2007-03-17 16:23:56Z liu21st $
 
 define('Think_CACHE_NO',      -1);   //不缓存
 define('Think_CACHE_DYNAMIC', 1);   //动态缓存
 define('Think_CACHE_STATIC',  2);   //静态缓存（永久缓存）
+
+import("Think.Util.HashMap");
 
 /**
  +------------------------------------------------------------------------------
@@ -28,10 +30,9 @@ define('Think_CACHE_STATIC',  2);   //静态缓存（永久缓存）
  +------------------------------------------------------------------------------
  * @package   core
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Vo.class.php 55 2007-03-17 16:23:56Z liu21st $
  +------------------------------------------------------------------------------
  */
-import("Think.Util.HashMap");
 class Vo extends Base
 {
     /**
@@ -55,40 +56,12 @@ class Vo extends Base
             }
             if(is_array($data)) {
                 foreach($data as $key=>$val) {
-                    if(false===$strict || ($strict && property_exists($this,$key)) )
+                    if(false===$strict || ($strict && property_exists($this,$key)))
                         $this->$key = $val; 
-					// 增加对数据库映射字段和属性不同的支持
-					if(isset($this->_map) ){
-						$_key = array_search($key,$this->_map);
-						if($_key !== false) {
-							$this->$_key = $val;
-						}
-					}
                 }        	
             }        	
         }
     }
-
-    /**
-     +----------------------------------------------------------
-     * 创建Vo对象并保存到数据库
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param mixed $data 数据
-     * @param Dao $dao Dao对象
-     +----------------------------------------------------------
-     */
-	function create($data='',$dao=NULL) {
-		if(empty($dao)) {
-			$daoClass = $this->getDao();
-			$dao	=	D($daoClass);
-		}
-		if(empty($data)) {
-			$data	 =	 $this->toMap();
-		}
-		return $dao->add($data);
-	}
 
     /**
      +----------------------------------------------------------

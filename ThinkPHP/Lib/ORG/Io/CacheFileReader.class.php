@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: CacheFileReader.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 import('Think.Util.StringReader');
 /**
@@ -24,7 +24,7 @@ import('Think.Util.StringReader');
  * 文件缓存读取类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: CacheFileReader.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class CachedFileReader extends StringReader 

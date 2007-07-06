@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Config_Array.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 import('Think.Util.Config');
 /**
@@ -24,7 +24,7 @@ import('Think.Util.Config');
  * 数组配置文件类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Config_Array.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Config_Array extends Config
@@ -42,14 +42,9 @@ class Config_Array extends Config
     {
         if(is_array($config)) {
             $this->_config = $config;
-			unset($config);
             $this->_connect = true;        	
-        }elseif(file_exists($config)) {
+        }elseif(is_file($config)) {
             $this->_config = include $config;
-			if(!is_array($this->_config)) {
-				$this->_config = $_config;
-				unset($_config);
-			}
             $this->_connect = true;
         }
         else

@@ -36,13 +36,14 @@ define('WEB_ROOT','.');
 define('APP_NAME', 'HOME');
 define('APP_PATH', './HOME');
 require('./config.php');
-// 加载框架公共入口文件 
+// 加载FCS框架公共入口文件 
 require(THINK_PATH."/ThinkPHP.php");
-
 //实例化一个网站应用实例
-$App = App::getInstance();
+$App = new App(); 
 
-// 执行应用程序
-$App->run();
+//应用程序初始化
+$App->init();
 
+//启动应用程序
+$App->exec();
 ?>

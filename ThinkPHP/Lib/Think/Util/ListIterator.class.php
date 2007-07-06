@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: ListIterator.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 if(version_compare(PHP_VERSION, '5.0.0', '<')){
     /**
@@ -24,7 +24,7 @@ if(version_compare(PHP_VERSION, '5.0.0', '<')){
      * Iterator接口实现类 PHP5以上内置了Iterator接口 无需使用该类
      +------------------------------------------------------------------------------
      * @author    liu21st <liu21st@gmail.com>
-     * @version   $Id$
+     * @version   $Id: ListIterator.class.php 33 2007-02-25 07:06:02Z liu21st $
      +------------------------------------------------------------------------------
      */
     class ListIterator extends Base

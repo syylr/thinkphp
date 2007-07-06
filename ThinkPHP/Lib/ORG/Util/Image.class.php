@@ -16,14 +16,14 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Image.class.php 68 2007-03-28 15:30:41Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
  * 图像操作类库
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Image.class.php 68 2007-03-28 15:30:41Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Image extends Base
@@ -152,7 +152,6 @@ class Image extends Base
             $pathinfo = pathinfo($image);
             $type =  $pathinfo['extension'];
             $type = empty($type)?$info['type']:$type;
-			$type = strtolower($type);
             $interlace  =  $interlace? 1:0;
             unset($info);
             $scale = min($maxWidth/$srcWidth, $maxHeight/$srcHeight); // 计算缩放比例
@@ -179,8 +178,8 @@ class Image extends Base
             if('gif'==$type || 'png'==$type) {
                 //imagealphablending($thumbImg, FALSE);//取消默认的混色模式
                 //imagesavealpha($thumbImg,TRUE);//设定保存完整的 alpha 通道信息
-                $background_color  =  ImageColorAllocate($thumbImg,  0,255,0);  //  指派一个绿色  
-				imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，若注释掉该行则输出绿色的图 
+                            $background_color  =  ImageColorAllocate($thumbImg,  0,255,0);  //  指派一个绿色  
+imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，若注释掉该行则输出绿色的图 
             }
 
             // 对jpeg图形设置隔行扫描

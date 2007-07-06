@@ -1,5 +1,4 @@
 <?php 
-if (!defined('THINK_PATH')) exit();
 define('DB_TYPE','mysql'); 
 define('DB_HOST','localhost'); 
 define('DB_NAME','admin'); 

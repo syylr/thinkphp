@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: defines.php 88 2007-04-01 14:56:17Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
@@ -24,41 +24,26 @@
  +------------------------------------------------------------------------------
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: defines.php 88 2007-04-01 14:56:17Z liu21st $
  +------------------------------------------------------------------------------
  */
 
 if (!defined('THINK_PATH')) exit();
 
-// PATH_INFO 修正
-if(!isset($_SERVER["PATH_INFO"]))
-{
-	$_SERVER['PATH_INFO'] = "";
-}
-elseif (empty($_SERVER["PATH_INFO"])) 
-{
-	// 在FastCGI模式下面 $_SERVER["PATH_INFO"] 为空
-	$_SERVER['PATH_INFO'] = str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['REQUEST_URI']);
-}
-if($_SERVER["SERVER_PORT"] == 443)
-{
-	define('WEB_HOST','https://'.$_SERVER['HTTP_HOST']);
-}
-else
-{
-	define('WEB_HOST','http://'.$_SERVER['HTTP_HOST']);
-}
+// CGI模式修正
+if ( strpos($_SERVER['SCRIPT_FILENAME'], 'php.cgi') == strlen($_SERVER['SCRIPT_FILENAME']) - 7 )
+	$_SERVER['SCRIPT_FILENAME'] = $_SERVER['PATH_TRANSLATED'];
+
+define('WEB_HOST','http://'.$_SERVER['HTTP_HOST']);
 
 // 当前文件名
-if(function_exists("apache_lookup_uri")) {
+if(false === strpos(php_sapi_name(),'cgi')) {
     // Apache 模块方式
     define('_PHP_FILE_',	rtrim($_SERVER["SCRIPT_NAME"],'/'));
-}elseif(false !== strpos(php_sapi_name(),'cgi')) {
+}else {
 	//CGI/FASTCGI模式下
     $_temp  = explode('.php',$_SERVER["PHP_SELF"]);
     define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
-}else {
-	define('_PHP_FILE_',	rtrim($_SERVER["SCRIPT_NAME"],'/'));
 }
 // 当前项目名称
 if (!defined('APP_NAME')) define('APP_NAME', basename(_PHP_FILE_,'.php'));
@@ -101,7 +86,7 @@ define('IS_IIS',strstr($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') ? 1 : 0);
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_LINUX',strstr(PHP_OS, 'Linux') ? 1 : 0 );
 define('IS_FREEBSD',strstr(PHP_OS, 'FreeBSD') ? 1 : 0 );
-define('NOW',time() );
+define('NOW_TIME',time() );
 
 // 	调试和Log设置
 define('WEB_LOG_ERROR',0);
@@ -113,10 +98,5 @@ define('FILE_LOG',3);
 
 define('DATA_TYPE_VO',1);
 define('DATA_TYPE_ARRAY',0);
-
-// 是否使用惯例配置
-define('CONVENTION_CONFIG',true);
-
-// 框架版本号
 include_once('version.php');
 ?>

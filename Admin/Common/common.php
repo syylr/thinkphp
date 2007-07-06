@@ -26,6 +26,21 @@ function toDate($time,$format='Y年m月d日 H:i:s')
 	return date(auto_charset($format),$time);
 }
 
+function getRemark($configName) 
+{
+        /*if(Session::is_set('_configShowList')) {
+        	$show  =  Session::get('_configShowList');
+            return $show[$configName];
+        }*/
+        $dao = D("ConfigDao");
+        $list = $dao->findAll();
+        $show  =  array();
+        foreach($list->getIterator() as $key=>$config) {
+        	$show[$config->title] = '<a href="javascript:edit('.$config->id.')" title="'.$config->remark.'">'.$config->title.'</a>';
+        }
+        Session::set('_configShowList',$show);
+        return $show[$configName];
+}
 
     function s2m($fSecond,$min=false){
         if(!$min) { // 显示小时

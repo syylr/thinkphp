@@ -16,14 +16,14 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Page.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
  * 分页显示类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Page.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Page extends Base
@@ -117,9 +117,17 @@ class Page extends Base
      * @access protected
      +----------------------------------------------------------
      */
+    var $recordName   =	'条记录';
 
-	// 分页显示定制
-    var $config   =	array('header'=>'条记录','prev'=>'上一页','next'=>'下一页','first'=>'第一页','last'=>'最后一页');
+    /**
+     +----------------------------------------------------------
+     * 分页记录名称
+     +----------------------------------------------------------
+     * @var integer
+     * @access protected
+     +----------------------------------------------------------
+     */
+    var $show   =	array('上一页','下一页','第一页','最后一页');
 
     /**
      +----------------------------------------------------------
@@ -138,11 +146,11 @@ class Page extends Base
     {    
         $this->totalRows = $totalRows;
         $this->parameter = $parameter;
-        $this->rollPage = C('PAGE_NUMBERS');
-        $this->listRows = !empty($listRows)?$listRows:C('LIST_NUMBERS');
+        $this->rollPage = PAGE_NUMBERS;
+        $this->listRows = !empty($listRows)?$listRows:LIST_NUMBERS;
         $this->totalPages = ceil($this->totalRows/$this->listRows);     //总页数
         $this->coolPages  = ceil($this->totalPages/$this->rollPage);
-        $this->nowPage  = !empty($_GET[C('VAR_PAGE')])?$_GET[C('VAR_PAGE')]:1;
+        $this->nowPage  = !empty($_GET[VAR_PAGE])?$_GET[VAR_PAGE]:1;
 
         if(!empty($this->totalPages) && $this->nowPage>$this->totalPages) {
             $this->nowPage = $this->totalPages;
@@ -171,13 +179,13 @@ class Page extends Base
         $upRow   = $this->nowPage-1;
         $downRow = $this->nowPage+1;
         if ($upRow>0){
-            $upPage="[<a href='".$url."&".C('VAR_PAGE')."=$upRow'>".$this->config['prev']."</a>]";
+            $upPage="[<a href='".$url."&".VAR_PAGE."=$upRow'>上一页</a>]";
         }else{
             $upPage="";
         }
 
         if ($downRow <= $this->totalPages){
-            $downPage="[<a href='".$url."&".C('VAR_PAGE')."=$downRow'>".$this->config['next']."</a>]";
+            $downPage="[<a href='".$url."&".VAR_PAGE."=$downRow'>下一页</a>]";
         }else{
             $downPage="";
         }
@@ -187,8 +195,8 @@ class Page extends Base
             $prePage = "";
         }else{
             $preRow =  $this->nowPage-$this->rollPage;
-            $prePage = "[<a href='".$url."&".C('VAR_PAGE')."=$preRow' >上".$this->rollPage."页</a>]";
-            $theFirst = "[<a href='".$url."&".C('VAR_PAGE')."=1' >".$this->config['first']."</a>]";
+            $prePage = "[<a href='".$url."&".VAR_PAGE."=$preRow' >上".$this->rollPage."页</a>]";
+            $theFirst = "[<a href='".$url."&".VAR_PAGE."=1' >第一页</a>]";
         }
         if($nowCoolPage == $this->coolPages){
             $nextPage = "";
@@ -196,8 +204,8 @@ class Page extends Base
         }else{
             $nextRow = $this->nowPage+$this->rollPage;
             $theEndRow = $this->totalPages;
-            $nextPage = "[<a href='".$url."&".C('VAR_PAGE')."=$nextRow' >下".$this->rollPage."页</a>]";
-            $theEnd = "[<a href='".$url."&".C('VAR_PAGE')."=$theEndRow' >".$this->config['last']."</a>]";
+            $nextPage = "[<a href='".$url."&".VAR_PAGE."=$nextRow' >下".$this->rollPage."页</a>]";
+            $theEnd = "[<a href='".$url."&".VAR_PAGE."=$theEndRow' >最后一页</a>]";
         }
         // 1 2 3 4 5
         $linkPage = "";
@@ -205,7 +213,7 @@ class Page extends Base
             $page=($nowCoolPage-1)*$this->rollPage+$i;
             if($page!=$this->nowPage){
                 if($page<=$this->totalPages){
-                    $linkPage .= "&nbsp;<a href='".$url."&".C('VAR_PAGE')."=$page'>&nbsp;".$page."&nbsp;</a>";
+                    $linkPage .= "&nbsp;<a href='".$url."&".VAR_PAGE."=$page'>&nbsp;".$page."&nbsp;</a>";
                 }else{
                     break;
                 }
@@ -215,16 +223,16 @@ class Page extends Base
                 }
             }
         }
-        $pageStr = '共'.$this->totalRows.' '.$this->config['header'].'/'.$this->totalPages.'页 '.$upPage.' '.$downPage.' '.$theFirst.' '.$prePage.' '.$linkPage.' '.$nextPage.' '.$theEnd; 
+        $pageStr = $this->totalRows.' '.$this->recordName.' '.$upPage.' '.$downPage.' 共'.$this->totalPages.'页 '.$theFirst.' '.$prePage.' '.$linkPage.' '.$nextPage.' '.$theEnd; 
         if($isArray) {
             $pageArray['totalRows'] =   $this->totalRows;
-            $pageArray['upPage']    =   $url.'&'.C('VAR_PAGE')."=$upRow";
-            $pageArray['downPage']  =   $url.'&'.C('VAR_PAGE')."=$downRow";
+            $pageArray['upPage']    =   $url.'&'.VAR_PAGE."=$upRow";
+            $pageArray['downPage']  =   $url.'&'.VAR_PAGE."=$downRow";
             $pageArray['totalPages']=   $this->totalPages;
-            $pageArray['firstPage'] =   $url.'&'.C('VAR_PAGE')."=1";
-            $pageArray['endPage']   =   $url.'&'.C('VAR_PAGE')."=$theEndRow";
-            $pageArray['nextPages'] =   $url.'&'.C('VAR_PAGE')."=$nextRow";
-            $pageArray['prePages']  =   $url.'&'.C('VAR_PAGE')."=$preRow";
+            $pageArray['firstPage'] =   $url.'&'.VAR_PAGE."=1";
+            $pageArray['endPage']   =   $url.'&'.VAR_PAGE."=$theEndRow";
+            $pageArray['nextPages'] =   $url.'&'.VAR_PAGE."=$nextRow";
+            $pageArray['prePages']  =   $url.'&'.VAR_PAGE."=$preRow";
             $pageArray['linkPages'] =   $linkPage;
 			$pageArray['nowPage'] =   $this->nowPage;
         	return $pageArray;

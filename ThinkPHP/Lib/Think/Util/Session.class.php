@@ -16,18 +16,17 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Session.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 define('SESSION_PREFIX',      'THINK_');
 define("HTTP_SESSION_STARTED",      1);
 define("HTTP_SESSION_CONTINUED",    2);
-
 /**
  +------------------------------------------------------------------------------
  * Session管理类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Session.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Session extends Base
@@ -64,7 +63,7 @@ class Session extends Base
         } else {
             $_SESSION['__HTTP_Session_Info'] = HTTP_SESSION_CONTINUED;
         }
-        Session::setExpire(C('SESSION_EXPIRE'));
+        Session::setExpire(SESSION_EXPIRE);
     }
 
     /**

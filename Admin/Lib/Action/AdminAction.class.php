@@ -47,12 +47,12 @@ class AdminAction extends Action
     function _initialize() 
     {
 
-        if(Session::is_set(C('USER_AUTH_KEY'))) {
+        if(Session::is_set(USER_AUTH_KEY)) {
             //显示菜单项
             $menu  = array();
-            if(Session::is_set('menu'.Session::get(C('USER_AUTH_KEY')))) {
+            if(Session::is_set('menu'.Session::get(USER_AUTH_KEY))) {
                 //如果已经缓存，直接读取缓存
-                $menu   =   Session::get('menu'.Session::get(C('USER_AUTH_KEY')));
+                $menu   =   Session::get('menu'.Session::get(USER_AUTH_KEY));
             }else {
                 //读取数据库模块列表生成菜单项
                 $dao    =   D("Node"); 
@@ -66,7 +66,7 @@ class AdminAction extends Action
                     }
                 }
                 //缓存菜单访问
-                Session::set('menu'.Session::get(C('USER_AUTH_KEY')),$menu);        	
+                Session::set('menu'.Session::get(USER_AUTH_KEY),$menu);        	
             }
             $this->assign('menu',$menu);
             $this->assign("login",true);
@@ -509,14 +509,14 @@ class AdminAction extends Action
     function __destruct()
     {
 		/*
-        if(MODULE_NAME!='log' && Session::is_set(C('USER_AUTH_KEY'))) {
+        if(MODULE_NAME!='log' && Session::is_set(USER_AUTH_KEY)) {
             import('@.Dao.LogDao');
             $dao    =   new LogDao();
             $map    =   new HashMap();
             $map->put('module',MODULE_NAME);
             $map->put('action',ACTION_NAME);
             $map->put('time',time());
-            $map->put('userId',Session::get(C('USER_AUTH_KEY')));
+            $map->put('userId',Session::get(USER_AUTH_KEY));
             $map->put('url',$_SERVER["PHP_SELF"]);
             $dao->add($map);
         }*/

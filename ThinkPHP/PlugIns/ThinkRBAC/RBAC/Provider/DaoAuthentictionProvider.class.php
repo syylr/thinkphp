@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: DaoAuthentictionProvider.class.php 33 2007-02-25 07:06:02Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
@@ -24,7 +24,7 @@
  +------------------------------------------------------------------------------
  * @package   core
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: DaoAuthentictionProvider.class.php 33 2007-02-25 07:06:02Z liu21st $
  +------------------------------------------------------------------------------
  */
 class DaoAuthentictionProvider extends ProviderManager
@@ -72,7 +72,8 @@ class DaoAuthentictionProvider extends ProviderManager
      */
     function authenticate($map,$daoClass='UserDao')
     {
-        $dao    = D($daoClass);
+        import(APP_NAME.'.Dao.'.$daoClass) ;
+        $dao    = new $daoClass();
         $result = $dao->find($map);
         if($result) {
             $this->data =   $result;
