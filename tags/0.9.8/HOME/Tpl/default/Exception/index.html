@@ -1,0 +1,8 @@
+<link rel='stylesheet' type='text/css' href='../Public/css/style.css'>
+<div style="margin:8px">
+<div class="title">异常显示</div>
+<div style="border:1px solid silver;background:#FFFFCC;padding:6px">
+[ <A HREF="__APP__/Index/erroraction/">调试模式下的错误页面显示</A> ]  <BR>标准的错误显示页面 ，这里调用了Index模块的error操作，是一个没有定义的操作，并且也不存在模板文件，因此执行该操作会抛出系统异常。在调试模式下面的异常显示会显示详细的错误信息和跟踪信息<P>
+[ <A HREF="__APP__/Exception/erroraction">非调试模式下面的错误显示</A> ]
+<BR>Exception模块关闭了DEBUG_MODEL，所以该演示调用Exception模块的一个没有定义的error操作，但是在抛出异常的时候，页面有所区别。<BR></div>
+</div>
