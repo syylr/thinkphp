@@ -1,0 +1,37 @@
+<tagLib name="html" />
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<TITLE>『系统管理平台』By FCS {$FCS.version}</TITLE>
+<html:import file="Js.Base" />
+<html:import file="Js.Util.tooltip" />
+<html:import file="Js.Form.CheckForm" />
+<html:import file="Js.Base" />
+<script language='JavaScript' src='../Public/js/common.js'></script> 
+<link rel='stylesheet' type='text/css' href='../Public/css/FCS.css'>
+</HEAD>
+
+<BODY onload="document.login.name.focus()" >
+<FORM METHOD=POST name="login" ACTION="__URL__/checkLogin/">
+<div class="tCenter hMargin">
+<TABLE id="checkList" class="login shadow" cellpadding=0 cellspacing=0 >
+<tr><td height="5" colspan="2" class="topTd" ></td></tr>
+<TR class="row" ><Th colspan="2" class="tCenter space">  系统管理登录 [ <A HREF="__URL__/password/">修改密码</A> ]</th></TR>
+<tr><td height="5" colspan="2" class="topTd" ></td></tr>
+<TR class="row" ><TD class="tRight">帐 号：</TD><TD><INPUT TYPE="text" class="medium bLeftRequire"  NAME="name"></TD></TR>
+<TR class="row" ><TD class="tRight">密 码：</TD><TD><INPUT TYPE="password" class="medium bLeftRequire" NAME="password"></TD></TR>
+<TR class="row" ><TD class="tRight">验证码：</TD><TD><INPUT TYPE="text" class="small bLeftRequire" NAME="verify"> <IMG SRC="__URL__/verify/" BORDER="0" ALT="" align="absmiddle"></TD></TR>
+<TR class="row" ><TD class="tCenter" align="justify" colspan="2">
+<div style="width:55%;">
+<div class="hMargin fLeft" ><INPUT TYPE="submit" id="" name="login" value="登录" onclick="" class="login imgButton"></div>
+<div class="hMargin fRig" ><INPUT TYPE="reset" id="" name="delete" value="取消" onclick="" class="delete imgButton"></div>
+</div>
+</td></tr>
+<tr><td height="5" colspan="2" class="bottomTd" ></td></tr>
+</TABLE>
+</div> 
+</FORM>
+</BODY>
+</HTML>
