@@ -1,0 +1,89 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<div id="main" class="main" >
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function selectCategory(){
+ var result= PopModalWindow('__APP__/Category/select/',268,360);
+ if(typeof(result) == "undefined") return;
+	$('categoryName').value=result[0][0];
+	$('categoryId').value=result[0][1];
+}
+function notice(name){
+	switch (name)
+	{
+	case 'name':		showTip('组名称');break;
+	case 'parent':	showTip('选择上级组，可以继承上级组的权限');break;
+	case 'rate':			showTip('是否需要进行提成，如果选择是的话，会在提成管理里面可以设置提成比例');break;
+	case 'status':		showTip('组状态');break;
+	case 'remark':		showTip('组备注信息');break;
+	}
+}
+//-->
+</SCRIPT>
+<div class="content">
+<div class="title">新增文章 [ <A HREF="__URL__">返回列表</A> ]</div>
+<div id="result" class="result none"></div>
+<div id="tips"  class="tips"  > 请输入文章信息，红色标注的字段为必填字段。</div>
+<FORM METHOD=POST id="form1" >
+<TABLE cellpadding=3 cellspacing=3 width="100%">
+<TR>
+	<TD class="tRight" >标题：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="huge bLeftRequire" onfocus="notice('name')"  check='Require' warning="标题不能为空" NAME="title"></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">内容：</TD>
+	<TD class="tLeft"><html:editor type="ubb" onfocus="notice('content')" style="width:80%;height:125px" name="content" /></TD>
+</TR>
+<TR>
+	<TD class="tRight" >分类：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="large bLeft" onfocus="notice('parent')"  NAME="categoryName"><INPUT TYPE="hidden" class="medium bLeft" NAME="categoryId"> <a href="javascript:selectCategory()" ><IMG SRC="../Public/images/search.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" align="absmiddle"></a></TD>
+</TR>
+<TR>
+	<TD class="tRight">状态：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft" onfocus="notice('status')"  NAME="status">
+	<option value="0">禁用</option>
+	<option value="1">草稿</option>
+	<option value="2">审核</option>
+	<option value="3">发布</option>
+	</SELECT></TD>
+</TR>
+<TR>
+	<TD class="tRight">评论：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft" onfocus="notice('status')"  NAME="commentStatus">
+	<option value="1">开放</option>
+	<option value="0">关闭</option>
+	</SELECT></TD>
+</TR>
+<TR>
+	<TD class="tRight">推荐：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft" onfocus="notice('status')"  NAME="isRecommend">
+	<option value="0">否</option>
+	<option value="1">是</option>
+	</SELECT></TD>
+</TR>
+<TR>
+	<TD class="tRight">置顶：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft" onfocus="notice('status')"  NAME="isTop">
+	<option value="0">否</option>
+	<option value="1">是</option>
+	</SELECT></TD>
+</TR>
+<TR>
+	<TD class="tRight">密码：</TD>
+	<TD class="tLeft"><INPUT TYPE="text" class="medium bLeft" onfocus="notice('password')"  NAME="password"></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD class="center"><div style="width:85%;margin:5px">
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+	<div class="fLeft hMargin"><INPUT TYPE="button" value="保存" onclick="sendForm('form1','__URL__/insert/','tips')" class="button"></div>
+	<div class="fLeft hMargin"><INPUT TYPE="reset" class="button" value="清空" ></div>
+	</div></TD>
+</TR>
+</TABLE>
+</FORM>
+</div>
+</div>
+<include file="../Public/footer" />

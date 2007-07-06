@@ -1,6 +1,6 @@
 <?php 
 // +----------------------------------------------------------------------+
-// | ThinkPHP                                                             |
+// | ThinkCMS                                                             |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
 // +----------------------------------------------------------------------+
@@ -16,16 +16,14 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: GroupDao.class.php 142 2007-06-15 03:28:16Z liu21st $
-
-import('@.Dao.AdminDao');
+// $Id: GroupDao.class.php 2 2007-01-03 07:52:09Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
- * 权限数据访问
+ * CMS 权限数据访问
  +------------------------------------------------------------------------------
  * @author liu21st <liu21st@gmail.com>
- * @version  $Id: GroupDao.class.php 142 2007-06-15 03:28:16Z liu21st $
+ * @version  $Id: GroupDao.class.php 2 2007-01-03 07:52:09Z liu21st $
  +------------------------------------------------------------------------------
  */
 class GroupDao extends Dao
@@ -34,7 +32,7 @@ class GroupDao extends Dao
 
 function setGroupApp($groupId,$appId) 
 {
-    $table = DB_PREFIX.'_access';
+    $table = $this->appPrefix.'_access';
 
     $result = $this->db->execute('insert into '.$table.' values('.$groupId.','.$actionId.')');
     if($result===false) {
@@ -50,7 +48,7 @@ function setGroupApps($groupId,$appIdList)
     }
     $id = implode(',',$appIdList);
     $where = 'a.id ='.$groupId.' AND b.id in('.$id.')';
-    $rs = $this->db->execute('INSERT INTO '.DB_PREFIX.'_access (groupId,nodeId,parentNodeId,level) SELECT a.id, b.id,b.pid,b.level FROM '.DB_PREFIX.'_group a, '.DB_PREFIX.'_node b WHERE '.$where);
+    $rs = $this->db->execute('INSERT INTO '.$this->appPrefix.'_access (groupId,nodeId,parentNodeId,level) SELECT a.id, b.id,b.pid,b.level FROM '.$this->appPrefix.'_group a, '.$this->appPrefix.'_node b WHERE '.$where);
     if($result===false) {
         return false;
     }else {
@@ -61,7 +59,7 @@ function setGroupApps($groupId,$appIdList)
 
 function delGroupApp($groupId) 
 {
-    $table = DB_PREFIX.'_access';
+    $table = $this->appPrefix.'_access';
 
     $result = $this->db->execute('delete from '.$table.' where level=1 and groupId='.$groupId);
     if($result===false) {
@@ -73,7 +71,7 @@ function delGroupApp($groupId)
 
 function delGroupAction($groupId,$moduleId) 
 {
-    $table = DB_PREFIX.'_access';
+    $table = $this->appPrefix.'_access';
 
     $result = $this->db->execute('delete from '.$table.' where level=3 and parentNodeId='.$moduleId.' and groupId='.$groupId);
     if($result===false) {
@@ -85,15 +83,15 @@ function delGroupAction($groupId,$moduleId)
 
 function getGroupActionList($groupId,$moduleId) 
 {
-    $table = DB_PREFIX.'_access';
-    $rs = $this->db->query('select b.id,b.title,b.name from '.$table.' as a ,'.DB_PREFIX.'_node as b where a.nodeId=b.id and  b.pid='.$moduleId.' and  a.groupId='.$groupId.' ');
+    $table = $this->appPrefix.'_access';
+    $rs = $this->db->query('select b.id,b.title,b.name from '.$table.' as a ,'.$this->appPrefix.'_node as b where a.nodeId=b.id and  b.pid='.$moduleId.' and  a.groupId='.$groupId.' ');
     return $this->rsToVoList($rs,'NodeVo');
 }
 
 
 function delGroupModule($groupId,$appId) 
 {
-    $table = DB_PREFIX.'_access';
+    $table = $this->appPrefix.'_access';
 
     $result = $this->db->execute('delete from '.$table.' where level=2 and parentNodeId='.$appId.' and groupId='.$groupId);
     if($result===false) {
@@ -105,21 +103,21 @@ function delGroupModule($groupId,$appId)
 
 function getGroupAppList($groupId) 
 {
-    $table = DB_PREFIX.'_access';
-    $rs = $this->db->query('select b.id,b.title,b.name from '.$table.' as a ,'.DB_PREFIX.'_node as b where a.nodeId=b.id and  b.pid=0 and a.groupId='.$groupId.' ');
+    $table = $this->appPrefix.'_access';
+    $rs = $this->db->query('select b.id,b.title,b.name from '.$table.' as a ,'.$this->appPrefix.'_node as b where a.nodeId=b.id and  b.pid=0 and a.groupId='.$groupId.' ');
     return $this->rsToVoList($rs,'NodeVo');
 }
 
 function getGroupModuleList($groupId,$appId) 
 {
-    $table = DB_PREFIX.'_access';
-    $rs = $this->db->query('select b.id,b.title,b.name from '.$table.' as a ,'.DB_PREFIX.'_node as b where a.nodeId=b.id and  b.pid='.$appId.' and a.groupId='.$groupId.' ');
+    $table = $this->appPrefix.'_access';
+    $rs = $this->db->query('select b.id,b.title,b.name from '.$table.' as a ,'.$this->appPrefix.'_node as b where a.nodeId=b.id and  b.pid='.$appId.' and a.groupId='.$groupId.' ');
     return $this->rsToVoList($rs,'NodeVo');
 }
 
 function setGroupUser($groupId,$userId) 
 {
-    $table = DB_PREFIX.'_groupuser';
+    $table = $this->appPrefix.'_groupuser';
 
     $result = $this->db->execute('insert into '.$table.' values('.$groupId.','.$userId.')');
     if($result===false) {
@@ -131,7 +129,7 @@ function setGroupUser($groupId,$userId)
 
 function delGroupUser($groupId) 
 {
-    $table = DB_PREFIX.'_groupUser';
+    $table = $this->appPrefix.'_groupuser';
 
     $result = $this->db->execute('delete from '.$table.' where groupId='.$groupId);
     if($result===false) {
@@ -143,8 +141,8 @@ function delGroupUser($groupId)
 
 function getGroupUserList($groupId) 
 {
-    $table = DB_PREFIX.'_groupUser';
-    $rs = $this->db->query('select b.id,b.name,b.nickname from '.$table.' as a ,'.DB_PREFIX.'_user as b where a.userId=b.id and  a.groupId='.$groupId.' ');
+    $table = $this->appPrefix.'_groupuser';
+    $rs = $this->db->query('select b.id,b.name,b.nickname from '.$table.' as a ,'.$this->appPrefix.'_user as b where a.userId=b.id and  a.groupId='.$groupId.' ');
     return $this->rsToVoList($rs,'UserVo');
 }
 
@@ -155,7 +153,7 @@ function setGroupUsers($groupId,$userIdList)
     }
     $id = implode(',',$userIdList);
     $where = 'a.id ='.$groupId.' AND b.id in('.$id.')';
-    $rs = $this->db->execute('INSERT INTO '.DB_PREFIX.'_groupuser (groupId,userId) SELECT a.id, b.id FROM '.DB_PREFIX.'_group a, '.DB_PREFIX.'_user b WHERE '.$where);
+    $rs = $this->db->execute('INSERT INTO '.$this->appPrefix.'_groupuser (groupId,userId) SELECT a.id, b.id FROM '.$this->appPrefix.'_group a, '.$this->appPrefix.'_user b WHERE '.$where);
     if($result===false) {
         return false;
     }else {
@@ -170,7 +168,7 @@ function setGroupActions($groupId,$actionIdList)
     }
     $id = implode(',',$actionIdList);
     $where = 'a.id ='.$groupId.' AND b.id in('.$id.')';
-    $rs = $this->db->execute('INSERT INTO '.DB_PREFIX.'_access (groupId,nodeId,parentNodeId,level) SELECT a.id, b.id,b.pid,b.level FROM '.DB_PREFIX.'_group a, '.DB_PREFIX.'_node b WHERE '.$where);
+    $rs = $this->db->execute('INSERT INTO '.$this->appPrefix.'_access (groupId,nodeId,parentNodeId,level) SELECT a.id, b.id,b.pid,b.level FROM '.$this->appPrefix.'_group a, '.$this->appPrefix.'_node b WHERE '.$where);
     if($result===false) {
         return false;
     }else {
@@ -185,7 +183,7 @@ function setGroupModules($groupId,$moduleIdList)
     }
     $id = implode(',',$moduleIdList);
     $where = 'a.id ='.$groupId.' AND b.id in('.$id.')';
-    $rs = $this->db->execute('INSERT INTO '.DB_PREFIX.'_access (groupId,nodeId,parentNodeId,level) SELECT a.id, b.id,b.pid,b.level FROM '.DB_PREFIX.'_group a, '.DB_PREFIX.'_node b WHERE '.$where);
+    $rs = $this->db->execute('INSERT INTO '.$this->appPrefix.'_access (groupId,nodeId,parentNodeId,level) SELECT a.id, b.id,b.pid,b.level FROM '.$this->appPrefix.'_group a, '.$this->appPrefix.'_node b WHERE '.$where);
     if($result===false) {
         return false;
     }else {

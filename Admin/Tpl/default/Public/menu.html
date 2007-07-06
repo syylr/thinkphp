@@ -1,26 +1,12 @@
-<div class="list" >
-<TABLE class="list shadow" cellpadding=0 cellspacing=0 >
-<tr>
-	<td height='5' colspan=7 class="topTd" ></td>
-</tr>
-<TR class="row" >
-	<th class="tCenter space"><IMG SRC="../Public/images/gohome.gif" WIDTH="15" HEIGHT="14" BORDER="0" ALT="" align="absmiddle"> 模块导航<session name="userId"> [ <A HREF="__APP__/Node/sort/pid/{$Think.APP_NAME|getAppId}">排序 </A> ]</session></th>
-</TR>
+<div ><A HREF="__APP__/">首  页</A> 
 <iterate id="item" name="menu" >
 <notequal name="item['name']" function="strtolower" value="public" >
 <notequal name="item['name']" function="strtolower" value="index" >
-<notequal name="item['name']" function="strtolower" value="attach" >
 <equal name="item['access']" value="1" >
-<TR class="row " >
-	<TD><IMG SRC="../Public/images/comment.gif" WIDTH="9" HEIGHT="9" BORDER="0" align="absmiddle" ALT=""> <A HREF="__APP__/{$item['name']}/index/">{$item['title']}</A></TD>
+	<A HREF="__APP__/{$item['name']}/index/">{$item['title']}</A> 
 </TR>
 </equal>
 </notequal>
 </notequal>
-</notequal>
 </iterate>
-<tr>
-	<td height='5' colspan=7 class="bottomTd"></td>
-</tr>
-</TABLE>
 </div>

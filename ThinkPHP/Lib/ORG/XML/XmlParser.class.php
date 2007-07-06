@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: XmlParser.class.php 11 2007-01-04 03:57:34Z liu21st $
 
  if(version_compare(PHP_VERSION, '5.0.0', '<')){
     /**
@@ -26,7 +26,7 @@
      * PHP5 使用 SimpleXML扩展完成XML解析
      +------------------------------------------------------------------------------
      * @author    liu21st <liu21st@gmail.com>
-     * @version   $Id$
+     * @version   $Id: XmlParser.class.php 11 2007-01-04 03:57:34Z liu21st $
      +------------------------------------------------------------------------------
      */
     class XMLParser extends Base
@@ -176,7 +176,7 @@
          +----------------------------------------------------------
          * @return string
          +----------------------------------------------------------
-         * @throws ThinkExecption
+         * @throws FcsException
          +----------------------------------------------------------
          */
         function open(&$parser, $tag, $attributes)
@@ -286,6 +286,6 @@
     } 
 }else {
     //引入PHP5支持的XMLParser类
-	import("Think.Io._XMLParser");	    	
+	import("FCS.Io._XMLParser");	    	
 }
 ?>

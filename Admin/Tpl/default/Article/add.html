@@ -1,0 +1,91 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<div id="main" class="main" >
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function selectCategory(){
+ var result= PopModalWindow('__APP__/Category/select/',268,360);
+ if(typeof(result) == "undefined") return;
+	$('categoryName').value=result[0][0];
+	$('categoryId').value=result[0][1];
+}
+function saveArt(){
+sendForm('form1','__URL__/insert/');
+$('form1').reset();
+}
+
+function publishArt(){
+sendForm('form1','__URL__/publish/')
+$('form1').reset();
+}
+//-->
+</SCRIPT>
+<div class="content">
+<div style="float:left;width:70%">
+<div class="title">新增文章 [ <A HREF="__URL__">返回列表</A> ]</div>
+<div id="result" class="result none"></div>
+<FORM METHOD=POST id="form1" >
+<TABLE cellpadding=3 cellspacing=3 >
+<TR>
+	<TD class="tRight" >标题：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="huge bLeftRequire" check='Require' warning="标题不能为空" NAME="title"></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">内容：</TD>
+	<TD class="tLeft"><html:editor type="smart"  id="editor" name="content"  /></TD>
+</TR>
+<TR>  
+	<TD class="tRight" >Trackback：</TD> 
+	<TD class="tLeft" ><INPUT TYPE="text" class="huge bLeft"  NAME="trackback" value="{$vo.trackback}"></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD class="center"><div style="width:85%;margin:5px">
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+	<INPUT TYPE="hidden" name="type" value="1">
+	<div class=" fLeft "><INPUT TYPE="reset" class="button small" onclick="resetEditor()" value="重 置" ></div>
+	<div class="fLeft hMargin"><INPUT TYPE="button" value="保 存" onclick="saveArt()" class="button small"></div>
+	<div class="fLeft hMargin"><INPUT TYPE="button" value="发 布" onclick="publishArt()" class="button medium"></div>
+	</div></TD>
+</TR>
+</TABLE>
+</div>
+<div style="width:28%;margin-left:0px;float:right;">
+<TABLE cellpadding=3 cellspacing=3 >
+<TR>
+	<TD class="tRight" >分类：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium fLeft"  NAME="categoryName"><INPUT TYPE="hidden" class="medium bLeft" NAME="categoryId"> <div class="fLeft hMargin"><INPUT TYPE="button" onclick="selectCategory()" class="button" value="选 择" ></div> </TD>
+</TR>
+<TR>
+	<TD class="tRight">评论：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft"  NAME="commentStatus">
+	<option value="1">开放</option>
+	<option value="0">关闭</option>
+	</SELECT></TD>
+</TR>
+<TR>
+	<TD class="tRight">推荐：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft"   NAME="isRecommend">
+	<option value="0">否</option>
+	<option value="1">是</option>
+	</SELECT></TD>
+</TR>
+<TR>
+	<TD class="tRight">置顶：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft"   NAME="isTop">
+	<option value="0">否</option>
+	<option value="1">是</option>
+	</SELECT></TD>
+</TR>
+<TR>
+	<TD class="tRight">密码：</TD>
+	<TD class="tLeft"><INPUT TYPE="text" class="medium bLeft"   NAME="password"></TD>
+</TR>
+</TABLE>
+<iframe src="__APP__/Attach/sadd/module/{$FCS.MODULE_NAME}" width="100%" id="subFrame" frameborder="0" scrolling="no" height="450"></iframe>
+</div>
+</FORM>
+</div>
+</div>
+<include file="../Public/footer" />

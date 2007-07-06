@@ -1,6 +1,6 @@
 <?php 
 // +----------------------------------------------------------------------+
-// | ThinkPHP                                                             |
+// | ThinkCMS                                                             |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
 // +----------------------------------------------------------------------+
@@ -16,19 +16,27 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: GroupAction.class.php 91 2007-04-04 10:45:32Z liu21st $
+// $Id: GroupAction.class.php 2 2007-01-03 07:52:09Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
- * ThinkPHP权限管理
+ * CMS 权限管理
  +------------------------------------------------------------------------------
  * @author liu21st <liu21st@gmail.com>
- * @version  $Id: GroupAction.class.php 91 2007-04-04 10:45:32Z liu21st $
+ * @version  $Id: GroupAction.class.php 2 2007-01-03 07:52:09Z liu21st $
  +------------------------------------------------------------------------------
  */
 
 import('@.Action.AdminAction');
-
+/**
+ +------------------------------------------------------------------------------
+ * 用户组管理
+ +------------------------------------------------------------------------------
+ * @package   core
+ * @author    liu21st <liu21st@gmail.com>
+ * @version   $Ver$
+ +------------------------------------------------------------------------------
+ */
 class GroupAction extends AdminAction
 {//类定义开始
 
@@ -122,8 +130,9 @@ class GroupAction extends AdminAction
      */
     function app() 
     {
+        import("@.Dao.NodeDao");
         //读取系统的项目列表
-        $dao    =  D("Node");
+        $dao    =  new NodeDao();
         $list         =  $dao->findAll('level=1','','id,title');
         $appList   =  $list->getCol('id,title');
 
@@ -169,7 +178,7 @@ class GroupAction extends AdminAction
         $id     = $_POST['groupModuleId'];
 		$groupId	=	$_POST['groupId'];
         $appId	=	$_POST['appId'];
-		$groupDao    =   D("Group");
+		$groupDao    =   new GroupDao();
 		$groupDao->delGroupModule($groupId,$appId);
 		$result = $groupDao->setGroupModules($groupId,$id);
 
@@ -197,10 +206,11 @@ class GroupAction extends AdminAction
      */
     function module() 
     {
+        import("@.Dao.NodeDao");
         $groupId =  $_GET['groupId'];
         $appId  = $_GET['appId'];
 
-		$groupDao   =  D("Group");
+		$groupDao   =  new GroupDao();
         //读取系统组列表
         $list       =  $groupDao->findAll('','','id,name');
         $groupList  =  $list->getCol('id,name');
@@ -214,7 +224,7 @@ class GroupAction extends AdminAction
             $this->assign("appList",$appList);
         }
 
-        $dao    =  D("Node");
+        $dao    =  new NodeDao();
         if(!empty($appId)) {
             $this->assign("selectAppId",$appId);
         	//读取当前项目的模块列表
@@ -255,7 +265,7 @@ class GroupAction extends AdminAction
         $id     = $_POST['groupActionId'];
 		$groupId	=	$_POST['groupId'];
         $moduleId	=	$_POST['moduleId'];
-		$groupDao    =   D("Group");
+		$groupDao    =   new GroupDao();
 		$groupDao->delGroupAction($groupId,$moduleId);
 		$result = $groupDao->setGroupActions($groupId,$id);
 
@@ -283,11 +293,12 @@ class GroupAction extends AdminAction
      */
     function action() 
     {
+        import("@.Dao.NodeDao");
         $groupId =  $_GET['groupId'];
         $appId  = $_GET['appId'];
         $moduleId  = $_GET['moduleId'];
 
-		$groupDao   =  D("Group");
+		$groupDao   =  new GroupDao();
         //读取系统组列表
         $list       =  $groupDao->findAll('','','id,name');
         $groupList  =  $list->getCol('id,name');
@@ -303,11 +314,12 @@ class GroupAction extends AdminAction
         if(!empty($appId)) {
             $this->assign("selectAppId",$appId);
         	//读取当前项目的授权模块列表
+            $dao    =  new NodeDao();
             $list         =  $groupDao->getGroupModuleList($groupId,$appId);
             $moduleList   =  $list->getCol('id,title');
             $this->assign("moduleList",$moduleList);
         }
-        $dao    =  D("Node");
+        $dao    =  new NodeDao();
 
         if(!empty($moduleId)) {
             $this->assign("selectModuleId",$moduleId);
@@ -350,7 +362,7 @@ class GroupAction extends AdminAction
     {
         $id     = $_POST['groupUserId'];
 		$groupId	=	$_POST['groupId'];
-		$groupDao    =   D("Group");
+		$groupDao    =   new GroupDao();
 		$groupDao->delGroupUser($groupId);
 		$result = $groupDao->setGroupUsers($groupId,$id);
 		if($result===false) {
@@ -377,12 +389,14 @@ class GroupAction extends AdminAction
      */
     function user() 
     {
+        import("@.Dao.UserDao");
+
         //读取系统的用户列表
-        $userDao    =   D("User");
+        $userDao    =   new UserDao();
         $list		=	$userDao->findAll('','','id,nickname,name');
         $userList	=	$list->getCol('id,name,nickname',' ');
 
-		$groupDao    =   D("Group");
+		$groupDao    =   new GroupDao();
         $list   =  $groupDao->findAll('','','id,name');
         $groupList = $list->getCol('id,name');
 		$this->assign("groupList",$groupList);

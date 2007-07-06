@@ -7,8 +7,26 @@
 <div class="main" >
 <IMG SRC="../Public/images/ring.gif" BORDER="0" ALT="" align="absmiddle" > 欢迎你：{$loginUserName} [ 上次登录时间：{$lastLoginTime|toDate} ]
 <div class="content">
-
-
+<div style="width:65%;float:left">
+</div>
+<div style="width:32%;float:left">
+<fieldset >
+<legend ><span class="title">保存列表</span></legend>
+<UL>
+<volist name="saveArtList" id="vo">
+<LI><A HREF="__APP__/Article/edit/id/{$vo.id}">{$vo.title}</A>
+</volist>
+</UL>
+</fieldset >
+<fieldset >
+<legend ><span class="title">审核列表</span></legend>
+<UL>
+<volist name="verifyArtList" id="vo">
+<LI><A HREF="__APP__/Article/edit/id/{$vo.id}">{$vo.title}</A>
+</volist>
+</UL>
+</fieldset >
+</div>
 </div>
 </div> 
 <!-- 主页面结束 -->

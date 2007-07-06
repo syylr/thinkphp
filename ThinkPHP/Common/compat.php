@@ -16,18 +16,18 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: compat.php 14 2007-01-08 06:38:51Z liu21st $
 
 //常量
 if(!defined('E_STRICT'))  define('E_STRICT',2048);
 
 /**
  +------------------------------------------------------------------------------
- * Think PHP4 兼容函数库
+ * ThinkPHP PHP4 兼容函数库
  +------------------------------------------------------------------------------
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: compat.php 14 2007-01-08 06:38:51Z liu21st $
  +------------------------------------------------------------------------------
  */
 if (!function_exists('array_diff_key')) {
@@ -49,86 +49,6 @@ if (!function_exists('array_diff_key')) {
     }
 }
 
-if (!function_exists('json_encode')) {
-     function format_json_value(&$value) 
-    {
-        if(is_int($value)) {
-            $value = intval($value);
-        } else if(is_float($value)) {
-            $value = floatval($value);
-        } else if(defined($value) && $value === null) {
-            $value = strval(constant($value));
-        } else if(is_string($value)) {
-            $value = '"'.addslashes($value).'"';
-        }
-        return $value;
-    }
-
-    function json_encode($data) 
-    {
-    	if(is_object($data)) {
-            //对象转换成数组
-            $data = get_object_vars($data);
-        }else if(!is_array($data)) {
-        	// 普通格式直接输出
-            return format_json_value($data);
-        }
-        // 判断是否关联数组
-        if(empty($data) || is_numeric(implode('',array_keys($data)))) {
-        	$assoc  =  false;
-        }else {
-        	$assoc  =  true;
-        }
-        // 组装 Json字符串
-        $json = $assoc ? '{' : '[' ;
-        foreach($data as $key=>$val) {
-            if(!is_null($val)) {
-                if($assoc) {
-                    $json .= "\"$key\":".json_encode($val).",";
-                }else {
-                    $json .= json_encode($val).",";
-                }            	
-            }
-        }
-        if(strlen($json)>1) {// 加上判断 防止空数组
-        	$json  = substr($json,0,-1);
-        }
-        $json .= $assoc ? '}' : ']' ;
-        return $json;
-    }
-}
-if (!function_exists('json_decode')) {
-    function json_decode($json,$assoc=false) 
-    {
-        // 目前不支持二维数组或对象
-        $begin  =  substr($json,0,1) ;
-        if(!in_array($begin,array('{','['))) {
-            // 不是对象或者数组直接返回
-        	return $json;
-        }
-        $parse = substr($json,1,-1);
-        $data  = explode(',',$parse);
-        if($flag = $begin =='{' ) {
-        	// 转换成PHP对象
-            $result   = new stdClass();
-            foreach($data as $val) {
-            	$item    = explode(':',$val);
-                $key =  substr($item[0],1,-1);
-                $result->$key = json_decode($item[1],$assoc);
-            }
-            if($assoc) {
-                $result   = get_object_vars($result);
-            }
-        }else {
-        	// 转换成PHP数组
-            $result   = array();
-            foreach($data as $val) {
-            	$result[]  =  json_decode($val,$assoc);
-            }
-        }
-        return $result;
-    }
-}
 if (!function_exists('property_exists')) {
     /**
      +----------------------------------------------------------
@@ -206,11 +126,11 @@ if (!function_exists('file_get_contents')){
      */
     function file_get_contents($filename) 
     { 
-        $fp = fopen($filename, 'rb');
+        $fp = @fopen($filename, 'rb');
         if (!is_resource($fp)) return false;
-        flock($fp, LOCK_SH);
-        $data = fread($fp, filesize($filename));
-        fclose($fp);
+        @flock($fp, LOCK_SH);
+        $data = @fread($fp, filesize($filename));
+        @fclose($fp);
         return $data;
     } 
 }
@@ -218,7 +138,7 @@ if (!function_exists('file_get_contents')){
 if (!function_exists('com_create_guid')){
     /**
      +----------------------------------------------------------
-     * 生成一个GUID 适用window和*nix
+     * 生成一个GUID 
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -462,26 +382,27 @@ if(!function_exists('image_type_to_extension'))
        if(empty($imagetype)) return false;
        switch($imagetype)
        {
-           case IMAGETYPE_GIF    : return '.gif';
-           case IMAGETYPE_JPEG    : return '.jpg';
-           case IMAGETYPE_PNG    : return '.png';
-           case IMAGETYPE_SWF    : return '.swf';
-           case IMAGETYPE_PSD    : return '.psd';
-           case IMAGETYPE_BMP    : return '.bmp';
-           case IMAGETYPE_TIFF_II : return '.tiff';
-           case IMAGETYPE_TIFF_MM : return '.tiff';
-           case IMAGETYPE_JPC    : return '.jpc';
-           case IMAGETYPE_JP2    : return '.jp2';
-           case IMAGETYPE_JPX    : return '.jpf';
-           case IMAGETYPE_JB2    : return '.jb2';
-           case IMAGETYPE_SWC    : return '.swc';
-           case IMAGETYPE_IFF    : return '.aiff';
-           case IMAGETYPE_WBMP    : return '.wbmp';
-           case IMAGETYPE_XBM    : return '.xbm';
+           case IMAGETYPE_GIF    : return 'gif';
+           case IMAGETYPE_JPEG    : return 'jpg';
+           case IMAGETYPE_PNG    : return 'png';
+           case IMAGETYPE_SWF    : return 'swf';
+           case IMAGETYPE_PSD    : return 'psd';
+           case IMAGETYPE_BMP    : return 'bmp';
+           case IMAGETYPE_TIFF_II : return 'tiff';
+           case IMAGETYPE_TIFF_MM : return 'tiff';
+           case IMAGETYPE_JPC    : return 'jpc';
+           case IMAGETYPE_JP2    : return 'jp2';
+           case IMAGETYPE_JPX    : return 'jpf';
+           case IMAGETYPE_JB2    : return 'jb2';
+           case IMAGETYPE_SWC    : return 'swc';
+           case IMAGETYPE_IFF    : return 'aiff';
+           case IMAGETYPE_WBMP    : return 'wbmp';
+           case IMAGETYPE_XBM    : return 'xbm';
            default                : return false;
        }
    }
 }
+
 
 if(!function_exists('str_ireplace')) {
     /**
@@ -517,7 +438,7 @@ if (!function_exists("ob_get_clean")) {
      */
     function ob_get_clean() {
         $ob_contents = ob_get_contents();
-        while(ob_get_length() !== false) ob_end_clean(); 
+        while(ob_get_length() !== false) @ob_end_clean(); 
         return $ob_contents;
     }
 }
@@ -600,7 +521,6 @@ if( !function_exists('memory_get_usage') )
 {
    function memory_get_usage()
    {
-       $output = array ();
        $pid = getmypid();
        if ( IS_WIN ) 
        {
@@ -625,7 +545,7 @@ if(!function_exists('scandir')) {
                        $files[] = $file;
                    }
                }
-               closedir($dirlist);
+               closedir($dir);
                ($sortorder == 0) ? asort($files) : rsort($files); // arsort was replaced with rsort
                $_list[$dir] = $files;
                return $files;           	
@@ -639,4 +559,85 @@ if(!function_exists('scandir')) {
    }
 }
 
+if (!function_exists('json_encode')) {
+     function format_json_value(&$value) 
+    {
+        if(is_int($value)) {
+            $value = intval($value);
+        } else if(is_float($value)) {
+            $value = floatval($value);
+        } else if(defined($value) && $value === null) {
+            $value = strval(constant($value));
+        } else if(is_string($value)) {
+            $value = '"'.addslashes($value).'"';
+        }
+        return $value;
+    }
+
+    function json_encode($data) 
+    {
+    	if(is_object($data)) {
+            //对象转换成数组
+            $data = get_object_vars($data);
+        }else if(!is_array($data)) {
+        	// 普通格式直接输出
+            return format_json_value($data);
+        }
+        // 判断是否关联数组
+        if(empty($data) || is_numeric(implode('',array_keys($data)))) {
+        	$assoc  =  false;
+        }else {
+        	$assoc  =  true;
+        }
+        // 组装 Json字符串
+        $json = $assoc ? '{' : '[' ;
+        foreach($data as $key=>$val) {
+            if(!is_null($val)) {
+                if($assoc) {
+                    $json .= "\"$key\":".json_encode($val).",";
+                }else {
+                    $json .= json_encode($val).",";
+                }            	
+            }
+        }
+        if(strlen($json)>1) {// 加上判断 防止空数组
+        	$json  = substr($json,0,-1);
+        }
+        $json .= $assoc ? '}' : ']' ;
+        return $json;
+    }
+}
+
+if (!function_exists('json_decode')) {
+    function json_decode($json,$assoc=false) 
+    {
+        // 目前不支持二维数组或对象
+        $begin  =  substr($json,0,1) ;
+        if(!in_array($begin,array('{','['))) {
+            // 不是对象或者数组直接返回
+        	return $json;
+        }
+        $parse = substr($json,1,-1);
+        $data  = explode(',',$parse);
+        if($flag = $begin =='{' ) {
+        	// 转换成PHP对象
+            $result   = new stdClass();
+            foreach($data as $val) {
+            	$item    = explode(':',$val);
+                $key =  substr($item[0],1,-1);
+                $result->$key = json_decode($item[1],$assoc);
+            }
+            if($assoc) {
+                $result   = get_object_vars($result);
+            }
+        }else {
+        	// 转换成PHP数组
+            $result   = array();
+            foreach($data as $val) {
+            	$result[]  =  json_decode($val,$assoc);
+            }
+        }
+        return $result;
+    }
+}
 ?>

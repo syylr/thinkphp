@@ -1,16 +1,66 @@
 function showTip(info){
 	$('tips').innerHTML	=	info;
 }
-function sendForm(formId,action,response,target,effect){
+function sendForm(formId,action,target,response,effect){
 	// Ajax方式提交表单
 	if (CheckForm($(formId)))//表单数据验证
 	{
-		ThinkAjax.sendForm(formId,action);
+		$('result').style.display = 'block';
+		SmartAjax.sendForm(formId,action,'result',response,effect);
 	}
 	//Form.reset(formId);
+
 }
 rowIndex = 0;
 
+function submitForm(formId,contentId,url){
+	var html = window.frames["Editor"].frames['HtmlEditor'].document.getElementsByTagName("BODY")[0].innerHTML;
+	if ( (html.toLowerCase() == "<p>&nbsp;</p>") || (html.toLowerCase() == "<p></p>") ){
+		html = "";
+	}
+	$(contentId).value = html;
+	sendForm(formId,url);
+}
+
+function WriteTo(id){
+	var type = $F('outputType');
+	switch (type)
+	{
+	case 'EXCEL':WriteToExcel(id);break;
+	case 'WORD':WriteToWord(id);break;
+	
+	}
+	return ;
+}
+
+function shortHandle(request){
+	if (request.responseText=='ok')
+	{
+		alert('快捷方式添加成功！');
+	}else {
+		alert('快捷方式添加失败！');
+	}
+}
+function shortcut(){
+	var name	=	 window.prompt("输入该快捷方式的显示名称","");
+	if (name !=null)
+	{
+	var url	=	location.href;
+	SmartAjax.send(location.protocol+'//'+location.hostname+APP+'/Shortcut/ajaxInsert/','name='+name+'&url='+url,'',shortHandle);
+	}
+
+}
+
+function show(){
+	if (document.getElementById('menu').style.display!='none')
+	{
+	document.getElementById('menu').style.display='none';
+	document.getElementById('main').className = 'full';
+	}else {
+	document.getElementById('menu').style.display='inline';
+	document.getElementById('main').className = 'main';
+	}
+}
 
 function allSelect(){
 	var	colInputs = document.getElementsByTagName("input");
@@ -35,41 +85,6 @@ function InverSelect(){
 	}
 }
 
-function WriteTo(id){
-	var type = $F('outputType');
-	switch (type)
-	{
-	case 'EXCEL':WriteToExcel(id);break;
-	case 'WORD':WriteToWord(id);break;
-	
-	}
-	return ;
-}
-
-function build(id){
-	window.location = APP+'/Card/batch/type/'+id;
-}
-function shortcut(){
-	var name	=	 window.prompt("输入该快捷方式的显示名称","");
-	if (name !=null)
-	{
-	var url	=	location.href;
-	ThinkAjax.send(location.protocol+'//'+location.hostname+APP+'/Shortcut/ajaxInsert/','name='+name+'&url='+url);
-	}
-
-}
-
-function show(){
-	if (document.getElementById('menu').style.display!='none')
-	{
-	document.getElementById('menu').style.display='none';
-	document.getElementById('main').className = 'full';
-	}else {
-	document.getElementById('menu').style.display='inline';
-	document.getElementById('main').className = 'main';
-	}
-}
-
 function CheckAll(strSection)
 	{
 		var i;
@@ -82,15 +97,16 @@ function CheckAll(strSection)
 function add(){
  location.href  = URL+"/add/";
 }
+
 function showHideSearch(){
 	if (document.getElementById('searchM').style.display=='inline')
 	{
 		document.getElementById('searchM').style.display='none';
-		document.getElementById('showText').value ='高级';
+		document.getElementById('showText').value ='高 级';
 		document.getElementById('key').style.display='inline';
 	}else {
 		document.getElementById('searchM').style.display='inline';
-		document.getElementById('showText').value ='隐藏';
+		document.getElementById('showText').value ='隐 藏';
 		document.getElementById('key').style.display='none';
 
 	}
@@ -109,8 +125,8 @@ function top(id){
 		alert('请选择置顶项！');
 		return false;
 	}
-
-	location.href = URL+"/top/id/"+keyValue;
+	$('result').style.display = 'block';
+	SmartAjax.send(URL+"/top",'ajax=1&id='+keyValue,'result');
 
 }
 
@@ -127,30 +143,12 @@ function recommend(id){
 		alert('请选择推荐项！');
 		return false;
 	}
-
-	location.href = URL+"/recommend/id/"+keyValue;
+	$('result').style.display = 'block';
+	SmartAjax.send(URL+"/recommend",'ajax=1&id='+keyValue,'result');
+	//location.href = URL+"/recommend/id/"+keyValue;
 
 }
 
-function checkPass(id){
-	var keyValue;
-	if (id)
-	{
-		keyValue = id;
-	}else {
-		keyValue = getSelectCheckboxValues();
-	}
-	if (!keyValue)
-	{
-		alert('请选择要审核的主持人！');
-		return false;
-	}
-
-	if (window.confirm('确实审核通过吗？'))
-	{
-		ThinkAjax.send(URL+"/checkPass/","id="+keyValue+'&_AJAX_SUBMIT_=1',doDelete,'result');
-	}
-}
 function sortBy (field,sort){
 	location.href = URL+"/index/order/"+field+"/sort/"+sort;
 }
@@ -177,9 +175,7 @@ function login(id){
 function child(id){
 	location.href = URL+"/index/pid/"+id;
 }
-function action(id){
-	location.href = URL+"/action/groupId/"+id;
-}
+
 
 function access(id){
 	location.href= URL+"/access/id/"+id;
@@ -191,11 +187,28 @@ function app(id){
 function module(id){
 	location.href = URL+"/module/groupId/"+id;
 }
+function action(id){
+	location.href = URL+"/action/groupId/"+id;
+}
+
+function sapp(id){
+	$('subFrame').src =  URL+"/sapp/groupId/"+id;
+}
+
+function smodule(id){
+	$('subFrame').src =  URL+"/smodule/groupId/"+id;
+}
+function saction(id){
+	$('subFrame').src =  URL+"/saction/groupId/"+id;
+}
 
 function user(id){
 	location.href = URL+"/user/id/"+id;
 }
 
+function suser(id){
+	$('subFrame').src =  URL+"/suser/id/"+id;
+}
 	//+---------------------------------------------------
 	//|	打开模式窗口，返回新窗口的操作值
 	//+---------------------------------------------------
@@ -236,6 +249,25 @@ function edit(id){
 	}
 	location.href =  URL+"/edit/id/"+keyValue;
 }
+
+function sedit(id){
+	var keyValue;
+	if (id)
+	{
+		keyValue = id;
+	}else {
+		keyValue = getSelectCheckboxValue();
+	}
+	if (!keyValue)
+	{
+		alert('请选择编辑项！');
+		return false;
+	}
+	$('subFrame').src =  URL+"/sedit/id/"+keyValue;
+}
+
+
+
 var selectRowIndex = Array();
 function del(id){
 	var keyValue;
@@ -253,10 +285,8 @@ function del(id){
 
 	if (window.confirm('确实要删除选择项吗？'))
 	{
-		ThinkAjax.send(URL+"/delete/","id="+keyValue+'&_AJAX_SUBMIT_=1',doDelete);
-	}
-}
-function doDelete(){
+		$('result').style.display = 'block';
+		SmartAjax.send(URL+"/delete/","id="+keyValue+'&_AJAX_SUBMIT_=1','result');
 		var Table = $('checkList');
 		var len	=	selectRowIndex.length;
 		for (var i=len-1;i>=0;i-- )
@@ -265,7 +295,29 @@ function doDelete(){
 			Table.deleteRow(selectRowIndex[i]);
 		}
 		selectRowIndex = Array();
+
+	//location.href = URL+"/delete/id/_AJAX_SUBMIT_/1"+keyValue;
+	}
 }
+
+function publish(id){
+	var keyValue;
+	if (id)
+	{
+		keyValue = id;
+	}else {
+		keyValue = getSelectCheckboxValues();
+	}
+	if (!keyValue)
+	{
+		alert('请选择要发布的文章！');
+		return false;
+	}
+
+	$('result').style.display = 'block';
+	SmartAjax.send(URL+"/publish/","id="+keyValue+'&_AJAX_SUBMIT_=1','result');
+}
+
 	function delAttach(id,showId){
 	var keyValue;
 	if (id)
@@ -283,7 +335,7 @@ function doDelete(){
 	if (window.confirm('确实要删除选择项吗？'))
 	{
 		$('result').style.display = 'block';
-		ThinkAjax.send(URL+"/delAttach/","id="+keyValue+'&_AJAX_SUBMIT_=1');
+		SmartAjax.send(URL+"/delAttach/","id="+keyValue+'&_AJAX_SUBMIT_=1','result');
 		if (showId != undefined)
 		{
 			$(showId).innerHTML = '';

@@ -17,21 +17,19 @@ function download(id){
 </SCRIPT>
 <!-- 主体内容  -->
 <div class="content" >
-<div class="title">附件列表 </div>
+<div style="float:left;width:65%">
+<fieldset >
+<legend >附件列表</legend>
 <!--  功能操作区域  -->
 <div class="operate" >
-<html:imageBtn name="delete" value="删除" click="del()" style="impBtn hMargin fLeft shadow" />
-<html:imageBtn name="sort" value="导出" click="WriteTo('checkList')" style="impBtn hMargin fLeft shadow" />
-<div class="fLeft"><SELECT class="small bLeft" NAME="outputType">
-	<option value="EXCEL">EXCEL</option>
-	<option value="WORD">WORD</option>
-	</SELECT></div>
+<input type="button" value="删 除" onclick="del()" class="button small hMargin fLeft" />
+
 <!-- 查询区域 -->
 <div class="fRig">
 <FORM METHOD=POST ACTION="">
 <div class="fLeft"><span id="key"><INPUT TYPE="text" NAME="name" title="名称查询" class="medium" ></span></div>
-<html:imageBtn type="submit" name="search" value="查询" style="impBtn hMargin fLeft shadow" />
-<html:imageBtn name="adv" value="高级" id="showText" click="showHideSearch()" style="impBtn hMargin fLeft shadow" />
+<input type="submit" value="查 询" class="button small hMargin fLeft" />
+<input type="button" value="高 级" id="showText" onclick="showHideSearch()" class="button small hMargin fLeft" />
 </div>
 <!-- 高级查询区域 -->
 <div  id="searchM" class=" none search cBoth" >
@@ -54,10 +52,15 @@ function download(id){
 <!-- 功能操作区域结束 -->
 <!-- 列表显示区域  -->
 <div class="list" >
-<div id="result" class="result none"></div><html:list id="checkList" name="attach" style="list" checkbox="true" datasource="list" show="id:编号|8%,name:名称:download,extension:类型|8%,size|byte_format:大小,uploadTime|toDate:上传时间,userId|getUserName:用户" /> 
+<div id="result" class="result none"></div><html:list id="checkList" name="attach" style="list" checkbox="true" datasource="list" show="id:编号|8%,name:名称:download,extension:类型|8%,size|byte_format:大小,uploadTime|toDate='Y-m-d':上传时间,module:模块,userId|getUserName:用户" /> 
 </div>
 <!--  分页显示区域 -->
 <div class="page">{$page}</div>
+</fieldset>
+</div>
+<div style="width:30%;margin-left:8px;float:right;">
+<iframe src="__URL__/sadd/" width="100%" id="subFrame" frameborder="0" scrolling="no" height="450"></iframe>
+</div>
 <!-- 列表显示区域结束 -->
 </div>
 <!-- 主体内容结束 -->

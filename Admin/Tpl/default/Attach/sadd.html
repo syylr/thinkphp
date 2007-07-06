@@ -1,0 +1,73 @@
+<tagLib name="html" />
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<TITLE>ThinkCMS 系统管理平台 By FCS {$FCS.version}</TITLE>
+<html:link type="css" href ="../Public/css/FCS.css" />
+<html:link type="js" href ="../Public/js/Common.js" />
+<html:import type="js" file="Js.Base" /> 
+<html:import type="js" file="Js.prototype" /> 
+<html:import type="js" file="Js.mootools" /> 
+<html:import type="js" file="Js.Ajax.SmartAjax" /> 
+<html:import type="js" file="Js.Util.Calendar" /> 
+<html:import type="js" file="Js.Form.CheckForm" /> 
+<html:import type="js" file="Js.Util.SwfObject" /> 
+<body style="margin:0">
+<div class="content">
+<div class="title" style="width:85%">增加附件 </div>
+<div id="result" class="result none"></div>
+<form id="upload" METHOD=POST action="__URL__/insert/" onsubmit="return CheckForm(this);" enctype="multipart/form-data" target="iframeUpload">
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+	<iframe name="iframeUpload" src="" width="350" height="35" frameborder=0  SCROLLING="no" style="display:none"></iframe>
+	<INPUT TYPE="hidden" name="_uploadFileResult" value="result">
+	<INPUT TYPE="hidden" name="_uploadFormId" value="upload">
+	<INPUT TYPE="hidden" name="_uploadFileSize" value="-1">
+	<INPUT TYPE="hidden" name="_uploadFileTable" value="{$FCS.get.module}">
+	<INPUT TYPE="hidden" name="_uploadFileType" value="bmp,jpg,gif,png,doc,rar,zip">
+	<INPUT TYPE="hidden" name="_uploadSavePath" value="{$FCS.WEB_ROOT}Public/Uploads/" >
+	<div class="fLeft hMargin"><INPUT TYPE="button" value="增 加" onclick="addRow();" class="button small"></div>
+	<div class="fLeft hMargin"><INPUT TYPE="submit" value="上 传" onclick="uploading();" class="button small"></div>
+	<BR class="cBoth">
+	<TABLE id='tbl'></TABLE>
+	</form>
+</div>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var curFileNum = 0;
+var rowsnum=0;  //记录行数
+var rindex="";       //列索引
+var tbl	=	$('tbl');
+function addRow(){   
+	curFileNum++;
+	rowsnum++;
+    var row=tbl.insertRow(-1);
+	//var td = arow.insertCell();
+	var cell = document.createElement("td");
+	cell.innerHTML='<div class="impBtn  fLeft" ><INPUT TYPE="file"  name="file'+ curFileNum +'" class="file  "></div><div class="fLeft hMargin"><INPUT TYPE="button" value="删 除" onfocus="javascript:getObject(this)" onclick="deleteRow();" class="button"></div> ';
+	cell.align="center"
+	row.appendChild(cell); 
+	//addFileForm.num.value=rowsnum;
+}
+function deleteRow(){
+	if(tbl.rows.length>0){
+		tbl.deleteRow(rindex); //删除当前行
+		rowsnum--;    
+	}else{
+		return;
+	}
+	rindex="";
+}
+function getObject(obj){ 
+	rindex=obj.parentElement.parentElement.rowIndex;/*当前行对象*/
+}
+
+function uploading(msg){
+	$('result').style.display = 'block';
+	$('result').innerHTML	=	'<IMG SRC="../Public/images/ajaxloading.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="" align="absmiddle"> 文件上传中～';
+	return true;
+}
+addRow();
+//-->
+</SCRIPT>
+</div>

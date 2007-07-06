@@ -1,7 +1,7 @@
 <?php 
     /*
     Plugin Name: varFilter 
-    Plugin URI: http://thinkphp.cn
+    Plugin URI: http://fcs.org.cn
     Description: 变量安全过滤插件
     Author: 流年
     Version: 1.0
@@ -22,7 +22,7 @@ function var_filter_deep($value) {
         $return = array_map('var_filter_deep', $value);
         return $return;
     }else {
-        $value = htmlspecialchars(trim($value),ENT_NOQUOTES);
+        $value = htmlspecialchars(trim($value));
         $value = str_replace("javascript", "j avascript", $value);
         return $value;
     }

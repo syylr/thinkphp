@@ -17,25 +17,22 @@ function notice(name){
 	case 'remark':		showTip('用户备注');break;
 	}
 }
-function resetPwd(){
+function resetUserPwd(){
 var pass	 =	 $F('resetPwd');
-ThinkAjax.send('__URL__/resetPwd/','ajax=1&id={$vo.id}&password='+encodeURIComponent(pass));
+$('result').style.display = 'block';
+SmartAjax.send('__URL__/resetPwd/','ajax=1&id={$vo.id}&password='+encodeURIComponent(pass),'result');
 }
 //-->
 </SCRIPT>
 <div class="content">
 <div class="title">编辑用户 [ <A HREF="__URL__">返回列表</A> ]</div>
 <div id="result" class="result none"></div><div id="tips"  class="tips"  > 修改用户资料信息，红色标注的字段为必填字段。</div>
-
+<FORM METHOD=POST id="form1" >
 <TABLE cellpadding=3 cellspacing=3>
 <TR>
 	<TD class="tRight">重置密码：</TD>
-	<TD class="tLeft" ><INPUT TYPE="text" NAME="resetPwd" > <INPUT type="button" value="重置密码" onclick="resetPwd()" class="submit" style="height:25px"></TD>
+	<TD class="tLeft" ><INPUT TYPE="text" NAME="resetPwd" style="margin-top:-28px"><INPUT value="重置密码" onclick="resetUserPwd()" style="width:100px" class="ok imgButton"></TD>
 </TR>
-<TR>
-	<TD class="tRight" colspan="2"><HR></TD>
-</TR>
-<FORM METHOD=POST id="form1" >
 <TR>
 	<TD class="tRight" >用户名：</TD>
 	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeftRequire" onfocus="notice('name')" check='^\S+$' warning="用户名不能为空,且不能含有空格" NAME="name" value="{$vo.name}"></TD>
@@ -47,6 +44,14 @@ ThinkAjax.send('__URL__/resetPwd/','ajax=1&id={$vo.id}&password='+encodeURICompo
 <TR>
 	<TD class="tRight">验证码：</TD>
 	<TD class="tLeft"><INPUT TYPE="text" class="medium bLeftRequire" onfocus="notice('verify')" NAME="verify" value="{$vo.verify}"></TD>
+</TR>
+<TR>
+	<TD class="tRight" >邮箱：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeft" onfocus="notice('email')" NAME="email" value="{$vo.email}"></TD>
+</TR>
+<TR>
+	<TD class="tRight" >URL：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeft" onfocus="notice('url')" NAME="url" value="{$vo.url}"></TD>
 </TR>
 <TR>
 	<TD class="tRight">状态：</TD>
@@ -63,8 +68,8 @@ ThinkAjax.send('__URL__/resetPwd/','ajax=1&id={$vo.id}&password='+encodeURICompo
 	<TD ></TD>
 	<TD class="center"><div style="width:85%"><INPUT TYPE="hidden" name="id" value="{$vo.id}" >
 	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
-	<div class="impBtn fLeft"><INPUT TYPE="button" value="保存" onclick="sendForm('form1','__URL__/update/','tips')" class="save imgButton"></div>
-	<div class="impBtn fRig"><INPUT TYPE="reset" class="reset imgButton" value="清空" ></div>
+	<div class=" fLeft hMargin"><INPUT TYPE="button" value="保 存" onclick="sendForm('form1','__URL__/update/','tips')" class=" button"></div>
+	<div class=" fLeft hMargin"><INPUT TYPE="reset" class="button" value="清 空" ></div>
 	</div></TD>
 </TR>
 </TABLE>

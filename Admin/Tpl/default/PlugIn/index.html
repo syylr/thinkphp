@@ -18,13 +18,13 @@ function flesh(){
 <div class="title">插件列表</div>
 <!--  功能操作区域  -->
 <div class="operate" >
-<html:imageBtn name="delete" value="删除" click="del()" style="impBtn hMargin fLeft shadow" />
+<input type="button"   value="删 除" onclick="del()" class="button hMargin small fLeft " />
 <!-- 查询区域 -->
 <div class="fRig">
 <FORM METHOD=POST ACTION="__URL__">
 <div class="fLeft"><span id="key"><INPUT TYPE="text" NAME="name" title="名称查询" class="medium" ></span></div>
-<html:imageBtn type="submit" name="search" value="查询" style="impBtn hMargin fLeft shadow" />
-<html:imageBtn name="adv" value="高级" id="showText" click="showHideSearch()" style="impBtn hMargin fLeft shadow" />
+<input type="submit"  value="查 询" class="button small hMargin fLeft " />
+<input type="button"  value="高 级" id="showText" onclick="showHideSearch()" class="button small hMargin fLeft " />
 </div>
 <!-- 高级查询区域 -->
 <div  id="searchM" class=" none search cBoth" >

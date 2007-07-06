@@ -1,6 +1,6 @@
 <?php 
 // +----------------------------------------------------------------------+
-// | ThinkPHP                                                             |
+// | ThinkCMS                                                             |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
 // +----------------------------------------------------------------------+
@@ -16,12 +16,20 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: SystemAction.class.php 78 2007-04-01 04:29:15Z liu21st $
+// $Id: SystemAction.class.php 2 2007-01-03 07:52:09Z liu21st $
 
+/**
+ +------------------------------------------------------------------------------
+ * CMS 系统管理
+ +------------------------------------------------------------------------------
+ * @author liu21st <liu21st@gmail.com>
+ * @version  $Id: SystemAction.class.php 2 2007-01-03 07:52:09Z liu21st $
+ +------------------------------------------------------------------------------
+ */
 import('@.Action.AdminAction');
 /**
  +------------------------------------------------------------------------------
- * 系统管理
+ * 广告管理
  +------------------------------------------------------------------------------
  * @package   core
  * @author    liu21st <liu21st@gmail.com>
@@ -37,41 +45,42 @@ class SystemAction extends AdminAction
         $app = $dao->findAll('status=1 AND level=1');
         $this->assign('app',$app);
         $dao     = D('MemoDao');
-        $labels  = $dao->findall('type="php" AND userId="'.Session::get(C('USER_AUTH_KEY')).'"');
+        $labels  = $dao->findall('type="php" AND userId="'.Session::get(USER_AUTH_KEY).'"');
         $this->assign('labels',$labels);
     	$this->display();
     }
 
+    function phpinfo() 
+    {
+    	phpinfo();
+        exit();
+    }
+
     function runPhp() 
     {
-    	$php = stripslashes($_POST['command']); 
+    	$php = stripslashes(str_replace('###a245###','&',$_POST['command'])); 
+        header("Content-Type:text/html; charset=utf-8");
         if(strlen($php)>4) {
             // 生成临时执行文件
             $tempPhpFile = TEMP_PATH."_@run".md5(rand_string(12)).".php";
             $result  =  file_put_contents($tempPhpFile, $php);
             if($result) {
                 @require($tempPhpFile);
-                @unlink($tempPhpFile);   
-                if(!empty($_POST['label'])) {//保存SQL标签
-                    $dao = D("MemoDao");
-                    $map= new HashMap();
-                    $map->put('memo',$php);
-                    $map->put('label',$_POST['label']);
-                    $map->put('createTime',time());
-                    $map->put('type','php');
-                    $map->put('userId',Session::get(C('USER_AUTH_KEY')));
-                    $dao->add($map);
-                }  
-                header("Content-Type:text/html; charset=utf-8");
-                exit('PHP语句已经成功执行！');  
-            }else {
-            header("Content-Type:text/html; charset=utf-8");
-        	exit('执行错误！');            	
+                //@unlink($tempPhpFile);   
             }
-      	
+            if(!empty($_POST['label'])) {//保存SQL标签
+                $dao = D("MemoDao");
+                $map= new HashMap();
+                $map->put('memo',$php);
+                $map->put('label',$_POST['label']);
+                $map->put('createTime',time());
+                $map->put('type','php');
+                $map->put('userId',Session::get(USER_AUTH_KEY));
+                $dao->add($map);
+            }  
+            exit('PHP语句已经成功执行！');        	
         }else {
-            header("Content-Type:text/html; charset=utf-8");
-        	exit('执行错误！');
+        	exit();
         }
 
     }
@@ -79,36 +88,54 @@ class SystemAction extends AdminAction
     function clearTmplCache() 
     {
     	$app = $_POST['app'];
+        header("Content-Type:text/html; charset=utf-8");
         if(!empty($app)) {
             $tmplPath =  str_replace('.','../'.$app,CACHE_PATH);
             import("ORG.Io.Dir");
             Dir::del($tmplPath);        	
-            $this->success('模版缓存已经清空！');
+            exit('模版缓存已经清空！');
         }
     }
-
+    function buildTemplate() 
+    {
+        $app = $_POST['app'];
+        if(!empty($app)) {
+            $tmplPath =  str_replace(APP_NAME,$app,TMPL_PATH);
+            if(!class_exists('FCSTemplate')) {
+            	import('Template.FCSTemplate',FCS_PATH.'/PlugIns/FCSTemplate/');
+            }
+            $tpl  =   new FCSTemplate();
+            set_time_limit(0);
+            //ignore_user_abort(true);
+            //$tpl->buildAllTemplate($tmplPath);
+            exit('模版编译完成！');        	
+        }
+    }
     function getLabel() 
     {
+        header("Content-Type:text/html; charset=utf-8");
     	if(!empty($_POST['id'])) {
     		$dao = D("MemoDao");
             $label   =  $dao->getById($_POST['id']);
-            $this->ajaxReturn($label->memo,'标签获取成功',1);
+            exit($label->memo);
     	}else {
     		exit();
     	}
     }
     function delLabel() 
     {
+        header("Content-Type:text/html; charset=utf-8");
     	$id = $_POST['id'];
         if(!empty($id)) {
             $dao = D("MemoDao");
             $result = $dao->deleteById($id);      	
             if($result !== false) {
-            	$this->success('标签删除成功！');
+            	exit('标签删除成功！');
             }else {
-            	$this->error('标签删除失败！');
+            	exit('标签删除失败！');
             }
         }
+        exit();
     }
 }//类定义结束
 ?>

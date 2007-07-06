@@ -1,6 +1,6 @@
 <?php 
 // +----------------------------------------------------------------------+
-// | ThinkPHP                                                             |
+// | ThinkCMS                                                             |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
 // +----------------------------------------------------------------------+
@@ -16,7 +16,16 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: AdminAction.class.php 78 2007-04-01 04:29:15Z liu21st $
+// $Id: AdminAction.class.php 2 2007-01-03 07:52:09Z liu21st $
+
+/**
+ +------------------------------------------------------------------------------
+ * CMS 公共管理
+ +------------------------------------------------------------------------------
+ * @author liu21st <liu21st@gmail.com>
+ * @version  $Id: AdminAction.class.php 2 2007-01-03 07:52:09Z liu21st $
+ +------------------------------------------------------------------------------
+ */
 
 // 导入引用类库
 import("ORG.Text.Validation");
@@ -46,17 +55,17 @@ class AdminAction extends Action
      */
     function _initialize() 
     {
-
-        if(Session::is_set(C('USER_AUTH_KEY'))) {
+        if(Session::is_set(USER_AUTH_KEY)) {
             //显示菜单项
             $menu  = array();
-            if(Session::is_set('menu'.Session::get(C('USER_AUTH_KEY')))) {
+            if(Session::is_set('menu'.Session::get(USER_AUTH_KEY))) {
                 //如果已经缓存，直接读取缓存
-                $menu   =   Session::get('menu'.Session::get(C('USER_AUTH_KEY')));
+                $menu   =   Session::get('menu'.Session::get(USER_AUTH_KEY));
             }else {
                 //读取数据库模块列表生成菜单项
-                $dao    =   D("Node"); 
-                $list   =   $dao->findAll('level=2 and pid='.getAppId(),'','id,name,title','seqNo asc'); 
+                import('@.Dao.NodeDao');
+                $dao    =   new NodeDao();
+                $list   =   $dao->findAll('level=2 and pid="'.getAppId().'"','','id,name,title','seqNo asc');  
                 $accessList = Session::get('_ACCESS_LIST');
                 foreach($list->getIterator() as $key=>$module) {
                      if(isset($accessList[strtoupper(APP_NAME)][strtoupper($module->name)]) || Session::is_setLocal('administrator')) {
@@ -65,17 +74,39 @@ class AdminAction extends Action
                         $menu[$key]  = $module->toArray();
                     }
                 }
+               
                 //缓存菜单访问
-                Session::set('menu'.Session::get(C('USER_AUTH_KEY')),$menu);        	
+                Session::set('menu'.Session::get(USER_AUTH_KEY),$menu);        	
             }
             $this->assign('menu',$menu);
             $this->assign("login",true);
             //显示登录用户名称
             $this->assign('loginUserName',Session::get('loginUserName'));
         }
+
         // 读取配置文件
+        //readConfig();
         parent::_initialize();
+
     }
+
+    function sAdd() 
+    {
+    	$this->add();
+        exit();
+    }
+
+    function sEdit() 
+    {
+    	$this->edit();
+        exit();
+    }
+    /**
+     +----------------------------------------------------------
+     * 默认操作定义
+     * 
+     +----------------------------------------------------------
+     */
 
     /**
      +----------------------------------------------------------
@@ -156,8 +187,8 @@ class AdminAction extends Action
         $list	=	$dao->findall($map,'','*','seqNo');
         header("content-type:text/xml;charset=utf-8");
         $xml	=  '<?xml version="1.0" encoding="utf-8" ?>';
-        if($map->containsKey('parentId')) {
-            $vo		=	$dao->find('id='.$map->get('parentId'));
+        if($map->containsKey('pid')) {
+            $vo		=	$dao->find('id='.$map->get('pid'));
             $xml	.= '<tree caption="'.$vo->name.'" >';
         }else {
             $xml	.= '<tree caption="'.$caption.'" >';
@@ -183,11 +214,11 @@ class AdminAction extends Action
     {
         $dao	=	$this->getDaoClass();
         foreach($list->getIterator() as $key=>$val) {
-            $list2	=	$dao->findall('parentId='.$val->id,'','*','seqNo');
+            $list2	=	$dao->findall('pid='.$val->id,'','*','seqNo');
             if($list2->size()==0) {
-                $xml	.= '<level'.$val->level.' id="'.$val->id.'" level="'.$val->level.'" parentId="'.$val->parentId.'" caption="'.$val->{$caption}.'" />';
+                $xml	.= '<level'.$val->level.' id="'.$val->id.'" level="'.$val->level.'" pid="'.$val->pid.'" caption="'.$val->{$caption}.'" />';
             }else {
-                $xml	.= '<level'.$val->level.' id="'.$val->id.'" level="'.$val->level.'" parentId="'.$val->parentId.'" caption="'.$val->{$caption}.'" >';
+                $xml	.= '<level'.$val->level.' id="'.$val->id.'" level="'.$val->level.'" pid="'.$val->pid.'" caption="'.$val->{$caption}.'" >';
                 if($subTree) {
                     $xml	.=	$this->_toXmlTree($list2,$caption);
                 }
@@ -218,7 +249,7 @@ class AdminAction extends Action
         $attach	    =   $dao->getById($id);
         $filename   =   $attach->savepath.$attach->savename;
         if(is_file($filename)) {
-            Http::download($filename,$attach->name);
+            Http::download($filename);
         }
     }
 
@@ -268,21 +299,16 @@ class AdminAction extends Action
      * @throws FcsException
      +----------------------------------------------------------
      */
-    function output($dao='',$map='')
+    function output()
     {
         //取得数据列表，并转换为字串
-        if(empty($dao)) {
-        	$dao        = $this->getDaoClass();
-        }
-        if(empty($map) && Session::is_set('_map')) {
-            $map    = Session::get('_map');	
-        }
-        $voList     = $dao->findAll($map);
+        $dao        = $this->getDaoClass();
+        $voList     = $dao->findAll();
         $content    = $voList->toString();
         if(!empty($content)) {
             import("ORG.Net.Http");
             //转换为gb2312编码
-            Http::download('',time().'.csv',auto_charset($content,OUTPUT_CHARSET,'big5'));			
+            Http::download('',time().'.csv',auto_charset($content,OUTPUT_CHARSET,'gb2312'));			
         }else {
             $this->assign('error','目前没有任何数据!');
             $this->forward();
@@ -305,6 +331,26 @@ class AdminAction extends Action
     {
         import("ORG.Util.Image");
         Image::showAdvVerify('gif'); 
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 查看源文件
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws FcsException
+     +----------------------------------------------------------
+     */
+    function source() 
+    {
+        $content = ob_end_clean();
+        header("Content-Type:text/html; charset=utf-8");
+        highlight_file($_GET[VAR_FILE]);
+        exit ;
     }
 
 
@@ -346,21 +392,21 @@ class AdminAction extends Action
      * @throws FcsException
      +----------------------------------------------------------
      */
-    function forbid()
+    function forbid($dao='')
     {
         //禁用指定记录
-        $dao        = $this->getDaoClass();
+        $dao      = !empty($dao)?$dao:$this->getDaoClass();
         $id         = $_GET[$dao->pk];
         //id 安全验证
         $validation = Validation::getInstance();
         if(!$validation->check($id,'/^\d+(\,\d+)?$/')) {
             throw_exception('非法Id');
         }
-        $condition = $dao->pk.' in ('.$id.')'; 
+
+        $condition = $dao->pk.' in ('.$id.')';         
         if($dao->forbid($condition)){
             $this->assign("message",'状态禁用成功！');
-            $this->assign('jumpUrl',"javascript:history.back(-2);");
-            //$this->assign("jumpUrl",$this->getReturnUrl());
+            $this->assign("jumpUrl",$this->getReturnUrl());
         }else {
             $this->assign('error',  '状态禁用失败！');
         }
@@ -379,10 +425,10 @@ class AdminAction extends Action
      * @throws FcsException
      +----------------------------------------------------------
      */
-    function resume()
+    function resume($dao='')
     {
         //恢复指定记录
-        $dao        = $this->getDaoClass();
+        $dao      = !empty($dao)?$dao:$this->getDaoClass();
         $id         = $_GET[$dao->pk];
         //id 安全验证
         $validation = Validation::getInstance();
@@ -392,8 +438,7 @@ class AdminAction extends Action
         $condition = $dao->pk.' in ('.$id.')'; 
         if($dao->resume($condition)){
             $this->assign("message",'状态恢复成功！');
-            $this->assign('jumpUrl',"javascript:history.back(-2);");
-            //$this->assign("jumpUrl",$this->getReturnUrl());
+            $this->assign("jumpUrl",$this->getReturnUrl());
         }else {
             $this->assign('error',  '状态恢复失败！');
         }
@@ -509,14 +554,14 @@ class AdminAction extends Action
     function __destruct()
     {
 		/*
-        if(MODULE_NAME!='log' && Session::is_set(C('USER_AUTH_KEY'))) {
+        if(MODULE_NAME!='log' && Session::is_set(USER_AUTH_KEY)) {
             import('@.Dao.LogDao');
             $dao    =   new LogDao();
             $map    =   new HashMap();
             $map->put('module',MODULE_NAME);
             $map->put('action',ACTION_NAME);
             $map->put('time',time());
-            $map->put('userId',Session::get(C('USER_AUTH_KEY')));
+            $map->put('userId',Session::get(USER_AUTH_KEY));
             $map->put('url',$_SERVER["PHP_SELF"]);
             $dao->add($map);
         }*/

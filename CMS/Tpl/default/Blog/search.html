@@ -1,0 +1,17 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="main_container">
+	<div id="left_content">
+	<h2>搜索到{$list.size()}条记录</h2>
+	<ul>
+	<volist id="vo" name="list">
+	<li><equal name="vo" property="type" value="2" ><A HREF="__APP__/page/index/id/{$vo.id}"></equal><equal name="vo" property="type" value="1" ><A HREF="__URL__/article/id/{$vo.id}"></equal>{$vo.title|ubb}</A>
+	</volist>
+	</ul>
+    <present name="page"><div class="page">{$page}</div></present>
+
+</div>
+<include file="../Public/middle" />
+<include file="../Public/right" />   
+</div>
+<include file="../Public/footer" />            

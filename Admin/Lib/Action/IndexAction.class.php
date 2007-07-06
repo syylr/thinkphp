@@ -1,6 +1,6 @@
 <?php 
 // +----------------------------------------------------------------------+
-// | ThinkPHP                                                             |
+// | ThinkCMS                                                             |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
 // +----------------------------------------------------------------------+
@@ -16,8 +16,16 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: IndexAction.class.php 78 2007-04-01 04:29:15Z liu21st $
+// $Id: IndexAction.class.php 2 2007-01-03 07:52:09Z liu21st $
 
+/**
+ +------------------------------------------------------------------------------
+ * CMS 首页管理
+ +------------------------------------------------------------------------------
+ * @author liu21st <liu21st@gmail.com>
+ * @version  $Id: IndexAction.class.php 2 2007-01-03 07:52:09Z liu21st $
+ +------------------------------------------------------------------------------
+ */
 import('@.Action.AdminAction');
 /**
  +------------------------------------------------------------------------------
@@ -46,8 +54,49 @@ class IndexAction extends AdminAction
      */
     function index() 
     {
+
 		//最近登录时间
 		$this->assign('lastLoginTime',Session::get('lastLoginTime'));
+
+        // 保存文章
+        $dao = D("ArticleDao");
+        $list  = $dao->findAll("status=1 and type=1");
+        $this->assign("saveArtList",$list);
+
+        $list  = $dao->findAll("status=2 and type=1");
+        $this->assign("verifyArtList",$list);
+        $this->display();
+        return ;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 主持人登录房间 
+     * 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws FcsException
+     +----------------------------------------------------------
+     */
+    function loginRoom() 
+    {
+        //检查主持人是否在线
+        $room    = $_POST['roomId'];
+        $girlId   = Session::get('girlId');
+        import('ORG.Crypt.Base64');
+        // 登录安全码
+        // 加密传值，保证在没有前台登录认证情况下的安全
+        $auth   = base64_encode(md5(Session::get(USER_AUTH_KEY)).Base64::encrypt($girlId,'_fcs_base64').md5($girlId));
+        $url  =  __ROOT__."/Chat/index.php/Chat/index/room/{$room}/auth/{$auth}";
+        exit($url);
+        //redirect (__ROOT__."/Chat/index.php/Chat/index/room/{$room}/auth/{$auth}");
+    }
+
+    function login() 
+    {
         $this->display();
         return ;
     }

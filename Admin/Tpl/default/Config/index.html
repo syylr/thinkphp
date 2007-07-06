@@ -1,0 +1,134 @@
+{// 引入标签库 }
+<tagLib name="html" />
+{// 加载头部公共文件 }
+<include file="../Public/header" />
+<!-- 菜单区域  -->
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<!-- 主页面开始 -->
+<div id="main" class="main" >
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function showList(){
+	if ($('switch').value =='>>高级模式')
+	{
+		$('list').style.display = 'block';
+		$('config').style.display = 'none';
+		$('switch').value='<<普通模式';
+	}else {
+		$('list').style.display = 'none';
+		$('config').style.display = 'block';
+		$('switch').value='>>高级模式';
+	}
+
+}
+//-->
+</SCRIPT>
+<!-- 主体内容  -->
+<div class="content" >
+<div style="float:left;width:65%">
+<fieldset >
+<legend >配置 </legend>
+<INPUT TYPE="button" class="button medium hMargin fRig"  id="switch" onclick="showList()" value=">>高级模式" />
+<BR class="cBoth">
+<div id="config">
+<div id="result" class="result none"></div>
+<FORM METHOD=POST id="form1" >
+<TABLE cellpadding=3 cellspacing=3>
+<volist name="list" id="vo">
+<TR>
+	<TD class="tRight tTop" >{$vo.title}：</TD>
+	<TD class="tLeft" >
+	<equal name="vo" property="type" value="0"><INPUT TYPE="text" class="medium " NAME="{$vo.name}" value="{$vo.value}"></equal>
+	<equal name="vo" property="type" value="1"><INPUT TYPE="text" class="medium " check="Number" warning="{$vo.title}必须是数字" NAME="{$vo.name}" value="{$vo.value}"></equal>
+	<equal name="vo" property="type" value="2">
+	<SELECT NAME="{$vo.name}" class="small">
+	<?php if (!empty($vo->extra)) { $option	=	explode(',',$vo->extra);?>
+	<option <?php if ($vo->value=='0'){ ?>selected<?php };?> value="0">{$option[0]}</option>
+	<option <?php if ($vo->value=='1'){ ?>selected<?php };?> value="1">{$option[1]}</option>
+	<?php }; ?>
+	</SELECT>
+	</equal>
+	<equal name="vo" property="type" value="3"><TEXTAREA style="overflow:auto" class="large " NAME="{$vo.name}" ROWS="5" COLS="35">{$vo.value}</TEXTAREA></equal>
+	<equal name="vo" property="type" value="4">
+	<SELECT NAME="{$vo.name}" class="medium">
+	<?php if (!empty($vo->extra)) { $option	=	explode(',',$vo->extra);?>
+	<iterate name="option" id="extra">
+	<option value="{$extra}">{$extra}</option>
+	</iterate>
+	<?php }; ?>
+	</SELECT>
+	</equal>
+	</TD>
+	<TD class="tLeft" ><div style="color:#3366FF;">{$vo.remark}</div></TD>
+</TR>
+</volist>
+<TR>
+	<TD ></TD>
+	<TD class="center" colspan=2>
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+	<INPUT TYPE="button" value="保 存" onclick="sendForm('form1','__URL__/saveConfig/','tips')" class="button small">
+	<INPUT TYPE="reset" class="button small" value="重 置" >
+	</TD>
+</TR>
+</TABLE>
+</FORM>
+</div>
+<div id="list" class="none">
+<!--  功能操作区域  -->
+<div class="operate" >
+<input type="button" value="新 增" onclick="$('subFrame').src='__URL__/sadd/'" class="button small hMargin fLeft " />
+<input type="button" value="删 除" onclick="del()" class="button hMargin small fLeft " />
+
+<!-- 查询区域 -->
+<div class="fRig">
+<FORM METHOD=POST ACTION="__URL__">
+<div class="fLeft"><span id="key"><INPUT TYPE="text" NAME="name" title="变量查询" class="medium" ></span></div>
+<input type="submit" value="查 询" class="button hMargin small fLeft " />
+<input type="button" value="高 级" id="showText" onclick="showHideSearch()" class="button hMargin small fLeft " />
+</div>
+<!-- 高级查询区域 -->
+<div  id="searchM" class=" none search cBoth" >
+<TABLE cellpadding="1" cellspacing="2" width="100%">
+<TR>
+	<TD class="tRight">名称：</TD>
+	<TD><INPUT TYPE="text" NAME="title" class="medium " ></TD>
+	<TD class="tRight">备注：</TD>
+	<TD><INPUT TYPE="text" NAME="remark" class="medium " ></TD>
+	<TD class="tRight">分组：</TD>
+	<TD><INPUT TYPE="text" NAME="group" class="medium " ></TD>
+	<TD class="tRight">类型：</TD>
+	<TD><SELECT class="small bLeft" NAME="type">
+	<option value="">选择</option>
+	<option value="0">字符型</option>
+	<option value="1">数字型</option>
+	<option value="2">布尔型</option>
+	<option value="3">文本型</option>
+	<option value="4">枚举型</option>
+	</SELECT></TD>
+</TR>
+</TABLE>
+</div>
+
+</FORM>
+</div>
+<!-- 功能操作区域结束 -->
+
+<!-- 列表显示区域  -->
+<div class="list" >
+<html:list id="checkList" name="config" style="list" checkbox="true" datasource="list" show="id:编号|10%,name:配置变量:sedit,title:配置名称,value:配置值"  /> 
+</div>
+<!-- 列表显示区域结束 -->
+</div>
+<!--  分页显示区域 -->
+<div class="page">{$page}</div>
+</fieldset>
+</div>
+<div style="width:30%;margin-left:8px;float:right;">
+<iframe src="__URL__/sadd/" width="100%" id="subFrame" frameborder="0" scrolling="no" height="580"></iframe>
+</div>
+</div>
+<!-- 主体内容结束 -->
+</div>
+<!-- 主页面结束 -->
+{// 加载尾部公共文件 }
+<include file="../Public/footer" />

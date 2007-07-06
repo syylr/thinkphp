@@ -9,23 +9,20 @@
 
 <!-- 主体内容  -->
 <div class="content" >
-<div class="title">用户列表</div>
+<div style="float:left;width:65%">
+<fieldset >
+<legend >用户列表</legend>
 <!--  功能操作区域  -->
 <div class="operate" >
-<html:imageBtn name="add" value="新增" click="add()" style="impBtn hMargin fLeft shadow" />
-<html:imageBtn name="edit" value="编辑" click="edit()" style="impBtn hMargin fLeft shadow" />
-<html:imageBtn name="delete" value="删除" click="del()" style="impBtn hMargin fLeft shadow" />
-<html:imageBtn name="sort" value="导出" click="WriteTo('checkList')" style="impBtn hMargin fLeft shadow" />
-<div class="fLeft"><SELECT class="small bLeft" NAME="outputType">
-	<option value="EXCEL">EXCEL</option>
-	<option value="WORD">WORD</option>
-	</SELECT></div>
+<input type="button" value="新 增" onclick="$('subFrame').src='__URL__/sadd/'" class="button small hMargin fLeft " />
+<input type="button" value="删 除" onclick="del()" class="button hMargin small fLeft " />
+
 <!-- 查询区域 -->
 <div class="fRig">
 <FORM METHOD=POST ACTION="__URL__">
 <div class="fLeft"><span id="key"><INPUT TYPE="text" NAME="name" title="用户名查询" class="medium" ></span></div>
-<html:imageBtn type="submit" name="search" value="查询" style="impBtn hMargin fLeft shadow" />
-<html:imageBtn name="adv" value="高级" id="showText" click="showHideSearch()" style="impBtn hMargin fLeft shadow" />
+<input type="submit" value="查 询" class="button hMargin small fLeft " />
+<input type="button" value="高 级" id="showText" onclick="showHideSearch()" class="button hMargin small fLeft " />
 </div>
 <!-- 高级查询区域 -->
 <div  id="searchM" class=" none search cBoth" >
@@ -33,18 +30,14 @@
 <TR>
 	<TD class="tRight">昵称：</TD>
 	<TD><INPUT TYPE="text" NAME="nickname" class="medium " ></TD>
+
+	<TD class="tRight">邮箱：</TD>
+	<TD><INPUT TYPE="text" NAME="email" class="medium " ></TD>
 	<TD class="tRight">状态：</TD>
 	<TD><SELECT class="small bLeft" NAME="status">
 <option value="">选择</option>
 	<option value="1">启用</option>
 	<option value="0">禁用</option>
-	</SELECT></TD>
-	<TD class="tRight">类型：</TD>
-	<TD><SELECT class="medium bLeft" NAME="type">
-<option value="">选择</option>
-<volist name="userType" id="userType" >
-<option value="{$userType.id}">{$userType.name}</option>
-</volist>
 	</SELECT></TD>
 </TR>
 </TABLE>
@@ -56,11 +49,16 @@
 
 <!-- 列表显示区域  -->
 <div class="list" >
-<div id="result" class="result none"></div><html:list id="checkList" name="user" style="list" checkbox="true" action="true" datasource="list" show="id:编号|10%,name:用户名:edit,nickname:昵称,verify:验证码,type|getUserType:类型,status|getStatus:状态" actionlist="forbid|resume:禁用|恢复" /> 
+<div id="result" class="result none"></div><html:list id="checkList" name="user" style="list" checkbox="true" action="true" datasource="list" show="id:编号|10%,name:用户名:sedit,nickname:昵称,id|getUserPostCount:文章,status|getStatus:状态" actionlist="forbid|resume:禁用|恢复" /> 
 </div>
 <!--  分页显示区域 -->
 <div class="page">{$page}</div>
 <!-- 列表显示区域结束 -->
+</fieldset>
+</div>
+<div style="width:30%;margin-left:8px;float:right;">
+<iframe src="__URL__/sadd/" width="100%" id="subFrame" frameborder="0" scrolling="no" height="450"></iframe>
+</div>
 </div>
 <!-- 主体内容结束 -->
 </div>

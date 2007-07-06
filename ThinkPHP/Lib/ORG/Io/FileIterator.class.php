@@ -16,18 +16,18 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: FileIterator.class.php 11 2007-01-04 03:57:34Z liu21st $
 
 if(version_compare(PHP_VERSION, '5.0.0', '<')){
     
-    import("Think.Util.ListIterator");
-    import("Think.Util.ArrayObject");
+    import("FCS.Util.ListIterator");
+    import("FCS.Util.ArrayObject");
     /**
      +------------------------------------------------------------------------------
      * 文件遍历类 PHP4实现
      +------------------------------------------------------------------------------
      * @author    liu21st <liu21st@gmail.com>
-     * @version   $Id$
+     * @version   $Id: FileIterator.class.php 11 2007-01-04 03:57:34Z liu21st $
      +------------------------------------------------------------------------------
      */
     class FileIterator extends ListIterator
@@ -104,6 +104,6 @@ if(version_compare(PHP_VERSION, '5.0.0', '<')){
 
 }else {
     //引入PHP5支持的FileIterator类
-	import("Think.Util._FileIterator");
+	import("FCS.Util._FileIterator");
 }
 ?>

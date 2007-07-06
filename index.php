@@ -16,33 +16,40 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: index.php 78 2007-04-01 04:29:15Z liu21st $
+// $Id: index.php 11 2007-01-04 03:57:34Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
  * 项目入口文件
  +------------------------------------------------------------------------------
  * @package    Core
- * @link       http://www.topthink.com.cn
+ * @link       http://www.fcs.org.cn
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id: index.php 78 2007-04-01 04:29:15Z liu21st $
+ * @version    $Id: index.php 11 2007-01-04 03:57:34Z liu21st $
  +------------------------------------------------------------------------------
  */
-define('THINK_PATH', './ThinkPHP');
+$GLOBALS['_beginTime'] = array_sum(split(' ', microtime()));
+define('FCS_PATH', './ThinkPHP');
 define('WEB_ROOT','.');
 
 //定义项目名称，如果不定义，默认为入口文件名称
-define('APP_NAME', 'HOME');
-define('APP_PATH', './HOME');
-require('./config.php');
-// 加载框架公共入口文件 
-require(THINK_PATH."/ThinkPHP.php");
-
+define('APP_NAME', 'CMS');
+define('APP_PATH', './CMS');
+// 加载配置文件 
+require("./config.php"); 
+// 加载FCS框架公共入口文件 
+require("./ThinkPHP/ThinkPHP.php");
 //实例化一个网站应用实例
-$App = App::getInstance();
 
-// 执行应用程序
-$App->run();
+$App = new App(); 
+//应用程序初始化
+$App->init();
 
+//启动应用程序
+$App->exec();
+
+if(SHOW_RUN_TIME) {
+echo '<div style="text-align:center;width:100%">Process: '.number_format((array_sum(split(' ', microtime())) - $GLOBALS['_beginTime']), 6).'s</div>';
+}
 ?>

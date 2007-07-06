@@ -16,14 +16,14 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Image.class.php 11 2007-01-04 03:57:34Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
  * 图像操作类库
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Image.class.php 11 2007-01-04 03:57:34Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Image extends Base
@@ -58,7 +58,7 @@ class Image extends Base
     function getImageInfo($img) {
         $imageInfo = getimagesize($img);
         if( $imageInfo!== false) {
-            $imageType = strtolower(substr(image_type_to_extension($imageInfo[2]),1));
+            $imageType = image_type_to_extension($imageInfo[2]);
             $imageSize = filesize($img);
             $info = array(
                 "width"=>$imageInfo[0],
@@ -101,10 +101,6 @@ class Image extends Base
                     $tc  = imagecolorallocate($im, 0, 0, 0);
                     imagestring($im, 3, 5, 5, $text, $tc);
                 }
-                if($info['type']=='png' || $info['type']=='gif') {
-                imagealphablending($im, FALSE);//取消默认的混色模式
-                imagesavealpha($im,TRUE);//设定保存完整的 alpha 通道信息                	
-                }
                 Header("Content-type: ".$info['mime']);
                 $ImageFun($im);        	            	
                 @ImageDestroy($im);
@@ -139,20 +135,18 @@ class Image extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
-    function thumb($image,$type='',$filename='',$maxWidth=200,$maxHeight=50,$interlace=true,$suffix='_thumb') 
+    function thumb($image,$type='',$filename='',$maxWidth=200,$maxHeight=50,$position='',$interlace=true) 
     {
         // 获取原图信息
         $info  = Image::getImageInfo($image); 
          if($info !== false) {
             $srcWidth  = $info['width'];
             $srcHeight = $info['height'];
-            $pathinfo = pathinfo($image);
-            $type =  $pathinfo['extension'];
             $type = empty($type)?$info['type']:$type;
-			$type = strtolower($type);
+            $position   = empty($position)?THUMB_DIR:$position;
             $interlace  =  $interlace? 1:0;
             unset($info);
             $scale = min($maxWidth/$srcWidth, $maxHeight/$srcHeight); // 计算缩放比例
@@ -176,28 +170,16 @@ class Image extends Base
                 ImageCopyResampled($thumbImg, $srcImg, 0, 0, 0, 0, $width, $height, $srcWidth,$srcHeight); 
             else
                 ImageCopyResized($thumbImg, $srcImg, 0, 0, 0, 0, $width, $height,  $srcWidth,$srcHeight); 
-            if('gif'==$type || 'png'==$type) {
-                //imagealphablending($thumbImg, FALSE);//取消默认的混色模式
-                //imagesavealpha($thumbImg,TRUE);//设定保存完整的 alpha 通道信息
-                $background_color  =  ImageColorAllocate($thumbImg,  0,255,0);  //  指派一个绿色  
-				imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，若注释掉该行则输出绿色的图 
-            }
 
             // 对jpeg图形设置隔行扫描
-            if('jpg'==$type || 'jpeg'==$type) 	imageinterlace($thumbImg,$interlace);
+            if('jpg'==$type) 	imageinterlace($thumbImg,$interlace);
 
-            //$gray=ImageColorAllocate($thumbImg,255,0,0);
-            //ImageString($thumbImg,2,5,5,"ThinkPHP",$gray);
             // 生成图片
             $imageFun = 'image'.($type=='jpg'?'jpeg':$type);
-            $filename  = empty($filename)? substr($image,0,strrpos($image, '.')).$suffix.'.'.$type : $filename;
-
-            $imageFun($thumbImg,$filename); 
+            $filename  = empty($filename)? basename($image,'.'.$type).'_thumb.' : $filename;
+            $imageFun($thumbImg,$position.$filename.$type); 
             ImageDestroy($thumbImg);
-            ImageDestroy($srcImg);
-            return $filename;
          }
-         return false;
     }
 
     /**
@@ -216,7 +198,7 @@ class Image extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function buildImageVerify($length=4,$mode=1,$type='png',$width=48,$height=22,$verifyName='verify') 
@@ -253,48 +235,6 @@ class Image extends Base
 
     /**
      +----------------------------------------------------------
-     * 把图像转换成字符显示
-     * 
-     +----------------------------------------------------------
-     * @static
-     * @access public 
-     +----------------------------------------------------------
-     * @param string $image  要显示的图像
-     * @param string $type  图像类型，默认自动获取
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-    function showASCIIImg($image,$type='') 
-    {
-        $info  = Image::getImageInfo($image); 
-        if($info !== false) {
-            $type = empty($type)?$info['type']:$type;
-            unset($info);
-            // 载入原图
-            $createFun = 'ImageCreateFrom'.($type=='jpg'?'jpeg':$type);
-            $im     = $createFun($image); 
-            $dx = imagesx($im);  
-            $dy = imagesy($im);  
-            $out   =  '<a href=""><span style="padding:0;margin:0;line-height:100%;font-size:1px;">';
-            for($y = 0; $y < $dy; $y++) {      
-              for($x=0; $x < $dx; $x++) {          
-                  $col = imagecolorat($im, $x, $y);          
-                  $rgb = imagecolorsforindex($im,$col);          
-                  $out .= sprintf('<font color=#%02x%02x%02x>*</font>',$rgb['red'],$rgb['green'],$rgb['blue']);      
-             }      
-             $out .= "<br>\n";  
-            }  
-            $out .=  '</span></a>';
-            imagedestroy($im);   
-            return $out;
-        }
-        return false;
-    }
-    /**
-     +----------------------------------------------------------
      * 生成高级图像验证码
      * 
      +----------------------------------------------------------
@@ -307,9 +247,48 @@ class Image extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
+    function buildAdvImageVerify($key,$type='png',$width=100,$height=45) 
+    {
+        $rand = build_count_rand(10,1,3);
+        $verify  =  '';
+        for($i=0; $i<strlen($key); $i++) {
+        	$verify .=  $rand[$key[$i]];
+        }
+        $_SESSION['verify']= md5($verify);
+        $randval   =  implode('',$rand);
+        $width = ($length*9+10)>$width?$length*9+10:$width;
+        if ( $type!='gif' && function_exists('imagecreatetruecolor')) {
+            $im = @imagecreatetruecolor($width,$height);
+        }else {
+            $im = @imagecreate($width,$height);
+        }
+        $r = Array(225,255,255,223);
+        $g = Array(225,236,237,255);
+        $b = Array(225,236,166,125);
+        $key = mt_rand(0,3);
+
+        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]);    //背景色（随机）
+        $borderColor = ImageColorAllocate($im, 0, 0, 0);                    //边框色
+        $pointColor = ImageColorAllocate($im, 0, 255, 255);                    //点颜色
+
+        @imagefilledrectangle($im, 0, 0, $width - 1, $height - 1, $backColor);
+        @imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
+        $stringColor1 = ImageColorAllocate($im, 255,51,153);
+        $stringColor2 = ImageColorAllocate($im, 65,65,65);
+        for($i=0;$i<=10;$i++){
+            $pointX = mt_rand(2,$width-2);
+            $pointY = mt_rand(2,$height-2);
+            @imagesetpixel($im, $pointX, $pointY, $pointColor);
+        }
+
+        @imagestring($im, 5, 5, 3, $randval, $stringColor1);
+        @imagestring($im, 5, 5, 25, '0123456789', $stringColor2);
+        Image::output($im,$type);
+    }
+
     function showAdvVerify($type='png',$width=180,$height=40) 
     {
         $verifyCodeRandArray = build_count_rand(10,1,3);
@@ -321,31 +300,31 @@ class Image extends Base
         $letter = implode(" ",$verifyCode);
         $_SESSION['verifyCode'] = $verifyCode;
 
-        $im = imagecreate($width,$height);
+        $im = @imagecreate($width,$height);
         $r = Array(225,255,255,223);
         $g = Array(225,236,237,255);
         $b = Array(225,236,166,125);
 
         $key = rand(0,3);
 
-        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]); 
-        $borderColor = ImageColorAllocate($im, 0, 0, 0);	
+        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]); //璉春︹繦诀
+        $borderColor = ImageColorAllocate($im, 0, 0, 0);				  //娩︹
 
         imagefilledrectangle($im, 0, 0, $width - 1, $height - 1, $backColor);
-        imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
+        @imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
         $stringColor1 = ImageColorAllocate($im, 255,rand(0,100), rand(0,100));
         $stringColor2 = ImageColorAllocate($im, rand(0,100), rand(0,100), 255);
         for($i=0;$i<=50;$i++){
             $pointX = rand(4,$width-4);
             $pointY = rand(16,$height-4);
-            imagesetpixel($im, $pointX, $pointY, $stringColor2);
+            @imagesetpixel($im, $pointX, $pointY, $stringColor2);
         }
 
         imagestring($im, 5, 5, 1, "0 1 2 3 4 5 6 7 8 9", $stringColor1);
         imagestring($im, 5, 5, 20, $letter, $stringColor2);
         Image::output($im,$type);
+	
     }
-
     /**
      +----------------------------------------------------------
      * 生成UPC-A条形码
@@ -360,7 +339,7 @@ class Image extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function UPCA($code,$type='png',$lw=2,$hi=100) { 
@@ -392,11 +371,11 @@ class Image extends Base
         $bars.=$ends; 
         /* Generate the Barcode Image */ 
         if ( $type!='gif' && function_exists('imagecreatetruecolor')) {
-            $im = imagecreatetruecolor($lw*95+30,$hi+30);
+            $im = @imagecreatetruecolor($lw*95+30,$hi+30);
         }else {
-            $im = imagecreate($lw*95+30,$hi+30);
+            $im = @imagecreate($lw*95+30,$hi+30);
         }
-        $fg = ImageColorAllocate($im, 0, 0, 0); 
+        $fg = ImageColorAllocate($img, 0, 0, 0); 
         $bg = ImageColorAllocate($im, 255, 255, 255); 
         ImageFilledRectangle($im, 0, 0, $lw*95+30, $hi+30, $bg); 
         $shift=10; 
@@ -421,7 +400,7 @@ class Image extends Base
         Header("Content-type: image/".$type);
         $ImageFun='Image'.$type;
         $ImageFun($im);
-        ImageDestroy($im);  	
+        @ImageDestroy($im);  	
     }
 
  

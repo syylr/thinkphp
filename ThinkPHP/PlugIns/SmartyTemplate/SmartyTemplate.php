@@ -1,16 +1,15 @@
 <?php 
 /*
 Plugin Name: SmartyTemplate
-Template URI: http://smarty.php.net
+Plugin URI: http://fcs.org.cn
 Description: Smarty模版引擎插件
-Author: 流年 修正 云中雾
+Author: 流年
 Version: 1.0
 Author URI: http://blog.liu21st.com/
-*/
+*/ 
 
-function SmartyTemplate($templateFile,$templateVar,$charset,$varPrefix='')
+function SmartyTemplate($templateFile,$templateVar,$charset,$varPrefix='') 
 {
-    $templateFile=substr($templateFile,strlen(TMPL_PATH));
         include_once("Smarty.class.php");
         $tpl = new Smarty();
         $tpl->caching = true;
@@ -21,7 +20,7 @@ function SmartyTemplate($templateFile,$templateVar,$charset,$varPrefix='')
         $tpl->display($templateFile);
         return ;
 }
-if('SMARTY'== strtoupper(C('TMPL_ENGINE_TYPE'))) {
-    add_compiler('Smarty','SmartyTemplate');
+if('SMARTY'== strtoupper(TMPL_ENGINE_TYPE)) {
+    add_compiler('SMARTY','SmartyTemplate');
 }
 ?>

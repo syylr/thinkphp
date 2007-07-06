@@ -1,6 +1,6 @@
 <?php 
 // +----------------------------------------------------------------------+
-// | ThinkPHP                                                             |
+// | ThinkCMS                                                             |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
 // +----------------------------------------------------------------------+
@@ -16,18 +16,18 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: PublicAction.class.php 135 2007-06-08 09:58:45Z liu21st $
+// $Id: PublicAction.class.php 2 2007-01-03 07:52:09Z liu21st $
 
-import('@.Action.AdminAction');
 /**
  +------------------------------------------------------------------------------
- * 公共模块
+ * CMS 公共管理
  +------------------------------------------------------------------------------
- * @package   core
- * @author    liu21st <liu21st@gmail.com>
- * @version   $Ver$
+ * @author liu21st <liu21st@gmail.com>
+ * @version  $Id: PublicAction.class.php 2 2007-01-03 07:52:09Z liu21st $
  +------------------------------------------------------------------------------
  */
+import('@.Action.AdminAction');
+
 class PublicAction extends AdminAction
 {//类定义开始
 
@@ -83,7 +83,125 @@ class PublicAction extends AdminAction
         return true;
     }
 
+    function install() 
+    {
+    	$this->display();
+    }
 
+    function installok() 
+    {
+        $db_config = array (
+            'dbms'     => $_POST['db_type'], 
+            'username' => $_POST['db_username'], 
+            'password' => $_POST['db_password'], 
+            'hostname' => $_POST['db_hostname'], 
+            'hostport' => $_POST['db_hostport'], 
+            'database' => $_POST['db_database']
+        );
+        // 创建数据表
+		$table_user_query = "CREATE TABLE {$db_prefix}user (
+							  id int(11) unsigned NOT NULL auto_increment,
+							  name varchar(30) NOT NULL default '',
+							  nickname varchar(50) NOT NULL default '',
+                              password varchar(32) NOT NULL default '',
+							  email VARCHAR(255) NOT NULL default '',
+							  url varchar(255) NOT NULL default '',
+							  verify varchar(8) NOT NULL default '',
+							  rtime int(11) unsigned NOT NULL default 0,
+							  ltime int(11) unsigned NOT NULL default 0,
+                              guid varchar(32) NOT NULL default '',
+							  status tinyint(1) unsigned NOT NULL default 0,
+							  PRIMARY KEY  (id)
+							  ) TYPE=InnoDB DEFAULT CHARSET=utf8 ";
+        $result  =  $db->execute($table_user_query);
+        if(false === $result) {
+        	$this->error('数据库错误！');
+        }
+
+		$table_category_query = "CREATE TABLE {$db_prefix}category (
+							  id mediumint(5) unsigned NOT NULL auto_increment,
+							  name varchar(30) NOT NULL default '',
+							  title varchar(50) NOT NULL default '',
+                              remark varchar(255) NOT NULL default '',
+							  seqno mediumint(5) unsigned NOT NULL default 0,
+							  pid mediumint(5) unsigned NOT NULL default 0,
+							  level smallint(2) unsigned NOT NULL default 0,
+							  status tinyint(1) unsigned NOT NULL default 0,
+							  PRIMARY KEY  (id)
+							  ) TYPE=InnoDB DEFAULT CHARSET=utf8 ";
+        $result  =  $db->execute($table_category_query);
+        if(false === $result) {
+        	$this->error('数据库错误！');
+        }
+
+		$table_comment_query = "CREATE TABLE {$db_prefix}comment (
+							  id mediumint(5) unsigned NOT NULL auto_increment,
+							  articleid int(11) unsigned NOT NULL default 0,
+							  userid mediumint(5) unsigned NOT NULL default 0,
+                              author varchar(50) NOT NULL default '',
+							  email varchar(255) NOT NULL default '',
+							  url varchar(255) NOT NULL default '',
+							  ip varchar(25) NOT NULL default '',
+							  content text NOT NULL default '',
+							  ctime int(11) unsigned  NOT NULL default 0,      
+							  agent int(11) unsigned NOT NULL default 0,                                  
+							  status tinyint(1) unsigned NOT NULL default 0,
+							  PRIMARY KEY  (id)
+							  ) TYPE=InnoDB DEFAULT CHARSET=utf8 ";
+        $result  =  $db->execute($table_comment_query);
+        if(false === $result) {
+        	$this->error('数据库错误！');
+        }
+
+		$table_board_query = "CREATE TABLE {$db_prefix}board (
+							  id mediumint(5) unsigned NOT NULL auto_increment,
+							  title varchar(255) NOT NULL default '',
+							  content text  NOT NULL default '',
+                              btime int(11) unsigned NOT NULL default 0,
+							  etime int(11) unsigned NOT NULL default 0,
+							  status tinyint(1) unsigned NOT NULL default 0,
+							  PRIMARY KEY  (id)
+							  ) TYPE=InnoDB DEFAULT CHARSET=utf8 ";
+        $result  =  $db->execute($table_board_query);
+        if(false === $result) {
+        	$this->error('数据库错误！');
+        }
+
+		$table_article_query = "CREATE TABLE {$db_prefix}article (
+							  id int(11) unsigned NOT NULL auto_increment,
+							  name varchar(15) NOT NULL default '',
+							  userid mediumint(5) unsigned NOT NULL default 0,
+                              title varchar(255) NOT NULL default '',
+							  content text NOT NULL default '',
+							  password varchar(32) NOT NULL default '',
+							  ctime int(11) unsigned NOT NULL default 0,
+							  atime int(11) unsigned NOT NULL default 0,
+							  mtime int(11) unsigned NOT NULL default 0,
+							  status tinyint(1) unsigned NOT NULL default 0,
+							  isrecommend tinyint(1) unsigned NOT NULL default 0,
+                              istop tinyint(1) unsigned unsigned NOT NULL default 0,
+                              commentstatus tinyint(1) unsigned NOT NULL default 0,
+                              guid varchar(50) NOT NULL default '',
+							  readcount mediumint(5) unsigned NOT NULL default 0,
+                              commentcount mediumint(5) unsigned NOT NULL default 0,
+							  PRIMARY KEY  (id)
+							  ) TYPE=InnoDB DEFAULT CHARSET=utf8 ";
+        $result  =  $db->execute($table_article_query);
+        if(false === $result) {
+        	$this->error('数据库错误！');
+        }
+        $admin =  array();
+        $admin['name']    = $_POST['admin_username'];
+        $admin['password']    =  $_POST['admin_password'];
+        $admin['status']          = 1;
+        $admin['rtime']          =  time();
+        $admin['nickname']    =  'administrator';
+        $result  =  $db->add($admin);
+        if(false !== $result) {
+        	$this->success('安装成功！');
+        }
+			      	
+    }
     /**
      +----------------------------------------------------------
      * 登录操作
@@ -98,7 +216,7 @@ class PublicAction extends AdminAction
      */
     function login() 
     {
-        if(!Session::is_set(C('USER_AUTH_KEY'))) {
+        if(!Session::is_set(USER_AUTH_KEY)) {
             $this->display();
             return ;
         }else {
@@ -111,6 +229,7 @@ class PublicAction extends AdminAction
 		//如果通过认证跳转到首页
 		redirect(__APP__);
 	}
+
 
     /**
      +----------------------------------------------------------
@@ -126,21 +245,14 @@ class PublicAction extends AdminAction
      */
     function logout() 
     {
-        if(Session::is_set(C('USER_AUTH_KEY'))) {
-            
-			$loginId	=	Session::get('loginId');
+        if(Session::is_set(USER_AUTH_KEY)) {
             Session::clear();
-			//保存登出记录
-			$loginDao   =   D("Login");
-			$map	=	new HashMap();
-            $map->put('outTime',time());
-			$map->put('id',$loginId);
-            $loginDao->save($map);
             $this->assign("message",'登出成功！');
             $this->assign("jumpUrl",__URL__.'/login/');
         }else {
             $this->assign('error', '已经登出！');
         }
+
         $this->forward();
     }
 
@@ -159,47 +271,45 @@ class PublicAction extends AdminAction
      */
     function checkLogin() 
     {
+        import('FCS.Util.HashMap');
         //生成认证条件
-        $map   =   new HashMap();
+        $map            =   new HashMap();
         $map->put("name",$_POST['name']);
-        $map->put("status",array('gt',0));
+
+        //检查密码加密方式
+        $encoder = AUTH_PWD_ENCODER;
+        if(!empty($encoder) && function_exists($encoder)) {
+            $map->put("password",$encoder($_POST['password']));
+        }
+        else {
+        	$map->put("password",$_POST['password']);
+        }
+        $map->put("status",1);
         $verifyCodeStr   = $_POST['verify'];
         $verifyCodeNum   = array_flip($_SESSION['verifyCode']);
         for($i=0; $i<strlen($_POST['verify']); $i++) {
         	$verify .=  $verifyCodeNum[$verifyCodeStr[$i]];
         }
+        $map->put("verify",$verify);
         $authInfo = RBAC::authenticate($map);
+
         //使用用户名、密码和状态的方式进行认证
         if(false === $authInfo) {
-            $this->error('用户名不存在或已禁用！');
+            $this->assign('error','登录失败，请检查用户名、密码和验证码！');
         }else {
-            if($authInfo->password != md5($_POST['password'])) {
-            	$this->error('密码错误！');
-            }
-            if($authInfo->verify !== $verify) {
-            	$this->error('验证码错误！');
-            }
-            Session::set(C('USER_AUTH_KEY'),$authInfo->id);
+            Session::set(USER_AUTH_KEY,$authInfo->id);
             Session::set('loginUserName',$authInfo->nickname);
-            Session::set('lastLoginTime',$authInfo->lastLoginTime);
+            Session::set('lastLoginTime',$authInfo->lTime);
             if($authInfo->name=='admin') {
             	Session::setLocal('administrator',true);
             }
             //保存登录时间
-            $dao    =   D("User");
+            import('@.Dao.UserDao');
+            $dao    =   new UserDao();
             $map->clear();
             $map->put('id',$authInfo->id);
-            $map->put('lastLoginTime',time());
+            $map->put('lTime',time());
             $dao->save($map);
-			//保存登录日志
-			$loginDao   =   D("Login");
-            $map->clear();
-            $map->put('userId',$authInfo->id);
-            $map->put('inTime',time());
-            $map->put('loginIp',$_SERVER["REMOTE_ADDR"]);
-            $map->put('type',$authInfo->type);
-            $loginId    =   $loginDao->add($map);
-            Session::set('loginId',$loginId);
             RBAC::saveAccessList();
             $this->assign("message",'登录成功！');
             $this->assign("jumpUrl",__APP__);
@@ -223,7 +333,19 @@ class PublicAction extends AdminAction
      */
 	function change() 
 	{
-        $dao = D("User");
+		if(Session::is_set('agencyId')) {
+			import('@.Dao.AgencyDao');
+			$dao = new AgencyDao();
+		}elseif(Session::is_set('providerId') || Session::is_set('dealerId')) {
+			import('@.Dao.DealerDao');
+			$dao = new DealerDao();
+		}elseif(Session::is_set('girlId')) {
+			import('@.Dao.GirlDao');
+			$dao = new GirlDao();
+		}elseif(Session::is_set('userId')) {
+			import('@.Dao.UserDao');
+			$dao = new UserDao();
+		}	
 		$this->_update($dao);
 	}
 
@@ -241,7 +363,7 @@ class PublicAction extends AdminAction
      */
     function password() 
     {
-        if(Session::is_set(C('USER_AUTH_KEY'))) {
+        if(Session::is_set(USER_AUTH_KEY)) {
             $this->assign("login",true);
         }
     	$this->display();
@@ -263,7 +385,7 @@ class PublicAction extends AdminAction
     function changePwd() 
     {
         //对表单提交处理进行处理或者增加非表单数据
-        $encoder = C('AUTH_PWD_ENCODER');
+        $encoder = AUTH_PWD_ENCODER;
         $map    =   new HashMap();
         if(!empty($encoder) && function_exists($encoder)) {
             $_POST['password']      =   $encoder($_POST['password']);
@@ -272,15 +394,15 @@ class PublicAction extends AdminAction
         $map->put('password',$_POST['oldpassword']);
         if(isset($_POST['name'])) {
             $map->put('name',$_POST['name']);
-        }elseif(Session::is_set(C('USER_AUTH_KEY'))) {
-            $map->put('id',Session::get(C('USER_AUTH_KEY')));
+        }elseif(Session::is_set(USER_AUTH_KEY)) {
+            $map->put('id',Session::get(USER_AUTH_KEY));
         }else {
         	
         }
         //检查用户
-        $dao    =   D("User");
+        $dao    =   new UserDao();
         $vo     =   $dao->find($map);
-        if(!$vo) {
+        if($vo->isEmpty()) {
             $this->assign('error','旧密码不符或者用户名错误！');
         }else {
         	$map->put('password',$_POST['password']);
@@ -296,19 +418,6 @@ class PublicAction extends AdminAction
         }
         $this->forward();
     }
-
-	function edit() 
-	{
-		if(Session::is_set(C('USER_AUTH_KEY'))) {
-            $dao = D("User");
-            $vo  = $dao->getById(Session::get(C('USER_AUTH_KEY')));
-            $this->assign('vo',$vo);
-            $this->display();
-					
-		}else {
-			redirect(__APP__.'/Public/login');
-		}
-	}
 
 }//类定义结束
 ?>

@@ -4,16 +4,17 @@
 <include file="../Public/header" />
 <SCRIPT LANGUAGE="JavaScript">
 <!--
-function getLabel(data){
-	$('execSql').value = data;
+function getLabel(request){
+	$('execSql').value = request.responseText;
 }
+SmartAjax.updateEffect = {'opacity':[1,0.3]};
 function addLabel(){
-	ThinkAjax.send('__URL__/getLabel','ajax=1&id='+$F('labelSql'),getLabel);
+	SmartAjax.send('__URL__/getLabel','ajax=1&id='+$F('labelSql'),'',getLabel);
 }
 function delLabel(){
 	if ($F('labelSql') != '')
 	{
-		ThinkAjax.send('__URL__/delLabel','ajax=1&id='+$F('labelSql'));
+		SmartAjax.send('__URL__/delLabel','ajax=1&id='+$F('labelSql'),'result');
 	}else {
 		alert('选择标签');
 	}
@@ -40,19 +41,27 @@ function deleteTable(tableId){
 		}
 }
 
-function handleSql(data){
-	deleteTable('table1');
-	if(data.length<=1) {
-		$('result').innerHTML	=	'无查询结果！';
-		$('resultNum').innerHTML	=	'[ 返回0条查询记录 ] ';
+function handleSql(request){
+	if ('SQL执行失败！' == request.responseText)
+	{
+		$('result').innerHTML	=	'SQL执行失败！';
+	}else if('SQL执行成功！' == request.responseText){
+		$('result').innerHTML	=	'SQL执行成功！';
 	}else {
-		$('resultNum').innerHTML	=	'[ 返回'+(data.length-1)+'条查询记录 ] ';
-		buildTable('table1',data);
+		var data	=	eval(request.responseText);
+		deleteTable('table1');
+		if(data.length<=1) {
+			$('result').innerHTML	=	'无查询结果！';
+			$('resultNum').innerHTML	=	'[ 返回0条查询记录 ] ';
+		}else {
+			$('resultNum').innerHTML	=	'[ 返回'+(data.length-1)+'条查询记录 ] ';
+			buildTable('table1',data);
+		}
+		
 	}
-
 }
 function runSql(){
-	ThinkAjax.send('__URL__/execute','ajax=1&sql='+$F('sql')+'&label='+$F('label'),handleSql);
+	SmartAjax.send('__URL__/execute','ajax=1&sql='+$F('sql')+'&label='+$F('label'),'',handleSql);
 }
 	function labelSearch(){
 		var obj	=	$('labelSql');
@@ -70,7 +79,7 @@ function runSql(){
 		var tableName	=	$F('tableName');
 		var sql	=	'CHECK TABLE '+tableName+'';
 		$('execSql').value	=	sql;
-		ThinkAjax.send('__URL__/execute','ajax=1&sql='+sql,handleSql);
+		SmartAjax.send('__URL__/execute','ajax=1&sql='+sql,'',handleSql);
 	}
 	function searchTable(){
 		var tableName	=	$F('tableName');	
@@ -80,25 +89,25 @@ function runSql(){
 		}
 		var sql	=	'SELECT * FROM  '+tableName+' LIMIT 0,30';
 		$('execSql').value	=	sql;
-		ThinkAjax.send('__URL__/execute','ajax=1&sql='+sql,handleSql);
+		SmartAjax.send('__URL__/execute','ajax=1&sql='+sql,'',handleSql);
 	}
 	function optimizeTable(){
 		var tableName	=	$F('tableName');
 		var sql	=	'OPTIMIZE TABLE  '+tableName+'';
 		$('execSql').value	=	sql;
-		ThinkAjax.send('__URL__/execute','ajax=1&sql='+sql,handleSql);
+		SmartAjax.send('__URL__/execute','ajax=1&sql='+sql,'',handleSql);
 	}
 	function analyzeTable(){
 		var tableName	=	$F('tableName');
 		var sql	=	'ANALYZE TABLE '+tableName+'';
 		$('execSql').value	=	sql;
-		ThinkAjax.send('__URL__/execute','ajax=1&sql='+sql,handleSql);
+		SmartAjax.send('__URL__/execute','ajax=1&sql='+sql,'',handleSql);
 	}
 	function repairTable(){
 		var tableName	=	$F('tableName');
 		var sql	=	'REPAIR TABLE '+tableName+'';
 		$('execSql').value	=	sql;
-		ThinkAjax.send('__URL__/execute','ajax=1&sql='+sql,handleSql);
+		SmartAjax.send('__URL__/execute','ajax=1&sql='+sql,'',handleSql);
 	}
 	function outputTable(){
 		var tableName	=	$F('tableName');
@@ -135,23 +144,23 @@ function runSql(){
 </iterate>
 </SELECT></div>
 <div class="fLeft" style="width:65px">
-<html:imageBtn value="查询" click="searchTable()" style="impBtn fLeft shadow" />
-<html:imageBtn value="优化" click="optimzeTable()" style="impBtn vMargin fLeft shadow" />
-<html:imageBtn value="检查" click="checkTable()" style="impBtn vMargin fLeft shadow" />
-<html:imageBtn value="分析" click="analyzeTable()" style="impBtn vMargin fLeft shadow" />
-<html:imageBtn value="修复" click="repairTable()" style="impBtn vMargin fLeft shadow" />
-<html:imageBtn value="导出" click="outputTable()" style="impBtn vMargin fLeft shadow" />
+<input type="button" value="查 询"  onclick="searchTable()" class="button small vMargin" />
+<input type="button" value="优 化"  onclick="optimizeTable()" class="button small vMargin " />
+<input type="button" value="检 查"  onclick="checkTable()"  class="button small vMargin " />
+<input type="button" value="分 析"  onclick="analyzeTable()"  class="button small vMargin " />
+<input type="button" value="修 复"  onclick="repairTable()"  class="button small vMargin " />
+<input type="button" value="导 出"  onclick="outputTable()"  class="button small vMargin " />
 </div>
 </div>
 </div>
 <BR class="cBoth">
 <div class="cBoth vMargin" >
-<html:imageBtn value="执行" click="runSql()" style="impBtn hMargin fLeft shadow" />
-<html:imageBtn type="reset" value="重置" style="impBtn hMargin fLeft shadow" />
+<input type="button"  value="执 行"  onclick="runSql()" class="button small hMargin fLeft " />
+<input type="button"  type="reset" value="重 置"  class="button small hMargin fLeft " />
 <div class="fLeft">保存为标签：<INPUT TYPE="text" style="width:175px" NAME="label"></div>
-<html:imageBtn value="删除" click="deLabel()" style="impBtn hMargin fLeft shadow" />
+<input type="button"  value="删 除"  onclick="delLabel()" class="button small hMargin fLeft " />
 <div class="fLeft"><INPUT TYPE="text" id="searchLabel" style="width:100px" NAME="label"></div>
-<html:imgLink name="search" alt="搜索"  click="labelSearch()" style=" hMargin fLeft shadow" />
+<input type="button"  value="搜索"  onclick="labelSearch()" class="button hMargin  fLeft " />
 </div>
 </fieldset>
 

@@ -1,7 +1,7 @@
 <?php 
 /*
 Plugin Name: htmlCache
-Plugin URI: http://thinkphp.cn
+Plugin URI: http://fcs.org.cn/
 Description: 静态缓存支持，根据REQUEST_URI 访问生成静态文件
 Author: 流年
 Version: 1.0
@@ -15,9 +15,9 @@ Author URI: http://blog.liu21st.com/
 function readHTMLCache() 
 {
         //如果开启HTML功能，载入静态页面，无需再次执行
-        if( C('HTML_CACHE_ON') ){
+        if( HTML_CACHE_ON ){
             //生成唯一的静态文件名
-            define('HTML_FILE_NAME',HTML_PATH.MODULE_NAME.'/'.md5($_SERVER['REQUEST_URI']).C('HTMLFILE_SUFFIX'));
+            define('HTML_FILE_NAME',HTML_PATH.MODULE_NAME.'/'.md5($_SERVER['REQUEST_URI']).HTMLFILE_SUFFIX);
             if (checkHTMLCache()) {//静态页面有效
                 if(substr_count(HTML_PATH,WEB_ROOT)) {
                     // 如果静态目录在WEB下，重定向到静态页面
@@ -36,7 +36,7 @@ function readHTMLCache()
 function writeHTMLCache(&$content) 
 {
     //静态文件写入
-    if(C('HTML_CACHE_ON')){
+    if(HTML_CACHE_ON){
             // 如果开启HTML功能 检查并重写HTML文件
             // 没有模版的操作不生成静态文件
             if(MODULE_NAME != 'Public' && !checkHTMLCache()) {
@@ -44,7 +44,7 @@ function writeHTMLCache(&$content)
                     mkdir(dirname(HTML_FILE_NAME));
                 }
                 if( false === file_put_contents(HTML_FILE_NAME,$content)) {
-                    throw_exception(L('文件写入失败！'));
+                    throw_exception('文件'.HTML_FILE_NAME.'写入失败！');
                 }
             }
     } 
@@ -68,22 +68,22 @@ function checkHTMLCache($tmplHTMLFile = HTML_FILE_NAME)
     if(!file_exists($tmplHTMLFile)){
         return False;
     }
-    elseif (!C('HTML_CACHE_ON')){    
+    elseif (!HTML_CACHE_ON){    
         return False;
     }
     elseif (filemtime(TMPL_FILE_NAME) > filemtime($tmplHTMLFile)) { 
         // 模板文件如果更新静态文件需要更新
         return False; 
     }
-    elseif (C('HTML_CACHE_TIME') != -1 && time() > filemtime($tmplHTMLFile)+C('HTML_CACHE_TIME')) { 
+    elseif (HTML_CACHE_TIME != -1 && time() > filemtime($tmplHTMLFile)+HTML_CACHE_TIME) { 
         // 文件是否在有效期
         return False; 
     }
     //静态文件有效
     return True;
 }
-
+if(defined('HTML_CACHE_ON') && HTML_CACHE_ON) {
 	add_filter('app_init','readHTMLCache');
     add_filter('ob_content','writeHTMLCache');
-
+}
 ?>

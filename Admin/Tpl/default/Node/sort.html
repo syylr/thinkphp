@@ -1,45 +1,58 @@
 <tagLib name="html" />
-<include file="../Public/header" />
-<div id="menu" class="menu"><include file="../Public/menu" /></div>
-<div id="main" class="main" >
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<TITLE>ThinkCMS 系统管理平台 By FCS {$FCS.version}</TITLE>
+<html:link type="css" href ="../Public/css/FCS.css" />
+<html:link type="js" href ="../Public/js/Common.js" />
+<html:import type="js" file="Js.Base" /> 
+<html:import type="js" file="Js.prototype" /> 
+<html:import type="js" file="Js.mootools" /> 
+<html:import type="js" file="Js.Ajax.SmartAjax" /> 
+<html:import type="js" file="Js.Util.Calendar" /> 
+<html:import type="js" file="Js.Form.CheckForm" /> 
+<html:import type="js" file="Js.Util.SwfObject" /> 
+<base target="_self" />
+<body style="margin:0">
 <div class="content">
-<div class="title"> <equal name="level" value="1">项目</equal><equal name="level" value="2">模块</equal><equal name="level" value="3">操作</equal>排序</div>
 <SCRIPT LANGUAGE="JavaScript">
 <!--
 function saveSort(){
 sl.ok();
 sendForm('form1','__URL__/saveSort/','result');
+//window.opener.location.reflash();
+window.close();
 }
 //-->
 </SCRIPT>
 <div id="result" class="result none"></div>
-<html:import type="js" file="Js.Form.SortSelect" />
+<html:link type="js" href="../Public/js/SortSelect.js" />
 <FORM METHOD=POST name = 'form1' >
-<html:sort source="sortList" title="模块排序" size="15" show="title" />
 <div align="center">
 <TABLE class="order" cellpadding=0 cellspacing=0 width="350">
 <tr><td height="5" colspan="2" class="topTd" ></td></tr>
 <TR>
-	<Th colspan=2 align="right"><div class="fLeft"><input name="search" type="text"></div>
-<input type="button" value="查 询" onclick="sl.Search()" class="submit hMargin small " /></Th>
+	<Th colspan=2 align="center"><div class="fLeft"><input name="search" type="text"></div>
+<html:imageBtn value="查询" click="sl.Search()" style="button " /></Th>
 </TR>
 <TR >
 	<TD width="75%" align="right">
 	<div class="solid">
 	<SELECT class="multiSelect" name="sort" size="15">
 	<?php $i=1; ?>
-<voList name="sortList" id="module" >
-<option value="{vo:module|id}"><?php echo $i++; ?>.{vo:module|title}</option>
+<voList name="sortList" id="node" >
+<option value="{$node.id}"><?php echo $i++; ?>.{$node.title}</option>
 </voList>
 </SELECT></div></TD>
 	<TD width="20" valign="top">
 	<div style="margin-top:20px">
-	<input type="button" value="第 一" onclick="sl.fnFirst()" class="submit vMargin small " />
-<input type="button" value="上 移" onclick="sl.sortUp()" class="submit vMargin small " />
-<input type="button" value="下 移" onclick="sl.sortDown()" class="submit vMargin small " />
-<input type="button" value="最 后" onclick="sl.fnEnd()" class="submit vMargin small " />
+	<html:imageBtn value="第 一" click="sl.fnFirst()" style="button vMargin small" />
+<html:imageBtn value="上 移" click="sl.sortUp()" style="button vMargin small" />
+<html:imageBtn value="下 移" click="sl.sortDown()" style="button vMargin small " />
+<html:imageBtn value="最 后" click="sl.fnEnd()" style="button vMargin small" />
 <div class="fLeft vMargin"><INPUT TYPE="text" NAME="jumpNum" size="4"></div>
-<input type="button" value="跳 转" onclick="sl.jump()" class="submit vMargin small " />
+<html:imageBtn value="跳 转" click="sl.jump()" style="button vMargin small" />
 </div>
 </TD>
 </TR>
@@ -47,8 +60,8 @@ sendForm('form1','__URL__/saveSort/','result');
 	<TD colspan=2 align="center">
 	<div style="width:85%"><INPUT TYPE="hidden" name="seqNoList">
 	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" VALUE="1">
-<input type="button" value="确 定" onclick="saveSort()" class="submit hMargin small " /> 
-<input type="reset" value="取 消" onclick="history.back()" class="submit hMargin small " />
+<html:imageBtn value="确 定" click="saveSort()" style="button " /> 
+<html:imageBtn type="reset" value="取 消" click="window.close()" style="button " />
 </div>
 </TD>
 </TR>
@@ -62,5 +75,3 @@ var sl = new SortSelect('form1','sort','search','jumpNum');
 //-->
 </SCRIPT>
 </div>
-</div>
-<include file="../Public/footer" />

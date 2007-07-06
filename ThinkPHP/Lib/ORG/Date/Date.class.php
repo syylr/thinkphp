@@ -16,7 +16,7 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: Date.class.php 11 2007-01-04 03:57:34Z liu21st $
 
 
 /**
@@ -24,7 +24,7 @@
  * 日期时间操作类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: Date.class.php 11 2007-01-04 03:57:34Z liu21st $
  +------------------------------------------------------------------------------
  */
 class Date extends Base
@@ -211,12 +211,13 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function parse($date) 
     {
         if (is_string($date)) {
+			
             if (($date == "") || strtotime($date) == -1) {
                 //为空默认取得当前时间戳
                 $tmpdate = time();
@@ -224,6 +225,7 @@ class Date extends Base
                 //把字符串转换成UNIX时间戳
                 $tmpdate = strtotime($date);
             }
+
         } elseif (is_null($date))  {
             //为空默认取得当前时间戳
             $tmpdate = time();
@@ -256,7 +258,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function valid($date) 
@@ -277,7 +279,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function setDate($date) 
@@ -314,7 +316,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function format($format = "%Y-%m-%d %H:%M:%S") {
@@ -331,7 +333,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function isLeapYear() 
@@ -357,26 +359,20 @@ class Date extends Base
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function dateDiff($date, $elaps = "d") 
     {
         $__DAYS_PER_WEEK__       = (7);
-        $__DAYS_PER_MONTH__       = (30);
-        $__DAYS_PER_YEAR__       = (365);
         $__HOURS_IN_A_DAY__      = (24);
         $__MINUTES_IN_A_DAY__    = (1440);
         $__SECONDS_IN_A_DAY__    = (86400);
+
         //计算天数差
         $__DAYSELAPS = ($this->parse($date) - $this->date) / $__SECONDS_IN_A_DAY__ ;
+
         switch ($elaps) {
-            case "y"://转换成年
-                $__DAYSELAPS =  $__DAYSELAPS / $__DAYS_PER_YEAR__;
-                break;
-            case "M"://转换成月
-                $__DAYSELAPS =  $__DAYSELAPS / $__DAYS_PER_MONTH__;
-                break;
             case "w"://转换成星期
                 $__DAYSELAPS =  $__DAYSELAPS / $__DAYS_PER_WEEK__;
                 break;
@@ -390,7 +386,9 @@ class Date extends Base
                 $__DAYSELAPS =  $__DAYSELAPS * $__SECONDS_IN_A_DAY__;
                 break;        
         } 
+
         return $__DAYSELAPS;
+
     }
 
     /**
@@ -401,34 +399,34 @@ class Date extends Base
      * @access public 
      +----------------------------------------------------------
      * @param mixed $time 要比较的时间
-     * @param mixed $precision 返回的精度 
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
-    function timeDiff( $time ,$precision=false) {     
-        if(!is_numeric($precision) && !is_bool($precision)) {
-            static $_diff = array('y'=>'年','M'=>'个月','d'=>'天','w'=>'周','s'=>'秒','h'=>'小时','m'=>'分钟');
-        	return ceil($this->dateDiff($time,$precision)).$_diff[$precision].'前';
+    function timeDiff( $time ) {     
+        $diff = (int) abs($this->date - $time);
+        if ($diff <= 3600) {
+            $mins = round($diff / 60);
+            if ($mins <= 1)
+                $since = '1 分钟';
+            else
+                $since = sprintf( '%s 分钟', $mins);
+        } else if (($diff <= 86400) && ($diff > 3600)) {
+            $hours = round($diff / 3600);
+            if ($hours <= 1)
+                $since = '1 小时';
+            else 
+                $since = sprintf( '%s 小时', $hours );
+        } elseif ($diff >= 86400) {
+            $days = round($diff / 86400);
+            if ($days <= 1)
+                $since = '1 天';
+            else
+                $since = sprintf( '%s 天', $days );
         }
-        $diff = abs($this->parse($time) - $this->date);
-        static $chunks = array(array(31536000,'年'),array(2592000,'个月'),array(604800,'周'),array(86400,'天'),array(3600 ,'小时'),array(60,'分钟'),array(1,'秒'));
-        $count =0;
-        $since = '';
-        for($i=0;$i<count($chunks);$i++) {
-        	if($diff>=$chunks[$i][0]) {
-                $num   =  floor($diff/$chunks[$i][0]);
-        		$since .= sprintf('%d'.$chunks[$i][1],$num);
-                $diff =  (int)($diff-$chunks[$i][0]*$num);
-                $count++;
-                if(!$precision || $count>=$precision) {
-                	break;
-                }
-        	}
-       }
-        return $since.'前';
+        return $since;
     }
 
     /**
@@ -440,7 +438,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function firstDayOfMonth() {
@@ -459,7 +457,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function firstDayOfYear() {
@@ -478,7 +476,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function lastDayOfMonth() {
@@ -497,7 +495,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function lastDayOfYear() {
@@ -516,7 +514,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function maxDayOfMonth() 
@@ -547,7 +545,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function dateAdd($number = 0, $interval = "d") 
@@ -625,7 +623,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function  numberToCh($number)
@@ -663,7 +661,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */   
     function  yearToCh( $yearStr ,$flag=false ){  
@@ -688,7 +686,7 @@ class Date extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function magicInfo($type) 

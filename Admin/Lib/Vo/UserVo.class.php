@@ -1,6 +1,6 @@
 <?php 
 // +----------------------------------------------------------------------+
-// | ThinkPHP                                                             |
+// | ThinkCMS                                                             |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
 // +----------------------------------------------------------------------+
@@ -16,46 +16,39 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: UserVo.class.php 78 2007-04-01 04:29:15Z liu21st $
+// $Id: UserVo.class.php 2 2007-01-03 07:52:09Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
- * 用户数据对象类
+ * CMS 会员数据对象
  +------------------------------------------------------------------------------
- * @package   Vo
- * @author    liu21st <liu21st@gmail.com>
- * @version   $Ver$
+ * @author liu21st <liu21st@gmail.com>
+ * @version  $Id: UserVo.class.php 2 2007-01-03 07:52:09Z liu21st $
  +------------------------------------------------------------------------------
  */
+
 class UserVo extends Vo
 {//类定义开始
 
     //+----------------------------------------
     //| 数据模型 数据表字段名 
     //+----------------------------------------
-    var $id;                    //用户编号
-    var $name;                  //用户名
-    var $password;              //密码
-    var $nickname;              //昵称
-    var $status;                //用户状态
-    var $remark;                //备注信息
-    var $verify;                //验证码
-    var $email;                    //邮箱
-    var $type;                    //用户类型
-    var $childId;                //关联用户编号
-	var $lastLoginTime;
-    var $registerTime;      //注册时间
+    var $id;                     // ID
+    var $name;                // login account
+    var $nickname;           // nickname
+    var $email;                // email address
+    var $url;                // home page
+    var $key;                   // active key
+    var $password;          // login password
+    var $rTime;                // register time
+    var $lTime;                // last login time
+    var $status;               // member status
+    var $guid;                 // access address
+    var $verify;               // verify code
 
-	var $_auto	 =	 array(
-		array('registerTime','time','ADD'),	//	在新增的时候写入 time()
-		array('password','md5','ALL'),		// 在所有情况下面对password属性使用md5方法
-		);
-
-	var $_validate = array(
-		array('name','/^[a-z]\w{5,}$/i','用户名必须是字母打头，5位以上',1), // MUST_TO_VALIDATE  必须检测
-		array('password','require','密码必须',0), // 只是在表单有设置的时候检测
-		array('verify','is_numeric','验证码必须是数字',0,1), // 在表单有设置的情况下使用is_numeric 函数进行检测 
-		);
+    //+----------------------------------------
+    //|    其他业务字段
+    //+----------------------------------------
 
 }//类定义结束
 ?>

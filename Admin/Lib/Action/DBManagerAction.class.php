@@ -1,6 +1,6 @@
 <?php 
 // +----------------------------------------------------------------------+
-// | ThinkPHP                                                             |
+// | ThinkCMS                                                             |
 // +----------------------------------------------------------------------+
 // | Copyright (c) 2006 liu21st.com All rights reserved.                  |
 // +----------------------------------------------------------------------+
@@ -16,12 +16,20 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id: DBManagerAction.class.php 78 2007-04-01 04:29:15Z liu21st $
+// $Id: DBManagerAction.class.php 2 2007-01-03 07:52:09Z liu21st $
 
+/**
+ +------------------------------------------------------------------------------
+ * CMS 数据库管理
+ +------------------------------------------------------------------------------
+ * @author liu21st <liu21st@gmail.com>
+ * @version  $Id: DBManagerAction.class.php 2 2007-01-03 07:52:09Z liu21st $
+ +------------------------------------------------------------------------------
+ */
 import('@.Action.AdminAction');
 /**
  +------------------------------------------------------------------------------
- * 数据库管理
+ * 广告管理
  +------------------------------------------------------------------------------
  * @package   core
  * @author    liu21st <liu21st@gmail.com>
@@ -31,7 +39,7 @@ import('@.Action.AdminAction');
 class DBManagerAction extends AdminAction
 {//类定义开始
 
-       function index() 
+    function index() 
     {
         $db      =  DB::getInstance();
         $tables   =  $db->getTables();
@@ -47,7 +55,7 @@ class DBManagerAction extends AdminAction
     {
     	$tables   =  explode(',',$_REQUEST['table']);
         $db  =  DB::getInstance();
-        $sql  = "-- ThinkPHP SQL Dump\n"
+        $sql  = "-- ThinkCMS SQL Dump\n"
                     ."-- http://www.topthink.com.cn\n\n";
         foreach($tables as $key=>$table) {
             $autoKey   = '';
@@ -100,6 +108,7 @@ class DBManagerAction extends AdminAction
             $result=    $db->_query($sql);
             $type = 'query';
         }
+        header("Content-Type:text/html; charset=utf-8");
         if(false !== $result) {
              if(!empty($_POST['label'])) {//保存SQL标签
                 $dao = D("MemoDao");
@@ -114,41 +123,39 @@ class DBManagerAction extends AdminAction
             if($type == 'query') {
                 $fields = array_keys($result->get(0));
                 $result->unshift($fields);
-                foreach($result->getIterator() as $key=>$val) {
-                	$val  = array_values($val);
-                    $result->set($key,$val);
-                }
-                $result  =  $result->toArray();
-                $this->ajaxReturn($result,'SQL执行成功！',1);
+                exit($result->toJson());            	
             }else {
-                $this->success('SQL执行成功！');
+                exit('SQL执行成功！');
             }
         }else {
-            $this->error('SQL执行失败！');
+            exit('SQL执行失败！');
         }
     }
     function getLabel() 
     {
+        header("Content-Type:text/html; charset=utf-8");
     	if(!empty($_POST['id'])) {
     		$dao = D("MemoDao");
             $label   =  $dao->getById($_POST['id']);
-            $this->ajaxReturn($label->memo,'标签获取成功！',1);
+            exit($label->memo);
     	}else {
     		exit();
     	}
     }
     function delLabel() 
     {
+        header("Content-Type:text/html; charset=utf-8");
     	$id = $_POST['id'];
         if(!empty($id)) {
             $dao = D("MemoDao");
             $result = $dao->deleteById($id);      	
             if($result !== false) {
-            	$this->success('标签删除成功！');
+            	exit('标签删除成功！');
             }else {
-            	$this->error('标签删除失败！');
+            	exit('标签删除失败！');
             }
         }
+        exit();
     }
 }//类定义结束
 ?>

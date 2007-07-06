@@ -40,7 +40,7 @@ function uploadComplete(id,name){
 <fieldset id="querybox" >
 <legend style="color:gray">直接输入图片地址：</legend>
 <div class="fLeft hMargin"> <input name="imageUrl"  type="text" class="large"></div>
-<input type="button" value="选 择" onclick="ok()" class="submit " />
+<html:imageBtn  value="选 择" click="ok()" style="button " />
 </fieldset>
 <fieldset id="querybox" >
 <legend style="color:gray">上传图片到资源库：[ jpg,gif,png ]</legend>
@@ -55,12 +55,8 @@ function uploadComplete(id,name){
 	<INPUT TYPE="hidden" name="_uploadFileType" value="jpg,gif,png">
 	<INPUT TYPE="hidden" name="_uploadSavePath" value="{$FCS.WEB_ROOT}Public/Uploads/" >
 	<INPUT TYPE="hidden" name="_uploadResponse" value="uploadComplete">
-	<INPUT TYPE="hidden" name="_uploadImgThumb" value="0">
-	<INPUT TYPE="hidden" name="_uploadThumbMaxWidth" value="80">
-	<INPUT TYPE="hidden" name="_uploadThumbMaxHeight" value="100">
-	<INPUT TYPE="hidden" name="_uploadThumbSuffix" value="_s">
 	<div class="hMargin fLeft"><div class="impBtn" ><INPUT TYPE="file"  name="file" class="file bgcolor1 large"> </div></div>
-	<div class="fLeft hMargin"><INPUT TYPE="submit" value="上 传" onclick="uploading();" class="submit "></div>
+	<div class="fLeft hMargin"><INPUT TYPE="submit" value="上 传" onclick="uploading();" class="button "></div>
 	</form></div>
 </fieldset>
 

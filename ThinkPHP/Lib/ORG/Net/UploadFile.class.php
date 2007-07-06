@@ -16,14 +16,14 @@
 // +----------------------------------------------------------------------+
 // | Author: liu21st <liu21st@gmail.com>                                  |
 // +----------------------------------------------------------------------+
-// $Id$
+// $Id: UploadFile.class.php 11 2007-01-04 03:57:34Z liu21st $
 
 /**
  +------------------------------------------------------------------------------
  * 文件上传类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: UploadFile.class.php 11 2007-01-04 03:57:34Z liu21st $
  +------------------------------------------------------------------------------
  */
 class UploadFile extends Base
@@ -69,10 +69,6 @@ class UploadFile extends Base
      */
     var $allowTypes = array();
 
-    var $thumb   =  false;
-    var $thumbMaxWidth;
-    var $thumbMaxHeight;
-    var $thumbSuffix   =  '_thumb';
     /**
      +----------------------------------------------------------
      * 上传文件保存路径
@@ -93,7 +89,7 @@ class UploadFile extends Base
      * @access private
      +----------------------------------------------------------
      */
-    var $saveRule = 'uniqid';
+    var $saveRule = 'create_guid';
 
     /**
      +----------------------------------------------------------
@@ -134,25 +130,17 @@ class UploadFile extends Base
      * @access public 
      +----------------------------------------------------------
      */
-    function __construct($maxSize='',$allowExts='',$allowTypes='',
+    function __construct($allowExts=array(),$allowTypes=array(),
                             $savePath=UPLOAD_PATH,$saveRule='')
     {
-        if(!empty($maxSize) && is_numeric($maxSize)) {
+        if($maxSize && is_numeric($maxSize)) {
             $this->maxSize = $maxSize;
         }
         if(!empty($allowExts)) {
-            if(is_array($allowExts)) {
-            	$this->allowExts = array_map('strtolower',$allowExts);
-            }else {
-            	$this->allowExts = explode(',',strtolower($allowExts));
-            }
+            $this->allowExts = $allowExts;
         }
         if(!empty($allowTypes)) {
-            if(is_array($allowTypes)) {
-            	$this->allowTypes = array_map('strtolower',$allowTypes);
-            }else {
-            	$this->allowTypes = explode(',',strtolower($allowTypes));
-            }
+            $this->allowTypes = $allowTypes;
         }
         if(!empty($saveRule)) {
             $this->saveRule = $saveRule;
@@ -172,7 +160,7 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function save($file) 
@@ -181,20 +169,6 @@ class UploadFile extends Base
         $filename = $this->savePath.$file['savename'];
         if(!move_uploaded_file($file['tmp_name'], $filename)) {
             return false;
-        }
-        if($this->thumb) {
-        	// 生成图像缩略图
-            import("ORG.Util.Image");
-            $image =  Image::getImageInfo($filename);
-            if(false !== $image) {
-            	//是图像文件生成缩略图
-                $thumbWidth = explode(',',$this->thumbMaxWidth);
-                $thumbHeight   =  explode(',',$this->thumbMaxHeight);
-                $thumbSuffix = explode(',',$this->thumbSuffix);
-                for($i=0,$len=count($thumbWidth); $i<$len; $i++) {
-                    $thumbname = Image::thumb($filename,'','',$thumbWidth[$i],$thumbHeight[$i],true,$thumbSuffix[$i]);                	
-                }
-            }
         }
         return true;
     }
@@ -210,7 +184,7 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function upload($savePath ='') 
@@ -307,7 +281,7 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @throws FcsException
      +----------------------------------------------------------
      */
     function error($errorNo) 
@@ -357,7 +331,7 @@ class UploadFile extends Base
         }else {
             if(function_exists($rule)) {
                 //使用函数生成一个唯一文件标识号
-            	$saveName = $rule("");
+            	$saveName = $rule();
             }else {
                 //使用给定的文件名作为标识号
             	$saveName = $rule;
@@ -383,7 +357,7 @@ class UploadFile extends Base
     function checkType($type) 
     {
         if(!empty($this->allowTypes)) {
-            return in_array(strtolower($type),$this->allowTypes);
+            return in_array($type,$this->allowTypes);
         }
         return true;
     }
@@ -391,20 +365,20 @@ class UploadFile extends Base
 
     /**
      +----------------------------------------------------------
-     * 检查上传的文件后缀是否合法
+     * 检查上传的文件类型是否合法
      * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param string $ext 后缀名
+     * @param string $type 数据
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    function checkExt($ext) 
+    function checkExt($type) 
     {
         if(!empty($this->allowExts)) {
-            return in_array(strtolower($ext),$this->allowExts);
+            return in_array($type,$this->allowExts);
         }
         return true;
     }
