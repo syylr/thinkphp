@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<TITLE>{$title}</TITLE>
+<html:link type="css" href ="../Public/css/FCS.css" />
+<html:link type="js" href ="../Public/js/Common.js" />
+<html:import type="js" file="Js.Base" /> 
+<html:import type="js" file="Js.Util.tooltip" /> 
+<html:import type="js" file="Js.Util.Calendar" /> 
+<html:import type="js" file="Js.Form.CheckForm" /> 
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+//指定当前组模块URL地址 
+var URL = '__URL__';
+function show(){
+	if (document.getElementById('menu').style.display!='none')
+	{
+	document.getElementById('menu').style.display='none';
+	document.getElementById('main').className = 'full';
+	}else {
+	document.getElementById('menu').style.display='inline';
+	document.getElementById('main').className = 'main';
+	}
+	
+}
+//-->
+</SCRIPT>
+</HEAD>
+
+<BODY>
+<!-- 头部区域 -->
+<div id="header" class="header">
+<div class="headTitle"> 后台管理系统 </div>
+	<!-- 功能导航区 -->
+	<div class="nav">
+	<A HREF="javascript:show()"><IMG SRC="../Public/images/activity.gif" WIDTH="20" HEIGHT="20" BORDER="0" align="absmiddle" ALT=""></A>  <A HREF="__APP__/index/index/"><IMG SRC="../Public/images/gohome.gif" WIDTH="15" HEIGHT="14" BORDER="0" ALT="">首 页</A> <A HREF="__APP__/public/password/"><IMG SRC="../Public/images/locked.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="">修改密码</A> <A HREF="__APP__/public/edit/"><IMG SRC="../Public/images/write.gif" WIDTH="17" HEIGHT="16" BORDER="0" ALT="">修改资料</A> <A HREF="__APP__/public/logout/"><IMG SRC="../Public/images/error.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="">退 出</A></div>
+</div>

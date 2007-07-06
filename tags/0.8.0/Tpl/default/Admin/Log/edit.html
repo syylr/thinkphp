@@ -1,0 +1,44 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<div id="main" class="main" >
+<div class="content">
+<div class="title">编辑操作</div>
+<FORM METHOD=POST  onsubmit="return CheckForm(this)" action="__URL__/update/" name="user" >
+<TABLE cellpadding=0 cellspacing=0 >
+<TR>
+	<TD class="tRight" width="15%">操作名：</TD>
+	<TD class="tLeft" width="45%"><INPUT TYPE="text" class="medium bLeft" check='^\S+$' warning="操作名不能为空,且不能含有空格" NAME="name" value="{$vo.name}"></TD>
+	<TD class="tLeft" width="40%"><div class="tips">操作名不能为空,且不能含有空格</div></TD>
+</TR>
+<TR>
+	<TD class="tRight" width="15%">显示名：</TD>
+	<TD class="tLeft" width="45%"><INPUT TYPE="text" class="medium bLeft" NAME="title" value="{$vo.title}"></TD>
+	<TD class="tLeft" width="40%"><div class="tips">操作显示名称</div></TD>
+</TR>
+<TR>
+	<TD class="tRight">状态：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft" NAME="status">
+	<option <equal name="vo" property="status" value="1" >selected</equal> value="1">启用</option>
+	<option <equal name="vo" property="status" value="0" >selected</equal> value="0">禁用</option>
+	</SELECT></TD>
+	<TD class="tLeft"><div class="tips">没有启用的操作暂时无法使用</div></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">描 述：</TD>
+	<TD class="tLeft"><TEXTAREA class="large bLeft" NAME="remark" ROWS="5" COLS="57">{$vo.remark}</TEXTAREA></TD>
+	<TD class="tLeft tTop"><div class="tips">操作功能描述</div></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD class="center"><div style="width:85%;margin:5px"><INPUT TYPE="hidden" name="id" value="{$vo.id}" >
+	<div class="impBtn fLeft"><INPUT TYPE="submit" value="保存" class="save imgButton"></div>
+	<div class="impBtn fRig"><INPUT TYPE="reset" onclick="history.back(-1)" class="reset imgButton" value="取消" ></div>
+	</div></TD>
+	<TD ></TD>
+</TR>
+</TABLE>
+</FORM>
+</div>
+</div>
+<include file="../Public/footer" />

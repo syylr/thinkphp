@@ -1,0 +1,81 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<div id="main" class="main" >
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var curFileNum = 0;
+var rowsnum=0;  //记录行数
+var rindex="";       //列索引
+function addRow(){   
+	curFileNum++;
+	rowsnum++;
+    var arow=tbl.insertRow();
+	var td = arow.insertCell();
+	td.innerHTML='<div class="impBtn  fLeft" ><INPUT TYPE="file"  name="file"'+ curFileNum +' class="file bgcolor1 large"> </div><A HREF="javascript:deleteRow(this)" onfocus="javascript:getObject(this)"><IMG SRC="../Public/images/limit.gif" WIDTH="20" HEIGHT="20" align="absmiddle"  style="cursor:hand" BORDER="0" ALT="删除文件上传框"> 删除</A>';
+
+	td.align="center"
+	addFileForm.num.value=rowsnum;
+}
+function deleteRow(){
+	if(tbl.rows.length>0){
+		tbl.deleteRow(rindex); //删除当前行
+		rowsnum--;    
+	}else{
+		return;
+	}
+	rindex="";
+}
+function getObject(obj){ 
+	rindex=obj.parentElement.parentElement.rowIndex;/*当前行对象*/
+}
+//-->
+</SCRIPT>
+<div class="content">
+<div class="title">编辑公告</div>
+<FORM METHOD=POST  enctype="multipart/form-data" onsubmit="return CheckForm(this)" action="__URL__/update/" name="user" >
+<TABLE cellpadding=0 cellspacing=0 >
+<TR>
+	<TD class="tRight" width="15%">标题：</TD>
+	<TD class="tLeft" width="45%"><INPUT TYPE="text" class="large bLeft" check='^\S+$' warning="操作名不能为空,且不能含有空格" NAME="title" value="{$vo.title}"></TD>
+	<TD class="tLeft" width="40%"><div class="tips">公告标题，支持UBB代码</div></TD>
+</TR>
+<TR>
+	<TD class="tRight" width="15%">有效日期：</TD>
+	<TD class="tLeft"  colspan="2"><INPUT type="text" name="beginDate" readonly onClick="javascript:ShowCalendar(this)" onblur="HiddenCalendar()" value="{$vo.beginDate|toDate='Y-m-d'}" class="normal bLeft"> 至  <INPUT type="text" name="endDate" readonly onClick="javascript:ShowCalendar(this)" onblur="HiddenCalendar()" value="{$vo.endDate|toDate='Y-m-d'}" class="normal bLeft"></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">内 容：</TD>
+	<TD class="tLeft" colspan="2"><html:editor name="remark" content="{$vo.content}" /></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">附 件：</TD>
+	<TD class="tLeft" colspan="2">
+	<div class="">
+	<volist name="attach" id="attach" empty="暂无附件" >
+	<IMG SRC="../Public/images/draft.gif" WIDTH="19" HEIGHT="20" BORDER="0" ALT="" align="absmiddle"> <A HREF="__URL__/download/id/{vo:attach|id}" title="下载附件" > {vo:attach|name}</A> <A HREF="__URL__/delAttach/id/{vo:attach|id}"><IMG SRC="../Public/images/limit.gif" BORDER="0" ALT="删除附件">删除</A><br>
+	</volist>
+	</div>
+	<TABLE id="tbl" width="95%" cellpadding="1" cellspacing="1"></TABLE>
+	<div class="vMargin"><A HREF="javascript:addRow();"><IMG SRC="../Public/images/file.gif" WIDTH="19" HEIGHT="20" BORDER="0" ALT="增加附件">增加附件</A></div></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD class="center"><div style="width:85%;margin:5px">
+	<INPUT TYPE="hidden" name="id" value="{$vo.id}">
+	<html:imageBtn name="add" style="submit" value="保存" click="add()" style="impBtn hMargin fLeft " />
+	<div class="impBtn fLeft"><INPUT TYPE="submit" value="保存" class="save imgButton"></div>
+	<div class="impBtn fRig"><INPUT TYPE="reset" class="reset imgButton" value="清空" ></div>
+	</div></TD>
+	<TD ></TD>
+</TR>
+</TABLE>
+</FORM>
+</div>
+</div>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+addRow();
+//-->
+</SCRIPT>
+<include file="../Public/footer" />

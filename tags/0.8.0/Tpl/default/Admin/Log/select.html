@@ -1,0 +1,40 @@
+<tagLib name="html" />
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<TITLE>{$title}</TITLE>
+<html:link type="js" href="../Public/js/common.js" />
+<html:link type="css" href ="../Public/css/FCS.css" />
+<div class="title"> 模块排序</div>
+<FORM METHOD=POST name = 'form1' ACTION="__URL__/saveSort/">
+<html:sort source="sortList" title="模块排序" size="15" show="title" />
+<div align="center">
+<TABLE class="order" cellpadding=0 cellspacing=0 width="350">
+<tr><td height="5" colspan="2" class="topTd" ></td></tr>
+<TR>
+	<Th align="center"><div class="fLeft"><input name="search" type="text"></div>
+<html:imageBtn name="add" value="查询" click="sl.Search()" style="impBtn hMargin fLeft " /></Th>
+</TR>
+<TR >
+	<TD align="right">
+	<div class="solid">
+	<SELECT class="multiSelect" name="sort" size="15">
+<voList name="list" id="action" >
+<option value="{vo:action|id}">{vo:action|title}</option>
+</voList>
+</SELECT></div></TD>
+</TR>
+<TR>
+	<TD align="center">
+	<div style="width:85%"><INPUT TYPE="hidden" name="seqNoList">
+<html:imageBtn name="add" type="submit" value="确定" click="sl.ok()" style="impBtn hMargin fLeft " /> 
+<html:imageBtn name="add" type="reset" value="取消" click="window.close()" style="impBtn hMargin fLeft " />
+</div>
+</TD>
+</TR>
+<tr><td height="5" colspan="2" class="topTd" ></td></tr>
+</TABLE>
+</div>
+</FORM>
+
