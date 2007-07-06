@@ -1,16 +1,33 @@
-/*
-+--------------------------------------------------------
-| 项目: 流年基类库--JS脚本库
-| 版本: 0.1
-| 作者: Liu21st < Liu21st2002@msn.com >
-| 文件: 
-| 功能: 
-+--------------------------------------------------------
-| 版权声明: Copyright◎ 2004-2005 世纪流年 版权所有
-| WebURL:	http://blog.liu21st.com
-| EMail:	liu21st@gmail.com
-+--------------------------------------------------------
-*/
+// +---------------------------------------------------------------------------+
+// | FCS -- Fast,Compatible & Simple OOP PHP Framework                         |
+// | FCS JS 基类库                                                             |
+// +---------------------------------------------------------------------------+
+// | Copyright (c) 2005-2006 liu21st.com.  All rights reserved.                |
+// | Website: http://www.fcs.org.cn/                                           |
+// | Author : Liu21st 流年 <liu21st@gmail.com>                                 |
+// +---------------------------------------------------------------------------+
+// | This program is free software; you can redistribute it and/or modify it   |
+// | under the terms of the GNU General Public License as published by the     |
+// | Free Software Foundation; either version 2 of the License,  or (at your   |
+// | option) any later version.                                                |
+// |                                                                           |
+// | This program is distributed in the hope that it will be useful,  but      |
+// | WITHOUT ANY WARRANTY; without even the implied warranty of                |
+// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General |
+// | Public License for more details.                                          |
+// +---------------------------------------------------------------------------+
+
+/**
+ +------------------------------------------------------------------------------
+ * 表单验证类
+ +------------------------------------------------------------------------------
+ * @package    Form
+ * @link       http://www.fcs.org.cn
+ * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
+ * @author     liu21st <liu21st@gmail.com>
+ * @version    $Id$
+ +------------------------------------------------------------------------------
+ */
 
 /*使用说明
 +--------------------------------------------------------
@@ -47,7 +64,7 @@
 	}
 
 	//主函数
-	function CheckForm(oForm,target)
+	function CheckForm(oForm)
 	{
 		var els = oForm.elements;
 		//遍历所有表元素
@@ -66,12 +83,7 @@
 				{
 					//验证不通过,弹出提示warning
 					//els[i].styles.border = '1pt solid orange';
-					if (target==undefined)
-					{
-						alert(els[i].warning);
-					}else {
-						$(target).innerHTML	=	els[i].warning;
-					}
+					alert(els[i].warning);
 
 					//该表单元素取得焦点,用通用返回函数
 					GoBack(els[i]);

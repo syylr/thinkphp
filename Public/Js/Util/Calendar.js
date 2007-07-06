@@ -146,7 +146,7 @@ function ShowCalendar(InputBox)
 	
 	//年
 	DivContent+="&nbsp;&nbsp;<select name='Year' id='Year' onChange='newCalendar()' style='font-family:Verdana; font-size:12px; width:60'>";
-	for (intLoop = thisyear - 10; intLoop < (thisyear + 10); intLoop++) 
+	for (intLoop = thisyear - 80; intLoop < (thisyear + 2); intLoop++) 
 		DivContent+="<option value= " + intLoop + " " + (today.year == intLoop ? "Selected" : "") + ">" + intLoop + "</option>"; 
 	DivContent+="</select>&nbsp;年&nbsp;";
 	
@@ -178,10 +178,11 @@ DivContent += ' </TR>';
 	{ 
 		DivContent+="<tr>"; 
 		for (intDays = 0; intDays < days.length; intDays++) 
-			DivContent+="<td onClick='GetDate(\"" + oid + "\")' class=Day onMouseover='buttonOver();' onMouseOut='buttonOut();' ></td>"; 
+			DivContent+="<td onClick='GetDate(\"" + oid + "\")' class=day onMouseover='buttonOver();' onMouseOut='buttonOut();' ></td>"; 
 		DivContent+="</tr>"; 
 	} 
 	DivContent+="</table></td></tr></table>";
+
 	document.all.Calendar.innerHTML=DivContent;
 	newCalendar();
 }
@@ -208,7 +209,7 @@ function isDate(dateStr)
 function buttonOver()
 {
  var obj = window.event.srcElement;
- obj.runtimeStyle.cssText = "background-color:#FFFFa7";
+ obj.runtimeStyle.cssText = "background-color:#FFFFFF";
 // obj.className="Hover";
 }
 

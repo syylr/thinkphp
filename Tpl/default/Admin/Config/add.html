@@ -1,0 +1,36 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<div id="main" class="main" >
+<div class="content">
+<div class="title">新增配置项</DIV>
+<FORM METHOD=POST onsubmit="return CheckForm(this)" action="__URL__/insert/" name="config" >
+<TABLE cellpadding=0 cellspacing=0 >
+<TR>
+	<TD class="tRight" width="15%">配置项：</TD>
+	<TD class="tLeft" width="45%"><INPUT TYPE="text" class="medium bLeftRequire" check='Require' warning="配置项不能为空" NAME="title"></TD>
+	<TD class="tLeft" width="40%"><div class="tips">提示文字</div></TD>
+</TR>
+<TR>
+	<TD class="tRight">配置值：</TD>
+	<TD class="tLeft"><INPUT TYPE="text" class="large bLeft" NAME="value"></TD>
+	<TD class="tLeft"><div class="tips">提示文字</div></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">备  注：</TD>
+	<TD class="tLeft"><TEXTAREA class="large bLeft" NAME="remark" ROWS="5" COLS="57"></TEXTAREA></TD>
+	<TD class="tLeft tTop"><div class="tips">提示文字</div></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD class="center"><div style="width:85%;margin:5px">
+	<div class="impBtn fLeft"><INPUT TYPE="submit" value="保存" class="save imgButton"></div>
+	<div class="impBtn fRig"><INPUT TYPE="reset" class="reset imgButton" value="清空" ></div>
+	</div></TD>
+	<TD ></TD>
+</TR>
+</TABLE>
+</FORM>
+</div>
+</div>
+<include file="../Public/footer" />
