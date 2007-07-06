@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="UTF-8">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<META NAME="Author" CONTENT="Liu21st">
+<META NAME="Keywords" CONTENT="fcs,6path,世纪流年,php,oop framework,pathinfo,seo">
+<title>{$webTitle} :: {$viaTitle} </title>
+<link rel='stylesheet' type='text/css' href='../public/css/v3.css'>
+<script type='text/javascript' src='../public/js/v3.js'></script>
+<script type='text/javascript' src='../public/js/v3_xlib.js'></script>
+<script type='text/javascript'>
+var pg = new xPage('../..', true, true, true);
+function winOnLoad()
+{
+  xDisplay('xSymbols', 'none');
+} 
+window.onload = function()
+{
+    pg.onLoad();
+    if (window.winOnLoad) window.winOnLoad();
+}
+window.onunload = function()
+{
+    pg.onUnload();
+    if (window.winOnUnload) window.winOnUnload();
+}
+
+</script>
+
+</head>
+<body>
+<div id='topLinkCon'><a name='topofpg'>&nbsp;</a></div>
+<div id='leftColumn' class='column'>
+<div class='leftContent'> 
+<div id='header'>
+<div id="logo">FCS <sup id="version">{$version}</sup><div id="remark">{ Fast,Compatible & Simple OOP PHP Framework }</div>
+</div>
+</div>
+<h4>[ <A HREF="?a=index">Home</A> ] [ <A HREF="?a=docs">Docs</A> ]  [ <A HREF="?a=update">Update</A> ] [ <A HREF="http://blog.liu21st.com">Blog</A> ] [ <A HREF="http://groups.google.com/group/FCS_PHP">BBS</A> ]</h4>
