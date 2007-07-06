@@ -722,11 +722,6 @@ class Action extends Base
         return ;
     }
 
-	// 默认的新增操作
-	function add() {
-		$this->display();
-	}
-
     /**
      +----------------------------------------------------------
      * 默认新增保存操作

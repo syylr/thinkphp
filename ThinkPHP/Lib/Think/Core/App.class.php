@@ -447,12 +447,9 @@ class App extends Base
         }
         //创建Action控制器实例
         $module  = & new $moduleClass();
+
         //获取当前操作名
         $moduleAction = ACTION_NAME; 
-		//如果存在前置操作，首先执行
-		if (method_exists($module,'_before_'.$moduleAction)) {    
-			$module->{'_before_'.$moduleAction}();
-		}
         if (!method_exists($module,$moduleAction)) {    
             // 如果当前模块类的操作方法不存在
             // 检查是否有插件操作
@@ -482,13 +479,17 @@ class App extends Base
 				call_user_func(array($module,$moduleAction));
 			}
         }else {
+            //如果存在前置操作，首先执行
+            if (method_exists($module,'_before_'.$moduleAction)) {    
+                $module->{'_before_'.$moduleAction}();
+            }
             //执行操作
             $module->{$moduleAction}();
+            //如果存在后置操作，继续执行
+            if (method_exists($module,'_after_'.$moduleAction)) {    
+                $module->{'_after_'.$moduleAction}();
+            }        	
         }
-		//如果存在后置操作，继续执行
-		if (method_exists($module,'_after_'.$moduleAction)) {    
-			$module->{'_after_'.$moduleAction}();
-		}  
         // 执行应用结束过滤器
         apply_filter('app_end');
         // 写入错误日志
