@@ -25,7 +25,7 @@
  * @link       http://www.fcs.org.cn
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: Date.js 73 2006-11-08 10:08:01Z fcs $
  +------------------------------------------------------------------------------
  */
 	

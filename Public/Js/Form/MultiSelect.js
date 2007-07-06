@@ -25,7 +25,7 @@
  * @link       http://www.fcs.org.cn
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: MultiSelect.js 73 2006-11-08 10:08:01Z fcs $
  +------------------------------------------------------------------------------
  */
 var isMsie = document.all ? true : false;
@@ -51,13 +51,15 @@ function addEvent(element, event, func)
 function buildMultipleSelects()
 {
     var selectObjects = document.getElementsByTagName('select');
+
     if (selectObjects) {
-	for (var i=0;i<selectObjects.length ; i++)
-	{
-            if (!selectObjects[i].multiple) {
+        while (selectObjects.length) {
+
+            if (!selectObjects[0].multiple) {
                 continue;
             }
-            var ms = selectObjects[i];
+
+            var ms = selectObjects[0];
             
             var disabled = ms.disabled ? true : false;
             var width    = ms.offsetWidth;
@@ -67,7 +69,7 @@ function buildMultipleSelects()
             divElement.style.overflow = 'auto';
             divElement.style.width    = width + "px";
             divElement.style.height   = height + "px";
-            //divElement.style.border   = "2px inset white";
+            divElement.style.border   = "2px inset white";
             divElement.style.font = "10pt Arial";
             divElement.className      = 'customMultipleSelect';
             
@@ -96,7 +98,6 @@ function buildMultipleSelects()
 
                 inputElement.value            = optionObjects[j].value;
                 inputElement.style.marginLeft = "-16px";
-				inputElement.style.marginRight = "5px";
                 inputElement.style.marginTop  = "-2px";
                 inputElement.name             = ms.name;
 

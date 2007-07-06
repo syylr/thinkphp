@@ -25,7 +25,7 @@
  * @link       http://www.fcs.org.cn
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: String.js 73 2006-11-08 10:08:01Z fcs $
  +------------------------------------------------------------------------------
  */
 
@@ -146,7 +146,7 @@
 	return this.substring(this.length-len,this.length); 
 	} 
 
-	String.prototype.NumberToCh=function(){
+	String.prototype.NumberToCh(){
 	// 数字转换成大写金额函数
     var numberValue=new String(Math.round(numberValue*100)); // 数字金额
     var chineseValue="";          // 转换后的汉字金额

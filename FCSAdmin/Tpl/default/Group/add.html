@@ -1,0 +1,54 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<div id="main" class="main" >
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function selectGroup(){
+ var result= PopModalWindow('__APP__/Group/select/parentId/0',268,360);
+ if(typeof(result) == "undefined") return;
+	document.group.groupName.value=result[0][0];
+	document.group.parentId.value=result[0][1];
+}
+//-->
+</SCRIPT>
+<div class="content">
+<div class="title">新增组</div>
+<FORM METHOD=POST  onsubmit="return CheckForm(this)" action="__URL__/insert/" name="group" >
+<TABLE cellpadding=0 cellspacing=0 >
+<TR>
+	<TD class="tRight" width="15%">组名：</TD>
+	<TD class="tLeft" width="45%"><INPUT TYPE="text" class="medium bLeftRequire" check='^\S+$' warning="组名不能为空,且不能含有空格" NAME="name"></TD>
+	<TD class="tLeft" width="40%"><div class="tips">组名不能为空,且不能含有空格</div></TD>
+</TR>
+<TR>
+	<TD class="tRight" width="15%">上级组：</TD>
+	<TD class="tLeft" width="45%"><INPUT TYPE="text" class="medium bLeft" NAME="groupName"><INPUT TYPE="hidden" class="medium bLeft" NAME="parentId"> <a href="javascript:selectGroup()" ><IMG SRC="../Public/images/search.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" align="absmiddle"></a></TD>
+	<TD class="tLeft" width="40%"><div class="tips">继承上级组权限（最多一级）</div></TD>
+</TR>
+<TR>
+	<TD class="tRight">组状态：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft" NAME="status">
+	<option value="1">启用</option>
+	<option value="0">禁用</option>
+	</SELECT></TD>
+	<TD class="tLeft"><div class="tips">没有启用的组暂时无法使用</div></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">描 述：</TD>
+	<TD class="tLeft"><TEXTAREA class="large bLeft" NAME="remark" ROWS="5" COLS="57"></TEXTAREA></TD>
+	<TD class="tLeft tTop"><div class="tips">组功能描述</div></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD class="center"><div style="width:85%;margin:5px">
+	<div class="impBtn fLeft"><INPUT TYPE="submit" value="保存" class="save imgButton"></div>
+	<div class="impBtn fRig"><INPUT TYPE="reset" class="reset imgButton" value="清空" ></div>
+	</div></TD>
+	<TD ></TD>
+</TR>
+</TABLE>
+</FORM>
+</div>
+</div>
+<include file="../Public/footer" />

@@ -25,7 +25,7 @@
  * @link       http://www.fcs.org.cn
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id: Base.js 78 2007-04-01 04:29:15Z liu21st $
+ * @version    $Id: Base.js 73 2006-11-08 10:08:01Z fcs $
  +------------------------------------------------------------------------------
  */
 
@@ -95,7 +95,6 @@ function _import(jsFile,basePath)
 	//---------------------------------------------------
 	//	getElementById 替代方法
 	//---------------------------------------------------
-	/*
 	function $() {
 	  var elements = new Array();
 
@@ -111,14 +110,14 @@ function _import(jsFile,basePath)
 	  }
 
 	  return elements;
-	}*/
+	}
 
 	//---------------------------------------------------
 	//	打开新窗口
 	//---------------------------------------------------
 	function PopWindow(pageUrl,WinWidth,WinHeight) 
 	{ 
-	var popwin=window.open(pageUrl,"_blank","scrollbars=yes,toolbar=no,location=no,directories=no,status=no,menubar=no,resizable=no,width="+WinWidth+",height="+WinHeight); 
+	var popwin=window.open(pageUrl,"PopWin","scrollbars=yes,toolbar=no,location=no,directories=no,status=no,menubar=no,resizable=no,width="+WinWidth+",height="+WinHeight); 
 	return false; 
 	} 
 
@@ -203,72 +202,3 @@ function _import(jsFile,basePath)
 		 return parastr;
 	}
 
-	function getPageScroll(){
-
-	var yScroll;
-
-	if (self.pageYOffset) {
-		yScroll = self.pageYOffset;
-	} else if (document.documentElement && document.documentElement.scrollTop){	 // Explorer 6 Strict
-		yScroll = document.documentElement.scrollTop;
-	} else if (document.body) {// all other Explorers
-		yScroll = document.body.scrollTop;
-	}
-
-	arrayPageScroll = new Array('',yScroll) 
-	return arrayPageScroll;
-}
-
-
-
-//
-// getPageSize()
-// Returns array with page width, height and window width, height
-// Core code from - quirksmode.org
-// Edit for Firefox by pHaez
-//
-function getPageSize(){
-	
-	var xScroll, yScroll;
-	
-	if (window.innerHeight && window.scrollMaxY) {	
-		xScroll = document.body.scrollWidth;
-		yScroll = window.innerHeight + window.scrollMaxY;
-	} else if (document.body.scrollHeight > document.body.offsetHeight){ // all but Explorer Mac
-		xScroll = document.body.scrollWidth;
-		yScroll = document.body.scrollHeight;
-	} else { // Explorer Mac...would also work in Explorer 6 Strict, Mozilla and Safari
-		xScroll = document.body.offsetWidth;
-		yScroll = document.body.offsetHeight;
-	}
-	
-	var windowWidth, windowHeight;
-	if (self.innerHeight) {	// all except Explorer
-		windowWidth = self.innerWidth;
-		windowHeight = self.innerHeight;
-	} else if (document.documentElement && document.documentElement.clientHeight) { // Explorer 6 Strict Mode
-		windowWidth = document.documentElement.clientWidth;
-		windowHeight = document.documentElement.clientHeight;
-	} else if (document.body) { // other Explorers
-		windowWidth = document.body.clientWidth;
-		windowHeight = document.body.clientHeight;
-	}	
-	
-	// for small pages with total height less then height of the viewport
-	if(yScroll < windowHeight){
-		pageHeight = windowHeight;
-	} else { 
-		pageHeight = yScroll;
-	}
-
-	// for small pages with total width less then width of the viewport
-	if(xScroll < windowWidth){	
-		pageWidth = windowWidth;
-	} else {
-		pageWidth = xScroll;
-	}
-
-
-	arrayPageSize = new Array(pageWidth,pageHeight,windowWidth,windowHeight) 
-	return arrayPageSize;
-}

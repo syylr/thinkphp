@@ -1,0 +1,141 @@
+<?php
+/**
++------------------------------------------------------------------------------
+* 项目配置文件 本配置文件由系统自动生成
++------------------------------------------------------------------------------
+*/
+if (!defined('FCS_PATH')) exit();
+
+// 调试设置 
+define('DEBUG_MODE',true);		//是否启用调试模式
+define('WEB_LOG_RECORD',true);	//是否记录日志
+define('LOG_FILE_SIZE',2097152);	//日志文件大小
+define('ERROR_PAGE','');			//错误定向页面
+define('ERROR_MESSAGE','你浏览的页面暂时发生了错误，请稍候再试！'); //错误提示信息
+define('SHOW_RUN_TIME',TRUE);	//是否显示运行时间
+
+// 路径设置
+define('TMPL_PATH',WEB_ROOT.'/FCSAdmin/Tpl/');		//模块路径
+define('HTML_PATH',WEB_ROOT.'/FCSAdmin/'.HTML_DIR.'/'); //静态页面路径
+
+// 框架设置
+define('DEFAULT_MODULE','Index');	//默认模块名称
+define('DEFAULT_ACTION','index');	//默认操作名称
+define('DEFAULT_TEMPLATE','default'); //默认模版名称
+define('VAR_LANGUAGE','l');		//语言GET变量
+define('VAR_TEMPLATE','t');		//模版GET变量
+define('VAR_MODULE','m');			//模块变量
+define('VAR_ACTION','a');			//操作变量
+define('VAR_FILE','f');				//文件变量
+
+define('SAVE_PARENT_VO',true);		//是否保存到父类Vo对象
+define('UPDATE_PARENT_VO',false);	//是否更新父类Vo对象
+define('DENY_REMOTE_SUBMIT',true); //是否允许远程提交
+
+// 插件设置
+define('PLUGIN_CACHE_ON',true);	//是否缓存插件
+
+// 语言设置
+define('DEFAULT_LANGUAGE','zh-cn'); //默认语言 需要对应语言包文件
+
+// 输出编码
+define('OUTPUT_CHARSET','utf-8'); 
+
+// 时区设置 PHP5需要
+define('TIME_ZONE','PRC'); 
+
+// 模版设置
+define('TMPL_ENGINE_TYPE','fcs');	//模版引擎名称
+define('TEMPLATE_SUFFIX','.html');	//模版文件后缀
+define('CACHFILE_SUFFIX','.php');	//模版缓存后缀
+define('TEMPLATE_CHARSET','utf-8');	//模版文件编码
+define('TMPL_CACHE_ON',true);		//模版缓存开启
+define('TMPL_CACHE_TIME',-1);		//模版缓存时间
+define('TMPL_DENY_FUNC_LIST','echo,exit');	//模版禁用函数
+define('TMPL_L_DELIM','{');			//模版开始标记
+define('TMPL_R_DELIM','}');			//模版结束标记
+define('TAGLIB_BEGIN','<');		//标签库开始标记
+define('TAGLIB_END','>');			//标签库结束标记
+
+// Session设置
+define('SESSION_NAME','FCSID');		//session name
+define('SESSION_TYPE','File');		//session使用方式 支持DB
+define('SESSION_EXPIRE',30000);	//session 有效时间
+define('SESSION_TABLE','fcs_session'); //session 数据库表名
+define('COOKIE_DOMAIN','.liu21st.com'); //session 跨域设置
+
+// 动态数据缓存
+define('DATA_CACHE_ON',false);		//是否启用动态数据缓存
+define('DATA_CACHE_TYPE','File');	//数据缓存类型
+define('DATA_CACHE_TIME',1000);	//数据缓存有效期
+define('DATA_CACHE_MAX',5000);	//最大数据缓存数目
+define('DATA_CACHE_COMPRESS',true); //是否启用数据压缩
+define('DATA_CACHE_CHECK',false);	//是否启用数据校验
+define('DATA_CACHE_TABLE','fcs_cache'); //缓存数据库表名 当DATA_CACHE_TYPE为DB时候有效
+define('CACHE_SERIAL_HEADER', "<?php\n//");	//文件方式缓存头部设置
+define('CACHE_SERIAL_FOOTER', "\n?".">");	//文件方式缓存尾部设置
+define('SHARE_MEM_SIZE',1048576);	//使用shmop方式时候内存大小设置
+
+// 数据库设置
+define('DB_TYPE','mysql');		//数据库类型
+define('DB_HOST','localhost');	//数据库主机地址
+define('DB_NAME','fcs');		//数据库名称
+define('DB_USER','root');		//数据库用户名
+define('DB_PWD','');			//数据库密码
+define('DB_PORT','3306');		//数据库端口
+define('DB_PREFIX','fcs');		//数据库前缀
+define('DB_CHARSET','utf8');	//数据库编码
+
+// 数据库缓存
+define('DB_CACHE_ON',false);	//是否启用数据库缓存
+define('DB_CACHE_TIME',1000); //数据库缓存有效期
+define('DB_CACHE_MAX',5000);	//缓存最大记录数
+
+// 分页设置
+define('LIST_NUMBERS',25);	//分页每页列表数目
+define('PAGE_NUMBERS',5);	//显示页数
+define('VAR_PAGE','p');		//分页变量
+
+//-------------------------------------------------------------
+// 插件设置项目 根据加载插件的不同进行设置
+// 具体插件的设置项请参考插件文件说明
+//-------------------------------------------------------------
+
+// FCSDispatch插件
+define('DISPATCH_NAME','FCSDispatcher'); //Dispatch名称
+define('URL_MODEL',1);		//URL模式
+define('PATH_MODEL',3);		//Pathinfo类型	
+define('PATH_DEPR',',');		//pathinfo分割符
+
+// 静态缓存插件
+define('HTMLFILE_SUFFIX','.shtml');	//静态文件后缀
+define('HTML_CACHE_ON',false);		//是否启用静态缓存
+define('HTML_CACHE_TIME',100);	//静态缓存有效期
+
+// RBAC插件
+define('USER_AUTH_ON',true);		//是否需要用户认证
+define('USER_AUTH_TYPE',1);		//用户认证方式
+define('USER_AUTH_KEY','authId');	//用户认证标识号
+define('AUTH_PWD_ENCODER','md5');	//用户认证密码加密方式
+define('USER_AUTH_PROVIDER','DaoAuthentictionProvider'); //委托认证类型
+define('USER_AUTH_GATEWAY','/Public/login');	//认证网关地址
+define('REQUIRE_AUTH_MODULE','');		//需要认证的模块，用逗号分割多个，优先于NOT_AUTH_MODULE
+define('NOT_AUTH_MODULE','Public');		//无需认证的模块 用逗号分割多个
+
+// 页面压缩输出插件
+define('COMPRESS_PAGE',true); 
+define('COMPRESS_METHOD','gzip'); 
+define('COMPRESS_LEVEL',5); 
+
+//浏览器缓存插件
+define('BROWSER_CACHE',false); 
+
+// 简繁转换插件
+define('BIG_2_GB',false); 
+
+// 任何项目需要的设置项目可以在这里统一设置 可选项目 
+define('WEB_TITLE','FCS 轻量级面向对象的PHP开发框架'); 
+define('WEB_DOMAIN','com.liu21st'); 
+
+//配置文件定义结束
+?>

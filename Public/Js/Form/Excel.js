@@ -25,7 +25,7 @@
  * @link       http://www.fcs.org.cn
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: Excel.js 73 2006-11-08 10:08:01Z fcs $
  +------------------------------------------------------------------------------
  */
 function Excel(tableId){
@@ -258,32 +258,6 @@ function Excel(tableId){
 		oActiveSheet.PageSetup.PrintTitleRows = "$1:$3";
 		oActiveSheet.PageSetup.PrintTitleColumns = "";
 	}
-/*
-var excel  = new ActiveXObject("Excel.Application"); //创建AX对象excel
- excel.visible =true; //设置excel可见属性
- var xlBook = excel.Workbooks.Add; //获取workbook对象
- var sheet1 = xlBook.Worksheets(1);  //创建sheet1
- var sheet2 = xlBook.Worksheets(2);  //创建sheet2
- sheet1.Range(sheet1.Cells(1,1),sheet1.Cells(1,14)).mergecells=true; //合并单元格
- sheet1.Range(sheet1.Cells(1,1),sheet1.Cells(1,14)).value="员工月考核成绩"; //设置单元格内容
- sheet1.Range(sheet1.Cells(1,1),sheet1.Cells(1,14)).Interior.ColorIndex=6;//设置底色 
- sheet1.Range(sheet1.Cells(1,1),sheet1.Cells(1,14)).Font.ColorIndex=5;//设置字体色 
-sheet1.Rows(1).RowHeight = 20; //设置列高
-sheet1.Rows(1).Font.Size=16;  //设置文字大小
-sheet1.Rows(1).Font.Name="宋体"; //设置字体
-//设置每一列的标题
-sheet1.Cells(2,1).Value="工程师考核项";
-sheet1.Cells(2,2).Value="总分";
-sheet1.Cells(2,3).Value="研发进度";
-sheet1.Cells(2,4).Value="出勤率";
-sheet1.Cells(2,5).Value="执行力";
-sheet1.Cells(2,6).Value="责任心";
-sheet1.Cells(2,7).Value="工作规范";
-sheet1.Cells(2,8).Value="协作精神";
-sheet1.Cells(2,9).Value="进取性";
-sheet1.Cells(2,10).Value="工作合理性";
-sheet1.Cells(2,11).Value="解决问题能力";
-sheet1.Cells(2,12).Value="应变能力";
-sheet1.Cells(2,13).Value="人际技能";
-sheet1.Cells(2,14).Value="理解能力";*/
+
+
 }

@@ -25,7 +25,7 @@
  * @link       http://www.fcs.org.cn
  * @copyright  Copyright (c) 2005-2006 liu21st.com.  All rights reserved. 
  * @author     liu21st <liu21st@gmail.com>
- * @version    $Id$
+ * @version    $Id: Office.js 73 2006-11-08 10:08:01Z fcs $
  +------------------------------------------------------------------------------
  */
 //+-------------------------------------------------------
@@ -37,77 +37,30 @@
   var oWB = oXL.Workbooks.Add(); 
   var oSheet = oWB.ActiveSheet;  
   var sel=document.body.createTextRange();
-  sel.moveToElementText($(tableId));
+  sel.moveToElementText(document.getElementById(tableId));
   sel.select();
   sel.execCommand("Copy");
   oSheet.Paste();
   oXL.Visible = true;
  }
 
- function WriteToWord(tableId) 
- {
- 	try {
-       var oWD = new ActiveXObject("Word.Application"); 
-     }
-    catch(e) {
-         alert("要使用该功能，必须安装Word，\n\r并且浏览器须允许执行ActiveX 控件。\n\r或者设置当前站点到信任站点！");
-         return "";
-     }
-  oWD.DisplayAlerts = false;
-  var oDC = oWD.Documents.Add("",0,1);
- var oRange =oDC.Range(0,1);
-  var sel=document.body.createTextRange();
-  sel.moveToElementText($(tableId));
-  sel.select();
-  sel.execCommand("Copy");
-  oRange.Paste();
-  oWD.Visible = true;
- }
 //+-------------------------------------------------------
 //|	指定页面区域“单元格”内容导入Excel,不包含页面样式
 //+-------------------------------------------------------
  function WriteToExcel(tableId) 
  {
- 	try {
-       var oXL = new ActiveXObject("Excel.Application"); 
-     }
-    catch(e) {
-         alert("要使用导出功能，必须安装Excel，\n\r并且浏览器须允许执行ActiveX 控件。\n\r或者设置当前站点到信任站点！");
-         return "";
-     }
+  var oXL = new ActiveXObject("Excel.Application"); 
   var oWB = oXL.Workbooks.Add(); 
   var oSheet = oWB.ActiveSheet; 
-  oXL.DisplayAlerts = false;
-  var obj = $(tableId);
-  var Lenr = obj.rows.length;
-  for (i=1;i<Lenr;i++) 
+  var Lenr = PrintA.rows.length;
+  var obj = document.getElementById(tableId);
+  for (i=0;i<Lenr;i++) 
   { 
-	   var Lenc = obj.rows(i).cells.length; 
-	   for (j=0;j<Lenc;j++) 
-	   { 
-		oSheet.Cells(i+1,j+1).value = obj.rows(i).cells(j).innerText; 
-	   } 
+   var Lenc = obj.rows(i).cells.length; 
+   for (j=0;j<Lenc;j++) 
+   { 
+    oSheet.Cells(i+1,j+1).value = obj.rows(i).cells(j).innerText; 
+   } 
   } 
   oXL.Visible = true; 
  }
-
-
-function getTableData(tableId,format)
- { 
- var a = $(tableId).getElementsByTagName('tr');
- var tdData = Array(a.length);
- for (i=0;i<a.length;i++){ 
-   var b = a[i].getElementsByTagName('td');
-   tdData[i] = Array(b.length);
-  for (j=0;j<b.length;j++){ 
-	  if (format == true)
-	  {
-		  tdData[i][j] = b[j].innerHTML;
-	  }else {
-		tdData[i][j] = b[j].innerText;
-	  }
-    
-   }
- }
-return tdData;
- } 

@@ -47,7 +47,7 @@
 	}
 
 	//主函数
-	function CheckForm(oForm,target)
+	function CheckForm(oForm)
 	{
 		var els = oForm.elements;
 		//遍历所有表元素
@@ -66,12 +66,7 @@
 				{
 					//验证不通过,弹出提示warning
 					//els[i].styles.border = '1pt solid orange';
-					if (target==undefined)
-					{
-						alert(els[i].warning);
-					}else {
-						$(target).innerHTML	=	els[i].warning;
-					}
+					alert(els[i].warning);
 
 					//该表单元素取得焦点,用通用返回函数
 					GoBack(els[i]);
