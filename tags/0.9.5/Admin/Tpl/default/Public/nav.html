@@ -1,0 +1,12 @@
+<div >| <A HREF="__APP__/">首页</A> | 
+<iterate id="item" name="menu" >
+<notequal name="item['name']" function="strtolower" value="public" >
+<notequal name="item['name']" function="strtolower" value="index" >
+<equal name="item['access']" value="1" >
+	<A HREF="__APP__/{$item['name']}/index/">{$item['title']}</A> | 
+</TR>
+</equal>
+</notequal>
+</notequal>
+</iterate>
+</div>

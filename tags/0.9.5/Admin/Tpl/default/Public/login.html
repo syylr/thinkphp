@@ -1,0 +1,59 @@
+<tagLib name="html" />
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<HEAD>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<TITLE></TITLE>
+<script language='JavaScript' src='../Public/js/Common.js'></script> 
+<link rel='stylesheet' type='text/css' href='../Public/css/FCS.css'>
+<html:import type="js" file="Js.prototype" /> 
+<html:import type="js" file="Js.mootools" /> 
+<html:import type="js" file="Js.Ajax.SmartAjax" /> 
+<html:import type="js" file="Js.Form.CheckForm" />
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function loginHandle(request){
+
+	if (-1!=request.responseText.indexOf('登录成功'))
+	{
+		$('result').innerHTML	=	'<span style="color:blue"><IMG SRC="../Public/images/ok.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" align="absmiddle" > 登录成功！3 秒后跳转～</span>';
+		window.setTimeout(function (){ window.location = '__URL__'; },3000);
+		
+	}else {
+		$('result').innerHTML	=	'<span style="color:red"><IMG SRC="../Public/images/update.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" align="absmiddle" > 登录失败！</span>';
+		window.setTimeout(function (){ $('result').style.display='none'; },3000);
+	}
+}
+function keydown(e){
+	if (event.keyCode==13)
+	{sendForm('form1','__URL__/checkLogin/','result',loginHandle)
+	}
+}
+//-->
+</SCRIPT>
+</HEAD>
+
+<BODY onload="document.login.name.focus()" >
+<FORM METHOD=POST name="login" id="form1" >
+<div class="tCenter hMargin">
+<TABLE id="checkList" class="login shadow" cellpadding=0 cellspacing=0 >
+<tr><td height="5" colspan="2" class="topTd" ></td></tr>
+<TR class="row" ><Th colspan="2" class="tCenter space">  系统管理登录 [ <A HREF="__URL__/password/">修改密码</A> ]</th></TR>
+<tr><td height="5" colspan="2" class="topTd" ></td></tr>
+<TR class="row" ><TD colspan="2" class="tCenter"><div id="result" class="result none"></div></TD></TR>
+<TR class="row" ><TD class="tRight">帐 号：</TD><TD><INPUT TYPE="text" class="medium bLeftRequire" check="Require" warning="请输入帐号" NAME="name"></TD></TR>
+<TR class="row" ><TD class="tRight">密 码：</TD><TD><INPUT TYPE="password" class="medium bLeftRequire" check="Require" warning="请输入密码" NAME="password"></TD></TR>
+<TR class="row" ><TD class="tRight">验证码：</TD><TD><INPUT TYPE="text" onkeydown="keydown()" class="medium bLeftRequire" check="Require" warning="请输入验证码" NAME="verify"> </TD></TR>
+<TR class="row" ><TD class="tCenter" colspan="2">请输入帐号验证码对应的英文</TD></TR>
+<TR class="row" ><TD class="tRight">数 字：<BR>英 文：</TD><TD><IMG SRC="__URL__/verify/" BORDER="0" ALT="" align="absmiddle"></TD></TR>
+<TR class="row" ><TD class="tCenter" align="justify" colspan="2">
+<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+<INPUT TYPE="button" value="登 录" onclick="sendForm('form1','__URL__/checkLogin/','result',loginHandle)" class="small button hMargin ">
+<INPUT TYPE="reset" value="取 消" class="button hMargin  small">
+</td></tr>
+<tr><td height="5" colspan="2" class="bottomTd" ></td></tr>
+</TABLE>
+</div>
+</FORM>
+</BODY>
+</HTML>

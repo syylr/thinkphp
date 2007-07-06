@@ -1,0 +1,55 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="main_container">
+	<div id="left_content">
+	<div class="content">
+	<h2 class="title">{$vo.title|ubb} </h2>
+    <div class="article">{$vo.content|ubb}</div> 
+	</div>
+	<present name="comments">
+	<div style="margin:6px 12px">当前共有 <span style="color:blue;font-weight:bold">{$comments.size()}</span> 条评论</div>
+	<div id="reviews">
+	<ol class="commentlist">
+	<?php $i=0; ?>
+	<volist id="comment" name="comments" >
+	<li class="<?php if ( ($i++ % 2 )==0): ?>alt<?php endif;?>" id="comment-{$i}">
+	<div style="height:58px;line-height:30px;">	<a href="http://www.popavatar.com" target="_blank" title="www.popavatar.com"><img src="http://www.popavatar.com/index.php?m=myavatar&amp;hash=07a0afb02a86ca71b8bae16e1d2950a4&amp;type=m" alt="www.PopAvatar.com" style="float:left;margin-right:0px;" /></a><cite>{$comment.author}</cite> Says:<BR>
+	<small class="commentmetadata"><a href="#comment-{$i}" title="">{$comment.cTime|toDate}</a> </small>
+	</div>{$comment.content|ubb}	</li>
+	</volist>
+	<ol>
+	</div>
+	<div id="comments">
+	<SCRIPT LANGUAGE="JavaScript">
+	<!--
+	function doComment(request){
+		var comment = eval(request.responseText);
+		$('reviews').innerHTML += comment.author+':'+comment.content+'<br/>';
+	}
+	function sendComment(){
+		$('result').style.display = 'block';
+		SmartAjax.sendForm('comment_form','__URL__/comment/','result',doComment);
+	}
+	//-->
+	</SCRIPT>
+	<div id="result" class="result none"></div>
+	<notpresent name="closeComment">
+	<FORM METHOD=POST id="comment_form" ACTION="">
+	作 者：<BR><INPUT TYPE="text" NAME="author" class="medium"><BR>
+	邮 箱：<BR><INPUT TYPE="text" NAME="email" class="medium"><BR>
+	网 站：<BR><INPUT TYPE="text" NAME="url" class="medium"><BR>
+	内 容：<BR><TEXTAREA NAME="content" ></TEXTAREA><P>
+	<INPUT TYPE="hidden" name="ajax" value="1" >
+	<INPUT TYPE="hidden" name="articleId" value="{$vo.id}">
+	<INPUT TYPE="button" class="submit medium" onclick="sendComment()" value="发表评论">
+	</FORM>
+	</notpresent>
+	</div>
+	</present>
+
+</div>
+<include file="../Public/middle" />
+<include file="../Public/right" />
+</div>
+<!-- main content end -->
+<include file="../Public/footer" />     

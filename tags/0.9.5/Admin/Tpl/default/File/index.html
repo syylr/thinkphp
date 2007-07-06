@@ -1,0 +1,103 @@
+{// 引入标签库 }
+<tagLib name="html" />
+{// 加载头部公共文件 }
+<include file="../Public/header" />
+<!-- 菜单区域  -->
+<div id="menu" class="menu"><include file="../Public/menu" /></div>
+<!-- 主页面开始 -->
+<div id="main" class="main" >
+<html:import type="js" file="Js.String.base64" /> 
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+	SmartAjax.updateEffect = {'opacity': [1,0.3]};
+function saveFile(){
+	var content	 =	 $F('filecontent');
+	$('result').style.display = 'block';
+	SmartAjax.send('__URL__/Save','ajax=1&filename='+$F('filename')+'&content='+encodeURIComponent(content),'result');
+}
+function saveAs(){
+	var filename	=	 window.prompt("输入要保存的服务器端文件地址","");
+	if (filename !=null)
+	{
+	var content	 =	 $F('filecontent')
+	SmartAjax.send('__URL__/SaveAs','ajax=1&filename='+filename+'&content='+encodeURIComponent(content),'result');
+	}
+}
+function handle(request){
+	$('filecontent').value = request.responseText;
+}
+function readFile(filename,writeable){
+	$('filename').value	=	filename;
+	$('editfile').value = base64decode(filename);
+	if (-1==$('editfile').value.indexOf('.'))
+	{
+		$('subFrame').src = '__URL__/sindex/f/'+filename;
+	}
+	if (!writeable)
+	{
+		$('save').disabled = true;
+	}else {
+		$('save').disabled = false;
+	}
+	sourceFile();
+}
+function editFile(filename){
+	$('fileO').value = '浏 览';
+	$('filesource').style.display = 'none';
+	$('filecontent').style.display = 'block';
+	SmartAjax.send('__URL__/Read','ajax=1&filename='+$('filename').value,'',handle);
+}
+function handle2(request){
+	$('filesource').innerHTML = request.responseText;
+}
+function sourceFile(){
+	$('fileO').value = '编 辑';
+	$('filesource').style.display = 'block';
+	$('filecontent').style.display = 'none';
+	SmartAjax.send('__URL__/Read','ajax=1&filename='+$('filename').value+'&source=123','',handle2);
+}
+function operation(filename){
+	if ($('fileO').value == '编 辑') editFile(filename);
+	else sourceFile();
+}
+function downFile(){
+	window.location = '__URL__/downFile/filename/'+$('filename').value;
+}
+//-->
+</SCRIPT>
+<!-- 主体内容  -->
+<div class="content" >
+<div style="float: left;width:70%;">
+<fieldset >
+<legend >文件浏览和编辑</legend>
+
+<!-- 功能操作区域结束 -->
+<div class="operate">	
+<input type="button" value="浏 览" id="fileO" onclick="operation()" class="button hMargin small fLeft" />
+<input type="button" id="save"  value="保 存" onclick="saveFile()" class="button hMargin small fLeft" />
+<input type="button" value="另 存" onclick="saveAs()" class="button hMargin small fLeft" />
+<input type="button" value="下 载" onclick="downFile()" class="button hMargin small fLeft" />
+<div class="fLeft">
+<INPUT TYPE="text" NAME="editfile" title="指定文件查看" style="padding:3pt;width:270px;font:normal normal normal 14px Tahoma;" ></div>
+<input type="button" value="查 看" click="readFile(base64encode($('editfile').value),true)" class="button hMargin small fLeft" />
+</div>
+<!-- 列表显示区域  -->
+<div class="list" >
+<div id="result" class="result none"></div>
+<INPUT TYPE="hidden" name="filename" >
+<TEXTAREA id="filecontent" NAME="content" style="display:none;padding:0px;background:#F4F4FF;width:99%;margin:0px 10px;border:1pt solid silver;overflow:auto;font: normal normal normal 14px Tahoma,Verdana;height:450px;line-height:150%;"></TEXTAREA>
+<div id="filesource" style="display:block;scroll:auto;padding:0px;overflow:auto;width:99%;margin:0px 10px;height:450px;background:#F4F4FF;border:1pt solid silver">{$content|highlight_code}</div>
+</div>
+<!-- 列表显示区域结束 -->
+</fieldset>
+</div>
+
+	<div style="width:28%;float:left;margin:0px;">
+	<iframe src="__URL__/sindex/" width="100%" id="subFrame" frameborder="0" scrolling="no" height="450"></iframe>
+	</div>
+</div>
+<!-- 主体内容结束 -->
+</div>
+<!-- 主页面结束 -->
+{// 加载尾部公共文件 }
+<include file="../Public/footer" />
