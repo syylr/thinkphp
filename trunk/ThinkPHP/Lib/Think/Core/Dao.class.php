@@ -431,6 +431,11 @@ class Dao extends Base
 								case HAS_MANY:
 									switch (strtoupper($opType)){
 										case 'ADD'	 :	// 增加关联数据
+											if(is_array($mappingData)) {
+												$mappingData[$mappingFk]	=	$pk;
+											}else{
+												$mappingData->$mappingFk	=	$pk;
+											}
 											$result   =  $dao->add($mappingData);
 											break;
 										case 'SAVE' :	// 更新关联数据
