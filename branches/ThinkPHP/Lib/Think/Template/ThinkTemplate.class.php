@@ -526,22 +526,28 @@ class  ThinkTemplate extends Base
             $varArray = explode('|',$varStr);
             //取得变量名称
             $var = array_shift($varArray);
-            //非法变量过滤 只允许使用 {$var} 形式模板变量
+            //非法变量过滤 不允许在变量里面使用 ->
             //TODO：还需要继续完善
             if(preg_match('/->/is',$var)){
                 return '';
             }
-            //特殊变量
             if(substr($var,0,6)=='Think.'){
+				// 所有以Think.打头的以特殊变量对待 无需模板赋值就可以输出
                 $name = $this->parseThinkVar($var);
             }
             elseif(strpos($var,'.')!== false) {
-                //支持 {$var.property} 方式输出对象的属性
+                //支持 {$var.property} 方式输出对象的属性或者数组，自动判断
 				$vars = explode('.',$var);
-                $var  =  str_replace('.','->',$var);
-                $name = "$".$var;
+                $name = 'is_array($'.$vars[0].')?$'.$vars[0].'["'.$vars[1].'"]:$'.$vars[0].'->'.$vars[1];
                 $var  = $vars[0];
             }
+			elseif(strpos($var,':')!==false){
+                //支持 {$var:property} 方式输出对象的属性
+				$vars = explode(':',$var);
+                $var  =  str_replace(':','->',$var);
+				$name = "$".$var;
+                $var  = $vars[0];
+			}
             elseif(strpos($var,'[')!== false) {
                 //支持 {$var['key']} 方式输出数组
                 $name = "$".$var;
