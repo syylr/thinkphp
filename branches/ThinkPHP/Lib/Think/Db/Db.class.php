@@ -231,7 +231,10 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      */
-    var $linkID  = null;
+    var $linkID  = array();
+
+	// 当前连接ID
+	var $_linkID	=	null;
 
     /**
      +----------------------------------------------------------
@@ -272,7 +275,6 @@ class Db extends Base
     /**
      +----------------------------------------------------------
      * 加载数据库 支持配置文件或者 DSN
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -301,30 +303,72 @@ class Db extends Base
             );
         }
         // 数据库类型
-        $this->dbType = ucwords(strtolower($db_config['dbms']));
-        if(Session::is_set(strtoupper($this->dbType))) {
-            // 已经定义该类型的数据库驱动
-        	$dbClass   =  Session::get(strtoupper($this->dbType));
-        }else {
-            // 读取系统数据库驱动目录
-            $dbClass = 'Db_'. $this->dbType;
-            $dbDriverPath = dirname(__FILE__).'/Driver/';      
-            require_cache( $dbDriverPath . $dbClass . '.class.php');     	
-        }
-        // 检查驱动类
-        if(class_exists($dbClass)) {
-            $db = & new $dbClass($db_config);
-			$db->dbType = $this->dbType;
-        }else {
-            // 类没有定义
-            throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
-        }
-        return $db;
+
+			$this->dbType = ucwords(strtolower($db_config['dbms']));
+			if(Session::is_set(strtoupper($this->dbType))) {
+				// 已经定义该类型的数据库驱动
+				$dbClass   =  Session::get(strtoupper($this->dbType));
+			}else {
+				// 读取系统数据库驱动目录
+				$dbClass = 'Db_'. $this->dbType;
+				$dbDriverPath = dirname(__FILE__).'/Driver/';      
+				require_cache( $dbDriverPath . $dbClass . '.class.php');     	
+			}
+			// 检查驱动类
+			if(class_exists($dbClass)) {
+				$db = & new $dbClass($db_config);
+				$db->dbType = $this->dbType;
+			}else {
+				// 类没有定义
+				throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
+			}
+			return $db;
+
     }
 
 	// 判断是否连接
 	function connected() {
 		return $this->connected;
+	}
+
+	// 初始化连接
+	function initConnect($master=true) {
+		if(1 == C('DB_DEPLOY_TYPE')) {
+			// 采用分布式数据库
+			$this->_linkID = $this->multi_connect($master);
+		}else{
+			// 默认单数据库
+			if ( !$this->connected ) $this->_linkID = $this->connect();
+		}
+	}
+
+	// 连接分布式数据库服务器
+	function multi_connect($master=false) {
+		static $_config = array();
+		if(empty($_config)) {
+			// 缓存分布式数据库配置解析
+			foreach ($this->config as $key=>$val){
+				$_config[$key]	 	=	explode(',',$val);
+			}
+		}
+		// 默认是连接第一个数据库配置 主服务器
+		$r	=	0;
+		if(!$master) {
+			// 连接从服务器
+			$r = floor(mt_rand(1,count($_config['hostname'])-1));	// 每次随机连接的数据库 不包括主服务器
+		}
+		$db_config = array(
+			'username'=>	 isset($_config['username'][$r])?$_config['username'][$r]:$_config['username'][0],
+			'password' => isset($_config['password'][$r])?$_config['password'][$r]:$_config['password'][0], 
+			'hostname' => isset($_config['hostname'][$r])?$_config['hostname'][$r]:$_config['hostname'][0], 
+			'hostport' =>	 isset($_config['hostport'][$r])?$_config['hostport'][$r]:$_config['hostport'][0], 
+			'database' =>	 isset($_config['database'][$r])?$_config['database'][$r]:$_config['database'][0],
+		);	
+		if(strtoupper(C('DB_TYPE'))=='PDO') {
+			$db_config['dsn']	=	isset($_config['pdodsn'][$r])?$_config['pdodsn'][$r]:$_config['pdodsn'][0];
+			$db_config['parms']	=	isset($_config['pdoparms'][$r])?$_config['pdoparms'][$r]:$_config['pdoparms'][0];
+		}
+		return $this->connect($db_config,$r);
 	}
 
     /**

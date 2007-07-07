@@ -52,39 +52,36 @@ Class Db_Mysql extends Db{
     /**
      +----------------------------------------------------------
      * 连接数据库方法
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function connect($config='') {
-        if ( !$this->linkID ) {
+    function connect($config='',$linkNum=0) {
+        if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'mysql_pconnect':'mysql_connect';
-            $this->linkID = $conn( $config['hostname'] . ':' . $config['hostport'], $config['username'], $config['password']);
-
-            if ( !$this->linkID) {
+            $this->linkID[$linkNum] = $conn( $config['hostname'] . ':' . $config['hostport'], $config['username'], $config['password']);
+            if ( !$this->linkID[$linkNum]) {
                 throw_exception(mysql_error());
                 return False;
             }
-
-            if ( !mysql_select_db($config['database'], $this->linkID) ) {
+            if ( !mysql_select_db($config['database'], $this->linkID[$linkNum]) ) {
                 throw_exception($this->error());
                 return False;
             }
-            $this->dbVersion = mysql_get_server_info($this->linkID);
+            $this->dbVersion = mysql_get_server_info($this->linkID[$linkNum]);
             if ($this->dbVersion >= "4.1") { 
                 //使用UTF8存取数据库 需要mysql 4.1.0以上支持
-                mysql_query("SET NAMES '".C('DB_CHARSET')."'", $this->linkID);
+                mysql_query("SET NAMES '".C('DB_CHARSET')."'", $this->linkID[$linkNum]);
             }
 			// 标记连接成功
 			$this->connected	=	true;
             // 注销数据库连接配置信息
-            unset($this->config);
+            // unset($this->config);
         }
-        return $this->linkID;
+        return $this->linkID[$linkNum];
     }
 
     /**
@@ -114,14 +111,14 @@ Class Db_Mysql extends Db{
      +----------------------------------------------------------
      */
     function _query($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) return False;
+		$this->initConnect(false);
+        if ( !$this->_linkID ) return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                mysql_query('SET AUTOCOMMIT=0', $this->linkID);
-                mysql_query('BEGIN', $this->linkID);
+                mysql_query('SET AUTOCOMMIT=0', $this->_linkID);
+                mysql_query('BEGIN', $this->_linkID);
             }
             $this->transTimes++;
         }else {
@@ -132,7 +129,7 @@ Class Db_Mysql extends Db{
         $this->queryTimes++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        $this->queryID = mysql_query($this->queryStr, $this->linkID);
+        $this->queryID = mysql_query($this->queryStr, $this->_linkID);
         if ( !$this->queryID ) {
             //if ( $this->debug ) throw_exception($this->error());
             return False;
@@ -159,15 +156,15 @@ Class Db_Mysql extends Db{
      +----------------------------------------------------------
      */
     function _execute($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) return False;
+		$this->initConnect(true);
+        if ( !$this->_linkID ) return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                //@mysql_query('SET AUTOCOMMIT=0', $this->linkID);
-                //@mysql_query('BEGIN', $this->linkID);
-                mysql_query('START TRANSACTION', $this->linkID);
+                //@mysql_query('SET AUTOCOMMIT=0', $this->_linkID);
+                //@mysql_query('BEGIN', $this->_linkID);
+                mysql_query('START TRANSACTION', $this->_linkID);
             }
             $this->transTimes++;
         }else {
@@ -178,12 +175,12 @@ Class Db_Mysql extends Db{
         $this->writeTimes++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !mysql_query($this->queryStr, $this->linkID) ) {
+        if ( !mysql_query($this->queryStr, $this->_linkID) ) {
             //if ( $this->debug ) throw_exception($this->error());
             return False;
         } else {
-            $this->numRows = mysql_affected_rows($this->linkID);
-            $this->lastInsID = mysql_insert_id($this->linkID);
+            $this->numRows = mysql_affected_rows($this->_linkID);
+            $this->lastInsID = mysql_insert_id($this->_linkID);
             return $this->numRows;            	
         }
     }
@@ -203,8 +200,8 @@ Class Db_Mysql extends Db{
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = mysql_query('COMMIT', $this->linkID);
-            //$result = @mysql_query('SET AUTOCOMMIT=1', $this->linkID);
+            $result = mysql_query('COMMIT', $this->_linkID);
+            //$result = @mysql_query('SET AUTOCOMMIT=1', $this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -229,8 +226,8 @@ Class Db_Mysql extends Db{
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = mysql_query('ROLLBACK', $this->linkID);
-            //$result = @mysql_query('SET AUTOCOMMIT=1', $this->linkID);
+            $result = mysql_query('ROLLBACK', $this->_linkID);
+            //$result = @mysql_query('SET AUTOCOMMIT=1', $this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -402,10 +399,10 @@ Class Db_Mysql extends Db{
     function close() { 
         if (!empty($this->queryID))
             mysql_free_result($this->queryID);
-        if (!mysql_close($this->linkID)){
+        if (!mysql_close($this->_linkID)){
             throw_exception($this->error());
         }
-        $this->linkID = 0;
+        $this->_linkID = 0;
     } 
 
     /**
@@ -421,7 +418,7 @@ Class Db_Mysql extends Db{
      +----------------------------------------------------------
      */
     function error() {
-        $this->error = mysql_error($this->linkID);
+        $this->error = mysql_error($this->_linkID);
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
@@ -447,7 +444,7 @@ Class Db_Mysql extends Db{
         $str = str_replace("&lt;", "<", $str);
         $str = str_replace("&gt;", ">", $str);
         $str = str_replace("&amp;", "&", $str);
-        //$str = mysql_real_escape_string($str, $this->linkID); 
+        //$str = mysql_real_escape_string($str, $this->_linkID); 
     } 
 
 }//类定义结束

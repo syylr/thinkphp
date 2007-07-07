@@ -30,7 +30,6 @@
  */
 Class Db_Pdo extends Db{
 
-	var $pdo		= null;
 	var $PDOStatement = null;
 
     /**
@@ -55,15 +54,14 @@ Class Db_Pdo extends Db{
     /**
      +----------------------------------------------------------
      * 连接数据库方法
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function connect($config='') {
-        if ( !$this->pdo ) {
+    function connect($config='',$linkNum=0) {
+        if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
 			if(empty($config['pdodsn'])) {
 				$config['dsn'] = C('DB_PDO_DSN');
@@ -71,19 +69,19 @@ Class Db_Pdo extends Db{
 			if(empty($config['pdoparms'])) {
 				$config['parms'] = C('DB_PDO_PARMS');
 			}
-            $this->pdo = new PDO( $config['dsn'], $config['username'], $config['password'],$config['parms']);
-            if ( !$this->pdo) {
+            $this->linkID[$linkNum] = new PDO( $config['dsn'], $config['username'], $config['password'],$config['parms']);
+            if ( !$this->linkID[$linkNum]) {
                 throw_exception('PDO CONNECT ERROR');
                 return False;
             }
-			$this->pdo->exec('SET NAMES '.C('DB_CHARSET'));  
-            $this->dbVersion = $this->pdo->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
+			$this->linkID[$linkNum]->exec('SET NAMES '.C('DB_CHARSET'));  
+            $this->dbVersion = $this->linkID[$linkNum]->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
 			// 标记连接成功
 			$this->connected	=	true;
             // 注销数据库连接配置信息
             unset($this->config);
         }
-        return $this->pdo;
+        return $this->linkID[$linkNum];
     }
 
     /**
@@ -112,13 +110,13 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      */
     function _query($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->pdo ) return False;
+		$this->initConnect(false);
+        if ( !$this->_linkID ) return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-				$this->pdo	->beginTransaction();
+				$this->_linkID	->beginTransaction();
             }
             $this->transTimes++;
         }else {
@@ -129,7 +127,7 @@ Class Db_Pdo extends Db{
         $this->queryTimes++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        $this->PDOStatement = $this->pdo->prepare($this->queryStr);
+        $this->PDOStatement = $this->_linkID->prepare($this->queryStr);
 		$result	=	$this->PDOStatement->execute();
         if ( !$result ) {
             if ( $this->debug ) throw_exception($this->error());
@@ -157,13 +155,13 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      */
     function _execute($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->pdo ) return False;
+		$this->initConnect(true);
+        if ( !$this->_linkID ) return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-				$this->pdo	->beginTransaction();
+				$this->_linkID->beginTransaction();
             }
             $this->transTimes++;
         }else {
@@ -174,13 +172,13 @@ Class Db_Pdo extends Db{
         $this->writeTimes++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-		$result	=	$this->pdo->exec($this->queryStr);
+		$result	=	$this->_linkID->exec($this->queryStr);
         if ( !$result) {
             //if ( $this->debug ) throw_exception($this->error());
             return False;
         } else {
 			$this->numRows = $result;
-            $this->lastInsID = $this->pdo->lastInsertId();
+            $this->lastInsID = $this->_linkID->lastInsertId();
             return $this->numRows;            	
         }
     }
@@ -200,7 +198,7 @@ Class Db_Pdo extends Db{
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = $this->pdo->commit();
+            $result = $this->_linkID->commit();
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -225,7 +223,7 @@ Class Db_Pdo extends Db{
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = $this->pdo->rollback();
+            $result = $this->_linkID->rollback();
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -392,7 +390,7 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      */
     function close() { 
-        $this->pdo = null;
+        $this->_linkID = null;
     } 
 
     /**

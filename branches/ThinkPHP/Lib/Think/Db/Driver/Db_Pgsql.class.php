@@ -58,11 +58,11 @@ Class Db_Pgsql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function connect($config='') {
-        if ( !$this->linkID ) {
+    function connect($config='',$linkNum=0) {
+        if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'pg_pconnect':'pg_connect';
-            $this->linkID =  $conn(
+            $this->linkID[$linkNum] =  $conn(
                 'host='			. $config['hostname'] .
                 ' port='			. $config['hostport'] .
                 ' dbname='	. $config['database'] .
@@ -70,19 +70,19 @@ Class Db_Pgsql extends Db{
                 ' password='	. $config['password']
             );
 
-             if (pg_connection_status($this->linkID) !== 0){
+             if (pg_connection_status($this->linkID[$linkNum]) !== 0){
                 throw_exception($this->error(False));
                 Return False;
             }
-            $pgInfo = pg_version($this->linkID);
+            $pgInfo = pg_version($this->linkID[$linkNum]);
             $this->dbVersion = $pgInfo['server'];
-            @pg_query( $this->linkID,"SET NAMES '".C('DB_CHARSET')."'");
+            @pg_query( $this->linkID[$linkNum],"SET NAMES '".C('DB_CHARSET')."'");
 			// 标记连接成功
 			$this->connected	=	true;
             //注销数据库安全信息
             unset($this->config);
         }
-        Return $this->linkID;
+        Return $this->linkID[$linkNum];
     }
 
     /**
@@ -112,13 +112,13 @@ Class Db_Pgsql extends Db{
      +----------------------------------------------------------
      */
     function _query($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) Return False;
+		$this->initConnect(false);
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                pg_exec($this->linkID,'begin;');
+                pg_exec($this->_linkID,'begin;');
             }
             $this->transTimes++;
         }else {
@@ -129,7 +129,7 @@ Class Db_Pgsql extends Db{
         $this->queryTimes ++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        $this->queryID = pg_query($this->linkID,$this->queryStr );
+        $this->queryID = pg_query($this->_linkID,$this->queryStr );
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
@@ -156,14 +156,14 @@ Class Db_Pgsql extends Db{
      +----------------------------------------------------------
      */
     function _execute($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) Return False;
+		$this->initConnect(true);
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
 
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                pg_exec($this->linkID,'begin;');
+                pg_exec($this->_linkID,'begin;');
             }
             $this->transTimes++;
         }else {
@@ -175,7 +175,7 @@ Class Db_Pgsql extends Db{
         $this->writeTimes ++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !pg_query($this->linkID,$this->queryStr) ) {
+        if ( !pg_query($this->_linkID,$this->queryStr) ) {
             throw_exception($this->error());
             Return False;
         } else {
@@ -200,7 +200,7 @@ Class Db_Pgsql extends Db{
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = pg_exec($this->linkID,'end;');
+            $result = pg_exec($this->_linkID,'end;');
             if(!$result){
                 throw_exception($this->error());
                 return False;
@@ -225,7 +225,7 @@ Class Db_Pgsql extends Db{
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = pg_exec($this->linkID,'abort;');
+            $result = pg_exec($this->_linkID,'abort;');
             if(!$result){
                 throw_exception($this->error());
                 return False;
@@ -353,10 +353,10 @@ Class Db_Pgsql extends Db{
     function close() { 
         if (!empty($this->queryID))
             pg_free_result($this->queryID);
-        if(!pg_close($this->linkID)){
+        if(!pg_close($this->_linkID)){
             throw_exception($this->error(False));
         }
-        $this->linkID = 0;
+        $this->_linkID = 0;
     } 
 
     /**
@@ -375,7 +375,7 @@ Class Db_Pgsql extends Db{
         if($result){
             $this->error = pg_result_error($this->queryID);
         }else{
-            $this->error = pg_last_error($this->linkID);
+            $this->error = pg_last_error($this->_linkID);
         }
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;

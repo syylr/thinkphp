@@ -58,25 +58,25 @@ Class Db_Oracle extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function connect($config='') {
-        if ( !$this->linkID ) {
+    function connect($config='',$linkNum=0) {
+        if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'oci_pconnect':'oci_connect';
 			if(false === strpos($config['database'],$config['hostname'])) {
 				$config['database']	=	"(DESCRIPTION = (ADDRESS_LIST = (ADDRESS =(COMMUNITY = ".$config['database'].")(PROTOCOL = TCP)(Host =".$config['hostname'].")(Port = ".$config['hostport'].")))(CONNECT_DATA = (SID = ".$config['sid'].")))";
 			}
-            $this->linkID = $conn($config['username'], $config['password'],$config['database']);
-            if ( !$this->linkID) {
+            $this->linkID[$linkNum] = $conn($config['username'], $config['password'],$config['database']);
+            if ( !$this->linkID[$linkNum]) {
                 throw_exception($this->error());
                 Return False;
             }
-            $this->dbVersion = OCI_Server_Version($this->linkID);
+            $this->dbVersion = OCI_Server_Version($this->linkID[$linkNum]);
 			// 标记连接成功
 			$this->connected	=	true;
             //注销数据库安全信息
             unset($this->config);
         }
-        Return $this->linkID;
+        Return $this->linkID[$linkNum];
     }
 
     /**
@@ -106,8 +106,8 @@ Class Db_Oracle extends Db{
      +----------------------------------------------------------
      */
     function _query($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) Return False;
+		$this->initConnect(false);
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         if ($this->autoCommit) {
             //释放前次的查询结果
@@ -117,7 +117,7 @@ Class Db_Oracle extends Db{
         $this->queryTimes ++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        $this->queryID = OCI_Parse($this->linkID,$this->queryStr);
+        $this->queryID = OCI_Parse($this->_linkID,$this->queryStr);
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
@@ -154,8 +154,8 @@ Class Db_Oracle extends Db{
      +----------------------------------------------------------
      */
     function _execute($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) Return False;
+		$this->initConnect(true);
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         if ($this->autoCommit) {
             //释放前次的查询结果
@@ -165,7 +165,7 @@ Class Db_Oracle extends Db{
         $this->writeTimes ++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !OCI_Parse($this->linkID,$this->queryStr) ) {
+        if ( !OCI_Parse($this->_linkID,$this->queryStr) ) {
             throw_exception($this->error());
             Return False;
         } else {
@@ -179,7 +179,7 @@ Class Db_Oracle extends Db{
                 throw_exception($this->error());
                 Return False;
             }
-            $this->numRows = oci_num_rows($this->linkID);
+            $this->numRows = oci_num_rows($this->_linkID);
             Return $this->numRows;
         }
     }
@@ -199,7 +199,7 @@ Class Db_Oracle extends Db{
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = oci_commit($this->linkID);
+            $result = oci_commit($this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -224,7 +224,7 @@ Class Db_Oracle extends Db{
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = oci_rollback($this->linkID);
+            $result = oci_rollback($this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -347,10 +347,10 @@ Class Db_Oracle extends Db{
     function close() { 
         if (!empty($this->queryID))
             $this->free();
-        if (!OCI_close($this->linkID)){
+        if (!OCI_close($this->_linkID)){
             throw_exception($this->error());
         }
-        $this->linkID = 0;
+        $this->_linkID = 0;
     } 
 
     /**
@@ -366,7 +366,7 @@ Class Db_Oracle extends Db{
      +----------------------------------------------------------
      */
     function error() {
-        $this->error = OCI_Error($this->linkID);
+        $this->error = OCI_Error($this->_linkID);
         $this->error = $this->error["message"];
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;

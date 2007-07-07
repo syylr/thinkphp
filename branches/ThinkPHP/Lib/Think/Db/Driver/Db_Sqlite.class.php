@@ -59,13 +59,13 @@ Class Db_Sqlite extends Db
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function connect($config='') {
-        if ( !$this->linkID ) {
+    function connect($config='',$linkNum=0) {
+        if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'sqlite_popen':'sqlite_open';
 			$config['mode']	=	0666;
-            $this->linkID = $conn($config['database'],$config['mode']);
-            if ( !$this->linkID) {
+            $this->linkID[$linkNum] = $conn($config['database'],$config['mode']);
+            if ( !$this->linkID[$linkNum]) {
                 throw_exception(sqlite_error_string());
                 Return False;
             }
@@ -75,7 +75,7 @@ Class Db_Sqlite extends Db
             //注销数据库安全信息
             unset($this->config);
         }
-        Return $this->linkID;
+        Return $this->linkID[$linkNum];
     }
 
     /**
@@ -105,8 +105,8 @@ Class Db_Sqlite extends Db
      +----------------------------------------------------------
      */
     function _query($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) Return False;
+		$this->initConnect(false);
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
@@ -115,7 +115,7 @@ Class Db_Sqlite extends Db
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
 
-        $this->queryID = sqlite_query($this->linkID,$this->queryStr);
+        $this->queryID = sqlite_query($this->_linkID,$this->queryStr);
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
@@ -142,13 +142,13 @@ Class Db_Sqlite extends Db
      +----------------------------------------------------------
      */
     function _execute($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) Return False;
+		$this->initConnect(true);
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                sqlite_query($this->linkID,'BEGIN TRANSACTION');
+                sqlite_query($this->_linkID,'BEGIN TRANSACTION');
             }
             $this->transTimes++;
         }else {
@@ -159,12 +159,12 @@ Class Db_Sqlite extends Db
         $this->writeTimes ++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !sqlite_exec($this->linkID,$this->queryStr) ) {
+        if ( !sqlite_exec($this->_linkID,$this->queryStr) ) {
             throw_exception($this->error());
             Return False;
         } else {
-            $this->numRows = sqlite_changes($this->linkID);
-            $this->lastInsID = sqlite_last_insert_rowid($this->linkID);
+            $this->numRows = sqlite_changes($this->_linkID);
+            $this->lastInsID = sqlite_last_insert_rowid($this->_linkID);
             Return $this->numRows;
         }
     }
@@ -184,7 +184,7 @@ Class Db_Sqlite extends Db
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = sqlite_query($this->linkID,'COMMIT TRANSACTION');
+            $result = sqlite_query($this->_linkID,'COMMIT TRANSACTION');
             if(!$result){
                 throw_exception($this->error());
                 return False;
@@ -209,7 +209,7 @@ Class Db_Sqlite extends Db
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = sqlite_query($this->linkID,'ROLLBACK TRANSACTION');
+            $result = sqlite_query($this->_linkID,'ROLLBACK TRANSACTION');
             if(!$result){
                 throw_exception($this->error());
                 return False;
@@ -333,10 +333,10 @@ Class Db_Sqlite extends Db
      +----------------------------------------------------------
      */
     function close() { 
-        if (!sqlite_close($this->linkID)){
+        if (!sqlite_close($this->_linkID)){
             throw_exception($this->error());
         }
-        $this->linkID = 0;
+        $this->_linkID = 0;
     } 
 
     /**
@@ -352,7 +352,7 @@ Class Db_Sqlite extends Db
      +----------------------------------------------------------
      */
     function error() {
-        $this->error = sqlite_error_string(sqlite_last_error($this->linkID));
+        $this->error = sqlite_error_string(sqlite_last_error($this->_linkID));
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }

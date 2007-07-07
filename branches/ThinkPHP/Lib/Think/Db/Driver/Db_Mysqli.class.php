@@ -58,35 +58,35 @@ Class Db_Mysqli extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function connect($config='') {
-        if ( !$this->linkID ) {
+    function connect($config='',$linkNum=0) {
+        if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
-            $this->linkID = mysqli_connect(
+            $this->linkID[$linkNum] = mysqli_connect(
                                 $config['hostname'], 
                                 $config['username'], 
                                 $config['password'],
                                 $config['database'], 
                                 $config['hostport']);
-            if ( !$this->linkID) {
+            if ( !$this->linkID[$linkNum]) {
                 throw_exception(mysqli_connect_error());
                 Return False;
             }
             if($this->autoCommit){
-                mysqli_autocommit($this->linkID, True);
+                mysqli_autocommit($this->linkID[$linkNum], True);
             }else {
-                mysqli_autocommit($this->linkID, False);
+                mysqli_autocommit($this->linkID[$linkNum], False);
             }
-            $this->dbVersion = mysqli_get_server_info($this->linkID);
+            $this->dbVersion = mysqli_get_server_info($this->linkID[$linkNum]);
             if ($this->dbVersion >= "4.1") { 
                 //使用UTF8存取数据库 需要mysql 4.1.0以上支持
-                mysqli_query( $this->linkID,"SET NAMES '".C('DB_CHARSET')."'");
+                mysqli_query( $this->linkID[$linkNum],"SET NAMES '".C('DB_CHARSET')."'");
             }
 			// 标记连接成功
 			$this->connected	=	true;
             //注销数据库安全信息
             unset($this->config);
         }
-        Return $this->linkID;
+        Return $this->linkID[$linkNum];
     }
 
     /**
@@ -116,13 +116,13 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      */
     function _query($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) Return False;
+		$this->initConnect(false);
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                mysqli_autocommit($this->linkID, false);
+                mysqli_autocommit($this->_linkID, false);
             }
             $this->transTimes++;
         }else {
@@ -134,7 +134,7 @@ Class Db_Mysqli extends Db{
         $this->queryTimes ++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        $this->queryID = mysqli_query($this->linkID,$this->queryStr );
+        $this->queryID = mysqli_query($this->_linkID,$this->queryStr );
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
@@ -161,13 +161,13 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      */
     function _execute($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) Return False;
+		$this->initConnect(true);
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                mysqli_autocommit($this->linkID, false);
+                mysqli_autocommit($this->_linkID, false);
             }
             $this->transTimes++;
         }else {
@@ -178,12 +178,12 @@ Class Db_Mysqli extends Db{
         $this->writeTimes ++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !mysqli_query($this->linkID,$this->queryStr) ) {
+        if ( !mysqli_query($this->_linkID,$this->queryStr) ) {
             throw_exception($this->error());
             Return False;
         } else {
-            $this->numRows = mysqli_affected_rows($this->linkID);
-            $this->lastInsID = mysqli_insert_id($this->linkID);
+            $this->numRows = mysqli_affected_rows($this->_linkID);
+            $this->lastInsID = mysqli_insert_id($this->_linkID);
             Return $this->numRows;
         }
     }
@@ -204,8 +204,8 @@ Class Db_Mysqli extends Db{
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = mysqli_commit($this->linkID);
-            mysqli_autocommit($this->linkID, TRUE);
+            $result = mysqli_commit($this->_linkID);
+            mysqli_autocommit($this->_linkID, TRUE);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -231,7 +231,7 @@ Class Db_Mysqli extends Db{
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = mysqli_rollback($this->linkID);
+            $result = mysqli_rollback($this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -409,10 +409,10 @@ Class Db_Mysqli extends Db{
     function close() { 
         if (!empty($this->queryID))
             mysqli_free_result($this->queryID);
-        if (!mysqli_close($this->linkID)){
+        if (!mysqli_close($this->_linkID)){
             throw_exception($this->error());
         }
-        $this->linkID = 0;
+        $this->_linkID = 0;
     } 
 
     /**
@@ -429,7 +429,7 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      */
     function error() {
-        $this->error = mysqli_error($this->linkID);
+        $this->error = mysqli_error($this->_linkID);
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
@@ -456,7 +456,7 @@ Class Db_Mysqli extends Db{
         $str = str_replace("&lt;", "<", $str);
         $str = str_replace("&gt;", ">", $str);
         $str = str_replace("&amp;", "&", $str);
-        //$str = mysqli_real_escape_string($this->linkID,$str); 
+        //$str = mysqli_real_escape_string($this->_linkID,$str); 
     } 
 
 }//类定义结束

@@ -58,18 +58,18 @@ Class Db_Mssql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function connect($config='') {
-        if ( !$this->linkID ) {
+    function connect($config='',$linkNum=0) {
+        if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'mssql_pconnect':'mssql_connect';
-            $this->linkID = $conn( $config['hostname'] . ':' . $config['hostport'], $config['username'], $config['password']);
+            $this->linkID[$linkNum] = $conn( $config['hostname'] . ':' . $config['hostport'], $config['username'], $config['password']);
 
-            if ( !$this->linkID) {
+            if ( !$this->linkID[$linkNum]) {
                 throw_exception($this->error());
                 Return False;
             }
 
-            if ( !mssql_select_db($config['database'], $this->linkID) ) {
+            if ( !mssql_select_db($config['database'], $this->linkID[$linkNum]) ) {
                 throw_exception($this->error());
                 Return False;
             }
@@ -78,7 +78,7 @@ Class Db_Mssql extends Db{
             //注销数据库安全信息
             unset($this->config);
         }
-        Return $this->linkID;
+        Return $this->linkID[$linkNum];
     }
 
     /**
@@ -108,13 +108,13 @@ Class Db_Mssql extends Db{
      +----------------------------------------------------------
      */
     function _query($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) Return False;
+		$this->initConnect(false);
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                mssql_query('BEGIN TRAN', $this->linkID);
+                mssql_query('BEGIN TRAN', $this->_linkID);
             }
             $this->transTimes++;
         }else {
@@ -125,7 +125,7 @@ Class Db_Mssql extends Db{
         $this->queryTimes ++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        $this->queryID = @mssql_query($this->queryStr, $this->linkID);
+        $this->queryID = @mssql_query($this->queryStr, $this->_linkID);
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
@@ -152,13 +152,13 @@ Class Db_Mssql extends Db{
      +----------------------------------------------------------
      */
     function _execute($str='') {
-		if ( !$this->connected ) $this->connect();
-        if ( !$this->linkID ) Return False;
+		$this->initConnect(true);
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                mssql_query('BEGIN TRAN', $this->linkID);
+                mssql_query('BEGIN TRAN', $this->_linkID);
             }
             $this->transTimes++;
         }else {
@@ -169,11 +169,11 @@ Class Db_Mssql extends Db{
         $this->writeTimes ++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !mssql_query($this->queryStr, $this->linkID) ) {
+        if ( !mssql_query($this->queryStr, $this->_linkID) ) {
             throw_exception($this->error());
             Return False;
         } else {
-            $this->numRows = mssql_rows_affected($this->linkID);
+            $this->numRows = mssql_rows_affected($this->_linkID);
             $this->lastInsID = $this->mssql_insert_id();
             Return $this->numRows;
         }
@@ -194,7 +194,7 @@ Class Db_Mssql extends Db{
     function mssql_insert_id() 
     {
         $query  =   "SELECT @@IDENTITY as last_insert_id";
-        $result =   mssql_query($query, $this->linkID);
+        $result =   mssql_query($query, $this->_linkID);
         list($last_insert_id)   =   mssql_fetch_row($result);
         mssql_free_result($result);
         return $last_insert_id;
@@ -215,7 +215,7 @@ Class Db_Mssql extends Db{
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = mssql_query('COMMIT TRAN', $this->linkID);
+            $result = mssql_query('COMMIT TRAN', $this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -240,7 +240,7 @@ Class Db_Mssql extends Db{
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = mssql_query('ROLLBACK TRAN', $this->linkID);
+            $result = mssql_query('ROLLBACK TRAN', $this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -366,10 +366,10 @@ Class Db_Mssql extends Db{
     function close() { 
         if (!empty($this->queryID))
             mssql_free_result($this->queryID);
-        if (!mssql_close($this->linkID)){
+        if (!mssql_close($this->_linkID)){
             throw_exception($this->error());
         }
-        $this->linkID = 0;
+        $this->_linkID = 0;
     } 
 
     /**
