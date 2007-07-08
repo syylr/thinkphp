@@ -206,7 +206,7 @@ class TagLib_Cx extends TagLib
 		if(!empty($length)) {
 			$parseStr  .= '<?php '.$name.'= array_slice('.$name.','.$offset.','.$length.') ?>';
 		}
-		$parseStr .= '<?php foreach($'.$name.' as $key=>$'.$id.'): ?>';
+		$parseStr .= '<?php foreach('.$name.' as $key=>$'.$id.'): ?>';
 		$parseStr .= '<?php ++$'.$key.';?>';
 		$parseStr .= '<?php $odd = (($'.$key.' % 2 )==0)?>';
 		$parseStr .= $content;
@@ -477,9 +477,9 @@ class TagLib_Cx extends TagLib
         }
         if('$' == substr($value,0,1)) {
         	$value  =  str_replace('.','->',$value);
-            $parseStr = '<?php if('.$value.'=='.$name.'): ?>';
+            $parseStr = '<?php if('.$value.'==('.$name.')): ?>';
         }else {
-            $parseStr = '<?php if("'.$value.'"=='.$name.'): ?>';        	
+            $parseStr = '<?php if("'.$value.'"==('.$name.')): ?>';        	
         }
         $parseStr .= $content.'<?php endif; ?>';
 
@@ -524,9 +524,9 @@ class TagLib_Cx extends TagLib
         }
        if('$' == substr($value,0,1)) {
         	$value  =  $this->autoBuildVar(substr($name,1));;
-            $parseStr = '<?php if('.$value.'!='.$name.'): ?>';
+            $parseStr = '<?php if('.$value.'!=('.$name.')): ?>';
         }else {
-            $parseStr = '<?php if("'.$value.'"!='.$name.'): ?>';        	
+            $parseStr = '<?php if("'.$value.'"!=('.$name.')): ?>';        	
         }
         $parseStr .= $content.'<?php endif; ?>';
         return $parseStr;

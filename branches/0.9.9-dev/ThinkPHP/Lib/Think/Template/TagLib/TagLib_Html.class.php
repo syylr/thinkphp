@@ -494,7 +494,6 @@ class TagLib_Html extends TagLib
         $name       = !empty($tag['name'])?$tag['name']:'vo';                 //Vo对象名
         $action     = $tag['action'];                   //是否显示功能操作
         $checkbox   = $tag['checkbox'];                 //是否显示Checkbox
-        $datatype = !empty($tag['datatype'])?$tag['datatype']:1;  // 数据源类型 1 对象列表 2 数组列表 默认为1
         if(isset($tag['actionlist'])) {
             $actionlist = explode(',',trim($tag['actionlist']));    //指定功能列表
         }
@@ -533,7 +532,7 @@ class TagLib_Html extends TagLib
                 $parseStr .= '<Th>';
             }
             $showname[2] = isset($showname[2])?$showname[2]:$showname[0];
-            $parseStr .= '<A HREF="javascript:sortBy(\''.$property[0].'\',\'{$sort}\',\''.ACTION_NAME.'\')" title="按照'.$showname[2].'<var name=\'sortType\' />">'.$showname[0].'<equal name="order" value="'.$property[0].'" ><IMG SRC="../public/images/{$sortImg}.gif" WIDTH="12" HEIGHT="17" BORDER="0" align="absmiddle"></equal></A></Th>';
+            $parseStr .= '<A HREF="javascript:sortBy(\''.$property[0].'\',\'{$sort}\',\''.ACTION_NAME.'\')" title="按照'.$showname[2].'{$sortType} ">'.$showname[0].'<equal name="order" value="'.$property[0].'" ><IMG SRC="../public/images/{$sortImg}.gif" WIDTH="12" HEIGHT="17" BORDER="0" align="absmiddle"></equal></A></Th>';
         }
         if(!empty($action)) {//如果指定显示操作功能列
             $parseStr .= '<th >操作</th>';
@@ -581,9 +580,9 @@ class TagLib_Html extends TagLib
                     if(count($b)>1) {
                         $c = explode('|',$a[0]);
                         if(count($c)>1) {
-                            $parseStr .= '<A HREF="javascript:'.$c[1].'({vo:'.$name.'|'.$pk.'})"><?php if($'.$name.'->status=="0"){ ?>'.$b[1].'<?php } ?></A><A HREF="javascript:'.$c[0].'({vo:'.$name.'|id})"><?php if($'.$name.'->status=="1"){ ?>'.$b[0].'<?php } ?></A> ';
+                            $parseStr .= '<A HREF="javascript:'.$c[1].'({$'.$name.'.'.$pk.'})"><?php if(0== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[1].'<?php } ?></A><A HREF="javascript:'.$c[0].'({$'.$name.'.'.$pk.'})"><?php if(1== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[0].'<?php } ?></A> ';
                         }else {
-                            $parseStr .= '<A HREF="javascript:'.$a[0].'({vo:'.$name.'|'.$pk.'})"><?php if($'.$name.'->status=="0"){ ?>'.$b[1].'<?php } ?><?php if($'.$name.'->status=="1"){ ?>'.$b[0].'<?php } ?></A> ';
+                            $parseStr .= '<A HREF="javascript:'.$a[0].'({$'.$name.'.'.$pk.'})"><?php if(0== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[1].'<?php } ?><?php if(1== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[0].'<?php } ?></A> ';
                         }
                         
                     }else {
