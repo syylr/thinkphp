@@ -8,18 +8,19 @@ Version: 1.0
 Author URI: http://www.56.com/
 */
 
-function DzTemplate($templateFile,$templateDir='default')
+function template($templateFile,$templateDir='default')
 {
-   // $templateFile = substr($templateFile,strlen(TMPL_PATH),-5);
     $CacheDir = substr(CACHE_PATH,0,-1);
     require_once("DzTemplate.class.php");
 	$tpl = &new DzTemplate;
 	$tpl->tpl_dir = TMPL_PATH.$templateDir;
 	$tpl->tpl_default_dir = TMPL_PATH.'default';
-	$tpl->tpl_refresh_time = TMPL_CACHE_TIME;
+	$tpl->tpl_refresh_time = C('TMPL_CACHE_TIME');
 	$tpl->tpl_cache_dir = CACHE_PATH;
+	$tpl->the_tpl_dir =$templateDir;
      return $tpl->tpl($templateFile);
 }
+ 
 
 function stripvtags($expr, $statement) {
 	$expr = str_replace("\\\"", "\"", preg_replace("/\<\?php echo (\\\$.+?)\?\>/s", "\\1", $expr));
@@ -28,7 +29,7 @@ function stripvtags($expr, $statement) {
 }
 
 if('DZ'== strtoupper(C('TMPL_ENGINE_TYPE'))) {
-    add_compiler('Dz','DzTemplate');
+    add_compiler('Dz','template');
 }
 
 ?>

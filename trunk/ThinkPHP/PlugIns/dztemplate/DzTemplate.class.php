@@ -5,7 +5,6 @@
 * @version 1.0
 */
 
-
 class DzTemplate {
     /**
      * 模板文件存放目录[Template file dir]
@@ -20,7 +19,13 @@ class DzTemplate {
      */	
 	var $tpl_default_dir;
     /**
-     * 模板缓存存放目录[Template file dir]
+     * 模板默认缓存存放目录[Template file dir]
+     *
+	 * @var string
+     */	
+	var $the_tpl_dir;
+    /**
+     * 模板存放目录[Template file dir]
      *
      * @var string
      */	
@@ -40,9 +45,8 @@ class DzTemplate {
 		$tplfile=$this->tpl_dir."/".$file.".html";
 		if(!is_readable($tplfile)) {
 			$tplfile=$this->tpl_default_dir."/".$file.".html";
-		}
-		$tpldir=$this->updir($this->tpl_default_dir);
-		$compiledtpldir=$this->tpl_cache_dir.$tpldir.".tpl";//构造编译目录[Define compile dir]
+		} 
+		$compiledtpldir=$this->tpl_cache_dir.$this->the_tpl_dir.".tpl";//构造编译目录[Define compile dir]
 		$compiledtplfile=$compiledtpldir."/".$file.".tpl.php";//构造编译文件[Define compile file]
 		is_dir($compiledtpldir) or @mkdir($compiledtpldir,0777);		
 		if(!file_exists($compiledtplfile) || (time()-@filemtime($compiledtplfile) > $this->tpl_refresh_time))//文件不存在或者创建日期超出刷新时间
@@ -71,10 +75,19 @@ class DzTemplate {
      *
      * @return string
      */
-	function tpl_parse($str){
+	function tpl_parse($str){ 
 		$str=preg_replace("/([\n\r]+)\t+/s","\\1",$str);
-		$str=preg_replace("/\<\!\-\-\{(.+?)\}\-\-\>/s", "{\\1}",$str);
-		$str=preg_replace("/\{template\s+(.+)\}/","\n<?php include template(\\1); ?>\n",$str);
+		//项目公共目录
+		$str = str_ireplace('../public',APP_PUBLIC_URL,$str);
+		$str = str_ireplace('../Public',APP_PUBLIC_URL,$str);
+		//网站公共目录
+		$str = str_replace('__PUBLIC__',WEB_PUBLIC_URL,$str);
+		//操作Action代号
+		$str = str_replace('__VAR_ACTION__',C('VAR_ACTION'),$str);
+		//操作Module代号
+		$str = str_replace('__VAR_MODULE__',C('VAR_MODULE'),$str);  		
+		$str=preg_replace("/\<\!\-\-\{(.+?)\}\-\-\>/s", "{\\1}",$str);	  
+		$str=preg_replace("/\{template\s+(.+)\}/","\n<?php include template('\\1','{$this->the_tpl_dir}'); ?>\n",$str);
 		$str = preg_replace("/[\n\r\t]*\{eval\s+(.+?)\}[\n\r\t]*/ies", "stripvtags('\n<? \\1 ?>\n','')", $str);
 		$str=preg_replace("/\{include\s+(.+)\}/","\n<?php include \\1; ?>\n",$str);
 		$str=preg_replace("/\{if\s+(.+?)\}/","<? if(\\1) { ?>",$str);
@@ -90,25 +103,6 @@ class DzTemplate {
 		$str=preg_replace("/\{(\\$[a-zA-Z0-9_\[\]\'\"\$\x7f-\xff]+)\}/s", "<?=\\1?>",$str);
 		$str=preg_replace("/\{([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/s", "<?=\\1?>",$str);
 		$str="<? if(!defined('THINK_PATH')) exit('Access Denied'); ?>\n".$str;//防止直接浏览模板编译文件
-		//项目公共目录
-        $str = str_ireplace('../public',APP_PUBLIC_URL,$str);
-		$str = str_ireplace('../Public',APP_PUBLIC_URL,$str);
-        //网站公共目录
-        $str = str_replace('__PUBLIC__',WEB_PUBLIC_URL,$str);
-        //网站根目录
-        $str = str_replace('__ROOT__',__ROOT__,$str);
-        //当前项目地址
-        $str = str_replace('__APP__',__APP__,$str);
-        //当前模块地址
-        $str = str_replace('__URL__',__URL__,$str);
-        //当前项目操作地址
-		$str = str_replace('__ACTION__',__ACTION__,$str);
-        //当前页面操作地址
-		$str = str_replace('__SELF__',__SELF__,$str);
-		//操作Action代号
-		$str = str_replace('__VAR_ACTION__',VAR_ACTION,$str);
-        //操作Module代号
-		$str = str_replace('__VAR_MODULE__',VAR_MODULE,$str);
 		return $str;
 	}
     /**
@@ -117,11 +111,13 @@ class DzTemplate {
      * @return string
      */
 	function tpl_read($tplfile){
-		if($fp=@fopen($tplfile,"r") or die('Can not read tpl file'))
+		if($fp=@fopen($tplfile,"r"))
 		{
 			$str=fread($fp,filesize($tplfile));
 			fclose($fp);
 			return $str;	
+		}else{
+			throw_exception(L('_TEMPLATE_NOT_EXIST_')); 
 		}
 		return false;
 	}
@@ -131,15 +127,19 @@ class DzTemplate {
      * @return boolean
      */
 	function tpl_write($compiledtplfile,$str){
-		if($fp=@fopen($compiledtplfile,"w") or die('Can not write tpl file'))
+		if($fp=@fopen($compiledtplfile,"w"))
 		{
 			flock($fp, 3);
-			if(@fwrite($fp,$str) or die('Can not write tpl file'))
+			if(@fwrite($fp,$str))
 			{
 				fclose($fp);
 				return true;
+			}else{
+				throw_exception('模版缓存文件无法写入！');
 			}
 			fclose($fp);
+		}else{
+			throw_exception('模版缓存文件写入失败！');
 		}
 		return false;
 	}
@@ -152,19 +152,5 @@ class DzTemplate {
 		$count=count($paths)-1;
 		return $paths[$count];
 	}
-	/**
-	 * 设定模板参数
-	 */
-	function set(&$config)
-	{
-		if(is_array($config))
-		{
-			foreach($config as $k => $v)
-			{
-				if(isset(self::$$k))self::$$k = $v;
-			}	
-		}
-	}
-
 }
 ?>
