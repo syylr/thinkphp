@@ -1,0 +1,28 @@
+开发版本更新日志(+表示增加 *表示完善 -表示删除）
+------------------version 0.9.9 ---------------------------
+[ 2007-07-03 ] + 增加快速创建对象实例的方法  
+使用I('Think.Util.HashMap') 来直接返回HashMap对象的实例
+[ 2007-07-05 ] +增加Dao的前置和后置方法     
+之前只有Action类才有前置和后置操作，现在Dao类的add、save、delete也可以分别定义前置和后置方法，规则和前置和后置操作类似。分别以_before_ 和 _after_ 作为前缀。 
+[ 2007-07-05 ] * 完善前置和后置操作的支持     
+原来的前置和后置操作要存在操作方法的时候才会生效，现在当没有定义操作的时候，或者使用插件操作的时候一样可以使用。 
+[ 2007-07-05 ] + 分布式数据库支持
+必须是同一个数据库类型，且表名相同，主服务器写入，从服务器随机读取
+[ 2007-07-06 ] * 更新静态缓存插件 感谢killerman
+支持目录层次的静态缓存生成
+[ 2007-07-06 ] * 更新模板引擎
+更改 {$var.name} 可以自动识别对象和数组显示 不需要使用{$var['name']} 来输出数组了，但是{$var.name.subname} 方式无效
+并且增加规则 {$var:name} 输出var对象的name属性，并且支持{$var:name:subname}， {$var['name']} 输出var数组的name索引方式不变
+[ 2007-07-07 ]  + 增加XCache缓存类型支持
+[ 2007-07-08 ]  * 系统基类库增加com包
+Think包为系统基类库 Org包为第三方类库 Com为企业类库包 并且在import的时候不区分大小写
+[ 2007-07-08 ]  * getIterator函数更名为get_iterator（命名规范考虑）
+[ 2007-07-08 ]  + 增加IS_PHP4 和 IS_PHP5 常量用以在应用中判断php大版本
+[ 2007-07-08 ]  * 完善数组和对象的自动识别在XML标签中
+包括 iterate volist vo switch equal notequal,但不含present和notpresent，
+[ 2007-07-08 ]  - 去掉了var和write标签，完全可用{$var}方式替换
+[ 2007-07-08 ]  * Dao中的属性名称更改（命名规范考虑）
+原来的auto_save_relations、auto_delete_relations、auto_add_relations分别改名为autoSaveRelations、autoDelRelations、autoAddRelations
+原来的auto_create_timestamps、auto_update_timestamps分别更名为autoCreateTimestamps、autoUpdateTimestamps
+原来的乐观锁属性改名为optimLock
+[ 2007-07-08 ]  - 去掉了系统函数库中的checkModRewrite、highlight_code和get_client_ip函数
