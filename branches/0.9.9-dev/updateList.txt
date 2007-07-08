@@ -26,3 +26,4 @@ Think包为系统基类库 Org包为第三方类库 Com为企业类库包 并且
 原来的auto_create_timestamps、auto_update_timestamps分别更名为autoCreateTimestamps、autoUpdateTimestamps
 原来的乐观锁属性改名为optimLock
 [ 2007-07-08 ]  - 去掉了系统函数库中的checkModRewrite、highlight_code和get_client_ip函数
+[ 2007-07-09 ]  - 去掉版本号定义文件，并入系统定义文件
