@@ -33,25 +33,14 @@ import("Think.Core.Template");
 class Action extends Base
 {//类定义开始
 
-    /**
-     +----------------------------------------------------------
-     * 模板实例对象
-     +----------------------------------------------------------
-     * @var object
-     * @access protected
-     +----------------------------------------------------------
-     */
-    var $tpl    ;
+	// Action控制器名称
+	var $name;
 
-    /**
-     +----------------------------------------------------------
-     * 上次错误信息
-     +----------------------------------------------------------
-     * @var string
-     * @access protected
-     +----------------------------------------------------------
-     */
-    var $error    ;
+    // 模板实例对象
+    var $tpl;
+
+    // 上次错误信息
+    var $error;
 
    /**
      +----------------------------------------------------------
@@ -64,6 +53,7 @@ class Action extends Base
     {
         //实例化模板类
         $this->tpl = Template::getInstance();    
+		$this->name	=	substr($this->__toString(),0,-6);
         //控制器初始化
         $this->_initialize();
     }
@@ -113,9 +103,12 @@ class Action extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function cacheVoList($voList,$identify) 
+    function cacheList($voList,$identify,$name='') 
     {
-        $guid   = strtoupper($voList->getVoClass()).'List_'.$identify;
+		if(empty($name)) {
+			$name	=	$this->name;
+		}
+        $guid   = $name.'List_'.$identify;
         //VoList对象缓存
         S($guid,$voList);
     }
@@ -134,9 +127,12 @@ class Action extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getCacheVoList($voClass,$identify) 
+    function getCacheList($identify,$name='') 
     {
-        $guid   = strtoupper($voClass).'List_'.$identify;
+		if(empty($name)) {
+			$name	=	$this->name;
+		}
+        $guid   = $name.'List_'.$identify;
         // 获取VoList对象缓存
         return  S($guid);
     }
@@ -155,9 +151,12 @@ class Action extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function delCacheVoList($voClass,$identify) 
+    function delCacheList($identify,$name='') 
     {
-        $guid   = strtoupper($voClass).'List_'.$identify;
+		if(empty($name)) {
+			$name	=	$this->name;
+		}
+        $guid   = $name.'List_'.$identify;
         // 删除VoList对象缓存
         return  S($guid,null);
     }
@@ -176,10 +175,12 @@ class Action extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function cacheVo($vo,$id) 
+    function cacheVo($vo,$id,$name='') 
     {
-        $guid   = strtoupper(get_class($vo)).'_'.$id;
-        //Vo对象缓存
+		if(empty($name)) {
+			$name	=	$this->name;
+		}
+        $guid   = $name.'_'.$id;
         S($guid,$vo);
     }
 
@@ -197,19 +198,18 @@ class Action extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getCacheVo($voClass,$id) 
+    function getCacheVo($id,$name='') 
     {
-        $guid   = strtoupper($voClass).'_'.$id;
+		if(empty($name)) {
+			$name	=	$this->name;
+		}
+        $guid   = $name.'_'.$id;
         //Vo对象缓存
         $vo      =  S($guid);
 		// 乐观锁记录
-		$dao = $this->getDaoClass();
-		if($dao->lock_optimistically) {
-			if(is_array($vo) && isset($vo[$dao->lock_optimistically])) {
-				Session::set($guid.'_lock_version',$vo[$dao->lock_optimistically]);
-			}elseif(isset($vo->{$dao->lock_optimistically})){
-				Session::set($guid.'_lock_version',$vo->{$dao->lock_optimistically});
-			}
+		$dao = D($name);
+		if($dao->optimLock && isset($vo[$dao->optimLock])) {
+			Session::set($guid.'_lock_version',$vo[$dao->optimLock]);
 		}
         return $vo;
     }
@@ -228,9 +228,12 @@ class Action extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function delCacheVo($voClass,$id) 
+    function delCacheVo($id,$name='') 
     {
-        $guid   = strtoupper($voClass).'_'.$id;
+		if(empty($name)) {
+			$name	=	$this->name;
+		}
+        $guid   = $name.'_'.$id;
         //删除Vo对象缓存
         return  S($guid,null);
     }
@@ -249,24 +252,7 @@ class Action extends Base
      */
     function getDao() 
     {
-        return substr($this->__toString(),0,-6).'Dao';
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 取得当前Vo对象的名称
-     * 用于自动导入Vo对象
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-    function getVo() 
-    {
-        return substr($this->__toString(),0,-6).'Vo';
+        return $this->name.'Dao';
     }
 
     /**
@@ -282,8 +268,7 @@ class Action extends Base
      */
     function getDaoClass() 
     {
-        $daoClass   = $this->getDao();
-        $dao        = D($daoClass);
+        $dao        = D($this->getDao());
         return $dao;
     }
 
@@ -641,19 +626,14 @@ class Action extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function _search($vo='') 
+    function _search() 
     {
         //生成查询条件
-        $map        = new HashMap();
-        if(empty($vo)) {
-            $vo    = $this->getVo();
-        }
-        //自动引入同名VO类
-        import(APP_NAME.'.Vo.'.$vo);
-        $vars       = get_class_vars($vo);
-        foreach($vars as $key=>$val) {
-            if(isset($_REQUEST[$key]) && $_REQUEST[$key]!='') {
-                $map->put($key,$_REQUEST[$key]);
+        $map        = I('Think.Util.HashMap');
+		$dao	=	D($this->getDao());
+        foreach($dao->fields as $key=>$val) {
+            if(isset($_REQUEST[$val]) && $_REQUEST[$val]!='') {
+                $map->put($val,$_REQUEST[$val]);
             }
         }
         return $map;
@@ -698,7 +678,7 @@ class Action extends Base
         }
         $p          = new Page($count,$listRows);
         //分页查询数据
-        $voList     = $dao->findAll($map,'','*',$order.' '.$sort,$p->firstRow.','.$p->listRows);
+        $voList     = $dao->findAll($map,'*',$order.' '.$sort,$p->firstRow.','.$p->listRows);
         //分页跳转的时候保证查询条件
         $condition  = $map->toArray();
         foreach($condition as $key=>$val) {
@@ -774,30 +754,9 @@ class Action extends Base
         //保存当前Vo对象
         $id = $dao->add($vo);
         if($id) { //保存成功
-            if(is_array($vo)) {
-            	$vo[$dao->pk]  =  $id;
-            }else {
-                $vo->{$dao->pk} =   $id;            	
-            }
+           	$vo[$dao->pk]  =  $id;
             // 缓存数据对象
-            $this->cacheVo($vo,$id);
-            if(C('SAVE_PARENT_VO') && 0!==strcasecmp(get_parent_class($vo),'Vo')) {
-                //如果启用保存父类Vo功能
-                //并且父类不是Vo基类，则首先保存父类Vo对象
-                //目前仅支持上一级Vo的保存
-                $voClass    =   get_parent_class($vo);
-                $map        =   $vo->toMap();
-                $map->put('childId',$id);
-                $extendsVo  =   new $voClass($map);
-                $daoClass   =   $extendsVo->getDao();
-                $extendsDao =   D($daoClass);
-                $parentId   =   $extendsDao->add($extendsVo);
-                if(!$parentId) {
-                    $this->assign('error',  '父类Vo对象'.$extendsVo.L('_INSERT_FAIL_') );
-                    $this->forward();
-                    return ;
-                }
-            }
+            $this->cacheVo($vo,$id,$dao->name);
             //数据保存触发器
             if(method_exists($this,'_trigger')) {
                 $this->_trigger($vo);
@@ -838,16 +797,16 @@ class Action extends Base
         	$dao    = $this->getDaoClass();
         }
         if(!empty($dao)) {
-            $id     = (int)$_REQUEST[$dao->pk];
+            $id     = (int)$_REQUEST[$dao->pk];		
             // 判断是否存在缓存Vo
-            $vo=$this->getCacheVo($this->getVo(),$id);
+            $vo=$this->getCacheVo($id,$dao->name);
             if(false === $vo) {
                 $vo     = $dao->find($dao->pk."='$id'");
                 if(!$vo) {
                     throw_exception(L('_SELECT_NOT_EXIST_'));
                 }
                 // 缓存Vo对象，便于下次显示
-                $this->cacheVo($vo,is_array($vo)?$vo[$dao->pk]:$vo->{$dao->pk});
+                $this->cacheVo($vo,$vo[$dao->pk],$dao->name);
             }
             $this->assign('vo',$vo);
             if($this->get('ajax')) {
@@ -924,36 +883,10 @@ class Action extends Base
 		}
     	$result  = $dao->save($vo);
         if($result) {
-			$id	=	is_array($vo)?$vo[$dao->pk]:$vo->{$dao->pk};
+			$id	=	$vo[$dao->pk];
 			$vo	=	$dao->getById($id);
             // 保存成功，更新缓存Vo对象
-            $this->cacheVo($vo,$id);
-            if(C('UPDATE_PARENT_VO') && 0!==strcasecmp(get_parent_class($vo),'Vo')) {
-                //如果启用保存父类Vo功能
-                //并且父类不是Vo基类，则首先保存父类Vo对象
-                //目前仅支持上一级Vo的保存
-                $voClass    =   get_parent_class($vo);
-                $extendsVo   =  new $voClass();
-                $daoClass   =   $extendsVo->getDao();
-                $extendsDao =   D($daoClass);
-                $map    = new HashMap();
-                $map->put("childId",$vo->{$dao->pk});
-                $map->put("type",$vo->type);
-                // 取得子对象的属性属性列表
-                $keys    = $vo->__varList();
-                foreach($keys as $key=>$property) {
-                    // 给父对象的属性赋值 主键排除
-                	if($property != $extendsDao->pk && !is_null($vo->$property) && $property != 'password' && property_exists($extendsVo,$property)) {
-                		$extendsVo->$property = $vo->$property;
-                	}
-                }
-                $parentId   =   $extendsDao->save($extendsVo,'',$map);
-                if(!$parentId) {
-                    $this->assign('error',  '父类Vo对象'.$extendsVo.L('_INSERT_FAIL_') );
-                    $this->forward();
-                    return ;
-                }
-            }
+            $this->cacheVo($vo,$id,$dao->name);
             //数据保存触发器
             if(method_exists($this,'_trigger')) {
                 $this->_trigger($vo);
@@ -961,7 +894,7 @@ class Action extends Base
             if(!empty($_FILES)) {//如果有文件上传
                 //执行默认上传操作
                 //保存附件信息到数据库
-                $this->_upload($dao->getTableName(),is_array($vo)?$vo[$dao->pk]:$vo->{$dao->pk});
+                $this->_upload($dao->getTableName(),$id);
             }
             //成功提示
             $this->assign("message",L('_UPDATE_SUCCESS_'));
