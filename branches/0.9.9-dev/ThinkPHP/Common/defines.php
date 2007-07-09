@@ -30,46 +30,6 @@
 
 if (!defined('THINK_PATH')) exit();
 
-// PATH_INFO 修正
-if(!isset($_SERVER["PATH_INFO"]))
-{
-	$_SERVER['PATH_INFO'] = "";
-}
-elseif (empty($_SERVER["PATH_INFO"])) 
-{
-	// 在FastCGI模式下面 $_SERVER["PATH_INFO"] 为空
-	$_SERVER['PATH_INFO'] = str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['REQUEST_URI']);
-}
-if($_SERVER["SERVER_PORT"] == 443)
-{
-	define('WEB_HOST','https://'.$_SERVER['HTTP_HOST']);
-}
-else
-{
-	define('WEB_HOST','http://'.$_SERVER['HTTP_HOST']);
-}
-
-// 当前文件名
-if(function_exists("apache_lookup_uri")) {
-    // Apache 模块方式
-    define('_PHP_FILE_',	rtrim($_SERVER["SCRIPT_NAME"],'/'));
-}elseif(false !== strpos(php_sapi_name(),'cgi')) {
-	//CGI/FASTCGI模式下
-    $_temp  = explode('.php',$_SERVER["PHP_SELF"]);
-    define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
-}else {
-	define('_PHP_FILE_',	rtrim($_SERVER["SCRIPT_NAME"],'/'));
-}
-// 当前项目名称
-if (!defined('APP_NAME')) define('APP_NAME', basename(_PHP_FILE_,'.php'));
-// 网站URL根目录
-if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
-    $_root = dirname(dirname(_PHP_FILE_));
-}else {
-    $_root = dirname(_PHP_FILE_);
-}
-define('WEB_URL',	(($_root=='/' || $_root=='\\')?'':$_root));
-
 // 目录设置
 define('CACHE_DIR',  'Cache'); 
 define('HTML_DIR',    'Html'); 
@@ -96,8 +56,10 @@ define('PLUGIN_PATH', APP_PATH.'/PlugIns/'); //
 define('MAGIC_QUOTES_GPC',get_magic_quotes_gpc()?True:False);
 define('OUTPUT_GZIP_ON',ini_get('output_handler') || ini_get('zlib.output_compression') );
 define('MEMORY_LIMIT_ON',function_exists('memory_get_usage')?TRUE:FALSE);
+define('PHP_SAPI_NAME',php_sapi_name());
 define('IS_APACHE',strstr($_SERVER['SERVER_SOFTWARE'], 'Apache') || strstr($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed') );
-define('IS_IIS',strstr($_SERVER['SERVER_SOFTWARE'], 'Microsoft-IIS') ? 1 : 0);
+define('IS_IIS',PHP_SAPI_NAME =='isapi' ? 1 : 0);
+define('IS_CGI',substr(PHP_SAPI_NAME, 0,3)=='cgi' ? 1 : 0 );
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_LINUX',strstr(PHP_OS, 'Linux') ? 1 : 0 );
 define('IS_FREEBSD',strstr(PHP_OS, 'FreeBSD') ? 1 : 0 );
@@ -126,6 +88,43 @@ define('DATA_TYPE_ARRAY',0);
 // 是否使用惯例配置
 define('CONVENTION_CONFIG',true);
 
+ //支持的URL模式
+define('URL_COMMON',      0);   //普通模式
+define('URL_PATHINFO',    1);   //PATHINFO模式
+define('URL_REWRITE',     2);   //REWRITE模式
+define('URL_ROUTER',     3);   // URL路由模式
+
 //	版本信息
-define('THINK_VERSION', '0.9.8');
+define('THINK_VERSION', '0.9.9');
+
+// PATH_INFO 修正
+if(!isset($_SERVER["PATH_INFO"]))
+{
+	$_SERVER['PATH_INFO'] = "";
+}
+elseif (empty($_SERVER["PATH_INFO"])) 
+{
+	// 在FastCGI模式下面 $_SERVER["PATH_INFO"] 为空
+	$_SERVER['PATH_INFO'] = str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['REQUEST_URI']);
+}
+
+// 当前文件名
+if(!defined('_PHP_FILE_')) {
+	if(IS_CGI) {
+		//CGI/FASTCGI模式下
+		$_temp  = explode('.php',$_SERVER["PHP_SELF"]);
+		define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
+	}else {
+		define('_PHP_FILE_',	rtrim($_SERVER["SCRIPT_NAME"],'/'));
+	}
+}
+// 当前项目名称
+if (!defined('APP_NAME')) define('APP_NAME', basename(_PHP_FILE_,'.php'));
+// 网站URL根目录
+if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
+    $_root = dirname(dirname(_PHP_FILE_));
+}else {
+    $_root = dirname(_PHP_FILE_);
+}
+define('WEB_URL',	(($_root=='/' || $_root=='\\')?'':$_root));
 ?>
