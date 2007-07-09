@@ -18,7 +18,7 @@
 // +----------------------------------------------------------------------+
 // $Id$
 
-import('Think.Util.Config.Config_Xml');
+import('Think.Util.Config.ConfigXml');
 
 /**
  +------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ import('Think.Util.Config.Config_Xml');
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class TagLib extends Config_Xml
+class TagLib extends ConfigXml
 {//类定义开始
 
     /**
@@ -263,7 +263,7 @@ class TagLib extends Config_Xml
         $attr = str_replace("<","&lt;", $attr);
         $attr = str_replace(">","&gt;", $attr);
         $xml =  '<tpl><tag '.$attr.' /></tpl>';
-        $result = & new Config_Xml($xml);
+        $result = & new ConfigXml($xml);
         $array  = $result->toArray();
         $array  = array_change_key_case($array['tag']);
         $attrs	= $this->getTagAttrList($tag);

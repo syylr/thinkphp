@@ -306,7 +306,7 @@ class  ThinkTemplate extends Base
             // 则对导入的TagLib进行解析 
             foreach($this->tagLib as $tagLibName=>$tagLibClass) {
                 if(empty($tagLibClass)) {
-                	import('Think.Template.TagLib.TagLib_'.ucwords(strtolower($tagLibName)));
+                	import('Think.Template.TagLib.TagLib'.ucwords(strtolower($tagLibName)));
                 }else {
                 	import($tagLibClass);
                 }
@@ -319,7 +319,7 @@ class  ThinkTemplate extends Base
         // <volist id='' name='' ></volist>
         // <var name='' />
         // 的形式
-        import('Think.Template.TagLib.TagLib_Cx');
+        import('Think.Template.TagLib.TagLibCx');
         $this->parseTagLib('cx',$content,true);
         //解析普通模板标签 {tagName:}
         $content = preg_replace('/('.C('TMPL_L_DELIM').')(\S.+?)('.C('TMPL_R_DELIM').')/eis',"\$this->parseTag('\\2')",$content);
@@ -348,7 +348,7 @@ class  ThinkTemplate extends Base
             //解析TagLib标签
             $tagLibs = $matches[1];
             $xml =  '<tpl><tag '.$tagLibs.' /></tpl>';
-            $result = new Config_Xml($xml);
+            $result = new ConfigXml($xml);
             $array  = $result->toArray();
             $tagLibName =  explode(',',$array['tag']['name']);
             $tagLibClass  =  isset($array['tag']['class'])?explode(',',$array['tag']['class']):array_fill(0,count($tagLibName),'');
@@ -419,7 +419,7 @@ class  ThinkTemplate extends Base
             $content = stripslashes($content);
         //}
         $content = trim($content);
-        $tlClass = 'TagLib_'.ucwords(strtolower($tagLib));
+        $tlClass = 'TagLib'.ucwords(strtolower($tagLib));
         $parse = '_'.$tag;
         $tl =  & new $tlClass($this);
         if($tl->valid()) {	

@@ -20,14 +20,15 @@
 
 /**
  +------------------------------------------------------------------------------
- * Pgsql数据库驱动类
+ * Sqlite数据库驱动类
  +------------------------------------------------------------------------------
  * @package   Db
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-Class Db_Pgsql extends Db{
+Class DbSqlite extends Db
+{//类定义开始
 
     /**
      +----------------------------------------------------------
@@ -39,8 +40,8 @@ Class Db_Pgsql extends Db{
      +----------------------------------------------------------
      */
     function __construct($config=''){    
-        if ( !extension_loaded('pgsql') ) {    
-            throw_exception('系统不支持pgsql');
+        if ( !extension_loaded('sqlite') ) {    
+            throw_exception('系统不支持sqlite');
         }
 		if(!empty($config)) {
 			$this->config	=	$config;
@@ -59,22 +60,14 @@ Class Db_Pgsql extends Db{
     function connect($config='',$linkNum=0) {
         if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
-            $conn = $this->pconnect ? 'pg_pconnect':'pg_connect';
-            $this->linkID[$linkNum] =  $conn(
-                'host='			. $config['hostname'] .
-                ' port='			. $config['hostport'] .
-                ' dbname='	. $config['database'] .
-                ' user='			. $config['username'] .
-                ' password='	. $config['password']
-            );
-
-             if (pg_connection_status($this->linkID[$linkNum]) !== 0){
-                throw_exception($this->error(False));
+            $conn = $this->pconnect ? 'sqlite_popen':'sqlite_open';
+			$config['mode']	=	0666;
+            $this->linkID[$linkNum] = $conn($config['database'],$config['mode']);
+            if ( !$this->linkID[$linkNum]) {
+                throw_exception(sqlite_error_string());
                 Return False;
             }
-            $pgInfo = pg_version($this->linkID[$linkNum]);
-            $this->dbVersion = $pgInfo['server'];
-            @pg_query( $this->linkID[$linkNum],"SET NAMES '".C('DB_CHARSET')."'");
+            $this->dbVersion = sqlite_libversion();
 			// 标记连接成功
 			$this->connected	=	true;
             //注销数据库安全信息
@@ -91,7 +84,7 @@ Class Db_Pgsql extends Db{
      +----------------------------------------------------------
      */
     function free() {
-        @pg_free_result($this->queryID);
+        unset($this->resultSet);
         $this->queryID = 0;
     }
 
@@ -113,27 +106,20 @@ Class Db_Pgsql extends Db{
 		$this->initConnect(false);
         if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
-        if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-            //数据rollback 支持
-            if ($this->transTimes == 0) {
-                pg_exec($this->_linkID,'begin;');
-            }
-            $this->transTimes++;
-        }else {
-            //释放前次的查询结果
-            if ( $this->queryID ) {    $this->free();    }
-        }
-        $this->queryStr = $this->escape_string($this->queryStr);
+        //释放前次的查询结果
+        if ( $this->queryID ) {    $this->free();    }
+        $this->escape_string($this->queryStr);
         $this->queryTimes ++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        $this->queryID = pg_query($this->_linkID,$this->queryStr );
+
+        $this->queryID = sqlite_query($this->_linkID,$this->queryStr);
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
         } else {
-            $this->numRows = pg_num_rows($this->queryID);
-            $this->numCols = pg_num_fields($this->queryID);
+            $this->numRows = sqlite_num_rows($this->queryID);
+            $this->numCols = sqlite_num_fields($this->queryID);
             $this->resultSet = $this->getAll();
             Return new resultSet($this->resultSet);
         }
@@ -156,28 +142,26 @@ Class Db_Pgsql extends Db{
 		$this->initConnect(true);
         if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
-
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                pg_exec($this->_linkID,'begin;');
+                sqlite_query($this->_linkID,'BEGIN TRANSACTION');
             }
             $this->transTimes++;
         }else {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-
         $this->queryStr = $this->escape_string($this->queryStr);
         $this->writeTimes ++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !pg_query($this->_linkID,$this->queryStr) ) {
+        if ( !sqlite_exec($this->_linkID,$this->queryStr) ) {
             throw_exception($this->error());
             Return False;
         } else {
-            $this->numRows = pg_affected_rows($this->queryID);
-            $this->lastInsID = pg_last_oid($this->queryID);
+            $this->numRows = sqlite_changes($this->_linkID);
+            $this->lastInsID = sqlite_last_insert_rowid($this->_linkID);
             Return $this->numRows;
         }
     }
@@ -196,7 +180,7 @@ Class Db_Pgsql extends Db{
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = pg_exec($this->_linkID,'end;');
+            $result = sqlite_query($this->_linkID,'COMMIT TRANSACTION');
             if(!$result){
                 throw_exception($this->error());
                 return False;
@@ -220,7 +204,7 @@ Class Db_Pgsql extends Db{
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = pg_exec($this->_linkID,'abort;');
+            $result = sqlite_query($this->_linkID,'ROLLBACK TRANSACTION');
             if(!$result){
                 throw_exception($this->error());
                 return False;
@@ -243,17 +227,17 @@ Class Db_Pgsql extends Db{
      +----------------------------------------------------------
      */
     function next() {
-
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
         }
-        // 查询结果
         if($this->resultType== DATA_TYPE_VO){
-            $this->result = pg_fetch_object($this->queryID);
+            // 返回对象集
+            $this->result = sqlite_fetch_object($this->queryID);
             $stat = is_object($this->result);
         }else{
-            $this->result = pg_fetch_assoc($this->queryID);
+            // 返回数组集
+            $this->result = sqlite_fetch_array($this->queryID,SQLITE_ASSOC);
             $stat = is_array($this->result);
         }
         Return $stat;
@@ -268,34 +252,32 @@ Class Db_Pgsql extends Db{
      * @param index $seek 指针位置
      * @param string $str  SQL指令
      +----------------------------------------------------------
-     * @return string
+     * @return array
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-     function getRow($sql = NULL,$seek=0) 
-        {
-            if (!empty($sql)) $this->_query($sql);
-            if ( !$this->queryID ) {
-                throw_exception($this->error());
-                Return False;
-            }
-            if($this->numRows >0) {
-                if(pg_result_seek($this->queryID,$seek)){
-                    if($this->resultType== DATA_TYPE_VO){
-                        //返回对象集
-                        $result = pg_fetch_object($this->queryID);
-                    }else{
-                        // 返回数组集
-                        $result = pg_fetch_assoc($this->queryID);
-                    }
-                }
-                return $result;
-            }else {
-            	return false;
-            }
-            
+    function getRow($sql = NULL,$seek=0) {
+        if (!empty($sql)) $this->_query($sql);
+        if ( !$this->queryID ) {
+            throw_exception($this->error());
+            Return False;
         }
+        if($this->numRows >0) {
+            if(sqlite_seek($this->queryID,$seek)){
+                if($this->resultType== DATA_TYPE_VO){
+                    //返回对象集
+                    $result = sqlite_fetch_object($this->queryID);
+                }else{
+                    // 返回数组集
+                    $result = sqlite_fetch_array($this->queryID,SQLITE_ASSOC );
+                }
+            }
+            Return $result;
+        }else {
+        	return false;
+        }
+    }
 
     /**
      +----------------------------------------------------------
@@ -306,7 +288,7 @@ Class Db_Pgsql extends Db{
      +----------------------------------------------------------
      * @param string $resultType  数据集类型
      +----------------------------------------------------------
-     * @return resultSet
+     * @return array
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -324,13 +306,13 @@ Class Db_Pgsql extends Db{
             for($i=0;$i<$this->numRows ;$i++ ){
                 if($resultType== DATA_TYPE_VO){
                     //返回对象集
-                    $result[$i] = pg_fetch_object($this->queryID);
+                    $result[$i] = sqlite_fetch_object($this->queryID);
                 }else{
                     // 返回数组集
-                    $result[$i] = pg_fetch_assoc($this->queryID);
+                    $result[$i] = sqlite_fetch_array($this->queryID,SQLITE_ASSOC);
                 }
             }
-            pg_result_seek($this->queryID,0);
+            sqlite_seek($this->queryID,0);
         }
         Return $result;
     }
@@ -345,10 +327,8 @@ Class Db_Pgsql extends Db{
      +----------------------------------------------------------
      */
     function close() { 
-        if (!empty($this->queryID))
-            pg_free_result($this->queryID);
-        if(!pg_close($this->_linkID)){
-            throw_exception($this->error(False));
+        if (!sqlite_close($this->_linkID)){
+            throw_exception($this->error());
         }
         $this->_linkID = 0;
     } 
@@ -365,12 +345,8 @@ Class Db_Pgsql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function error($result = True) {
-        if($result){
-            $this->error = pg_result_error($this->queryID);
-        }else{
-            $this->error = pg_last_error($this->_linkID);
-        }
+    function error() {
+        $this->error = sqlite_error_string(sqlite_last_error($this->_linkID));
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
@@ -395,7 +371,8 @@ Class Db_Pgsql extends Db{
         $str = str_replace("&lt;", "<", $str);
         $str = str_replace("&gt;", ">", $str);
         $str = str_replace("&amp;", "&", $str);
-        //$str = pg_escape_string($str); 
+        //$str = sqlite_escape_string($str); 
+
     } 
 
 }//类定义结束

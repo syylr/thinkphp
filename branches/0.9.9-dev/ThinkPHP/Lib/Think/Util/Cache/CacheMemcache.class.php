@@ -26,7 +26,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Cache_Memcache extends Cache
+class CacheMemcache extends Cache
 {//类定义开始
 
 

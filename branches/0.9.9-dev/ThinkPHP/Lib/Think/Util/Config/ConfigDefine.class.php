@@ -21,13 +21,13 @@
 import('Think.Util.Config');
 /**
  +------------------------------------------------------------------------------
- * 对象配置文件类
+ * 定义配置文件类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Config_Object extends Config
+class ConfigDefine extends Config
 {//类定义开始
 
     /**
@@ -40,9 +40,12 @@ class Config_Object extends Config
      */
     function __construct($config)
     {
-        if(is_object($config)) {
-            $this->_config = get_object_vars($config);
-			unset($config);
+        if(file_exists($config)) {
+            $before = get_defined_constants();
+            include_once($config);
+            $after  = get_defined_constants();
+            $define = array_diff_assoc($after,$before);
+            $this->_config = array_change_key_case($define);
             $this->_connect = true;        	
         }else {
         	$this->_connect = false;

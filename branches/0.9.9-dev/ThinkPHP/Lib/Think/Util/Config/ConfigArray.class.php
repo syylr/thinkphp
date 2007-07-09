@@ -21,13 +21,13 @@
 import('Think.Util.Config');
 /**
  +------------------------------------------------------------------------------
- * 数据库配置文件类
+ * 数组配置文件类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Config_Dao extends Config
+class ConfigArray extends Config
 {//类定义开始
 
     /**
@@ -40,16 +40,23 @@ class Config_Dao extends Config
      */
     function __construct($config)
     {
-        import($config);
-		$daoClass	=	substr(strrchr($config, '.'),1);
-        $configDao  =   new $daoClass();
-        $configList =   $configDao->findAll();
-        if($configList->isEmpty()) {
-        	$this->_connect = false;
-        }else {
-            $this->_config = $configList->getCol('name,value');
+        if(is_array($config)) {
+            $this->_config = $config;
+			unset($config);
+            $this->_connect = true;        	
+        }elseif(file_exists($config)) {
+            $this->_config = include $config;
+			if(!is_array($this->_config)) {
+				$this->_config = $_config;
+				unset($_config);
+			}
             $this->_connect = true;
         }
+        else
+        {
+            $this->_connect = false;
+        }
+
     }
 
     /**

@@ -35,7 +35,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Cache_Db extends Cache
+class CacheDb extends Cache
 {//类定义开始
 
     /**

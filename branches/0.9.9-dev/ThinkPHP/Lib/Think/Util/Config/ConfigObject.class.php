@@ -21,13 +21,13 @@
 import('Think.Util.Config');
 /**
  +------------------------------------------------------------------------------
- * INI配置文件类
+ * 对象配置文件类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Config_Ini extends Config
+class ConfigObject extends Config
 {//类定义开始
 
     /**
@@ -40,8 +40,9 @@ class Config_Ini extends Config
      */
     function __construct($config)
     {
-        if(file_exists($config)) {
-            $this->_config = parse_ini_file($config);
+        if(is_object($config)) {
+            $this->_config = get_object_vars($config);
+			unset($config);
             $this->_connect = true;        	
         }else {
         	$this->_connect = false;

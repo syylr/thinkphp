@@ -155,13 +155,11 @@ class Template extends Base
         header("Cache-control: private");  //支持页面回跳
         // 设置输出缓存
         ini_set('output_buffering',4096);
-        if(C('COMPRESS_PAGE')) {//开启页面压缩输出
-            $zlibCompress   =  ini_get('zlib.output_compression');
-            if(empty($zlibCompress) && function_exists('ini_set')) {
-                ini_set( 'zlib.output_compression', 1 );
-                $zlibCompress   =  1;
-            } 
-        }
+		$zlibCompress   =  ini_get('zlib.output_compression');
+		if(empty($zlibCompress) && function_exists('ini_set')) {
+			ini_set( 'zlib.output_compression', 1 );
+			$zlibCompress   =  1;
+		} 
         // 缓存初始化过滤
         apply_filter('ob_init');
         //页面缓存

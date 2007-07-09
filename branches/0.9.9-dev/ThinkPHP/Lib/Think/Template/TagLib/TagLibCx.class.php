@@ -27,7 +27,7 @@ import('Think.Template.TagLib');
  * @author    liu21st <liu21st@gmail.com>
  +------------------------------------------------------------------------------
  */
-class TagLib_Cx extends TagLib
+class TagLibCx extends TagLib
 {//类定义开始
 
     /**

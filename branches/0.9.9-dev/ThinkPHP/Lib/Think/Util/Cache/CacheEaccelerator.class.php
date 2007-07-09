@@ -20,15 +20,14 @@
 
 /**
  +------------------------------------------------------------------------------
- * Apc缓存类
+ * Eaccelerator缓存类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Cache_Apc extends Cache
-{//类定义开始
-
+class CacheEaccelerator extends Cache
+{
 
     /**
      +----------------------------------------------------------
@@ -39,10 +38,6 @@ class Cache_Apc extends Cache
      */
     function __construct($options)
     {
-		if(!function_exists('apc_cache_info')) {
-			throw_exception(L('系统不支持Apc'));
-		}
-		$this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
         $this->type = strtoupper(substr(__CLASS__,6));
     }
 
@@ -60,13 +55,13 @@ class Cache_Apc extends Cache
      function get($name)
      {
 		$this->Q(1);
-         return apc_fetch($name);
+         return eaccelerator_get($name);
      }
+
 
     /**
      +----------------------------------------------------------
      * 写入缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -83,8 +78,10 @@ class Cache_Apc extends Cache
             $expire = $ttl;
         else 
             $expire = $this->expire;
-         return apc_store($name, $value, $expire);
+         eaccelerator_lock($name);
+         return eaccelerator_put ($name, $value, $expire);
      }
+
 
     /**
      +----------------------------------------------------------
@@ -100,22 +97,8 @@ class Cache_Apc extends Cache
      */
      function rm($name)
      {
-         return apc_delete($name);
+         return eaccelerator_rm($name);
      }
-
-    /**
-     +----------------------------------------------------------
-     * 清除缓存
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @return boolen
-     +----------------------------------------------------------
-     */
-    function clear()
-    {
-        return apc_clear_cache();
-    }
 
 }//类定义结束
 ?>

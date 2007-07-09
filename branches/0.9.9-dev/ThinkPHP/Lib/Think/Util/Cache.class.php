@@ -114,7 +114,7 @@ class Cache extends Base
         	$cacheClass   = Session::get('CACHE_'.strtoupper($type));
         }else {
             $cachePath = dirname(__FILE__).'/Cache/';
-            $cacheClass = 'Cache_'.ucwords(strtolower($type));
+            $cacheClass = 'Cache'.ucwords(strtolower($type));
             require_cache($cachePath.$cacheClass.'.class.php');
         }
         if(class_exists($cacheClass)){
@@ -139,7 +139,7 @@ class Cache extends Base
      */
     function getInstance() 
     {
-        $param = func_get_args();
+       $param = func_get_args();
         return get_instance_of(__CLASS__,'connect',$param);
     }
 

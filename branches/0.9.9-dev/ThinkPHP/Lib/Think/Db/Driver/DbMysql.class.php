@@ -18,17 +18,17 @@
 // +----------------------------------------------------------------------+
 // $Id$
 
+
 /**
  +------------------------------------------------------------------------------
- * Sqlite数据库驱动类
+ * Mysql数据库驱动类
  +------------------------------------------------------------------------------
  * @package   Db
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-Class Db_Sqlite extends Db
-{//类定义开始
+Class DbMysql extends Db{
 
     /**
      +----------------------------------------------------------
@@ -40,8 +40,8 @@ Class Db_Sqlite extends Db
      +----------------------------------------------------------
      */
     function __construct($config=''){    
-        if ( !extension_loaded('sqlite') ) {    
-            throw_exception('系统不支持sqlite');
+        if ( !extension_loaded('mysql') ) {    
+            throw_exception('系统不支持mysql');
         }
 		if(!empty($config)) {
 			$this->config	=	$config;
@@ -60,20 +60,27 @@ Class Db_Sqlite extends Db
     function connect($config='',$linkNum=0) {
         if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
-            $conn = $this->pconnect ? 'sqlite_popen':'sqlite_open';
-			$config['mode']	=	0666;
-            $this->linkID[$linkNum] = $conn($config['database'],$config['mode']);
+            $conn = $this->pconnect ? 'mysql_pconnect':'mysql_connect';
+            $this->linkID[$linkNum] = $conn( $config['hostname'] . ':' . $config['hostport'], $config['username'], $config['password']);
             if ( !$this->linkID[$linkNum]) {
-                throw_exception(sqlite_error_string());
-                Return False;
+                throw_exception(mysql_error());
+                return False;
             }
-            $this->dbVersion = sqlite_libversion();
+            if ( !mysql_select_db($config['database'], $this->linkID[$linkNum]) ) {
+                throw_exception($this->error());
+                return False;
+            }
+            $this->dbVersion = mysql_get_server_info($this->linkID[$linkNum]);
+            if ($this->dbVersion >= "4.1") { 
+                //使用UTF8存取数据库 需要mysql 4.1.0以上支持
+                mysql_query("SET NAMES '".C('DB_CHARSET')."'", $this->linkID[$linkNum]);
+            }
 			// 标记连接成功
 			$this->connected	=	true;
-            //注销数据库安全信息
-            unset($this->config);
+            // 注销数据库连接配置信息
+            // unset($this->config);
         }
-        Return $this->linkID[$linkNum];
+        return $this->linkID[$linkNum];
     }
 
     /**
@@ -84,7 +91,7 @@ Class Db_Sqlite extends Db
      +----------------------------------------------------------
      */
     function free() {
-        unset($this->resultSet);
+        @mysql_free_result($this->queryID);
         $this->queryID = 0;
     }
 
@@ -104,24 +111,32 @@ Class Db_Sqlite extends Db
      */
     function _query($str='') {
 		$this->initConnect(false);
-        if ( !$this->_linkID ) Return False;
+        if ( !$this->_linkID ) return False;
         if ( $str != '' ) $this->queryStr = $str;
-        //释放前次的查询结果
-        if ( $this->queryID ) {    $this->free();    }
+        if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
+            //数据rollback 支持
+            if ($this->transTimes == 0) {
+                mysql_query('SET AUTOCOMMIT=0', $this->_linkID);
+                mysql_query('BEGIN', $this->_linkID);
+            }
+            $this->transTimes++;
+        }else {
+            //释放前次的查询结果
+            if ( $this->queryID ) {    $this->free();    }
+        }
         $this->escape_string($this->queryStr);
-        $this->queryTimes ++;
+        $this->queryTimes++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-
-        $this->queryID = sqlite_query($this->_linkID,$this->queryStr);
+        $this->queryID = mysql_query($this->queryStr, $this->_linkID);
         if ( !$this->queryID ) {
-            throw_exception($this->error());
-            Return False;
+            //if ( $this->debug ) throw_exception($this->error());
+            return False;
         } else {
-            $this->numRows = sqlite_num_rows($this->queryID);
-            $this->numCols = sqlite_num_fields($this->queryID);
+            $this->numRows = mysql_num_rows($this->queryID);
+            $this->numCols = mysql_num_fields($this->queryID);
             $this->resultSet = $this->getAll();
-            Return new resultSet($this->resultSet);
+            return new resultSet($this->resultSet);              	
         }
     }
 
@@ -140,29 +155,31 @@ Class Db_Sqlite extends Db
      */
     function _execute($str='') {
 		$this->initConnect(true);
-        if ( !$this->_linkID ) Return False;
+        if ( !$this->_linkID ) return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-                sqlite_query($this->_linkID,'BEGIN TRANSACTION');
+                //@mysql_query('SET AUTOCOMMIT=0', $this->_linkID);
+                //@mysql_query('BEGIN', $this->_linkID);
+                mysql_query('START TRANSACTION', $this->_linkID);
             }
             $this->transTimes++;
         }else {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-        $this->queryStr = $this->escape_string($this->queryStr);
-        $this->writeTimes ++;
+        $this->escape_string($this->queryStr);
+        $this->writeTimes++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !sqlite_exec($this->_linkID,$this->queryStr) ) {
-            throw_exception($this->error());
-            Return False;
+        if ( !mysql_query($this->queryStr, $this->_linkID) ) {
+            //if ( $this->debug ) throw_exception($this->error());
+            return False;
         } else {
-            $this->numRows = sqlite_changes($this->_linkID);
-            $this->lastInsID = sqlite_last_insert_rowid($this->_linkID);
-            Return $this->numRows;
+            $this->numRows = mysql_affected_rows($this->_linkID);
+            $this->lastInsID = mysql_insert_id($this->_linkID);
+            return $this->numRows;            	
         }
     }
 
@@ -180,12 +197,13 @@ Class Db_Sqlite extends Db
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = sqlite_query($this->_linkID,'COMMIT TRANSACTION');
+            $result = mysql_query('COMMIT', $this->_linkID);
+            //$result = @mysql_query('SET AUTOCOMMIT=1', $this->_linkID);
+            $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
                 return False;
             }
-            $this->transTimes = 0;
         }
         return true;
     }
@@ -204,12 +222,13 @@ Class Db_Sqlite extends Db
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = sqlite_query($this->_linkID,'ROLLBACK TRANSACTION');
+            $result = mysql_query('ROLLBACK', $this->_linkID);
+            //$result = @mysql_query('SET AUTOCOMMIT=1', $this->_linkID);
+            $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
                 return False;
             }
-            $this->transTimes = 0;
         }
         return True;
     }
@@ -229,18 +248,18 @@ Class Db_Sqlite extends Db
     function next() {
         if ( !$this->queryID ) {
             throw_exception($this->error());
-            Return False;
+            return False;
         }
         if($this->resultType== DATA_TYPE_VO){
             // 返回对象集
-            $this->result = sqlite_fetch_object($this->queryID);
+            $this->result = @mysql_fetch_object($this->queryID);
             $stat = is_object($this->result);
         }else{
             // 返回数组集
-            $this->result = sqlite_fetch_array($this->queryID,SQLITE_ASSOC);
+            $this->result = @mysql_fetch_assoc($this->queryID);
             $stat = is_array($this->result);
         }
-        Return $stat;
+        return $stat;
     }
 
     /**
@@ -249,7 +268,7 @@ Class Db_Sqlite extends Db
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param index $seek 指针位置
+     * @param integer $seek 指针位置
      * @param string $str  SQL指令
      +----------------------------------------------------------
      * @return array
@@ -261,19 +280,19 @@ Class Db_Sqlite extends Db
         if (!empty($sql)) $this->_query($sql);
         if ( !$this->queryID ) {
             throw_exception($this->error());
-            Return False;
+            return False;
         }
         if($this->numRows >0) {
-            if(sqlite_seek($this->queryID,$seek)){
+            if(mysql_data_seek($this->queryID,$seek)){
                 if($this->resultType== DATA_TYPE_VO){
                     //返回对象集
-                    $result = sqlite_fetch_object($this->queryID);
+                    $result = mysql_fetch_object($this->queryID);
                 }else{
                     // 返回数组集
-                    $result = sqlite_fetch_array($this->queryID,SQLITE_ASSOC );
+                    $result = mysql_fetch_assoc($this->queryID);
                 }
             }
-            Return $result;
+            return $result;
         }else {
         	return false;
         }
@@ -297,25 +316,71 @@ Class Db_Sqlite extends Db
         if (!empty($sql)) $this->_query($sql);
         if ( !$this->queryID ) {
             throw_exception($this->error());
-            Return False;
+            return False;
         }
         //返回数据集
         $result = array();
         if($this->numRows >0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-            for($i=0;$i<$this->numRows ;$i++ ){
+             for($i=0;$i<$this->numRows ;$i++ ){
                 if($resultType== DATA_TYPE_VO){
                     //返回对象集
-                    $result[$i] = sqlite_fetch_object($this->queryID);
+                    $result[$i] = mysql_fetch_object($this->queryID);
                 }else{
                     // 返回数组集
-                    $result[$i] = sqlite_fetch_array($this->queryID,SQLITE_ASSOC);
+                    $result[$i] = mysql_fetch_assoc($this->queryID);
                 }
             }
-            sqlite_seek($this->queryID,0);
+            mysql_data_seek($this->queryID,0);
         }
-        Return $result;
+        return $result;
     }
+
+    /**
+     +----------------------------------------------------------
+     * 取得数据表的字段信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getFields($tableName) { 
+        $this->_query('SHOW COLUMNS FROM `'.$tableName.'`');
+        $result =   $this->getAll();
+        $info   =   array();
+        foreach ($result as $key => $val) {
+            $info[$val['Field']] = array(
+                'name'    => $val['Field'],
+                'type'    => $val['Type'],
+                'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
+                'default' => $val['Default'],
+                'primary' => (strtolower($val['Key']) == 'pri'),
+                'autoInc' => (strtolower($val['Extra']) == 'auto_increment'),
+            );
+        }
+        return $info;
+    } 
+
+    /**
+     +----------------------------------------------------------
+     * 取得数据库的表信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getTables($dbName='') { 
+        $this->_query('SHOW TABLES');
+        $result =   $this->getAll();
+        $info   =   array();
+        foreach ($result as $key => $val) {
+            $info[$key] = current($val);
+        }
+        return $info;
+    } 
+
 
     /**
      +----------------------------------------------------------
@@ -327,7 +392,9 @@ Class Db_Sqlite extends Db
      +----------------------------------------------------------
      */
     function close() { 
-        if (!sqlite_close($this->_linkID)){
+        if (!empty($this->queryID))
+            mysql_free_result($this->queryID);
+        if (!mysql_close($this->_linkID)){
             throw_exception($this->error());
         }
         $this->_linkID = 0;
@@ -346,7 +413,7 @@ Class Db_Sqlite extends Db
      +----------------------------------------------------------
      */
     function error() {
-        $this->error = sqlite_error_string(sqlite_last_error($this->_linkID));
+        $this->error = mysql_error($this->_linkID);
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
@@ -371,8 +438,7 @@ Class Db_Sqlite extends Db
         $str = str_replace("&lt;", "<", $str);
         $str = str_replace("&gt;", ">", $str);
         $str = str_replace("&amp;", "&", $str);
-        //$str = sqlite_escape_string($str); 
-
+        //$str = mysql_real_escape_string($str, $this->_linkID); 
     } 
 
 }//类定义结束

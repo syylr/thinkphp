@@ -18,19 +18,16 @@
 // +----------------------------------------------------------------------+
 // $Id$
 
-
 /**
  +------------------------------------------------------------------------------
- * PDO数据库驱动类
+ * Mysqli数据库驱动类
  +------------------------------------------------------------------------------
  * @package   Db
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-Class Db_Pdo extends Db{
-
-	var $PDOStatement = null;
+Class DbMysqli extends Db{
 
     /**
      +----------------------------------------------------------
@@ -42,8 +39,8 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      */
     function __construct($config=''){    
-        if ( !class_exists('PDO') ) {    
-            throw_exception('系统不支持PDO');
+        if ( !extension_loaded('mysqli') ) {    
+            throw_exception('系统不支持mysqli');
         }
 		if(!empty($config)) {
 			$this->config	=	$config;
@@ -62,25 +59,32 @@ Class Db_Pdo extends Db{
     function connect($config='',$linkNum=0) {
         if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
-			if(empty($config['pdodsn'])) {
-				$config['dsn'] = C('DB_PDO_DSN');
-			}
-			if(empty($config['pdoparms'])) {
-				$config['parms'] = C('DB_PDO_PARMS');
-			}
-            $this->linkID[$linkNum] = new PDO( $config['dsn'], $config['username'], $config['password'],$config['parms']);
+            $this->linkID[$linkNum] = mysqli_connect(
+                                $config['hostname'], 
+                                $config['username'], 
+                                $config['password'],
+                                $config['database'], 
+                                $config['hostport']);
             if ( !$this->linkID[$linkNum]) {
-                throw_exception('PDO CONNECT ERROR');
-                return False;
+                throw_exception(mysqli_connect_error());
+                Return False;
             }
-			$this->linkID[$linkNum]->exec('SET NAMES '.C('DB_CHARSET'));  
-            $this->dbVersion = $this->linkID[$linkNum]->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
+            if($this->autoCommit){
+                mysqli_autocommit($this->linkID[$linkNum], True);
+            }else {
+                mysqli_autocommit($this->linkID[$linkNum], False);
+            }
+            $this->dbVersion = mysqli_get_server_info($this->linkID[$linkNum]);
+            if ($this->dbVersion >= "4.1") { 
+                //使用UTF8存取数据库 需要mysql 4.1.0以上支持
+                mysqli_query( $this->linkID[$linkNum],"SET NAMES '".C('DB_CHARSET')."'");
+            }
 			// 标记连接成功
 			$this->connected	=	true;
-            // 注销数据库连接配置信息
+            //注销数据库安全信息
             unset($this->config);
         }
-        return $this->linkID[$linkNum];
+        Return $this->linkID[$linkNum];
     }
 
     /**
@@ -91,7 +95,8 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      */
     function free() {
-        $this->PDOStatement = null;
+        mysqli_free_result($this->queryID);
+        $this->queryID = 0;
     }
 
     /**
@@ -101,7 +106,7 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param string $str  sql指令
+     * @param string $sqlStr  sql指令
      +----------------------------------------------------------
      * @return resultSet
      +----------------------------------------------------------
@@ -110,32 +115,32 @@ Class Db_Pdo extends Db{
      */
     function _query($str='') {
 		$this->initConnect(false);
-        if ( !$this->_linkID ) return False;
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-				$this->_linkID	->beginTransaction();
+                mysqli_autocommit($this->_linkID, false);
             }
             $this->transTimes++;
         }else {
             //释放前次的查询结果
-            if ( !empty($this->PDOStatement) ) {    $this->free();    }
+            if ( $this->queryID ) {    $this->free();    }
         }
+
         $this->escape_string($this->queryStr);
-        $this->queryTimes++;
+        $this->queryTimes ++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        $this->PDOStatement = $this->_linkID->prepare($this->queryStr);
-		$result	=	$this->PDOStatement->execute();
-        if ( !$result ) {
-            if ( $this->debug ) throw_exception($this->error());
-            return False;
+        $this->queryID = mysqli_query($this->_linkID,$this->queryStr );
+        if ( !$this->queryID ) {
+            throw_exception($this->error());
+            Return False;
         } else {
-            $this->numRows = $this->PDOStatement->rowCount();
-            $this->numCols = $this->PDOStatement->columnCount();
+            $this->numRows = mysqli_num_rows($this->queryID);
+            $this->numCols = mysqli_num_fields($this->queryID);
             $this->resultSet = $this->getAll();
-            return new resultSet($this->resultSet);              	
+            Return new resultSet($this->resultSet);
         }
     }
 
@@ -154,30 +159,29 @@ Class Db_Pdo extends Db{
      */
     function _execute($str='') {
 		$this->initConnect(true);
-        if ( !$this->_linkID ) return False;
+        if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
             //数据rollback 支持
             if ($this->transTimes == 0) {
-				$this->_linkID->beginTransaction();
+                mysqli_autocommit($this->_linkID, false);
             }
             $this->transTimes++;
         }else {
             //释放前次的查询结果
-            if ( !empty($this->PDOStatement) ) {    $this->free();    }
+            if ( $this->queryID ) {    $this->free();    }
         }
         $this->escape_string($this->queryStr);
-        $this->writeTimes++;
+        $this->writeTimes ++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-		$result	=	$this->_linkID->exec($this->queryStr);
-        if ( !$result) {
-            //if ( $this->debug ) throw_exception($this->error());
-            return False;
+        if ( !mysqli_query($this->_linkID,$this->queryStr) ) {
+            throw_exception($this->error());
+            Return False;
         } else {
-			$this->numRows = $result;
-            $this->lastInsID = $this->_linkID->lastInsertId();
-            return $this->numRows;            	
+            $this->numRows = mysqli_affected_rows($this->_linkID);
+            $this->lastInsID = mysqli_insert_id($this->_linkID);
+            Return $this->numRows;
         }
     }
 
@@ -185,6 +189,7 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      * 用于非自动提交状态下面的查询提交
      +----------------------------------------------------------
+     * @static
      * @access public 
      +----------------------------------------------------------
      * @return boolen
@@ -195,7 +200,8 @@ Class Db_Pdo extends Db{
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = $this->_linkID->commit();
+            $result = mysqli_commit($this->_linkID);
+            mysqli_autocommit($this->_linkID, TRUE);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -209,6 +215,7 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      * 事务回滚
      +----------------------------------------------------------
+     * @static
      * @access public 
      +----------------------------------------------------------
      * @return boolen
@@ -219,7 +226,7 @@ Class Db_Pdo extends Db{
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = $this->_linkID->rollback();
+            $result = mysqli_rollback($this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -234,6 +241,7 @@ Class Db_Pdo extends Db{
      * 获得下一条查询结果 简易数据集获取方法
      * 查询结果放到 result 数组中
      +----------------------------------------------------------
+     * @static
      * @access public 
      +----------------------------------------------------------
      * @return boolen
@@ -242,29 +250,30 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      */
     function next() {
-        if ( !$this->PDOStatement ) {
+        if ( !$this->queryID ) {
             throw_exception($this->error());
-            return False;
+            Return False;
         }
-        if($this->resultType== DATA_TYPE_VO){
+        if($this->resultType==DATA_TYPE_VO){
             // 返回对象集
-            $this->result = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'));
+            $this->result = mysqli_fetch_object($this->queryID);
             $stat = is_object($this->result);
         }else{
             // 返回数组集
-            $this->result = $this->PDOStatement->fetch(constant('PDO::FETCH_ASSOC'));
+            $this->result = mysqli_fetch_assoc($this->queryID);
             $stat = is_array($this->result);
         }
-        return $stat;
+        Return $stat;
     }
 
     /**
      +----------------------------------------------------------
      * 获得一条查询结果
      +----------------------------------------------------------
+     * @static
      * @access public 
      +----------------------------------------------------------
-     * @param integer $seek 指针位置
+     * @param index $seek 指针位置
      * @param string $str  SQL指令
      +----------------------------------------------------------
      * @return array
@@ -274,19 +283,21 @@ Class Db_Pdo extends Db{
      */
     function getRow($sql = NULL,$seek=0) {
         if (!empty($sql)) $this->_query($sql);
-        if ( empty($this->PDOStatement) ) {
+        if ( !$this->queryID ) {
             throw_exception($this->error());
-            return False;
+            Return False;
         }
         if($this->numRows >0) {
-			if($this->resultType== DATA_TYPE_VO){
-				//返回对象集
-				$result = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'),constant('PDO::FETCH_ORI_NEXT'),$seek);
-			}else{
-				// 返回数组集
-				$result = $this->PDOStatement->fetch(constant('PDO::FETCH_ASSOC'),constant('PDO::FETCH_ORI_NEXT'),$seek);
-			}
-            return $result;
+            if(mysqli_data_seek($this->queryID,$seek)){
+                if($this->resultType== DATA_TYPE_VO){
+                    //返回对象集
+                    $result = mysqli_fetch_object($this->queryID);
+                }else{
+                    // 返回数组集
+                    $result = mysqli_fetch_assoc($this->queryID);
+                }
+            }
+            Return $result;
         }else {
         	return false;
         }
@@ -297,6 +308,7 @@ Class Db_Pdo extends Db{
      * 获得所有的查询数据
      * 查询结果放到 resultSet 数组中
      +----------------------------------------------------------
+     * @static
      * @access public 
      +----------------------------------------------------------
      * @param string $resultType  数据集类型
@@ -308,23 +320,26 @@ Class Db_Pdo extends Db{
      */
     function getAll($sql = NULL,$resultType=NULL) {
         if (!empty($sql)) $this->_query($sql);
-        if ( empty($this->PDOStatement) ) {
+        if ( !$this->queryID ) {
             throw_exception($this->error());
-            return False;
+            Return False;
         }
         //返回数据集
         $result = array();
-        if($this->numRows >0) {
+        $info   = mysqli_fetch_fields($this->queryID);
+        if($this->numRows>0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-             for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType== DATA_TYPE_VO){
+            //返回数据集
+            for($i=0;$i<$this->numRows ;$i++ ){
+                if($resultType==DATA_TYPE_VO){
                     //返回对象集
-                    $result[$i] = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'));
+                    $result[$i] = mysqli_fetch_object($this->queryID);
                 }else{
                     // 返回数组集
-                    $result[$i] = $this->PDOStatement->fetch(constant('PDO::FETCH_ASSOC'));
+                    $result[$i] = mysqli_fetch_assoc($this->queryID);
                 }
             }
+            mysqli_data_seek($this->queryID,0);
         }
         return $result;
     }
@@ -339,7 +354,7 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      */
     function getFields($tableName) { 
-        $this->_query('SHOW COLUMNS FROM `'.$tableName.'`');
+        $this->_query('SHOW COLUMNS FROM '.$tableName);
         $result =   $this->getAll();
         $info   =   array();
         foreach ($result as $key => $val) {
@@ -357,7 +372,7 @@ Class Db_Pdo extends Db{
 
     /**
      +----------------------------------------------------------
-     * 取得数据库的表信息
+     * 取得数据表的字段信息
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -365,8 +380,8 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      */
     function getTables($dbName='') { 
-        $result = $this->_query('SHOW TABLES');
-		$result = $result->toArray();
+        $this->_query('SHOW TABLES');
+        $result =   $this->getAll();
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
@@ -379,13 +394,19 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      * 关闭数据库
      +----------------------------------------------------------
+     * @static
      * @access public 
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function close() { 
-        $this->_linkID = null;
+        if (!empty($this->queryID))
+            mysqli_free_result($this->queryID);
+        if (!mysqli_close($this->_linkID)){
+            throw_exception($this->error());
+        }
+        $this->_linkID = 0;
     } 
 
     /**
@@ -393,6 +414,7 @@ Class Db_Pdo extends Db{
      * 数据库错误信息
      * 并显示当前的SQL语句
      +----------------------------------------------------------
+     * @static
      * @access public 
      +----------------------------------------------------------
      * @return string
@@ -401,8 +423,7 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      */
     function error() {
-        $error = $this->PDOStatement->errorInfo();
-		$this->error = $error[2];
+        $this->error = mysqli_error($this->_linkID);
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
@@ -413,6 +434,7 @@ Class Db_Pdo extends Db{
      +----------------------------------------------------------
      * SQL指令安全过滤
      +----------------------------------------------------------
+     * @static
      * @access public 
      +----------------------------------------------------------
      * @param string $str  SQL指令
@@ -427,7 +449,7 @@ Class Db_Pdo extends Db{
         $str = str_replace("&lt;", "<", $str);
         $str = str_replace("&gt;", ">", $str);
         $str = str_replace("&amp;", "&", $str);
-        //$str = mysql_real_escape_string($str, $this->linkID); 
+        //$str = mysqli_real_escape_string($this->_linkID,$str); 
     } 
 
 }//类定义结束

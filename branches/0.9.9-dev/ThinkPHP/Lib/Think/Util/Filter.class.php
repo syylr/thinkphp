@@ -54,7 +54,7 @@ class Filter extends Base
                 $filterClass = strtolower(substr(strrchr($val, '.'),1));
             	import($val);
             }else {
-                $filterClass = 'Filter_'.$val ;
+                $filterClass = 'Filter'.$val ;
                 require_cache( $filterPath.$filterClass . '.class.php');
             }
             if(class_exists($filterClass)) {

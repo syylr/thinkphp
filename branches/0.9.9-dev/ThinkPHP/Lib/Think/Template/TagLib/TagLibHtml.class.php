@@ -27,7 +27,7 @@
  +------------------------------------------------------------------------------
  */
 import('Think.Template.TagLib');
-class TagLib_Html extends TagLib
+class TagLibHtml extends TagLib
 {//类定义开始
 
     /**

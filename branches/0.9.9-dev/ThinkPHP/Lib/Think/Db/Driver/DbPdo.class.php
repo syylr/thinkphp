@@ -18,16 +18,19 @@
 // +----------------------------------------------------------------------+
 // $Id$
 
+
 /**
  +------------------------------------------------------------------------------
- * Oracle数据库驱动类
+ * PDO数据库驱动类
  +------------------------------------------------------------------------------
  * @package   Db
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-Class Db_Oracle extends Db{
+Class DbPdo extends Db{
+
+	var $PDOStatement = null;
 
     /**
      +----------------------------------------------------------
@@ -39,8 +42,8 @@ Class Db_Oracle extends Db{
      +----------------------------------------------------------
      */
     function __construct($config=''){    
-        if ( !function_exists('oci_connect')) {    
-            throw_exception('系统不支持oracle');
+        if ( !class_exists('PDO') ) {    
+            throw_exception('系统不支持PDO');
         }
 		if(!empty($config)) {
 			$this->config	=	$config;
@@ -59,22 +62,25 @@ Class Db_Oracle extends Db{
     function connect($config='',$linkNum=0) {
         if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
-            $conn = $this->pconnect ? 'oci_pconnect':'oci_connect';
-			if(false === strpos($config['database'],$config['hostname'])) {
-				$config['database']	=	"(DESCRIPTION = (ADDRESS_LIST = (ADDRESS =(COMMUNITY = ".$config['database'].")(PROTOCOL = TCP)(Host =".$config['hostname'].")(Port = ".$config['hostport'].")))(CONNECT_DATA = (SID = ".$config['sid'].")))";
+			if(empty($config['pdodsn'])) {
+				$config['dsn'] = C('DB_PDO_DSN');
 			}
-            $this->linkID[$linkNum] = $conn($config['username'], $config['password'],$config['database']);
+			if(empty($config['pdoparms'])) {
+				$config['parms'] = C('DB_PDO_PARMS');
+			}
+            $this->linkID[$linkNum] = new PDO( $config['dsn'], $config['username'], $config['password'],$config['parms']);
             if ( !$this->linkID[$linkNum]) {
-                throw_exception($this->error());
-                Return False;
+                throw_exception('PDO CONNECT ERROR');
+                return False;
             }
-            $this->dbVersion = OCI_Server_Version($this->linkID[$linkNum]);
+			$this->linkID[$linkNum]->exec('SET NAMES '.C('DB_CHARSET'));  
+            $this->dbVersion = $this->linkID[$linkNum]->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
 			// 标记连接成功
 			$this->connected	=	true;
-            //注销数据库安全信息
+            // 注销数据库连接配置信息
             unset($this->config);
         }
-        Return $this->linkID[$linkNum];
+        return $this->linkID[$linkNum];
     }
 
     /**
@@ -85,8 +91,7 @@ Class Db_Oracle extends Db{
      +----------------------------------------------------------
      */
     function free() {
-        @oci_free_statement($this->queryID);
-        $this->queryID = 0;
+        $this->PDOStatement = null;
     }
 
     /**
@@ -105,35 +110,32 @@ Class Db_Oracle extends Db{
      */
     function _query($str='') {
 		$this->initConnect(false);
-        if ( !$this->_linkID ) Return False;
+        if ( !$this->_linkID ) return False;
         if ( $str != '' ) $this->queryStr = $str;
-        if ($this->autoCommit) {
+        if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
+            //数据rollback 支持
+            if ($this->transTimes == 0) {
+				$this->_linkID	->beginTransaction();
+            }
+            $this->transTimes++;
+        }else {
             //释放前次的查询结果
-            if ( $this->queryID ) {    $this->free();    }
+            if ( !empty($this->PDOStatement) ) {    $this->free();    }
         }
         $this->escape_string($this->queryStr);
-        $this->queryTimes ++;
+        $this->queryTimes++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        $this->queryID = OCI_Parse($this->_linkID,$this->queryStr);
-        if ( !$this->queryID ) {
-            throw_exception($this->error());
-            Return False;
+        $this->PDOStatement = $this->_linkID->prepare($this->queryStr);
+		$result	=	$this->PDOStatement->execute();
+        if ( !$result ) {
+            if ( $this->debug ) throw_exception($this->error());
+            return False;
         } else {
-            if(!$this->autoCommit && $this->isMainIps($this->queryStr)){
-                $result = OCI_Execute($this->queryID,OCI_DEFAULT);
-                $this->transTimes++;
-            }else {
-                $result = OCI_Execute($this->queryID,OCI_COMMIT_ON_SUCCESS);
-            }
-            if(!$result){
-                throw_exception($this->error());
-                Return False;
-            }
-            $this->numRows = oci_fetch_all($this->queryID,$this->resultSet);
-            $this->numCols = oci_num_fields($this->queryID);
+            $this->numRows = $this->PDOStatement->rowCount();
+            $this->numCols = $this->PDOStatement->columnCount();
             $this->resultSet = $this->getAll();
-            Return new resultSet($this->resultSet);
+            return new resultSet($this->resultSet);              	
         }
     }
 
@@ -152,32 +154,30 @@ Class Db_Oracle extends Db{
      */
     function _execute($str='') {
 		$this->initConnect(true);
-        if ( !$this->_linkID ) Return False;
+        if ( !$this->_linkID ) return False;
         if ( $str != '' ) $this->queryStr = $str;
-        if ($this->autoCommit) {
+        if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
+            //数据rollback 支持
+            if ($this->transTimes == 0) {
+				$this->_linkID->beginTransaction();
+            }
+            $this->transTimes++;
+        }else {
             //释放前次的查询结果
-            if ( $this->queryID ) {    $this->free();    }
+            if ( !empty($this->PDOStatement) ) {    $this->free();    }
         }
         $this->escape_string($this->queryStr);
-        $this->writeTimes ++;
+        $this->writeTimes++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !OCI_Parse($this->_linkID,$this->queryStr) ) {
-            throw_exception($this->error());
-            Return False;
+		$result	=	$this->_linkID->exec($this->queryStr);
+        if ( !$result) {
+            //if ( $this->debug ) throw_exception($this->error());
+            return False;
         } else {
-            if(!$this->autoCommit && $this->isMainIps($this->queryStr)){
-                $result = OCI_Execute($this->queryID,OCI_DEFAULT);
-                $this->transTimes++;
-            }else {
-                $result = OCI_Execute($this->queryID,OCI_COMMIT_ON_SUCCESS);
-            }
-            if(!$result){
-                throw_exception($this->error());
-                Return False;
-            }
-            $this->numRows = oci_num_rows($this->_linkID);
-            Return $this->numRows;
+			$this->numRows = $result;
+            $this->lastInsID = $this->_linkID->lastInsertId();
+            return $this->numRows;            	
         }
     }
 
@@ -195,7 +195,7 @@ Class Db_Oracle extends Db{
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = oci_commit($this->_linkID);
+            $result = $this->_linkID->commit();
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -219,7 +219,7 @@ Class Db_Oracle extends Db{
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = oci_rollback($this->_linkID);
+            $result = $this->_linkID->rollback();
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -242,20 +242,20 @@ Class Db_Oracle extends Db{
      +----------------------------------------------------------
      */
     function next() {
-        if ( !$this->queryID ) {
+        if ( !$this->PDOStatement ) {
             throw_exception($this->error());
-            Return False;
+            return False;
         }
         if($this->resultType== DATA_TYPE_VO){
             // 返回对象集
-            $this->result = oci_fetch_object($this->queryID);
+            $this->result = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'));
             $stat = is_object($this->result);
         }else{
             // 返回数组集
-            $this->result = oci_fetch_assoc($this->queryID);
+            $this->result = $this->PDOStatement->fetch(constant('PDO::FETCH_ASSOC'));
             $stat = is_array($this->result);
         }
-        Return $stat;
+        return $stat;
     }
 
     /**
@@ -264,7 +264,7 @@ Class Db_Oracle extends Db{
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param index $seek 指针位置
+     * @param integer $seek 指针位置
      * @param string $str  SQL指令
      +----------------------------------------------------------
      * @return array
@@ -272,21 +272,21 @@ Class Db_Oracle extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getRow($sql = NULL) {
+    function getRow($sql = NULL,$seek=0) {
         if (!empty($sql)) $this->_query($sql);
-        if ( !$this->queryID ) {
+        if ( empty($this->PDOStatement) ) {
             throw_exception($this->error());
-            Return False;
+            return False;
         }
         if($this->numRows >0) {
-            if($this->resultType== DATA_TYPE_VO){
-                //返回对象集
-                $result = oci_fetch_object($this->queryID);
-            }else{
-                // 返回数组集
-                $result = oci_fetch_assoc($this->queryID);
-            }
-            Return $result;
+			if($this->resultType== DATA_TYPE_VO){
+				//返回对象集
+				$result = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'),constant('PDO::FETCH_ORI_NEXT'),$seek);
+			}else{
+				// 返回数组集
+				$result = $this->PDOStatement->fetch(constant('PDO::FETCH_ASSOC'),constant('PDO::FETCH_ORI_NEXT'),$seek);
+			}
+            return $result;
         }else {
         	return false;
         }
@@ -308,26 +308,72 @@ Class Db_Oracle extends Db{
      */
     function getAll($sql = NULL,$resultType=NULL) {
         if (!empty($sql)) $this->_query($sql);
-        if ( !$this->queryID ) {
+        if ( empty($this->PDOStatement) ) {
             throw_exception($this->error());
-            Return False;
+            return False;
         }
         //返回数据集
         $result = array();
         if($this->numRows >0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-            for($i=0;$i<$this->numRows ;$i++ ){
+             for($i=0;$i<$this->numRows ;$i++ ){
                 if($resultType== DATA_TYPE_VO){
                     //返回对象集
-                    $result[$i] = oci_fetch_object($this->queryID);
+                    $result[$i] = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'));
                 }else{
                     // 返回数组集
-                    $result[$i] = oci_fetch_assoc($this->queryID);
+                    $result[$i] = $this->PDOStatement->fetch(constant('PDO::FETCH_ASSOC'));
                 }
             }
         }
-        Return $result;
+        return $result;
     }
+
+    /**
+     +----------------------------------------------------------
+     * 取得数据表的字段信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getFields($tableName) { 
+        $this->_query('SHOW COLUMNS FROM `'.$tableName.'`');
+        $result =   $this->getAll();
+        $info   =   array();
+        foreach ($result as $key => $val) {
+            $info[$val['Field']] = array(
+                'name'    => $val['Field'],
+                'type'    => $val['Type'],
+                'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
+                'default' => $val['Default'],
+                'primary' => (strtolower($val['Key']) == 'pri'),
+                'autoInc' => (strtolower($val['Extra']) == 'auto_increment'),
+            );
+        }
+        return $info;
+    } 
+
+    /**
+     +----------------------------------------------------------
+     * 取得数据库的表信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getTables($dbName='') { 
+        $result = $this->_query('SHOW TABLES');
+		$result = $result->toArray();
+        $info   =   array();
+        foreach ($result as $key => $val) {
+            $info[$key] = current($val);
+        }
+        return $info;
+    } 
+
 
     /**
      +----------------------------------------------------------
@@ -339,12 +385,7 @@ Class Db_Oracle extends Db{
      +----------------------------------------------------------
      */
     function close() { 
-        if (!empty($this->queryID))
-            $this->free();
-        if (!OCI_close($this->_linkID)){
-            throw_exception($this->error());
-        }
-        $this->_linkID = 0;
+        $this->_linkID = null;
     } 
 
     /**
@@ -360,8 +401,8 @@ Class Db_Oracle extends Db{
      +----------------------------------------------------------
      */
     function error() {
-        $this->error = OCI_Error($this->_linkID);
-        $this->error = $this->error["message"];
+        $error = $this->PDOStatement->errorInfo();
+		$this->error = $error[2];
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
@@ -386,6 +427,7 @@ Class Db_Oracle extends Db{
         $str = str_replace("&lt;", "<", $str);
         $str = str_replace("&gt;", ">", $str);
         $str = str_replace("&amp;", "&", $str);
+        //$str = mysql_real_escape_string($str, $this->linkID); 
     } 
 
 }//类定义结束

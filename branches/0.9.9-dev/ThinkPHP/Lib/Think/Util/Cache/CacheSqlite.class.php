@@ -18,18 +18,16 @@
 // +----------------------------------------------------------------------+
 // $Id$
 
-
 /**
  +------------------------------------------------------------------------------
- * 文件类型缓存类
+ * 使用Sqlite作为缓存类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Cache_File extends Cache
-{//类定义开始
-
+class CacheSqlite extends Cache
+{
 
     /**
      +----------------------------------------------------------
@@ -40,48 +38,26 @@ class Cache_File extends Cache
      */
     function __construct($options)
     {
-        if(!empty($options['temp'])){
-            $this->options['temp'] = $options['temp'];
-        }else {
-            $this->options['temp'] = TEMP_PATH;
+        if ( !extension_loaded('sqlite') ) {    
+            throw_exception(L('系统不支持sqlite'));
         }
-        $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
-        if(!is_dir($this->options['temp'])){
-            mkdir($this->options['temp']);
+        if(empty($options)){
+            $options= array
+            (
+                'db'        => ':memory:',
+                'table'     => 'sharedmemory',
+                'var'       => 'var',
+                'value'     => 'value',
+                'expire'    => 'expire',
+                'persistent'=> false
+            );
         }
-        if(substr($this->options['temp'], -1) != "/")    $this->options['temp'] .= "/";
-        $this->connected = is_dir($this->options['temp']) && is_writeable($this->options['temp']);
+        $this->options = $options;
+        $func = $this->options['persistent'] ? 'sqlite_popen' : 'sqlite_open';
+        $this->handler = $func($this->options['db']);
+        $this->connected = is_resource($this->handler);
         $this->type = strtoupper(substr(__CLASS__,6));
-        $this->init();
 
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 初始化检查
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @return boolen
-     +----------------------------------------------------------
-     */
-    function init() 
-    {
-        $stat = stat($this->options['temp']);
-		$dir_perms = $stat['mode'] & 0007777; // Get the permission bits.
-		$file_perms = $dir_perms & 0000666; // Remove execute bits for files.
-
-		// 创建项目缓存目录
-		if (!file_exists($this->options['temp'])) {
-			if (!  mkdir($this->options['temp']))
-				return false;
-			 chmod($this->options['temp'], $dir_perms);
-		}
-        // 创建缓存目录安全文件
-		if (!file_exists($this->options['temp']."index.php")) {
-			 touch($this->options['temp']."index.php");
-			 chmod($this->options['temp']."index.php", $file_perms);
-		}    	
     }
 
     /**
@@ -100,25 +76,6 @@ class Cache_File extends Cache
 
     /**
      +----------------------------------------------------------
-     * 取得变量的存储文件名
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param string $name 缓存变量名
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-    function filename($name)
-    {
-        return $this->options['temp'].$this->prefix.md5($name).'.php';
-    }
-
-    
-    /**
-     +----------------------------------------------------------
      * 读取缓存
      +----------------------------------------------------------
      * @access public 
@@ -130,38 +87,22 @@ class Cache_File extends Cache
      */
     function get($name)
     {
-        $filename   =   $this->filename($name);
-        if (!$this->isConnected() || !file_exists($filename)) {
-           return false;
-        }
 		$this->Q(1);
-        $content    =   file_get_contents($filename);
-        if( false !== $content) {
-            $expire  =  substr($content,strlen(C('CACHE_SERIAL_HEADER')), 6);
-            if($expire != -1 && time() > filemtime($filename) + $expire) { 
-                //缓存过期删除缓存文件
-                unlink($filename);
-                return false;
-            }
-            if(C('DATA_CACHE_CHECK')) {//开启数据校验
-                $check  =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+6, 32);
-                $content   =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+6+32, -strlen(C('CACHE_SERIAL_FOOTER')));
-                if($check != md5($content)) {//校验错误
-                    return false;
-                }
-            }else {
-            	$content   =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+6, -strlen(C('CACHE_SERIAL_FOOTER')));
-            }
+		$name   = sqlite_escape_string($name);
+        $sql = 'SELECT '.$this->options['value'].
+               ' FROM '.$this->options['table'].
+               ' WHERE '.$this->options['var'].'=\''.$name.'\' AND '.$this->options['expire'].'!=-1 AND '.$this->options['expire'].'<'.time().
+               ' LIMIT 1';
+        $result = sqlite_query($this->handler, $sql);
+        if (sqlite_num_rows($result)) {
+            $content   =  sqlite_fetch_single($result);
             if(C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
                 //启用数据压缩
                 $content   =   gzuncompress($content);
             }
-            $content    =   unserialize($content);
-            return $content;
+            return unserialize($content);
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -176,36 +117,28 @@ class Cache_File extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    function set($name, $value,$expire='')
+    function set($name, $value,$expireTime=0)
     {
-		$this->W(1);
-        if(empty($expire)) {
-        	$expire =  $this->expire;
-        }
-        $filename   =   $this->filename($name);
-        $data   =   serialize($value);
+		$this->Q(1);
+        $expire =  !empty($expireTime)? $expireTime : C('DATA_CACHE_TIME');
+        $name  = sqlite_escape_string($name);
+        $value = sqlite_escape_string(serialize($value));
+        $expire =  ($expireTime==-1)?-1: (time()+$expire);
         if( C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
             //数据压缩
-            $data   =   gzcompress($data,3);
+            $value   =   gzcompress($value,3);
         }
-        if(C('DATA_CACHE_CHECK')) {//开启数据校验
-        	$check  =  md5($data);
-        }else {
-        	$check  =  '';
-        }
-        $data    = C('CACHE_SERIAL_HEADER').sprintf('%06d',$expire).$check.$data.C('CACHE_SERIAL_FOOTER');
-        $result  =   file_put_contents($filename,$data);
-        if($result) {
-            clearstatcache();
-            return true;
-        }else {
-        	return false;
-        }
+        $sql  = 'REPLACE INTO '.$this->options['table'].
+                ' ('.$this->options['var'].', '.$this->options['value'].','.$this->options['expire'].
+                ') VALUES (\''.$name.'\', \''.$value.'\', \''.$expire.'\')';
+        sqlite_query($this->handler, $sql);
+        return true;
     }
 
     /**
      +----------------------------------------------------------
      * 删除缓存
+     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -216,7 +149,11 @@ class Cache_File extends Cache
      */
     function rm($name)
     {
-        return unlink($this->filename($name));
+        $name  = sqlite_escape_string($name);
+        $sql  = 'DELETE FROM '.$this->options['table'].
+               ' WHERE '.$this->options['var'].'=\''.$name.'\'';
+        sqlite_query($this->handler, $sql);
+        return true;
     }
 
     /**
@@ -225,16 +162,14 @@ class Cache_File extends Cache
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param string $name 缓存变量名
-     +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
      */
     function clear()
     {
-        import("ORG.Io.Dir");
-        Dir::del($this->options['temp']);
+        $sql  = 'delete from `'.$this->options['table'].'`';
+        sqlite_query($this->handler, $sql);
+        return ;
     }
-
 }//类定义结束
 ?>

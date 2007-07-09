@@ -20,14 +20,14 @@
 
 /**
  +------------------------------------------------------------------------------
- * Mysqli数据库驱动类
+ * Oracle数据库驱动类
  +------------------------------------------------------------------------------
  * @package   Db
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-Class Db_Mysqli extends Db{
+Class DbOracle extends Db{
 
     /**
      +----------------------------------------------------------
@@ -39,8 +39,8 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      */
     function __construct($config=''){    
-        if ( !extension_loaded('mysqli') ) {    
-            throw_exception('系统不支持mysqli');
+        if ( !function_exists('oci_connect')) {    
+            throw_exception('系统不支持oracle');
         }
 		if(!empty($config)) {
 			$this->config	=	$config;
@@ -59,26 +59,16 @@ Class Db_Mysqli extends Db{
     function connect($config='',$linkNum=0) {
         if ( !$this->linkID[$linkNum] ) {
 			if(empty($config))	$config	=	$this->config;
-            $this->linkID[$linkNum] = mysqli_connect(
-                                $config['hostname'], 
-                                $config['username'], 
-                                $config['password'],
-                                $config['database'], 
-                                $config['hostport']);
+            $conn = $this->pconnect ? 'oci_pconnect':'oci_connect';
+			if(false === strpos($config['database'],$config['hostname'])) {
+				$config['database']	=	"(DESCRIPTION = (ADDRESS_LIST = (ADDRESS =(COMMUNITY = ".$config['database'].")(PROTOCOL = TCP)(Host =".$config['hostname'].")(Port = ".$config['hostport'].")))(CONNECT_DATA = (SID = ".$config['sid'].")))";
+			}
+            $this->linkID[$linkNum] = $conn($config['username'], $config['password'],$config['database']);
             if ( !$this->linkID[$linkNum]) {
-                throw_exception(mysqli_connect_error());
+                throw_exception($this->error());
                 Return False;
             }
-            if($this->autoCommit){
-                mysqli_autocommit($this->linkID[$linkNum], True);
-            }else {
-                mysqli_autocommit($this->linkID[$linkNum], False);
-            }
-            $this->dbVersion = mysqli_get_server_info($this->linkID[$linkNum]);
-            if ($this->dbVersion >= "4.1") { 
-                //使用UTF8存取数据库 需要mysql 4.1.0以上支持
-                mysqli_query( $this->linkID[$linkNum],"SET NAMES '".C('DB_CHARSET')."'");
-            }
+            $this->dbVersion = OCI_Server_Version($this->linkID[$linkNum]);
 			// 标记连接成功
 			$this->connected	=	true;
             //注销数据库安全信息
@@ -95,7 +85,7 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      */
     function free() {
-        mysqli_free_result($this->queryID);
+        @oci_free_statement($this->queryID);
         $this->queryID = 0;
     }
 
@@ -106,7 +96,7 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param string $sqlStr  sql指令
+     * @param string $str  sql指令
      +----------------------------------------------------------
      * @return resultSet
      +----------------------------------------------------------
@@ -117,28 +107,31 @@ Class Db_Mysqli extends Db{
 		$this->initConnect(false);
         if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
-        if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-            //数据rollback 支持
-            if ($this->transTimes == 0) {
-                mysqli_autocommit($this->_linkID, false);
-            }
-            $this->transTimes++;
-        }else {
+        if ($this->autoCommit) {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-
         $this->escape_string($this->queryStr);
         $this->queryTimes ++;
 		$this->Q(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        $this->queryID = mysqli_query($this->_linkID,$this->queryStr );
+        $this->queryID = OCI_Parse($this->_linkID,$this->queryStr);
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
         } else {
-            $this->numRows = mysqli_num_rows($this->queryID);
-            $this->numCols = mysqli_num_fields($this->queryID);
+            if(!$this->autoCommit && $this->isMainIps($this->queryStr)){
+                $result = OCI_Execute($this->queryID,OCI_DEFAULT);
+                $this->transTimes++;
+            }else {
+                $result = OCI_Execute($this->queryID,OCI_COMMIT_ON_SUCCESS);
+            }
+            if(!$result){
+                throw_exception($this->error());
+                Return False;
+            }
+            $this->numRows = oci_fetch_all($this->queryID,$this->resultSet);
+            $this->numCols = oci_num_fields($this->queryID);
             $this->resultSet = $this->getAll();
             Return new resultSet($this->resultSet);
         }
@@ -161,13 +154,7 @@ Class Db_Mysqli extends Db{
 		$this->initConnect(true);
         if ( !$this->_linkID ) Return False;
         if ( $str != '' ) $this->queryStr = $str;
-        if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-            //数据rollback 支持
-            if ($this->transTimes == 0) {
-                mysqli_autocommit($this->_linkID, false);
-            }
-            $this->transTimes++;
-        }else {
+        if ($this->autoCommit) {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
@@ -175,12 +162,21 @@ Class Db_Mysqli extends Db{
         $this->writeTimes ++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !mysqli_query($this->_linkID,$this->queryStr) ) {
+        if ( !OCI_Parse($this->_linkID,$this->queryStr) ) {
             throw_exception($this->error());
             Return False;
         } else {
-            $this->numRows = mysqli_affected_rows($this->_linkID);
-            $this->lastInsID = mysqli_insert_id($this->_linkID);
+            if(!$this->autoCommit && $this->isMainIps($this->queryStr)){
+                $result = OCI_Execute($this->queryID,OCI_DEFAULT);
+                $this->transTimes++;
+            }else {
+                $result = OCI_Execute($this->queryID,OCI_COMMIT_ON_SUCCESS);
+            }
+            if(!$result){
+                throw_exception($this->error());
+                Return False;
+            }
+            $this->numRows = oci_num_rows($this->_linkID);
             Return $this->numRows;
         }
     }
@@ -189,7 +185,6 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      * 用于非自动提交状态下面的查询提交
      +----------------------------------------------------------
-     * @static
      * @access public 
      +----------------------------------------------------------
      * @return boolen
@@ -200,8 +195,7 @@ Class Db_Mysqli extends Db{
     function commit()
     {
         if ($this->transTimes > 0) {
-            $result = mysqli_commit($this->_linkID);
-            mysqli_autocommit($this->_linkID, TRUE);
+            $result = oci_commit($this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -215,7 +209,6 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      * 事务回滚
      +----------------------------------------------------------
-     * @static
      * @access public 
      +----------------------------------------------------------
      * @return boolen
@@ -226,7 +219,7 @@ Class Db_Mysqli extends Db{
     function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = mysqli_rollback($this->_linkID);
+            $result = oci_rollback($this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -241,7 +234,6 @@ Class Db_Mysqli extends Db{
      * 获得下一条查询结果 简易数据集获取方法
      * 查询结果放到 result 数组中
      +----------------------------------------------------------
-     * @static
      * @access public 
      +----------------------------------------------------------
      * @return boolen
@@ -254,13 +246,13 @@ Class Db_Mysqli extends Db{
             throw_exception($this->error());
             Return False;
         }
-        if($this->resultType==DATA_TYPE_VO){
+        if($this->resultType== DATA_TYPE_VO){
             // 返回对象集
-            $this->result = mysqli_fetch_object($this->queryID);
+            $this->result = oci_fetch_object($this->queryID);
             $stat = is_object($this->result);
         }else{
             // 返回数组集
-            $this->result = mysqli_fetch_assoc($this->queryID);
+            $this->result = oci_fetch_assoc($this->queryID);
             $stat = is_array($this->result);
         }
         Return $stat;
@@ -270,7 +262,6 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      * 获得一条查询结果
      +----------------------------------------------------------
-     * @static
      * @access public 
      +----------------------------------------------------------
      * @param index $seek 指针位置
@@ -281,21 +272,19 @@ Class Db_Mysqli extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getRow($sql = NULL,$seek=0) {
+    function getRow($sql = NULL) {
         if (!empty($sql)) $this->_query($sql);
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
         }
         if($this->numRows >0) {
-            if(mysqli_data_seek($this->queryID,$seek)){
-                if($this->resultType== DATA_TYPE_VO){
-                    //返回对象集
-                    $result = mysqli_fetch_object($this->queryID);
-                }else{
-                    // 返回数组集
-                    $result = mysqli_fetch_assoc($this->queryID);
-                }
+            if($this->resultType== DATA_TYPE_VO){
+                //返回对象集
+                $result = oci_fetch_object($this->queryID);
+            }else{
+                // 返回数组集
+                $result = oci_fetch_assoc($this->queryID);
             }
             Return $result;
         }else {
@@ -308,7 +297,6 @@ Class Db_Mysqli extends Db{
      * 获得所有的查询数据
      * 查询结果放到 resultSet 数组中
      +----------------------------------------------------------
-     * @static
      * @access public 
      +----------------------------------------------------------
      * @param string $resultType  数据集类型
@@ -326,75 +314,25 @@ Class Db_Mysqli extends Db{
         }
         //返回数据集
         $result = array();
-        $info   = mysqli_fetch_fields($this->queryID);
-        if($this->numRows>0) {
+        if($this->numRows >0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-            //返回数据集
             for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType==DATA_TYPE_VO){
+                if($resultType== DATA_TYPE_VO){
                     //返回对象集
-                    $result[$i] = mysqli_fetch_object($this->queryID);
+                    $result[$i] = oci_fetch_object($this->queryID);
                 }else{
                     // 返回数组集
-                    $result[$i] = mysqli_fetch_assoc($this->queryID);
+                    $result[$i] = oci_fetch_assoc($this->queryID);
                 }
             }
-            mysqli_data_seek($this->queryID,0);
         }
-        return $result;
+        Return $result;
     }
-
-    /**
-     +----------------------------------------------------------
-     * 取得数据表的字段信息
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-    function getFields($tableName) { 
-        $this->_query('SHOW COLUMNS FROM '.$tableName);
-        $result =   $this->getAll();
-        $info   =   array();
-        foreach ($result as $key => $val) {
-            $info[$val['Field']] = array(
-                'name'    => $val['Field'],
-                'type'    => $val['Type'],
-                'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
-                'default' => $val['Default'],
-                'primary' => (strtolower($val['Key']) == 'pri'),
-                'autoInc' => (strtolower($val['Extra']) == 'auto_increment'),
-            );
-        }
-        return $info;
-    } 
-
-    /**
-     +----------------------------------------------------------
-     * 取得数据表的字段信息
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-    function getTables($dbName='') { 
-        $this->_query('SHOW TABLES');
-        $result =   $this->getAll();
-        $info   =   array();
-        foreach ($result as $key => $val) {
-            $info[$key] = current($val);
-        }
-        return $info;
-    } 
-
 
     /**
      +----------------------------------------------------------
      * 关闭数据库
      +----------------------------------------------------------
-     * @static
      * @access public 
      +----------------------------------------------------------
      * @throws ThinkExecption
@@ -402,8 +340,8 @@ Class Db_Mysqli extends Db{
      */
     function close() { 
         if (!empty($this->queryID))
-            mysqli_free_result($this->queryID);
-        if (!mysqli_close($this->_linkID)){
+            $this->free();
+        if (!OCI_close($this->_linkID)){
             throw_exception($this->error());
         }
         $this->_linkID = 0;
@@ -414,7 +352,6 @@ Class Db_Mysqli extends Db{
      * 数据库错误信息
      * 并显示当前的SQL语句
      +----------------------------------------------------------
-     * @static
      * @access public 
      +----------------------------------------------------------
      * @return string
@@ -423,7 +360,8 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      */
     function error() {
-        $this->error = mysqli_error($this->_linkID);
+        $this->error = OCI_Error($this->_linkID);
+        $this->error = $this->error["message"];
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
@@ -434,7 +372,6 @@ Class Db_Mysqli extends Db{
      +----------------------------------------------------------
      * SQL指令安全过滤
      +----------------------------------------------------------
-     * @static
      * @access public 
      +----------------------------------------------------------
      * @param string $str  SQL指令
@@ -449,7 +386,6 @@ Class Db_Mysqli extends Db{
         $str = str_replace("&lt;", "<", $str);
         $str = str_replace("&gt;", ">", $str);
         $str = str_replace("&amp;", "&", $str);
-        //$str = mysqli_real_escape_string($this->_linkID,$str); 
     } 
 
 }//类定义结束

@@ -20,14 +20,15 @@
 
 /**
  +------------------------------------------------------------------------------
- * 使用Sqlite作为缓存类
+ * Apachenote缓存类
  +------------------------------------------------------------------------------
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Cache_Sqlite extends Cache
-{
+class CacheApachenote extends Cache
+{//类定义开始
+
 
     /**
      +----------------------------------------------------------
@@ -38,24 +39,16 @@ class Cache_Sqlite extends Cache
      */
     function __construct($options)
     {
-        if ( !extension_loaded('sqlite') ) {    
-            throw_exception(L('系统不支持sqlite'));
-        }
         if(empty($options)){
-            $options= array
-            (
-                'db'        => ':memory:',
-                'table'     => 'sharedmemory',
-                'var'       => 'var',
-                'value'     => 'value',
-                'expire'    => 'expire',
-                'persistent'=> false
-            );
+            $options = array(           
+                'host' => '127.0.0.1',
+                'port' => 1042,
+                'timeout' => 10
+        );
         }
+        $this->handler = null;
+        $this->open();
         $this->options = $options;
-        $func = $this->options['persistent'] ? 'sqlite_popen' : 'sqlite_open';
-        $this->handler = $func($this->options['db']);
-        $this->connected = is_resource($this->handler);
         $this->type = strtoupper(substr(__CLASS__,6));
 
     }
@@ -74,6 +67,7 @@ class Cache_Sqlite extends Cache
         return $this->connected;
     }
 
+
     /**
      +----------------------------------------------------------
      * 读取缓存
@@ -85,25 +79,19 @@ class Cache_Sqlite extends Cache
      * @return mixed
      +----------------------------------------------------------
      */
-    function get($name)
-    {
+     function get($name)
+     {
+         $this->open();
+         $s = 'F' . pack('N', strlen($name)) . $name;
+         fwrite($this->handler, $s);
+
+         for ($data = ''; !feof($this->handler);) {
+             $data .= fread($this->handler, 4096);
+         }
 		$this->Q(1);
-		$name   = sqlite_escape_string($name);
-        $sql = 'SELECT '.$this->options['value'].
-               ' FROM '.$this->options['table'].
-               ' WHERE '.$this->options['var'].'=\''.$name.'\' AND '.$this->options['expire'].'!=-1 AND '.$this->options['expire'].'<'.time().
-               ' LIMIT 1';
-        $result = sqlite_query($this->handler, $sql);
-        if (sqlite_num_rows($result)) {
-            $content   =  sqlite_fetch_single($result);
-            if(C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
-                //启用数据压缩
-                $content   =   gzuncompress($content);
-            }
-            return unserialize($content);
-        }
-        return false;
-    }
+         $this->close();
+         return $data === '' ? '' : unserialize($data);
+     }
 
     /**
      +----------------------------------------------------------
@@ -117,28 +105,23 @@ class Cache_Sqlite extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    function set($name, $value,$expireTime=0)
+    function set($name, $value)
     {
-		$this->Q(1);
-        $expire =  !empty($expireTime)? $expireTime : C('DATA_CACHE_TIME');
-        $name  = sqlite_escape_string($name);
-        $value = sqlite_escape_string(serialize($value));
-        $expire =  ($expireTime==-1)?-1: (time()+$expire);
-        if( C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
-            //数据压缩
-            $value   =   gzcompress($value,3);
-        }
-        $sql  = 'REPLACE INTO '.$this->options['table'].
-                ' ('.$this->options['var'].', '.$this->options['value'].','.$this->options['expire'].
-                ') VALUES (\''.$name.'\', \''.$value.'\', \''.$expire.'\')';
-        sqlite_query($this->handler, $sql);
-        return true;
+		$this->W(1);
+		$this->open();
+        $value = serialize($value);
+        $s = 'S' . pack('NN', strlen($name), strlen($value)) . $name . $value;
+
+        fwrite($this->handler, $s);
+        $ret = fgets($this->handler);
+        $this->close();
+        $this->setTime[$name] = time();
+        return $ret === "OK\n";
     }
 
     /**
      +----------------------------------------------------------
      * 删除缓存
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -147,29 +130,44 @@ class Cache_Sqlite extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    function rm($name)
-    {
-        $name  = sqlite_escape_string($name);
-        $sql  = 'DELETE FROM '.$this->options['table'].
-               ' WHERE '.$this->options['var'].'=\''.$name.'\'';
-        sqlite_query($this->handler, $sql);
-        return true;
-    }
+     function rm($name)
+     {
+         $this->open();
+         $s = 'D' . pack('N', strlen($name)) . $name;
+         fwrite($this->handler, $s);
+         $ret = fgets($this->handler);
+         $this->close();
+
+         return $ret === "OK\n";
+     }
 
     /**
      +----------------------------------------------------------
-     * 清除缓存
+     * 关闭缓存
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @return boolen
+     */
+     function close()
+     {
+         fclose($this->handler);
+         $this->handler = false;
+     }
+
+    /**
+     +----------------------------------------------------------
+     * 打开缓存
+     +----------------------------------------------------------
+     * @access public 
      +----------------------------------------------------------
      */
-    function clear()
-    {
-        $sql  = 'delete from `'.$this->options['table'].'`';
-        sqlite_query($this->handler, $sql);
-        return ;
-    }
+     function open()
+     {
+         if (!is_resource($this->handler)) {
+             $this->handler = fsockopen($this->options['host'], $this->options['port'], $_, $_, $this->options['timeout']);
+             $this->connected = is_resource($this->handler);         
+         }
+     }
+
 }//类定义结束
 ?>

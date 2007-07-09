@@ -106,7 +106,7 @@ class Config extends Base
                 $confType  = $type;
             }
         }
-        $confClass = 'Config_'.ucwords(strtolower($confType));
+        $confClass = 'Config'.ucwords(strtolower($confType));
         $configClassPath = dirname(__FILE__).'/Config/';		
         if(require_cache ($configClassPath.$confClass . '.class.php')){
             $con = & new $confClass($config);

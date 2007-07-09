@@ -40,8 +40,17 @@ class Cookie extends Base
 	}
 
 	// 设置某个Cookie值
-	function set($name,$value,$timeout='') {
-		setcookie(COOKIE_PREFIX.'['.$name.']', $value,$timeout);
+	function set($name,$value,$expire='',$path='',$domain='') {
+		if($expire=='') {
+			$expire	=	C('COOKIE_EXPIRE');
+		}
+		if(empty($path)) {
+			$path = C('COOKIE_PATH');
+		}
+		if(empty($domain)) {
+			$domain	=	C('COOKIE_DOMAIN');
+		}
+		setcookie(COOKIE_PREFIX.'['.$name.']', $value,$expire,$path,$domain);
 		$_COOKIE[COOKIE_PREFIX][$name]	=	$value;
 	}
 

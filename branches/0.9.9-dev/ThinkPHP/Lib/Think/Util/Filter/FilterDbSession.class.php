@@ -26,7 +26,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Filter_DbSession extends Base
+class FilterDbSession extends Base
 {//类定义开始
 
     /**

@@ -27,7 +27,7 @@ import('Think.Util.Config');
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Config_Xml extends Config
+class ConfigXml extends Config
 {//类定义开始
 
     /**

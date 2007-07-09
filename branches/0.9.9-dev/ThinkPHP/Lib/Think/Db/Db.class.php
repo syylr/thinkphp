@@ -162,7 +162,7 @@ class Db extends Base
 				$dbClass   =  Session::get(strtoupper($this->dbType));
 			}else {
 				// 读取系统数据库驱动目录
-				$dbClass = 'Db_'. $this->dbType;
+				$dbClass = 'Db'. $this->dbType;
 				$dbDriverPath = dirname(__FILE__).'/Driver/';      
 				require_cache( $dbDriverPath . $dbClass . '.class.php');     	
 			}
