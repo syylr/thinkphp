@@ -137,20 +137,20 @@ class CacheFile extends Cache
 		$this->Q(1);
         $content    =   file_get_contents($filename);
         if( false !== $content) {
-            $expire  =  substr($content,strlen(C('CACHE_SERIAL_HEADER')), 6);
+            $expire  =  (int)substr($content,strlen(C('CACHE_SERIAL_HEADER')), 12);
             if($expire != -1 && time() > filemtime($filename) + $expire) { 
                 //缓存过期删除缓存文件
                 unlink($filename);
                 return false;
             }
             if(C('DATA_CACHE_CHECK')) {//开启数据校验
-                $check  =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+6, 32);
-                $content   =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+6+32, -strlen(C('CACHE_SERIAL_FOOTER')));
+                $check  =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+12, 32);
+                $content   =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+12+32, -strlen(C('CACHE_SERIAL_FOOTER')));
                 if($check != md5($content)) {//校验错误
                     return false;
                 }
             }else {
-            	$content   =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+6, -strlen(C('CACHE_SERIAL_FOOTER')));
+            	$content   =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+12, -strlen(C('CACHE_SERIAL_FOOTER')));
             }
             if(C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
                 //启用数据压缩
@@ -172,11 +172,12 @@ class CacheFile extends Cache
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      * @param mixed $value  存储数据
+     * @param int $expire  有效时间 -1 为永久
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
      */
-    function set($name, $value,$expire='')
+    function set($name,$value,$expire='')
     {
 		$this->W(1);
         if(empty($expire)) {
@@ -193,7 +194,7 @@ class CacheFile extends Cache
         }else {
         	$check  =  '';
         }
-        $data    = C('CACHE_SERIAL_HEADER').sprintf('%06d',$expire).$check.$data.C('CACHE_SERIAL_FOOTER');
+        $data    = C('CACHE_SERIAL_HEADER').sprintf('%012d',$expire).$check.$data.C('CACHE_SERIAL_FOOTER');
         $result  =   file_put_contents($filename,$data);
         if($result) {
             clearstatcache();

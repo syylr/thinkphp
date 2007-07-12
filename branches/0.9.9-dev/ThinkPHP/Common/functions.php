@@ -1363,7 +1363,7 @@ function C($name='',$value=null) {
 }
 
 // 缓存设置和读取
-function S($name,$value='',$type='') {
+function S($name,$value='',$expire='',$type='') {
 	static $_cache = array();
 	if('' !== $value) {
         //取得缓存对象实例
@@ -1377,7 +1377,7 @@ function S($name,$value='',$type='') {
 			return $result;
 		}else{
 			// 缓存数据
-			$cache->set($name,$value);
+			$cache->set($name,$value,$expire);
 			$_cache[$type.'_'.$name]	 =	 $value;
 		}
 		return ;

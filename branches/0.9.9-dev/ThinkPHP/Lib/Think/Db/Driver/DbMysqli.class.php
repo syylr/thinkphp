@@ -57,7 +57,7 @@ Class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     function connect($config='',$linkNum=0) {
-        if ( !$this->linkID[$linkNum] ) {
+        if ( !isset($this->linkID[$linkNum]) ) {
 			if(empty($config))	$config	=	$this->config;
             $this->linkID[$linkNum] = mysqli_connect(
                                 $config['hostname'], 
@@ -82,7 +82,7 @@ Class DbMysqli extends Db{
 			// 标记连接成功
 			$this->connected	=	true;
             //注销数据库安全信息
-            unset($this->config);
+            if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
         Return $this->linkID[$linkNum];
     }
@@ -131,8 +131,8 @@ Class DbMysqli extends Db{
         $this->escape_string($this->queryStr);
         $this->queryTimes ++;
 		$this->Q(1);
-        if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->queryID = mysqli_query($this->_linkID,$this->queryStr );
+		$this->debug();
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
@@ -174,8 +174,9 @@ Class DbMysqli extends Db{
         $this->escape_string($this->queryStr);
         $this->writeTimes ++;
 		$this->W(1);
-        if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !mysqli_query($this->_linkID,$this->queryStr) ) {
+		$result	=	mysqli_query($this->_linkID,$this->queryStr);
+		$this->debug();
+        if ( !$result ) {
             throw_exception($this->error());
             Return False;
         } else {
@@ -254,7 +255,7 @@ Class DbMysqli extends Db{
             throw_exception($this->error());
             Return False;
         }
-        if($this->resultType==DATA_TYPE_VO){
+        if($this->resultType==DATA_TYPE_OBJ){
             // 返回对象集
             $this->result = mysqli_fetch_object($this->queryID);
             $stat = is_object($this->result);
@@ -289,7 +290,7 @@ Class DbMysqli extends Db{
         }
         if($this->numRows >0) {
             if(mysqli_data_seek($this->queryID,$seek)){
-                if($this->resultType== DATA_TYPE_VO){
+                if($this->resultType== DATA_TYPE_OBJ){
                     //返回对象集
                     $result = mysqli_fetch_object($this->queryID);
                 }else{
@@ -331,7 +332,7 @@ Class DbMysqli extends Db{
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
             //返回数据集
             for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType==DATA_TYPE_VO){
+                if($resultType==DATA_TYPE_OBJ){
                     //返回对象集
                     $result[$i] = mysqli_fetch_object($this->queryID);
                 }else{
@@ -358,6 +359,9 @@ Class DbMysqli extends Db{
         $result =   $this->getAll();
         $info   =   array();
         foreach ($result as $key => $val) {
+			if(is_object($val)) {
+				$val	=	get_object_vars($val);
+			}
             $info[$val['Field']] = array(
                 'name'    => $val['Field'],
                 'type'    => $val['Type'],

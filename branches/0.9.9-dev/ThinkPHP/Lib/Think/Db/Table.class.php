@@ -97,6 +97,7 @@ class Table extends Base
 			$this->tableToAction($table);
         }
         $db->commit();
+		clearstatcache();
     }
 
     /**
@@ -129,21 +130,17 @@ class Table extends Base
             $content .= " +------------------------------------------------------------------------------\n";
             $content .= " */\n";
             $content .= "class ".$voClass." extends Vo \n{\n";
-            $content .= "    //+----------------------------------------\n";
-            $content .= "    //| 数据模型 数据表字段名 \n";
-            $content .= "    //+----------------------------------------\n";
+			$fields	=	array_keys($this->fields);
             foreach($this->fields as $key=>$val) {
-                $content .= "    var $".$key.";\n";	
                 if($val['primary']) {
-                    $this->primary = $val['name'];
-                    if($val['autoInc']) $this->autoInc = $val['autoInc'];
+                    $fields['_pk'] = $val['name'];
+                    if($val['autoInc']) $fields['_autoInc'] = $val['autoInc'];
                 }
             }
-            /*
-            $content .= "\n    //+----------------------------------------\n";
-            $content .= "    //| 数据模型 数据表字段详细信息 \n";
-            $content .= "    //+----------------------------------------\n";
-            $content .= "    var $"."_info= array('primary'=>'".$this->primary."' ,'autoInc'=>".($this->autoInc? 'true':'false').",'fields'=>".var_export($this->fields,true).");\n";*/
+			$content .= "	// 数据表".$this->prefix.'_'.$name."字段定义\n";
+			$content .= '	var $fields	=	'.str_replace("\n",'',var_export($fields,true)).";\n\n";
+            $content .= "	// 验证信息、自动填充信息、关联信息 \n\n";
+            $content .= "	// 在下面添加需要的数据访问方法 \n";
             $content .= "}\n?>";
             $result = file_put_contents($filename,$content);  
         }
@@ -170,6 +167,8 @@ class Table extends Base
         $daoClass	=	empty($daoClass)? ucwords($name).'Dao':$daoClass;
         $filename = empty($filename)?$this->appPath.'/Lib/Dao/'.$daoClass.'.class.php':$filename;
         if(!file_exists($filename)) {
+            $db     =   DB::getInstance();
+            $this->fields	=	$db->getFields(strtolower($this->prefix.'_'.$name));
             $content =   "<?php \n";
             $content .= "/**\n +------------------------------------------------------------------------------\n";
             $content .= " * ThinkPHP系统自动生成的".$daoClass."数据访问对象类\n";
@@ -177,12 +176,44 @@ class Table extends Base
             $content .= " +------------------------------------------------------------------------------\n";
             $content .= " */\n";
             $content .= "class ".$daoClass." extends Dao \n{\n";
-            $content .= "    //+----------------------------------------\n";
-            $content .= "    //| 在下面添加需要的数据访问方法 \n";
-            $content .= "    //+----------------------------------------\n";
+			$fields	=	array_keys($this->fields);
+            foreach($this->fields as $key=>$val) {
+                if($val['primary']) {
+                    $fields['_pk'] = $val['name'];
+                    if($val['autoInc']) $fields['_autoInc'] = $val['autoInc'];
+                }
+            }
+			$content .= "	// 数据表".$this->prefix.'_'.$name."字段定义\n";
+			$content .= '	var $fields	=	'.str_replace("\n",'',var_export($fields,true)).";\n\n";
+            $content .= "	// 验证信息、自动填充信息、关联信息定义 \n\n";
+            $content .= "	// 在下面添加需要的数据访问方法 \n";
             $content .= "}\n?>";
             file_put_contents($filename,$content);        	
-        }
+        }else{
+			// 升级旧版本的Dao类
+			$content	=	file_get_contents($filename);
+			if(!strpos($content,'ThinkPHP升级更新信息')) {
+				// 更新Dao类的数据定义
+				$pos	=	strpos($content,'{');
+				$start=	substr($content,0,$pos+1);
+				$end	=	substr($content,$pos+1);
+				$db     =   DB::getInstance();
+				$this->fields	=	$db->getFields(strtolower($this->prefix.'_'.$name));
+				$fields	=	array_keys($this->fields);
+				foreach($this->fields as $key=>$val) {
+					if($val['primary']) {
+						$fields['_pk'] = $val['name'];
+						if($val['autoInc']) $fields['_autoInc'] = $val['autoInc'];
+					}
+				}
+				$start .= "\n	// ThinkPHP升级更新信息开始\n";
+				$start .= "	// 数据表".$this->prefix.'_'.$name."字段定义\n";
+				$start .= '	var $fields	=	'.var_export($fields,true).";\n\n";
+				$start .= "	// 验证信息、自动填充信息、关联信息定义 \n\n";
+				$start .= "	// 在下面添加需要的数据访问方法 \n";
+				file_put_contents($filename,$start.$end);  
+			}
+		}
     }
 
     /**

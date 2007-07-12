@@ -57,7 +57,7 @@ Class DbOracle extends Db{
      +----------------------------------------------------------
      */
     function connect($config='',$linkNum=0) {
-        if ( !$this->linkID[$linkNum] ) {
+        if ( !isset($this->linkID[$linkNum]) ) {
 			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'oci_pconnect':'oci_connect';
 			if(false === strpos($config['database'],$config['hostname'])) {
@@ -72,7 +72,7 @@ Class DbOracle extends Db{
 			// 标记连接成功
 			$this->connected	=	true;
             //注销数据库安全信息
-            unset($this->config);
+            if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
         Return $this->linkID[$linkNum];
     }
@@ -114,10 +114,10 @@ Class DbOracle extends Db{
         $this->escape_string($this->queryStr);
         $this->queryTimes ++;
 		$this->Q(1);
-        if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->queryID = OCI_Parse($this->_linkID,$this->queryStr);
+		$this->debug();
         if ( !$this->queryID ) {
-            throw_exception($this->error());
+            //throw_exception($this->error());
             Return False;
         } else {
             if(!$this->autoCommit && $this->isMainIps($this->queryStr)){
@@ -127,7 +127,7 @@ Class DbOracle extends Db{
                 $result = OCI_Execute($this->queryID,OCI_COMMIT_ON_SUCCESS);
             }
             if(!$result){
-                throw_exception($this->error());
+                //throw_exception($this->error());
                 Return False;
             }
             $this->numRows = oci_fetch_all($this->queryID,$this->resultSet);
@@ -161,9 +161,10 @@ Class DbOracle extends Db{
         $this->escape_string($this->queryStr);
         $this->writeTimes ++;
 		$this->W(1);
-        if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !OCI_Parse($this->_linkID,$this->queryStr) ) {
-            throw_exception($this->error());
+		$result	=	OCI_Parse($this->_linkID,$this->queryStr);
+		$this->debug();
+        if ( !$result ) {
+            //throw_exception($this->error());
             Return False;
         } else {
             if(!$this->autoCommit && $this->isMainIps($this->queryStr)){
@@ -173,7 +174,7 @@ Class DbOracle extends Db{
                 $result = OCI_Execute($this->queryID,OCI_COMMIT_ON_SUCCESS);
             }
             if(!$result){
-                throw_exception($this->error());
+                //throw_exception($this->error());
                 Return False;
             }
             $this->numRows = oci_num_rows($this->_linkID);
@@ -246,7 +247,7 @@ Class DbOracle extends Db{
             throw_exception($this->error());
             Return False;
         }
-        if($this->resultType== DATA_TYPE_VO){
+        if($this->resultType== DATA_TYPE_OBJ){
             // 返回对象集
             $this->result = oci_fetch_object($this->queryID);
             $stat = is_object($this->result);
@@ -279,7 +280,7 @@ Class DbOracle extends Db{
             Return False;
         }
         if($this->numRows >0) {
-            if($this->resultType== DATA_TYPE_VO){
+            if($this->resultType== DATA_TYPE_OBJ){
                 //返回对象集
                 $result = oci_fetch_object($this->queryID);
             }else{
@@ -317,7 +318,7 @@ Class DbOracle extends Db{
         if($this->numRows >0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
             for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType== DATA_TYPE_VO){
+                if($resultType== DATA_TYPE_OBJ){
                     //返回对象集
                     $result[$i] = oci_fetch_object($this->queryID);
                 }else{
@@ -328,6 +329,54 @@ Class DbOracle extends Db{
         }
         Return $result;
     }
+
+   /**
+     +----------------------------------------------------------
+     * 取得数据表的字段信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getFields($tableName) { 
+        $this->_query('SHOW COLUMNS FROM '.$tableName);
+        $result =   $this->getAll();
+        $info   =   array();
+        foreach ($result as $key => $val) {
+			if(is_object($val)) {
+				$val	=	get_object_vars($val);
+			}
+            $info[$val['Field']] = array(
+                'name'    => $val['Field'],
+                'type'    => $val['Type'],
+                'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
+                'default' => $val['Default'],
+                'primary' => (strtolower($val['Key']) == 'pri'),
+                'autoInc' => (strtolower($val['Extra']) == 'auto_increment'),
+            );
+        }
+        return $info;
+    } 
+
+    /**
+     +----------------------------------------------------------
+     * 取得数据库的表信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getTables($dbName='') { 
+        $result = $this->_query('SHOW TABLES');
+		$result = $result->toArray();
+        $info   =   array();
+        foreach ($result as $key => $val) {
+            $info[$key] = current($val);
+        }
+        return $info;
+    } 
 
     /**
      +----------------------------------------------------------

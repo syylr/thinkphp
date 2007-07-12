@@ -19,7 +19,6 @@
 // $Id$
 
 import("Think.Util.ArrayList");
-
 /**
  +------------------------------------------------------------------------------
  * 数据集类 可以用size()方法获取数据集的行数
@@ -44,28 +43,6 @@ class ResultSet extends ArrayList
     function __construct($array=array())
     {
         parent::__construct($array);
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 转换为VoList对象
-     +----------------------------------------------------------
-     * @param string $voClass Vo类名
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     */
-    function toVoList($voClass) 
-    {
-        $voList     = new VoList();
-        foreach ($this->getIterator() as $result)
-        {
-            if(!empty($result)){
-                $vo     = new $voClass($result);
-                $voList->add($vo);
-            }
-        }
-        return $voList;    	
     }
 
     /**
@@ -107,7 +84,7 @@ class ResultSet extends ArrayList
             $field	=	explode(',',$field);
         }        
         $array      =   array();
-        foreach($this->getIterator() as $key=>$val) {
+        foreach($this->toArray() as $key=>$val) {
             if(is_object($val)) {
             	$val  = get_object_vars($val);
             }

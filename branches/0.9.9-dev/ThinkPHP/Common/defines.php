@@ -77,12 +77,14 @@ define('NOW',time() );
 // 	调试和Log设置
 define('WEB_LOG_ERROR',0);
 define('WEB_LOG_DEBUG',1);
+define('SQL_LOG_DEBUG',2);
+
 define('SYSTEM_LOG',0);
 define('MAIL_LOG',1);
 define('TCP_LOG',2);
 define('FILE_LOG',3);
 
-define('DATA_TYPE_VO',1);
+define('DATA_TYPE_OBJ',1);
 define('DATA_TYPE_ARRAY',0);
 
 // 是否使用惯例配置

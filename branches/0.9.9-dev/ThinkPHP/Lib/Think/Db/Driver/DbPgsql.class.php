@@ -57,7 +57,7 @@ Class DbPgsql extends Db{
      +----------------------------------------------------------
      */
     function connect($config='',$linkNum=0) {
-        if ( !$this->linkID[$linkNum] ) {
+        if ( !isset($this->linkID[$linkNum]) ) {
 			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'pg_pconnect':'pg_connect';
             $this->linkID[$linkNum] =  $conn(
@@ -78,7 +78,7 @@ Class DbPgsql extends Db{
 			// 标记连接成功
 			$this->connected	=	true;
             //注销数据库安全信息
-            unset($this->config);
+            if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
         Return $this->linkID[$linkNum];
     }
@@ -126,8 +126,8 @@ Class DbPgsql extends Db{
         $this->queryStr = $this->escape_string($this->queryStr);
         $this->queryTimes ++;
 		$this->Q(1);
-        if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->queryID = pg_query($this->_linkID,$this->queryStr );
+		$this->debug();
         if ( !$this->queryID ) {
             throw_exception($this->error());
             Return False;
@@ -171,8 +171,10 @@ Class DbPgsql extends Db{
         $this->queryStr = $this->escape_string($this->queryStr);
         $this->writeTimes ++;
 		$this->W(1);
-        if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !pg_query($this->_linkID,$this->queryStr) ) {
+		$this->debug();
+		$result	=	pg_query($this->_linkID,$this->queryStr);
+		$this->debug();
+        if ( !$result ) {
             throw_exception($this->error());
             Return False;
         } else {
@@ -249,7 +251,7 @@ Class DbPgsql extends Db{
             Return False;
         }
         // 查询结果
-        if($this->resultType== DATA_TYPE_VO){
+        if($this->resultType== DATA_TYPE_OBJ){
             $this->result = pg_fetch_object($this->queryID);
             $stat = is_object($this->result);
         }else{
@@ -282,7 +284,7 @@ Class DbPgsql extends Db{
             }
             if($this->numRows >0) {
                 if(pg_result_seek($this->queryID,$seek)){
-                    if($this->resultType== DATA_TYPE_VO){
+                    if($this->resultType== DATA_TYPE_OBJ){
                         //返回对象集
                         $result = pg_fetch_object($this->queryID);
                     }else{
@@ -322,7 +324,7 @@ Class DbPgsql extends Db{
         if($this->numRows >0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
             for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType== DATA_TYPE_VO){
+                if($resultType== DATA_TYPE_OBJ){
                     //返回对象集
                     $result[$i] = pg_fetch_object($this->queryID);
                 }else{
@@ -335,6 +337,53 @@ Class DbPgsql extends Db{
         Return $result;
     }
 
+   /**
+     +----------------------------------------------------------
+     * 取得数据表的字段信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getFields($tableName) { 
+        $this->_query('SHOW COLUMNS FROM '.$tableName);
+        $result =   $this->getAll();
+        $info   =   array();
+        foreach ($result as $key => $val) {
+			if(is_object($val)) {
+				$val	=	get_object_vars($val);
+			}
+            $info[$val['Field']] = array(
+                'name'    => $val['Field'],
+                'type'    => $val['Type'],
+                'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
+                'default' => $val['Default'],
+                'primary' => (strtolower($val['Key']) == 'pri'),
+                'autoInc' => (strtolower($val['Extra']) == 'auto_increment'),
+            );
+        }
+        return $info;
+    } 
+
+    /**
+     +----------------------------------------------------------
+     * 取得数据库的表信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getTables($dbName='') { 
+        $result = $this->_query('SHOW TABLES');
+		$result = $result->toArray();
+        $info   =   array();
+        foreach ($result as $key => $val) {
+            $info[$key] = current($val);
+        }
+        return $info;
+    } 
     /**
      +----------------------------------------------------------
      * 关闭数据库

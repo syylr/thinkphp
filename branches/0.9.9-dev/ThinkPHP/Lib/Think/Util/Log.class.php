@@ -34,7 +34,6 @@ class Log extends Base
     /**
      +----------------------------------------------------------
      * 日志写入
-     * 
      +----------------------------------------------------------
      * @static
      * @access public 
@@ -43,9 +42,11 @@ class Log extends Base
      * @param string $type  日志类型
      * WEB_LOG_DEBUG 调试信息
      * WEB_LOG_ERROR 错误信息
+	 * SQL_LOG_DEBUG SQL调试
      * @param string $file  写入文件 默认取定义日志文件
-     * WEB_LOG_DEBUG类型取系统日志目录下面的 systemOut.log
-     * WEB_LOG_ERROR类型取系统日志目录下面的 systemErr.log
+     * 调试日志文件 systemOut.log
+     * 错误日志文件  systemErr.log
+     * SQL日志文件  systemSql.log
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -58,21 +59,25 @@ class Log extends Base
                 $logType ='[调试]';
                 $destination = $file == ''? LOG_PATH.date('y_m_d')."_systemOut.log" : $file;
                 break;
-            default :
+			case SQL_LOG_DEBUG:
+				// 调试SQL记录
+                $logType ='[SQL]';
+                $destination = $file == ''? LOG_PATH.date('y_m_d')."_systemSql.log" : $file;
+                break;
+			case WEB_LOG_ERROR:
                 $logType ='[错误]';
                 $destination = $file == ''? LOG_PATH.date('y_m_d')."_systemErr.log" : $file;
+				break;
         }
         if(!is_writable(LOG_PATH)){
             halt(L('_FILE_NOT_WRITEABLE_').':'.$destination);
         }
         //检测日志文件大小，超过配置大小则备份日志文件重新生成
-        if(file_exists($destination)) {
-            if( floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
-                  rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
-            }        	
-        }
+		if(file_exists($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
+			  rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
+		}        	
         error_log("$now\n$message\n", FILE_LOG,$destination );
-
+		clearstatcache();
     }
 
 }//类定义结束

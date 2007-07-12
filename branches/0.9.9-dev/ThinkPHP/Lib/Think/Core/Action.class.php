@@ -80,7 +80,7 @@ class Action extends Base
         //如果定义了validation方法，则进行表单验证
         if(method_exists($this,'_validation')) {
             $valid	=	$this->_validation();
-            //如果验证无效则提示相应错误
+            //如果验证无效则提示相应错误并终止执行
             if(!$valid) {
                 $this->error($this->error);
             }
@@ -91,19 +91,20 @@ class Action extends Base
     /**
      +----------------------------------------------------------
      * 在不开启数据缓存的情况下
-     * 缓存当前页面VoList对象
+     * 缓存当前页面ResultSet对象
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
      * @param VoList $voList 要缓存的VoList对象
      * @param String $identify  缓存标识
+     * @param String $name  缓存的数据名称
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function cacheList($voList,$identify,$name='') 
+    function cacheResultSet($voList,$identify,$name='') 
     {
 		if(empty($name)) {
 			$name	=	$this->name;
@@ -115,19 +116,19 @@ class Action extends Base
 
     /**
      +----------------------------------------------------------
-     * 在不开启数据缓存情况下缓存Vo对象
+     * 获取缓存ResultSet对象
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param String $voClass 缓存的Vo类名称
      * @param String $identify 缓存标识
+     * @param String $name 缓存的名称
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getCacheList($identify,$name='') 
+    function getCacheResultSet($identify,$name='') 
     {
 		if(empty($name)) {
 			$name	=	$this->name;
@@ -143,15 +144,15 @@ class Action extends Base
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param String $voClass 缓存的Vo类名称
      * @param String $identify 缓存标识
+     * @param String $name 缓存的名称
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function delCacheList($identify,$name='') 
+    function delCacheResultSet($identify,$name='') 
     {
 		if(empty($name)) {
 			$name	=	$this->name;
@@ -169,6 +170,7 @@ class Action extends Base
      +----------------------------------------------------------
      * @param Vo $vo 要缓存的Vo对象
      * @param integer $id 要缓存的Vo对象ID
+     * @param String $name 缓存的名称
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -190,8 +192,8 @@ class Action extends Base
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param String $voClass 缓存的Vo类名称
      * @param integer $id 缓存的Vo ID
+     * @param String $name 缓存的名称
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -206,10 +208,14 @@ class Action extends Base
         $guid   = $name.'_'.$id;
         //Vo对象缓存
         $vo      =  S($guid);
-		// 乐观锁记录
+		// 取出缓存数据的时候记录乐观锁
 		$dao = D($name);
-		if($dao->optimLock && isset($vo[$dao->optimLock])) {
-			Session::set($guid.'_lock_version',$vo[$dao->optimLock]);
+		if($dao->optimLock) {
+			if(is_array($vo) && isset($vo[$dao->optimLock])) {
+				Session::set($guid.'_lock_version',$vo[$dao->optimLock]);
+			}elseif(isset($vo->{$dao->optimLock})){
+				Session::set($guid.'_lock_version',$vo->{$dao->optimLock});
+			}
 		}
         return $vo;
     }
@@ -268,7 +274,7 @@ class Action extends Base
      */
     function getDaoClass() 
     {
-        $dao        = D($this->getDao());
+        $dao        = D($this->name);
         return $dao;
     }
 
@@ -613,7 +619,6 @@ class Action extends Base
         return;
     }
 
-
     /**
      +----------------------------------------------------------
      * 根据表单生成查询条件
@@ -626,11 +631,14 @@ class Action extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function _search() 
+    function _search($name='') 
     {
         //生成查询条件
         $map        = I('Think.Util.HashMap');
-		$dao	=	D($this->getDao());
+		if(empty($name)) {
+			$name	=	$this->name;
+		}
+		$dao	=	D($name);
         foreach($dao->fields as $key=>$val) {
             if(isset($_REQUEST[$val]) && $_REQUEST[$val]!='') {
                 $map->put($val,$_REQUEST[$val]);
@@ -754,7 +762,11 @@ class Action extends Base
         //保存当前Vo对象
         $id = $dao->add($vo);
         if($id) { //保存成功
-           	$vo[$dao->pk]  =  $id;
+			if(is_array($vo)) {
+	           	$vo[$dao->pk]  =  $id;
+			}else{
+	           	$vo->{$dao->pk}  =  $id;
+			}
             // 缓存数据对象
             $this->cacheVo($vo,$id,$dao->name);
             //数据保存触发器
@@ -806,7 +818,12 @@ class Action extends Base
                     throw_exception(L('_SELECT_NOT_EXIST_'));
                 }
                 // 缓存Vo对象，便于下次显示
-                $this->cacheVo($vo,$vo[$dao->pk],$dao->name);
+				if(is_array($vo)) {
+	                $this->cacheVo($vo,$vo[$dao->pk],$dao->name);
+				}else{
+	                $this->cacheVo($vo,$vo->{$dao->pk},$dao->name);
+				}
+
             }
             $this->assign('vo',$vo);
             if($this->get('ajax')) {
@@ -883,7 +900,7 @@ class Action extends Base
 		}
     	$result  = $dao->save($vo);
         if($result) {
-			$id	=	$vo[$dao->pk];
+			$id	=	is_array($vo)?$vo[$dao->pk]:$vo->{$dao->pk};
 			$vo	=	$dao->getById($id);
             // 保存成功，更新缓存Vo对象
             $this->cacheVo($vo,$id,$dao->name);
@@ -1013,12 +1030,12 @@ class Action extends Base
                         $vo  =  $attachDao->find("module='".$module."' and recordId='".$id."'");
                         if(false !== $vo) {
                             // 如果附件为覆盖方式 且已经存在记录，则进行替换 
-                            $attachDao->save($file,'',"id='".$vo->{$attachDao->pk}."'");     
-                            $uploadId[]   = $vo->{$attachDao->pk};
+							$id	=	is_array($vo)?$vo[$attachDao->pk]:$vo->{$attachDao->pk};
+                            $attachDao->save($file,"id='".$id."'");     
+                            $uploadId[]   = $id;
                         }else {
                             $uploadId[] = $attachDao->add($file);
                         }
-
                     }else {
                         //保存附件信息到数据库
                         $uploadId[] =  $attachDao->add($file);
@@ -1112,16 +1129,18 @@ class Action extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function delete()
+    function delete($dao='')
     {
         //删除指定记录
-        $dao        = $this->getDaoClass();
+		if(empty($dao)) {
+	        $dao        = $this->getDaoClass();
+		}
         if(!empty($dao)) {
             $id         = $_REQUEST[$dao->pk];
             if(isset($id)) {
                 $condition = $dao->pk.' in ('.$id.')'; 
                 if($dao->delete($condition)){
-                    $this->assign("message",L('_DELETE_SUCCESS_'));
+                    $this->success(L('_DELETE_SUCCESS_'));
                 }else {
                     $this->error(L('_DELETE_FAIL_'));
                 }        	
@@ -1129,7 +1148,6 @@ class Action extends Base
                 $this->error(L('_ERROR_ACTION_'));
             }        	
         }
-        $this->forward();
     }
 
     /**

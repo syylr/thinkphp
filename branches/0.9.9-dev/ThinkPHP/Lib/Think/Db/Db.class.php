@@ -108,6 +108,11 @@ class Db extends Base
 	// 数据库表达式
     var $comparison = array('eq'=>'=','neq'=>'!=','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','like'=>'like');
 
+	// SQL 执行时间记录
+	var $beginTime;
+
+	var $logSql = array();
+
     /**
      +----------------------------------------------------------
      * 取得数据库类实例
@@ -266,6 +271,20 @@ class Db extends Base
 
     /**
      +----------------------------------------------------------
+     * 数据库调试 记录当前SQL
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     */
+	function debug() {
+		// 记录操作结束时间
+		$runtime	=	number_format((array_sum(explode(' ', microtime())) - $this->beginTime), 6);
+        if ( $this->debug || C('SQL_DEBUG_LOG')) 	Log::Write(" RunTime:".$runtime."s SQL = ".$this->queryStr,SQL_LOG_DEBUG);
+		if(C('SHOW_RUN_SQL')) 	echo $this->queryStr.'<br/>';
+	}
+
+    /**
+     +----------------------------------------------------------
      * table分析
      +----------------------------------------------------------
      * @access public 
@@ -300,71 +319,40 @@ class Db extends Base
     function parseWhere($where)
     {
         $whereStr = '';
-        if(is_object($where)){
-            if(is_instance_of($where,'Vo')){
-                //如果是Vo对象则转换为Map对象
-                $where = $where->toMap();
-            }
-            if(is_instance_of($where,'HashMap')){
-                $it = $where->getIterator();
-                foreach ($it as $key=>$val){
-                    if(false !== strpos(strtoupper(DB_TYPE),'MYSQL')) {
-                        $key = "`$key`";
-                    }
-                    $whereStr .= "$key ";
-                    if(is_array($val)) {
-                        if(preg_match('/(EQ|NEQ|GT|EGT|LT|ELT|LIKE)/i',$val[0])) {
-                            $whereStr .= $this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
-                        }else {
-                        	$whereStr .= '>='.$this->fieldFormat($val[0]).' AND '.$key.' <='.$this->fieldFormat($val[1]);
-                        }
-                        
-                    }else {
-                        //对字符串类型字段采用模糊匹配
-                        if(preg_match('/(\w*)(title|name|content|value|remark|company|address)(\w*)/i',$key)) {
-                            $val = '%'.$val.'%';
-                            $whereStr .= "like ".$this->fieldFormat($val);
-                        }
-                        else {
-                            $whereStr .= "= ".$this->fieldFormat($val);
-                        }                    	
-                    }
-                    $whereStr .= " AND ";
-                }
-                $whereStr = substr($whereStr,0,-4);
-            }else{
-                throw_exception(_DATA_TYPE_INVALID_);
-            }
-        }
-        if(is_array($where)){
-            //支持数组作为条件
-            foreach ($where as $key=>$val){
-                    if(false !== strpos(strtoupper(C('DB_TYPE')),'MYSQL')) {
-                        $key = "`$key`";
-                    }
-                    $whereStr .= "$key ";
-                    if(is_array($val)) {
-                        if(preg_match('/(EQ|NEQ|GT|EGT|LT|ELT|LIKE)/i',$val[0])) {
-                            $whereStr .= $this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
-                        }else {
-                        	$whereStr .= '>='.$this->fieldFormat($val[0]).' AND '.$key.' <='.$this->fieldFormat($val[1]);
-                        }                        
-                    }else {
-                        if(preg_match('/(\w*)(title|name|content|value|remark|company|address)(\w*)/i',$key)) {
-                            $val = '%'.$val.'%';
-                            $whereStr .= "like ".$this->fieldFormat($val);
-                        }
-                        else {
-                            $whereStr .= "= ".$this->fieldFormat($val);
-                        }                    	
-                    }
-
-                    $whereStr .= " AND ";
-            }
-            $whereStr = substr($whereStr,0,-4);
-        }else if(is_string($where)) { 
+		if(is_string($where)) { 
             //支持String作为条件 如使用 > like 等
             $whereStr = $where; 
+        }else{
+            if(is_instance_of($where,'HashMap')){
+				$where	=	$where->toArray();
+			}elseif(is_object($where)){
+                $where = get_object_vars($where);
+            }
+			foreach ($where as $key=>$val){
+				if(false !== strpos(strtoupper(DB_TYPE),'MYSQL')) {
+					$key = "`$key`";
+				}
+				$whereStr .= "$key ";
+				if(is_array($val)) {
+					if(preg_match('/(EQ|NEQ|GT|EGT|LT|ELT|LIKE)/i',$val[0])) {
+						$whereStr .= $this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
+					}else {
+						$whereStr .= '>='.$this->fieldFormat($val[0]).' AND '.$key.' <='.$this->fieldFormat($val[1]);
+					}
+					
+				}else {
+					//对字符串类型字段采用模糊匹配
+					if(preg_match('/(\w*)(title|name|content|value|remark|company|address)(\w*)/i',$key)) {
+						$val = '%'.$val.'%';
+						$whereStr .= "like ".$this->fieldFormat($val);
+					}
+					else {
+						$whereStr .= "= ".$this->fieldFormat($val);
+					}                    	
+				}
+				$whereStr .= " AND ";
+			}
+			$whereStr = substr($whereStr,0,-4);
         }
         return empty($whereStr)?'':' WHERE '.$whereStr;
     }
@@ -533,10 +521,6 @@ class Db extends Base
     {
         $setsStr  = '';
         if(is_object($sets) && !empty($sets)){
-            if(is_instance_of($sets,'Vo')){
-                //如果是Vo对象则转换为Map对象
-                $sets = $sets->toMap();
-            }
             if(is_instance_of($sets,'HashMap')){
                 $sets = $sets->toArray();
             }
@@ -659,11 +643,7 @@ class Db extends Base
         $this->_query($sql);
         if($this->next()) {
             $result =   $this->result;
-            if($this->resultType==1) {
-                return   $result->$field;
-            }else {
-                return   $result[$field];
-            }
+             return   is_array($result)?$result[$field]:$result->$field;
         }else {
             return null;
         }
@@ -822,7 +802,7 @@ class Db extends Base
     function count($where,$tables,$fields='count(id) as count')
     {
         $this->queryStr = 'SELECT '.$fields 
-                        .' FROM '.$tables
+                        .' FROM '.$this->parseTables($tables)
                         .$this->parseWhere($where);
 
         return $this->getOne('count',$this->queryStr);
@@ -844,11 +824,7 @@ class Db extends Base
      */
     function optimize($tableName)
     {
-        if(empty($tableName)) {
-        	$tables = $this->getTables();
-            $tableName   = implode(',',$tables);
-        }
-        $this->execute("Optimize Table " . $tableName);
+        $this->execute("Optimize Table " . $this->parseTables($tableName));
         return ;
     }
 
@@ -928,11 +904,7 @@ class Db extends Base
      */
     function clear($table)
     {
-        if(is_string($table)) {
-            return $this->execute( 'TRUNCATE TABLE '.$table);        	
-        }else {
-        	return false;
-        }
+		return $this->execute( 'TRUNCATE TABLE '.$this->parseTables($table));        	
     }
 
     /**
@@ -954,39 +926,8 @@ class Db extends Base
      */
     function save($sets,$table,$where,$limit=0,$order='')
     {
-        if(!is_instance_of($sets,'HashMap')){
-            throw_exception(L('_DATA_TYPE_INVALID_'));
-        }
         $this->queryStr = 'UPDATE '.$table.' SET '.$this->parseSets($sets).$this->parseWhere($where).$this->parseOrder($order).$this->parseLimit($limit);
         return $this->execute();
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 查询数据集返回 Array Iterator
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    function getArrayIterator() 
-    {
-        return new resultSet($this->getAll(0));
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 查询数据集返回 Object Iterator
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    function getObjectIterator() 
-    {
-        return new resultSet($this->getAll(1));
     }
 
 	// 查询次数更新或者查询
@@ -996,6 +937,8 @@ class Db extends Base
 			return $_times;
 		}else{
 			$_times++;
+			// 记录开始执行时间
+			$this->beginTime = array_sum(explode(' ', microtime()));
 		}
 	}
 
@@ -1006,6 +949,8 @@ class Db extends Base
 			return $_times;
 		}else{
 			$_times++;
+			// 记录开始执行时间
+			$this->beginTime = array_sum(explode(' ', microtime()));
 		}
 	}
 

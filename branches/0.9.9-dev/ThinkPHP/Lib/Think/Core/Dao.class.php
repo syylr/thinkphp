@@ -20,6 +20,7 @@
 
 import("Think.Db.Db");
 import("Think.Util.Cache");
+import("Think.Util.HashMap");
 
 define('HAS_ONE',1);
 define('BELONGS_TO',2);
@@ -56,9 +57,6 @@ class Dao extends Base
 	// 启用查询缓存
 	var $cacheQuery =   true;
 
-    // 返回元数据类型 1 Vo 0 数组
-    var $resultType =  '';
-
     // 数据表前缀
     var $tablePrefix	=	'';            
 
@@ -77,14 +75,14 @@ class Dao extends Base
 	// 数据信息
 	var $data	=	array();
 
-    // 错误信息
+    // 上次错误信息
     var $error;        
 
 	// 乐观锁
 	var $optimLock = 'lock_version';
 	
 	var $autoSaveRelations = false;		// 自动关联保存
-	var $autoDelRelations = false;	// 自动关联删除
+	var $autoDelRelations = false;			// 自动关联删除
 	var $autoAddRelations = false;		// 自动关联增加
 
 	// 自动写入时间戳
@@ -94,29 +92,35 @@ class Dao extends Base
     /**
      +----------------------------------------------------------
      * 架构函数 取得DB类的实例对象
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
-     * @param string $tablePrefix 数据库前缀
      * @param string $name 数据表名
-     * @param string $pk  主键名
-     * @param boolean $autoIncrement  是否自动增长
      +----------------------------------------------------------
      */
-    function __construct($tablePrefix='')
+    function __construct()
     {
 		$this->name	=	substr($this->__toString(),0,-3);
         $this->db = Db::getInstance();
+		$this->db->resultType	=	C('DATA_RESULT_TYPE');
         if(!empty($tablePrefix))  $this->tablePrefix    =   $tablePrefix;
 		else $this->tablePrefix = C('DB_PREFIX');
+		$this->_checkTableInfo();
+        if(method_exists($this,'_initialize')) {
+	       $this->_initialize();
+		}
+    }
 
-		// 自动记录数据表字段		
-		if( empty($this->fields)) {
-			// 如果数据表字段没有保存则获取
-			$guid	=	$this->name.'Vo';
+	// 初始化检测
+	function _checkTableInfo() {
+		// 自动记录数据表信息
+		// 只在第一次执行记录
+		if(empty($this->fields)) {
+			// 如果数据表字段没有定义则自动获取
+			$guid	=	$this->name.'_fields';
 			$this->fields = S($guid);
 			if(!$this->fields) {
+				// 缓存不存在则查询数据表信息
 				$fields	=	$this->db->getFields($this->getTableName());
 				$this->fields	=	array_keys($fields);
 				$this->fields['_autoInc'] = false;
@@ -126,19 +130,18 @@ class Dao extends Base
 						if($val['autoInc'])	$this->fields['_autoInc']	=	true;
 					}
 				}
-				S($guid,$this->fields);
+				// 永久缓存数据表信息
+				S($guid,$this->fields,-1);
+				// TODO 缓存详细的字段属性
+				// ......
 			}
-			// 自动获取主键和自动增长
+		}
+		// 自动修正主键和自动增长
+		if($this->pk != $this->fields['_pk']) {
 			$this->pk	=	$this->fields['_pk'];
 			$this->autoIncrement	=	$this->fields['_autoInc'];
 		}
-
-        //如果存在initialize方法，就首先调用
-        if(method_exists($this,'_initialize')) {
-            $this->_initialize();
-        }
-    }
-
+	}
 
     /**
      +----------------------------------------------------------
@@ -147,10 +150,9 @@ class Dao extends Base
      * @access public 
      +----------------------------------------------------------
      * @param mixed $data 数据
-     * @param string $table  数据表名
-     * @param string $pk 主键名
+     * @param boolean $autoLink 自动关联操作
      +----------------------------------------------------------
-     * @return boolen
+     * @return int
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -167,6 +169,9 @@ class Dao extends Base
 		else if(is_instance_of($data,'HashMap')){
             $map = $data;
         }
+		elseif(is_object($data)){
+			$map	=	new HashMap(get_object_vars($data));
+		}
 		else {
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
@@ -194,8 +199,7 @@ class Dao extends Base
 			$insertId	=	$this->db->getLastInsID();
 			// 保存关联记录
 			if ($this->autoAddRelations || $autoLink){
-				if(empty($pk)) $pk	=	$this->pk;
-				$map->put($pk, $insertId);
+				$map->put($this->pk, $insertId);
 				$this->opRelation('ADD',$map);
 			}
 			// 检查后置操作
@@ -226,8 +230,6 @@ class Dao extends Base
      * @access public 
      +----------------------------------------------------------
      * @param mixed $dataList 数据
-     * @param string $table  数据表名
-     * @param string $pk 主键名
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -259,9 +261,8 @@ class Dao extends Base
      * @access public 
      +----------------------------------------------------------
      * @param mixed $data 要更新的数据
-     * @param string $table  数据表名
      * @param mixed $where 更新数据的条件
-     * @param string $pk 主键名
+     * @param boolean $autoLink 自动关联操作
      * @param integer $limit 要更新的记录数
      * @param string $order  更新的顺序
      +----------------------------------------------------------
@@ -270,7 +271,7 @@ class Dao extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function save($data,$where='',$limit=0,$order='')
+    function save($data,$where='',$autoLink=false,$limit=0,$order='')
     {
 		// 检查前置操作
 		if(method_exists($this,'_before_save')) {
@@ -292,8 +293,12 @@ class Dao extends Base
 			return $result;
 		}
         else {
-            $this->error = L('_DATA_TYPE_INVALID_');
-            return false;
+			if(is_object($data)) {
+				$map	=	new HashMap(get_object_vars($data));
+			}else{
+				$this->error = L('_DATA_TYPE_INVALID_');
+				return false;
+			}
         }
 		
         $pk     =	$this->pk;
@@ -307,16 +312,16 @@ class Dao extends Base
         $table = $this->getTableName();
 
 		// 检查乐观锁
-		$guid   = $this->name.'_'.$id;
-		if($this->optimLock && Session::is_set($guid.'_lock_version')) {
-			$lock_version = Session::get($guid.'_lock_version');
+		$guid   = $this->name.'_'.$id.'_lock_version';
+		if($this->optimLock && Session::is_set($guid)) {
+			$lock_version = Session::get($guid);
 			if(!empty($where)) {
-				$vo = $this->find($where,$table,$this->optimLock);
+				$vo = $this->find($where,$this->optimLock);
 			}else {
-				$vo = $this->find($map,$table,$this->optimLock);
+				$vo = $this->find($map,$this->optimLock);
 			}
-			Session::set($guid.'_lock_version',$lock_version);
-			$curr_version = $vo[$this->optimLock];
+			Session::set($guid,$lock_version);
+			$curr_version = is_array($vo)?$vo[$this->optimLock]:$vo->{$this->optimLock};
 			if(isset($curr_version)) {
 				if($curr_version>0 && $lock_version != $curr_version) {
 					// 记录已经更新
@@ -328,7 +333,7 @@ class Dao extends Base
 					if($save_version != $lock_version+1) {
 						$map->put($this->optimLock,$lock_version+1);
 					}
-					Session::set($guid.'_lock_version',$lock_version+1);
+					Session::set($guid,$lock_version+1);
 				}
 			}
 		}
@@ -353,6 +358,11 @@ class Dao extends Base
     function opRelation($opType,$data,$type='',$name='') 
     {
   		$result	=	false;
+		if(is_instance_of($data,'HashMap')){
+            $data = $data->toArray();
+        }elseif(is_object($data)){
+			$data	 =	 get_object_vars($data);
+		}
         if(!empty($this->_link)) {
             foreach($this->_link as $val) {
                 if(empty($type) || $val['mapping_type']==$type) {
@@ -390,6 +400,11 @@ class Dao extends Base
 											return false;
 									}
 									break;
+								case BELONGS_TO:
+									break;
+								case MANY_TO_MANY:
+									break;
+
 							}
 						}
                      }                	
@@ -591,7 +606,7 @@ class Dao extends Base
         }
         $rs     = $this->db->find($this->pk."='{$id}'",$this->getTableName(),$fields);
         if($rs && $rs->size()>0) {
-                $vo  =  $this->rsToVo($rs->get(0),'','',$relation);
+                $vo  =  $this->rsToVo($rs->get(0),$relation);
                 if(C('DATA_CACHE_ON')) 
                     $this->CacheVo($vo,$id);
                 return $vo;
@@ -627,7 +642,7 @@ class Dao extends Base
         }
         $rs     = $this->db->find($field."='{$value}'",$table,$fields);
         if($rs && $rs->size()>0) {
-                $vo  =  $this->rsToVo($rs->get(0),'','',$relation);
+                $vo  =  $this->rsToVo($rs->get(0),$relation);
                 if(C('DATA_CACHE_ON')) 
                     $this->CacheVo($vo,$field.'_'.$value);
                 return $vo;
@@ -652,9 +667,9 @@ class Dao extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function find($condition='',$table=NULL,$fields='*',$cache=true,$relation=false)
+    function find($condition='',$fields='*',$cache=true,$relation=false)
     {
-        $table  = empty($table)?$this->getTableName():$table;
+        $table  = $this->getTableName();
         $identify   = to_guid_string($condition);
         if(C('DATA_CACHE_ON') && $cache) {//启用动态数据缓存
         	$vo  =  $this->getCacheVo($identify);
@@ -664,7 +679,7 @@ class Dao extends Base
         }
         $rs = $this->db->find($condition,$table,$fields,NULL,NULL,NULL,NULL,$cache);
         if($rs && $rs->size()>0) {
-            $vo  =  $this->rsToVo($rs->get(0),'','',$relation);
+            $vo  =  $this->rsToVo($rs->get(0),$relation);
             if(C('DATA_CACHE_ON'))
                 $this->cacheVo($vo,$identify);
             return $vo;
@@ -691,9 +706,9 @@ class Dao extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function xFind($condition='',$table=NULL,$fields='*',$cache=true) 
+    function xFind($condition='',$fields='*',$cache=true) 
     {
-        return $this->find($condition,$table,$fields,$cache,true);
+        return $this->find($condition,$fields,$cache,true);
     }
 
     /**
@@ -748,13 +763,13 @@ class Dao extends Base
                             case HAS_ONE:
                             case BELONGS_TO:
                                 // 不再获取关联记录的关联
-                                $relation   =  $dao->find($mappingCondition,'',$mappingFields,false,false);
+                                $relation   =  $dao->find($mappingCondition,$mappingFields,false,false);
                                 break;
                             case HAS_MANY:
                                 $mappingOrder =  $val['mapping_order'];
                                 $mappingLimit =  $val['mapping_limit'];
                                 // 不再获取关联记录的关联
-                                $relation   =  $dao->findAll($mappingCondition,'',$mappingFields,$mappingOrder,$mappingLimit);
+                                $relation   =  $dao->findAll($mappingCondition,$mappingFields,$mappingOrder,$mappingLimit);
                                 break;
                             case MANY_TO_MANY:
                                 $mappingOrder =  $val['mapping_order'];
@@ -775,7 +790,7 @@ class Dao extends Base
                                 	$sql .= ' LIMIT '.$mappingLimit;
                                 }
                                 $rs   =  $this->query($sql);
-                                $relation   =  $dao->rsToVoList($rs,'','',false);
+                                $relation   =  $dao->rsToVoList($rs,false);
                                 break;
                         }
                         $result[$mappingName] = $relation;
@@ -816,7 +831,7 @@ class Dao extends Base
             }
         }
         $rs = $this->db->find($condition,$this->getTableName(),$fields,$order,$limit,$group,$having,$this->cacheQuery);
-        $voList  = $this->rsToVoList($rs,'','',$relation);
+        $voList  = $this->rsToVoList($rs,$relation);
         if(C('DATA_CACHE_ON'))
             $this->cacheVoList($voList,$identify);
         return $voList;
@@ -836,7 +851,7 @@ class Dao extends Base
      +----------------------------------------------------------
      * @param string $sql  SQL指令
      +----------------------------------------------------------
-     * @return false | integer
+     * @return ResultSet
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -888,22 +903,67 @@ class Dao extends Base
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  条件
-     * @param string $table  数据表名
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getOne($field,$condition='')
+    function getField($field,$condition='')
     {
-        $result    =   $this->find($condition);
-        if(!empty($result)) {
-            return $result[$field];
-        }else {
-            return null;
-        }
+		$rs = $this->db->find($condition,$this->getTableName(),$field);
+		return $this->getCol($rs,$field);
     }
+
+    /**
+     +----------------------------------------------------------
+     * 获取数据集的个别字段值 返回数组或者Null
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $field 字段名称
+     * @param mixed $condition  条件
+     * @param string $spea  多字段分割符号
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getFields($field,$condition='',$sepa=' ')
+    {
+        $rs = $this->db->find($condition,$this->getTableName(),$field);
+		return $this->getCols($rs,$field,$sepa);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 设置记录的某个字段值
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $field  字段名
+     * @param string $value  字段值
+     * @param mixed $condition  条件
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+	function setField($field,$value,$condition='') {
+		return $this->db->execute('update '.$this->getTableName().' set '.$field.'='.$value.$this->db->parseWhere($condition));
+	}
+
+	// 字段值增长
+	function setInc($field,$condition='',$step=1) {
+		return $this->setField($field,"$field+".$step,$condition);
+	}
+
+	// 字段值减少
+	function setDec($field,$condition='',$step=1) {
+		return $this->setField($field,"$field-".$step,$condition);
+	}
 
     /**
      +----------------------------------------------------------
@@ -912,23 +972,44 @@ class Dao extends Base
      * @access public 
      +----------------------------------------------------------
      * @param ResultSet $rs  查询结果
-     * @param string $col  列名
+     * @param string $field  字段名
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getCol($rs,$col) 
+    function getCol($rs,$field) 
     {
         if(!empty($rs)) {
             $result =   $rs->get(0);
-            $field  =   $result[$col];
+            $field  =   is_array($result)?$result[$field]:$result->$field;
             return $field;         	
         }else {
         	return NULL;
         }
     }
+
+	function getCols($rs,$field,$sepa=' ') {
+		if(!empty($rs)) {
+			$field	=	explode(',',$field);
+			$cols	 =	 array();
+			$length	 = count($field);
+			foreach ($rs->toArray() as $result){
+				if(is_object($result)) $result	=	get_object_vars($result);
+				if($length>1) {
+					$cols[$result[$field[0]]]	=	'';
+					for($i=1; $i<$length; $i++) {
+						$cols[$result[$field[0]]] .= $result[$field[$i]].$sepa;
+					}
+				}else{
+					$cols[]	 =	 $result[$field];
+				}
+			}
+			return $cols;
+		}
+		return NULL;
+	}
 
     /**
      +----------------------------------------------------------
@@ -937,7 +1018,7 @@ class Dao extends Base
      * @access public 
      +----------------------------------------------------------
      * @param mixed $condition  条件
-     * @param string $table  数据表名
+     * @param string $field  要统计的字段
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
@@ -963,7 +1044,6 @@ class Dao extends Base
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  条件
-     * @param string $table  数据表名
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
@@ -989,7 +1069,6 @@ class Dao extends Base
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  条件
-     * @param string $table  数据表名
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
@@ -1015,7 +1094,6 @@ class Dao extends Base
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  条件
-     * @param string $table  数据表名
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
@@ -1042,7 +1120,6 @@ class Dao extends Base
      +----------------------------------------------------------
      * @param integer $position 记录位置
      * @param mixed $condition 条件
-     * @param string $table  数据表名
      * @param string $fields 字段名，默认为*
      * @param boolean $relation 是否读取关联
      +----------------------------------------------------------
@@ -1058,7 +1135,7 @@ class Dao extends Base
 				$position = $rs->size()-abs($position);
 			}
 			if($position<$rs->size()) {
-				$vo  =  $this->rsToVo($rs->get($position),'','',$relation);
+				$vo  =  $this->rsToVo($rs->get($position),$relation);
 				return $vo;
 			}else {
 				return null;
@@ -1070,12 +1147,12 @@ class Dao extends Base
 
 	// 获取第一条记录
 	function getFirst($condition='',$fields='*',$relation=false) {
-		return $this->getN(0,$condition,$this->getTableName(),$fields,$relation);
+		return $this->getN(0,$condition,$fields,$relation);
 	}
 
 	// 获取最后一条记录
 	function getLast($condition='',$fields='*',$relation=false) {
-		return $this->getN(-1,$condition,$this->getTableName(),$fields,$relation);
+		return $this->getN(-1,$condition,$fields,$relation);
 	}
 
     /**
@@ -1095,13 +1172,11 @@ class Dao extends Base
     function cacheVoList($voList,$identify='') 
     {
         $guid   = $this->name.'List_'.$identify;
-        $vo  =  $voList->get(0);
-        if(empty($vo->_info)) {
+        if(empty($this->_info)) {
 			S($guid,$voList);
         }else {
-            // 读取vo对象的缓存属性
-            // 进行相应的缓存
-            switch($vo->_info['cache']) {
+            // 读取缓存属性进行相应的缓存
+            switch($this->_info['cache']) {
             	case Think_CACHE_STATIC:
                      // 永久缓存
                     file_put_contents(TEMP_PATH.$guid,serialize($voList));
@@ -1248,8 +1323,14 @@ class Dao extends Base
 	// 记录乐观锁
 	function cacheLockVersion($vo) {
 		if($this->optimLock) {
-			if(isset($vo[$this->optimLock]) && isset($vo[$this->pk])) {
-				Session::set($this->name.'_'.$vo[$this->pk].'_lock_version',$vo[$this->optimLock]);
+			if(is_array($vo)) {
+				if(isset($vo[$this->optimLock]) && isset($vo[$this->pk])) {
+					Session::set($this->name.'_'.$vo[$this->pk].'_lock_version',$vo[$this->optimLock]);
+				}
+			}else{
+				if(isset($vo->{$this->optimLock}) && isset($vo->{$this->pk})) {
+					Session::set($this->name.'_'.$vo->{$this->pk}.'_lock_version',$vo->{$this->optimLock});
+				}
 			}
 		}
 	}
@@ -1261,7 +1342,7 @@ class Dao extends Base
      * @access public 
      +----------------------------------------------------------
      * @param Result $result 记录
-     * @param string $voClass Vo对象名
+     * @param boolean $relation 是否获取关联
      +----------------------------------------------------------
      * @return Vo
      +----------------------------------------------------------
@@ -1270,7 +1351,7 @@ class Dao extends Base
      */
     function rsToVo($result,$relation=false) 
     {
-		// 记录乐观锁
+		// 取出记录的时候记录乐观锁
 		$this->cacheLockVersion($result);
 
 	   // 获取关联
@@ -1303,17 +1384,14 @@ class Dao extends Base
            $name   =  isset($relation['name'])?$relation['name']:'';
        }
 		if($resultSet) {
-			$list  = $resultSet->toArray();
 			if( $relation ) {
-				foreach($list as $key=>$val) {
+				foreach($resultSet->toArray() as $key=>$val) {
 					$val  = $this->getRelation($val,$type,$name);
-					$list[$key] = $val;
+					$resultSet->set($key,$val);
 				}
 			}            	
-		}else {
-			$list  = array();
 		}
-        return auto_charset($list,C('DB_CHARSET'),C('TEMPLATE_CHARSET'));
+        return auto_charset($resultSet,C('DB_CHARSET'),C('TEMPLATE_CHARSET'));
     }
 
     /**
@@ -1336,9 +1414,13 @@ class Dao extends Base
         } else { //编辑
             //根据编号获取Vo对象
             $value   = $_REQUEST[$this->pk];
-			$rs		= $this->db->find($this->pk."='{$value}'");
+			$rs		= $this->db->find($this->pk."='{$value}'",$this->getTableName());
 			if($rs && $rs->size()>0) {
 				$vo = $rs->get(0); 
+				if(DATA_TYPE_OBJ == C('DATA_RESULT_TYPE')) {
+					// 对象模式
+					$vo	=	get_object_vars($vo);
+				}
 			}else {
 				return false;
 			}   
@@ -1419,6 +1501,10 @@ class Dao extends Base
 					}
 				}
 			}
+		}
+		if(DATA_TYPE_OBJ == C('DATA_RESULT_TYPE')) {
+			// 对象模式 强制转换为stdClass对象实例
+			$vo	=	(object) $vo;
 		}
         return $vo;
     }

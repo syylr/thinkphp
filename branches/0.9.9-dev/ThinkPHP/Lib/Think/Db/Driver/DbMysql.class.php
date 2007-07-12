@@ -58,7 +58,7 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      */
     function connect($config='',$linkNum=0) {
-        if ( !$this->linkID[$linkNum] ) {
+        if ( !isset($this->linkID[$linkNum]) ) {
 			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'mysql_pconnect':'mysql_connect';
             $this->linkID[$linkNum] = $conn( $config['hostname'] . ':' . $config['hostport'], $config['username'], $config['password']);
@@ -78,7 +78,7 @@ Class DbMysql extends Db{
 			// 标记连接成功
 			$this->connected	=	true;
             // 注销数据库连接配置信息
-            // unset($this->config);
+            if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
         return $this->linkID[$linkNum];
     }
@@ -127,8 +127,8 @@ Class DbMysql extends Db{
         $this->escape_string($this->queryStr);
         $this->queryTimes++;
 		$this->Q(1);
-        if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->queryID = mysql_query($this->queryStr, $this->_linkID);
+		$this->debug();
         if ( !$this->queryID ) {
             //if ( $this->debug ) throw_exception($this->error());
             return False;
@@ -172,9 +172,9 @@ Class DbMysql extends Db{
         $this->escape_string($this->queryStr);
         $this->writeTimes++;
 		$this->W(1);
-        if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
-        if ( !mysql_query($this->queryStr, $this->_linkID) ) {
-            //if ( $this->debug ) throw_exception($this->error());
+		$result	=	mysql_query($this->queryStr, $this->_linkID) ;
+		$this->debug();
+        if ( !$result) {
             return False;
         } else {
             $this->numRows = mysql_affected_rows($this->_linkID);
@@ -250,7 +250,7 @@ Class DbMysql extends Db{
             throw_exception($this->error());
             return False;
         }
-        if($this->resultType== DATA_TYPE_VO){
+        if($this->resultType== DATA_TYPE_OBJ){
             // 返回对象集
             $this->result = @mysql_fetch_object($this->queryID);
             $stat = is_object($this->result);
@@ -284,7 +284,7 @@ Class DbMysql extends Db{
         }
         if($this->numRows >0) {
             if(mysql_data_seek($this->queryID,$seek)){
-                if($this->resultType== DATA_TYPE_VO){
+                if($this->resultType== DATA_TYPE_OBJ){
                     //返回对象集
                     $result = mysql_fetch_object($this->queryID);
                 }else{
@@ -323,7 +323,7 @@ Class DbMysql extends Db{
         if($this->numRows >0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
              for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType== DATA_TYPE_VO){
+                if($resultType== DATA_TYPE_OBJ){
                     //返回对象集
                     $result[$i] = mysql_fetch_object($this->queryID);
                 }else{
@@ -350,6 +350,9 @@ Class DbMysql extends Db{
         $result =   $this->getAll();
         $info   =   array();
         foreach ($result as $key => $val) {
+			if(is_object($val)) {
+				$val	=	get_object_vars($val);
+			}
             $info[$val['Field']] = array(
                 'name'    => $val['Field'],
                 'type'    => $val['Type'],

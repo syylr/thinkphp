@@ -18,12 +18,6 @@
 // +----------------------------------------------------------------------+
 // $Id$
 
- //支持的URL模式
-define('URL_COMMON',      0);   //普通模式
-define('URL_PATHINFO',    1);   //PATHINFO模式
-define('URL_REWRITE',     2);   //REWRITE模式
-define('URL_ROUTER',     3);   // URL路由模式
-
 class ThinkDispatcher extends Base
 {//类定义开始
 
@@ -125,7 +119,7 @@ class ThinkDispatcher extends Base
 			}
 		}else {
             //如果是URL_COMMON 模式
-            if(isset($_SERVER['PATH_INFO']) ) {
+            if(!empty($_SERVER['PATH_INFO']) ) {
                 $pathinfo = ThinkDispatcher :: getPathInfo(); 
                 $_GET = array_merge($_GET,$pathinfo);
                 if(!empty($_POST)) {
@@ -194,7 +188,9 @@ class ThinkDispatcher extends Base
             else {
                 $res = preg_replace('@(\w+)'.C('PATH_DEPR').'([^,\/]+)@e', '$pathInfo[\'\\1\']="\\2";', $_SERVER['PATH_INFO']);
             }
-        }
+        }else{
+			// 不支持PATH_INFO的情况
+		}
         return $pathInfo;
     }
 

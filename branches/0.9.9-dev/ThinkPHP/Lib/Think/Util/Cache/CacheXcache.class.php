@@ -42,21 +42,8 @@ class CacheXcache extends Cache
             throw_exception(L('系统不支持Xcache'));
         }
         $this->type = strtoupper(substr(__CLASS__,6));
-		$this->init();
+		$this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
     }
-
-    /**
-     +----------------------------------------------------------
-     * 是否连接
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @return boolen
-     +----------------------------------------------------------
-     */
-	function init() {
-		$this->duration = 3600;
-	}
 
     /**
      +----------------------------------------------------------
@@ -90,13 +77,13 @@ class CacheXcache extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    function set($name, $value,$duration='')
+    function set($name, $value,$expire='')
     {
 		$this->Q(1);
-		if(empty($duation)) {
-			$duration = $this->duration ;
+		if(empty($expire)) {
+			$expire = $this->expire ;
 		}
-		return xcache_set($name, $value, $duration);
+		return xcache_set($name, $value, $expire);
     }
 
     /**

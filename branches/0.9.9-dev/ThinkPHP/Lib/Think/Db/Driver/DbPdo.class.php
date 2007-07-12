@@ -60,7 +60,7 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      */
     function connect($config='',$linkNum=0) {
-        if ( !$this->linkID[$linkNum] ) {
+        if ( !isset($this->linkID[$linkNum]) ) {
 			if(empty($config))	$config	=	$this->config;
 			if(empty($config['pdodsn'])) {
 				$config['dsn'] = C('DB_PDO_DSN');
@@ -78,7 +78,7 @@ Class DbPdo extends Db{
 			// 标记连接成功
 			$this->connected	=	true;
             // 注销数据库连接配置信息
-            unset($this->config);
+            if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
         return $this->linkID[$linkNum];
     }
@@ -125,11 +125,11 @@ Class DbPdo extends Db{
         $this->escape_string($this->queryStr);
         $this->queryTimes++;
 		$this->Q(1);
-        if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
         $this->PDOStatement = $this->_linkID->prepare($this->queryStr);
 		$result	=	$this->PDOStatement->execute();
+		$this->debug();
         if ( !$result ) {
-            if ( $this->debug ) throw_exception($this->error());
+            //if ( $this->debug ) throw_exception($this->error());
             return False;
         } else {
             $this->numRows = $this->PDOStatement->rowCount();
@@ -169,8 +169,8 @@ Class DbPdo extends Db{
         $this->escape_string($this->queryStr);
         $this->writeTimes++;
 		$this->W(1);
-        if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
 		$result	=	$this->_linkID->exec($this->queryStr);
+		$this->debug();
         if ( !$result) {
             //if ( $this->debug ) throw_exception($this->error());
             return False;
@@ -246,7 +246,7 @@ Class DbPdo extends Db{
             throw_exception($this->error());
             return False;
         }
-        if($this->resultType== DATA_TYPE_VO){
+        if($this->resultType== DATA_TYPE_OBJ){
             // 返回对象集
             $this->result = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'));
             $stat = is_object($this->result);
@@ -279,7 +279,7 @@ Class DbPdo extends Db{
             return False;
         }
         if($this->numRows >0) {
-			if($this->resultType== DATA_TYPE_VO){
+			if($this->resultType== DATA_TYPE_OBJ){
 				//返回对象集
 				$result = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'),constant('PDO::FETCH_ORI_NEXT'),$seek);
 			}else{
@@ -317,7 +317,7 @@ Class DbPdo extends Db{
         if($this->numRows >0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
              for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType== DATA_TYPE_VO){
+                if($resultType== DATA_TYPE_OBJ){
                     //返回对象集
                     $result[$i] = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'));
                 }else{
@@ -339,10 +339,13 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      */
     function getFields($tableName) { 
-        $this->_query('SHOW COLUMNS FROM `'.$tableName.'`');
+        $this->_query('SHOW COLUMNS FROM '.$tableName);
         $result =   $this->getAll();
         $info   =   array();
         foreach ($result as $key => $val) {
+			if(is_object($val)) {
+				$val	=	get_object_vars($val);
+			}
             $info[$val['Field']] = array(
                 'name'    => $val['Field'],
                 'type'    => $val['Type'],
