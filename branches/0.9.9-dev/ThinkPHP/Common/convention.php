@@ -153,7 +153,5 @@ $_default_config = array(
 
 	/* 其它设置 */
 	'AUTO_LOAD_PATH'=>'Think.Util.',	//	PHP5 下面 __autoLoad 的路径设置 当前项目的Dao和Vo类会自动加载，无需设置 注意搜索顺序
-	'SAVE_PARENT_VO'=>true,
-	'UPDATE_PARENT_VO'=>true,
 );
 ?>
