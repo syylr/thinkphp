@@ -149,7 +149,7 @@ $_default_config = array(
 
 	/* 数据格式设置 */
 	'AJAX_RETURN_TYPE'=>'JSON', //AJAX 数据返回格式 JSON XML ...
-	'DATA_RESULT_TYPE'=>1,	// 默认数据返回格式 1 VO 0 数组
+	'DATA_RESULT_TYPE'=>0,	// 默认数据返回格式 1 VO 0 数组
 
 	/* 其它设置 */
 	'AUTO_LOAD_PATH'=>'Think.Util.',	//	PHP5 下面 __autoLoad 的路径设置 当前项目的Dao和Vo类会自动加载，无需设置 注意搜索顺序
