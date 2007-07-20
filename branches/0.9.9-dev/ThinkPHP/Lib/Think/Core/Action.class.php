@@ -779,13 +779,11 @@ class Action extends Base
                 $this->_upload($dao->getTableName(),$id);
             }
             //成功提示
-            $this->assign("message",L('_INSERT_SUCCESS_'));
+            $this->success(L('_INSERT_SUCCESS_'));
         }else { 
             //失败提示
-            $this->assign('error',  L('_INSERT_FAIL_'));
+            $this->error(L('_INSERT_FAIL_'));
         }
-        //页面跳转
-        $this->forward();    	
     }
 
     /**
@@ -914,19 +912,25 @@ class Action extends Base
                 $this->_upload($dao->getTableName(),$id);
             }
             //成功提示
-            $this->assign("message",L('_UPDATE_SUCCESS_'));
+            $this->success(L('_UPDATE_SUCCESS_'));
         }else {
             //错误提示
-            $this->assign('error', $dao->error);
+            $this->error($dao->error);
         }
-        //页面跳转
-        $this->forward();    	
     }
 
+	// 默认上传操作
+	function upload() {
+		if(!empty($_FILES)) {//如果有文件上传
+			// 上传附件并保存信息到数据库
+			$this->_upload(MODULE_NAME);
+			$this->forward();
+		}
+	}
+	
     /**
      +----------------------------------------------------------
-     * 默认上传操作 支持多文件上传
-     * 把表单中的文件上传到服务器默认目录
+     * 文件上传功能，支持多文件上传、保存数据库、自动缩略图
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -938,7 +942,7 @@ class Action extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function _upload($module,$id) 
+    function _upload($module='',$id='') 
     {
         import("ORG.Net.UploadFile");
         $upload = new UploadFile();
@@ -966,6 +970,10 @@ class Action extends Base
         if(!empty($_POST['_uploadRecordId'])) {
             //设置附件关联记录ID
             $id =  $_POST['_uploadRecordId']; 
+        }
+        if(!empty($_POST['_uploadFileVerify'])) {
+            //设置附件关联记录ID
+            $verify =  $_POST['_uploadFileVerify']; 
         }
         if(!empty($_POST['_uploadUserId'])) {
             //设置附件关联记录ID
@@ -1020,11 +1028,12 @@ class Action extends Base
                 $attachDao    = D('AttachDao');
                 //启动事务
                 $attachDao->startTrans();
-                foreach($uploadList->getIterator() as $key=>$file) {
+                foreach($uploadList->toArray() as $key=>$file) {
                     //记录模块信息
                     $file['module']     =   $module;
                     $file['recordId']   =   $id;
                     $file['userId']     =   $userId;
+					$file['verify']	=	$verify?$verify:'';
                     //保存附件信息到数据库
                     if($uploadReplace ) {
                         $vo  =  $attachDao->find("module='".$module."' and recordId='".$id."'");
@@ -1113,7 +1122,6 @@ class Action extends Base
             $show .=  'result.innerHTML = "<div style=\"color:#FF0000\"><IMG SRC=\"'.APP_PUBLIC_URL.'/images/update.gif\" align=\"absmiddle\" BORDER=\"0\"> 上传失败：'.$info['message'].'</div>";';           	
         }
         $show .= "\n".'</script>';   
-
         $this->assign('_ajax_upload_',$show);   
         return ;
    	}

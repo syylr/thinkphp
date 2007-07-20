@@ -102,9 +102,11 @@ class Dao extends Base
     {
 		$this->name	=	substr($this->__toString(),0,-3);
         $this->db = Db::getInstance();
+		// 设置数据库的返回数据格式
 		$this->db->resultType	=	C('DATA_RESULT_TYPE');
         if(!empty($tablePrefix))  $this->tablePrefix    =   $tablePrefix;
 		else $this->tablePrefix = C('DB_PREFIX');
+		// 数据表字段检测
 		$this->_checkTableInfo();
         if(method_exists($this,'_initialize')) {
 	       $this->_initialize();
@@ -137,7 +139,7 @@ class Dao extends Base
 			}
 		}
 		// 自动修正主键和自动增长
-		if($this->pk != $this->fields['_pk']) {
+		if(isset($this->fields['_pk']) && $this->pk != $this->fields['_pk']) {
 			$this->pk	=	$this->fields['_pk'];
 			$this->autoIncrement	=	$this->fields['_autoInc'];
 		}
@@ -187,7 +189,7 @@ class Dao extends Base
 
 		// 记录乐观锁
 		if($this->optimLock && !$map->get($this->optimLock) ) {
-			if(in_array($this->optimLock,$this->fields)) {
+			if(in_array($this->optimLock,$this->fields,true)) {
 				$map->put($this->optimLock,0);
 			}
 		}
@@ -302,7 +304,7 @@ class Dao extends Base
         }
 		
         $pk     =	$this->pk;
-        if($map->containsKey($pk)) {
+        if(empty($where) && $map->containsKey($pk)) {
 			$id	=	$map->get($pk);
             $where  = $pk."=".$id;
             $map->remove($pk);         	
@@ -384,10 +386,15 @@ class Dao extends Base
 						if(!empty($mappingData)) {
 							switch($mappingType) {
 								case HAS_ONE:
+								case BELONGS_TO:
 								case HAS_MANY:
 									switch (strtoupper($opType)){
 										case 'ADD'	 :	// 增加关联数据
-											$mappingData[$mappingFk]	=	$pk;
+											if(is_array($mappingData)) {
+												$mappingData[$mappingFk]	=	$pk;
+											}else{
+												$mappingData->$mappingFk	=	$pk;
+											}
 											$result   =  $dao->add($mappingData);
 											break;
 										case 'SAVE' :	// 更新关联数据
@@ -400,7 +407,7 @@ class Dao extends Base
 											return false;
 									}
 									break;
-								case BELONGS_TO:
+
 									break;
 								case MANY_TO_MANY:
 									break;
@@ -631,9 +638,9 @@ class Dao extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getBy($field,$value,$table='',$fields='*',$relation=false)
+    function getBy($field,$value,$fields='*',$relation=false)
     {
-        $table  = empty($table)?$this->getTableName():$table;
+        $table  = $this->getTableName();
         if(C('DATA_CACHE_ON')) {//启用动态数据缓存
         	$vo  =  $this->getCacheVo($field.'_'.$value);
             if(false !== $vo) {
@@ -746,12 +753,12 @@ class Dao extends Base
                         $mappingParentKey = !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
                     }
                     if(empty($mappingCondition)) {
-                        $fk   =  $result[$this->pk];
+                        $fk   =  is_array($result)?$result[$this->pk]:$result->{$this->pk};
                         if(empty($mappingParentKey)) {
                         	$mappingCondition = "{$mappingFk}={$fk}";
                         }else {
                             if($mappingType== BELONGS_TO) {
-                                $parentKey   =  $result[$mappingParentKey];
+                                $parentKey   =  is_array($result)?$result[$mappingParentKey]:$result->{$mappingParentKey};
                             	$mappingCondition = "{$dao->pk}={$parentKey}";
                             }else {
                             	$mappingCondition = "{$mappingParentKey}={$fk}";
@@ -793,7 +800,11 @@ class Dao extends Base
                                 $relation   =  $dao->rsToVoList($rs,false);
                                 break;
                         }
-                        $result[$mappingName] = $relation;
+						if(is_array($result)) {
+	                        $result[$mappingName] = $relation;
+						}else{
+	                        $result->$mappingName = $relation;
+						}
                      }                	
                 }
             }
@@ -952,17 +963,17 @@ class Dao extends Base
      +----------------------------------------------------------
      */
 	function setField($field,$value,$condition='') {
-		return $this->db->execute('update '.$this->getTableName().' set '.$field.'='.$value.$this->db->parseWhere($condition));
+		return $this->db->execute('update '.$this->getTableName().' set '.$field.'="'.$value.'"'.$this->db->parseWhere($condition));
 	}
 
 	// 字段值增长
 	function setInc($field,$condition='',$step=1) {
-		return $this->setField($field,"$field+".$step,$condition);
+		return $this->db->execute('update '.$this->getTableName().' set '.$field.'='.$field.'+'.$step.$this->db->parseWhere($condition));
 	}
 
 	// 字段值减少
 	function setDec($field,$condition='',$step=1) {
-		return $this->setField($field,"$field-".$step,$condition);
+		return $this->db->execute('update '.$this->getTableName().' set '.$field.'='.$field.'-'.$step.$this->db->parseWhere($condition));
 	}
 
     /**
@@ -1323,14 +1334,9 @@ class Dao extends Base
 	// 记录乐观锁
 	function cacheLockVersion($vo) {
 		if($this->optimLock) {
-			if(is_array($vo)) {
-				if(isset($vo[$this->optimLock]) && isset($vo[$this->pk])) {
-					Session::set($this->name.'_'.$vo[$this->pk].'_lock_version',$vo[$this->optimLock]);
-				}
-			}else{
-				if(isset($vo->{$this->optimLock}) && isset($vo->{$this->pk})) {
-					Session::set($this->name.'_'.$vo->{$this->pk}.'_lock_version',$vo->{$this->optimLock});
-				}
+			if(is_object($vo))	$vo	=	get_object_vars($vo);
+			if(isset($vo[$this->optimLock]) && isset($vo[$this->pk])) {
+				Session::set($this->name.'_'.$vo[$this->pk].'_lock_version',$vo[$this->optimLock]);
 			}
 		}
 	}
@@ -1354,7 +1360,7 @@ class Dao extends Base
 		// 取出记录的时候记录乐观锁
 		$this->cacheLockVersion($result);
 
-	   // 获取关联
+	   // 获取关联记录
        if( $relation ) {
            $type = isset($relation['type'])?$relation['type']:'';
            $name   =  isset($relation['name'])?$relation['name']:'';
@@ -1401,19 +1407,32 @@ class Dao extends Base
      * @access public 
      +----------------------------------------------------------
      * @param string $type 创建类型
+     * @param string $data 创建数据
      +----------------------------------------------------------
      * @return Vo
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function createVo($type='add')
+    function createVo($type='add',$data='')
     {
+		// 2007-7-15 增加根据数据创建Vo的支持
+		// 如果没有传值默认取REQUEST数据
+		if(empty($data)) {
+			$data	 =	 $_POST;
+		}
+		elseif(is_instance_of($data,'HashMap')){
+            $data = $data->toArray();
+        }
+		elseif(is_object($data)){
+			$data	=	get_object_vars($data);
+		}
+
         if ( strtolower($type) == "add" ) { //新增
             $vo = array(); //新建Vo对象
         } else { //编辑
             //根据编号获取Vo对象
-            $value   = $_REQUEST[$this->pk];
+            $value   = $data[$this->pk];
 			$rs		= $this->db->find($this->pk."='{$value}'",$this->getTableName());
 			if($rs && $rs->size()>0) {
 				$vo = $rs->get(0); 
@@ -1425,17 +1444,16 @@ class Dao extends Base
 				return false;
 			}   
         }
-
         //给表单对象赋值
         foreach ( $this->fields as $key=>$name){
 			if(substr($key,0,1)=='_') continue;
-            $val = isset($_REQUEST[$name])?$_REQUEST[$name]:null;
+            $val = isset($data[$name])?$data[$name]:null;
             //保证赋值有效
             if(!is_null($val) ){
 				// 首先保证表单赋值
                 $vo[$name] = $val;
-            }elseif(	(strtolower($type) == "add" && in_array($name,$this->autoCreateTimestamps)) || 
-						(strtolower($type) == "edit" && in_array($name,$this->autoUpdateTimestamps)) ){ 
+            }elseif(	(strtolower($type) == "add" && in_array($name,$this->autoCreateTimestamps,true)) || 
+						(strtolower($type) == "edit" && in_array($name,$this->autoUpdateTimestamps,true)) ){ 
 				// 自动保存时间戳
 				$vo[$name] = time();
 			}elseif($this->optimLock && $name==$this->optimLock ){
@@ -1446,6 +1464,7 @@ class Dao extends Base
 					$vo[$name] += 1 ;
 				}
 			}elseif(strtolower($type) == "edit"){
+				// 避免重复保存多余字段
 				unset($vo[$name]);
 			}
         }
@@ -1484,10 +1503,10 @@ class Dao extends Base
             }
         }
 
-		// Vo自动填充
+		// 自动填充
 		if(!empty($this->_auto)) {
 			foreach ($this->_auto as $auto){
-				if(in_array($auto[0],$this->fields)) {
+				if(in_array($auto[0],$this->fields,true)) {
 					if(empty($auto[2])) $auto[2] = 'ADD';// 默认为新增的时候自动填充
 					if( (strtolower($type) == "add"  && $auto[2] == 'ADD') || 	(strtolower($type) == "edit"  && $auto[2] == 'UPDATE') || $auto[2] == 'ALL') 
 					{

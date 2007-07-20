@@ -464,7 +464,7 @@ class App extends Base
                 // 检查是否提供公共模块的插件操作
             	$moduleAction = $_action[APP_NAME.'_'.'public'][$moduleAction];
             }
-            if(!is_callable($moduleAction)) {
+            if(!is_callable(array(&$module,$moduleAction))) {
                 // 检查是否存在模版 如果有直接输出模版
                 if(file_exists(TMPL_FILE_NAME)) {
                 	$module->display();
