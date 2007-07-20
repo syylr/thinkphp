@@ -105,5 +105,74 @@ class ResultSet extends ArrayList
         }
         return $array;
     }
+
+    /**
+     +----------------------------------------------------------
+     * 从数据集中随机取number个记录
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param Integer $number 随机个数
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getRand($number=1) 
+    {
+        $resultSet = $this->toArray();
+        $list   =   array_rand($resultSet,$number);
+        if($number===1) {
+            $list   =   $resultSet[$list];
+        }
+        return $list;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 对数据排序 返回排序后的数据集对象
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function sortBy($field,$sort='desc') 
+    {
+        $resultSet = array();
+        foreach($this->toArray() as $result) {
+			if(is_object($result))	$result = get_object_vars($result);
+            $resultSet[$result[$field]] = $result;
+        }
+        ($sort=='desc')? krsort($resultSet):ksort($resultSet);
+        return new ResultSet($resultSet);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 转换为字符串
+     * 格式为CSV格式
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function toString() 
+    {
+        $resultSet = $this->toArray();
+        $str = '';
+        foreach($resultSet as $result) {
+			if(is_object($result))	$result = get_object_vars($result);
+            $str .= implode(',',$result)."\n";
+        }
+        return $str;
+    }
+
 };
 ?>

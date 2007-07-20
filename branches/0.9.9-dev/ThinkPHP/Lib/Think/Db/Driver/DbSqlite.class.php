@@ -44,6 +44,9 @@ Class DbSqlite extends Db
             throw_exception('系统不支持sqlite');
         }
 		if(!empty($config)) {
+			if(!isset($config['mode'])) {
+				$config['mode']	=	0666;
+			}
 			$this->config	=	$config;
 		}
     }
@@ -61,7 +64,6 @@ Class DbSqlite extends Db
         if ( !isset($this->linkID[$linkNum]) ) {
 			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'sqlite_popen':'sqlite_open';
-			$config['mode']	=	0666;
             $this->linkID[$linkNum] = $conn($config['database'],$config['mode']);
             if ( !$this->linkID[$linkNum]) {
                 throw_exception(sqlite_error_string());
