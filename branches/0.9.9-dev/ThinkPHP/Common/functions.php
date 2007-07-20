@@ -1308,6 +1308,26 @@ function D($daoClassName)
     }
 }
 
+// 获取Action类实例
+function A($className) 
+{
+	static $_action = array();
+    if(!strpos($className,'Action')) {
+    	$className =  $className.'Action';
+    }
+	if(isset($_action[$className])) {
+		return $_action[$className];
+	}
+	import("@.Action.".$className);
+    if(class_exists($className)) {
+        $action = new $className();
+		$_actioin[$className] =	$action;
+        return $action;    	
+    }else {
+    	return false;
+    }
+}
+
 // 获取语言定义
 function L($name='',$value=null) {
 	static $_lang = array();
