@@ -215,6 +215,13 @@ class App extends Base
             (isset($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:'');
         // 如果 $module 为空，则赋予默认值
         if (empty($module)) $module = C('DEFAULT_MODULE'); 
+		// 检查模块URL伪装
+		if(C('MODULE_REDIRECT')) {
+            $res = preg_replace('@(\w+):([^,\/]+)@e', '$modules[\'\\1\']="\\2";', C('MODULE_REDIRECT'));
+			if(array_key_exists($module,$modules)) {
+				$module	=	$modules[$module];
+			}
+		}
         return $module; 
     }
 
@@ -235,6 +242,13 @@ class App extends Base
             (isset($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:'');
         // 如果 $action 为空，则赋予默认值
         if (empty($action)) $action = C('DEFAULT_ACTION');
+		// 检查操作URL伪装
+		if(C('ACTION_REDIRECT')) {
+            $res = preg_replace('@(\w+):([^,\/]+)@e', '$actions[\'\\1\']="\\2";', C('ACTION_REDIRECT'));
+			if(array_key_exists($action,$actions)) {
+				$action	=	$actions[$action];
+			}
+		}
         return $action; 
     }
 
