@@ -323,7 +323,7 @@ class Dao extends Base
     {
 		// 检查前置操作
 		if(method_exists($this,'_before_save')) {
-			$this->_before_save(&$data);
+			$this->_before_save($data);
 		}
         if(is_array($data)){
             $map = new HashMap($data);
