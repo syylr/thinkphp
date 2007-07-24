@@ -219,7 +219,10 @@ class App extends Base
 		if(C('MODULE_REDIRECT')) {
             $res = preg_replace('@(\w+):([^,\/]+)@e', '$modules[\'\\1\']="\\2";', C('MODULE_REDIRECT'));
 			if(array_key_exists($module,$modules)) {
+				// 记录伪装的模块名称
+				define('P_MODULE_NAME',$module);
 				$module	=	$modules[$module];
+
 			}
 		}
         return $module; 
@@ -246,6 +249,8 @@ class App extends Base
 		if(C('ACTION_REDIRECT')) {
             $res = preg_replace('@(\w+):([^,\/]+)@e', '$actions[\'\\1\']="\\2";', C('ACTION_REDIRECT'));
 			if(array_key_exists($action,$actions)) {
+				// 记录伪装的操作名称
+				define('P_ACTION_NAME',$action);
 				$action	=	$actions[$action];
 			}
 		}
@@ -365,10 +370,14 @@ class App extends Base
         define('__ROOT__',WEB_URL);
         //当前项目地址
         define('__APP__',PHP_FILE);
+
+		$module	=	defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
+		$action		=	defined('P_ACTION_NAME')?P_ACTION_NAME:ACTION_NAME;
+
         //模块地址
-        define('__URL__',PHP_FILE.'/'.MODULE_NAME);
+        define('__URL__',PHP_FILE.'/'.$module);
         //当前操作地址
-        define('__ACTION__',PHP_FILE.'/'.MODULE_NAME.'/'.ACTION_NAME);  
+        define('__ACTION__',PHP_FILE.'/'.$module.'/'.$action);  
         //当前页面地址
         define('__SELF__',$_SERVER['PHP_SELF']);
 
