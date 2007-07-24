@@ -33,6 +33,9 @@ if(IS_PHP5){
          */
         var $type;
 
+		// 是否存在多余调试信息
+		var $extra;
+
         /**
          +----------------------------------------------------------
          * 架构函数
@@ -43,10 +46,11 @@ if(IS_PHP5){
          * @param string $message  异常信息
          +----------------------------------------------------------
          */
-        function __construct($message,$code=0) 
+        function __construct($message,$code=0,$extra=false) 
         {
             parent::__construct($message,$code);
             $this->type = get_class($this);
+			$this->extra = $trace;
         }
         
         /**
@@ -63,7 +67,10 @@ if(IS_PHP5){
         function __toString() 
         {
             $trace = $this->getTrace();
-            array_shift($trace);
+			if($this->extra) {
+				// 通过throw_exception抛出的异常要去掉多余的调试信息
+	            array_shift($trace);
+			}
             $this->class = $trace[0]['class'];
             $this->function = $trace[0]['function'];
             $this->file = $trace[0]['file'];
