@@ -597,6 +597,14 @@ function using($class,$baseUrl = LIB_PATH,$ext='.class.php',$subdir=false)
     return import($class,$baseUrl,$ext,$subdir);
 }
 
+// 快速导入第三方框架类库
+// 所有第三方框架的类库文件统一放到 Vendor目录下面
+// 并且默认都是以.php后缀导入
+function import_v($class,$baseUrl = VENDOR_PATH,$ext='.php',$subdir=false)
+{
+	return import($class,$baseUrl,$ext,$subdir);
+}
+
 /**
  +----------------------------------------------------------
  * 根据PHP各种类型变量生成唯一标识号 

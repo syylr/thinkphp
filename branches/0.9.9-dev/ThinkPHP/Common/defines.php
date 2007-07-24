@@ -96,6 +96,7 @@ define('URL_PATHINFO',    1);   //PATHINFO模式
 define('URL_REWRITE',     2);   //REWRITE模式
 define('URL_ROUTER',     3);   // URL路由模式
 
+
 //	版本信息
 define('THINK_VERSION', '0.9.9');
 
@@ -129,4 +130,8 @@ if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
     $_root = dirname(_PHP_FILE_);
 }
 define('WEB_URL',	(($_root=='/' || $_root=='\\')?'':$_root));
+
+define('VENDOR_PATH',THINK_PATH.'/Vendor/');
+// 为了方便导入第三方类库 设置Vendor目录到include_path
+set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
 ?>

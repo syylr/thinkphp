@@ -1,3 +1,3 @@
 <?php 
-throw new $type($msg,$code);
+throw new $type($msg,$code,true);
 ?>
