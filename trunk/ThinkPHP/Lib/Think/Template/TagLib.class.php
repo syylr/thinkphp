@@ -268,8 +268,8 @@ class TagLib extends Config_Xml
         $attr = str_replace("<","&lt;", $attr);
         $attr = str_replace(">","&gt;", $attr);
         $xml =  '<tpl><tag '.$attr.' /></tpl>';
-        $result = & new Config_Xml($xml);
-        $array  = $result->toArray();
+        $result = & new Config_Xml();
+        $array  = $result->xmlToArray($xml);
         $array  = array_change_key_case($array['tag']);
         $attrs	= $this->getTagAttrList($tag);
         foreach($attrs as $val) {
