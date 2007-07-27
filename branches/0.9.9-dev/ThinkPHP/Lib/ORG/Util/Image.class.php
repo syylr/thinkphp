@@ -179,7 +179,7 @@ class Image extends Base
             if('gif'==$type || 'png'==$type) {
                 //imagealphablending($thumbImg, FALSE);//取消默认的混色模式
                 //imagesavealpha($thumbImg,TRUE);//设定保存完整的 alpha 通道信息
-                $background_color  =  ImageColorAllocate($thumbImg,  0,255,0);  //  指派一个绿色  
+                $background_color  =  imagecolorallocate($thumbImg,  0,255,0);  //  指派一个绿色  
 				imagecolortransparent($thumbImg,$background_color);  //  设置为透明色，若注释掉该行则输出绿色的图 
             }
 
@@ -203,7 +203,6 @@ class Image extends Base
     /**
      +----------------------------------------------------------
      * 生成图像验证码
-     * 
      +----------------------------------------------------------
      * @static
      * @access public 
@@ -234,22 +233,56 @@ class Image extends Base
         $b = Array(225,236,166,125);
         $key = mt_rand(0,3);
 
-        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]);    //背景色（随机）
-        $borderColor = ImageColorAllocate($im, 0, 0, 0);                    //边框色
-        $pointColor = ImageColorAllocate($im, 0, 255, 255);                    //点颜色
+        $backColor = imagecolorallocate($im, $r[$key],$g[$key],$b[$key]);    //背景色（随机）
+		$borderColor = imagecolorallocate($im, 100, 100, 100);                    //边框色
+        $pointColor = imagecolorallocate($im,mt_rand(0,255),mt_rand(0,255),mt_rand(0,255));                 //点颜色
 
         @imagefilledrectangle($im, 0, 0, $width - 1, $height - 1, $backColor);
         @imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
-        $stringColor = ImageColorAllocate($im, 255,51,153);
-        for($i=0;$i<=10;$i++){
-            $pointX = mt_rand(2,$width-2);
-            $pointY = mt_rand(2,$height-2);
-            @imagesetpixel($im, $pointX, $pointY, $pointColor);
-        }
+        $stringColor = imagecolorallocate($im,mt_rand(0,200),mt_rand(0,120),mt_rand(0,120));
+		// 干扰
+		for($i=0;$i<10;$i++){
+			$fontcolor=imagecolorallocate($im,mt_rand(0,255),mt_rand(0,255),mt_rand(0,255));
+			imagearc($im,mt_rand(-10,$width),mt_rand(-10,$height),mt_rand(30,300),mt_rand(20,200),55,44,$fontcolor);
+		}
+		for($i=0;$i<25;$i++){
+			$fontcolor=imagecolorallocate($im,mt_rand(0,255),mt_rand(0,255),mt_rand(0,255));
+			imagesetpixel($im,mt_rand(0,$width),mt_rand(0,$height),$pointColor);
+		}
 
         @imagestring($im, 5, 5, 3, $randval, $stringColor);
         Image::output($im,$type);
     }
+	
+	// 中文验证码
+	function GBVerify($length=4,$type='png',$width=180,$height=50,$fontface='simhei.ttf',$verifyName='verify') {
+		$code	=	rand_string($length,4);
+        $width = ($length*45)>$width?$length*45:$width;
+		$_SESSION[$verifyName]= md5($code);
+		$im=imagecreatetruecolor($width,$height);
+		$borderColor = imagecolorallocate($im, 100, 100, 100);                    //边框色
+		$bkcolor=imagecolorallocate($im,250,250,250);
+		imagefill($im,0,0,$bkcolor);
+        @imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
+		// 干扰
+		for($i=0;$i<15;$i++){
+			$fontcolor=imagecolorallocate($im,mt_rand(0,255),mt_rand(0,255),mt_rand(0,255));
+			imagearc($im,mt_rand(-10,$width),mt_rand(-10,$height),mt_rand(30,300),mt_rand(20,200),55,44,$fontcolor);
+		}
+		for($i=0;$i<255;$i++){
+			$fontcolor=imagecolorallocate($im,mt_rand(0,255),mt_rand(0,255),mt_rand(0,255));
+			imagesetpixel($im,mt_rand(0,$width),mt_rand(0,$height),$fontcolor);
+		}
+		if(!is_file($fontface)) {
+			$fontface = dirname(__FILE__)."/".$fontface;
+		}
+		for($i=0;$i<$length;$i++){
+			$fontcolor=imagecolorallocate($im,mt_rand(0,120),mt_rand(0,120),mt_rand(0,120)); //这样保证随机出来的颜色较深。
+			$codex= msubstr($code,$i,1);
+			imagettftext($im,mt_rand(16,20),mt_rand(-60,60),40*$i+20,mt_rand(30,35),$fontcolor,$fontface,$codex);
+		}
+		Image::output($im,$type);
+	}
 
     /**
      +----------------------------------------------------------
@@ -320,29 +353,28 @@ class Image extends Base
         }
         $letter = implode(" ",$verifyCode);
         $_SESSION['verifyCode'] = $verifyCode;
-
         $im = imagecreate($width,$height);
         $r = Array(225,255,255,223);
         $g = Array(225,236,237,255);
         $b = Array(225,236,166,125);
-
-        $key = rand(0,3);
-
-        $backColor = ImageColorAllocate($im, $r[$key],$g[$key],$b[$key]); 
-        $borderColor = ImageColorAllocate($im, 0, 0, 0);	
-
+        $key = mt_rand(0,3);
+        $backColor = imagecolorallocate($im, $r[$key],$g[$key],$b[$key]); 
+		$borderColor = imagecolorallocate($im, 100, 100, 100);                    //边框色
         imagefilledrectangle($im, 0, 0, $width - 1, $height - 1, $backColor);
         imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
-        $stringColor1 = ImageColorAllocate($im, 255,rand(0,100), rand(0,100));
-        $stringColor2 = ImageColorAllocate($im, rand(0,100), rand(0,100), 255);
-        for($i=0;$i<=50;$i++){
-            $pointX = rand(4,$width-4);
-            $pointY = rand(16,$height-4);
-            imagesetpixel($im, $pointX, $pointY, $stringColor2);
-        }
-
-        imagestring($im, 5, 5, 1, "0 1 2 3 4 5 6 7 8 9", $stringColor1);
-        imagestring($im, 5, 5, 20, $letter, $stringColor2);
+        $numberColor = imagecolorallocate($im, 255,rand(0,100), rand(0,100));
+        $stringColor = imagecolorallocate($im, rand(0,100), rand(0,100), 255);
+		// 添加干扰
+		for($i=0;$i<15;$i++){
+			$fontcolor=imagecolorallocate($im,mt_rand(0,255),mt_rand(0,255),mt_rand(0,255));
+			imagearc($im,mt_rand(-10,$width),mt_rand(-10,$height),mt_rand(30,300),mt_rand(20,200),55,44,$fontcolor);
+		}
+		for($i=0;$i<255;$i++){
+			$fontcolor=imagecolorallocate($im,mt_rand(0,255),mt_rand(0,255),mt_rand(0,255));
+			imagesetpixel($im,mt_rand(0,$width),mt_rand(0,$height),$fontcolor);
+		}
+        imagestring($im, 5, 5, 1, "0 1 2 3 4 5 6 7 8 9", $numberColor);
+        imagestring($im, 5, 5, 20, $letter, $stringColor);
         Image::output($im,$type);
     }
 
@@ -418,12 +450,11 @@ class Image extends Base
 
     function output($im,$type='png') 
     {
-        Header("Content-type: image/".$type);
+        header("Content-type: image/".$type);
         $ImageFun='Image'.$type;
         $ImageFun($im);
-        ImageDestroy($im);  	
+        imagedestroy($im);  	
     }
 
- 
 }//类定义结束
 ?>
