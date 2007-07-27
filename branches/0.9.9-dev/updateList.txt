@@ -57,8 +57,12 @@ Think包为系统基类库 Org包为第三方类库 Com为企业类库包 并且
 [ 2007-07-25 ]  *   Attach表增加version字段，用来记录附件版本 同时增加updateTime 字段记录最后更新时间 增加remark字段记录附件说明
 [ 2007-07-26 ]  +   惯例配置文件中增加参数 UPLOAD_FILE_RULE 用以设置上传文件的命名规则 默认uniqid
 [ 2007-07-27 ]  *   增强Map条件表达式，支持IN OR XOR 等逻辑运算符 和更加复杂的条件表达式
-默认的运算采用AND 如果需要对每个map条件之间使用 OR，可以增加
-$map->put('_logic','or'); 条件，系统会进行识别
+增加条件因子之间的or和xor支持，默认为and
+$map->put('id',array('neq',1));
+$map->put('name','ok');
+// id !=1 and name like '%ok%' 
+$map->put('_logic','or');
+// id !=1 or name like '%ok%' 
 增加了In 判断
 $map->put('id',array('in','1,2,3,4')); // id in (1,2,3,4)
 复杂的条件表达式
