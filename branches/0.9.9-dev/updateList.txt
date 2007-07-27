@@ -55,7 +55,8 @@ Think包为系统基类库 Org包为第三方类库 Com为企业类库包 并且
 [ 2007-07-25 ]  *   上传文件类支持表单中使用 file[] 的方式上传多文件，系统会自动判断
 [ 2007-07-25 ]  +  Dao类增加deleteBy方法，根据某个字段来删除记录
 [ 2007-07-25 ]  *   Attach表增加version字段，用来记录附件版本 同时增加updateTime 字段记录最后更新时间 增加remark字段记录附件说明
-[ 2007-07-26 ]  *   增强Map条件表达式，支持IN OR XOR 等逻辑运算符 和更加复杂的条件表达式
+[ 2007-07-26 ]  +   惯例配置文件中增加参数 UPLOAD_FILE_RULE 用以设置上传文件的命名规则 默认uniqid
+[ 2007-07-27 ]  *   增强Map条件表达式，支持IN OR XOR 等逻辑运算符 和更加复杂的条件表达式
 默认的运算采用AND 如果需要对每个map条件之间使用 OR，可以增加
 $map->put('_logic','or'); 条件，系统会进行识别
 增加了In 判断
@@ -63,4 +64,4 @@ $map->put('id',array('in','1,2,3,4')); // id in (1,2,3,4)
 复杂的条件表达式
 $map->put('id',array('1','3','or')); //id >= 1 or id <=3
 $map->put('id',array(array('neq',6),array('gt',3),'and')); // id != 6 and id > 3
-[ 2007-07-26 ]  +   惯例配置文件中增加参数 UPLOAD_FILE_RULE 用以设置上传文件的命名规则 默认uniqid
+
