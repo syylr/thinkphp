@@ -29,113 +29,57 @@
 class UploadFile extends Base
 {//类定义开始
 
-    /**
-     +----------------------------------------------------------
-     * 上传文件的最大值
-     +----------------------------------------------------------
-     * @var integer
-     * @access private
-     +----------------------------------------------------------
-     */
+    // 上传文件的最大值
     var $maxSize = -1;
 
-    /**
-     +----------------------------------------------------------
-     * 是否支持多文件上传
-     +----------------------------------------------------------
-     * @var boolean
-     * @access private
-     +----------------------------------------------------------
-     */
+    // 是否支持多文件上传
     var $supportMulti = true;
 
-    /**
-     +----------------------------------------------------------
-     * 允许上传的文件后缀
-     +----------------------------------------------------------
-     * @var array
-     * @access private
-     +----------------------------------------------------------
-     */
-    var $allowExts = array('rar','gif','zip','doc','xls','jpg','png','pdf');
+    // 允许上传的文件后缀
+	//  留空不作后缀检查
+    var $allowExts = array();
 
-    /**
-     +----------------------------------------------------------
-     * 允许上传的文件类型
-     +----------------------------------------------------------
-     * @var array
-     * @access private
-     +----------------------------------------------------------
-     */
+    // 允许上传的文件类型
+	// 留空不做检查
     var $allowTypes = array();
 
+	// 使用对上传图片进行缩略图处理
     var $thumb   =  false;
+	// 缩略图最大宽度
     var $thumbMaxWidth;
+	// 缩略图最大高度
     var $thumbMaxHeight;
+	// 缩略图后缀
     var $thumbSuffix   =  '_thumb';
-    /**
-     +----------------------------------------------------------
-     * 上传文件保存路径
-     +----------------------------------------------------------
-     * @var string
-     * @access private
-     +----------------------------------------------------------
-     */
+	// 压缩图片文件上传
+	var $zipImages = false;
+
+    // 上传文件保存路径
     var $savePath = '';
 
-    /**
-     +----------------------------------------------------------
-     * 上传文件命名规则
-     * 例如可以是 time uniqid com_create_guid 等
-     * 必须是一个无需任何参数的函数名 可以使用自定义函数
-     +----------------------------------------------------------
-     * @var string
-     * @access private
-     +----------------------------------------------------------
-     */
-    var $saveRule = 'uniqid';
+    // 上传文件命名规则
+    // 例如可以是 time uniqid com_create_guid 等
+    // 必须是一个无需任何参数的函数名 可以使用自定义函数
+    var $saveRule = '';
 
-    /**
-     +----------------------------------------------------------
-     * 上传文件Hash规则函数名
-     * 例如可以是 md5_file sha1_file 等
-     +----------------------------------------------------------
-     * @var string
-     * @access private
-     +----------------------------------------------------------
-     */
+    // 上传文件Hash规则函数名
+    // 例如可以是 md5_file sha1_file 等
     var $hashType = 'md5_file';
 
-    /**
-     +----------------------------------------------------------
-     * 错误信息
-     +----------------------------------------------------------
-     * @var string
-     * @access private
-     +----------------------------------------------------------
-     */
+    // 错误信息
     var $error = '';
 
-    /**
-     +----------------------------------------------------------
-     * 上传成功的文件信息
-     +----------------------------------------------------------
-     * @var array
-     * @access private
-     +----------------------------------------------------------
-     */
+    // 上传成功的文件信息
     var $uploadFileInfo ;
 
     /**
      +----------------------------------------------------------
      * 架构函数
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
      */
-    function __construct($maxSize='',$allowExts='',$allowTypes='',
-                            $savePath=UPLOAD_PATH,$saveRule='')
+    function __construct($maxSize='',$allowExts='',$allowTypes='',$savePath=UPLOAD_PATH,$saveRule='')
     {
         if(!empty($maxSize) && is_numeric($maxSize)) {
             $this->maxSize = $maxSize;
@@ -156,14 +100,15 @@ class UploadFile extends Base
         }
         if(!empty($saveRule)) {
             $this->saveRule = $saveRule;
-        }
+        }else{
+			$this->saveRul	=	C('UPLOAD_FILE_RULE');
+		}
         $this->savePath = $savePath;
     }
 
     /**
      +----------------------------------------------------------
      * 上传一个文件
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -177,8 +122,7 @@ class UploadFile extends Base
      */
     function save($file) 
     {
-
-        $filename = $this->savePath.$file['savename'];
+        $filename = $file['savepath'].$file['savename'];
         if(!move_uploaded_file($file['tmp_name'], $filename)) {
             return false;
         }
@@ -196,13 +140,16 @@ class UploadFile extends Base
                 }
             }
         }
+		if($this->zipImags) {
+			// TODO 对图片压缩包在线解压
+
+		}
         return true;
     }
 
     /**
      +----------------------------------------------------------
      * 上传文件
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -216,29 +163,36 @@ class UploadFile extends Base
     function upload($savePath ='') 
     {
         //如果不指定保存文件名，则由系统默认
-        if(!empty($path)) {
-            $this->savePath = $savePath;
+        if(empty($savepath)) {
+            $savePath = $this->savePath;
         }
         // 检查上传目录
-        if(!file_exists($this->savePath)) {
-        	$this->error  =  '上传目录不存在';
+        if(!file_exists($savePath)) {
+        	$this->error  =  '上传目录'.$savePath.'不存在';
             return false;
         }else {
-        	if(!is_writeable($this->savePath)) {
-                $this->error  =  '上传目录不可写';
+        	if(!is_writeable($savePath)) {
+                $this->error  =  '上传目录'.$savePath.'不可写';
                 return false;        		
         	}
         }
         $fileInfo = new ArrayList();
         $isUpload   = false;
-        foreach($_FILES as $key => $file) {
+
+		// 获取上传的文件信息
+		// 对$_FILES数组信息处理
+		if(!empty($_FILES['name'])) {
+			$files	 =	 $this->dealFiles($_FILES);
+		}else{
+			$files	 =	 $_FILES;
+		}
+        foreach($files as $key => $file) {
             //过滤无效的上传
             if(!empty($file['name'])) {
                 //登记上传文件的扩展信息
                 $file['extension']  = $this->getExt($file['name']);
-                $file['savepath']   = $this->savePath;
+                $file['savepath']   = $savePath;
                 $file['savename']   = $this->getSaveName($file);
-               
                 if($file['error']!== 0) {
                     //文件上传失败
                     //捕获错误代码
@@ -279,8 +233,6 @@ class UploadFile extends Base
                     $fun =  $this->hashType;
                     $file['hash']   =  $fun($file['savepath'].$file['savename']);                	
                 }
-                $file['uploadTime'] =   time();
-
                 //上传成功后保存文件信息，供其他地方调用
                 unset($file['tmp_name'],$file['error']);
                 $fileInfo->add($file);
@@ -296,10 +248,22 @@ class UploadFile extends Base
         }
     }
 
+	// 转换上传文件数组变量为正确的方式
+	function dealFiles(&$files) {
+	   $fileArray = array();
+	   $count = count($files['name']);
+	   $keys = array_keys($files);
+	   for ($i=0; $i<$count; $i++) {
+		   foreach ($keys as $key) {
+			   $fileArray[$i][$key] = $files[$key][$i];
+		   }
+	   }
+	   return $fileArray;
+	}
+
     /**
      +----------------------------------------------------------
      * 获取错误代码信息
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -340,7 +304,6 @@ class UploadFile extends Base
     /**
      +----------------------------------------------------------
      * 根据上传文件命名规则取得保存文件名
-     * 
      +----------------------------------------------------------
      * @access private 
      +----------------------------------------------------------
@@ -357,21 +320,18 @@ class UploadFile extends Base
         }else {
             if(function_exists($rule)) {
                 //使用函数生成一个唯一文件标识号
-            	$saveName = $rule("");
+            	$saveName = $rule($filename['name']).".".$filename['extension'];
             }else {
                 //使用给定的文件名作为标识号
-            	$saveName = $rule;
+            	$saveName = $rule.".".$filename['extension'];
             }
-            
         }
-        return $saveName.".".$filename['extension'];
+        return $saveName;
     }
-
 
     /**
      +----------------------------------------------------------
      * 检查上传的文件类型是否合法
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -392,7 +352,6 @@ class UploadFile extends Base
     /**
      +----------------------------------------------------------
      * 检查上传的文件后缀是否合法
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -412,7 +371,6 @@ class UploadFile extends Base
     /**
      +----------------------------------------------------------
      * 检查文件大小是否合法
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -429,7 +387,6 @@ class UploadFile extends Base
     /**
      +----------------------------------------------------------
      * 检查文件是否非法提交
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -446,7 +403,6 @@ class UploadFile extends Base
     /**
      +----------------------------------------------------------
      * 取得上传文件的后缀
-     * 
      +----------------------------------------------------------
      * @access protected 
      +----------------------------------------------------------
@@ -464,7 +420,6 @@ class UploadFile extends Base
     /**
      +----------------------------------------------------------
      * 取得上传文件的信息
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -479,7 +434,6 @@ class UploadFile extends Base
     /**
      +----------------------------------------------------------
      * 取得最后一次错误信息
-     * 
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------

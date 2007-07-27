@@ -153,5 +153,6 @@ $_default_config = array(
 
 	/* 其它设置 */
 	'AUTO_LOAD_PATH'=>'Think.Util.',	//	PHP5 下面 __autoLoad 的路径设置 当前项目的Dao和Vo类会自动加载，无需设置 注意搜索顺序
+	'UPLOAD_FILE_RULE'=>'uniqid',			//  文件上传命名规则 例如 time uniqid com_create_guid 等 支持自定义函数 仅适用于内置的UploadFile类
 );
 ?>

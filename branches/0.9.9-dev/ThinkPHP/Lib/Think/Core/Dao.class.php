@@ -488,6 +488,16 @@ class Dao extends Base
         }
     }
 
+	// 根据某个字段的值删除记录
+	function deleteBy($field,$value,$limit='',$order='') {
+        if(FALSE === $this->db->remove($field."='$value'",$this->getTableName(),$limit,$order)){
+            $this->error =  L('_OPERATION_WRONG_');
+            return false;
+        }else {
+            return True;
+        }
+	}
+
     /**
      +----------------------------------------------------------
      * 根据条件删除表数据

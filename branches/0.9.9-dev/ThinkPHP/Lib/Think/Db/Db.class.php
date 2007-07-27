@@ -328,31 +328,61 @@ class Db extends Base
 			}elseif(is_object($where)){
                 $where = get_object_vars($where);
             }
+			if(array_key_exists('_operate',$where)) {
+				// 定义逻辑运算规则 例如 OR XOR AND
+				$operate	=	' '.strtoupper($where['_logic']).' ';
+				unset($where['_logic']);
+			}else{
+				// 默认进行 AND 运算
+				$operate	=	' AND ';
+			}
 			foreach ($where as $key=>$val){
 				if(false !== strpos(strtoupper(DB_TYPE),'MYSQL')) {
 					$key = "`$key`";
 				}
-				$whereStr .= "$key ";
+				$whereStr .= "(";
 				if(is_array($val)) {
 					if(preg_match('/(EQ|NEQ|GT|EGT|LT|ELT|LIKE)/i',$val[0])) {
-						$whereStr .= $this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
+						// 是否存在比较运算
+						$whereStr .= $key.$this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
+					}elseif('IN' == strtoupper(trim($val[0]))){
+						// 支持 IN 运算
+						$whereStr .= $key.' IN ('.$val[1].')';
 					}else {
-						$whereStr .= '>='.$this->fieldFormat($val[0]).' AND '.$key.' <='.$this->fieldFormat($val[1]);
+						// 区间比较
+						if(is_array($val[0])) {
+							$operate1	=	$this->comparison[strtolower($val[0][0])];
+							$data1	=	$val[0][1];
+						}else{
+							$operate1	=	'>=';
+							$data1	=	$val[0];
+						}
+						if(is_array($val[1])) {
+							$operate2	=	$this->comparison[strtolower($val[1][0])];
+							$data2	=	$val[1][1];
+						}else{
+							$operate2	=	'<=';
+							$data2	=	$val[1];
+						}
+						if(empty($val[2])) $val[2]	=	'AND'; // 运算规则默认为AND
+						if(in_array(strtoupper(trim($val[2])),array('AND','OR','XOR'))) {
+							$whereStr .= $key.' '.$operate1.' '.$this->fieldFormat($data1).' '.$val[2].' '.$key.' '.$operate2.' '.$this->fieldFormat($data2);
+						}
 					}
 					
 				}else {
 					//对字符串类型字段采用模糊匹配
 					if(preg_match('/(\w*)(title|name|content|value|remark|company|address)(\w*)/i',$key)) {
 						$val = '%'.$val.'%';
-						$whereStr .= "like ".$this->fieldFormat($val);
+						$whereStr .= $key." like ".$this->fieldFormat($val);
 					}
 					else {
-						$whereStr .= "= ".$this->fieldFormat($val);
+						$whereStr .= $key." = ".$this->fieldFormat($val);
 					}                    	
 				}
-				$whereStr .= " AND ";
+				$whereStr .= ')'.$operate;
 			}
-			$whereStr = substr($whereStr,0,-4);
+			$whereStr = substr($whereStr,0,-strlen($operate));
         }
         return empty($whereStr)?'':' WHERE '.$whereStr;
     }
