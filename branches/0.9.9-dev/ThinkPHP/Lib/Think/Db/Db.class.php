@@ -328,7 +328,7 @@ class Db extends Base
 			}elseif(is_object($where)){
                 $where = get_object_vars($where);
             }
-			if(array_key_exists('_operate',$where)) {
+			if(array_key_exists('_logic',$where)) {
 				// 定义逻辑运算规则 例如 OR XOR AND
 				$operate	=	' '.strtoupper($where['_logic']).' ';
 				unset($where['_logic']);
