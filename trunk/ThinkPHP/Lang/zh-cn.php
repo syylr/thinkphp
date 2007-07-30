@@ -40,6 +40,7 @@ return Array(
 	'_ACTION_'=>'操作',
 	'_APP_CONFIG_NOT_EXIST_'=>'项目配置文件不存在！',
 	'_ROUTER_NOT_EXIST_'=>'路由不存在或者没有定义',
+	'_VALID_ACCESS_'=>'没有权限',
 	//  错误提示
 
 	'_WAITING_GOTO_EXIST_'=>	'请等待系统转向...',

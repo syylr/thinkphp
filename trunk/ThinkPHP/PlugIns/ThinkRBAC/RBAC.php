@@ -111,7 +111,7 @@ class RBAC extends Base
                     $accessList = Session::get('_ACCESS_LIST');
                 }
                 if(!isset($accessList[strtoupper(APP_NAME)][strtoupper(MODULE_NAME)][strtoupper(ACTION_NAME)])) {
-                    throw_exception(L('没有权限!'));
+                    throw_exception(L('_VALID_ACCESS_'));
                 }else {
                     Session::set($accessGuid,true);
                 }
