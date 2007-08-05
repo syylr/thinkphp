@@ -155,7 +155,7 @@ Class Db_Sqlite extends Db
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-        $this->queryStr = $this->escape_string($this->queryStr);
+        $this->escape_string($this->queryStr);
         $this->writeTimes ++;
 		$this->W(1);
         if ( $this->debug ) Log::Write(" SQL = ".$this->queryStr,WEB_LOG_DEBUG);
