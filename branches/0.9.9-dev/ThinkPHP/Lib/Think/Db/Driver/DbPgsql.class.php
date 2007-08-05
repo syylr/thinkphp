@@ -123,7 +123,7 @@ Class DbPgsql extends Db{
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-        $this->queryStr = $this->escape_string($this->queryStr);
+        $this->escape_string($this->queryStr);
         $this->queryTimes ++;
 		$this->Q(1);
         $this->queryID = pg_query($this->_linkID,$this->queryStr );
@@ -167,8 +167,7 @@ Class DbPgsql extends Db{
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-
-        $this->queryStr = $this->escape_string($this->queryStr);
+        $this->escape_string($this->queryStr);
         $this->writeTimes ++;
 		$this->W(1);
 		$this->debug();
