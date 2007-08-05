@@ -1363,9 +1363,6 @@ class Dao extends Base
         if($resultType== DATA_TYPE_VO) {
             $voClass    = !empty($voClass)? $voClass : $this->getVo();
             $vo = V($voClass,$result);       
-			if(isset($vo->_link)) unset($vo->_link);
-			if(isset($vo->_auto)) unset($vo->_auto);
-			if(isset($vo->_validate)) unset($vo->_validate);
         }else{
         	$vo  =  &$result;
         }
@@ -1378,6 +1375,11 @@ class Dao extends Base
            $name   =  isset($relation['name'])?$relation['name']:'';
        	    $vo  =  $this->getRelation($vo,$type,$name);
        }
+	   if($resultType == DATA_TYPE_VO) {
+			if(isset($vo->_link)) unset($vo->_link);
+			if(isset($vo->_auto)) unset($vo->_auto);
+			if(isset($vo->_validate)) unset($vo->_validate);
+	   }
        return auto_charset($vo,C('DB_CHARSET'),C('TEMPLATE_CHARSET'));
     }
 
