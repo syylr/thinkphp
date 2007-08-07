@@ -120,8 +120,8 @@ class RBAC extends Base
         return true;
     }	
 }//end class
-if(C('USER_AUTH_ON')) {
+//if(C('USER_AUTH_ON')) {
     //在应用初始化的时候添加认证过滤器
     add_filter('app_init',array('RBAC','AccessDecision'));	
-}
+//}
 ?>
