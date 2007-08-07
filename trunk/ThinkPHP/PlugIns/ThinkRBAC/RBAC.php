@@ -76,7 +76,7 @@ class RBAC extends Base
                 $notAuthModuleList = explode(',',C('NOT_AUTH_MODULE'));  
             }
             //检查当前模块是否需要认证
-            if(!in_array(MODULE_NAME,$notAuthModuleList) || in_array(MODULE_NAME,$requireAuthModuleList)) {
+            if((!empty($notAuthModuleList) && !in_array(MODULE_NAME,$notAuthModuleList)) || (!empty($requireAuthModuleList) && in_array(MODULE_NAME,$requireAuthModuleList))) {
                 return true;
             }else {
                 return false;
