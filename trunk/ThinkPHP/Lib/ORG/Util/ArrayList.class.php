@@ -116,11 +116,9 @@ class ArrayList extends Base implements IteratorAggregate
     public function addAll($list)
     {
         $before = $this->size();
-        if (is_instance_of($list, get_class($this))) {
-            foreach( $iterator as $element) {
-                $this->add($element);
-            }
-        }
+		foreach( $iterator as $element) {
+			$this->add($element);
+		}
         $after = $this->size();
         return ($before < $after);
     }
