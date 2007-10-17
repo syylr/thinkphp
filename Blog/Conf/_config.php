@@ -10,7 +10,7 @@ return array(
 	'DB_HOST'=>'localhost',
 	'DB_NAME'=>'blog',
 	'DB_USER'=>'root',
-	'DB_PWD'=>'',
+	'DB_PWD'=>'admin',
 	'DB_PORT'=>'3306',
 	'DB_PREFIX'=>'think_',
 	'default_module'=>'Blog',
