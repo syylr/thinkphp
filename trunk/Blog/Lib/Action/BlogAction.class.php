@@ -3,8 +3,6 @@ import("@.Action.PublicAction");
 class BlogAction extends PublicAction {
 
 	function _initialize() {
-		$this->setCache(true);
-		$this->_cacheAction = array('add');
 		$Blog	=	D("Blog");
 		$new = $Blog->top8("status=1","id,readCount,commentCount,categoryId,cTime,title",'cTime desc');
 		$Comment = D("Comment");
