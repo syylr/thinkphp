@@ -2,7 +2,7 @@
 import('@.Model.CommonModel');
 class CategoryModel extends CommonModel 
 {
-	var $_validate	 =	 array(
+	protected $_validate	 =	 array(
 		array('title','require','类别名称必须！'),
 		);
 }

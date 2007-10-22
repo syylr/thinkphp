@@ -338,7 +338,7 @@ abstract class Model extends Base  implements IteratorAggregate
 			return false;
 		}else {
 			$insertId	=	$this->getLastInsID();
-			$data[$this->fields['_pk']]	=	 $insertId;
+			$data[$this->getPk()]	=	 $insertId;
 			$this->saveBlobFields($data);
 			// 保存关联记录
 			if ($this->autoAddRelations || $autoLink){
@@ -695,18 +695,14 @@ abstract class Model extends Base  implements IteratorAggregate
      * @return void
      +----------------------------------------------------------
      */
-	public function delBlobFields(&$data,$filed='') {
+	public function delBlobFields(&$data,$field='') {
 		if(!empty($this->blobFields)) {
 			$pk	=	$this->getPk();
 			$id	=	is_array($data)?$data[$pk]:$data->$pk;
-			if(empty($filed)) {
+			if(empty($field)) {
 				foreach ($this->blobFields as $field){
 					$identify	=	$this->name.'_'.$id.'_'.$field;
-					if(is_array($data) && isset($data[$field])) {
-						F($identify,null);
-					}elseif(isset($data->$field)){
-						F($identify,null);
-					}
+					F($identify,null);
 				}
 			}else{
 				$identify	=	$this->name.'_'.$id.'_'.$field;
@@ -773,10 +769,10 @@ abstract class Model extends Base  implements IteratorAggregate
 			$this->error = L('_DATA_TYPE_INVALID_');
 			return false;
 		}
-		if($this->fields['_autoInc'] && isset($data[$this->fields['_pk']])) {
+		if($this->fields['_autoInc'] && isset($data[$this->getPk()])) {
 			//如果主键为自动增长类型
 			//删除主键属数据 由数据库自动生成
-			unset($data[$this->fields['_pk']]);
+			unset($data[$this->getPk()]);
 		}
 		// 记录乐观锁
 		if($this->optimLock && !isset($data[$this->optimLock]) ) {
@@ -1520,9 +1516,9 @@ abstract class Model extends Base  implements IteratorAggregate
 		if(empty($data)) {
 			$data	 =	 $this->data;
 		}
-		if(is_array($data) && isset($data[$this->fields['_pk']])) {
+		if(is_array($data) && isset($data[$this->getPk()])) {
 			$data	=	$this->_facade($data);
-			$where  = $pk."=".$data[$this->fields['_pk']];
+			$where  = $this->getPk()."=".$data[$this->getPk()];
 		}else {
 			$where  =   $data;
 		}
@@ -1624,7 +1620,7 @@ abstract class Model extends Base  implements IteratorAggregate
 		if(is_array($ids)) {
 			$ids	=	implode(',',$ids);
 		}
-		return $this->_read($this->fields['_pk']." IN ({$ids})",$fields,true,$order,$limit,null,null,$cache,$relation,$lazy);
+		return $this->_read($this->getPk()." IN ({$ids})",$fields,true,$order,$limit,null,null,$cache,$relation,$lazy);
 	}
 
 	/**
@@ -2463,6 +2459,7 @@ abstract class Model extends Base  implements IteratorAggregate
 				// array('field','填充内容','填充条件','附加规则')
 				if(in_array($auto[0],$this->fields,true)) {
 					if(empty($auto[2])) $auto[2] = 'ADD';// 默认为新增的时候自动填充
+					else $auto[2]	=	strtoupper($auto[2]);
 					if( (strtolower($type) == "add"  && $auto[2] == 'ADD') || 	(strtolower($type) == "edit"  && $auto[2] == 'UPDATE') || $auto[2] == 'ALL')
 					{
 						switch($auto[3]) {
