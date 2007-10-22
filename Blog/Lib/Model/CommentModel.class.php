@@ -4,14 +4,14 @@ class CommentModel extends CommonModel
 {
 
 	// 验证信息、自动填充信息、关联信息定义 
-	var $_auto	 =	 array(
+	protected $_auto	 =	 array(
 		array('cTime','time','ADD','function'),	
 		array('content','htmlspecialchars','ADD','function'),
 		array('status','1','ADD'),		
 		array('ip','get_client_ip','ADD','function'),
 		array('agent','userAgent','ADD','callback'),
 		);
-	var $_validate	 =	 array(
+	protected $_validate	 =	 array(
 		array('author','require','用户名必须!'),
 		array('email','email','邮箱格式错误',2),
 		array('content','require','回复内容必须'),
@@ -20,7 +20,7 @@ class CommentModel extends CommonModel
 		);
 	// 在下面添加需要的数据访问方法 
 
-	function userAgent() {
+	public function userAgent() {
 		return strval($_SERVER["HTTP_USER_AGENT"]);
 	}
 }

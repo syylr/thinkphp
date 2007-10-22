@@ -2,7 +2,7 @@
 import("@.Action.PublicAction");
 class BlogAction extends PublicAction {
 
-	function _initialize() {
+	protected function _initialize() {
 		$Blog	=	D("Blog");
 		$new = $Blog->top8("status=1","id,readCount,commentCount,categoryId,cTime,title",'cTime desc');
 		$Comment = D("Comment");
@@ -31,7 +31,7 @@ class BlogAction extends PublicAction {
 		parent::_initialize();
 	}
 
-	function index() {
+	public function index() {
 		$Blog	=	D("BlogView");
 		// 日志列表
 		$count	=	$Blog->count(array('status'=>1));
@@ -71,7 +71,7 @@ class BlogAction extends PublicAction {
 	}
 
 
-	function read() {
+	public function read() {
 		$this->getAttach();
 		$this->getComment();
 		$Blog = D("BlogView");
@@ -87,7 +87,7 @@ class BlogAction extends PublicAction {
 		}
 	}
 
-	function _after_read() {
+	public function _after_read() {
 		$Blog = D("Blog");
 		$blog = $this->get('vo');
 		// 阅读计数
@@ -98,7 +98,7 @@ class BlogAction extends PublicAction {
 		}
 	}
 
-	function _before_add() {
+	public function _before_add() {
 		if(Session::is_set('userId')) {
 			$verify	=	build_verify(8);
 			Session::set('attach_verify',$verify);
@@ -111,7 +111,7 @@ class BlogAction extends PublicAction {
 	}
 
 
-	function edit() {
+	public function edit() {
 		$Blog = D("Blog");
 		$id	=	$_GET['id'];
 		$blog	=	$Blog->getById($id);
@@ -124,7 +124,7 @@ class BlogAction extends PublicAction {
 		}
 	}
     // 获取归档日志
-    function archive() 
+    public function archive() 
     {
     	if(checkdate($_REQUEST['month'],'01',$_REQUEST['year'] ) )
         {
@@ -150,7 +150,7 @@ class BlogAction extends PublicAction {
         $this->display();
     }
 
-  function tag() 
+  public function tag() 
     {
     	$dao = D("Tag");
         if(!empty($_GET['name'])) {
@@ -183,7 +183,7 @@ class BlogAction extends PublicAction {
     }
 
     // 查看分类日志
-    function category() 
+    public function category() 
     {
     	$id   =  $_REQUEST['id'];
         if(!empty($id)) {

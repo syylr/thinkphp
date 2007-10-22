@@ -3,7 +3,7 @@
 import('@.Action.PublicAction');
 class CategoryAction extends PublicAction
 {//类定义开始
-	function insert() {
+	public function insert() {
 		$Model = D("Category");
 		if($category = $Model->create()) {
 			$result	=	$Model->add();

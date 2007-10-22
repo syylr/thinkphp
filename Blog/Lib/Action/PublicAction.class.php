@@ -3,7 +3,7 @@
 class PublicAction extends Action
 {//类定义开始
 
-	function getAttach() {
+	public function getAttach() {
         //读取附件信息
 		$id	=	$_GET['id'];
         $dao = D('Attach');
@@ -15,7 +15,7 @@ class PublicAction extends Action
 	}
 
 	// 保存文章的标签
-	function _trigger($vo) {
+	public function _trigger($vo) {
 		if(ACTION_NAME=='insert') {
 			// 补充附件表信息
 			$dao	=	D("Attach");
@@ -26,7 +26,32 @@ class PublicAction extends Action
 		$this->saveTag($vo->tags,$vo->id);
 	}
 
-	function getComment() {
+    public function delete($model='')
+    {
+        //删除指定记录
+		if(empty($model)) {
+	        $model        = $this->getModelClass();
+		}
+        if(!empty($model)) {
+            $id         = $_REQUEST[$model->getPk()];
+            if(isset($id)) {
+                $condition[$model->getPk()]	=	$id; 
+                if($model->delete($condition)){
+					if($this->get('ajax')) {
+						$this->ajaxReturn($id,L('_DELETE_SUCCESS_'),1);
+					}else{
+	                    $this->success(L('_DELETE_SUCCESS_'));
+					}
+                }else {
+                    $this->error(L('_DELETE_FAIL_'));
+                }        	
+            }else {
+                $this->error(L('_ERROR_ACTION_'));
+            }        	
+        }
+    }
+	
+	public function getComment() {
         //读取附件信息
 		$id	=	$_GET['id'];
 		import("ORG.Util.Page");
@@ -43,7 +68,7 @@ class PublicAction extends Action
 		}
 	}
     // 发表评论
-    function comment() 
+    public function comment() 
     {
         // 创建评论对象
         $dao = D("Comment");
@@ -67,7 +92,7 @@ class PublicAction extends Action
         }
     }
 
-    function saveTag($tags,$id,$module=MODULE_NAME) 
+    public function saveTag($tags,$id,$module=MODULE_NAME) 
     {
         if(!empty($tags) && !empty($id)) {
             $dao = D("Tag");
@@ -108,7 +133,7 @@ class PublicAction extends Action
     }
 
     // 删除评论
-    function delComment() 
+    public function delComment() 
     {
         //删除指定记录
         $dao        = D("Comment");
@@ -131,7 +156,7 @@ class PublicAction extends Action
         }
     }
 
-    function delAttach()
+    public function delAttach()
     {
         //删除指定记录
         $dao        = D("Attach");
@@ -158,7 +183,7 @@ class PublicAction extends Action
         }
     }
 
-    function download()
+    public function download()
     {
         import("ORG.Net.Http");
         $id         =   $_GET['id'];

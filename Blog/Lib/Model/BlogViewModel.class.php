@@ -2,15 +2,15 @@
 
 class BlogViewModel extends Model 
 {
-	var $viewModel = true;
-	var $masterModel = 'Blog';
-	var $viewFields = array(
+	protected $viewModel = true;
+	protected $masterModel = 'Blog';
+	protected $viewFields = array(
 		'Blog'=>array('id','name','title','cTime','categoryId','content','readCount','commentCount','status'),
 		'Category'=>array('title'=>'category'),
 		);
-	var $viewCondition = array("Blog.categoryId" => array('eqf',"Category.id"));
-	var $blobFields = array('content');
-	function getPk() {
+	protected $viewCondition = array("Blog.categoryId" => array('eqf',"Category.id"));
+	protected $blobFields = array('content');
+	public function getPk() {
 		return 'id';
 	}
 

@@ -2,7 +2,7 @@
 class CommonModel extends Model
 {//类定义开始
 
-	function CheckVerify($verify) {
+	public function CheckVerify($verify) {
 		if(md5($verify) != Session::get('verify')) {
 			return false;
 		}
