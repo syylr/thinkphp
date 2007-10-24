@@ -41,7 +41,7 @@ define('VALUE_TO_VAILIDATE',2);		// 表单值不为空则验证
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-abstract class Model extends Base  implements IteratorAggregate
+class Model extends Base  implements IteratorAggregate
 {
 	// 数据库底层操作对象
 	protected $db ;
