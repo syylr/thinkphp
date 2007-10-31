@@ -549,12 +549,12 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	private function _checkTableInfo() {
-		// 自动记录数据表信息
+		// 如果不是Model类 自动记录数据表信息
 		// 只在第一次执行记录
-		if(empty($this->fields)) {
+		if(empty($this->fields) && strtolower(get_class($this))!='model') {
 			// 如果数据表字段没有定义则自动获取
 			$identify	=	$this->name.'_fields';
-			$this->fields = S($identify);
+			$this->fields = F($identify);
 			if(!$this->fields) {
 				$this->flush();
 			}
@@ -600,7 +600,8 @@ class Model extends Base  implements IteratorAggregate
 		}
 		$identify	=	$this->name.'_fields';
 		// 永久缓存数据表信息
-		S($identify,$this->fields,-1);
+		// 2007-10-31 更改为F方法保存，保存在项目的Data目录，并且始终采用文件形式
+		F($identify,$this->fields);
 	}
 
 	/**
