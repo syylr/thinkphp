@@ -1122,10 +1122,14 @@ if(!function_exists('stripslashes_deep')) {
     }	
 }
 
-function D($className,$appName='@') 
+function D($className='',$appName='@') 
 {
 	static $_model = array();
-   	$className =  C('MODEL_CLASS_PREFIX').$className.C('MODEL_CLASS_SUFFIX');
+	if(empty($className)) {
+		return new  Model();
+	}else{
+	   	$className =  C('MODEL_CLASS_PREFIX').$className.C('MODEL_CLASS_SUFFIX');
+	}
 	if(isset($_model[$className])) {
 		return $_model[$className];
 	}
