@@ -656,7 +656,7 @@ abstract class Action extends Base
         $voList     = $model->findAll($map,'*',$order.' '.$sort,$p->firstRow.','.$p->listRows);
         //分页跳转的时候保证查询条件
         foreach($map as $key=>$val) {
-            $p->parameter   .=   "$key=$val&";         
+            $p->parameter   .=   "$key=".urlencode($val)."&";         
         }
 
         //分页显示
