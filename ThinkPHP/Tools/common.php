@@ -19,22 +19,22 @@
 // $Id$
 
 //加载ThinkPHP基类
-include THINK_PATH."/Lib/Think/Core/Base.class.php";
-include THINK_PATH."/Lib/Think/Util/Config.class.php";
+require THINK_PATH."/Common/defines.php";
+// 系统函数库
+require THINK_PATH."/Common/functions.php";
+//加载ThinkPHP基类
+import("Think.Core.Base");
+//加载Think核心类
+import("Think.Util.Config");
+import("Think.Db.Db");
 
 function init() {
 	mk_dir(APP_PATH.'Lib/Model/');
 	mk_dir(APP_PATH.'Lib/Action/');
 }
-function mk_dir($dir, $mode = 0755)
-{
-  if (is_dir($dir) || @mkdir($dir,$mode)) return true;
-  if (!mk_dir(dirname($dir),$mode)) return false;
-  return @mkdir($dir,$mode);
-}
+
 function buildModel($name='') {
 	if(empty($name)) {
-		import("Think.Db.Db");
 		$db	=	DB::getInstance();
 		$tables = $db->getTables(DB_NAME);
 		foreach ($tables as $table){
@@ -62,7 +62,6 @@ function buildModel($name='') {
 
 function buildAction($name='') {
 	if(empty($name)) {
-		import("Think.Db.Db");
 		$db	=	DB::getInstance();
 		$tables = $db->getTables(DB_NAME);
 		foreach ($tables as $table){
