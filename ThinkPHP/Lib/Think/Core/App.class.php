@@ -178,17 +178,22 @@ class App extends Base
 		// 加载模块配置文件 并自动生成配置缓存文件
 		$this->loadConfig('m_'.MODULE_NAME,CONFIG_PATH,'m_'.MODULE_NAME.'Config.php',false);
 
+		// 代理访问检测
+		if(C('LIMIT_PROXY_VISIT') && ($_SERVER['HTTP_X_FORWARDED_FOR'] || $_SERVER['HTTP_VIA'] || $_SERVER['HTTP_PROXY_CONNECTION'] || $_SERVER['HTTP_USER_AGENT_VIA'])) {
+			// 禁止代理访问
+			exit('Access Denied');
+		}
 		//	启用页面防刷新机制
 		if(C('LIMIT_RESFLESH_ON')) {
 			$guid	=	md5($_SERVER['PHP_SELF']);
 			// 检查页面刷新间隔
-			if(Session::is_set('_last_visit_time_'.$guid) && Session::get('_last_visit_time_'.$guid)>time()-C('LIMIT_REFLESH_TIMES')) {
+			if(Cookie::is_set('_last_visit_time_'.$guid) && Cookie::get('_last_visit_time_'.$guid)>time()-C('LIMIT_REFLESH_TIMES')) {
 				// 页面刷新读取浏览器缓存
 				header('HTTP/1.1 304 Not Modified');
 				exit;
 			}else{
 				// 缓存当前地址访问时间
-				Session::set('_last_visit_time_'.$guid,time());
+				Cookie::set('_last_visit_time_'.$guid,time());
 				header('Last-Modified:'.(date('D,d M Y H:i:s',time()-C('LIMIT_REFLESH_TIMES'))).' GMT');
 			}
 		}
@@ -338,8 +343,15 @@ class App extends Base
      */
     private function checkLanguage()
     {
+		$defaultLang = C('DEFAULT_LANGUAGE');
         //检测浏览器支持语言
-        $langSet = detect_browser_language();
+		if($defaultLang && !isset($_GET[C('VAR_LANGUAGE')])) {
+			// 采用系统设置的默认语言
+			$langSet = $defaultLang;
+		}else{
+			// 自动侦测语言
+	        $langSet = detect_browser_language();
+		}
         // setlocale操作比较费时，暂时屏蔽 
         //setlocale(LC_ALL, $langSet);       
 
@@ -351,15 +363,19 @@ class App extends Base
         if (!file_exists(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
 			Language::load(THINK_PATH.'/Lang/'.LANG_SET.'.php');
 		}else{
-			Language::load(THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');       
+			Language::load(THINK_PATH.'/Lang/'.$defaultLang.'.php');       
 		}
         // 读取项目（公共）语言包
 		if (file_exists(LANG_PATH.LANG_SET.'.php'))
 	        Language::load(LANG_PATH.LANG_SET.'.php');  
+		else
+			Language::load(LANG_PATH.$defaultLang.'.php');
 
 		// 读取当前模块的语言包
 		if (file_exists(LANG_PATH.strtolower(MODULE_NAME).'_'.LANG_SET.'.php'))
 	        Language::load(LANG_PATH.strtolower(MODULE_NAME).'_'.LANG_SET.'.php');  
+		else
+			Language::load(LANG_PATH.strtolower(MODULE_NAME).'_'.$defaultLang.'.php');  
 
 		// 缓存语言变量
 		L(Language::$_lang);
