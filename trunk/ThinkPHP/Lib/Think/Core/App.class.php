@@ -344,13 +344,24 @@ class App extends Base
     private function checkLanguage()
     {
 		$defaultLang = C('DEFAULT_LANGUAGE');
-        //检测浏览器支持语言
-		if($defaultLang && !isset($_GET[C('VAR_LANGUAGE')])) {
-			// 采用系统设置的默认语言
-			$langSet = $defaultLang;
-		}else{
-			// 自动侦测语言
-	        $langSet = detect_browser_language();
+		//检测浏览器支持语言
+		if(isset($_GET[C('VAR_LANGUAGE')])) {
+			// 有在url 里面设置语言
+			$langSet = $_GET[C('VAR_LANGUAGE')];
+			Cookie::set('l',$langSet);	// 记住用户的选择
+		}elseif ( Cookie::is_set('l') ) {
+			// 获取上次用户的选择
+			$langSet = Cookie::get('l');
+		}else {
+			if(C('AUTO_DETECT_LANG')) {
+				// 启用自动侦测浏览器语言
+				preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
+				$langSet = $matches[1];
+				Cookie::set('l',$langSet);
+			}else{
+				// 采用系统设置的默认语言
+				$langSet = $defaultLang;
+			}
 		}
         // setlocale操作比较费时，暂时屏蔽 
         //setlocale(LC_ALL, $langSet);       
@@ -360,7 +371,7 @@ class App extends Base
 		// 加载语言类
 		import("Think.Util.Language");
 		// 加载框架语言包
-        if (!file_exists(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
+        if (file_exists(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
 			Language::load(THINK_PATH.'/Lang/'.LANG_SET.'.php');
 		}else{
 			Language::load(THINK_PATH.'/Lang/'.$defaultLang.'.php');       
@@ -374,8 +385,6 @@ class App extends Base
 		// 读取当前模块的语言包
 		if (file_exists(LANG_PATH.strtolower(MODULE_NAME).'_'.LANG_SET.'.php'))
 	        Language::load(LANG_PATH.strtolower(MODULE_NAME).'_'.LANG_SET.'.php');  
-		else
-			Language::load(LANG_PATH.strtolower(MODULE_NAME).'_'.$defaultLang.'.php');  
 
 		// 缓存语言变量
 		L(Language::$_lang);
