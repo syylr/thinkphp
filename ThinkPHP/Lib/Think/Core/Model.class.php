@@ -2626,7 +2626,11 @@ class Model extends Base  implements IteratorAggregate
 		if(empty($this->name)) {
 			$prefix	=	C('MODEL_CLASS_PREFIX');
 			$suffix	=	C('MODEL_CLASS_SUFFIX');
-			$this->name	=	substr(substr(get_class($this),strlen($prefix)),0,-strlen($suffix));
+			if(strlen($suffix)>0) {
+				$this->name	=	substr(substr(get_class($this),strlen($prefix)),0,-strlen($suffix));
+			}else{
+				$this->name	=	substr(get_class($this),strlen($prefix));
+			}
 		}
 		return $this->name;
 	}
