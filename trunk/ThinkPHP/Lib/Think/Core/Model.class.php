@@ -1236,7 +1236,7 @@ class Model extends Base  implements IteratorAggregate
 								$mappingOrder =  !empty($val['mapping_order'])?$val['mapping_order']:'';
 								$mappingLimit =  !empty($val['mapping_limit'])?$val['mapping_limit']:'';
 								// 延时获取关联记录
-								$relationData   =  $model->findAll($mappingCondition,$mappingFields,$mappingOrder,$mappingLimit,null,null,true,false,true);
+								$relationData   =  $model->findAll($mappingCondition,$mappingFields,$mappingOrder,$mappingLimit,null,null,null);
 								break;
 							case MANY_TO_MANY:
 								if(empty($mappingCondition)) {
