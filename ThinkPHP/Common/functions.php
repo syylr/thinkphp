@@ -565,6 +565,7 @@ function include_cache($filename)
     return false;
 }
 
+$GLOBALS['include_file'] = 0;
 /**
  +----------------------------------------------------------
  * 优化的require_once
