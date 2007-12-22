@@ -167,6 +167,18 @@ class TagLibCx extends TagLib
         return ;
     }
 
+	public function _volist($attr,$content) {
+		return $this->_iterate($attr,$content);
+	}
+
+	public function _resultset($attr,$content) {
+		return $this->_iterate($attr,$content);
+	}
+
+	public function _sublist($attr,$content) {
+		return $this->_iterate($attr,$content);
+	}
+
     public function _foreach($attr,$content) 
     {
         static $_iterateParseCache = array();
@@ -205,130 +217,18 @@ class TagLibCx extends TagLib
 		$parseStr	=	'<?php echo url('.$action.','.$module.');?>';
 		return $parseStr;
 	}
-    /**
-     +----------------------------------------------------------
-     * ResultSet标签解析 
-     * 输出数据集
-     * 格式： 
-     * <resultset name="userList" id="user" >
-     * {user.username}
-     * {user.email}
-     * </resultset>
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param string $attr 标签属性
-     * @param string $content  标签内容
-     +----------------------------------------------------------
-     * @return string|void
-     +----------------------------------------------------------
-     */
-    public function _resultset($attr,$content) 
-    {
-        static $_parseCache = array();
-        //如果已经解析过，则直接返回变量值
-        $cacheVoListId = md5($attr.$content);
-        if(isset($_parseCache[$cacheVoListId])) return $_parseCache[$cacheVoListId];
-        //解析标签属性
-        $tag        = $this->parseXmlAttr($attr,'resultset');
-        $name       = $tag['name'];
-        $empty      = $tag['empty'];
-        $id         = isset($tag['id'])?$tag['id']:$name;
-        $offset     = isset($tag['offset'])?$tag['offset']:0;
-        $length     = isset($tag['length'])?$tag['length']:'';
-		$key			=	!empty($tag['key'])?$tag['key']:'i';
-		$odd			=	isset($tag['odd'])?$tag['odd']:'odd';
-		$name = $this->autoBuildVar($name);
-		$parseStr  = '<?php if('.$name.'->count()==0 ) echo "'.$empty.'"; ?>';
-		$parseStr .= '<?php foreach('.$name.' as $key=>$'.$id.'): ?>';
-		$parseStr .= '<?php ++$'.$key.';?>';
-		$parseStr .= '<?php $odd = (($'.$key.' % 2 )==0)?>';
-		$parseStr .= $content;
-		$parseStr .= '<?php endforeach; ?>';
-		$_parseCache[$cacheVoListId] = $parseStr;
-        
-        if(!empty($parseStr)) {
-            return $parseStr;
-        }
-        return ;
-    }
 
-    /**
-     +----------------------------------------------------------
-     * VoList标签解析 
-     * 输出Volist的值 需要结合vo标签
-     * 格式： 
-     * <voList name="userList" id="user" >
-     * <vo name="user" property="username" format="" />
-     * <vo name="user" property="email" />
-     * </voList>
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param string $attr 标签属性
-     * @param string $content  标签内容
-     +----------------------------------------------------------
-     * @return string|void
-     +----------------------------------------------------------
-     */
-    public function _volist($attr,$content) 
-    {
-        static $_voListParseCache = array();
-        //如果已经解析过，则直接返回变量值
-        $cacheVoListId = md5($attr.$content);
-        if(isset($_voListParseCache[$cacheVoListId])) return $_voListParseCache[$cacheVoListId];
-        //解析标签属性
-        $tag        = $this->parseXmlAttr($attr,'volist');
-        $name       = $tag['name'];
-        $empty      = $tag['empty'];
-        $id         = isset($tag['id'])?$tag['id']:$name;
-        $offset     = isset($tag['offset'])?$tag['offset']:0;
-        $length     = isset($tag['length'])?$tag['length']:'';
-		$key			=	!empty($tag['key'])?$tag['key']:'i';
-		$odd			=	isset($tag['odd'])?$tag['odd']:'odd';
+	public function _var($attr) {
+		$tag	=	$this->parseXmlAttr($attr,'var');
+		$name       = $tag['name'];
+		$varArray = explode('|',$name);
+		$name	=	array_shift($varArray);
 		$name = $this->autoBuildVar($name);
-		$parseStr  =  '<?php if(isset('.$name.')): ?>';
-		$parseStr	.= '<?php $'.$key.' = 0; ?>';
-		$parseStr  .= '<?php if (is_array('.$name.')): ?>';
-		$parseStr  .= '<?php if(count('.$name.')==0 ) echo "'.$empty.'"; ?>';
-		if(!empty($length)) {
-			$parseStr  .= '<?php '.$name.'= array_slice('.$name.','.$offset.','.$length.') ?>';
-		}
-		$parseStr  .= '<?php endif; ?>';
-		$parseStr  .= '<?php if (is_object('.$name.')): ?>';
-		$parseStr  .= '<?php if('.$name.'->count()==0 ) echo "'.$empty.'"; ?>';
-		$parseStr  .= '<?php endif; ?>';
-		$parseStr .= '<?php foreach('.$name.' as $key=>$'.$id.'): ?>';
-		$parseStr .= '<?php ++$'.$key.';?>';
-		$parseStr .= '<?php $odd = (($'.$key.' % 2 )==0)?>';
-		$parseStr .= $content;//$this->tpl->parse($content);
-		$parseStr .= '<?php endforeach; ?>';
-		$parseStr .=  '<?php endif;?>';
-		$_voListParseCache[$cacheVoListId] = $parseStr;
-        
-        if(!empty($parseStr)) {
-            return $parseStr;
-        }
-        return ;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * sublist标签解析 
-     * 和volist用法一致
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param string $attr 标签属性
-     * @param string $content  标签内容
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function _sublist($attr,$content) 
-    {
-    	return $this->_volist($attr,$content);
-    }
+		if(count($varArray)>0) 
+			$name = $this->tpl->parseVarFunction($name,$varArray);
+		$parseStr	=	'<?php echo ('.$name.');?>';
+		return $parseStr;
+	}
 
     public function _defined($attr,$content) 
     {
@@ -483,9 +383,9 @@ class TagLibCx extends TagLib
 
     /**
      +----------------------------------------------------------
-     * equal标签解析 
-     * 如果变量的值等于value，则输出内容
-     * 格式： <equal name="" property="" value="" >content</equal>
+     * compare标签解析 
+     * 用于值的比较 支持 eq neq gt lt egt elt heq nheq 默认是eq
+     * 格式： <compare name="" type="eq" value="" >content</compare>
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
@@ -495,11 +395,12 @@ class TagLibCx extends TagLib
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _equal($attr,$content) 
+    public function _compare($attr,$content,$type='eq') 
     {
-        $tag        = $this->parseXmlAttr($attr,'equal');
+        $tag        = $this->parseXmlAttr($attr,'compare');
         $name       = $tag['name'];
         $value      = $tag['value'];
+		$type	 =	 $this->parseCondition($type);
 		$varArray = explode('|',$name);
 		$name	=	array_shift($varArray);
 		$name = $this->autoBuildVar($name);
@@ -507,49 +408,52 @@ class TagLibCx extends TagLib
 			$name = $this->tpl->parseVarFunction($name,$varArray);
         if('$' == substr($value,0,1)) {
 			$value  =  $this->autoBuildVar(substr($value,1));;
-            $parseStr = '<?php if('.$value.'==('.$name.')): ?>';
         }else {
-            $parseStr = '<?php if("'.$value.'"==('.$name.')): ?>';        	
+			$value	=	'"'.$value.'"';
         }
-        $parseStr .= $content.'<?php endif; ?>';
-
+        $parseStr = '<?php if('.$value.' '.$type.' ('.$name.')): ?>'.$content.'<?php endif; ?>';
         return $parseStr;
     }
 
+	public function _eq($attr,$content) {
+		return $this->_compare($attr,$content,'eq');
+	}
 
-    /**
-     +----------------------------------------------------------
-     * notequal标签解析 
-     * 如果某个变量的值不等于value 则输出内容
-     * 格式： <notequal name="" property="" value="" >content</notequal>
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param string $attr 标签属性
-     * @param string $content  标签内容
-     +----------------------------------------------------------
-     * @return string|void
-     +----------------------------------------------------------
-     */
-    public function _notequal($attr,$content) 
-    {
-        $tag        = $this->parseXmlAttr($attr,'notequal');
-        $name       = $tag['name'];
-        $value      = $tag['value'];
-		$varArray = explode('|',$name);
-		$name	=	array_shift($varArray);
-		$name = $this->autoBuildVar($name);
-		if(count($varArray)>0) 
-			$name = $this->tpl->parseVarFunction($name,$varArray);
-       if('$' == substr($value,0,1)) {
-        	$value  =  $this->autoBuildVar(substr($value,1));;
-            $parseStr = '<?php if('.$value.'!=('.$name.')): ?>';
-        }else {
-            $parseStr = '<?php if("'.$value.'"!=('.$name.')): ?>';        	
-        }
-        $parseStr .= $content.'<?php endif; ?>';
-        return $parseStr;
-    }
+	public function _equal($attr,$content) {
+		return $this->_eq($attr,$content);
+	}
+
+	public function _neq($attr,$content) {
+		return $this->_compare($attr,$content,'neq');
+	}
+
+	public function _notequal($attr,$content) {
+		return $this->_neq($attr,$content);
+	}
+
+	public function _gt($attr,$content) {
+		return $this->_compare($attr,$content,'gt');
+	}
+
+	public function _lt($attr,$content) {
+		return $this->_compare($attr,$content,'lt');
+	}
+
+	public function _egt($attr,$content) {
+		return $this->__compare($attr,$content,'egt');
+	}
+
+	public function _elt($attr,$content) {
+		return $this->_compare($attr,$content,'elt');
+	}
+
+	public function _heq($attr,$content) {
+		return $this->_compare($attr,$content,'heq');
+	}
+
+	public function _nheq($attr,$content) {
+		return $this->_compare($attr,$content,'nheq');
+	}
 
     /**
      +----------------------------------------------------------
@@ -619,7 +523,7 @@ class TagLibCx extends TagLib
 			$array	=	explode('|',$name);
 			$parseStr  = '<?php if( ';
 			for($i=0; $i<count($array); $i++) {
-				$parseStr  .= 'Session::is_set("'.$array[$i].'") || ';
+				$parseStr  .= 'isset($_SESSION["'.$array[$i].'"]) || ';
 			}
 			$parseStr	=	substr($parseStr,0,-3);
 			$parseStr  .='): ?>'.$content.'<?php endif; ?>';		
@@ -627,12 +531,12 @@ class TagLibCx extends TagLib
 			$array	=	explode(',',$name);
 			$parseStr  = '<?php if( ';
 			for($i=0; $i<count($array); $i++) {
-				$parseStr  .= 'Session::is_set("'.$array[$i].'") && ';
+				$parseStr  .= 'isset($_SESSION["'.$array[$i].'"]) && ';
 			}
 			$parseStr	=	substr($parseStr,0,-3);
 			$parseStr  .='): ?>'.$content.'<?php endif; ?>';				
 		}else {
-			$parseStr  = '<?php if(Session::is_set("'.$name.'")): ?>'.$content.'<?php endif; ?>';			
+			$parseStr  = '<?php if(isset($_SESSION["'.$name.'"])): ?>'.$content.'<?php endif; ?>';			
 		}
         return $parseStr;
     }
@@ -659,7 +563,7 @@ class TagLibCx extends TagLib
 			$array	=	explode('|',$name);
 			$parseStr  = '<?php if( ';
 			for($i=0; $i<count($array); $i++) {
-				$parseStr  .= '!Session::is_set("'.$array[$i].'") || ';
+				$parseStr  .= '!isset($_SESSION["'.$array[$i].'"]) || ';
 			}
 			$parseStr	=	substr($parseStr,0,-3);
 			$parseStr  .='): ?>'.$content.'<?php endif; ?>';		
@@ -667,12 +571,12 @@ class TagLibCx extends TagLib
 			$array	=	explode(',',$name);
 			$parseStr  = '<?php if( ';
 			for($i=0; $i<count($array); $i++) {
-				$parseStr  .= '!Session::is_set("'.$array[$i].'") && ';
+				$parseStr  .= '!isset($_SESSION["'.$array[$i].'"]) && ';
 			}
 			$parseStr	=	substr($parseStr,0,-3);
 			$parseStr  .='): ?>'.$content.'<?php endif; ?>';				
 		}else {
-			$parseStr  = '<?php if( !Session::is_set("'.$name.'")): ?>'.$content.'<?php endif; ?>';			
+			$parseStr  = '<?php if( !isset($_SESSION["'.$name.'"])): ?>'.$content.'<?php endif; ?>';			
 		}
 		
         return $parseStr;

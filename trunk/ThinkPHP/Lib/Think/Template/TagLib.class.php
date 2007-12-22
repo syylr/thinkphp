@@ -139,8 +139,7 @@ class TagLib extends Base
     }
 
 	public function load() {
-		$xml = file_get_contents($this->xml);
-		$array = (array)(simplexml_load_string($xml));
+		$array = (array)(simplexml_load_file($this->xml));
 		if($array !== false) {
 			$this->parse = $array;
 			$this->valid = true;
@@ -207,6 +206,16 @@ class TagLib extends Base
 								'content'=>$tags->bodycontent,
 								'attribute'=>isset($tags->attribute)?$tags->attribute:'',
 								);
+				if(isset($tags->alias)) {
+					$alias	=	explode(',',$tag->alias);
+					foreach ($alias as $tag){
+						$list[] =  array(
+										'name'=>$tag,
+										'content'=>$tags->bodycontent,
+										'attribute'=>isset($tags->attribute)?$tags->attribute:'',
+										);
+					}
+				}
 			}else{
 				foreach($tags as $tag) {
 					$tag = (array)$tag;
@@ -215,6 +224,16 @@ class TagLib extends Base
 									'content'=>$tag['bodycontent'],
 									'attribute'=>isset($tag['attribute'])?$tag['attribute']:'',
 									);
+					if(isset($tag['alias'])) {
+						$alias	=	explode(',',$tag['alias']);
+						foreach ($alias as $tag1){
+							$list[] =  array(
+											'name'=>$tag1,
+											'content'=>$tag['bodycontent'],
+											'attribute'=>isset($tag['attribute'])?$tag['attribute']:'',
+											);
+						}
+					}
 				}
 			}
             $this->tagList = $list;
@@ -373,6 +392,17 @@ class TagLib extends Base
         return $tmplContent;
     }
 
+    /**
+     +----------------------------------------------------------
+     * 自动识别构建变量 
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $name 变量描述
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
 	public function autoBuildVar($name) {
         if(strpos($name,'.')) {
 			// 数组和对象自动判断支持

@@ -3,31 +3,35 @@ import("@.Action.PublicAction");
 class BlogAction extends PublicAction {
 
 	protected function _initialize() {
-		$Blog	=	D("Blog");
-		$new = $Blog->top8("status=1","id,readCount,commentCount,categoryId,cTime,title",'cTime desc');
-		$Comment = D("Comment");
-		$comment	=	$Comment->top8("module='Blog' and status=1","","id desc");
-		$this->assign("lastArticles",$new);
-		$this->assign("lastComments",$comment);
 		$Cate	=	D("Category");
 		$cate	 =	 $Cate->findAll();
 		$this->assign("category",$cate);
-        // 获取归档日志
-        if(!Session::is_set('BlogArchiveList')) {
-            $Blog = D("Blog");
-			$old	=	strtotime('-2 year');
-            $new = $Blog->max('cTime');
-            $list = array();
-            $time    = $new;
-            while($time>=$old) {
-                $list[] = array('year'=>date('Y',$time),'month'=>date('m',$time),'show'=>$time);
-                $time    = strtotime('-1 month',$time);
-            }
-            Session::set('BlogArchiveList',$list);
-        }else {
-            $list  = Session::get('BlogArchiveList');        	
-        }
-        $this->assign('monthList',$list);
+		if(ACTION_NAME != 'add') {
+			$Blog	=	D("Blog");
+			$new = $Blog->top8("status=1","id,readCount,commentCount,categoryId,cTime,title",'cTime desc');
+			$Comment = D("Comment");
+			$comment	=	$Comment->top8("module='Blog' and status=1","","id desc");
+			$this->assign("lastArticles",$new);
+			$this->assign("lastComments",$comment);
+
+			// 获取归档日志
+			if(!isset($_SESSION['BlogArchiveList'])) {
+				$Blog = D("Blog");
+				$old	=	strtotime('-2 year');
+				$new = $Blog->max('cTime');
+				$list = array();
+				$time    = $new;
+				while($time>=$old) {
+					$list[] = array('year'=>date('Y',$time),'month'=>date('m',$time),'show'=>$time);
+					$time    = strtotime('-1 month',$time);
+				}
+				$_SESSION['BlogArchiveList']	=	$list;
+			}else {
+				$list  = $_SESSION['BlogArchiveList'];        	
+			}
+			$this->assign('monthList',$list);
+		}
+
 		parent::_initialize();
 	}
 
@@ -92,16 +96,16 @@ class BlogAction extends PublicAction {
 		$blog = $this->get('vo');
 		// 阅读计数
 		$id	=	$blog->id;
-		if(!Session::is_set('blog_read_count_'.$id)) {
+		if(!isset($_SESSION['blog_read_count_'.$id])) {
 			$Blog->setInc('readCount',"id=".$id);
-			Session::set('blog_read_count_'.$id,true);
+			$_SESSION['blog_read_count_'.$id]		=	true;
 		}
 	}
 
 	public function _before_add() {
-		if(Session::is_set('userId')) {
+		if(isset($_SESSION['userId'])) {
 			$verify	=	build_verify(8);
-			Session::set('attach_verify',$verify);
+			$_SESSION['attach_verify']	=	$verify;
 			$this->assign('verify',$verify);
 
 			$Category	=	D("Category");

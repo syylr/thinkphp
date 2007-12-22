@@ -171,7 +171,7 @@ class View extends Base
 	protected function showTime($startTime) {
 		if(C('SHOW_RUN_TIME')) {
 			// 显示运行时间
-			$endTime = array_sum(explode(' ', microtime()));
+			$endTime = microtime(TRUE);
 			$total_run_time	=	number_format(($endTime - $GLOBALS['_beginTime']), 3);
 			$showTime	=	'Process: '.$total_run_time.'s ';
 			if(C('SHOW_ADV_TIME')) {
@@ -182,12 +182,12 @@ class View extends Base
 				$_parse_time	=	number_format(($endTime - $startTime), 3);
 				$showTime .= '( Load:'.$_load_time.'s Init:'.$_init_time.'s Exec:'.$_exec_time.'s Template:'.$_parse_time.'s )';
 			}
-			if(C('SHOW_DB_TIMES') && C('DB_TYPE') ) {
+			if(C('SHOW_DB_TIMES') && class_exists('Db',false) ) {
 				// 显示数据库操作次数
 				$db	=	Db::getInstance();
 				$showTime .= ' | DB :'.$db->Q().' queries '.$db->W().' writes ';
 			}
-			if(C('SHOW_CACHE_TIMES')) {
+			if(C('SHOW_CACHE_TIMES') && class_exists('Cache',false)) {
 				// 显示数据库操作次数
 				$cache	=	Cache::getInstance();
 				$showTime .= ' | Cache :'.$cache->Q().' gets '.$cache->W().' writes ';
@@ -219,7 +219,7 @@ class View extends Base
      */
 	public function layout($layoutFile,$charset='',$contentType='text/html',$varPrefix='',$display=true) 
 	{
-		$startTime = array_sum(explode(' ', microtime()));
+		$startTime = microtime(TRUE);
 		// 获取布局模板文件
 		$content	=	$this->fetch('layout:'.$layoutFile,$charset,$contentType,$varPrefix,true);
 		// 查找布局包含的页面
@@ -292,7 +292,7 @@ class View extends Base
      */
     public function fetch($templateFile='',$charset='',$contentType='text/html',$varPrefix='',$display=false) 
     {
-		$startTime = array_sum(explode(' ', microtime()));
+		$startTime = microtime(TRUE);
         if(null===$templateFile) {
             // 使用null参数作为模版名直接返回不做任何输出
         	return ;
@@ -400,7 +400,7 @@ class View extends Base
 				$this->trace('当前页面',	$_SERVER['PHP_SELF']);
 				$this->trace('请求方法',	$_SERVER['REQUEST_METHOD']);
 				$this->trace('通信协议',	$_SERVER['SERVER_PROTOCOL']);
-				$this->trace('请求时间',	Date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
+				$this->trace('请求时间',	date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
 				$this->trace('用户代理',	$_SERVER['HTTP_USER_AGENT']);
 				$this->trace('会话ID'	,	session_id());
 				$this->trace('运行数据',	$showTime);

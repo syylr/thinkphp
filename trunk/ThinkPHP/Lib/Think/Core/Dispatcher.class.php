@@ -140,7 +140,7 @@ class Dispatcher extends Base
             }
         }
         //字符转义还原
-        self :: MagicQuote();
+        //self :: MagicQuote();
     }
 
     /**

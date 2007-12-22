@@ -29,35 +29,50 @@
  */
 
 //记录开始运行时间
-$GLOBALS['_beginTime'] = array_sum(explode(' ', microtime()));
+$GLOBALS['_beginTime'] = microtime(TRUE);
 
-//ThinkPHP系统目录定义
+// ThinkPHP系统目录定义
 if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
+if(!defined('APP_PATH')) define('APP_PATH', dirname(THINK_PATH).'/'.APP_NAME);
 
-// 部署模式只需要加载一个Core文件
-// 包括了定义文件、函数库、Core类库和异常、日志类库
-// require(THINK_PATH.'/Core.php');
+if(file_exists(APP_PATH.'/~runtime.php')) {
+	// 加载框架核心缓存文件
+	// 如果有修改核心文件请删除该缓存
+	require APP_PATH.'/~runtime.php';
+}else{
+	// 加载系统定义文件
+	require THINK_PATH."/Common/defines.php";
+	// 系统函数库
+	require THINK_PATH."/Common/functions.php";
 
+	//加载ThinkPHP基类
+	import("Think.Core.Base");
+	//加载异常处理类
+	import("Think.Exception.ThinkException");
+	// 加载日志类
+	import("Think.Util.Log");
+	//加载Think核心类
+	import("Think.Core.App");
+	import("Think.Core.Action");
+	import("Think.Core.Model");
+	import("Think.Core.View");
 
-// 开发模式
-// 加载系统定义文件
-require THINK_PATH."/Common/defines.php";
-
-// 记录内存初始使用
-if(MEMORY_LIMIT_ON) {
-	 $GLOBALS['_startUseMems'] = memory_get_usage();
+	// 生成核心文件的缓存 去掉文件空白以减少大小
+	$content	 =	 php_strip_whitespace(THINK_PATH.'/Common/defines.php');
+	$content	.=	 php_strip_whitespace(THINK_PATH.'/Common/functions.php');
+	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/Base.class.php');
+	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Exception/ThinkException.class.php');
+	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Util/Log.class.php');
+	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/App.class.php');
+	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/Action.class.php');
+	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/Model.class.php');
+	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/View.class.php');
+	if(version_compare(PHP_VERSION,'5.2.0','<') ) {
+		// 加载兼容函数
+		$content .=	 THINK_PATH.'/Common/compat.php,';	
+	}
+	file_put_contents(APP_PATH.'/~runtime.php',$content);
 }
-// 系统函数库
-require THINK_PATH."/Common/functions.php";
-
-
-//加载ThinkPHP基类
-import("Think.Core.Base");
-//加载异常处理类
-import("Think.Exception.ThinkException");
-//加载Think核心类
-import("Think.Core.App");
-
 // 记录加载文件时间
-$GLOBALS['_loadTime'] = array_sum(explode(' ', microtime()));
+$GLOBALS['_loadTime'] = microtime(TRUE);
 ?>
