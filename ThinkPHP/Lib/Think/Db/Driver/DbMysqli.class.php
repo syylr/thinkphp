@@ -1,21 +1,13 @@
 <?php 
-// +----------------------------------------------------------------------+
-// | ThinkPHP                                                             |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2006~2007 http://thinkphp.cn All rights reserved.      |
-// +----------------------------------------------------------------------+
-// | Licensed under the Apache License, Version 2.0 (the 'License');      |
-// | you may not use this file except in compliance with the License.     |
-// | You may obtain a copy of the License at                              |
-// | http://www.apache.org/licenses/LICENSE-2.0                           |
-// | Unless required by applicable law or agreed to in writing, software  |
-// | distributed under the License is distributed on an 'AS IS' BASIS,    |
-// | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or      |
-// | implied. See the License for the specific language governing         |
-// | permissions and limitations under the License.                       |
-// +----------------------------------------------------------------------+
-// | Author: liu21st <liu21st@gmail.com>                                  |
-// +----------------------------------------------------------------------+
+// +----------------------------------------------------------------------
+// | ThinkPHP                                                             
+// +----------------------------------------------------------------------
+// | Copyright (c) 2007 http://thinkphp.cn All rights reserved.      
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: liu21st <liu21st@gmail.com>                                  
+// +----------------------------------------------------------------------
 // $Id$
 
 /**
@@ -61,7 +53,7 @@ Class DbMysqli extends Db{
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
 			if(empty($config))	$config	=	$this->config;
-            $this->linkID[$linkNum] = mysqli_connect(
+            $this->linkID[$linkNum] = new mysqli(
                                 $config['hostname'], 
                                 $config['username'], 
                                 $config['password'],
@@ -72,14 +64,14 @@ Class DbMysqli extends Db{
                 return false;
             }
             if($this->autoCommit){
-                mysqli_autocommit($this->linkID[$linkNum], true);
+                $this->linkID[$linkNum]->autocommit( true);
             }else {
-                mysqli_autocommit($this->linkID[$linkNum], false);
+                $this->linkID[$linkNum]->autocommit( false);
             }
-            $this->dbVersion = mysqli_get_server_info($this->linkID[$linkNum]);
+            $this->dbVersion = $this->linkID[$linkNum]->server_version;
             if ($this->dbVersion >= "4.1") { 
-                //使用UTF8存取数据库 需要mysql 4.1.0以上支持
-                mysqli_query( $this->linkID[$linkNum],"SET NAMES '".C('DB_CHARSET')."'");
+                // 设置数据库编码 需要mysql 4.1.0以上支持
+                $this->linkID[$linkNum]->query("SET NAMES '".C('DB_CHARSET')."'");
             }
 			// 标记连接成功
 			$this->connected	=	true;
@@ -128,16 +120,16 @@ Class DbMysqli extends Db{
 
         $this->queryTimes ++;
 		$this->Q(1);
-        $this->queryID = mysqli_query($this->_linkID,$this->queryStr );
+        $this->queryID = $this->_linkID->query($this->queryStr);
 		$this->debug();
         if ( !$this->queryID ) {
             throw_exception($this->error());
             return false;
         } else {
-            $this->numRows = mysqli_num_rows($this->queryID);
-            $this->numCols = mysqli_num_fields($this->queryID);
+            $this->numRows = $this->queryID->num_rows;
+            $this->numCols = $this->queryID->field_count;
             $this->resultSet = $this->getAll();
-            return new ArrayObject($this->resultSet);
+            return $this->resultSet;
         }
     }
 
@@ -166,14 +158,14 @@ Class DbMysqli extends Db{
         }
         $this->writeTimes ++;
 		$this->W(1);
-		$result	=	mysqli_query($this->_linkID,$this->queryStr);
+		$result	=	$this->_linkID->query($this->queryStr);
 		$this->debug();
         if ( false === $result ) {
             //throw_exception($this->error());
             return false;
         } else {
-            $this->numRows = mysqli_affected_rows($this->_linkID);
-            $this->lastInsID = mysqli_insert_id($this->_linkID);
+            $this->numRows = $this->_linkID->affected_rows;
+            $this->lastInsID = $this->_linkID->insert_id;
             return $this->numRows;
         }
     }
@@ -190,9 +182,10 @@ Class DbMysqli extends Db{
      +----------------------------------------------------------
      */
 	public function startTrans() {
+		$this->initConnect(true);
 		//数据rollback 支持
 		if ($this->transTimes == 0) {
-			mysqli_autocommit($this->_linkID, false);
+			$this->_linkID->autocommit(false);
 		}
 		$this->transTimes++;
 		return ;
@@ -212,8 +205,8 @@ Class DbMysqli extends Db{
     public function commit()
     {
         if ($this->transTimes > 0) {
-            $result = mysqli_commit($this->_linkID);
-            mysqli_autocommit($this->_linkID, true);
+            $result = $this->_linkID->commit();
+            $this->_linkID->autocommit( true);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -237,7 +230,7 @@ Class DbMysqli extends Db{
     public function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = mysqli_rollback($this->_linkID);
+            $result = $this->_linkID->rollback();
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -266,11 +259,11 @@ Class DbMysqli extends Db{
         }
         if($this->resultType==DATA_TYPE_OBJ){
             // 返回对象集
-            $this->result = mysqli_fetch_object($this->queryID);
+            $this->result = $this->queryID->fetch_object();
             $stat = is_object($this->result);
         }else{
             // 返回数组集
-            $this->result = mysqli_fetch_assoc($this->queryID);
+            $this->result = $this->queryID->fetch_assoc();
             $stat = is_array($this->result);
         }
         return $stat;
@@ -297,13 +290,13 @@ Class DbMysqli extends Db{
             return false;
         }
         if($this->numRows >0) {
-            if(mysqli_data_seek($this->queryID,$seek)){
+            if($this->queryID->data_seek($seek)){
                 if($this->resultType== DATA_TYPE_OBJ){
                     //返回对象集
-                    $result = mysqli_fetch_object($this->queryID);
+                    $result = $this->queryID->fetch_object();
                 }else{
                     // 返回数组集
-                    $result = mysqli_fetch_assoc($this->queryID);
+                    $result = $this->queryID->fetch_assoc();
                 }
             }
             return $result;
@@ -334,20 +327,20 @@ Class DbMysqli extends Db{
         }
         //返回数据集
         $result = array();
-        $info   = mysqli_fetch_fields($this->queryID);
+        $info   = $this->queryID->fetch_fields();
         if($this->numRows>0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
             //返回数据集
             for($i=0;$i<$this->numRows ;$i++ ){
                 if($resultType==DATA_TYPE_OBJ){
                     //返回对象集
-                    $result[$i] = mysqli_fetch_object($this->queryID);
+                    $result[$i] = $this->queryID->fetch_object();
                 }else{
                     // 返回数组集
-                    $result[$i] = mysqli_fetch_assoc($this->queryID);
+                    $result[$i] = $this->queryID->fetch_assoc();
                 }
             }
-            mysqli_data_seek($this->queryID,0);
+            $this->queryID->data_seek(0);
         }
         return $result;
     }
@@ -413,8 +406,8 @@ Class DbMysqli extends Db{
      */
     function close() { 
         if (!empty($this->queryID))
-            mysqli_free_result($this->queryID);
-        if (!mysqli_close($this->_linkID)){
+            $this->queryID->free_result();
+        if (!$this->_linkID->close()){
             throw_exception($this->error());
         }
         $this->_linkID = 0;
@@ -434,7 +427,7 @@ Class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     function error() {
-        $this->error = mysqli_error($this->_linkID);
+        $this->error = $this->_linkID->error;
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
@@ -455,8 +448,12 @@ Class DbMysqli extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function escape_string($str) { 
-        return  mysqli_real_escape_string($this->_linkID,$str); 
+    function escape_string($str) {
+		if($this->_linkID) {
+	        return  $this->_linkID->real_escape_string($str); 
+		}else{
+			return addslashes($str);
+		}
     } 
 
 }//类定义结束

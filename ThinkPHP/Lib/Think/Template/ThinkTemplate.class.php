@@ -448,21 +448,23 @@ class  ThinkTemplate extends Base
                 	$startTag = $tag['name'];
                 }
                 $endTag = $startTag;
-                if(empty($tag['attribute'])){
-					// 无属性标签
-					if($tag['content'] !='empty'){
-						$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-					}else{
-						$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)\/'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+				if(false !== stripos($content,C('TAGLIB_BEGIN').$startTag)) {
+					if(empty($tag['attribute'])){
+						// 无属性标签
+						if($tag['content'] !='empty'){
+							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+						}else{
+							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+						}
+					}elseif($tag['content'] !='empty') {//闭合标签解析
+						$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.+?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+						
+					}else {//开放标签解析
+						//$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+						// 开始标签必须有一个空格
+						$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
 					}
-				}elseif($tag['content'] !='empty') {//闭合标签解析
-                    $content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.+?)'.C('TAGLIB_BEGIN').'\/'.$endTag.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-                    
-                }else {//开放标签解析
-                    //$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-					// 开始标签必须有一个空格
-                    $content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)\/'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
-                }
+				}
             }
         }
     }

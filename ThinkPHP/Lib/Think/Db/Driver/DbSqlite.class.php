@@ -1,21 +1,13 @@
 <?php 
-// +----------------------------------------------------------------------+
-// | ThinkPHP                                                             |
-// +----------------------------------------------------------------------+
-// | Copyright (c) 2006~2007 http://thinkphp.cn All rights reserved.      |
-// +----------------------------------------------------------------------+
-// | Licensed under the Apache License, Version 2.0 (the 'License');      |
-// | you may not use this file except in compliance with the License.     |
-// | You may obtain a copy of the License at                              |
-// | http://www.apache.org/licenses/LICENSE-2.0                           |
-// | Unless required by applicable law or agreed to in writing, software  |
-// | distributed under the License is distributed on an 'AS IS' BASIS,    |
-// | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or      |
-// | implied. See the License for the specific language governing         |
-// | permissions and limitations under the License.                       |
-// +----------------------------------------------------------------------+
-// | Author: liu21st <liu21st@gmail.com>                                  |
-// +----------------------------------------------------------------------+
+// +----------------------------------------------------------------------
+// | ThinkPHP                                                             
+// +----------------------------------------------------------------------
+// | Copyright (c) 2007 http://thinkphp.cn All rights reserved.      
+// +----------------------------------------------------------------------
+// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
+// +----------------------------------------------------------------------
+// | Author: liu21st <liu21st@gmail.com>                                  
+// +----------------------------------------------------------------------
 // $Id$
 
 /**
@@ -127,7 +119,7 @@ Class DbSqlite extends Db
             $this->numRows = sqlite_num_rows($this->queryID);
             $this->numCols = sqlite_num_fields($this->queryID);
             $this->resultSet = $this->getAll();
-            return new ArrayObject($this->resultSet);
+            return $this->resultSet;
         }
     }
 
@@ -181,6 +173,7 @@ Class DbSqlite extends Db
      +----------------------------------------------------------
      */
 	public function startTrans() {
+		$this->initConnect(true);
 		//数据rollback 支持
 		if ($this->transTimes == 0) {
 			sqlite_query($this->_linkID,'BEGIN TRANSACTION');
@@ -339,6 +332,56 @@ Class DbSqlite extends Db
         }
         return $result;
     }
+
+    /**
+     +----------------------------------------------------------
+     * 取得数据表的字段信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    public function getFields($tableName) { 
+        $this->_query('PRAGMA table_info( '.$tableName.' )');
+        $result =   $this->getAll();
+        $info   =   array();
+        foreach ($result as $key => $val) {
+			if(is_object($val)) {
+				$val	=	get_object_vars($val);
+			}
+            $info[$val['Field']] = array(
+                'name'    => $val['Field'],
+                'type'    => $val['Type'],
+                'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
+                'default' => $val['Default'],
+                'primary' => (strtolower($val['Key']) == 'pri'),
+                'autoInc' => (strtolower($val['Extra']) == 'auto_increment'),
+            );
+        }
+        return $info;
+    } 
+
+    /**
+     +----------------------------------------------------------
+     * 取得数据库的表信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    public function getTables($dbName='') { 
+        $this->_query("SELECT name FROM sqlite_master WHERE type='table' "
+             . "UNION ALL SELECT name FROM sqlite_temp_master "
+             . "WHERE type='table' ORDER BY name");
+        $result =   $this->getAll();
+        $info   =   array();
+        foreach ($result as $key => $val) {
+            $info[$key] = current($val);
+        }
+        return $info;
+    } 
 
     /**
      +----------------------------------------------------------

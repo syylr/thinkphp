@@ -83,6 +83,7 @@ return  array(
 	/* 模板设置 */
 	'TMPL_CACHE_ON'=>true,		// 默认开启模板缓存
 	'TMPL_CACHE_TIME'=>-1,		// 模板缓存有效期 -1 永久 单位为秒
+	'TMPL_SWITCH_ON'=>true,	// 启用多模版支持
 	'DEFAULT_TEMPLATE'=>'default',	// 默认模板名称
 	'TEMPLATE_SUFFIX'=>'.html',	 // 默认模板文件后缀
 	'CACHFILE_SUFFIX'=>'.php',	// 默认模板缓存后缀
@@ -105,6 +106,7 @@ return  array(
 	'HTML_URL_SUFFIX'=>'.shtml',	// 伪静态后缀设置
 
 	/* 语言时区设置 */
+	'LANG_SWITCH_ON'=>false,	 // 默认关闭多语言包功能
 	'DEFAULT_LANGUAGE'=>'zh-cn',	 // 默认语言
 	'TIME_ZONE'=>'PRC',		 // 默认时区
 

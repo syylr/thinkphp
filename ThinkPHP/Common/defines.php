@@ -34,6 +34,10 @@ if (!defined('THINK_PATH')) exit();
 define('MAGIC_QUOTES_GPC',get_magic_quotes_gpc()?True:False);
 define('OUTPUT_GZIP_ON',ini_get('output_handler') || ini_get('zlib.output_compression') );
 define('MEMORY_LIMIT_ON',function_exists('memory_get_usage')?true:false);
+// 记录内存初始使用
+if(MEMORY_LIMIT_ON) {
+	 $GLOBALS['_startUseMems'] = memory_get_usage();
+}
 define('PHP_SAPI_NAME',php_sapi_name());
 define('IS_APACHE',strstr($_SERVER['SERVER_SOFTWARE'], 'Apache') || strstr($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed') );
 define('IS_IIS',PHP_SAPI_NAME =='isapi' ? 1 : 0);
@@ -53,9 +57,6 @@ if(!defined('_PHP_FILE_')) {
 		define('_PHP_FILE_',	rtrim($_SERVER["SCRIPT_NAME"],'/'));
 	}
 }
-// 当前项目名称
-if(!defined('APP_NAME')) define('APP_NAME', basename(_PHP_FILE_,'.php'));
-if(!defined('APP_PATH')) define('APP_PATH', dirname(THINK_PATH).'/'.APP_NAME);
 
 // 网站URL根目录
 if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {

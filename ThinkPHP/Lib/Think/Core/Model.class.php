@@ -18,8 +18,6 @@
 // +----------------------------------------------------------------------+
 // $Id$
 
-import("Think.Db.Db");
-
 define('HAS_ONE',1);
 define('BELONGS_TO',2);
 define('HAS_MANY',3);
@@ -127,6 +125,7 @@ class Model extends Base  implements IteratorAggregate
 				// 获取数据后生成静态缓存
 				$this->dataList	=	S($this->name);
 			}else{
+				import("Think.Db.Db");
 				// 获取数据库操作对象
 				if(!empty($this->connection)) {
 					// 当前模型有独立的数据库连接信息
@@ -209,36 +208,6 @@ class Model extends Base  implements IteratorAggregate
 
 	/**
      +----------------------------------------------------------
-     * 数据对象的属性是否设置 （魔术方法）
-     +----------------------------------------------------------
-     * @access private 
-     +----------------------------------------------------------
-     * @param string $name 名称
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-	private function __isset($name) {
-		return isset($this->data[$name]);
-	}
-
-	/**
-     +----------------------------------------------------------
-     * unset数据对象的属性 （魔术方法）
-     +----------------------------------------------------------
-     * @access private 
-     +----------------------------------------------------------
-     * @param string $name 名称
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-	private function __unset($name) {
-		unset($this->data[$name]);
-	}
-
-	/**
-     +----------------------------------------------------------
      * 利用__call方法重载 实现一些特殊的Model方法 （魔术方法）
      +----------------------------------------------------------
      * @access private 
@@ -300,13 +269,6 @@ class Model extends Base  implements IteratorAggregate
 					unset($this->data[$field]);
 				}
 			}
-		}elseif(strtolower(substr($method,0,5))=='isset'){
-			// isset 数据对象
-			$field	 =	 strtolower(substr($method,5));
-			if(in_array($field,$this->fields,true)) {
-				array_unshift($args,$field);
-				return call_user_func_array(array(&$this, '__isset'), $args);
-			}
 		}
 		return;
 	}
@@ -332,13 +294,15 @@ class Model extends Base  implements IteratorAggregate
 			return false;
 		}
 		// 插入数据库
-		if(false === $this->db->add($data,$this->getTableName(),$multi)){
+		if(false === $result = $this->db->add($data,$this->getTableName(),$multi)){
 			// 数据库插入操作失败
 			$this->error = L('_OPERATION_WRONG_');
 			return false;
 		}else {
 			$insertId	=	$this->getLastInsID();
-			$data[$this->getPk()]	=	 $insertId;
+			if($insertId && !isset($data[$this->getPk()])) {
+				$data[$this->getPk()]	=	 $insertId;
+			}
 			$this->saveBlobFields($data);
 			// 保存关联记录
 			if ($this->autoAddRelations || $autoLink){
@@ -347,7 +311,7 @@ class Model extends Base  implements IteratorAggregate
 			// 后置调用
 			$this->_after_create($data);
 			//成功后返回插入ID
-			return $insertId;
+			return $insertId ?	$insertId	: $result;
 		}
 	}
 	// Create回调方法 before after 
@@ -376,7 +340,9 @@ class Model extends Base  implements IteratorAggregate
 			return false;
 		}
 		$lock	 =	 ($this->pessimisticLock || $lock);
-		$where	=	$this->checkCondition($where);
+		if($this->viewModel) {
+			$where	=	$this->checkCondition($where);
+		}
 		if(false === $this->db->save($data,$this->getTableName(),$where,$limit,$order,$lock)){
 			$this->error = L('_OPERATION_WRONG_');
 			return false;
@@ -423,12 +389,12 @@ class Model extends Base  implements IteratorAggregate
 			// 如果返回false 中止
 			return false;
 		}
-		if($all) {
-			$identify   = $this->name.'List_'.to_guid_string(func_get_args());
-		}else{
-			$identify   = $this->name.'_'.to_guid_string($condition);
-		}
 		if($cache) {//启用动态数据缓存
+			if($all) {
+				$identify   = $this->name.'List_'.to_guid_string(func_get_args());
+			}else{
+				$identify   = $this->name.'_'.to_guid_string($condition);
+			}
 			$result  =  S($identify);
 			if(false !== $result) {
 				if(!$all) {
@@ -480,7 +446,9 @@ class Model extends Base  implements IteratorAggregate
 		if(!$this->_before_delete($where)) {
 			return false;
 		}
-		$where	=	$this->checkCondition($where);
+		if($this->viewModel) {
+			$where	=	$this->checkCondition($where);
+		}
 		$result=    $this->db->remove($where,$this->getTableName(),$limit,$order);
 		if(false === $result ){
 			$this->error =  L('_OPERATION_WRONG_');
@@ -802,6 +770,8 @@ class Model extends Base  implements IteratorAggregate
 			$data = $data->toArray();
 		}elseif(is_object($data)) {
 			$data	 =	 get_object_vars($data);
+		}elseif(is_string($data)){
+			parse_str($data,$data);
 		}elseif(!is_array($data)){
 			return false;
 		}
@@ -870,38 +840,36 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */	
 	public function checkCondition($data) {
-		 if($this->viewModel ) {
-			 if((empty($data) || (is_instance_of($data,'HashMap') && $data->isEmpty())) && !empty($this->viewCondition)) {
-				 $data = $this->viewCondition;
-			 }elseif(!is_string($data)) {
-				$data	 =	 $this->_facade($data);
-				$baseCondition = $this->viewCondition;
-				$view	=	array();
-				// 检查视图字段
-				foreach ($this->viewFields as $key=>$val){
-					foreach ($data as $name=>$value){
-						if(false !== $field = array_search($name,$val)) {
-							// 存在视图字段
-							if(is_numeric($field)) {
-								$_key	=	$key.'.'.$name;
-							}else{
-								$_key	=	$key.'.'.$field;
-							}
-							$view[$_key]	=	$value;
-							unset($data[$name]);
-							if(is_array($baseCondition) && isset($baseCondition[$_key])) {
-								// 组合条件处理
-								$view[$_key.','.$_key]	=	array($value,$baseCondition[$_key]);
-								unset($baseCondition[$_key]);
-								unset($view[$_key]);
-							}
+		 if((empty($data) || (is_instance_of($data,'HashMap') && $data->isEmpty())) && !empty($this->viewCondition)) {
+			 $data = $this->viewCondition;
+		 }elseif(!is_string($data)) {
+			$data	 =	 $this->_facade($data);
+			$baseCondition = $this->viewCondition;
+			$view	=	array();
+			// 检查视图字段
+			foreach ($this->viewFields as $key=>$val){
+				foreach ($data as $name=>$value){
+					if(false !== $field = array_search($name,$val)) {
+						// 存在视图字段
+						if(is_numeric($field)) {
+							$_key	=	$key.'.'.$name;
+						}else{
+							$_key	=	$key.'.'.$field;
+						}
+						$view[$_key]	=	$value;
+						unset($data[$name]);
+						if(is_array($baseCondition) && isset($baseCondition[$_key])) {
+							// 组合条件处理
+							$view[$_key.','.$_key]	=	array($value,$baseCondition[$_key]);
+							unset($baseCondition[$_key]);
+							unset($view[$_key]);
 						}
 					}
 				}
-				//if(!empty($view) && !empty($baseCondition)) {
-					$data	 =	 array_merge($data,$baseCondition,$view);
-				//}
-			 }
+			}
+			//if(!empty($view) && !empty($baseCondition)) {
+				$data	 =	 array_merge($data,$baseCondition,$view);
+			//}
 		 }
 		return $data;
 	}
@@ -1107,6 +1075,10 @@ class Model extends Base  implements IteratorAggregate
 			$this->error = L('_DATA_TYPE_INVALID_');
 			return false;
 		}
+		if(isset($data[$this->getPk()])) {
+			$where  = $this->getPk()."=".$data[$this->getPk()];
+			unset($data[$this->getPk()]);
+		}
 		// 检查乐观锁
 		if(!$this->checkLockVersion($data,$where)) {
 			$this->error = L('_RECORD_HAS_UPDATE_');
@@ -1137,14 +1109,14 @@ class Model extends Base  implements IteratorAggregate
 		}
 		// 检查乐观锁
 		$identify   = $this->name.'_'.$id.'_lock_version';
-		if($this->optimLock && Session::is_set($identify)) {
-			$lock_version = Session::get($identify);
+		if($this->optimLock && isset($_SESSION[$identify])) {
+			$lock_version = $_SESSION[$identify];
 			if(!empty($where)) {
 				$vo = $this->find($where,$this->optimLock);
 			}else {
 				$vo = $this->find($data,$this->optimLock);
 			}
-			Session::set($identify,$lock_version);
+			$_SESSION[$identify]	 =	 $lock_version;
 			$curr_version = is_array($vo)?$vo[$this->optimLock]:$vo->{$this->optimLock};
 			if(isset($curr_version)) {
 				if($curr_version>0 && $lock_version != $curr_version) {
@@ -1156,7 +1128,7 @@ class Model extends Base  implements IteratorAggregate
 					if($save_version != $lock_version+1) {
 						$data[$this->optimLock]	 =	 $lock_version+1;
 					}
-					Session::set($identify,$lock_version+1);
+					$_SESSION[$identify]	 =	 $lock_version+1;
 				}
 			}
 		}
@@ -1236,7 +1208,7 @@ class Model extends Base  implements IteratorAggregate
 								$mappingOrder =  !empty($val['mapping_order'])?$val['mapping_order']:'';
 								$mappingLimit =  !empty($val['mapping_limit'])?$val['mapping_limit']:'';
 								// 延时获取关联记录
-								$relationData   =  $model->findAll($mappingCondition,$mappingFields,$mappingOrder,$mappingLimit,null,null,null);
+								$relationData   =  $model->findAll($mappingCondition,$mappingFields,$mappingOrder,$mappingLimit);
 								break;
 							case MANY_TO_MANY:
 								if(empty($mappingCondition)) {
@@ -1254,7 +1226,7 @@ class Model extends Base  implements IteratorAggregate
 								if(!empty($mappingLimit)) {
 									$sql .= ' LIMIT '.$mappingLimit;
 								}
-								$relationData	=	$this->_query($sql,false,true);
+								$relationData	=	$this->_query($sql);
 								break;
 						}
 						if(is_array($result)) {
@@ -1862,7 +1834,10 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getField($field,$condition='')
 	{
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+			$field	=	$this->checkFields($field);
+		}
 		$rs = $this->db->find($condition,$this->getTableName(),$field);
 		return $this->getCol($rs,$field);
 	}
@@ -1884,7 +1859,10 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getFields($field,$condition='',$sepa=' ')
 	{
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+			$field	=	$this->checkFields($field);
+		}
 		$rs = $this->db->find($condition,$this->getTableName(),$field);
 		return $this->getCols($rs,$field,$sepa);
 	}
@@ -1907,7 +1885,10 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	public function setField($field,$value,$condition='') {
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+			$field	=	$this->checkFields($field);
+		}
 		return $this->db->setField($field,$value,$this->getTableName(),$condition);
 	}
 
@@ -1927,7 +1908,10 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	public function setInc($field,$condition='',$step=1) {
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+			$field	=	$this->checkFields($field);
+		}
 		return $this->db->setInc($field,$this->getTableName(),$condition,$step);
 	}
 
@@ -1947,7 +1931,10 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	public function setDec($field,$condition='',$step=1) {
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+			$field	=	$this->checkFields($field);
+		}
 		return $this->db->setDec($field,$this->getTableName(),$condition,$step);
 	}
 
@@ -2029,7 +2016,9 @@ class Model extends Base  implements IteratorAggregate
 	public function count($condition='',$field='*')
 	{
 		$fields = 'count('.$field.') as count';
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+		}
 		$rs = $this->db->find($condition,$this->getTableName(),$fields);
 		return $this->getCol($rs,'count');
 	}
@@ -2051,7 +2040,9 @@ class Model extends Base  implements IteratorAggregate
 	public function max($field,$condition='')
 	{
 		$fields = 'MAX('.$field.') as max';
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+		}
 		$rs = $this->db->find($condition,$this->getTableName(),$fields);
 		return $this->getCol($rs,'max')|0;
 	}
@@ -2073,7 +2064,9 @@ class Model extends Base  implements IteratorAggregate
 	public function min($field,$condition='')
 	{
 		$fields = 'MIN('.$field.') as min';
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+		}
 		$rs = $this->db->find($condition,$this->getTableName(),$fields);
 		return $this->getCol($rs,'min')|0;
 	}
@@ -2095,7 +2088,9 @@ class Model extends Base  implements IteratorAggregate
 	public function sum($field,$condition='')
 	{
 		$fields = 'SUM('.$field.') as sum';
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+		}
 		$rs = $this->db->find($condition,$this->getTableName(),$fields);
 		return $this->getCol($rs,'sum') | 0;
 	}
@@ -2117,7 +2112,9 @@ class Model extends Base  implements IteratorAggregate
 	public function avg($field,$condition='')
 	{
 		$fields = 'AVG('.$field.') as avg';
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+		}
 		$rs = $this->db->find($condition,$this->getTableName(),$fields);
 		return $this->getCol($rs,'avg')|0;
 	}
@@ -2140,7 +2137,10 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getN($position=0,$condition='',$order='',$fields='*',$relation=false)
 	{
-		$condition = $this->checkCondition($condition);
+		if($this->viewModel) {
+			$condition	=	$this->checkCondition($condition);
+			$field	=	$this->checkFields($field);
+		}
 		if($position>=0) {
 			$rs = $this->db->find($condition,$this->getTableName(),$fields,$order,$position.',1');
 			return $this->rsToVo($rs,false,0,$relation);
@@ -2204,7 +2204,7 @@ class Model extends Base  implements IteratorAggregate
 			if(is_object($data))	$data	=	get_object_vars($data);
 			if(isset($data[$this->optimLock]) && isset($data[$this->getPk()])) {
 				// 只有当存在乐观锁字段和主键有值的时候才记录乐观锁
-				Session::set($this->name.'_'.$data[$this->getPk()].'_lock_version',$data[$this->optimLock]);
+				$_SESSION[$this->name.'_'.$data[$this->getPk()].'_lock_version']	=	$data[$this->optimLock];
 			}
 		}
 	}

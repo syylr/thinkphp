@@ -18,10 +18,6 @@
 // +----------------------------------------------------------------------+
 // $Id$
 
-import("Think.Util.Config");
-import("Think.Util.Session");
-import("Think.Util.Cookie");
-
 /**
  +------------------------------------------------------------------------------
  * ThinkPHP 应用程序类 执行应用过程管理
@@ -114,22 +110,14 @@ class App extends Base
         set_error_handler(array(&$this,"appError"));
 		set_exception_handler(array(&$this,"appException"));
 
-		// 加载惯例配置文件
-		C(array_change_key_case(include THINK_PATH.'/Common/convention.php'));
-
-        // 加载项目配置文件
-        // 支持App.* 作为配置文件
-        // 自动生成_appConfig.php 配置缓存
-        $this->loadConfig('App',CONFIG_PATH,'_config.php');
-
-		// 如果是调试模式加载调试模式配置文件
-		if(C('DEBUG_MODE')) {
-			// 加载系统默认的开发模式配置文件
-			C(array_change_key_case(include THINK_PATH.'/Common/debug.php'));
-			if(file_exists(CONFIG_PATH.'_debug.php')) {
-				// 允许项目增加开发模式配置定义
-				C(array_change_key_case(include CONFIG_PATH.'_debug.php'));
-			}
+		// 检查项目是否编译过
+		// 在部署模式下会自动在第一次执行的时候编译项目
+		if(file_exists(APP_PATH.'/~app.php')) {
+			// 直接读取编译后的项目文件
+			C(array_change_key_case(include APP_PATH.'/~app.php'));
+		}else{
+			// 预编译项目
+			$this->build();
 		}
 
         // 设置系统时区 PHP5支持
@@ -142,7 +130,7 @@ class App extends Base
 			Filter::load(ucwords(C('SESSION_TYPE')).'Session');
         }
         // Session初始化
-        Session::start();   
+		session_start();
 
         // 加载插件 必须在Session开启之后加载插件
 		if(C('THINK_PLUGIN_ON')) {
@@ -176,31 +164,25 @@ class App extends Base
         if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
 
 		// 加载模块配置文件 并自动生成配置缓存文件
-		$this->loadConfig('m_'.MODULE_NAME,CONFIG_PATH,'m_'.MODULE_NAME.'Config.php',false);
-
-		// 代理访问检测
-		if(C('LIMIT_PROXY_VISIT') && ($_SERVER['HTTP_X_FORWARDED_FOR'] || $_SERVER['HTTP_VIA'] || $_SERVER['HTTP_PROXY_CONNECTION'] || $_SERVER['HTTP_USER_AGENT_VIA'])) {
-			// 禁止代理访问
-			exit('Access Denied');
+		if(file_exists(CONFIG_PATH.'m_'.MODULE_NAME.'Config.php')) {
+			C(array_change_key_case(include CONFIG_PATH.'m_'.MODULE_NAME.'Config.php'));
 		}
+
 		//	启用页面防刷新机制
 		if(C('LIMIT_RESFLESH_ON')) {
+			//	启用页面防刷新机制
 			$guid	=	md5($_SERVER['PHP_SELF']);
 			// 检查页面刷新间隔
-			if(Cookie::is_set('_last_visit_time_'.$guid) && Cookie::get('_last_visit_time_'.$guid)>time()-C('LIMIT_REFLESH_TIMES')) {
+			if(isset($_COOKIE['_last_visit_time_'.$guid]) && $_COOKIE['_last_visit_time_'.$guid]>time()-C('LIMIT_REFLESH_TIMES')) {
 				// 页面刷新读取浏览器缓存
 				header('HTTP/1.1 304 Not Modified');
 				exit;
 			}else{
 				// 缓存当前地址访问时间
-				Cookie::set('_last_visit_time_'.$guid,time());
-				header('Last-Modified:'.(date('D,d M Y H:i:s',time()-C('LIMIT_REFLESH_TIMES'))).' GMT');
+				setcookie('_last_visit_time_'.$guid, $_SERVER['REQUEST_TIME'],$_SERVER['REQUEST_TIME']+3600);
+				$_COOKIE['_last_visit_time_'.$guid]	 =	 $_SERVER['REQUEST_TIME'];
+				header('Last-Modified:'.(date('D,d M Y H:i:s',$_SERVER['REQUEST_TIME']-C('LIMIT_REFLESH_TIMES'))).' GMT');
 			}
-		}
-
-        // 加载项目公共文件
-		if(file_exists(APP_PATH.'/Common/common.php')) {
-	       	include APP_PATH.'/Common/common.php';
 		}
 
         // 系统检查
@@ -221,10 +203,52 @@ class App extends Base
         apply_filter('app_init');
 
 		// 记录应用初始化时间
-		$GLOBALS['_initTime'] = array_sum(explode(' ', microtime()));
+		$GLOBALS['_initTime'] = microtime(TRUE);
 
         return ;
     }
+
+    /**
+     +----------------------------------------------------------
+	 * 读取配置信息 编译项目
+     +----------------------------------------------------------
+     * @access private 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	private function build() 
+	{
+		// 加载惯例配置文件
+		C(array_change_key_case(include THINK_PATH.'/Common/convention.php'));
+
+        // 加载项目配置文件
+		if(file_exists(CONFIG_PATH.'_config.php')) {
+			C(array_change_key_case(include CONFIG_PATH.'_config.php'));
+		}
+        // 加载项目公共文件
+		if(file_exists(APP_PATH.'/Common/common.php')) {
+	       	include APP_PATH.'/Common/common.php';
+			if(!C('DEBUG_MODE')) {
+				$common	= php_strip_whitespace(APP_PATH.'/Common/common.php');
+			}
+		}
+		// 如果是调试模式加载调试模式配置文件
+		if(C('DEBUG_MODE')) {
+			// 加载系统默认的开发模式配置文件
+			C(array_change_key_case(include THINK_PATH.'/Common/debug.php'));
+			if(file_exists(CONFIG_PATH.'_debug.php')) {
+				// 允许项目增加开发模式配置定义
+				C(array_change_key_case(include CONFIG_PATH.'_debug.php'));
+			}
+		}else{
+			// 部署模式下面生成编译文件
+			// 下次直接加载项目编译文件
+			$content  = $common."<?php\nreturn ".var_export(C(),true).";\n?>";
+			file_put_contents(APP_PATH.'/~app.php',$content);
+		}
+		return ;
+	}
 
     /**
      +----------------------------------------------------------
@@ -300,39 +324,6 @@ class App extends Base
 
     /**
      +----------------------------------------------------------
-     * 加载配置文件
-     * 支持XML、INI和PHP数组、对象和常量定义文件
-     +----------------------------------------------------------
-     * @access private 
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    private function loadConfig($name,$path,$configFile) 
-    {
-        //加载项目配置文件
-        $cacheFile =   $path.$configFile;
-        //如果存在系统生成的配置缓存文件，则直接引入，无需再进行配置文件解析
-        if(!file_exists($cacheFile)) {
-            //寻找匹配的项目配置文件
-            //支持XML、INI和PHP数组、对象和常量定义文件
-            $list = glob($path.$name.'.*');
-            if(!empty($list)) {
-                $config  = Config::getInstance();
-                //分析第一个配置文件
-                $result  = $config->parse($list[0]);
-                // 生成配置缓存文件供下次加载
-				// 默认采用PHP数组方式缓存
-				$result->toArray($cacheFile);
-            }
-        }
-		if(file_exists($cacheFile)) {
-			C(array_change_key_case(include $cacheFile));
-		}
-    }
-
-    /**
-     +----------------------------------------------------------
      * 语言检查
      * 检查浏览器支持语言，并自动加载语言包
      +----------------------------------------------------------
@@ -343,52 +334,62 @@ class App extends Base
      */
     private function checkLanguage()
     {
-		$defaultLang = C('DEFAULT_LANGUAGE');
-		//检测浏览器支持语言
-		if(isset($_GET[C('VAR_LANGUAGE')])) {
-			// 有在url 里面设置语言
-			$langSet = $_GET[C('VAR_LANGUAGE')];
-			Cookie::set('l',$langSet);	// 记住用户的选择
-		}elseif ( Cookie::is_set('l') ) {
-			// 获取上次用户的选择
-			$langSet = Cookie::get('l');
-		}else {
-			if(C('AUTO_DETECT_LANG')) {
-				// 启用自动侦测浏览器语言
-				preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
-				$langSet = $matches[1];
-				Cookie::set('l',$langSet);
-			}else{
-				// 采用系统设置的默认语言
-				$langSet = $defaultLang;
+		if(C('LANG_SWITCH_ON')) {
+			// 使用语言包功能
+			$defaultLang = C('DEFAULT_LANGUAGE');
+			//检测浏览器支持语言
+			if(isset($_GET[C('VAR_LANGUAGE')])) {
+				// 有在url 里面设置语言
+				$langSet = $_GET[C('VAR_LANGUAGE')];
+				// 记住用户的选择
+				setcookie('think_language',$langSet,360000);
+			}elseif ( isset($_COOKIE['think_language']) ) {
+				// 获取上次用户的选择
+				$langSet = $_COOKIE['think_language'];
+			}else {
+				if(C('AUTO_DETECT_LANG') && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+					// 启用自动侦测浏览器语言
+					preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
+					$langSet = $matches[1];
+					setcookie('think_language',$langSet,360000);
+				}else{
+					// 采用系统设置的默认语言
+					$langSet = $defaultLang;
+				}
 			}
-		}
-        // setlocale操作比较费时，暂时屏蔽 
-        //setlocale(LC_ALL, $langSet);       
 
-        // 定义当前语言
-        define('LANG_SET',$langSet);
-		// 加载语言类
-		import("Think.Util.Language");
-		// 加载框架语言包
-        if (file_exists(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
-			Language::load(THINK_PATH.'/Lang/'.LANG_SET.'.php');
+			// 定义当前语言
+			define('LANG_SET',$langSet);
+			if(file_exists(TEMP_PATH.MODULE_NAME.'_lang.php')) {
+				// 加载语言包缓存文件
+				L(include TEMP_PATH.MODULE_NAME.'_lang.php');
+			}else{
+				// 加载框架语言包
+				if (file_exists(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
+					L(include THINK_PATH.'/Lang/'.LANG_SET.'.php');
+				}else{
+					L(include THINK_PATH.'/Lang/'.$defaultLang.'.php');    
+				}
+
+				// 读取项目（公共）语言包
+				if (file_exists(LANG_PATH.LANG_SET.'.php'))
+					L(include LANG_PATH.LANG_SET.'.php');  
+				else
+					L(include LANG_PATH.$defaultLang.'.php');
+
+				// 读取当前模块的语言包
+				if (file_exists(LANG_PATH.strtolower(MODULE_NAME).'_'.LANG_SET.'.php'))
+					L(include LANG_PATH.strtolower(MODULE_NAME).'_'.LANG_SET.'.php');  
+
+				// 写入语言包缓存文件
+				$content  = "<?php\nreturn ".var_export(L(),true).";\n?>";
+				file_put_contents(TEMP_PATH.MODULE_NAME.'_lang.php',$content);
+			}
 		}else{
-			Language::load(THINK_PATH.'/Lang/'.$defaultLang.'.php');       
+			// 不使用语言包功能，仅仅加载框架语言文件
+			L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
 		}
-        // 读取项目（公共）语言包
-		if (file_exists(LANG_PATH.LANG_SET.'.php'))
-	        Language::load(LANG_PATH.LANG_SET.'.php');  
-		else
-			Language::load(LANG_PATH.$defaultLang.'.php');
-
-		// 读取当前模块的语言包
-		if (file_exists(LANG_PATH.strtolower(MODULE_NAME).'_'.LANG_SET.'.php'))
-	        Language::load(LANG_PATH.strtolower(MODULE_NAME).'_'.LANG_SET.'.php');  
-
-		// 缓存语言变量
-		L(Language::$_lang);
-        return ;
+		return ;
     }
 
     /**
@@ -404,26 +405,36 @@ class App extends Base
      */
     private function checkTemplate()
     {
-        if ( isset($_GET[C('VAR_TEMPLATE')]) ) {
-            $templateSet = $_GET[C('VAR_TEMPLATE')];
-			Cookie::set('t',$templateSet);
-        } else {
-			if(Cookie::is_set('t')) {
-				$templateSet = Cookie::get('t');
-            }
-            else {
-                $templateSet =    C('DEFAULT_TEMPLATE');
-				Cookie::set('t',$templateSet);
-            }
-        }
-        if (!is_dir(TMPL_PATH.$templateSet)) {
-            //模版不存在的话，使用默认模版
-            $templateSet =    C('DEFAULT_TEMPLATE');
-        }
-        //模版名称
-        define('TEMPLATE_NAME',$templateSet); 
-        // 当前模版路径
-        define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME); 
+		if(C('TMPL_SWITCH_ON')) {
+			// 启用多模版
+			$t = C('VAR_TEMPLATE');
+			if ( isset($_GET[$t]) ) {
+				$templateSet = $_GET[$t];
+				setcookie('think_template',$templateSet,360000);
+			} else {
+				if(isset($_COOKIE['think_template'])) {
+					$templateSet = $_COOKIE['think_template'];
+				}else {
+					$templateSet =    C('DEFAULT_TEMPLATE');
+					setcookie('think_template',$templateSet,360000);
+				}
+			}
+			if (!is_dir(TMPL_PATH.$templateSet)) {
+				//模版不存在的话，使用默认模版
+				$templateSet =    C('DEFAULT_TEMPLATE');
+			}
+			//模版名称
+			define('TEMPLATE_NAME',$templateSet); 
+			// 当前模版路径
+			define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME.'/'); 
+			$tmplDir	=	TMPL_DIR.'/'.TEMPLATE_NAME.'/';
+		}else{
+			// 把模版目录直接放置项目模版文件
+			// 该模式下面没有TEMPLATE_NAME常量
+			define('TEMPLATE_PATH',TMPL_PATH); 
+			$tmplDir	=	TMPL_DIR.'/';
+		}
+
         //当前网站地址
         define('__ROOT__',WEB_URL);
         //当前项目地址
@@ -441,16 +452,16 @@ class App extends Base
         // 默认加载的模板文件名
 		if(defined('C_MODULE_NAME')) {
 	        C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(':','/',C_MODULE_NAME).'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
-	        define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/'.str_replace(':','/',C_MODULE_NAME));
+	        define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.str_replace(':','/',C_MODULE_NAME));
 		}else{
 	        C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
-	        define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/'.MODULE_NAME);
+	        define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
 		}
 
         //网站公共文件地址
         define('WEB_PUBLIC_URL', WEB_URL.'/Public');
         //项目公共文件地址
-        define('APP_PUBLIC_URL', WEB_URL.'/'.APP_NAME.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/Public'); 
+        define('APP_PUBLIC_URL', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.'Public'); 
 
         return ;
     }
@@ -466,24 +477,23 @@ class App extends Base
      */
     private function loadPlugIn()
     {
-        // 如果存在缓存插件数据，直接包含
-        if(file_exists(CONFIG_PATH.'_plugins.php')) {
-            $plugins    = include CONFIG_PATH.'_plugins.php';
-        }else {
-            // 检查插件数据
-            $common_plugins = get_plugins(THINK_PATH.'/PlugIns','Think');// 公共插件
-            $app_plugins = get_plugins();// 项目插件
-            // 合并插件数据
-            $plugins    = array_merge($common_plugins,$app_plugins);   
-            // 缓存插件数据
-            $content  = "<?php\nreturn ".var_export($plugins,true).";\n?>";
-            file_put_contents(CONFIG_PATH.'_plugins.php',$content);              
-        }
-
         //加载有效插件文件
-        foreach($plugins as $key=>$val) {
-            include_cache($val['file']);
-        }
+		if(file_exists(CONFIG_PATH.'~plugins.php')) {
+			include CONFIG_PATH.'~plugins.php';
+		}else{
+			// 检查插件数据
+			$common_plugins = get_plugins(THINK_PATH.'/PlugIns','Think');// 公共插件
+			$app_plugins = get_plugins();// 项目插件
+			// 合并插件数据
+			$plugins    = array_merge($common_plugins,$app_plugins);   
+			// 缓存插件数据
+			$content	=	'';
+			foreach($plugins as $key=>$val) {
+				include $val['file'];
+				$content	.=	php_strip_whitespace($val['file']);
+			}
+			file_put_contents(CONFIG_PATH.'~plugins.php',$content);
+		}
         return ;
     }
 
@@ -500,7 +510,6 @@ class App extends Base
      */
     public function exec()
     {
-		import("Think.Core.Action");
         //创建Action控制器实例
 		if(defined('C_MODULE_NAME')) {
 			$module  =  A(C_MODULE_NAME);
