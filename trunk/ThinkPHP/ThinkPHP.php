@@ -34,11 +34,12 @@ $GLOBALS['_beginTime'] = microtime(TRUE);
 // ThinkPHP系统目录定义
 if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
 if(!defined('APP_PATH')) define('APP_PATH', dirname(THINK_PATH).'/'.APP_NAME);
+if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH);
 
-if(file_exists(APP_PATH.'/~runtime.php')) {
+if(file_exists(RUNTIME_PATH.'/~runtime.php')) {
 	// 加载框架核心缓存文件
 	// 如果有修改核心文件请删除该缓存
-	require APP_PATH.'/~runtime.php';
+	require RUNTIME_PATH.'/~runtime.php';
 }else{
 	// 加载系统定义文件
 	require THINK_PATH."/Common/defines.php";
@@ -71,7 +72,8 @@ if(file_exists(APP_PATH.'/~runtime.php')) {
 		// 加载兼容函数
 		$content .=	 THINK_PATH.'/Common/compat.php,';	
 	}
-	file_put_contents(APP_PATH.'/~runtime.php',$content);
+	file_put_contents(RUNTIME_PATH.'/~runtime.php',$content);
+	unset($content);
 }
 // 记录加载文件时间
 $GLOBALS['_loadTime'] = microtime(TRUE);
