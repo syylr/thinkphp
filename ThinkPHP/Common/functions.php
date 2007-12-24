@@ -1183,23 +1183,22 @@ function S($name,$value='',$expire='',$type='') {
 	return $value;
 }
 
-// 文件数据读取和保存
-function F($name,$value='',$path=DATA_PATH) {
+// 快速文件数据读取和保存 针对简单类型数据 字符串、数组
+function F($name,$value='',$expire=-1,$path=DATA_PATH) {
 	static $_cache = array();
+	$filename	=	$path.$name.'.php';
 	if('' !== $value) {
-        //取得文件缓存对象实例
-        //取得缓存对象实例
-        $cache  = Cache::getInstance('File',array('temp'=>$path,'expire'=>-1));
 		if(is_null($value)) {
 			// 删除缓存
-			$result	=	$cache->rm($name);
+			$result	=	unlink($filename);
 			if($result) {
 				unset($_cache[$name]);
 			}
 			return $result;
 		}else{
 			// 缓存数据
-			$cache->set($name,$value);
+			$content   =   "<?php\n//".sprintf('%012d',$expire)."\nreturn ".var_export($value,true).";\n?>";
+			$result  =   file_put_contents($filename,$content);
 			$_cache[$name]	 =	 $value;
 		}
 		return ;
@@ -1207,11 +1206,19 @@ function F($name,$value='',$path=DATA_PATH) {
 	if(isset($_cache[$name])) {
 		return $_cache[$name];
 	}
-	// 取得文件缓存对象实例
-    $cache  = Cache::getInstance('File',array('temp'=>$path,'expire'=>-1));
 	// 获取缓存数据
-	$value      =  $cache->get($name);
-	$_cache[$name]	 =	 $value;
+	if(file_exists($filename) && false !== $content = file_get_contents($filename)) {
+		$expire  =  (int)substr($content,8, 12);
+		if($expire != -1 && time() > filemtime($filename) + $expire) { 
+			//缓存过期删除缓存文件
+			unlink($filename);
+			return false;
+		}
+		$value	=	 eval(substr($content,21,-2));
+		$_cache[$name]	 =	 $value;
+	}else{
+		$value	=	false;
+	}
 	return $value;
 }
 
