@@ -62,7 +62,7 @@ class Db extends Base
     protected $resultSet = null;
 
     // 数据集返回类型 0 返回数组 1 返回对象
-    protected $resultType = DATA_TYPE_ARRAY;
+    public $resultType = DATA_TYPE_ARRAY;
 
     // 当前查询返回的字段集
     protected $fields = null;
