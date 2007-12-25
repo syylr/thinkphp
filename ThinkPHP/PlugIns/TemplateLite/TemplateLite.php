@@ -11,7 +11,7 @@ Author URI: http://www.20488.com/
 function TemplateLite($templateFile,$templateVar,$charset,$varPrefix='')
 {
     $templateFile=substr($templateFile,strlen(TMPL_PATH));
-    include_once("class.template.php");
+    include_once(PLUGIN_PATH."TemplateLite/class.template.php");
         $tpl = new Template_Lite();
         $tpl->template_dir = TMPL_PATH;
         $tpl->compile_dir = CACHE_PATH ;

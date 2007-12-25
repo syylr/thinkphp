@@ -13,7 +13,7 @@ function EaseTemplate($templateFile,$templateVar,$charset,$varPrefix='')
     $templateFile = substr($templateFile,strlen(TMPL_PATH),-5);
     $CacheDir = substr(CACHE_PATH,0,-1);
     $TemplateDir = substr(TMPL_PATH,0,-1);
-    include "template.php";
+    include PLUGIN_PATH."EaseTemplate/template.php";
 	$tpl = new EaseTemplate(
 	  array(
 		'CacheDir'=>$CacheDir,
