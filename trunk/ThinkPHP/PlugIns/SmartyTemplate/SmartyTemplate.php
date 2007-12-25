@@ -11,7 +11,7 @@ Author URI: http://blog.liu21st.com/
 function SmartyTemplate($templateFile,$templateVar,$charset,$varPrefix='')
 {
     $templateFile=substr($templateFile,strlen(TMPL_PATH));
-        include_once("Smarty.class.php");
+        include_once(PLUGIN_PATH."SmartyTemplate/Smarty.class.php");
         $tpl = new Smarty();
         $tpl->caching = true;
         $tpl->template_dir = TMPL_PATH;
