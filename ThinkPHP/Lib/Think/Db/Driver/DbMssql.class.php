@@ -370,7 +370,7 @@ Class DbMssql extends Db{
      +----------------------------------------------------------
      */
     public function getFields($tableName) { 
-        $this->_query('SHOW COLUMNS FROM '.$tableName);
+        $this->_query('DESCRIBE '.$tableName);
         $result =   $this->getAll();
         $info   =   array();
         foreach ($result as $key => $val) {

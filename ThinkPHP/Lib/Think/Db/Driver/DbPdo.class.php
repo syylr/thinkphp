@@ -348,7 +348,7 @@ Class DbPdo extends Db{
      */
     public function getFields($tableName) { 
 		$this->initConnect(true);
-        $sth	=	$this->_linkID->prepare('SHOW COLUMNS FROM '.$tableName);
+        $sth	=	$this->_linkID->prepare('DESCRIBE '.$tableName);
 		$sth->execute();
 		$result = $sth->fetchAll(constant('PDO::FETCH_ASSOC'));
         $info   =   array();
