@@ -70,7 +70,8 @@ if(file_exists(RUNTIME_PATH.'/~runtime.php')) {
 	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/View.class.php');
 	if(version_compare(PHP_VERSION,'5.2.0','<') ) {
 		// 加载兼容函数
-		$content .=	 THINK_PATH.'/Common/compat.php,';	
+		require THINK_PATH.'/Common/compat.php';
+		$content .=	 php_strip_whitespace(THINK_PATH.'/Common/compat.php');	
 	}
 	file_put_contents(RUNTIME_PATH.'/~runtime.php',$content);
 	unset($content);
