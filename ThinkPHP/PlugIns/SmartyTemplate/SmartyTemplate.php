@@ -7,7 +7,6 @@ Author: 流年 修正 云中雾
 Version: 1.0
 Author URI: http://blog.liu21st.com/
 */
-
 function SmartyTemplate($templateFile,$templateVar,$charset,$varPrefix='')
 {
     $templateFile=substr($templateFile,strlen(TMPL_PATH));
