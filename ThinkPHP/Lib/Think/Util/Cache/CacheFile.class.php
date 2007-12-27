@@ -47,9 +47,6 @@ class CacheFile extends Cache
             $this->options['temp'] = TEMP_PATH;
         }
         $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
-        if(!is_dir($this->options['temp'])){
-            mkdir($this->options['temp']);
-        }
         if(substr($this->options['temp'], -1) != "/")    $this->options['temp'] .= "/";
         $this->connected = is_dir($this->options['temp']) && is_writeable($this->options['temp']);
         $this->type = strtoupper(substr(__CLASS__,6));
@@ -78,11 +75,6 @@ class CacheFile extends Cache
 				return false;
 			 chmod($this->options['temp'], $dir_perms);
 		}
-        // 创建缓存目录安全文件
-		if (!file_exists($this->options['temp']."index.php")) {
-			 touch($this->options['temp']."index.php");
-			 chmod($this->options['temp']."index.php", $file_perms);
-		}    	
     }
 
     /**
