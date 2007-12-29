@@ -358,6 +358,9 @@ class Db extends Base
 				return 'DB2';
 			}elseif(false !== strpos(strtoupper($this->dbType),'ODBC')){
 				return 'ODBC';
+			}elseif(false !== strpos(strtoupper($this->dbType),'IBASE')){
+				// Firebird 剑雷 2007.12.29
+				return 'IBASE';
 			}else{
 				return $this->dbType;
 			}
@@ -564,6 +567,14 @@ class Db extends Base
 			}elseif('MSSQL'== strtoupper(C('DB_TYPE'))){
 				// MsSQL
 				$limitStr = ' TOP '.$limit;
+			}elseif('IBASE'== strtoupper(C('DB_TYPE'))){
+				// Firebird 剑雷 2007.12.29
+				$limit	=	explode(',',$limit);
+				if(count($limit)>1) {
+				  $limitStr = ' FIRST '.$limit[1].' SKIP '.$limit[0];
+				}else{
+				  $limitStr = ' FIRST '.$limit[0];
+				}
 			}else{
 				// 其它数据库
 	            $limitStr .= ' LIMIT '.$limit;
@@ -975,7 +986,7 @@ class Db extends Base
      */
     public function find($where,$tables,$fields='*',$order=null,$limit=null,$group=null,$having=null,$join=null,$cache=true,$lazy=false,$lock=false)
     {
-		if('MSSQL' == strtoupper(C('DB_TYPE'))) {
+		if(in_array($this->getDbType(),array('MSSQL','IBASE'),true) ) {
 			$this->queryStr = 'SELECT '.$this->parseLimit($limit)
 							.$this->parseFields($fields)
 							.' FROM '.$tables
