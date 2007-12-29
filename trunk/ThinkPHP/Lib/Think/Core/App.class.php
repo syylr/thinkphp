@@ -112,9 +112,9 @@ class App extends Base
 
 		// 检查项目是否编译过
 		// 在部署模式下会自动在第一次执行的时候编译项目
-		if(file_exists(APP_PATH.'/~app.php')) {
+		if(file_exists(RUNTIME_PATH.'/~app.php')) {
 			// 直接读取编译后的项目文件
-			C(array_change_key_case(include APP_PATH.'/~app.php'));
+			C(array_change_key_case(include RUNTIME_PATH.'/~app.php'));
 		}else{
 			// 预编译项目
 			$this->build();
@@ -245,7 +245,7 @@ class App extends Base
 			// 部署模式下面生成编译文件
 			// 下次直接加载项目编译文件
 			$content  = $common."<?php\nreturn ".var_export(C(),true).";\n?>";
-			file_put_contents(APP_PATH.'/~app.php',$content);
+			file_put_contents(RUNTIME_PATH.'/~app.php',$content);
 		}
 		return ;
 	}
