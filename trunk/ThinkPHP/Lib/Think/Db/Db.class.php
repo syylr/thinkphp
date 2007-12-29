@@ -358,7 +358,7 @@ class Db extends Base
 				return 'DB2';
 			}elseif(false !== strpos(strtoupper($this->dbType),'ODBC')){
 				return 'ODBC';
-			}elseif(false !== strpos(strtoupper($this->dbType),'IBASE')){
+			}elseif(false !== strpos(strtoupper($this->dbType),'FIREBIRD')){
 				// Firebird 剑雷 2007.12.29
 				return 'IBASE';
 			}else{
@@ -559,25 +559,25 @@ class Db extends Base
 				// PgSQL
 				$limit	=	explode(',',$limit);
 				if(count($limit)>1) {
-					$limitStr .= ' LIMIT '.$limit[1].' OFFSET '.$limit[0];
+					$limitStr .= ' LIMIT '.$limit[1].' OFFSET '.$limit[0].' ';
 				}else{
-					$limitStr .= ' LIMIT '.$limit[0];
+					$limitStr .= ' LIMIT '.$limit[0].' ';
 				}
 				
 			}elseif('MSSQL'== strtoupper(C('DB_TYPE'))){
 				// MsSQL
-				$limitStr = ' TOP '.$limit;
+				$limitStr = ' TOP '.$limit.' ';
 			}elseif('IBASE'== strtoupper(C('DB_TYPE'))){
 				// Firebird 剑雷 2007.12.29
 				$limit	=	explode(',',$limit);
 				if(count($limit)>1) {
-				  $limitStr = ' FIRST '.$limit[1].' SKIP '.$limit[0];
+				  $limitStr = ' FIRST '.$limit[1].' SKIP '.$limit[0].' ';
 				}else{
-				  $limitStr = ' FIRST '.$limit[0];
+				  $limitStr = ' FIRST '.$limit[0].' ';
 				}
 			}else{
 				// 其它数据库
-	            $limitStr .= ' LIMIT '.$limit;
+	            $limitStr .= ' LIMIT '.$limit.' ';
 			}
 		}
         return $limitStr;
