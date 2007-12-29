@@ -757,7 +757,7 @@ class Db extends Base
 			// 例如 (score+1) (name) 必须包含括号
 			$value = $value;
 		}else if(is_string($value)) {
-            $value = '"'.$this->escape_string($value).'"';
+            $value = '\''.$this->escape_string($value).'\'';
         }
         return $value;
     }
