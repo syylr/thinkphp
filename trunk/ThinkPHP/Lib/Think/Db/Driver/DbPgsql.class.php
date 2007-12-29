@@ -77,7 +77,6 @@ Class DbPgsql extends Db{
 			}
 			$pgInfo = pg_version($this->linkID[$linkNum]);
 			$this->dbVersion = $pgInfo['server'];
-			@pg_query( $this->linkID[$linkNum],"SET NAMES '".C('DB_CHARSET')."'");
 			// 标记连接成功
 			$this->connected	=	true;
 			//注销数据库安全信息
@@ -399,7 +398,7 @@ Class DbPgsql extends Db{
      +----------------------------------------------------------
      */
 	public function getTables($dbName='') {
-		$result = $this->_query('SHOW TABLES');
+		$result = $this->_query("select tablename as Tables_in_test from pg_tables where  schemaname ='public'");
 		$result = $result->toArray();
 		$info   =   array();
 		foreach ($result as $key => $val) {
