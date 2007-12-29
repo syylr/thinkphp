@@ -1266,4 +1266,25 @@ function data_to_xml($data) {
 	}
 	return $xml;
 }
+
+// 清除缓存目录
+function clearCache($type=0,$path=NULL) {
+		if(is_null($path)) {
+			switch($type) {
+			case 0:// 模版缓存目录
+				$path = CACHE_PATH;
+				break;
+			case 1:// 数据缓存目录
+				$path	=	TEMP_PATH;
+				break;
+			case 2://  日志目录
+				$path	=	LOG_PATH;
+				break;
+			case 3://  数据目录
+				$path	=	DATA_PATH;
+			}
+		}
+		import("ORG.Io.Dir");
+		Dir::del($path);   
+	}
 ?>
