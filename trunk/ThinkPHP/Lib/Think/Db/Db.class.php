@@ -852,44 +852,19 @@ class Db extends Base
 			// 延时读取数据库
 			return $this->lazyQuery($this->queryStr);
 		}
-        if(C('DB_CACHE_ON') && $cache) {// 启用数据库缓存
+        if($cache) {// 启用数据库缓存
             $guid   =   md5($this->queryStr);
             //获取缓存数据
-			$length = S($guid.'_count');
-			if(!$length) {
-				$data = S($guid);
-			}else{
-				$data =   new ResultSet();
-				for($i=0; $i<$length; $i++) {
-					$array   =   S($guid.'_'.$i);
-					foreach($array as $key=>$val) {
-						$data->add($val);
-					}
-				} 				
-            } 
+			$data = S($guid);
             if(!empty($data)){
                 return $data;
             }
         }
         // 进行查询
         $data = $this->_query();
-        if(C('DB_CACHE_ON')){
+        if($cache){
             //如果启用数据库缓存则重新缓存
-            $rowNums    =   $this->numRows;  //总的记录数
-            if($rowNums > C('DB_CACHE_MAX')) {
-                //如果记录数超过设置范围，多文件缓存，
-                //避免serialize超时
-                $length =   ceil($rowNums / C('DB_CACHE_MAX'));   //缓存文件数
-                for($i=0; $i<$length; $i++) {
-                    //依次缓存
-                    S($guid.'_'.$i,$data->range(C('DB_CACHE_MAX') * $i,C('DB_CACHE_MAX')));
-                }
-                //记录缓存文件数目
-                S($guid.'_count',$length);                        
-            }else {
-                //全部数据缓存
-                S($guid,$data);                    	
-            }
+             S($guid,$data);                    	
         }
         return $data;
     }
