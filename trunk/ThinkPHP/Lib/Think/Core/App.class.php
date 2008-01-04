@@ -371,15 +371,15 @@ class App extends Base
 					L(include THINK_PATH.'/Lang/'.$defaultLang.'.php');    
 				}
 
-				// 读取项目（公共）语言包
-				if (file_exists(LANG_PATH.LANG_SET.'.php'))
-					L(include LANG_PATH.LANG_SET.'.php');  
-				else
-					L(include LANG_PATH.$defaultLang.'.php');
+			// 读取项目（公共）语言包
+			if (file_exists(LANG_PATH.LANG_SET.'/common.php'))
+				L(include LANG_PATH.LANG_SET.'/common.php');  
+			else
+				L(include LANG_PATH.$defaultLang.'/common.php');
 
-				// 读取当前模块的语言包
-				if (file_exists(LANG_PATH.strtolower(MODULE_NAME).'_'.LANG_SET.'.php'))
-					L(include LANG_PATH.strtolower(MODULE_NAME).'_'.LANG_SET.'.php');  
+			// 读取当前模块的语言包
+			if (file_exists(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
+				L(include LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php');  
 
 				// 写入语言包缓存文件
 				$content  = "<?php\nreturn ".var_export(L(),true).";\n?>";
@@ -478,8 +478,8 @@ class App extends Base
     private function loadPlugIn()
     {
         //加载有效插件文件
-		if(file_exists(CONFIG_PATH.'~plugins.php')) {
-			include CONFIG_PATH.'~plugins.php';
+		if(file_exists(RUNTIME_PATH.'~plugins.php')) {
+			include RUNTIME_PATH.'~plugins.php';
 		}else{
 			// 检查插件数据
 			$common_plugins = get_plugins(THINK_PATH.'/PlugIns','Think');// 公共插件
@@ -492,7 +492,7 @@ class App extends Base
 				include $val['file'];
 				$content	.=	php_strip_whitespace($val['file']);
 			}
-			file_put_contents(CONFIG_PATH.'~plugins.php',$content);
+			file_put_contents(RUNTIME_PATH.'~plugins.php',$content);
 		}
         return ;
     }
