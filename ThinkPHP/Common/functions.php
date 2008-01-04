@@ -653,8 +653,11 @@ function using($class,$baseUrl = LIB_PATH,$ext='.class.php',$subdir=false)
 // 快速导入第三方框架类库
 // 所有第三方框架的类库文件统一放到 基类库Vendor目录下面
 // 并且默认都是以.php后缀导入
-function vendor($class,$baseUrl = VENDOR_PATH,$ext='.php',$subdir=false)
+function vendor($class,$baseUrl = '',$ext='.php',$subdir=false)
 {
+	if(empty($baseUrl)) {
+		$baseUrl	=	VENDOR_PATH;
+	}
 	return import($class,$baseUrl,$ext,$subdir);
 }
 
