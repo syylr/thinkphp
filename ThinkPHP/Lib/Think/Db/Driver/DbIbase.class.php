@@ -48,6 +48,8 @@ Class DbIbase extends Db{
 		if(!empty($config)) {
 			$this->config	=	$config;
 		}
+		//读取数据结果集类型
+		$this->resultType=C('DATA_RESULT_TYPE');
     }
 
     /**
@@ -261,6 +263,46 @@ Class DbIbase extends Db{
         }
         return $stat;
     }
+	
+    /**
+     +----------------------------------------------------------
+     * BLOB字段解密函数 Firebird特有
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param $blob 待解密的BLOB
+     +----------------------------------------------------------
+     * @return 二进制数据
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+	 public function BlobDecode($blob) 
+    {
+        $maxblobsize = 262144; 
+        if  (PHP_VERSION >= 5) {
+            $blob_data = ibase_blob_info($this->_linkID, $blob );
+            $blobid = ibase_blob_open($this->_linkID, $blob );
+        } else {
+
+            $blob_data = ibase_blob_info( $blob );
+            $blobid = ibase_blob_open( $blob );
+        }
+
+        if( $blob_data[0] > $maxblobsize ) {
+
+            $realblob = ibase_blob_get($blobid, $maxblobsize);
+
+            while($string = ibase_blob_get($blobid, 8192)){
+                $realblob .= $string; 
+            }
+        } else {
+            $realblob = ibase_blob_get($blobid, $blob_data[0]);
+        }
+
+        ibase_blob_close( $blobid );
+        return( $realblob );
+	}
 
     /**
      +----------------------------------------------------------
@@ -277,15 +319,31 @@ Class DbIbase extends Db{
      +----------------------------------------------------------
      */
     public function getRow($sql = null,$seek=0) {
-        if (!empty($sql)) $this->_query($sql);
+        //if (!empty($sql)) $this->_query($sql);
+		//剑雷 2007.12.30
+		if (!empty($sql)) {
+	  	  $this->initConnect(false);
+          if ( !$this->_linkID ) return false;
+
+		  if ( $this->queryID ) {    $this->free();    }
+		  $this->queryStr = $sql;
+		  $this->Q(1);
+		  $this->queryID = ibase_query($this->_linkID, $this->queryStr);
+		  $this->debug();
+		}
+		
         if ( !$this->queryID ) {
             throw_exception($this->error());
             return false;
         }
-        if($this->numRows >0) {
-            if($this->resultType== DATA_TYPE_OBJ){
+
+		    //剑雷 2007.12.30
+			//由于前面调用了$this->query使$this->queryID记录指针已经到了最末尾,只能重新查询一次
+		    $this->queryID=ibase_query($this->_linkID, $sql);
+			
+			if($this->resultType== DATA_TYPE_OBJ){
               //返回对象集
-			  while ($seek>=0)
+		   	  while ($seek>=0)
 			  {
                 $result = ibase_fetch_object($this->queryID);
 				if (!$result){ $seek=-1;} else { $seek--;}
@@ -298,10 +356,29 @@ Class DbIbase extends Db{
 				if (!$result){ $seek=-1;} else { $seek--;}
 			  }
             }
-            return $result;
-        }else {
-        	return false;
-        }
+		//剑雷 2007.12.30 自动解密BLOB字段
+		//取BLOB字段清单
+	    	$bloblist = array();
+		    $fieldCount = ibase_num_fields($this->queryID);
+            for ($i = 0; $i < $fieldCount; $i++) {
+	         $col_info = ibase_field_info($this->queryID, $i);
+	         if ($col_info['type']=='BLOB') {
+	    	   $bloblist[]=trim($col_info['name']);
+		     }
+            }
+		
+       //如果有BLOB字段,就进行解密处理
+	       if (!empty($bloblist)) {
+	    	   foreach($bloblist as $field) {
+	    	     if ($this->resultType== DATA_TYPE_OBJ) {
+		           if (!empty($result->$field)) $result->$field=$this->BlobDecode($result->$field);
+		         }else{
+		    	   if (!empty($result[$field])) $result[$field]=$this->BlobDecode($result[$field]);
+		         }
+		       }
+           }			
+			
+          return $result;
     }
 
     /**
@@ -319,7 +396,20 @@ Class DbIbase extends Db{
      +----------------------------------------------------------
      */
     public function getAll($sql = null,$resultType=null) {
-        if (!empty($sql)) $this->_query($sql);
+        //if (!empty($sql)) $this->_query($sql);
+		//剑雷 2007.12.30 由于没有类似mysql_data_seek($this->queryID,0)的方法,只有更改写法,不调用_query方法,以免影响记录集指针
+
+		if (!empty($sql)) {
+	  	  $this->initConnect(false);
+          if ( !$this->_linkID ) return false;
+
+		  if ( $this->queryID ) {    $this->free();    }
+		  $this->queryStr = $sql;
+		  $this->Q(1);
+		  $this->queryID = ibase_query($this->_linkID, $this->queryStr);
+		  $this->debug();
+		}
+		
         if ( !$this->queryID ) {
             throw_exception($this->error());
             return false;
@@ -329,13 +419,37 @@ Class DbIbase extends Db{
 		$rowCount	 =	 0;
 		if(is_null($resultType)){ $resultType   =  $this->resultType ; }
 		$fun = ($resultType== DATA_TYPE_OBJ) ?	'ibase_fetch_object' : 'ibase_fetch_assoc';
-		while ( $row = $fun($this->queryID))
-		{ 
+		while ( $row = $fun($this->queryID)) { 
 			$result[]	=	$row;
 			$rowCount = $rowCount + 1;
 		}
 		$this->numRows	=	$rowCount;
-        return $result;
+		
+		//剑雷 2007.12.30 自动解密BLOB字段
+		//取BLOB字段清单
+		$bloblist = array();
+		$fieldCount = ibase_num_fields($this->queryID);
+        for ($i = 0; $i < $fieldCount; $i++) {
+	     $col_info = ibase_field_info($this->queryID, $i);
+	     if ($col_info['type']=='BLOB') {
+		   $bloblist[]=trim($col_info['name']);
+		 }
+        }
+       //如果有BLOB字段,就进行解密处理
+	   if (!empty($bloblist)) {
+	     $i=0;
+	     foreach ($result as $row) {
+		   foreach($bloblist as $field) {
+		     if ($resultType== DATA_TYPE_OBJ) {
+		       if (!empty($row->$field)) $row->$field=$this->BlobDecode($row->$field);
+		     }else{
+			   if (!empty($row[$field])) $result[$i][$field]=$this->BlobDecode($row[$field]);
+		     }
+		  }
+		  $i++;
+	    }
+      }
+     return $result;
     }
 
     /**

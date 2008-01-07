@@ -119,6 +119,7 @@ class Db extends Base
      +----------------------------------------------------------
      */
     function __construct($config=''){    
+		$this->resultType = C('DATA_RESULT_TYPE'); 
 		return $this->factory($config);
 	}
 
