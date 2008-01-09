@@ -400,6 +400,7 @@ class TagLibCx extends TagLib
         $tag        = $this->parseXmlAttr($attr,'compare');
         $name       = $tag['name'];
         $value      = $tag['value'];
+		$type	 =	 $type?$type:$tag['type'];
 		$type	 =	 $this->parseCondition($type);
 		$varArray = explode('|',$name);
 		$name	=	array_shift($varArray);
