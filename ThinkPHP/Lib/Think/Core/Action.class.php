@@ -386,6 +386,8 @@ abstract class Action extends Base
      */
     public function ajaxReturn($data='',$info='',$status='',$type='') 
     {
+		// 保存日志
+		Log::save();
         $result  =  array();
         if($status === '') {
         	$status  = $this->get('error')?0:1;
