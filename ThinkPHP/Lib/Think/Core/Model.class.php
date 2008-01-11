@@ -129,7 +129,7 @@ class Model extends Base  implements IteratorAggregate
 				// 获取数据库操作对象
 				if(!empty($this->connection)) {
 					// 当前模型有独立的数据库连接信息
-					$this->db = new Db($this->connection);
+					$this->db = Db::getInstance($this->connection);
 				}else{
 					$this->db = Db::getInstance();
 				}
