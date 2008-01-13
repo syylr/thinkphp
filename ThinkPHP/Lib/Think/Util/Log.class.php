@@ -39,12 +39,66 @@
  */
 class Log extends Base
 {//类定义开始
-	
+
 	static $log	=	array();
 
     /**
      +----------------------------------------------------------
-     * 日志写入
+     * 记录日志
+     +----------------------------------------------------------
+     * @static
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $message 日志信息
+     * @param string $type  日志类型
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+	static function record($message,$type=WEB_LOG_ERROR) {
+        $now = date('[ y-m-d H:i:s ]');
+		self::$log[$type][]	=	"\n$now\n$message";
+	}
+
+    /**
+     +----------------------------------------------------------
+     * 日志保存
+     +----------------------------------------------------------
+     * @static
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $message 日志信息
+     * @param string $type  日志类型
+     * @param string $file  写入文件 默认取定义日志文件
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    static function save()
+    {	
+		$day	=	date('y_m_d');
+		$_type	=	array(
+			WEB_LOG_DEBUG	=>	realpath(LOG_PATH).'/'.$day."_systemOut.log",
+			SQL_LOG_DEBUG	=>	realpath(LOG_PATH).'/'.$day."_systemSql.log",
+			WEB_LOG_ERROR	=>	realpath(LOG_PATH).'/'.$day."_systemErr.log",
+			);
+        if(!is_writable(LOG_PATH)){
+            halt(L('_FILE_NOT_WRITEABLE_').':'.LOG_PATH);
+        }
+		foreach (self::$log as $type=>$logs){
+			//检测日志文件大小，超过配置大小则备份日志文件重新生成
+			$destination	=	$_type[$type];
+			if(file_exists($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
+				  rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
+			}
+	        error_log(implode('',$logs), FILE_LOG,$destination );
+		}
+		clearstatcache();
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 日志直接写入
      +----------------------------------------------------------
      * @static
      * @access public 
@@ -82,9 +136,9 @@ class Log extends Base
 			  rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
 		}        	
         error_log("$now\n$message\n", FILE_LOG,$destination );
-		self::$log[$type][]	=	$message;
 		clearstatcache();
     }
+
 
 }//类定义结束
 ?>
