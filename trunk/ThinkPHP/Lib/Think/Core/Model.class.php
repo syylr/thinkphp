@@ -1162,7 +1162,7 @@ class Model extends Base  implements IteratorAggregate
 						$mappingClass  = $val['class_name'];			//  关联类名
 						$mappingFk   =  !empty($val['foreign_key'])?$val['foreign_key']:$this->name.'_id';		//  关联外键
 						$mappingFields = !empty($val['mapping_fields'])?$val['mapping_fields']:'*';		// 映射字段
-						$mappingCondition = !empty($val['condition'])?$val['condition']:'1';			// 关联条件
+						$mappingCondition = !empty($val['condition'])?$val['condition']:'1=1';			// 关联条件
 						if(strtoupper($mappingClass)==strtoupper($this->name)) {
 							// 自引用关联 获取父键名
 							$mappingParentKey = !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
@@ -2860,6 +2860,19 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getLastInsID() {
 		return $this->db->lastInsID;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 返回最后执行的sql语句
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	public function getLastSql() {
+		return $this->db->getLastSql();
 	}
 };
 ?>
