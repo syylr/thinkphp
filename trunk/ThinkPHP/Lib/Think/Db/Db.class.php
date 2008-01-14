@@ -305,8 +305,10 @@ class Db extends Base
      */
 	protected function debug() {
 		// 记录操作结束时间
-		$runtime	=	number_format((array_sum(explode(' ', microtime())) - $this->beginTime), 6);
-        if ( $this->debug || C('SQL_DEBUG_LOG')) 	Log::record(" RunTime:".$runtime."s SQL = ".$this->queryStr,SQL_LOG_DEBUG);
+		if ( $this->debug || C('SQL_DEBUG_LOG')) 	{
+			$runtime	=	number_format((array_sum(explode(' ', microtime())) - $this->beginTime), 6);
+			Log::record(" RunTime:".$runtime."s SQL = ".$this->queryStr,SQL_LOG_DEBUG);
+		}
 	}
 
     /**
@@ -1235,6 +1237,19 @@ class Db extends Base
 			// 记录开始执行时间
 			$this->beginTime = array_sum(explode(' ', microtime()));
 		}
+	}
+
+    /**
+     +----------------------------------------------------------
+     * 获取最近一次查询的sql语句
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	public function getLastSql() {
+		return $this->queryStr;
 	}
 
 }//类定义结束
