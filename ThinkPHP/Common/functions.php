@@ -290,7 +290,7 @@ function debug_end($label='')
 
 /**
  +----------------------------------------------------------
- * 系统调试输出 Log::Write 的一个调用方法
+ * 系统调试输出 Log::record 的一个调用方法
  +----------------------------------------------------------
  * @param string $msg 调试信息
  +----------------------------------------------------------
@@ -300,7 +300,7 @@ function debug_end($label='')
 function system_out($msg)
 {
     if(!empty($msg))
-        Log::Write($msg,WEB_LOG_DEBUG);
+        Log::record($msg,WEB_LOG_DEBUG);
 }
 
 /**

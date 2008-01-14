@@ -553,7 +553,7 @@ class App extends Base
 
 		// 写入错误日志
         if(C('WEB_LOG_RECORD'))
-            system_out(trim(implode('',self::$debug)));
+            Log::save();
 
         return ;
     }
@@ -610,7 +610,8 @@ class App extends Base
           case E_USER_ERROR: 
               $errorStr = "错误：[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
               if(C('WEB_LOG_RECORD')){
-                 system_out($errorStr);
+                 Log::record($errorStr);
+				 Log::save();
               }
               halt($errorStr);
               break;
@@ -619,7 +620,7 @@ class App extends Base
           case E_USER_NOTICE:
           default: 
 			$errorStr = "注意：[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
-			self::$debug[] = $errorStr;
+			Log::record($errorStr);
              break;
       }
     }
