@@ -526,10 +526,10 @@ class  ThinkTemplate extends Base
             return $this->parseVar(substr($tagStr,1));
         }elseif(substr($tagStr,0,1)==':'){
 			// 输出某个函数的结果
-			return  '<?php echo '.substr($tagStr,1).';?>';
+			return  '<?php echo '.substr($tagStr,1).'();?>';
 		}elseif(substr($tagStr,0,1)=='~'){
 			// 执行某个函数
-			return  '<?php '.substr($tagStr,1).';?>';
+			return  '<?php '.substr($tagStr,1).'();?>';
 		}elseif(substr($tagStr,0,1)=='&'){
 			// 输出配置参数
 			return '<?php echo C("'.substr($tagStr,1).'");?>';
