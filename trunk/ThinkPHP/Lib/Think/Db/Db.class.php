@@ -155,22 +155,7 @@ class Db extends Base
     public function &factory($db_config='')
     {
         // 读取数据库配置
-        if ( is_string($db_config) && !empty($db_config) ) {
-            // 如果DSN字符串则进行解析
-            $db_config = $this->parseDSN($db_config);
-        }else if(empty($db_config)){
-            // 如果配置为空，读取配置文件设置
-            $db_config = array (
-                'dbms'     => C('DB_TYPE'), 
-                'username' => C('DB_USER'), 
-                'password' => C('DB_PWD'), 
-                'hostname' => C('DB_HOST'), 
-                'hostport' => C('DB_PORT'), 
-                'database' => C('DB_NAME'),
-				'dsn'		=>	C('DB_DSN'),
-				'params'=> C('DB_PARAMS'),
-            );
-        }
+		$db_confg = $this->parseConfig($db_config);
 		if(empty($db_config['dbms'])) {
 			throw_exception(L('_NO_DB_CONFIG_'));
 		}
@@ -191,6 +176,89 @@ class Db extends Base
 		}
 		return $db;
     }
+
+    /**
+     +----------------------------------------------------------
+     * 分析数据库配置信息，支持数组好DSN
+     +----------------------------------------------------------
+     * @access private 
+     +----------------------------------------------------------
+     * @param mixed $db_config 数据库配置信息
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+	private function parseConfig($db_config='') {
+        if ( !empty($db_config) && is_string($db_config)) {
+            // 如果DSN字符串则进行解析
+            $db_config = $this->parseDSN($db_config);
+        }else if(empty($db_config)){
+            // 如果配置为空，读取配置文件设置
+            $db_config = array (
+                'dbms'     => C('DB_TYPE'), 
+                'username' => C('DB_USER'), 
+                'password' => C('DB_PWD'), 
+                'hostname' => C('DB_HOST'), 
+                'hostport' => C('DB_PORT'), 
+                'database' => C('DB_NAME'),
+				'dsn'		=>	C('DB_DSN'),
+				'params'=> C('DB_PARAMS'),
+            );
+        }
+		return $db_config;
+	}
+
+    /**
+     +----------------------------------------------------------
+     * 增加数据库连接
+     +----------------------------------------------------------
+     * @access protected 
+     +----------------------------------------------------------
+     * @param mixed $config 数据库连接信息
+	 * @param mixed $linkNum  创建的连接序号
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+	public function addConnect($config,$linkNum=null) {
+		$db_config	=	$this->parseConfig($config);
+		if(empty($linkNum)) {
+			$linkNum	 =	 count($this->linkID);
+		}
+		if(isset($this->linkID[$linkNum])) {
+			// 已经存在连接
+			return false;
+		}
+		// 创建新的数据库连接
+		return $this->connect($db_config,$linkNum);
+	}
+	
+    /**
+     +----------------------------------------------------------
+     * 切换数据库连接
+     +----------------------------------------------------------
+     * @access protected 
+     +----------------------------------------------------------
+	 * @param integer $linkNum  创建的连接序号
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+	public function switchConnect($linkNum) {
+		if(isset($this->linkID[$linkNum])) {
+			// 存在指定的数据库连接序号
+			$this->_linkID	=	$this->linkID[$linkNum];
+			return true;
+		}else{
+			return false;
+		}
+	}
 
     /**
      +----------------------------------------------------------
@@ -933,7 +1001,7 @@ class Db extends Base
         if(empty($sql)) {
         	$sql  = $this->queryStr;
         }
-        if($this->isMainIps($this->queryStr)) {
+        if($this->isMainIps($sql)) {
         	$this->execute($sql,$lock);
         }else {
         	$this->query($sql,$cache,$lazy,$lock);
