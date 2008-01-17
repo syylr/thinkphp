@@ -79,7 +79,7 @@ class Http extends Base
         //header('Cache-Control: no-store, no-cache, must-revalidate');
         header("Expires: " . gmdate("D, d M Y H:i:s",time()+$expire) . "GMT");
         header("Last-Modified: " . gmdate("D, d M Y H:i:s",time()) . "GMT");
-        header("Content-Disposition: attachment; filename='".$showname."'"); 
+        header("Content-Disposition: attachment; filename=".$showname); 
         header("Content-Length: ".$length);
         header("Content-type: ".$type);
         header('Content-Encoding: none');
