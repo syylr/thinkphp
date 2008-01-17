@@ -360,9 +360,9 @@ class App extends Base
 
 			// 定义当前语言
 			define('LANG_SET',$langSet);
-			if(file_exists(TEMP_PATH.MODULE_NAME.'_lang.php')) {
+			if(file_exists(TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php')) {
 				// 加载语言包缓存文件
-				L(include TEMP_PATH.MODULE_NAME.'_lang.php');
+				L(include TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php');
 			}else{
 				// 加载框架语言包
 				if (file_exists(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
@@ -383,7 +383,7 @@ class App extends Base
 
 				// 写入语言包缓存文件
 				$content  = "<?php\nreturn ".var_export(L(),true).";\n?>";
-				file_put_contents(TEMP_PATH.MODULE_NAME.'_lang.php',$content);
+				file_put_contents(TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php',$content);
 			}
 		}else{
 			// 不使用语言包功能，仅仅加载框架语言文件
