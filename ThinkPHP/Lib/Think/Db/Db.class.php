@@ -155,7 +155,7 @@ class Db extends Base
     public function &factory($db_config='')
     {
         // 读取数据库配置
-		$db_confg = $this->parseConfig($db_config);
+		$db_config = $this->parseConfig($db_config);
 		if(empty($db_config['dbms'])) {
 			throw_exception(L('_NO_DB_CONFIG_'));
 		}
