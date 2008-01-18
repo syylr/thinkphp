@@ -41,8 +41,11 @@ define('VALUE_TO_VAILIDATE',2);		// 表单值不为空则验证
  */
 class Model extends Base  implements IteratorAggregate
 {
-	// 数据库底层操作对象
-	protected $db ;
+	// 数据库连接对象列表
+	protected $_db = array();
+
+	// 当前数据库操作对象
+	protected $db = null;
 
 	// 数据表前缀
 	protected $tablePrefix	=	'';
@@ -51,13 +54,13 @@ class Model extends Base  implements IteratorAggregate
 	protected $tableSuffix = '';
 
 	// 模型名称
-	protected $name;
+	protected $name	= '';
 
 	// 数据表名（不包含表前缀）
-	protected $tableName;
+	protected $tableName = '';
 
 	// 实际数据表名（包含表前缀）
-	protected $trueTableName;
+	protected $trueTableName ='';
 
 	// 字段信息
 	protected $fields = array();
@@ -72,7 +75,7 @@ class Model extends Base  implements IteratorAggregate
 	protected $dataList	=	array();
 
 	// 上次错误信息
-	protected $error;
+	protected $error = '';
 
 	// 包含的聚合对象
 	protected $aggregation = array();
@@ -2873,6 +2876,58 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getLastSql() {
 		return $this->db->getLastSql();
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 增加数据库连接
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param mixed $config 数据库连接信息
+	 * @param mixed $linkNum  创建的连接序号
+	 * @param boolean $eqType 是否相同类型连接
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+	public function addConnect($config,$linkNum,$eqType=true) {
+		if($eqType) {
+			// 同类型的数据库连接直接在实例增加
+			return $this->db->addConnect($config,$linkNum);
+		}
+		// 不同类型的数据库连接创建一个新的实例
+		if(isset($this->_db[$linkNum])) {
+			return false;
+		}
+		$this->_db[$linkNum] = Db::getInstance($config);
+		return true;
+	}
+
+    /**
+     +----------------------------------------------------------
+     * 切换数据库连接
+     +----------------------------------------------------------
+     * @access protected 
+     +----------------------------------------------------------
+	 * @param integer $linkNum  创建的连接序号
+	 * @param boolean $eqType 是否相同类型连接
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+	public function switchConnect($linkNum,$eqType=true) {
+		if($eqType) {
+			// 同类型数据库连接直接在实例里面切换
+			return $this->db->switchConnect($linkNum);
+		}
+		// 不同类型的数据库连接在不同实例直接切换
+		if(isset($this->_db[$linkNum])) {
+			$this->db	=	$this->_db[$linkNum];
+			return true;
+		}else{
+			return false;
+		}
 	}
 };
 ?>
