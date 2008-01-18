@@ -342,7 +342,7 @@ class App extends Base
 				// 有在url 里面设置语言
 				$langSet = $_GET[C('VAR_LANGUAGE')];
 				// 记住用户的选择
-				setcookie('think_language',$langSet,360000);
+				setcookie('think_language',$langSet,time()+360000);
 			}elseif ( isset($_COOKIE['think_language']) ) {
 				// 获取上次用户的选择
 				$langSet = $_COOKIE['think_language'];
@@ -351,7 +351,7 @@ class App extends Base
 					// 启用自动侦测浏览器语言
 					preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
 					$langSet = $matches[1];
-					setcookie('think_language',$langSet,360000);
+					setcookie('think_language',$langSet,time()+360000);
 				}else{
 					// 采用系统设置的默认语言
 					$langSet = $defaultLang;
@@ -410,13 +410,13 @@ class App extends Base
 			$t = C('VAR_TEMPLATE');
 			if ( isset($_GET[$t]) ) {
 				$templateSet = $_GET[$t];
-				setcookie('think_template',$templateSet,360000);
+				setcookie('think_template',$templateSet,time()+360000);
 			} else {
 				if(isset($_COOKIE['think_template'])) {
 					$templateSet = $_COOKIE['think_template'];
 				}else {
 					$templateSet =    C('DEFAULT_TEMPLATE');
-					setcookie('think_template',$templateSet,360000);
+					setcookie('think_template',$templateSet,time()+360000);
 				}
 			}
 			if (!is_dir(TMPL_PATH.$templateSet)) {
