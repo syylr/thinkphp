@@ -129,10 +129,13 @@ Class DbPdo extends Db{
             //if ( $this->debug ) throw_exception($this->error());
             return false;
         } else {
-            $this->numRows = $this->PDOStatement->rowCount();
             $this->numCols = $this->PDOStatement->columnCount();
             $this->resultSet = $this->getAll();
-            return new ArrayObject($this->resultSet);              	
+            $this->numRows = count( $this->resultSet );
+            if ( $this->numRows > 0 ){
+                return new ArrayObject($this->resultSet);              	
+            }
+            return false;            	
         }
     }
 
@@ -290,18 +293,14 @@ Class DbPdo extends Db{
             throw_exception($this->error());
             return false;
         }
-        if($this->numRows >0) {
-			if($this->resultType== DATA_TYPE_OBJ){
-				//返回对象集
-				$result = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'),constant('PDO::FETCH_ORI_NEXT'),$seek);
-			}else{
-				// 返回数组集
-				$result = $this->PDOStatement->fetch(constant('PDO::FETCH_ASSOC'),constant('PDO::FETCH_ORI_NEXT'),$seek);
-			}
-            return $result;
-        }else {
-        	return false;
-        }
+		if($this->resultType== DATA_TYPE_OBJ){
+			//返回对象集
+			$result = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'),constant('PDO::FETCH_ORI_NEXT'),$seek);
+		}else{
+			// 返回数组集
+			$result = $this->PDOStatement->fetch(constant('PDO::FETCH_ASSOC'),constant('PDO::FETCH_ORI_NEXT'),$seek);
+		}
+		return $result;
     }
 
     /**
@@ -326,14 +325,12 @@ Class DbPdo extends Db{
         }
         //返回数据集
         $result = array();
-        if($this->numRows >0) {
-            if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-			if($resultType== DATA_TYPE_ARRAY){
-				$result	=	$this->PDOStatement->fetchAll(constant('PDO::FETCH_ASSOC'));
-			}else{
-				$result	=	$this->PDOStatement->fetchAll(constant('PDO::FETCH_OBJ'));
-			}
-        }
+		if(is_null($resultType)){ $resultType   =  $this->resultType ; }
+		if($resultType== DATA_TYPE_ARRAY){
+			$result	=	$this->PDOStatement->fetchAll(constant('PDO::FETCH_ASSOC'));
+		}else{
+			$result	=	$this->PDOStatement->fetchAll(constant('PDO::FETCH_OBJ'));
+		}
         return $result;
     }
 
