@@ -57,24 +57,31 @@ if(file_exists(RUNTIME_PATH.'/~runtime.php')) {
 	import("Think.Core.Action");
 	import("Think.Core.Model");
 	import("Think.Core.View");
-
-	// 生成核心文件的缓存 去掉文件空白以减少大小
-	$content	 =	 php_strip_whitespace(THINK_PATH.'/Common/defines.php');
-	$content	.=	 php_strip_whitespace(THINK_PATH.'/Common/functions.php');
-	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/Base.class.php');
-	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Exception/ThinkException.class.php');
-	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Util/Log.class.php');
-	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/App.class.php');
-	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/Action.class.php');
-	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/Model.class.php');
-	$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/View.class.php');
+	// 是否生成核心缓存
+	$cache	=	( !defined('CACHE_RUNTIME') || CACHE_RUNTIME == true );
+	if($cache) {
+		// 生成核心文件的缓存 去掉文件空白以减少大小
+		$content	 =	 php_strip_whitespace(THINK_PATH.'/Common/defines.php');
+		$content	.=	 php_strip_whitespace(THINK_PATH.'/Common/functions.php');
+		$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/Base.class.php');
+		$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Exception/ThinkException.class.php');
+		$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Util/Log.class.php');
+		$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/App.class.php');
+		$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/Action.class.php');
+		$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/Model.class.php');
+		$content	.=	 php_strip_whitespace(THINK_PATH.'/Lib/Think/Core/View.class.php');
+	}
 	if(version_compare(PHP_VERSION,'5.2.0','<') ) {
 		// 加载兼容函数
 		require THINK_PATH.'/Common/compat.php';
-		$content .=	 php_strip_whitespace(THINK_PATH.'/Common/compat.php');	
+		if($cache) {
+			$content .=	 php_strip_whitespace(THINK_PATH.'/Common/compat.php');	
+		}
 	}
-	file_put_contents(RUNTIME_PATH.'/~runtime.php',$content);
-	unset($content);
+	if($cache) {
+		file_put_contents(RUNTIME_PATH.'/~runtime.php',$content);
+		unset($content);
+	}
 }
 // 记录加载文件时间
 $GLOBALS['_loadTime'] = microtime(TRUE);
