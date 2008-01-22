@@ -342,7 +342,7 @@ class App extends Base
 				// 有在url 里面设置语言
 				$langSet = $_GET[C('VAR_LANGUAGE')];
 				// 记住用户的选择
-				setcookie('think_language',$langSet,time()+360000);
+				setcookie('think_language',$langSet,time()+3600);
 			}elseif ( isset($_COOKIE['think_language']) ) {
 				// 获取上次用户的选择
 				$langSet = $_COOKIE['think_language'];
@@ -351,7 +351,7 @@ class App extends Base
 					// 启用自动侦测浏览器语言
 					preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
 					$langSet = $matches[1];
-					setcookie('think_language',$langSet,time()+360000);
+					setcookie('think_language',$langSet,time()+3600);
 				}else{
 					// 采用系统设置的默认语言
 					$langSet = $defaultLang;
@@ -410,13 +410,13 @@ class App extends Base
 			$t = C('VAR_TEMPLATE');
 			if ( isset($_GET[$t]) ) {
 				$templateSet = $_GET[$t];
-				setcookie('think_template',$templateSet,time()+360000);
+				setcookie('think_template',$templateSet,time()+3600);
 			} else {
 				if(isset($_COOKIE['think_template'])) {
 					$templateSet = $_COOKIE['think_template'];
 				}else {
 					$templateSet =    C('DEFAULT_TEMPLATE');
-					setcookie('think_template',$templateSet,time()+360000);
+					setcookie('think_template',$templateSet,time()+3600);
 				}
 			}
 			if (!is_dir(TMPL_PATH.$templateSet)) {
@@ -443,17 +443,21 @@ class App extends Base
 		$module	=	defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
 		$action		=	defined('P_ACTION_NAME')?P_ACTION_NAME:ACTION_NAME;
 
-        //模块地址
-        define('__URL__',PHP_FILE.'/'.$module);
-        //当前操作地址
-        define('__ACTION__',PHP_FILE.'/'.$module.'/'.$action);  
         //当前页面地址
         define('__SELF__',$_SERVER['PHP_SELF']);
         // 默认加载的模板文件名
 		if(defined('C_MODULE_NAME')) {
+	        // 当前模块地址
+	        define('__URL__',PHP_FILE.'/'.C_MODULE_NAME);
+		    //当前操作地址
+	        define('__ACTION__',__URL__.'/'.$action);  
 	        C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(':','/',C_MODULE_NAME).'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
 	        define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.str_replace(':','/',C_MODULE_NAME));
 		}else{
+		    // 当前模块地址
+	        define('__URL__',PHP_FILE.'/'.$module);
+		    //当前操作地址
+	        define('__ACTION__',__URL__.'/'.$action);  
 	        C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
 	        define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
 		}
