@@ -626,7 +626,8 @@ class Db extends Base
     {
         $limitStr    = '';
         if(!empty($limit)) {
-			if(in_array(strtoupper(C('DB_TYPE')),array('PGSQL','SQLITE'))) {
+			$dbType	 =	 $this->getDbType();
+			if(in_array($dbType,array('PGSQL','SQLITE'))) {
 				// PgSQL
 				$limit	=	explode(',',$limit);
 				if(count($limit)>1) {
@@ -635,10 +636,10 @@ class Db extends Base
 					$limitStr .= ' LIMIT '.$limit[0].' ';
 				}
 				
-			}elseif('MSSQL'== strtoupper(C('DB_TYPE'))){
+			}elseif('MSSQL'== $dbType){
 				// MsSQL
 				$limitStr = ' TOP '.$limit.' ';
-			}elseif('IBASE'== strtoupper(C('DB_TYPE'))){
+			}elseif('IBASE'== $dbType){
 				// Firebird 剑雷 2007.12.29
 				$limit	=	explode(',',$limit);
 				if(count($limit)>1) {
