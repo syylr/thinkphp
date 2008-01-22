@@ -427,7 +427,12 @@ class App extends Base
 			define('TEMPLATE_NAME',$templateSet); 
 			// 当前模版路径
 			define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME.'/'); 
-			$tmplDir	=	TMPL_DIR.'/'.TEMPLATE_NAME.'/';
+			if(defined('C_MODULE_NAME')) {
+				$array	=	explode(':',C_MODULE_NAME);
+				$tmplDir	=	TMPL_DIR.'/'.TEMPLATE_NAME.'/'.$array[0].'/';
+			}else{
+				$tmplDir	=	TMPL_DIR.'/'.TEMPLATE_NAME.'/';
+			}
 		}else{
 			// 把模版目录直接放置项目模版文件
 			// 该模式下面没有TEMPLATE_NAME常量
