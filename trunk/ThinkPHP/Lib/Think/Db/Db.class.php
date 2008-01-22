@@ -912,7 +912,7 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function query($sql='',$cache=true,$lazy=false,$lock=false)
+    public function query($sql='',$cache=false,$lazy=false,$lock=false)
     {
         if(!empty($sql)) {
             $this->queryStr = $sql;
@@ -1031,7 +1031,7 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function find($where,$tables,$fields='*',$order=null,$limit=null,$group=null,$having=null,$join=null,$cache=true,$lazy=false,$lock=false)
+    public function find($where,$tables,$fields='*',$order=null,$limit=null,$group=null,$having=null,$join=null,$cache=false,$lazy=false,$lock=false)
     {
 		if(in_array($this->getDbType(),array('MSSQL','IBASE'),true) ) {
 			$this->queryStr = 'SELECT '.$this->parseLimit($limit)
