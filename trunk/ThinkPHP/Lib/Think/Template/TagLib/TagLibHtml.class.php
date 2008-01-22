@@ -600,13 +600,13 @@ class TagLibHtml extends TagLib
                     if(count($b)>1) {
                         $c = explode('|',$a[0]);
                         if(count($c)>1) {
-                            $parseStr .= '<A HREF="javascript:'.$c[1].'({$'.$name.'.'.$pk.'})"><?php if(0== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[1].'<?php } ?></A><A HREF="javascript:'.$c[0].'({$'.$name.'.'.$pk.'})"><?php if(1== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[0].'<?php } ?></A> ';
+                            $parseStr .= '<A HREF="javascript:'.$c[1].'(\'{$'.$name.'.'.$pk.'}\')"><?php if(0== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[1].'<?php } ?></A><A HREF="javascript:'.$c[0].'({$'.$name.'.'.$pk.'})"><?php if(1== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[0].'<?php } ?></A> ';
                         }else {
-                            $parseStr .= '<A HREF="javascript:'.$a[0].'({$'.$name.'.'.$pk.'})"><?php if(0== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[1].'<?php } ?><?php if(1== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[0].'<?php } ?></A> ';
+                            $parseStr .= '<A HREF="javascript:'.$a[0].'(\'{$'.$name.'.'.$pk.'}\')"><?php if(0== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[1].'<?php } ?><?php if(1== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[0].'<?php } ?></A> ';
                         }
                         
                     }else {
-                        $parseStr .= '<A HREF="javascript:'.$a[0].'({$'.$name.'.'.$pk.'})">'.$a[1].'</A> ';
+                        $parseStr .= '<A HREF="javascript:'.$a[0].'(\'{$'.$name.'.'.$pk.'}\')">'.$a[1].'</A> ';
                     }
                     
                 }
