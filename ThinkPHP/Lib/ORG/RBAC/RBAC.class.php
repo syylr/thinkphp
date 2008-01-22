@@ -107,28 +107,37 @@ class RBAC extends Base
             if("" != C('REQUIRE_AUTH_MODULE')) {
                 //需要认证的模块
                 $_module['yes'] = explode(',',strtoupper(C('REQUIRE_AUTH_MODULE')));
-            }else {
+            }elseif('' != C('NOT_AUTH_MODULE')){
                 //无需认证的模块
                 $_module['no'] = explode(',',strtoupper(C('NOT_AUTH_MODULE')));  
             }
-            //检查当前模块是否需要认证
-            if((!empty($_module['no']) && !in_array(strtoupper(MODULE_NAME),$_module['no'])) || (!empty($_module['yes']) && in_array(strtoupper(MODULE_NAME),$_module['yes']))) {
-				if("" != C('REQUIRE_AUTH_ACTION')) {
-					//需要认证的操作
-					$_action['yes'] = explode(',',strtoupper(C('REQUIRE_AUTH_ACTION')));
-				}else {
-					//无需认证的操作
-					$_action['no'] = explode(',',strtoupper(C('NOT_AUTH_ACTION')));  
-				}
-				//检查当前操作是否需要认证
-				if((!empty($_action['no']) && !in_array(strtoupper(ACTION_NAME),$_action['no'])) || (!empty($_action['yes']) && in_array(strtoupper(ACTION_NAME),$_action['yes']))) {
-					return true;
+			if(!empty($_module)) {
+				//检查当前模块是否需要认证
+				if((!empty($_module['no']) && !in_array(strtoupper(MODULE_NAME),$_module['no'])) || (!empty($_module['yes']) && in_array(strtoupper(MODULE_NAME),$_module['yes']))) {
+					if("" != C('REQUIRE_AUTH_ACTION')) {
+						//需要认证的操作
+						$_action['yes'] = explode(',',strtoupper(C('REQUIRE_AUTH_ACTION')));
+					}elseif('' != C('NOT_AUTH_ACTION')) {
+						//无需认证的操作
+						$_action['no'] = explode(',',strtoupper(C('NOT_AUTH_ACTION')));  
+					}
+					if(!empty($_action)) {
+						//检查当前操作是否需要认证
+						if((!empty($_action['no']) && !in_array(strtoupper(ACTION_NAME),$_action['no'])) || (!empty($_action['yes']) && in_array(strtoupper(ACTION_NAME),$_action['yes']))) {
+							return true;
+						}else {
+							return false;
+						}
+					}else{
+						return true;
+					}
 				}else {
 					return false;
 				}
-            }else {
-                return false;
-            }
+			}else{
+				return true;
+			}
+
         }
         return false;	
     }
