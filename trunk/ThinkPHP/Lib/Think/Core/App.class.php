@@ -267,10 +267,10 @@ class App extends Base
         // 如果 $module 为空，则赋予默认值
         if (empty($module)) $module = C('DEFAULT_MODULE'); 
 		// 检查组件模块
-		if(strpos($module,':')) {
+		if(strpos($module,C('COMPONENT_DEPR'))) {
 			// 记录完整的模块名
 			define('C_MODULE_NAME',$module);
-			$array	=	explode(':',$module);
+			$array	=	explode(C('COMPONENT_DEPR'),$module);
 			// 实际的模块名称
 			$module	=	array_pop($array);
 		}
@@ -303,10 +303,10 @@ class App extends Base
         // 如果 $action 为空，则赋予默认值
         if (empty($action)) $action = C('DEFAULT_ACTION');
 		// 检查操作链
-		if(strpos($action,':')) {
+		if(strpos($action,C('COMPONENT_DEPR'))) {
 			// 记录完整的模块名
 			define('C_ACTION_NAME',$action);
-			$array	=	explode(':',$action);
+			$array	=	explode(C('COMPONENT_DEPR'),$action);
 			// 实际的模块名称
 			$action	=	array_pop($array);
 		}
