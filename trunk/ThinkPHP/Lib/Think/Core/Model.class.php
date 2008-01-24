@@ -2892,15 +2892,15 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	public function addConnect($config,$linkNum,$eqType=true) {
+		if(isset($this->_db[$linkNum])) {
+			return false;
+		}
 		if($eqType) {
 			// 同类型的数据库连接直接在实例增加
 			$this->_db[$linkNum]			=	 true;
 			return $this->db->addConnect($config,$linkNum);
 		}
 		// 不同类型的数据库连接创建一个新的实例
-		if(isset($this->_db[$linkNum])) {
-			return false;
-		}
 		$this->_db[$linkNum]			=	 Db::getInstance($config);
 		return true;
 	}
