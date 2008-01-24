@@ -2894,13 +2894,14 @@ class Model extends Base  implements IteratorAggregate
 	public function addConnect($config,$linkNum,$eqType=true) {
 		if($eqType) {
 			// 同类型的数据库连接直接在实例增加
+			$this->_db[$linkNum]			=	 true;
 			return $this->db->addConnect($config,$linkNum);
 		}
 		// 不同类型的数据库连接创建一个新的实例
 		if(isset($this->_db[$linkNum])) {
 			return false;
 		}
-		$this->_db[$linkNum] = Db::getInstance($config);
+		$this->_db[$linkNum]			=	 Db::getInstance($config);
 		return true;
 	}
 
@@ -2911,19 +2912,19 @@ class Model extends Base  implements IteratorAggregate
      * @access protected 
      +----------------------------------------------------------
 	 * @param integer $linkNum  创建的连接序号
-	 * @param boolean $eqType 是否相同类型连接
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-	public function switchConnect($linkNum,$eqType=true) {
-		if($eqType) {
-			// 同类型数据库连接直接在实例里面切换
-			return $this->db->switchConnect($linkNum);
-		}
-		// 不同类型的数据库连接在不同实例直接切换
+	public function switchConnect($linkNum) {
 		if(isset($this->_db[$linkNum])) {
-			$this->db	=	$this->_db[$linkNum];
+			if(true === $this->_db[$linkNum] ) {
+				// 同类型数据库连接直接在实例里面切换
+				return $this->db->switchConnect($linkNum);
+			}else{
+				// 不同类型的数据库连接在不同实例直接切换
+				$this->db	=	$this->_db[$linkNum];
+			}
 			return true;
 		}else{
 			return false;
