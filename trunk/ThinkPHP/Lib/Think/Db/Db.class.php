@@ -304,11 +304,19 @@ class Db extends Base
 				$_config[$key]	 	=	explode(',',$val);
 			}
 		}
-		// 默认是连接第一个数据库配置 主服务器
-		$r	=	0;
-		if(!$master) {
-			// 连接从服务器
-			$r = floor(mt_rand(1,count($_config['hostname'])-1));	// 每次随机连接的数据库 不包括主服务器
+		// 数据库读写是否分离
+		if(C('DB_RW_SEPARATE')){
+			// 主从式采用读写分离
+			if($master) {
+				// 默认主服务器是连接第一个数据库配置
+				$r	=	0;
+			}else{
+				// 读操作连接从服务器
+				$r = floor(mt_rand(1,count($_config['hostname'])-1));	// 每次随机连接的数据库
+			}
+		}else{
+			// 读写操作不区分服务器
+			$r = floor(mt_rand(0,count($_config['hostname'])-1));	// 每次随机连接的数据库
 		}
 		$db_config = array(
 			'username'=>	 isset($_config['username'][$r])?$_config['username'][$r]:$_config['username'][0],
