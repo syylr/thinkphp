@@ -873,7 +873,7 @@ class Db extends Base
             //如果包含* 或者 使用了sql方法 则不作处理
         }
         elseif(false === strpos($value,'`') ) {
-            $value = '`'.$value.'`';
+            $value = '`'.trim($value).'`';
         }
         return $value;
     }
