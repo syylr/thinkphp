@@ -1095,11 +1095,13 @@ class Db extends Base
 		foreach ($map as $key=>$val){
 			if(is_array($val) && strtolower($val[0]) == 'exp') {
 				$val	=	$val[1];						// 使用表达式
+			}elseif (is_scalar($val)){
+				$val	=	$this->fieldFormat($val);
+			}else{
+				// 去掉复合对象
+				continue;
 			}
-			// 去掉复合对象 保证关联数据属性不会被保存导致错误
-			if(is_scalar($val)) {
-				$data[$key]	=	$val;
-			}
+			$data[$key]	=	$val;
 		}
         //转换数据库编码
         $data    = auto_charset($data,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
@@ -1109,7 +1111,7 @@ class Db extends Base
         }
         $fieldsStr = implode(',', $fields);
         $values = array_values($data);
-        array_walk($values, array($this, 'fieldFormat'));
+        //array_walk($values, array($this, 'fieldFormat'));
 
         $valuesStr = implode(',', $values);
         $this->queryStr =    'INSERT INTO '.$table.' ('.$fieldsStr.') VALUES ('.$valuesStr.')';
