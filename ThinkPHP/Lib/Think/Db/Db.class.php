@@ -790,14 +790,18 @@ class Db extends Base
         $sets    = auto_charset($sets,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
         if(is_array($sets)){
             foreach ($sets as $key=>$val){
-                if(!is_null($val) && is_scalar($val)){
-					// 过滤空值元素 和复合元素
-					if('MYSQL' == $this->getDbType()) {
-	                    $setsStr .= $this->addSpecialChar($key)." = ".$this->fieldFormat($val).",";
-					}else {
-	                    $setsStr .= "$key = ".$this->fieldFormat($val).",";
-					}
-                }
+				if('MYSQL' == $this->getDbType()) {
+					$key	=	$this->addSpecialChar($key);
+				}
+				if(is_array($val) && strtolower($val[0]) == 'exp') {
+					$val	=	$val[1];						// 使用表达式
+				}elseif(!is_null($val) && is_scalar($val)){
+					$val	=	$this->fieldFormat($val);
+				}else{
+					// 过滤控制和复合对象
+					continue;
+				}
+				$setsStr .= "$key = ".$val.",";
             }
             $setsStr = substr($setsStr,0,-1);
         }else if(is_string($sets)) { 
@@ -1088,8 +1092,11 @@ class Db extends Base
                 throw_exception(L('_DATA_TYPE_INVALID_'));
             }
         }
-		// 去掉复合对象 保证关联数据属性不会被保存导致错误
 		foreach ($map as $key=>$val){
+			if(is_array($val) && strtolower($val[0]) == 'exp') {
+				$val	=	$val[1];						// 使用表达式
+			}
+			// 去掉复合对象 保证关联数据属性不会被保存导致错误
 			if(is_scalar($val)) {
 				$data[$key]	=	$val;
 			}
