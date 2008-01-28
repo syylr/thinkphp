@@ -133,8 +133,9 @@ Class DbIbase extends Db{
         if ( !$this->queryID ) {
             return false;
         } else {
-            $this->numCols = ibase_num_fields($this->queryID);
+            //$this->numCols = ibase_num_fields($this->queryID);
 			$this->resultSet = $this->getAll();
+			$this->numRows	=	count($this->resultSet);
             return new ArrayObject($this->resultSet);              	
         }
     }
@@ -416,14 +417,11 @@ Class DbIbase extends Db{
         }
         //返回数据集
         $result = array();
-		$rowCount	 =	 0;
 		if(is_null($resultType)){ $resultType   =  $this->resultType ; }
 		$fun = ($resultType== DATA_TYPE_OBJ) ?	'ibase_fetch_object' : 'ibase_fetch_assoc';
 		while ( $row = $fun($this->queryID)) { 
 			$result[]	=	$row;
-			$rowCount = $rowCount + 1;
 		}
-		$this->numRows	=	$rowCount;
 		
 		//剑雷 2007.12.30 自动解密BLOB字段
 		//取BLOB字段清单

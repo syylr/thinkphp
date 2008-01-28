@@ -129,7 +129,7 @@ Class DbPdo extends Db{
             //if ( $this->debug ) throw_exception($this->error());
             return false;
         } else {
-            $this->numCols = $this->PDOStatement->columnCount();
+            //$this->numCols = $this->PDOStatement->columnCount();
             $this->resultSet = $this->getAll();
             $this->numRows = count( $this->resultSet );
             if ( $this->numRows > 0 ){
