@@ -130,7 +130,7 @@ Class DbPgsql extends Db{
 			return false;
 		} else {
 			$this->numRows = pg_num_rows($this->queryID);
-			$this->numCols = pg_num_fields($this->queryID);
+			//$this->numCols = pg_num_fields($this->queryID);
 			$this->resultSet = $this->getAll();
 			return new ArrayObject($this->resultSet);
 		}
@@ -345,14 +345,9 @@ Class DbPgsql extends Db{
 		$result = array();
 		if($this->numRows >0) {
 			if(is_null($resultType)){ $resultType   =  $this->resultType ; }
+			$fun	=	$resultType== DATA_TYPE_OBJ ? 'pg_fetch_object':'pg_fetch_assoc';
 			for($i=0;$i<$this->numRows ;$i++ ){
-				if($resultType== DATA_TYPE_OBJ){
-					//返回对象集
-					$result[$i] = pg_fetch_object($this->queryID);
-				}else{
-					// 返回数组集
-					$result[$i] = pg_fetch_assoc($this->queryID);
-				}
+				$result[$i]	=	$fun($this->queryID);
 			}
 			pg_result_seek($this->queryID,0);
 		}

@@ -130,7 +130,7 @@ Class DbMysql extends Db{
             return false;
         } else {
             $this->numRows = mysql_num_rows($this->queryID);
-            $this->numCols = mysql_num_fields($this->queryID);
+            //$this->numCols = mysql_num_fields($this->queryID);
             $this->resultSet = $this->getAll();
             return new ArrayObject($this->resultSet);              	
         }
@@ -321,17 +321,12 @@ Class DbMysql extends Db{
         //返回数据集
         $result = array();
         if($this->numRows >0) {
-            if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-             for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType== DATA_TYPE_OBJ){
-                    //返回对象集
-                    $result[$i] = mysql_fetch_object($this->queryID);
-                }else{
-                    // 返回数组集
-                    $result[$i] = mysql_fetch_assoc($this->queryID);
-                }
-            }
-            mysql_data_seek($this->queryID,0);
+			if(is_null($resultType)){ $resultType   =  $this->resultType ; }
+			$fun	=	$resultType== DATA_TYPE_OBJ?'mysql_fetch_object':'mysql_fetch_assoc';
+			while($row = $fun($this->queryID)){
+				$result[]	=	$row;
+			}
+			mysql_data_seek($this->queryID,0);
         }
         return $result;
     }

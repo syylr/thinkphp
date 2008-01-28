@@ -327,18 +327,14 @@ Class DbMysqli extends Db{
         }
         //返回数据集
         $result = array();
-        $info   = $this->queryID->fetch_fields();
+        //$info   = $this->queryID->fetch_fields();
         if($this->numRows>0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
+			// 判断数据返回类型
+			$fun	=	$resultType== DATA_TYPE_OBJ?'fetch_object':'fetch_assoc';
             //返回数据集
             for($i=0;$i<$this->numRows ;$i++ ){
-                if($resultType==DATA_TYPE_OBJ){
-                    //返回对象集
-                    $result[$i] = $this->queryID->fetch_object();
-                }else{
-                    // 返回数组集
-                    $result[$i] = $this->queryID->fetch_assoc();
-                }
+	            $result[$i] = $this->queryID->$fun();
             }
             $this->queryID->data_seek(0);
         }
