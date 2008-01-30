@@ -655,6 +655,9 @@ class Db extends Base
 				}else{
 				  $limitStr = ' FIRST '.$limit[0].' ';
 				}
+			}elseif('ORACLE'==$dbType){
+				// TODO oracle的limit
+				$limitStr .= '';
 			}else{
 				// 其它数据库
 	            $limitStr .= ' LIMIT '.$limit.' ';
