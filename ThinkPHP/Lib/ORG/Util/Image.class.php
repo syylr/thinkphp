@@ -336,12 +336,9 @@ class Image extends Base
      */
     static function showAdvVerify($type='png',$width=180,$height=40) 
     {
-        $verifyCodeRandArray = build_count_rand(10,1,3);
-        $i=0;
-        while (list($k,$v)=each($verifyCodeRandArray)) {
-            $verifyCode[$i] = $v;
-            $i++;
-        }
+		$rand	=	range('a','z');
+		shuffle($rand);
+		$verifyCode	=	array_slice($rand,0,10);
         $letter = implode(" ",$verifyCode);
         $_SESSION['verifyCode'] = $verifyCode;
         $im = imagecreate($width,$height);
