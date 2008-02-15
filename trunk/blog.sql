@@ -61,7 +61,7 @@ CREATE TABLE `think_blog` (
   `userId` mediumint(5) unsigned NOT NULL default '0',
   `categoryId` smallint(5) unsigned NOT NULL,
   `title` varchar(255) NOT NULL default '',
-  `content` longtext NOT NULL,
+  `content` longtext,
   `cTime` int(11) unsigned NOT NULL default '0',
   `mTime` int(11) unsigned NOT NULL default '0',
   `status` tinyint(1) unsigned NOT NULL default '0',
