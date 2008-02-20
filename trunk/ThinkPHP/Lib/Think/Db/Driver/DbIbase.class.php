@@ -127,7 +127,7 @@ Class DbIbase extends Db{
             //$this->numCols = ibase_num_fields($this->queryID);
 			$this->resultSet = $this->getAll();
 			$this->numRows	=	count($this->resultSet);
-            return new ArrayObject($this->resultSet);              	
+            return $this->resultSet;              	
         }
     }
 

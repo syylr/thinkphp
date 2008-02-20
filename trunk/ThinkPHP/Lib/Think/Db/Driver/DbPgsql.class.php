@@ -124,7 +124,7 @@ Class DbPgsql extends Db{
 			$this->numRows = pg_num_rows($this->queryID);
 			//$this->numCols = pg_num_fields($this->queryID);
 			$this->resultSet = $this->getAll();
-			return new ArrayObject($this->resultSet);
+			return $this->resultSet;
 		}
 	}
 
