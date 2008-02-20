@@ -1,0 +1,67 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function selectGroup(){
+ var result= PopModalWindow('__APP__/Group/select/parentId/0',268,360);
+ if(typeof(result) == "undefined") return;
+	$('groupName').value=result[0][0];
+	$('parentId').value=result[0][1];
+}
+function notice(name){
+	switch (name)
+	{
+	case 'name':		showTip('组名称');break;
+	case 'parent':	showTip('选择上级组，可以继承上级组的权限');break;
+	case 'rate':			showTip('是否需要进行提成，如果选择是的话，会在提成管理里面可以设置提成比例');break;
+	case 'status':		showTip('组状态');break;
+	case 'remark':		showTip('组备注信息');break;
+	}
+}
+//-->
+</SCRIPT>
+<div class="content">
+<div class="title">编辑组 [ <A HREF="__URL__">返回列表</A> ]</div>
+<div id="result" class="result none"></div><div id="tips"  class="tips"  > 修改权限组信息，红色标注的字段为必填字段。</div>
+<FORM METHOD=POST action="__URL__/update/" id="form1" >
+<TABLE cellpadding=3 cellspacing=3 >
+<TR>
+	<TD class="tRight" >组名：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeft" check='^\S+$' onfocus="notice('name')"  warning="组名不能为空,且不能含有空格" NAME="name" value="{$vo.name}"></TD>
+</TR>
+<TR>
+	<TD class="tRight" >上级组：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeft" onfocus="notice('parent')"  NAME="groupName" value="{$vo.parentId|getGroupName}"><INPUT TYPE="hidden" class="medium bLeft" NAME="parentId" value="{$vo.parentId}"> <a href="javascript:selectGroup()" ><IMG SRC="../Public/images/search.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" align="absmiddle"></a></TD>
+</TR>
+<TR>
+	<TD class="tRight">组状态：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft" onfocus="notice('status')"  NAME="status">
+	<option <equal name="vo.status" value="1" >selected</equal> value="1">启用</option>
+	<option <equal name="vo.status" value="0" >selected</equal> value="0">禁用</option>
+	</SELECT></TD>
+</TR>
+<TR>
+	<TD class="tRight">需要提成：</TD>
+	<TD class="tLeft"><SELECT class="small bLeft" onfocus="notice('rate')"  NAME="requireRate">
+	<option <equal name="vo.requireRate" value="0" >selected</equal> value="0">否</option>
+	<option <equal name="vo.requireRate" value="1" >selected</equal> value="1">是</option>
+	</SELECT></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">描 述：</TD>
+	<TD class="tLeft"><TEXTAREA class="large bLeft" NAME="remark" onfocus="notice('remark')"  ROWS="5" COLS="57">{$vo.remark}</TEXTAREA></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD class="center"><div style="width:85%;margin:5px"><INPUT TYPE="hidden" name="id" value="{$vo.id}" >
+	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" value="1">
+	<div class="impBtn fLeft"><INPUT TYPE="submit" value="保存" class="save imgButton"></div>
+	<div class="impBtn fRig"><INPUT TYPE="reset" onclick="history.back(-1)" class="reset imgButton" value="取消" ></div>
+	</div></TD>
+</TR>
+</TABLE>
+</FORM>
+</div>
+
+<include file="../Public/footer" />

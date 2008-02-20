@@ -1,0 +1,55 @@
+<taglib name="html" />
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <TITLE>ThinkPHP示例：CURD操作</TITLE>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+<html:import type="js" file="Js.Base" /> 
+<html:import type="js" file="Js.prototype" /> 
+<html:import type="js" file="Js.mootools" /> 
+<html:import type="js" file="Js.Ajax.ThinkAjax" /> 
+ </HEAD>
+ <BODY><SCRIPT LANGUAGE="JavaScript">
+ <!--
+	function add(){
+		ThinkAjax.sendForm('form1','__URL__/insert',complete,'result');
+	}
+	function complete(data,status){
+		if (status==1)
+		{
+		 window.setTimeout(function (){window.location.href='__URL__',20000});
+		}
+	}
+ //-->
+ </SCRIPT>
+ <div class="main">
+ <H2>ThinkPHP示例之：CURD操作 [ 新增数据表单 ] </H2>
+ <TABLE cellpadding=2 cellspacing=2>
+  <TR>
+	<TD colspan="2"><div id="result" class="none result" style="font-family:微软雅黑,Tahoma;letter-spacing:2px"></div></TD>
+ </TR>
+
+   <FORM id="form1" METHOD=POST ACTION="__URL__/insert">
+ <TR>
+	<TD class="tRight" width="12%">标题：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" NAME="title" style="height:23px" class="huge bLeft"> </TD>
+ </TR>
+  <TR>
+	<TD class="tRight" >邮箱：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" NAME="email" style="height:23px" class="huge bLeft"></TD>
+ </TR>
+ <TR>
+	<TD class="tRight tTop" >内容：</TD>
+	<TD><TEXTAREA NAME="content" class="huge bLeft" ROWS="8" COLS="25"></TEXTAREA></TD>
+ </TR>
+ <TR>
+	<TD><INPUT TYPE="hidden" NAME="ajax" value="1"></TD>
+	<TD><INPUT TYPE="button" onclick="add()" class="button" value="保 存"> <INPUT TYPE="reset" class="button" value="清 空"></TD>
+ </TR>
+   </FORM>
+ </TABLE>
+
+</div>
+ </BODY>
+</HTML>

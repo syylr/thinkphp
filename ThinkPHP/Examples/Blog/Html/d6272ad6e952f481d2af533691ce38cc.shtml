@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><HEAD><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta name="generator" content="ThinkPHP 1.0.2" /><meta name="keywords" content="" /><meta name="robots" content="all" /><meta name="author" content="liu21st | www.topthink.com.cn" /><meta name="Copyright" content="Copyright (c) 2007 thinkPHP.cn" /><TITLE> ThinkPHP PHP最佳实践框架</TITLE><link rel="shortcut icon" href="/favicon.ico" ><link rel="icon" href="/animated_favicon1.gif" type="image/gif" ><link rel='stylesheet' type='text/css' href='/thinkphp/Examples/Blog/Tpl/default/Public/css/style.css'><script language='JavaScript' src='/thinkphp/Examples/Blog/Tpl/default/Public/js/Common.js'></script> <script language='JavaScript' src='/thinkphp/Examples/Public/Js/Base.js'></script> <script language='JavaScript' src='/thinkphp/Examples/Public/Js/prototype.js'></script>  <script language='JavaScript' src='/thinkphp/Examples/Public/Js/mootools.js'></script>  <script language='JavaScript' src='/thinkphp/Examples/Public/Js/Ajax/ThinkAjax.js'></script>  <script language='JavaScript' src='/thinkphp/Examples/Public/Js/UbbEditor.js'></script> <script language='JavaScript' src='/thinkphp/Examples/Public/Js/Form/CheckForm.js'></script>  <SCRIPT LANGUAGE="JavaScript">var URL = '/thinkphp/Examples/blog/index.php/Blog';var APP	 =	 '/thinkphp/Examples/blog/index.php';var PUBLIC = '/thinkphp/Examples/Public';ThinkAjax.updateTip = '<IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/loading2.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="loading..." align="absmiddle"> 数据处理中...';</SCRIPT></HEAD>
+<body >
+<div id="header">
+<div id="innerHeader">
+  <div id="blogLogo"></div>
+  <div class="blog-header">
+    <div class="blog-title"><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/logo.png"  style="border:1px solid gray" BORDER="0" ALT="" align="absmiddle"> <a href="http://thinkphp.cn">ThinkPHP</a></div>
+    <div class="blog-desc">PHP最佳实践框架  [ Blog示例程序]</div>
+  </div>
+  <div id="menu">
+    <ul>
+    <li><a href="/thinkphp/Examples/blog/index.php">日志首页</a></li>
+    <li><a href="/thinkphp/Examples/blog/index.php/Blog/add">撰写日志</a></li>
+    <li><a href="http://thinkphp.cn">官方网站</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+
+
+<div id="mainWrapper">
+<div id="content" class="content">
+<div id="innerContent">
+  
+  <div class="announce" style="border:1px solid silver;padding:5px;font-size:14px;" class="text">
+  	<H4 style="color:#FF3300"><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/wav.gif" WIDTH="18" HEIGHT="18" BORDER="0" ALT="" align="absmiddle"> 简单的BLOG示例</H4>
+    本示例Blog基于ThinkPHP1.0.0实现，包括日志的新增、修改、列表、统计、评论、标签、归档、上传附件和删除等功能，涵盖了新版ThinkPHP的路由功能、内置模板引擎标签的使用、视图模型、文本字段、AJAX操作、前置和后置操作、自动验证、自动填充、分页功能、查询语言、统计查询、动态查询、自动时间戳记录、CURD操作、触发器、默认模块设置、页面Trace、浏览器缓存、Action缓存、静态缓存、操作重定向、文件上传（批量上传、AJAX上传）、验证码等知识点的实现，可以作为入门ThinkPHP的绝佳示例。<P>请按照下面步骤操作，增加分类、添加日志、增加评论。
+ </div>
+<div class="article-top"><div class="view-mode">浏览模式: <a href="?mode=normal">普通</a> | <a href="?mode=list">列表</a></div><div class="pages">共5 篇日志 /1页       </div></div>
+<div id="blog_5">
+<div class="textbox-title"><H4><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_point2.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/5">dfdf</A> <span style="color:gray;font-weight:normal"> </span></H4><div class="textbox-label">[ 2008-02-19 21:50:16  | <A HREF="/thinkphp/Examples/blog/index.php/Category/1">test </A>] </div></div>
+<div class="textbox-content"><p>dfdfdf</p></div> 
+<div class="textbox-bottom"> [ 管理：<A HREF="/thinkphp/Examples/blog/index.php/Blog/edit/id/5">编辑</A> <A HREF="javascript:delBlog(5)">删除</A> ]   关键词:  <a href="/thinkphp/Examples/blog/index.php/Blog/tag/name/"></a>   | <A HREF="/thinkphp/Examples/blog/index.php/Blog/5#reply">评论: 0</A> | 浏览: 0</div><P>
+</div><div id="blog_4">
+<div class="textbox-title"><H4><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_point2.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/4">33333333333</A> <span style="color:gray;font-weight:normal"> </span></H4><div class="textbox-label">[ 2008-02-18 14:29:43  | <A HREF="/thinkphp/Examples/blog/index.php/Category/1">test </A>] </div></div>
+<div class="textbox-content"><p>33333333</p></div> 
+<div class="textbox-bottom"> [ 管理：<A HREF="/thinkphp/Examples/blog/index.php/Blog/edit/id/4">编辑</A> <A HREF="javascript:delBlog(4)">删除</A> ]   关键词:  <a href="/thinkphp/Examples/blog/index.php/Blog/tag/name/"></a>   | <A HREF="/thinkphp/Examples/blog/index.php/Blog/4#reply">评论: 1</A> | 浏览: 1</div><P>
+</div><div id="blog_3">
+<div class="textbox-title"><H4><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_point2.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/3">dfdf</A> <span style="color:gray;font-weight:normal"> </span></H4><div class="textbox-label">[ 2008-02-18 14:25:48  | <A HREF="/thinkphp/Examples/blog/index.php/Category/1">test </A>] </div></div>
+<div class="textbox-content"></div> 
+<div class="textbox-bottom"> [ 管理：<A HREF="/thinkphp/Examples/blog/index.php/Blog/edit/id/3">编辑</A> <A HREF="javascript:delBlog(3)">删除</A> ]   关键词:  <a href="/thinkphp/Examples/blog/index.php/Blog/tag/name/"></a>   | <A HREF="/thinkphp/Examples/blog/index.php/Blog/3#reply">评论: 0</A> | 浏览: 0</div><P>
+</div><div id="blog_2">
+<div class="textbox-title"><H4><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_point2.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2">1111</A> <span style="color:gray;font-weight:normal"> </span></H4><div class="textbox-label">[ 2008-02-17 12:05:48  | <A HREF="/thinkphp/Examples/blog/index.php/Category/1">test </A>] </div></div>
+<div class="textbox-content"></div> 
+<div class="textbox-bottom"> [ 管理：<A HREF="/thinkphp/Examples/blog/index.php/Blog/edit/id/2">编辑</A> <A HREF="javascript:delBlog(2)">删除</A> ]   关键词:  <a href="/thinkphp/Examples/blog/index.php/Blog/tag/name/"></a>   | <A HREF="/thinkphp/Examples/blog/index.php/Blog/2#reply">评论: 0</A> | 浏览: 0</div><P>
+</div><div id="blog_1">
+<div class="textbox-title"><H4><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_point2.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/1">ddd</A> <span style="color:gray;font-weight:normal"> </span></H4><div class="textbox-label">[ 2008-02-17 12:00:33  | <A HREF="/thinkphp/Examples/blog/index.php/Category/1">test </A>] </div></div>
+<div class="textbox-content"></div> 
+<div class="textbox-bottom"> [ 管理：<A HREF="/thinkphp/Examples/blog/index.php/Blog/edit/id/1">编辑</A> <A HREF="javascript:delBlog(1)">删除</A> ]   关键词:  <a href="/thinkphp/Examples/blog/index.php/Blog/tag/name/"></a>   | <A HREF="/thinkphp/Examples/blog/index.php/Blog/1#reply">评论: 4</A> | 浏览: 2</div><P>
+</div><div class="article-bottom"><div class="pages">共5 篇日志 /1页       </div></div>
+</div> 
+</div>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+	function addCategory(){
+		ThinkAjax.send('/thinkphp/Examples/blog/index.php/Category/insert','ajax=1&title='+$F('categoryName'),addComplete);
+	}
+	function addComplete(data,status){
+		if (status==1)
+		{
+		$('category').innerHTML += '<li id="category_'+data.id+'"><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/folder.gif" WIDTH="18" HEIGHT="18" BORDER="0" ALT="" align="absmiddle"><A HREF="/thinkphp/Examples/blog/index.php/Category/'+data.id+'">'+data.title+'</A> <span >(0)</span><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/del.gif" WIDTH="20" HEIGHT="20" BORDER="0" style="cursor:pointer" ALT="" onclick="delCategory('+data.id+')" align="absmiddle">';
+		}
+	}
+	function delCategory(id){
+		ThinkAjax.send('/thinkphp/Examples/blog/index.php/Category/delete/','ajax=1&id='+id,delComplete);
+	}
+	function delComplete(data,status){
+		if (status==1)
+		{
+			$('category_'+data).style.display = 'none';
+		}
+	}
+//-->
+</SCRIPT>
+<div id="sidebar" class="sidebar">
+<div id="innerSidebar">
+  <div id="panelSearch" class="panel">
+  <div id="panelStats" class="panel">
+  <h5>统计数据</h5>
+  <div class="panel-content">
+	创建日期：<span style="color:#CC9933">2008-02-17</span><BR>
+	日志总数：<span style="color:#CC9933">5</span><BR>
+	阅读总数：<span style="color:#6699FF">3</span><BR>
+	评论总数：<span style="color:#FF9900">5</span> <BR>
+  </div>
+  </div>
+	<H5 >日志分类 </H5><div class="panel-content">
+  <ul id="category">
+  <li><div class="fLeft"><INPUT TYPE="text" id="categoryName" class="text" NAME="name"></div><div class="fLeft"><INPUT TYPE="button" value="增 加" class="submit hMargin small" onclick="addCategory()"></div>
+  <li id="category_1"><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/folder.gif" WIDTH="18" HEIGHT="18" BORDER="0" ALT="" align="absmiddle"><A HREF="/thinkphp/Examples/blog/index.php/Category/1">test</A> <span >(5)</span> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/del.gif" style="cursor:pointer" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" onclick="delCategory(1)" align="absmiddle"></ul></div>
+</div>
+  <div id="panelSearch" class="panel">
+<H5 >最新日志</H5><div class="panel-content">
+  <ul><li><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_ctb.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/5" title="dfdf">dfdf</A> <sup style="color:silver;font-size:12px"> [<span style="color:#3366CC">0</span> |<span style="color:#FF6600"> 0</span>]</sup><li><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_ctb.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/4" title="33333333333">33333333333</A> <sup style="color:silver;font-size:12px"> [<span style="color:#3366CC">1</span> |<span style="color:#FF6600"> 1</span>]</sup><li><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_ctb.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/3" title="dfdf">dfdf</A> <sup style="color:silver;font-size:12px"> [<span style="color:#3366CC">0</span> |<span style="color:#FF6600"> 0</span>]</sup><li><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_ctb.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2" title="1111">1111</A> <sup style="color:silver;font-size:12px"> [<span style="color:#3366CC">0</span> |<span style="color:#FF6600"> 0</span>]</sup><li><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_ctb.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/1" title="ddd">ddd</A> <sup style="color:silver;font-size:12px"> [<span style="color:#3366CC">2</span> |<span style="color:#FF6600"> 4</span>]</sup></ul></div>
+</div>
+
+  <div id="panelSearch" class="panel">
+<H5 >最新评论</H5><div class="panel-content">
+  <ul><li><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/Comment.gif" WIDTH="9" HEIGHT="9" BORDER="0" ALT="" align="absmiddle"> <A HREF="mailto:"> <span style="color:#3366CC">dfdf</span></A>：<A HREF="/thinkphp/Examples/blog/index.php/Blog/4#5" title="">dfdf</A><li><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/Comment.gif" WIDTH="9" HEIGHT="9" BORDER="0" ALT="" align="absmiddle"> <A HREF="mailto:"> <span style="color:#3366CC">dfdf</span></A>：<A HREF="/thinkphp/Examples/blog/index.php/Blog/1#4" title="">dfdfdf</A><li><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/Comment.gif" WIDTH="9" HEIGHT="9" BORDER="0" ALT="" align="absmiddle"> <A HREF="mailto:"> <span style="color:#3366CC">dfdfdf</span></A>：<A HREF="/thinkphp/Examples/blog/index.php/Blog/1#3" title="">dfdfdf</A><li><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/Comment.gif" WIDTH="9" HEIGHT="9" BORDER="0" ALT="" align="absmiddle"> <A HREF="mailto:"> <span style="color:#3366CC">dfd</span></A>：<A HREF="/thinkphp/Examples/blog/index.php/Blog/1#2" title="">fdfdf</A><li><IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/Comment.gif" WIDTH="9" HEIGHT="9" BORDER="0" ALT="" align="absmiddle"> <A HREF="mailto:"> <span style="color:#3366CC">dfdf</span></A>：<A HREF="/thinkphp/Examples/blog/index.php/Blog/1#1" title="">dfdfdf</A></ul></div>
+</div>
+
+  <div id="panelSearch" class="panel">
+<H5 >标签云集 [ <A HREF="/thinkphp/Examples/blog/index.php/Blog/tag/">更多</A> ]</H5> 
+<div class="panel-content">
+  <ul><li>
+</ul></div>
+</div>
+
+  <div id="panelSearch" class="panel">
+	<H5 >日志归档</H5> 	<div class="panel-content">
+  <ul><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2008/02">2008年02月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2008/01">2008年01月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/12">2007年12月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/11">2007年11月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/10">2007年10月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/09">2007年09月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/08">2007年08月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/07">2007年07月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/06">2007年06月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/05">2007年05月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/04">2007年04月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/03">2007年03月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/02">2007年02月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2007/01">2007年01月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2006/12">2006年12月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2006/11">2006年11月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2006/10">2006年10月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2006/09">2006年09月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2006/08">2006年08月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2006/07">2006年07月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2006/06">2006年06月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2006/05">2006年05月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2006/04">2006年04月</A><li> <IMG SRC="/thinkphp/Examples/Blog/Tpl/default/Public/images/icon_quote.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle"> <A HREF="/thinkphp/Examples/blog/index.php/Blog/2006/03">2006年03月</A></ul></div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+ <!-- 版权信息区域 -->
+<div id="footer" class="footer" >
+<div id="innerFooter">
+Powered by ThinkPHP 1.0.2 | Template designed by <a target="_blank" href="http://www.topthink.com.cn">TopThink</a></div>
+</div>
+</BODY>
+</HTML>
