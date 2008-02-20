@@ -124,7 +124,7 @@ Class DbPdo extends Db{
             $this->resultSet = $this->getAll();
             $this->numRows = count( $this->resultSet );
             if ( $this->numRows > 0 ){
-                return new ArrayObject($this->resultSet);              	
+                return $this->resultSet;              	
             }
             return false;            	
         }
