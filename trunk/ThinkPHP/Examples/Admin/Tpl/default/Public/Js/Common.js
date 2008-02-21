@@ -72,30 +72,6 @@ function InverSelect(){
 	}
 }
 
-function WriteTo(id){
-	var type = $F('outputType');
-	switch (type)
-	{
-	case 'EXCEL':WriteToExcel(id);break;
-	case 'WORD':WriteToWord(id);break;
-	
-	}
-	return ;
-}
-
-function build(id){
-	window.location = APP+'/Card/batch/type/'+id;
-}
-function shortcut(){
-	var name	=	 window.prompt("输入该快捷方式的显示名称","");
-	if (name !=null)
-	{
-	var url	=	location.href;
-	ThinkAjax.send(location.protocol+'//'+location.hostname+APP+'/Shortcut/ajaxInsert/','ajax=1&name='+name+'&url='+url);
-	}
-
-}
-
 function show(){
 	if (document.getElementById('menu').style.display!='none')
 	{
@@ -133,76 +109,6 @@ function showHideSearch(){
 	}
 }
 
-function top(id){
-	var keyValue;
-	if (id)
-	{
-		keyValue = id;
-	}else {
-		keyValue = getSelectCheckboxValues();
-	}
-	if (!keyValue)
-	{
-		alert('请选择置顶项！');
-		return false;
-	}
-
-	location.href = URL+"/top/id/"+keyValue;
-
-}
-
-function high(id){
-	var keyValue;
-	if (id)
-	{
-		keyValue = id;
-	}else {
-		keyValue = getSelectCheckboxValues();
-	}
-	if (!keyValue)
-	{
-		alert('请选择高亮项！');
-		return false;
-	}
-	location.href = URL+"/high/id/"+keyValue;
-}
-function recommend(id){
-	var keyValue;
-	if (id)
-	{
-		keyValue = id;
-	}else {
-		keyValue = getSelectCheckboxValues();
-	}
-	if (!keyValue)
-	{
-		alert('请选择推荐项！');
-		return false;
-	}
-
-	location.href = URL+"/recommend/id/"+keyValue;
-
-}
-
-function checkPass(id){
-	var keyValue;
-	if (id)
-	{
-		keyValue = id;
-	}else {
-		keyValue = getSelectCheckboxValues();
-	}
-	if (!keyValue)
-	{
-		alert('请选择要审核的专家！');
-		return false;
-	}
-
-	if (window.confirm('确实审核通过吗？'))
-	{
-		ThinkAjax.send(URL+"/checkPass/","id="+keyValue+'&_AJAX_SUBMIT_=1',doDelete,'result');
-	}
-}
 function sortBy (field,sort){
 	location.href = "?order="+field+"&sort="+sort;
 }
@@ -216,18 +122,7 @@ function recycle(id){
 function resume(id){
 	location.href = URL+"/resume/id/"+id;
 }
-function output(){
-	location.href = URL+"/output/";
-}
-function member(id){
-	location.href = URL+"/../Member/edit/id/"+id;
-}
-function chat(id){
-	location.href = URL+"/../Chat/index/girlId/"+id;
-}
-function login(id){
-	location.href = URL+"/../Login/index/type/4/id/"+id;
-}
+
 function child(id){
 	location.href = URL+"/index/pid/"+id;
 }
@@ -352,33 +247,6 @@ function doDelete(data,status){
 		}
 	}
 }
-
-function clearData(){
-	if (window.confirm('确实要清空全部数据吗？'))
-	{
-	location.href = URL+"/clear/";
-	}
-}
-function takeback(id){
-	var keyValue;
-	if (id)
-	{
-		keyValue = id;
-	}else {
-		keyValue = getSelectCheckboxValues();
-	}
-	if (!keyValue)
-	{
-		alert('请选择回收项！');
-		return false;
-	}
-
-	if (window.confirm('确实要回收选择项吗？'))
-	{
-	location.href = URL+"/takeback/id/"+keyValue;
-	}
-}
-
 
 function getSelectCheckboxValue(){
 	var obj = document.getElementsByName('key');
