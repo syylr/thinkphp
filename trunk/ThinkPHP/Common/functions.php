@@ -1312,9 +1312,9 @@ function buildAppDir() {
 			mkdir(LIB_PATH.'Action/');	//	创建控制器目录
 		// 目录安全写入
 		if(!defined('BUILD_DIR_SECURE')) define('BUILD_DIR_SECURE',false);
-		if(!defined('DIR_SECURE_FILENAME')) define('DIR_SECURE_FILENAME','index.html');
-		if(!defined('DIR_SECURE_CONTENT')) define('DIR_SECURE_CONTENT',' ');
 		if(BUILD_DIR_SECURE) {
+			if(!defined('DIR_SECURE_FILENAME')) define('DIR_SECURE_FILENAME','index.html');
+			if(!defined('DIR_SECURE_CONTENT')) define('DIR_SECURE_CONTENT',' ');
 			// 自动写入目录安全文件
 			$content		=	DIR_SECURE_CONTENT;
 			$a = explode(',', DIR_SECURE_FILENAME);
