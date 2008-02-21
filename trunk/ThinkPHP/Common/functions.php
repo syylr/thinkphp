@@ -1313,19 +1313,25 @@ function buildAppDir() {
 		// 目录安全写入
 		if(!defined('BUILD_DIR_SECURE')) define('BUILD_DIR_SECURE',false);
 		if(!defined('DIR_SECURE_FILENAME')) define('DIR_SECURE_FILENAME','index.html');
-		if(!defined('DIR_SECURE_CONTENT')) define('DIR_SECURE_CONTENT','');
+		if(!defined('DIR_SECURE_CONTENT')) define('DIR_SECURE_CONTENT',' ');
 		if(BUILD_DIR_SECURE) {
 			// 自动写入目录安全文件
-			$filename	=	DIR_SECURE_FILENAME;
 			$content		=	DIR_SECURE_CONTENT;
-			file_put_contents(LIB_PATH.$filename,$content);
-			file_put_contents(CACHE_PATH.$filename,$content);
-			file_put_contents(TEMP_PATH.$filename,$content);
-			file_put_contents(TMPL_PATH.$filename,$content);
-			file_put_contents(DATA_PATH.$filename,$content);
-			file_put_contents(COMMON_PATH.$filename,$content);
-			file_put_contents(CONFIG_PATH.$filename,$content);
-			file_put_contents(LOG_PATH.$filename,$content);
+			$a = explode(',', DIR_SECURE_FILENAME);
+			foreach ($a as $filename){
+				file_put_contents(LIB_PATH.$filename,$content);
+				file_put_contents(LIB_PATH.'Action/'.$filename,$content);
+				file_put_contents(LIB_PATH.'Model/'.$filename,$content);
+				file_put_contents(CACHE_PATH.$filename,$content);
+				file_put_contents(LANG_PATH.$filename,$content);
+				file_put_contents(TEMP_PATH.$filename,$content);
+				file_put_contents(TMPL_PATH.$filename,$content);
+				file_put_contents(TMPL_PATH.'default/'.$filename,$content);
+				file_put_contents(DATA_PATH.$filename,$content);
+				file_put_contents(COMMON_PATH.$filename,$content);
+				file_put_contents(CONFIG_PATH.$filename,$content);
+				file_put_contents(LOG_PATH.$filename,$content);
+			}
 		}
 		// 写入测试Action
 		if(!file_exists(LIB_PATH.'Action/IndexAction.class.php')) {
