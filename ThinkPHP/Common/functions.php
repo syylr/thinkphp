@@ -1310,10 +1310,14 @@ function buildAppDir() {
 			mkdir(LIB_PATH.'Model/');	//	创建模型目录
 		if(!is_dir(LIB_PATH.'Action/')) 
 			mkdir(LIB_PATH.'Action/');	//	创建控制器目录
-		if(C('BUILD_DIR_SECURE')) {
+		// 目录安全写入
+		if(!defined('BUILD_DIR_SECURE')) define('BUILD_DIR_SECURE',false);
+		if(!defined('DIR_SECURE_FILENAME')) define('DIR_SECURE_FILENAME','index.html');
+		if(!defined('DIR_SECURE_CONTENT')) define('DIR_SECURE_CONTENT','');
+		if(BUILD_DIR_SECURE) {
 			// 自动写入目录安全文件
-			$filename	=	C('DIR_SECURE_FILENAME');
-			$content		=	C('DIR_SECURE_CONTENT');
+			$filename	=	DIR_SECURE_FILENAME;
+			$content		=	DIR_SECURE_CONTENT;
 			file_put_contents(LIB_PATH.$filename,$content);
 			file_put_contents(CACHE_PATH.$filename,$content);
 			file_put_contents(TEMP_PATH.$filename,$content);
