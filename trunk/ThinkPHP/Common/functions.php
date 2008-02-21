@@ -1310,7 +1310,19 @@ function buildAppDir() {
 			mkdir(LIB_PATH.'Model/');	//	创建模型目录
 		if(!is_dir(LIB_PATH.'Action/')) 
 			mkdir(LIB_PATH.'Action/');	//	创建控制器目录
-
+		if(C('BUILD_DIR_SECURE')) {
+			// 自动写入目录安全文件
+			$filename	=	C('DIR_SECURE_FILENAME');
+			$content		=	C('DIR_SECURE_CONTENT');
+			file_put_contents(LIB_PATH.$filename,$content);
+			file_put_contents(CACHE_PATH.$filename,$content);
+			file_put_contents(TEMP_PATH.$filename,$content);
+			file_put_contents(TMPL_PATH.$filename,$content);
+			file_put_contents(DATA_PATH.$filename,$content);
+			file_put_contents(COMMON_PATH.$filename,$content);
+			file_put_contents(CONFIG_PATH.$filename,$content);
+			file_put_contents(LOG_PATH.$filename,$content);
+		}
 		// 写入测试Action
 		if(!file_exists(LIB_PATH.'Action/IndexAction.class.php')) {
 			$content	 =	 
