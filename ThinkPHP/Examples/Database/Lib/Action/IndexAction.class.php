@@ -42,6 +42,7 @@ class IndexAction extends Action{
 			$Form->add();
 			$this->redirect();
 		}else{
+			header("Content-Type:text/html; charset=utf-8");
 			exit($Form->getError().' [ <A HREF="javascript:history.back()">返 回</A> ]');
 		}
 	}

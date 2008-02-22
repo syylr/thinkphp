@@ -15,6 +15,7 @@ class IndexAction extends Action {
 			$Blob->add();
 			$this->redirect();
 		}else{
+			header("Content-Type:text/html; charset=utf-8");
 			exit($Blob->getError().' [ <A HREF="javascript:history.back()">返 回</A> ]');
 		}
 	}
