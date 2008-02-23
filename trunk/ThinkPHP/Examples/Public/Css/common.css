@@ -141,7 +141,7 @@ input.access{background-image:url(../Images/access.gif)}
 div.loading{position:absolute; z-index:90; top:240px; left:250px; width:250px; height:60px; border:1px ridge gray; background-color:#eee; padding-top:10px}
 div.search{float:left; background:#FBFAF8; border:1px solid #d4d4d4; padding:5px; width:98%; text-align:justify; margin-top:8px}
 div.tips{border:1px solid #d4d4d4; background:#FBFAF8 url(../Images/use.gif) no-repeat; background-position:5px 8px; padding:8px 25px; overflow:auto; max-height:250px; margin:8px; line-height:185%; color:#393939; font-weight:bold; float:left; width:250px !important; width:25%; height:85px}
-div.result{border:1px solid #d4d4d4; background:#FFC; padding:8px 12px; margin:2px 15px; line-height:185%; color:#393939; font-weight:bold; float:auto; width:85%; height:25px}
+div.result{border:1px solid #d4d4d4; background:#FFC; padding:8px 12px; margin:2px 15px; line-height:185%; color:#393939; font-weight:bold; float:auto; width:85%;}
 div.require{border:1pt solid #F63}
 span.require{margin:0px 5px; color:#F30; font-weight:bold; font-family:Verdana,arial; font-size:17px}
 div.wait{    line-height:155%; border:1px solid #d4d4d4; background:#FBFAF8; padding:3px; overflow:auto; width:65%; color:gray; max-height:250px; margin:8px}
