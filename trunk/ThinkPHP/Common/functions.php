@@ -1285,6 +1285,10 @@ function clearCache($type=0,$path=NULL) {
 
 // 创建项目目录结构
 function buildAppDir() {
+	// 没有创建项目目录的话自动创建
+	if(!is_dir(APP_PATH)){
+		mk_dir(APP_PATH);
+	}
 	if(is_writeable(APP_PATH)) {
 		if(!is_dir(LIB_PATH)) 
 			mkdir(LIB_PATH);				// 创建项目应用目录
