@@ -37,8 +37,8 @@ function getObject(obj){
 }
 
 function uploading(msg){
-	$('result').style.display = 'block';
-	$('result').innerHTML	=	'<IMG SRC="__PUBLIC__/Images/ajaxloading.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="" align="absmiddle"> 文件上传中～';
+	document.getElementById('result').style.display = 'block';
+	document.getElementById('result').innerHTML	=	'<IMG SRC="__PUBLIC__/Images/ajaxloading.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="" align="absmiddle"> 文件上传中～';
 	return true;
 }
 
@@ -50,8 +50,8 @@ function uploadComplete(savename){
 //-->
 </SCRIPT>
 <div class="content">
-<TABLE cellpadding=3 cellspacing=3 width="450PX">
 <form id="upload" METHOD=POST action="__URL__/upload/" enctype="multipart/form-data" target="iframeUpload">
+<TABLE cellpadding=3 cellspacing=3 width="450PX">
 <TR>
 	<TD colspan="2" class="tLeft">
 	<div class="result" style="background:#E9E9F3">上传允许文件类型：gif png jpg 图像文件，大小不超过32k。</div>
@@ -78,13 +78,12 @@ function uploadComplete(savename){
 		<div id="img" ></div>
 </TD>
 </TR>
-</form>
 <TR>
 <TD class="tRight tTop"></TD>
 	<TD  class="tLeft"><HR> 示例源码<BR>控制器IndexAction类<BR><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php></TD>
 </TR>
-
 </TABLE>
+</form>
 </div>
 </div>
 <SCRIPT LANGUAGE="JavaScript">

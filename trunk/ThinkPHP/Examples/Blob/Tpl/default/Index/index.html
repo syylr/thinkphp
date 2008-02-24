@@ -9,8 +9,8 @@
  <div class="main">
  <H2>ThinkPHP示例之文本字段：采用文本方式存储模型中的个别字段</H2>
  本示例对内容字段进行了文本方式存储，而不是保存在数据库中。
+    <FORM METHOD=POST ACTION="__URL__/insert">
  <TABLE  cellpadding=2 cellspacing=2>
-   <FORM METHOD=POST ACTION="__URL__/insert">
  <TR>
 	<TD class="tRight" width="12%">标题：</TD>
 	<TD class="tLeft" ><INPUT TYPE="text" NAME="title" style="height:26px" class="large bLeft"></TD>
@@ -23,7 +23,6 @@
 	<TD></TD>
 	<TD><INPUT TYPE="submit" class="button" value="提 交"> <INPUT TYPE="reset" class="button" value="清 空"></TD>
  </TR>
-   </FORM>
  <TR>
  <TD></TD>
 	<TD ><HR></TD>
@@ -44,6 +43,7 @@
 	<BR>模型BlobModel类<php>highlight_file(LIB_PATH.'Model/BlobModel.class.php');</php></TD>
  </TR>
  </TABLE>
+    </FORM>
 </div>
  </BODY>
 </HTML>
