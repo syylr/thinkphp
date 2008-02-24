@@ -111,8 +111,11 @@ function uploadComplete(){
 		<div class="fLeft hMargin"><INPUT TYPE="button" id="submit" value="发表日志" onclick="save()" class="submit small"></div>
 		</div></TD>
 	</TR>
-		</form>
+	</TABLE>
+			</form>
+
 <form id="upload" METHOD=POST action="__URL__/upload/" onsubmit="return CheckForm(this);" enctype="multipart/form-data" target="iframeUpload">
+<TABLE cellpadding=3 cellspacing=3 style="font-size:14px">
 <TR>
 	<TD class="tRight tTop">附件：</TD>
 	<TD class="tLeft tTop"><INPUT TYPE="hidden" name="ajax" value="1">
@@ -128,8 +131,8 @@ function uploadComplete(){
 	<TABLE id='tbl' style="clear:both"></TABLE>
 </TD>
 </TR>
-</form>
-	</TABLE>
+</TABLE>
+	</form>
 	</TD>
 </TR> 
 </TABLE>
