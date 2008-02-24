@@ -64,7 +64,7 @@
   </div>
 	<H5 >日志分类 </H5><div class="panel-content">
   <ul id="category">
-  <li><div class="fLeft"><INPUT TYPE="text" id="categoryName" class="text" NAME="name"></div><div class="fLeft"><INPUT TYPE="button" value="增 加" class="submit hMargin small" onclick="addCategory()"></div>
+  <li><div class="fLeft" ><INPUT TYPE="text" id="categoryName" class="text" NAME="name"></div><INPUT TYPE="button" value="增 加" class="submit hMargin small" onclick="addCategory()"><br style="clear:both;float:auto"/>
   <volist name="category" id="vo"><li id="category_{$vo:id}"><IMG SRC="../Public/images/folder.gif" WIDTH="18" HEIGHT="18" BORDER="0" ALT="" align="absmiddle"><A HREF="__APP__/Category/{$vo.id}">{$vo.title}</A> <span >({$vo.id|getCategoryBlogCount})</span> <IMG SRC="../Public/images/del.gif" style="cursor:pointer" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" onclick="delCategory({$vo:id})" align="absmiddle"></volist></ul></div>
 </div>
   <div id="panelSearch" class="panel">
