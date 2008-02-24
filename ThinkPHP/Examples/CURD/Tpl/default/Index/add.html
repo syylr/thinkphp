@@ -25,12 +25,11 @@
  </SCRIPT>
  <div class="main">
  <H2>ThinkPHP示例之：CURD操作 [ 新增数据表单 ] </H2>
+    <FORM id="form1" METHOD=POST ACTION="__URL__/insert">
  <TABLE cellpadding=2 cellspacing=2>
   <TR>
 	<TD colspan="2"><div id="result" class="none result" style="font-family:微软雅黑,Tahoma;letter-spacing:2px"></div></TD>
  </TR>
-
-   <FORM id="form1" METHOD=POST ACTION="__URL__/insert">
  <TR>
 	<TD class="tRight" width="12%">标题：</TD>
 	<TD class="tLeft" ><INPUT TYPE="text" NAME="title" style="height:23px" class="huge bLeft"> </TD>
@@ -47,9 +46,8 @@
 	<TD><INPUT TYPE="hidden" NAME="ajax" value="1"></TD>
 	<TD><INPUT TYPE="button" onclick="add()" class="button" value="保 存"> <INPUT TYPE="reset" class="button" value="清 空"></TD>
  </TR>
-   </FORM>
  </TABLE>
-
+   </FORM>
 </div>
  </BODY>
 </HTML>
