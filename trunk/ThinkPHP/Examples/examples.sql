@@ -11,7 +11,7 @@ CREATE TABLE `think_blob` (
   `create_time` int(11) unsigned NOT NULL,
   `status` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
 
 -- 
 -- 导出表中的数据 `think_blob`
@@ -31,7 +31,7 @@ CREATE TABLE `think_form` (
   `status` tinyint(1) unsigned NOT NULL,
   `email` varchar(50) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
 
 -- 
 -- 导出表中的数据 `think_form`
@@ -93,7 +93,7 @@ CREATE TABLE `think_attach` (
   KEY `module` (`module`),
   KEY `recordId` (`recordId`),
   KEY `userId` (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- 导出表中的数据 `think_attach`
@@ -120,7 +120,7 @@ CREATE TABLE `think_blog` (
   `commentCount` mediumint(5) unsigned NOT NULL default '0',
   `tags` varchar(100) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- 导出表中的数据 `think_blog`
@@ -140,7 +140,7 @@ CREATE TABLE `think_category` (
   `remark` varchar(255) NOT NULL default '',
   `status` tinyint(1) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- 导出表中的数据 `think_category`
@@ -166,7 +166,7 @@ CREATE TABLE `think_comment` (
   `status` tinyint(1) unsigned NOT NULL default '0',
   `module` varchar(50) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- 导出表中的数据 `think_comment`
@@ -188,7 +188,7 @@ CREATE TABLE `think_tag` (
   KEY `name` (`name`),
   KEY `module` (`module`),
   KEY `count` (`count`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- 导出表中的数据 `think_tag`
@@ -210,7 +210,7 @@ CREATE TABLE `think_tagged` (
   `module` varchar(25) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `module` (`module`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- 
 -- 导出表中的数据 `think_tagged`
