@@ -130,9 +130,7 @@ return  array(
 	'SQL_DEBUG_LOG'			=>	false,			// 记录SQL语句到日志文件
 
 	/* 数据缓存设置 */
-	'DATA_CACHE_ON'			=>	false,			// 默认关闭数据缓存
 	'DATA_CACHE_TIME'		=>	-1,			// 数据缓存有效期
-	'DATA_CACHE_MAX'			=>	5000,			// 数据缓存最多记录
 	'DATA_CACHE_COMPRESS'=>	false,		// 数据缓存是否压缩缓存
 	'DATA_CACHE_CHECK'		=>	false,		// 数据缓存是否校验缓存
 	'DATA_CACHE_TYPE'		=>	'File',		// 数据缓存类型 支持 File Db Apc Memcache Shmop Sqlite Xcache Apachenote Eaccelerator
