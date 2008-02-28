@@ -136,6 +136,7 @@ return  array(
 	'DATA_CACHE_COMPRESS'=>	false,		// 数据缓存是否压缩缓存
 	'DATA_CACHE_CHECK'		=>	false,		// 数据缓存是否校验缓存
 	'DATA_CACHE_TYPE'		=>	'File',		// 数据缓存类型 支持 File Db Apc Memcache Shmop Sqlite Xcache Apachenote Eaccelerator
+	'DATA_CACHE_SUBDIR'		=>	false,		// 使用子目录缓存 （自动根据缓存标识的哈希创建子目录）
 	'DATA_CACHE_TABLE'		=>	'think_cache',	// 数据缓存表 当使用数据库缓存方式时有效
 	'CACHE_SERIAL_HEADER'	=>	"<?php\n//",	// 文件缓存开始标记
 	'CACHE_SERIAL_FOOTER'	=>	"\n?".">",	// 文件缓存结束标记
