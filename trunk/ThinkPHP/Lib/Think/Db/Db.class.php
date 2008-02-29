@@ -1177,7 +1177,7 @@ class Db extends Base
      */
     public function remove($where,$table,$limit='',$order='')
     {
-        $this->queryStr = 'DELETE FROM '.$table.$this->parseWhere($where).$this->parseOrder($order).$this->parseLimit($limit);;
+        $this->queryStr = 'DELETE FROM '.$table.$this->parseWhere($where).$this->parseOrder($order).$this->parseLimit($limit);
         return $this->execute();
     }
 
