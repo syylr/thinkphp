@@ -410,7 +410,7 @@ class App extends Base
 			// 当前模版路径
 			define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME.'/'); 
 			if(defined('C_MODULE_NAME')) {
-				$array	=	explode(':',C_MODULE_NAME);
+				$array	=	explode(C('COMPONENT_DEPR'),C_MODULE_NAME);
 				$tmplDir	=	TMPL_DIR.'/'.TEMPLATE_NAME.'/'.$array[0].'/';
 			}else{
 				$tmplDir	=	TMPL_DIR.'/'.TEMPLATE_NAME.'/';
