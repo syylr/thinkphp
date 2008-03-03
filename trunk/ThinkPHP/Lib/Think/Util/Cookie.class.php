@@ -25,12 +25,20 @@ class Cookie extends Base
 {
 	// 判断Cookie是否存在
 	static function is_set($name) {
-		return isset($_COOKIE[C('COOKIE_PREFIX')][$name]);
+		if(C('COOKIE_PREFIX')) {
+			return isset($_COOKIE[C('COOKIE_PREFIX')][$name]);
+		}else{
+			return isset($_COOKIE[$name]);
+		}
 	}
 
 	// 获取某个Cookie值
 	static function get($name) {
-		return $_COOKIE[C('COOKIE_PREFIX')][$name];
+		if(C('COOKIE_PREFIX')) {
+			return $_COOKIE[C('COOKIE_PREFIX')][$name];
+		}else{
+			return $_COOKIE[$name];
+		}
 	}
 
 	// 设置某个Cookie值
@@ -44,19 +52,32 @@ class Cookie extends Base
 		if(empty($domain)) {
 			$domain	=	C('COOKIE_DOMAIN');
 		}
-		setcookie(C('COOKIE_PREFIX').'['.$name.']', $value,time()+$expire,$path,$domain);
-		$_COOKIE[C('COOKIE_PREFIX')][$name]	=	$value;
+		if(C('COOKIE_PREFIX')) {
+			setcookie(C('COOKIE_PREFIX').'['.$name.']', $value,time()+$expire,$path,$domain);
+			$_COOKIE[C('COOKIE_PREFIX')][$name]	=	$value;
+		}else{
+			setcookie($name, $value,time()+$expire,$path,$domain);
+			$_COOKIE[$name]	=	$value;
+		}
 	}
 
 	// 删除某个Cookie值
 	static function delete($name) {
-		setcookie(C('COOKIE_PREFIX').'['.$name.']', "", time() - 3600);
-		unset($_COOKIE[C('COOKIE_PREFIX')][$name]);
+		Cookie::set($name,'',time()-3600);
+		if(C('COOKIE_PREFIX')) {
+			unset($_COOKIE[C('COOKIE_PREFIX')][$name]);
+		}else{
+			unset($_COOKIE[$name]);
+		}
 	}
 	
 	// 清空Cookie值
 	static function clear() {
-		unset($_COOKIE[C('COOKIE_PREFIX')]);
+		if(C('COOKIE_PREFIX')) {
+			unset($_COOKIE[C('COOKIE_PREFIX')]);
+		}else{
+			unset($_COOKIE);
+		}
 	}
 }
 ?>
