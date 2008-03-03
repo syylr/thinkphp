@@ -155,14 +155,13 @@ class App extends Base
 			//	启用页面防刷新机制
 			$guid	=	md5($_SERVER['PHP_SELF']);
 			// 检查页面刷新间隔
-			if(isset($_COOKIE['_last_visit_time_'.$guid]) && $_COOKIE['_last_visit_time_'.$guid]>time()-C('LIMIT_REFLESH_TIMES')) {
+			if(Cookie::is_set('_last_visit_time_'.$guid) && Cookie::get('_last_visit_time_'.$guid)>time()-C('LIMIT_REFLESH_TIMES')) {
 				// 页面刷新读取浏览器缓存
 				header('HTTP/1.1 304 Not Modified');
 				exit;
 			}else{
 				// 缓存当前地址访问时间
-				setcookie('_last_visit_time_'.$guid, $_SERVER['REQUEST_TIME'],$_SERVER['REQUEST_TIME']+3600);
-				$_COOKIE['_last_visit_time_'.$guid]	 =	 $_SERVER['REQUEST_TIME'];
+				Cookie::set('_last_visit_time_'.$guid,$_SERVER['REQUEST_TIME'],$_SERVER['REQUEST_TIME']+3600);
 				header('Last-Modified:'.(date('D,d M Y H:i:s',$_SERVER['REQUEST_TIME']-C('LIMIT_REFLESH_TIMES'))).' GMT');
 			}
 		}
@@ -324,16 +323,16 @@ class App extends Base
 				// 有在url 里面设置语言
 				$langSet = $_GET[C('VAR_LANGUAGE')];
 				// 记住用户的选择
-				setcookie('think_language',$langSet,time()+3600);
-			}elseif ( isset($_COOKIE['think_language']) ) {
+				Cookie::set('think_language',$langSet,time()+3600);
+			}elseif ( Cookie::is_set('think_language') ) {
 				// 获取上次用户的选择
-				$langSet = $_COOKIE['think_language'];
+				$langSet = Cookie::get('think_language');
 			}else {
 				if(C('AUTO_DETECT_LANG') && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
 					// 启用自动侦测浏览器语言
 					preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
 					$langSet = $matches[1];
-					setcookie('think_language',$langSet,time()+3600);
+					Cookie::set('think_language',$langSet,time()+3600);
 				}else{
 					// 采用系统设置的默认语言
 					$langSet = $defaultLang;
@@ -392,13 +391,13 @@ class App extends Base
 			$t = C('VAR_TEMPLATE');
 			if ( isset($_GET[$t]) ) {
 				$templateSet = $_GET[$t];
-				setcookie('think_template',$templateSet,time()+3600);
+				Cookie::set('think_template',$templateSet,time()+3600);
 			} else {
-				if(isset($_COOKIE['think_template'])) {
-					$templateSet = $_COOKIE['think_template'];
+				if(Cookie::is_set('think_template')) {
+					$templateSet = Cookie::get('think_template');
 				}else {
 					$templateSet =    C('DEFAULT_TEMPLATE');
-					setcookie('think_template',$templateSet,time()+3600);
+					Cookie::set('think_template',$templateSet,time()+3600);
 				}
 			}
 			if (!is_dir(TMPL_PATH.$templateSet)) {
