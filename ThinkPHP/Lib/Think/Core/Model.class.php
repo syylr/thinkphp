@@ -332,7 +332,17 @@ class Model extends Base  implements IteratorAggregate
      * @return boolean
      +----------------------------------------------------------
      */
-	private function _update(&$data,$where,$limit='',$order='',$autoLink=false,$lock=false) {
+	private function _update(&$data,$where='',$limit='',$order='',$autoLink=false,$lock=false) {
+		if(!empty($this->options)) {
+			// 已经有定义的查询表达式
+			$where	=	$this->options['where']?		$this->options['where']:	$where;
+			$limit		=	$this->options['limit']?		$this->options['limit']:		$limit;
+			$order	=	$this->options['order']?		$this->options['order']:	$order;
+			$lock		=	isset($this->options['lock'])?$this->options['lock']:	$lock;
+			$autoLink=	isset($this->options['link'])?	$this->options['link']:		$autoLink;
+			$table		=	$this->options['table']?		$this->options['table']:	$this->getTableName();
+			unset($this->options);
+		}
 		// 前置调用
 		if(!$this->_before_update($data,$where)) {
 			return false;
@@ -341,7 +351,7 @@ class Model extends Base  implements IteratorAggregate
 		if($this->viewModel) {
 			$where	=	$this->checkCondition($where);
 		}
-		if(false === $this->db->save($data,$this->getTableName(),$where,$limit,$order,$lock)){
+		if(false === $this->db->save($data,$table,$where,$limit,$order,$lock)){
 			$this->error = L('_OPERATION_WRONG_');
 			return false;
 		}else {
@@ -381,7 +391,23 @@ class Model extends Base  implements IteratorAggregate
      * @return boolean
      +----------------------------------------------------------
      */
-	private function _read($condition,$fields='*',$all=false,$order='',$limit='',$group='',$having='',$join='',$cache=false,$relation=false,$lazy=false,$lock=false) {
+	private function _read($condition='',$fields='*',$all=false,$order='',$limit='',$group='',$having='',$join='',$cache=false,$relation=false,$lazy=false,$lock=false) {
+		if(!empty($this->options)) {
+			// 已经有定义的查询表达式
+			$condition	=	$this->options['where']?			$this->options['where']:	$condition;
+			$table			=	$this->options['table']?			$this->options['table']:	$this->getTableName();
+			$fields		=	$this->options['filed']?			$this->options['field']:	$fields;
+			$limit			=	$this->options['limit']?			$this->options['limit']:		$limit;
+			$order		=	$this->options['order']?			$this->options['order']:	$order;
+			$group		=	$this->options['group']?			$this->options['group']:	$group;
+			$having		=	$this->options['having']?			$this->options['having']:	$having;
+			$join			=	$this->options['join']?				$this->options['join']:		$join;
+			$cache		=	isset($this->options['cache'])?	$this->options['cache']:	$cache;
+			$lock			=	isset($this->options['lock'])?	$this->options['lock']:		$lock;
+			$lazy			=	isset($this->options['lazy'])?	$this->options['lazy']:	$lazy;
+			$relation		=	isset($this->options['link'])?		$this->options['link']:		$relation;
+			unset($this->options);
+		}
 		// 前置调用
 		if(!$this->_before_read($condition)) {
 			// 如果返回false 中止
@@ -411,7 +437,7 @@ class Model extends Base  implements IteratorAggregate
 		}
 		$lazy	 =	 ($this->lazyQuery || $lazy);
 		$lock	 =	 ($this->pessimisticLock || $lock);
-		$rs = $this->db->find($condition,$this->getTableName(),$fields,$order,$limit,$group,$having,$join,$cache,$lazy,$lock);
+		$rs = $this->db->find($condition,$table,$fields,$order,$limit,$group,$having,$join,$cache,$lazy,$lock);
 		$result	=	$this->rsToVo($rs,$all,0,$relation);
 		// 后置调用
 		$this->_after_read($condition,$result);
@@ -439,7 +465,16 @@ class Model extends Base  implements IteratorAggregate
      * @return boolean
      +----------------------------------------------------------
      */
-	private function _delete($data,$where,$limit=0,$order='',$autoLink=false) {
+	private function _delete($data,$where='',$limit=0,$order='',$autoLink=false) {
+		if(!empty($this->options)) {
+			// 已经有定义的查询表达式
+			$where		=	$this->options['where']?		$this->options['where']:	$where;
+			$table			=	$this->options['table']?		$this->options['table']:	$this->getTableName();
+			$limit			=	$this->options['limit']?		$this->options['limit']:		$limit;
+			$order		=	$this->options['order']?		$this->options['order']:	$order;
+			$autoLink	=	isset($this->options['link'])?	$this->options['link']:		$autoLink;
+			unset($this->options);
+		}
 		// 前置调用
 		if(!$this->_before_delete($where)) {
 			return false;
@@ -447,7 +482,7 @@ class Model extends Base  implements IteratorAggregate
 		if($this->viewModel) {
 			$where	=	$this->checkCondition($where);
 		}
-		$result=    $this->db->remove($where,$this->getTableName(),$limit,$order);
+		$result=    $this->db->remove($where,$table,$limit,$order);
 		if(false === $result ){
 			$this->error =  L('_OPERATION_WRONG_');
 			return false;
@@ -482,8 +517,14 @@ class Model extends Base  implements IteratorAggregate
      * @return mixed
      +----------------------------------------------------------
      */
-	private function _query($sql,$cache=false,$lazy=false,$lock=false) {
-		if(empty($sql)) return false;
+	private function _query($sql='',$cache=false,$lazy=false,$lock=false) {
+		if(!empty($this->options)) {
+			$sql		=	isset($this->options['sql'])?			$this->options['sql']:		$sql;
+			$cache	=	isset($this->options['cache'])?		$this->options['cache']:	$cache;
+			$lazy		=	isset($this->options['lazy'])?		$this->options['lazy']:	$lazy;
+			$lock		=	isset($this->options['lock'])?		$this->options['lock']:		$lock;
+			unset($this->options);
+		}
 		if(!$this->_before_query($sql)) {
 			return false;
 		}
@@ -1824,8 +1865,11 @@ class Model extends Base  implements IteratorAggregate
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function execute($sql)
+	public function execute($sql='')
 	{
+		if(empty($sql) && !empty($this->options['sql'])) {
+			$sql	=	$this->options['sql'];
+		}
 		if(!empty($sql)) {
 			$result =   $this->db->execute($sql);
 			return $result;
@@ -2153,12 +2197,22 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getN($position=0,$condition='',$order='',$fields='*',$relation=false)
 	{
+		if(!empty($this->options)) {
+			// 已经有定义的查询表达式
+			$condition	=	$this->options['where']?			$this->options['where']:	$condition;
+			$table			=	$this->options['table']?			$this->options['table']:	$this->getTableName();
+			$fields		=	$this->options['filed']?			$this->options['field']:	$fields;
+			$limit			=	$this->options['limit']?			$this->options['limit']:		$limit;
+			$order		=	$this->options['order']?			$this->options['order']:	$order;
+			$relation		=	isset($this->options['link'])?		$this->options['link']:		$relation;
+			unset($this->options);
+		}
 		if($this->viewModel) {
 			$condition	=	$this->checkCondition($condition);
 			$field	=	$this->checkFields($field);
 		}
 		if($position>=0) {
-			$rs = $this->db->find($condition,$this->getTableName(),$fields,$order,$position.',1');
+			$rs = $this->db->find($condition,$table,$fields,$order,$position.',1');
 			return $this->rsToVo($rs,false,0,$relation);
 		}else{
 			$rs = $this->db->find($condition,$this->getTableName(),$fields,$order);
@@ -2981,5 +3035,197 @@ class Model extends Base  implements IteratorAggregate
 		}
 	}
 
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装 where
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param mixed $where 
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function where($where) {
+		$this->options['where']	=	$where;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装 order
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $order 
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function order($order) {
+		$this->options['order']	=	$order;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装 table
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param mixed $table 
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function table($table) {
+		$this->options['table']	=	$table;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装 group
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $group 
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function group($group) {
+		$this->options['group']	=	$group;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装 field
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $field 
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function field($field) {
+		$this->options['field']	=	$field;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装 limit
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param array $limit 
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function limit($limit) {
+		$this->options['limit']	=	$limit;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装 join
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param array $join 
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function join($join) {
+		$this->options['join']	=	$join;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装 having
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $having 
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function having($having) {
+		$this->options['having']	=	$having;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装 惰性
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param boolean $lazy 惰性查询
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function lazy($lazy) {
+		$this->options['lazy']	=	$lazy;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装lock
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param boolean $lock 是否锁定
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function lock($lock) {
+		$this->options['lock']	=	$lock;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装lock
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param boolean $lock 是否锁定
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function cache($cache) {
+		$this->options['cache']	=	$cache;
+		return $this;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 查询SQL组装
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $sql sql语句
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function sql($sql) {
+		$this->options['sql']	=	$sql;
+		return $this;
+	}
+	
 };
 ?>
