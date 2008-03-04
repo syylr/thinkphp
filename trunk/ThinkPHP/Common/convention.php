@@ -160,7 +160,7 @@ return  array(
 	'COOKIE_EXPIRE'				=>	3600,		// Coodie有效期
 	'COOKIE_DOMAIN'			=>	'',	// Cookie有效域名
 	'COOKIE_PATH'				=>	'/',			// Cookie路径
-	'COOKIE_PREFIX'				=>	'THINK_', // Cookie前缀 避免冲突
+	'COOKIE_PREFIX'				=>	'', // Cookie前缀 避免冲突
 
 	/* 分页设置 */	
 	'PAGE_NUMBERS'				=>	5,			// 分页显示页数
