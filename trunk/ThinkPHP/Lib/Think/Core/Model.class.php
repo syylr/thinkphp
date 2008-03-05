@@ -333,6 +333,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	private function _update(&$data,$where='',$limit='',$order='',$autoLink=false,$lock=false) {
+		$table		=	$this->getTableName();
 		if(!empty($this->options)) {
 			// 已经有定义的查询表达式
 			$where	=	$this->options['where']?		$this->options['where']:	$where;
@@ -392,6 +393,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	private function _read($condition='',$fields='*',$all=false,$order='',$limit='',$group='',$having='',$join='',$cache=false,$relation=false,$lazy=false,$lock=false) {
+		$table		=	$this->getTableName();
 		if(!empty($this->options)) {
 			// 已经有定义的查询表达式
 			$condition	=	$this->options['where']?			$this->options['where']:	$condition;
@@ -466,6 +468,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	private function _delete($data,$where='',$limit=0,$order='',$autoLink=false) {
+		$table		=	$this->getTableName();
 		if(!empty($this->options)) {
 			// 已经有定义的查询表达式
 			$where		=	$this->options['where']?		$this->options['where']:	$where;
@@ -2197,6 +2200,7 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getN($position=0,$condition='',$order='',$fields='*',$relation=false)
 	{
+		$table		=	$this->getTableName();
 		if(!empty($this->options)) {
 			// 已经有定义的查询表达式
 			$condition	=	$this->options['where']?			$this->options['where']:	$condition;
