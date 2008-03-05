@@ -21,7 +21,7 @@ class IndexAction extends Action{
 		$list	=	$Form->findAll($map,'*','id desc','0,5');
 		$this->assign('list2',$list);
 		// 定位查询 查询满足条件的第一个数据
-		$vo	=	$Form->first($map,'*','id desc');
+		$vo	=	$Form->first($map,'id desc','*');
 		$this->assign('first',$vo);
 		// 动态查询
 		$list	=	$Form->top3('','id,title','id desc');
