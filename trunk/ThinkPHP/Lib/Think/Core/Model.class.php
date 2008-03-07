@@ -2912,7 +2912,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	public function getPk() {
-		return $this->fields['_pk'];
+		return $this->fields['_pk']?$this->fields['_pk']:'id';
 	}
 
 	/**
