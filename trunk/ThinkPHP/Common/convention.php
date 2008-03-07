@@ -128,6 +128,7 @@ return  array(
 	'DB_CACHE_TIME'			=>	60,			// 数据库缓存有效期
 	'DB_CACHE_MAX'				=>	5000,			// 数据库缓存最多记录
 	'SQL_DEBUG_LOG'			=>	false,			// 记录SQL语句到日志文件
+	'DB_FIELDS_CACHE'			=>	true,			// 缓存数据表字段信息
 
 	/* 数据缓存设置 */
 	'DATA_CACHE_TIME'		=>	-1,			// 数据缓存有效期
