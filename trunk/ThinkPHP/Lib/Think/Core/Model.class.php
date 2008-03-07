@@ -563,7 +563,7 @@ class Model extends Base  implements IteratorAggregate
 		// 只在第一次执行记录
 		if(empty($this->fields) && strtolower(get_class($this))!='model') {
 			// 如果数据表字段没有定义则自动获取
-			iif(C('DB_FIELDS_CACHE')) {
+			if(C('DB_FIELDS_CACHE')) {
 				$identify	=	$this->name.'_fields';
 				$this->fields = F($identify);
 				if(!$this->fields) {
