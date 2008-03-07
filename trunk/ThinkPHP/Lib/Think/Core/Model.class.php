@@ -563,9 +563,14 @@ class Model extends Base  implements IteratorAggregate
 		// 只在第一次执行记录
 		if(empty($this->fields) && strtolower(get_class($this))!='model') {
 			// 如果数据表字段没有定义则自动获取
-			$identify	=	$this->name.'_fields';
-			$this->fields = F($identify);
-			if(!$this->fields) {
+			iif(C('DB_FIELDS_CACHE')) {
+				$identify	=	$this->name.'_fields';
+				$this->fields = F($identify);
+				if(!$this->fields) {
+					$this->flush();
+				}
+			}else{
+				// 每次都会读取数据表信息
 				$this->flush();
 			}
 		}
@@ -608,10 +613,13 @@ class Model extends Base  implements IteratorAggregate
 				}
 			}
 		}
-		$identify	=	$this->name.'_fields';
-		// 永久缓存数据表信息
-		// 2007-10-31 更改为F方法保存，保存在项目的Data目录，并且始终采用文件形式
-		F($identify,$this->fields);
+		// 2008-3-7 增加缓存开关控制
+		if(C('DB_FIELDS_CACHE')) {
+			// 永久缓存数据表信息
+			// 2007-10-31 更改为F方法保存，保存在项目的Data目录，并且始终采用文件形式
+			$identify	=	$this->name.'_fields';
+			F($identify,$this->fields);
+		}
 	}
 
 	/**
