@@ -49,14 +49,15 @@ if(!defined('_PHP_FILE_')) {
 		define('_PHP_FILE_',	rtrim($_SERVER["SCRIPT_NAME"],'/'));
 	}
 }
-
-// 网站URL根目录
-if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
-    $_root = dirname(dirname(_PHP_FILE_));
-}else {
-    $_root = dirname(_PHP_FILE_);
+if(!defined('WEB_URL')) {
+	// 网站URL根目录
+	if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
+		$_root = dirname(dirname(_PHP_FILE_));
+	}else {
+		$_root = dirname(_PHP_FILE_);
+	}
+	define('WEB_URL',	(($_root=='/' || $_root=='\\')?'':$_root));
 }
-define('WEB_URL',	(($_root=='/' || $_root=='\\')?'':$_root));
 
 define('VENDOR_PATH',THINK_PATH.'/Vendor/');
 // 为了方便导入第三方类库 设置Vendor目录到include_path
