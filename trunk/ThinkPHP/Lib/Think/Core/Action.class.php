@@ -30,9 +30,6 @@ abstract class Action extends Base
     // 模板实例对象
     protected $tpl;
 
-	// 是否启用action缓存
-	protected $useCache = false;
-
 	// 需要缓存的action
 	protected $_cacheAction = array();
 
@@ -91,34 +88,26 @@ abstract class Action extends Base
     protected function _initialize() 
     {
 		//判断是否有Action缓存
-		if($this->useCache && in_array(ACTION_NAME,$this->_cacheAction,true)) {
-			$guid	=	md5(__SELF__);
-			$content	=	S($guid);
+		if(C('ACTION_CACHE_ON') && in_array(ACTION_NAME,$this->_cacheAction,true)) {
+			$content	=	S(md5(__SELF__));
 			if($content) {
 				echo $content;
 				exit;
 			}
 		}
-        if(isset($_REQUEST[C('VAR_AJAX_SUBMIT')]) ) {
-            // 判断Ajax方式提交
-            $this->assign('ajax',true);
-        }
         return ;
     }
 
-    /**
-     +----------------------------------------------------------
-     * 设置Action缓存
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-	public function setCache($cache) {
-		$this->useCache	=	$cache;
+	protected function isAjax() {
+		if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) ) {
+			if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])=='xmlhttprequest')
+				return true;
+		}
+        if(!empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) {
+            // 判断Ajax方式提交
+            return true;
+        }
+		return false;
 	}
 
     /**
@@ -196,11 +185,10 @@ abstract class Action extends Base
      */
     public function display($templateFile='',$charset='',$contentType='text/html',$varPrefix='')
     {
-		if($this->useCache && in_array(ACTION_NAME,$this->_cacheAction,true)) {
+		if(C('ACTION_CACHE_ON') && in_array(ACTION_NAME,$this->_cacheAction,true)) {
 			// 启用Action缓存
-			$guid	=	md5(__SELF__);
 			$content	=	$this->fetch($templateFile,$charset,$contentType,$varPrefix);
-			S($guid,$content);
+			S(md5(__SELF__),$content);
 			echo $content;
 		}else{
 	        $this->tpl->display($templateFile,$charset,$contentType,$varPrefix);
@@ -354,7 +342,7 @@ abstract class Action extends Base
      */
     public function error($errorMsg,$ajax=false) 
     {
-        if($ajax || $this->get('ajax')) {
+        if($ajax || $this->isAjax()) {
         	$this->ajaxReturn('',$errorMsg,0);
         }else {
             $this->assign('error',$errorMsg);
@@ -376,7 +364,7 @@ abstract class Action extends Base
      */
     public function success($message,$ajax=false) 
     {
-        if($ajax || $this->get('ajax')) {
+        if($ajax || $this->isAjax()) {
         	$this->ajaxReturn('',$message,1);
         }else {
         	$this->assign('message',$message);
@@ -507,7 +495,7 @@ abstract class Action extends Base
      */
     private function _dispatch_jump() 
     {
-        if($this->get('ajax') ) {
+        if($this->isAjax() ) {
             // 用于Ajax附件上传 显示信息
             if($this->get('_ajax_upload_')) {
                 header("Content-Type:text/html; charset=".C('OUTPUT_CHARSET'));
