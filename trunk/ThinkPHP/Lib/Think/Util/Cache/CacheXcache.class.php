@@ -74,7 +74,7 @@ class CacheXcache extends Cache
      */
     public function set($name, $value,$expire='')
     {
-		$this->Q(1);
+		$this->W(1);
 		if(empty($expire)) {
 			$expire = $this->expire ;
 		}
