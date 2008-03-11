@@ -114,7 +114,7 @@ class CacheSqlite extends Cache
      */
     public function set($name, $value,$expireTime=0)
     {
-		$this->Q(1);
+		$this->W(1);
         $expire =  !empty($expireTime)? $expireTime : C('DATA_CACHE_TIME');
         $name  = sqlite_escape_string($name);
         $value = sqlite_escape_string(serialize($value));
