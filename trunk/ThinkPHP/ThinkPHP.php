@@ -54,7 +54,7 @@ if(file_exists(RUNTIME_PATH.'~runtime.php')) {
 	import("Think.Core.View");
 	// 是否生成核心缓存
 	$cache	=	( !defined('CACHE_RUNTIME') || CACHE_RUNTIME == true );
-	if(defined('STRIP_RUNTIME_SPACE') || STRIP_RUNTIME_SPACE == false ) {
+	if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
 		$fun	=	'file_get_contents';
 	}else{
 		$fun	=	'php_strip_whitespace';		
