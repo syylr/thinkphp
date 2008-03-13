@@ -507,14 +507,18 @@ class App extends Base
 			$module  =  A(MODULE_NAME);
 		}
 		if(!$module) {
-			// 模块不存在
-			if(C('DEBUG_MODE')) {
-				// 调试模式 抛出异常
-				throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);    
-			}else{
-				// 部署模式重定向到默认模块
-				$url	=	__APP__.'/'.C('DEFAULT_MODULE');
-				redirect($url);
+			// 是否定义Empty模块
+			$module	=	A("Empty");
+			if(!$module) {
+				// 模块不存在
+				if(C('DEBUG_MODE')) {
+					// 调试模式 抛出异常
+					throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);    
+				}else{
+					// 部署模式重定向到默认模块
+					$url	=	__APP__.'/'.C('DEFAULT_MODULE');
+					redirect($url);
+				}
 			}
 		}
 
