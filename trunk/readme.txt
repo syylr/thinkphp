@@ -9,6 +9,24 @@
 执行 http://localhost/ThinkPHP/Examples/ 就可以进入示例中心
 或者参考在线示例中心 http://exp.thinkphp.cn
 
+[1.0.3 版本] 2008-3-16
+增加空模块支持 如果指定的模块不存在会首先定位是否存在Empty模块
+增加核心编译文件的去除空白和注释的开关，在入口文件定义 STRIP_RUNTIME_SPACE 常量为false 可以关闭去除空白和注释
+Action缓存由原来的userCache成员属性控制改为项目参数 ACTION_CACHE_ON 控制，便于动态控制
+增加数据库字段缓存的开关 惯例配置增加DB_FIELDS_CACHE 用以设置数据库字段是否缓存，默认进行缓存
+修正xcache和sqlite缓存方式的读写次数记录
+使用视图模型的时候，如果主键是id，不需要再定义getPk方法
+修正多语言和多模板的cookie问题
+入口文件免设置APP_NAME APP_PATH
+完善Cookie类
+修正模板检查的时候组件化的支持
+模型类的查询操作支持连贯方法
+去掉了一些废弃的惯例配置参数 包括：DATA_CACHE_ON 和 DATA_CACHE_MAX
+惯例配置增加了DATA_CACHE_SUBDIR 参数控制文件缓存方式是否自动使用子目录哈希缓存
+在项目根目录不存在的情况下自动创建
+完善对跨库查询的支持
+目录自动创建支持写入安全文件
+
 2周年版本的更新
 [ 1.0.2 版本 ] 2008-2-21
 Model类增加toArray方法
