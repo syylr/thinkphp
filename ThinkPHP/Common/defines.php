@@ -107,5 +107,5 @@ define('URL_PATHINFO',    1);   //PATHINFO模式
 define('URL_REWRITE',     2);   //REWRITE模式
 
 //	版本信息
-define('THINK_VERSION', '1.0.2');
+define('THINK_VERSION', '1.0.3');
 ?>
