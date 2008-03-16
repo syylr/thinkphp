@@ -7,7 +7,7 @@
 CREATE TABLE `think_blob` (
   `id` smallint(4) unsigned NOT NULL auto_increment,
   `title` varchar(255) NOT NULL,
-  `content` varchar(255) NOT NULL,
+  `content` varchar(255) default NULL,
   `create_time` int(11) unsigned NOT NULL,
   `status` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY  (`id`)
