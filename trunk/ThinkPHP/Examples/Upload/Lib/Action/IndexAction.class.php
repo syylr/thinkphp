@@ -15,23 +15,12 @@ class IndexAction extends Action{
     {
         import("ORG.Net.UploadFile");
         $upload = new UploadFile();
-        //检查客户端上传文件参数设置
-        if(isset($_POST['_uploadFileSize']) && is_numeric($_POST['_uploadFileSize'])) {
-            //设置上传文件大小
-            $upload->maxSize  = $_POST['_uploadFileSize'] ;
-        }
-        if(!empty($_POST['_uploadFileType'])) {
-            //设置上传文件类型
-            $upload->allowExts  = explode(',',strtolower($_POST['_uploadFileType']));
-        }
-        if(!empty($_POST['_uploadSavePath'])) {
-            //设置附件上传目录
-            $upload->savePath =  $_POST['_uploadSavePath']; 
-        }
-        if(isset($_POST['_uploadSaveRule'])) {
-            //设置附件命名规则
-            $upload->saveRule =  $_POST['_uploadSaveRule']; 
-        }
+        //设置上传文件大小
+        $upload->maxSize  = 32922 ;
+        //设置上传文件类型
+        $upload->allowExts  = explode(',','doc,rar,txt');
+        //设置附件上传目录
+        $upload->savePath =  '../Public/Uploads/'; 
 
         //执行上传操作
         if(!$upload->upload()) {

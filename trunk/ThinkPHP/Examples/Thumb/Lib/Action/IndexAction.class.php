@@ -15,39 +15,21 @@ class IndexAction extends Action{
     {
         import("ORG.Net.UploadFile");
         $upload = new UploadFile();
-        //检查客户端上传文件参数设置
-        if(isset($_POST['_uploadFileSize']) && is_numeric($_POST['_uploadFileSize'])) {
-            //设置上传文件大小
-            $upload->maxSize  = $_POST['_uploadFileSize'] ;
-        }
-        if(!empty($_POST['_uploadFileType'])) {
-            //设置上传文件类型
-            $upload->allowExts  = explode(',',strtolower($_POST['_uploadFileType']));
-        }
-        if(!empty($_POST['_uploadSavePath'])) {
-            //设置附件上传目录
-            $upload->savePath =  $_POST['_uploadSavePath']; 
-        }
-        if(isset($_POST['_uploadSaveRule'])) {
-            //设置附件命名规则
-            $upload->saveRule =  $_POST['_uploadSaveRule']; 
-        }
-       if(!empty($_POST['_uploadImgThumb'])) {
-            //设置需要生成缩略图，仅对图像文件有效
-            $upload->thumb =  $_POST['_uploadImgThumb']; 
-        }
-        if(!empty($_POST['_uploadThumbSuffix'])) {
-            //设置需要生成缩略图的文件后缀
-            $upload->thumbSuffix =  $_POST['_uploadThumbSuffix']; 
-        }
-        if(!empty($_POST['_uploadThumbMaxWidth'])) {
-            //设置缩略图最大宽度
-            $upload->thumbMaxWidth =  $_POST['_uploadThumbMaxWidth']; 
-        }
-        if(!empty($_POST['_uploadThumbMaxHeight'])) {
-            //设置缩略图最大高度
-            $upload->thumbMaxHeight =  $_POST['_uploadThumbMaxHeight']; 
-        }
+        //设置上传文件大小
+        $upload->maxSize  = 32922 ;
+        //设置上传文件类型
+        $upload->allowExts  = explode(',','jpg,gif,png,jpeg');
+        //设置附件上传目录
+        $upload->savePath =  '../Public/Uploads/'; 
+	    //设置需要生成缩略图，仅对图像文件有效
+       $upload->thumb =  true; 
+       //设置需要生成缩略图的文件后缀
+       $upload->thumbSuffix =  '_thumb'; 
+       //设置缩略图最大宽度
+       $upload->thumbMaxWidth =  50; 
+       //设置缩略图最大高度
+       $upload->thumbMaxHeight =  50; 
+
         //执行上传操作
         if(!$upload->upload()) {
             if($this->get('ajax') && isset($_POST['_uploadFileResult'])) {
