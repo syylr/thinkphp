@@ -211,7 +211,11 @@ class App extends Base
 		if(file_exists(APP_PATH.'/Common/common.php')) {
 	       	include APP_PATH.'/Common/common.php';
 			if(!C('DEBUG_MODE')) {
-				$common	= php_strip_whitespace(APP_PATH.'/Common/common.php');
+				if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
+					$common	= file_get_contents(APP_PATH.'/Common/common.php');
+				}else{
+					$common	= php_strip_whitespace(APP_PATH.'/Common/common.php');
+				}
 			}
 		}
 		// 如果是调试模式加载调试模式配置文件
