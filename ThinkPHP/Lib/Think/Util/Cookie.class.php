@@ -44,7 +44,8 @@ class Cookie extends Base
 		if(empty($domain)) {
 			$domain	=	C('COOKIE_DOMAIN');
 		}
-		setcookie(C('COOKIE_PREFIX').$name, $value,time()+$expire,$path,$domain);
+		$expire	=	!empty($expire)?	time()+$expire	 :	0;
+		setcookie(C('COOKIE_PREFIX').$name, $value,$expire,$path,$domain);
 		$_COOKIE[C('COOKIE_PREFIX').$name]	=	$value;
 	}
 
