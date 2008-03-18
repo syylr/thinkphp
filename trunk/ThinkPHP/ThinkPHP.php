@@ -54,12 +54,12 @@ if(file_exists(RUNTIME_PATH.'~runtime.php')) {
 	import("Think.Core.View");
 	// 是否生成核心缓存
 	$cache	=	( !defined('CACHE_RUNTIME') || CACHE_RUNTIME == true );
-	if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
-		$fun	=	'file_get_contents';
-	}else{
-		$fun	=	'php_strip_whitespace';		
-	}
 	if($cache) {
+		if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
+			$fun	=	'file_get_contents';
+		}else{
+			$fun	=	'php_strip_whitespace';		
+		}
 		// 生成核心文件的缓存 去掉文件空白以减少大小
 		$content	 =	 $fun(THINK_PATH.'/Common/defines.php');
 		$content	.=	 $fun(THINK_PATH.'/Common/functions.php');
