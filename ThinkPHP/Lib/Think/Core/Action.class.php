@@ -308,14 +308,14 @@ abstract class Action extends Base
      */
 	private function __call($method,$parms) {
 		if(strtolower($method) == strtolower(ACTION_NAME.C('ACTION_SUFFIX'))) {
-			// 检查是否存在模版 如果有直接输出模版
-			if(file_exists(C('TMPL_FILE_NAME'))) {
-				$this->display();
-			}else { 
-				// 如果定义了_empty操作 则调用
-				if(method_exists($this,'_empty')) {
-					$this->_empty();
-				}else {
+			// 如果定义了_empty操作 则调用
+			if(method_exists($this,'_empty')) {
+				$this->_empty();
+			}else {
+				// 检查是否存在模版 如果有直接输出模版
+				if(file_exists(C('TMPL_FILE_NAME'))) {
+					$this->display();
+				}else{
 					if(C('DEBUG_MODE')) {
 						// 调试模式抛出异常
 						throw_exception(L('_ERROR_ACTION_').ACTION_NAME);      
