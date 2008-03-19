@@ -394,9 +394,20 @@ class Db extends Base
      */
     protected function parseTables($tables)
     {
-        if(is_array($tables)) $tablesStr = implode(',', $tables);
-        else if(is_string($tables)) $tablesStr = $tables;
-        return empty($tablesStr)?'':$tablesStr;
+        if(is_array($tables)) {
+			if('MYSQL' == $this->getDbType()) {
+				array_walk($tables, array($this, 'addSpecialChar'));
+			}
+			$tablesStr = implode(',', $tables);
+		}
+        else if(is_string($tables)) {
+			if('MYSQL' == $this->getDbType() && false === strpos($tables,'`')) {
+				$tablesStr =  '`'.trim($tables).'`';
+			}else{
+				$tablesStr = $tables;
+			}
+		}
+        return $tablesStr;
     }
 
     /**
