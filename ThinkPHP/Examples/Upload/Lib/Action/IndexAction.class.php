@@ -24,7 +24,7 @@ class IndexAction extends Action{
 
         //执行上传操作
         if(!$upload->upload()) {
-            if($this->get('ajax') && isset($_POST['_uploadFileResult'])) {
+            if($this->isAjax() && isset($_POST['_uploadFileResult'])) {
                 $uploadSuccess =  false;
                 $ajaxMsg  =  $upload->getErrorMsg();
             }else {
@@ -36,7 +36,7 @@ class IndexAction extends Action{
 		}
         // 判断是否有Ajax方式上传附件
         // 并且设置了结果显示Html元素
-        if($this->get('ajax') && isset($_POST['_uploadFileResult']) ) {
+        if($this->isAjax() && isset($_POST['_uploadFileResult']) ) {
             // Ajax方式上传参数信息
             $info = Array();
             $info['success']  =  $uploadSuccess;
