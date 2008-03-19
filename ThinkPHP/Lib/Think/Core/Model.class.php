@@ -1143,7 +1143,7 @@ class Model extends Base  implements IteratorAggregate
 			$this->error = L('_DATA_TYPE_INVALID_');
 			return false;
 		}
-		if(isset($data[$this->getPk()])) {
+		if(empty($where) && isset($data[$this->getPk()])) {
 			$where  = $this->getPk()."=".$data[$this->getPk()];
 			unset($data[$this->getPk()]);
 		}
