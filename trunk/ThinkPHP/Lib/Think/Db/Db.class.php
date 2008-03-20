@@ -856,7 +856,7 @@ class Db extends Base
         } elseif(preg_match('/^\(\w*(\+|\-|\*|\/)?\w*\)$/i',$value)){
 			// 支持在字段的值里面直接使用其它字段
 			// 例如 (score+1) (name) 必须包含括号
-			$value = $value;
+			$value = $this->escape_string($value);
 		}else if(is_string($value)) {
             $value = '\''.$this->escape_string($value).'\'';
         }
