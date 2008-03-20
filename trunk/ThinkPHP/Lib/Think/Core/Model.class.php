@@ -1,4 +1,4 @@
-<?php 
+f<?php 
 // +----------------------------------------------------------------------
 // | ThinkPHP                                                             
 // +----------------------------------------------------------------------
@@ -1860,7 +1860,17 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function query($sql,$cache=false,$lazy=false)
 	{
-		return $this->_query($sql,$cache,$lazy);
+		if(empty($sql) && !empty($this->options['sql'])) {
+			$sql	=	$this->options['sql'];
+		}
+		if(!empty($sql)) {
+			if(strpos($sql,'__TABLE__')) {
+				$sql	=	str_replace('__TABLE__',$this->getTableName(),$sql);
+			}
+			return $this->_query($sql,$cache,$lazy);
+		}else{
+			return false;
+		}
 	}
 
 	/**
@@ -1882,6 +1892,9 @@ class Model extends Base  implements IteratorAggregate
 			$sql	=	$this->options['sql'];
 		}
 		if(!empty($sql)) {
+			if(strpos($sql,'__TABLE__')) {
+				$sql	=	str_replace('__TABLE__',$this->getTableName(),$sql);
+			}
 			$result =   $this->db->execute($sql);
 			return $result;
 		}else {
