@@ -124,9 +124,6 @@ return  array(
 	/* 数据库设置 */
 	'DB_CHARSET'					=>	'utf8',			// 数据库编码默认采用utf8
 	'DB_DEPLOY_TYPE'			=>	0,			// 数据库部署方式 0 集中式（单一服务器） 1 分布式（主从服务器）
-	'DB_CACHE_ON'				=>	false,			// 默认关闭数据库缓存
-	'DB_CACHE_TIME'			=>	60,			// 数据库缓存有效期
-	'DB_CACHE_MAX'				=>	5000,			// 数据库缓存最多记录
 	'SQL_DEBUG_LOG'			=>	false,			// 记录SQL语句到日志文件
 	'DB_FIELDS_CACHE'			=>	true,			// 缓存数据表字段信息
 
