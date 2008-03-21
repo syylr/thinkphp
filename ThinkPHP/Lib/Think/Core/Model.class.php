@@ -793,7 +793,9 @@ class Model extends Base  implements IteratorAggregate
 	{
 		if(empty($data)) {
 			// 没有传递数据，获取当前数据对象的值
-			if(!empty($this->data)) {
+			if(!empty($this->options['data'])) {
+				$data	 =	 $this->options['data'];
+			}elseif(!empty($this->data)) {
 				$data	 =	 $this->data;
 			}elseif(!empty($this->dataList)){
 				return $this->addAll($this->dataList);
@@ -1124,7 +1126,9 @@ class Model extends Base  implements IteratorAggregate
 	public function save($data=null,$where='',$autoLink=false,$limit=0,$order='')
 	{
 		if(empty($data)) {
-			if(!empty($this->data)) {
+			if(!empty($this->options['data'])) {
+				$data	 =	 $this->options['data'];
+			}elseif(!empty($this->data)) {
 				// 保存当前数据对象
 				$data	 =	 $this->data;
 			}elseif(!empty($this->dataList)){
@@ -3252,5 +3256,20 @@ class Model extends Base  implements IteratorAggregate
 		return $this;
 	}
 	
+	/**
+     +----------------------------------------------------------
+     * 数据SQL组装
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $data 要插入或者保存的数据
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function data($data) {
+		$this->options['data']	=	$data;
+		return $this;
+	}
 };
 ?>
