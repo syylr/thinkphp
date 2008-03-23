@@ -74,7 +74,7 @@ return  array(
 	'DEFAULT_ACTION'			=>	'index', // 默认操作名称
 
 	/* 模板设置 */
-	'TMPL_CACHE_ON'			=>	true,		// 默认开启模板缓存
+	'TMPL_CACHE_ON'			=>	true,		// 默认开启模板编译缓存 false 的话每次都重新编译模板
 	'TMPL_CACHE_TIME'		=>	-1,		// 模板缓存有效期 -1 永久 单位为秒
 	'TMPL_SWITCH_ON'			=>	true,	// 启用多模版支持
 	'DEFAULT_TEMPLATE'		=>	'default',	// 默认模板名称

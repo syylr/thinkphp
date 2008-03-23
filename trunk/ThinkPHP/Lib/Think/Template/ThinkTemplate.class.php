@@ -224,13 +224,12 @@ class  ThinkTemplate extends Base
         $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
         if(!file_exists($tmplCacheFile)){
             return false;
-        }
-        elseif (!C('TMPL_CACHE_ON')){
+        }elseif (!C('TMPL_CACHE_ON')){
             return false;
         }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) { 
             // 模板文件如果有更新则缓存需要更新
             return false; 
-        } elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) { 
+        }elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) { 
             // 缓存是否在有效期
             return false; 
         }
