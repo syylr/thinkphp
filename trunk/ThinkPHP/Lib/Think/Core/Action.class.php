@@ -316,13 +316,8 @@ abstract class Action extends Base
 				if(file_exists(C('TMPL_FILE_NAME'))) {
 					$this->display();
 				}else{
-					if(C('DEBUG_MODE')) {
-						// 调试模式抛出异常
-						throw_exception(L('_ERROR_ACTION_').ACTION_NAME);      
-					}else{
-						// 执行默认操作
-						$this->redirect(C('DEFAULT_ACTION'));
-					}
+					// 调试模式抛出异常
+					throw_exception(L('_ERROR_ACTION_').ACTION_NAME);      
 				}
 			}
 		}
