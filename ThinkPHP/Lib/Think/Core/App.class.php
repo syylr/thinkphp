@@ -289,7 +289,7 @@ class App extends Base
         if (empty($action)) $action = C('DEFAULT_ACTION');
 		// 检查操作链
 		if(strpos($action,C('COMPONENT_DEPR'))) {
-			// 记录完整的模块名
+			// 记录完整的操作名
 			define('C_ACTION_NAME',$action);
 			$array	=	explode(C('COMPONENT_DEPR'),$action);
 			// 实际的模块名称
@@ -514,15 +514,8 @@ class App extends Base
 			// 是否定义Empty模块
 			$module	=	A("Empty");
 			if(!$module) {
-				// 模块不存在
-				if(C('DEBUG_MODE')) {
-					// 调试模式 抛出异常
-					throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);    
-				}else{
-					// 部署模式重定向到默认模块
-					$url	=	__APP__.'/'.C('DEFAULT_MODULE');
-					redirect($url);
-				}
+				// 模块不存在 抛出异常
+				throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);    
 			}
 		}
 
@@ -530,7 +523,7 @@ class App extends Base
         $action = ACTION_NAME.C('ACTION_SUFFIX');
 		if(defined('C_ACTION_NAME')) {
 			// 执行操作链 最多只能有一个输出
-			$actionList	=	explode(':',C_ACTION_NAME);
+			$actionList	=	explode(C('COMPONENT_DEPR'),C_ACTION_NAME);
 			foreach ($actionList as $action){
 				$module->$action();
 			}
