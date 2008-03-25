@@ -1192,7 +1192,7 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
 			return $result;
 		}else{
 			// 缓存数据
-			$content   =   "<?php\n//".sprintf('%012d',$expire)."\nreturn ".var_export($value,true).";\n?>";
+			$content   =   "<?php\nif (!defined('THINK_PATH')) exit();\n//".sprintf('%012d',$expire)."\nreturn ".var_export($value,true).";\n?>";
 			$result  =   file_put_contents($filename,$content);
 			$_cache[$name]	 =	 $value;
 		}
@@ -1203,13 +1203,13 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
 	}
 	// 获取缓存数据
 	if(file_exists($filename) && false !== $content = file_get_contents($filename)) {
-		$expire  =  (int)substr($content,8, 12);
+		$expire  =  (int)substr($content,44, 12);
 		if($expire != -1 && time() > filemtime($filename) + $expire) { 
 			//缓存过期删除缓存文件
 			unlink($filename);
 			return false;
 		}
-		$value	=	 eval(substr($content,21,-2));
+		$value	=	 eval(substr($content,57,-2));
 		$_cache[$name]	 =	 $value;
 	}else{
 		$value	=	false;
