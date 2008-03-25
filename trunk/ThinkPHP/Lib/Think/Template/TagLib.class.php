@@ -396,7 +396,10 @@ class TagLib extends Base
      +----------------------------------------------------------
      */
 	public function autoBuildVar($name) {
-        if(strpos($name,'.')) {
+		if(substr($name,0,6)=='Think.'){
+			// 特殊变量
+			return $this->parseThinkVar($name);
+		}elseif(strpos($name,'.')) {
 			// 数组和对象自动判断支持
 			$vars = explode('.',$name);
 			$name = 'is_array($'.$vars[0].')?$'.$vars[0].'["'.$vars[1].'"]:$'.$vars[0].'->'.$vars[1];
@@ -408,6 +411,51 @@ class TagLib extends Base
 		}
 		return $name;
 	}
+
+    /**
+     +----------------------------------------------------------
+     * 用于标签属性里面的特殊模板变量解析
+     * 格式 以 Think. 打头的变量属于特殊模板变量
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @param string $varStr  变量字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function parseThinkVar($varStr){
+        $vars = explode('.',$varStr);
+        $vars[1] = strtoupper(trim($vars[1]));
+        $parseStr = '';
+
+        if(count($vars)==3){
+            $vars[2] = trim($vars[2]);
+            switch($vars[1]){
+                case 'SERVER':$parseStr = '$_SERVER[\''.$vars[2].'\']';break;
+                case 'GET':$parseStr = '$_GET[\''.$vars[2].'\']';break;
+                case 'POST':$parseStr = '$_POST[\''.$vars[2].'\']';break;
+                case 'COOKIE':$parseStr = '$_COOKIE[\''.$vars[2].'\']';break;
+                case 'SESSION':$parseStr = '$_SESSION[\''.$vars[2].'\']';break;
+                case 'ENV':$parseStr = '$_ENV[\''.$vars[2].'\']';break;
+                case 'REQUEST':$parseStr = '$_REQUEST[\''.$vars[2].'\']';break;
+                case 'CONST':$parseStr = strtoupper($vars[2]);break;
+                case 'LANG':$parseStr = 'L("'.$vars[2].'")';break;
+				case 'CONFIG':$parseStr = 'C("'.$vars[2].'")';break;
+                default:break;
+            }
+        }else if(count($vars)==2){
+            switch($vars[1]){
+                case 'NOW':$parseStr = "date('Y-m-d g:i a',time())";break;
+                case 'VERSION':$parseStr = 'THINK_VERSION';break;    
+                case 'TEMPLATE':$parseStr = 'C("TMPL_FILE_NAME")';break;
+                case 'LDELIM':$parseStr = 'C("TMPL_L_DELIM")';break;
+                case 'RDELIM':$parseStr = 'C("TMPL_R_DELIM")';break;
+            }
+            if(defined($vars[1])){ $parseStr = strtoupper($vars[1]);}
+        }
+        return $parseStr;
+    }
 
 }//类定义结束
 ?>
