@@ -564,7 +564,7 @@ class Model extends Base  implements IteratorAggregate
 		if(empty($this->fields) && strtolower(get_class($this))!='model') {
 			// 如果数据表字段没有定义则自动获取
 			if(C('DB_FIELDS_CACHE')) {
-				$identify	=	md5($this->name.'_fields');
+				$identify	=	$this->name.'_fields';
 				$this->fields = F($identify);
 				if(!$this->fields) {
 					$this->flush();
@@ -617,7 +617,7 @@ class Model extends Base  implements IteratorAggregate
 		if(C('DB_FIELDS_CACHE')) {
 			// 永久缓存数据表信息
 			// 2007-10-31 更改为F方法保存，保存在项目的Data目录，并且始终采用文件形式
-			$identify	=	md5($this->name.'_fields');
+			$identify	=	$this->name.'_fields';
 			F($identify,$this->fields);
 		}
 	}
