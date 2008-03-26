@@ -342,7 +342,7 @@ class Model extends Base  implements IteratorAggregate
 			$lock		=	isset($this->options['lock'])?$this->options['lock']:	$lock;
 			$autoLink=	isset($this->options['link'])?	$this->options['link']:		$autoLink;
 			$table		=	$this->options['table']?		$this->options['table']:	$this->getTableName();
-			unset($this->options);
+			$this->options	=	array();
 		}
 		// 前置调用
 		if(!$this->_before_update($data,$where)) {
@@ -408,7 +408,7 @@ class Model extends Base  implements IteratorAggregate
 			$lock			=	isset($this->options['lock'])?	$this->options['lock']:		$lock;
 			$lazy			=	isset($this->options['lazy'])?	$this->options['lazy']:	$lazy;
 			$relation		=	isset($this->options['link'])?		$this->options['link']:		$relation;
-			unset($this->options);
+			$this->options	=	array();
 		}
 		// 前置调用
 		if(!$this->_before_read($condition)) {
@@ -476,7 +476,7 @@ class Model extends Base  implements IteratorAggregate
 			$limit			=	$this->options['limit']?		$this->options['limit']:		$limit;
 			$order		=	$this->options['order']?		$this->options['order']:	$order;
 			$autoLink	=	isset($this->options['link'])?	$this->options['link']:		$autoLink;
-			unset($this->options);
+			$this->options	=	array();
 		}
 		// 前置调用
 		if(!$this->_before_delete($where)) {
@@ -526,7 +526,7 @@ class Model extends Base  implements IteratorAggregate
 			$cache	=	isset($this->options['cache'])?		$this->options['cache']:	$cache;
 			$lazy		=	isset($this->options['lazy'])?		$this->options['lazy']:	$lazy;
 			$lock		=	isset($this->options['lock'])?		$this->options['lock']:		$lock;
-			unset($this->options);
+			$this->options	=	array();
 		}
 		if(!$this->_before_query($sql)) {
 			return false;
@@ -2234,7 +2234,7 @@ class Model extends Base  implements IteratorAggregate
 			$limit			=	$this->options['limit']?			$this->options['limit']:		$limit;
 			$order		=	$this->options['order']?			$this->options['order']:	$order;
 			$relation		=	isset($this->options['link'])?		$this->options['link']:		$relation;
-			unset($this->options);
+			$this->options	=	array();
 		}
 		if($this->viewModel) {
 			$condition	=	$this->checkCondition($condition);
