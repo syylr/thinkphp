@@ -356,7 +356,7 @@ class  ThinkTemplate extends Base
 		$i	=	count($_literal);
 		$_literal[$i] = $content;
 		$parseStr	=	"<!--###literal{$i}###-->";
-		Session::set("literal{$i}",$content);
+		$_SESSION["literal{$i}"]	=	$content;
 		return $parseStr;
 	}
 
@@ -373,9 +373,9 @@ class  ThinkTemplate extends Base
      */
 	function restoreLiteral($tag) {
 		// 还原literal标签
-		$parseStr	=	Session::get('literal'.$tag);
+		$parseStr	=	$_SESSION['literal'.$tag];
 		// 销毁literal记录
-		Session::set('literal'.$tag,null);
+		unset($_SESSION['literal'.$tag]);
 		return $parseStr;
 	}
 
