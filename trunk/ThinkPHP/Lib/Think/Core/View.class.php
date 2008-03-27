@@ -347,7 +347,7 @@ class View extends Base
 				// 缓存无效 重新编译
 				$compiler	=	true;
 				import('Think.Template.ThinkTemplate');
-				$tpl = new ThinkTemplate();
+				$tpl = ThinkTemplate::getInstance();
 				// 编译并加载模板文件
 				$tpl->load($templateFile,$charset,$this->tVar,$varPrefix); 
 			}else{
