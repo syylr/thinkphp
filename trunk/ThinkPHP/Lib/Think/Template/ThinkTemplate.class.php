@@ -10,7 +10,6 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-import('Think.Template.TagLib');
 /**
  +------------------------------------------------------------------------------
  * ThinkPHP内置模板引擎类
@@ -427,7 +426,7 @@ class  ThinkTemplate extends Base
      */
     public function parseTagLib($tagLib,&$content,$hide=false) 
     {
-        $tLib = new TagLib($tagLib);
+        $tLib =  get_instance_of('TagLib'.ucwords(strtolower($tagLib)));
         if($tLib->valid()) { 
             //如果标签库有效则取出支持标签列表
             $tagList =  $tLib->getTagList();
@@ -481,12 +480,11 @@ class  ThinkTemplate extends Base
             $attr = stripslashes($attr);
             $content = stripslashes($content);
         //}
-        $content = trim($content);
-        $tlClass = 'TagLib'.ucwords(strtolower($tagLib));
-        $parse = '_'.$tag;
-        $tl =  new $tlClass($this);
-        if($tl->valid()) {	
-            return $tl->$parse($attr,$content);
+        $tLib =  get_instance_of('TagLib'.ucwords(strtolower($tagLib)));
+        if($tLib->valid()) {	
+	        $parse = '_'.$tag;
+	        $content = trim($content);
+            return $tLib->$parse($attr,$content);
         }
     }
 
