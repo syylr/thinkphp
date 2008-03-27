@@ -100,28 +100,18 @@ class TagLib extends Base
 
     /**
      +----------------------------------------------------------
-     * 取得标签库实例对象
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @return App
-     +----------------------------------------------------------
-     */
-    static function getInstance() 
-    {
-        return get_instance_of(__CLASS__);
-    }
-
-    /**
-     +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
      * @access public 
      +----------------------------------------------------------
      */
-    public function __construct($tagLib,$filename='')
+    public function __construct($tagLib='',$filename='')
     {
+		if(empty($tagLib)) {
+			$tagLib	=	strtolower(substr(get_class($this),6));
+		}
         $this->tagLib = $tagLib;
+        $this->tpl = ThinkTemplate::getInstance();
         if(!empty($filename)) {
             $this->xml = $filename;
         }else {
