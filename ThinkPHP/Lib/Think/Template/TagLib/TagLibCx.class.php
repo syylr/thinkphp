@@ -121,7 +121,7 @@ class TagLibCx extends TagLib
         $offset     = isset($tag['offset'])?$tag['offset']:0;
         $length     = isset($tag['length'])?$tag['length']:'';
 		$key			=	!empty($tag['key'])?$tag['key']:'i';
-		$odd			=	isset($tag['odd'])?$tag['odd']:'odd';
+		$mod			=	isset($tag['mod'])?$tag['mod']:'2';
 		$name = $this->autoBuildVar($name);
 		$parseStr  =  '<?php if(isset('.$name.')): ?>';
 		$parseStr	.= '<?php $'.$key.' = 0; ?>';
@@ -131,7 +131,7 @@ class TagLibCx extends TagLib
 		$parseStr .= '<?php if( count('.$name.')==0 ) echo "'.$empty.'" ?>';
 		$parseStr .= '<?php foreach('.$name.' as $key=>$'.$id.'): ?>';
 		$parseStr .= '<?php ++$'.$key.';?>';
-		$parseStr .= '<?php $odd = (($'.$key.' % 2 )==0)?>';
+		$parseStr .= '<?php $mod = (($'.$key.' % '.$mod.' )==0)?>';
 		$parseStr .= $this->tpl->parse($content);
 		$parseStr .= '<?php endforeach; ?>';
 		$parseStr .=  '<?php endif; ?>';
