@@ -31,12 +31,14 @@ var ThinkAjax = {
 	bComplete:false,			//是否完成
 	updateTip:'数据处理中～',	//后台处理中提示信息
 	updateEffect:{'opacity': [0.1,0.85]},			//更新效果
-	target:'ThinkAjaxResult',	//提示信息对象
+	image:['','',''], // 图片配置 依次是处理中、成功和错误的显示图片
+	tipTarget:'ThinkAjaxResult',	//提示信息对象
 	showTip:true,	 // 是否显示提示信息，默认开启
 	status:0, //返回状态码
 	info:'',	//返回信息
 	data:'',	//返回数据
 	intval:0,
+	options:{}, // 连贯操作的参数
 	debug:false,
 	activeRequestCount:0,
 	// Ajax连接初始化
@@ -47,6 +49,32 @@ var ThinkAjax = {
 		  function() {return new ActiveXObject('Microsoft.XMLHTTP')}
 		 
 		) || false;
+	},
+	// 连贯操作方法支持
+	// ThinkAjax.url(...).params(...).tip(...).target(...).effect(...).response(...).send()
+	tip:function (tips){
+		this.options['tip']	=	tips;
+		return this;
+	},
+	effect:function (effect){
+		this.options['effect']	=	effect;
+		return this;
+	},
+	target:function (taget){
+		this.options['target']	=	target;
+		return this;
+	},
+	response:function (response){
+		this.options['response']	=	response;
+		return this;
+	},
+	url:function (url){
+		this.options['url']	=	url;
+		return this;
+	},
+	params:function (vars){
+		this.options['var']	=	vars;
+		return this;
 	},
 	loading:function (target,tips,effect){
 		if ($(target))
@@ -61,7 +89,12 @@ var ThinkAjax = {
 			{
 				$('loader').style.display = 'none';
 			}
-			$(target).innerHTML = tips;
+			if ('' != this.image[0])
+			{
+				$(target).innerHTML = '<IMG SRC="'+this.image[0]+'"  BORDER="0" ALT="loading..." align="absmiddle"> '+tips;
+			}else{
+				$(target).innerHTML = tips;
+			}
 			//使用更新效果
 			var myEffect = $(target).effects();
 			myEffect.custom(effect);
@@ -105,8 +138,25 @@ var ThinkAjax = {
 		if ($(target))
 		{
 			// 显示提示信息
-			if (this.showTip && this.info!= undefined && this.info!='')
-			$(target).innerHTML	= this.info;
+			if (this.showTip && this.info!= undefined && this.info!=''){
+				if (this.status==1)
+				{
+					if ('' != this.image[1])
+					{
+						$(target).innerHTML	= '<IMG SRC="'+this.image[1]+'"  BORDER="0" ALT="success..." align="absmiddle"> <span style="color:blue">'+this.info+'</span>';
+					}else{
+						$(target).innerHTML	= '<span style="color:blue">'+this.info+'</span>';
+					}
+					
+				}else{
+					if ('' != this.image[2])
+					{
+						$(target).innerHTML	= '<IMG SRC="'+this.image[2]+'"  BORDER="0" ALT="error..." align="absmiddle"> <span style="color:red">'+this.info+'</span>';
+					}else{
+						$(target).innerHTML	= '<span style="color:red">'+this.info+'</span>';
+					}
+				}
+			}
 			// 提示信息停留5秒
 			if (this.showTip)
 			this.intval = window.setTimeout(function (){
@@ -119,9 +169,17 @@ var ThinkAjax = {
 	send:function(url,pars,response,target,tips,effect)
 	{
 		var xmlhttp = this.getTransport();
-		if (target == undefined)	target = this.target;
-		if (effect == undefined)	effect = this.updateEffect;
-		if (tips == undefined) tips = this.updateTip;
+		url = (url == undefined)?this.options['url']:url;
+		pars = (pars == undefined)?this.options['var']:pars;
+		if (target == undefined)	{
+			target = (this.options['target'])?this.options['target']:this.tipTarget;
+		}
+		if (effect == undefined)	{
+			effect = (this.options['effect'])?this.options['effect']:this.updateEffect;
+		}
+		if (tips == undefined) {
+			tips = (this.options['tip'])?this.options['tip']: this.updateTip;
+		}
 		if (this.showTip)
 		{
 			this.loading(target,tips,effect);
