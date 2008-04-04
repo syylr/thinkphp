@@ -2108,7 +2108,7 @@ class Model extends Base  implements IteratorAggregate
 			$condition	=	$this->checkCondition($condition);
 		}
 		$rs = $this->db->find($condition,$this->getTableName(),$fields);
-		return $this->getCol($rs,'count');
+		return $this->getCol($rs,'count')|0;
 	}
 
 	/**
@@ -2132,7 +2132,7 @@ class Model extends Base  implements IteratorAggregate
 			$condition	=	$this->checkCondition($condition);
 		}
 		$rs = $this->db->find($condition,$this->getTableName(),$fields);
-		return $this->getCol($rs,'max')|0;
+		return floatval($this->getCol($rs,'max'));
 	}
 
 	/**
@@ -2156,7 +2156,7 @@ class Model extends Base  implements IteratorAggregate
 			$condition	=	$this->checkCondition($condition);
 		}
 		$rs = $this->db->find($condition,$this->getTableName(),$fields);
-		return $this->getCol($rs,'min')|0;
+		return floatval($this->getCol($rs,'min'));
 	}
 
 	/**
@@ -2180,7 +2180,7 @@ class Model extends Base  implements IteratorAggregate
 			$condition	=	$this->checkCondition($condition);
 		}
 		$rs = $this->db->find($condition,$this->getTableName(),$fields);
-		return $this->getCol($rs,'sum') | 0;
+		return floatval($this->getCol($rs,'sum'));
 	}
 
 	/**
@@ -2204,7 +2204,7 @@ class Model extends Base  implements IteratorAggregate
 			$condition	=	$this->checkCondition($condition);
 		}
 		$rs = $this->db->find($condition,$this->getTableName(),$fields);
-		return $this->getCol($rs,'avg')|0;
+		return floatval($this->getCol($rs,'avg'));
 	}
 
 	/**
