@@ -554,7 +554,7 @@ class Db extends Base
 						}
 				}else {
 					//对字符串类型字段采用模糊匹配
-					if(preg_match('/(\w*)('.C('LIKE_MATCH_FIELDS').')(\w*)/i',$key)) {
+					if(C('LIKE_MATCH_FIELDS') && preg_match('/('.C('LIKE_MATCH_FIELDS').')/i',$key)) {
 						$val = '%'.$val.'%';
 						$whereStr .= $key." LIKE ".$this->fieldFormat($val);
 					}else {
