@@ -1,0 +1,1237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+			<!-- template designed by Marco Von Ballmoos  -->
+			<title>Docs For Class Date</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+						<script src="../../media/lib/classTree.js"></script>
+												<script language="javascript" type="text/javascript">
+				var imgPlus = new Image();
+				var imgMinus = new Image();
+				imgPlus.src = "../../media/images/plus.png";
+				imgMinus.src = "../../media/images/minus.png";
+				
+				function showNode(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+							var oImg = document.layers["img" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+							var oImg = document.all["img" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+							var oImg = document.getElementById("img" + Node);
+									break;
+							}
+					oImg.src = imgMinus.src;
+					oTable.style.display = "block";
+				}
+				
+				function hideNode(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+							var oImg = document.layers["img" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+							var oImg = document.all["img" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+							var oImg = document.getElementById("img" + Node);
+									break;
+							}
+					oImg.src = imgPlus.src;
+					oTable.style.display = "none";
+				}
+				
+				function nodeIsVisible(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+									break;
+							}
+					return (oTable && oTable.style.display == "block");
+				}
+				
+				function toggleNodeVisibility(Node){
+					if (nodeIsVisible(Node)){
+						hideNode(Node);
+					}else{
+						showNode(Node);
+					}
+				}
+			</script>
+					</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Date</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">日期时间操作类</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> liu21st &lt;<a href="mailto:liu21st@gmail.com">liu21st@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Id$</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_ORG---Date---Date.class.php.html">/ORG/Date/Date.class.php</a> (line <span class="field">25</span>)
+		</p>
+		
+				
+		<pre><a href="../../Think/Core/Base.html">Base</a>
+   |
+   --Date</pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																																																																																																																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$CDATE" title="details" class="var-name">$CDATE</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$cMonth" title="details" class="var-name">$cMonth</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$CTIME" title="details" class="var-name">$CTIME</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$cWeekday" title="details" class="var-name">$cWeekday</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$date" title="details" class="var-name">$date</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$day" title="details" class="var-name">$day</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$hour" title="details" class="var-name">$hour</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$minute" title="details" class="var-name">$minute</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$month" title="details" class="var-name">$month</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$second" title="details" class="var-name">$second</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$timezone" title="details" class="var-name">$timezone</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$Week" title="details" class="var-name">$Week</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$weekday" title="details" class="var-name">$weekday</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$yDay" title="details" class="var-name">$yDay</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$year" title="details" class="var-name">$year</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$YMD" title="details" class="var-name">$YMD</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+										
+				<div class="method-definition">
+					static 						<span class="method-result">Date</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$date</span> = <span class="var-default">''</span>])
+									</div>
+																						
+				<div class="method-definition">
+					static 						<span class="method-result">integer</span>
+										<a href="#dateDiff" title="details" class="method-name">dateDiff</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$date</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$elaps</span> = <span class="var-default">&quot;d&quot;</span>])
+									</div>
+																																						
+				<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#isLeapYear" title="details" class="method-name">isLeapYear</a>
+										()
+									</div>
+																														
+				<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#magicInfo" title="details" class="method-name">magicInfo</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>)
+									</div>
+																						
+				<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#numberToCh" title="details" class="method-name">numberToCh</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$number</span>)
+									</div>
+														
+				<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#parse" title="details" class="method-name">parse</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$date</span>)
+									</div>
+														
+				<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#setDate" title="details" class="method-name">setDate</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$date</span>)
+									</div>
+														
+				<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#timeDiff" title="details" class="method-name">timeDiff</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$time</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$precision</span> = <span class="var-default">false</span>])
+									</div>
+																						
+				<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#yearToCh" title="details" class="method-name">yearToCh</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$yearStr</span>, [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$flag</span> = <span class="var-default">false</span>])
+									</div>
+																																		
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#dateAdd" title="details" class="method-name">dateAdd</a>
+											([<span class="var-type">integer</span>&nbsp;<span class="var-name">$number</span> = <span class="var-default">0</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$interval</span> = <span class="var-default">&quot;d&quot;</span>])
+									</div>
+																						
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#firstDayOfMonth" title="details" class="method-name">firstDayOfMonth</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#firstDayOfYear" title="details" class="method-name">firstDayOfYear</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#format" title="details" class="method-name">format</a>
+											([<span class="var-type">string</span>&nbsp;<span class="var-name">$format</span> = <span class="var-default">&quot;%Y-%m-%d %H:%M:%S&quot;</span>])
+									</div>
+																						
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#lastDayOfMonth" title="details" class="method-name">lastDayOfMonth</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#lastDayOfYear" title="details" class="method-name">lastDayOfYear</a>
+										()
+									</div>
+																						
+				<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#maxDayOfMonth" title="details" class="method-name">maxDayOfMonth</a>
+										()
+									</div>
+																																														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#valid" title="details" class="method-name">valid</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$date</span>)
+									</div>
+																						
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__toString" title="details" class="method-name">__toString</a>
+										()
+									</div>
+											</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			
+<a name="var$CDATE" id="$CDATE"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$CDATE</span>
+						(line <span class="line-number">156</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">日期CDATE表示</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$cMonth" id="$cMonth"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$cMonth</span>
+						(line <span class="line-number">146</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">月份的完整表示</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$CTIME" id="$CTIME"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$CTIME</span>
+						(line <span class="line-number">176</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">时间的输出表示</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$cWeekday" id="$cWeekday"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$cWeekday</span>
+						(line <span class="line-number">126</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">星期的完整表示</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$date" id="$date"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$date</span>
+						(line <span class="line-number">36</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">日期的时间戳</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$day" id="$day"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$day</span>
+						(line <span class="line-number">76</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">日</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$hour" id="$hour"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$hour</span>
+						(line <span class="line-number">86</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">时</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$minute" id="$minute"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$minute</span>
+						(line <span class="line-number">96</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">分</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$month" id="$month"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$month</span>
+						(line <span class="line-number">66</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">月</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$second" id="$second"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$second</span>
+						(line <span class="line-number">106</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">秒</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$timezone" id="$timezone"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$timezone</span>
+						(line <span class="line-number">46</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">时区</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$Week" id="$Week"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$Week</span>
+			 = <span class="var-default">array(&quot;日&quot;,&quot;一&quot;,&quot;二&quot;,&quot;三&quot;,&quot;四&quot;,&quot;五&quot;,&quot;六&quot;)</span>			(line <span class="line-number">177</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$weekday" id="$weekday"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$weekday</span>
+						(line <span class="line-number">116</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">星期的数字表示</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$yDay" id="$yDay"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$yDay</span>
+						(line <span class="line-number">136</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">一年中的天数 0－365</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$year" id="$year"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$year</span>
+						(line <span class="line-number">56</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">年</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$YMD" id="$YMD"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$YMD</span>
+						(line <span class="line-number">166</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">日期的YMD表示</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static __construct</span> (line <span class="line-number">190</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">架构函数</p>
+<p class="description"><p>创建一个Date对象</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		static <span class="method-result">Date</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$date</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$date</span><span class="var-description">: 日期</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddateDiff" id="dateDiff"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static dateDiff</span> (line <span class="line-number">355</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">计算日期差</p>
+<p class="description"><p>w - weeks   d - days   h - hours   m - minutes   s - seconds</p></p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		static <span class="method-result">integer</span>
+		<span class="method-name">
+			dateDiff
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$date</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$elaps</span> = <span class="var-default">&quot;d&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$date</span><span class="var-description">: 要比较的日期</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$elaps</span><span class="var-description">: 比较跨度</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodisLeapYear" id="isLeapYear"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static isLeapYear</span> (line <span class="line-number">329</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">是否为闰年</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		static <span class="method-result">string</span>
+		<span class="method-name">
+			isLeapYear
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodmagicInfo" id="magicInfo"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static magicInfo</span> (line <span class="line-number">686</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">判断日期 所属 干支 生肖 星座   type 参数：XZ 星座 GZ 干支 SX 生肖</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		static <span class="method-result">string</span>
+		<span class="method-name">
+			magicInfo
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$type</span><span class="var-description">: 获取信息类型</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodnumberToCh" id="numberToCh"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static numberToCh</span> (line <span class="line-number">623</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">日期数字转中文</p>
+<p class="description"><p>用于日和月、周</p></p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		static <span class="method-result">string</span>
+		<span class="method-name">
+			numberToCh
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$number</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$number</span><span class="var-description">: 日期数字</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodparse" id="parse"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static parse</span> (line <span class="line-number">212</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">日期分析</p>
+<p class="description"><p>返回时间戳</p></p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		static <span class="method-result">string</span>
+		<span class="method-name">
+			parse
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$date</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$date</span><span class="var-description">: 日期</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetDate" id="setDate"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static setDate</span> (line <span class="line-number">276</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">日期参数设置</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		static <span class="method-result">void</span>
+		<span class="method-name">
+			setDate
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$date</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$date</span><span class="var-description">: 日期时间戳</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtimeDiff" id="timeDiff"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static timeDiff</span> (line <span class="line-number">403</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">人性化的计算日期差</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		static <span class="method-result">string</span>
+		<span class="method-name">
+			timeDiff
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$time</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$precision</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$time</span><span class="var-description">: 要比较的时间</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$precision</span><span class="var-description">: 返回的精度</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodyearToCh" id="yearToCh"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static yearToCh</span> (line <span class="line-number">661</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">年份数字转中文</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		static <span class="method-result">string</span>
+		<span class="method-name">
+			yearToCh
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$yearStr</span>, [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$flag</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$yearStr</span><span class="var-description">: 年份数字</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$flag</span><span class="var-description">: 是否显示公元</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddateAdd" id="dateAdd"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">dateAdd</span> (line <span class="line-number">545</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">取得指定间隔日期</p>
+<p class="description"><p>yyyy - 年     q    - 季度     m    - 月     y    - day of year     d    - 日     w    - 周     ww   - week of year     h    - 小时     n    - 分钟     s    - 秒</p></p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			dateAdd
+		</span>
+					([<span class="var-type">integer</span>&nbsp;<span class="var-name">$number</span> = <span class="var-default">0</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$interval</span> = <span class="var-default">&quot;d&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$number</span><span class="var-description">: 间隔数目</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$interval</span><span class="var-description">: 比较类型</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfirstDayOfMonth" id="firstDayOfMonth"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">firstDayOfMonth</span> (line <span class="line-number">438</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">计算月份的第一天</p>
+<p class="description"><p>返回Date对象</p></p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			firstDayOfMonth
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodfirstDayOfYear" id="firstDayOfYear"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">firstDayOfYear</span> (line <span class="line-number">457</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">计算年份的第一天</p>
+<p class="description"><p>返回Date对象</p></p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			firstDayOfYear
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodformat" id="format"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">format</span> (line <span class="line-number">313</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">日期格式化</p>
+<p class="description"><p>默认返回 1970-01-01 11:30:45 格式</p></p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			format
+		</span>
+					([<span class="var-type">string</span>&nbsp;<span class="var-name">$format</span> = <span class="var-default">&quot;%Y-%m-%d %H:%M:%S&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$format</span><span class="var-description">: 格式化参数</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodlastDayOfMonth" id="lastDayOfMonth"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">lastDayOfMonth</span> (line <span class="line-number">476</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">计算月份的最后一天</p>
+<p class="description"><p>返回Date对象</p></p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			lastDayOfMonth
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodlastDayOfYear" id="lastDayOfYear"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">lastDayOfYear</span> (line <span class="line-number">495</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">计算年份的最后一天</p>
+<p class="description"><p>返回Date对象</p></p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			lastDayOfYear
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodmaxDayOfMonth" id="maxDayOfMonth"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">maxDayOfMonth</span> (line <span class="line-number">514</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">计算月份的最大天数</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			maxDayOfMonth
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodvalid" id="valid"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">valid</span> (line <span class="line-number">256</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">验证日期数据是否有效</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			valid
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$date</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$date</span><span class="var-description">: 日期数据</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__toString" id="__toString"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">__toString</span> (line <span class="line-number">727</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__toString
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Thu, 27 Mar 2008 08:20:29 +0000 by 塞北的雪
+	</p>
+	</div></body>
+</html>
