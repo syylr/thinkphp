@@ -2098,8 +2098,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
 	public function count($condition='',$field='*')
 	{
@@ -2120,9 +2118,7 @@ class Model extends Base  implements IteratorAggregate
      * @param string $field  字段名
      * @param mixed $condition  条件
      +----------------------------------------------------------
-     * @return integer
-     +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return float
      +----------------------------------------------------------
      */
 	public function max($field,$condition='')
@@ -2144,9 +2140,7 @@ class Model extends Base  implements IteratorAggregate
      * @param string $field  字段名
      * @param mixed $condition  条件
      +----------------------------------------------------------
-     * @return integer
-     +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return float
      +----------------------------------------------------------
      */
 	public function min($field,$condition='')
@@ -2168,9 +2162,7 @@ class Model extends Base  implements IteratorAggregate
      * @param string $field  字段名
      * @param mixed $condition  条件
      +----------------------------------------------------------
-     * @return integer
-     +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return float
      +----------------------------------------------------------
      */
 	public function sum($field,$condition='')
@@ -2192,9 +2184,7 @@ class Model extends Base  implements IteratorAggregate
      * @param string $field  字段名
      * @param mixed $condition  条件
      +----------------------------------------------------------
-     * @return integer
-     +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return float
      +----------------------------------------------------------
      */
 	public function avg($field,$condition='')
