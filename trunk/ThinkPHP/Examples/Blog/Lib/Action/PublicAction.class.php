@@ -264,19 +264,11 @@ class PublicAction extends Action
     {
         import("ORG.Net.UploadFile");
         $upload = new UploadFile();
-        //检查客户端上传文件参数设置
-        if(isset($_POST['_uploadFileSize']) && is_numeric($_POST['_uploadFileSize'])) {
-            //设置上传文件大小
-            $upload->maxSize  = $_POST['_uploadFileSize'] ;
-        }
-        if(!empty($_POST['_uploadFileType'])) {
-            //设置上传文件类型
-            $upload->allowExts  = explode(',',strtolower($_POST['_uploadFileType']));
-        }
-        if(!empty($_POST['_uploadSavePath'])) {
-            //设置附件上传目录
-            $upload->savePath =  $_POST['_uploadSavePath']; 
-        }
+        //设置上传文件大小
+        $upload->maxSize  = 32922 ;
+        //设置上传文件类型
+        $upload->allowExts  = array('rar','zip','doc','swf','txt','ppt');
+        $upload->savePath =  '../Public/Uploads/'; 
         if(isset($_POST['_uploadSaveRule'])) {
             //设置附件命名规则
             $upload->saveRule =  $_POST['_uploadSaveRule']; 
@@ -344,7 +336,7 @@ class PublicAction extends Action
         $savename = array();
         //执行上传操作
         if(!$upload->upload()) {
-            if($this->get('ajax') && isset($_POST['_uploadFileResult'])) {
+            if($this->isAjax() && isset($_POST['_uploadFileResult'])) {
                 $uploadSuccess =  false;
                 $ajaxMsg  =  $upload->getErrorMsg();
             }else {
@@ -419,7 +411,7 @@ class PublicAction extends Action
 
         // 判断是否有Ajax方式上传附件
         // 并且设置了结果显示Html元素
-        if($this->get('ajax') && isset($_POST['_uploadFileResult']) ) {
+        if($this->isAjax() && isset($_POST['_uploadFileResult']) ) {
             // Ajax方式上传参数信息
             $info = Array();
             $info['success']  =  $uploadSuccess;
