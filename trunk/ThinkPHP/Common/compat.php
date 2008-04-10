@@ -24,13 +24,15 @@
 if (!function_exists('json_encode')) {
      function format_json_value(&$value) 
     {
-        if(is_int($value)) {
+        if(is_bool($value)) {
+			$value = $value?'true':'false';
+        }elseif(is_int($value)) {
             $value = intval($value);
-        } else if(is_float($value)) {
+        }elseif(is_float($value)) {
             $value = floatval($value);
-        } else if(defined($value) && $value === null) {
+        }elseif(defined($value) && $value === null) {
             $value = strval(constant($value));
-        } else if(is_string($value)) {
+        }elseif(is_string($value)) {
             $value = '"'.addslashes($value).'"';
         }
         return $value;
