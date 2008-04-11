@@ -11,7 +11,7 @@ class IndexAction extends Action{
 		$list	=	$Form->findAll('','*','id desc','0,5');
 		$this->assign('list',$list);
 		// 带条件查询
-		$conditon['id']	=	array('gt',0);
+		$condition['id']	=	array('gt',0);
 		$condition['status']	=	1;
 		$vo	=	$Form->find($condition,'id,title');
 		$this->assign('vo',$vo);
