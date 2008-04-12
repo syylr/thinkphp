@@ -521,7 +521,7 @@ class Db extends Base
 						}else{
 							if(is_string($val[0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE|BETWEEN)$/i',$val[0])) {
 								// 是否存在比较运算
-								$whereStr .= $key.$this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
+								$whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
 							}elseif(is_string($val[0]) && preg_match('/IN/i',$val[0])){
 								// 支持 IN 运算
 								$zone	=	is_array($val[1])? implode(',',$val[1]):$val[1];
