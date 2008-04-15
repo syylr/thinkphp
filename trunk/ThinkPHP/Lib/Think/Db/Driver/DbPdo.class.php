@@ -67,7 +67,8 @@ Class DbPdo extends Db{
                 return false;
             }
 			$this->linkID[$linkNum]->exec('SET NAMES '.C('DB_CHARSET'));  
-            $this->dbVersion = $this->linkID[$linkNum]->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
+			// 因个别驱动不支持getAttribute方法 暂时注释
+            //$this->dbVersion = $this->linkID[$linkNum]->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
 			// 标记连接成功
 			$this->connected	=	true;
             // 注销数据库连接配置信息
