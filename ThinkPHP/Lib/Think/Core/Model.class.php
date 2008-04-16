@@ -398,7 +398,7 @@ class Model extends Base  implements IteratorAggregate
 			// 已经有定义的查询表达式
 			$condition	=	$this->options['where']?			$this->options['where']:	$condition;
 			$table			=	$this->options['table']?			$this->options['table']:	$this->getTableName();
-			$fields		=	$this->options['filed']?			$this->options['field']:	$fields;
+			$fields		=	$this->options['field']?			$this->options['field']:	$fields;
 			$limit			=	$this->options['limit']?			$this->options['limit']:		$limit;
 			$order		=	$this->options['order']?			$this->options['order']:	$order;
 			$group		=	$this->options['group']?			$this->options['group']:	$group;
