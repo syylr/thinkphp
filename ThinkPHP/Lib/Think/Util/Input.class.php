@@ -16,6 +16,10 @@ class Input extends Base {
 	private $filter	=	null;	// 输入过滤
 	private static $_input	=	array('get','post','request','env','server','cookie','session','globals','config','lang','call');
 
+	static public function getInstance() {
+		return get_instance_of(__CLASS__);
+	}
+
     /**
      +----------------------------------------------------------
      * 魔术方法 有不存在的操作的时候执行
