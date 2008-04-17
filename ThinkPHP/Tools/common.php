@@ -10,6 +10,8 @@
 // +----------------------------------------------------------------------
 // $Id$
 
+//加载配置文件
+require './config.php';
 //加载ThinkPHP基类
 require THINK_PATH."/Common/defines.php";
 // 系统函数库
@@ -19,6 +21,8 @@ import("Think.Core.Base");
 //加载Think核心类
 import("Think.Util.Config");
 import("Think.Db.Db");
+// 数据库连接信息设置
+C($config);
 
 function init() {
 	mk_dir(APP_PATH.'Lib/Model/');
@@ -28,9 +32,9 @@ function init() {
 function buildModel($name='') {
 	if(empty($name)) {
 		$db	=	DB::getInstance();
-		$tables = $db->getTables(DB_NAME);
+		$tables = $db->getTables(C('DB_NAME'));
 		foreach ($tables as $table){
-			$table    =   str_replace(DB_PREFIX,'',$table);	
+			$table    =   str_replace(C('DB_PREFIX'),'',$table);	
 			buildModel($table);
 		}
 	}else{
@@ -55,9 +59,9 @@ function buildModel($name='') {
 function buildAction($name='') {
 	if(empty($name)) {
 		$db	=	DB::getInstance();
-		$tables = $db->getTables(DB_NAME);
+		$tables = $db->getTables(C('DB_NAME'));
 		foreach ($tables as $table){
-			$table    =   str_replace(DB_PREFIX,'',$table);	
+			$table    =   str_replace(C('DB_PREFIX'),'',$table);	
 			buildAction($table);
 		}
 	}else{
