@@ -133,6 +133,8 @@ class Model extends Base  implements IteratorAggregate
 				}
 				// 设置数据库的返回数据格式
 				$this->db->resultType	=	C('DATA_RESULT_TYPE');
+				// 设置默认的数据库连接
+				$this->_db[0]	=	$this->db;
 				// 设置表前后缀
 				$this->tablePrefix = C('DB_PREFIX')|'';
 				$this->tableSuffix = C('DB_SUFFIX')|'';
