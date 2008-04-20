@@ -513,7 +513,7 @@ class Date extends Base
      */
     public function maxDayOfMonth() 
     {
-        $result = $this->dateDiff($this->dateAdd(1,'m'),'d');
+        $result = $this->dateDiff(strtotime($this->dateAdd(1,'m')),'d');
         return $result;    	
     }
 
