@@ -190,6 +190,10 @@ class  ThinkTemplate extends Base
 		$tmplContent = str_replace('__ACTION__',__ACTION__,$tmplContent);
         //当前页面操作地址
 		$tmplContent = str_replace('__SELF__',__SELF__,$tmplContent);
+		if(ini_get('short_open_tag')) {
+			// 开启短标签的情况要将<?标签用echo方式输出 否则无法正常输出xml标识
+			$tmplContent = preg_replace('/(<\?(?!php|=|$))/i', '<?php echo \'\\1\'; ?>'."\n", $tmplContent );
+		}
         //编码替换
         if(C('TEMPLATE_CHARSET') != $charset) {
         	$tmplContent = str_ireplace('charset='.C('TEMPLATE_CHARSET'), 'charset='.$charset, $tmplContent);
