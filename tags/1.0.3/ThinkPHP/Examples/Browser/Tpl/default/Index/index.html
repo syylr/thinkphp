@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <TITLE>ThinkPHP示例：多语言</TITLE>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+ </HEAD>
+ <BODY>
+ <div class="main">
+ <H2>ThinkPHP示例之：防止页面刷新</H2>
+可以设置页面防止页面刷新的时间，该特性利用了浏览器缓存功能。<BR>在设置的时间间隔内刷新页面将直接读取浏览器缓存！<BR>
+ <TABLE  cellpadding=3 cellspacing=3>
+  <TR>
+	<TD ><div class="result" style="color:red">当前时间：{$id|time|date='H:i:s',###}</div></TD>
+ </TR>
+ <TR>
+	<TD class="tLeft" >当前设置的页面防止刷新的时间间隔为30秒，<A HREF="javascript:location.reload()">刷新页面</A> 后注意看时间是否有变化</TD>
+ </TR>
+ <TR>
+	<TD ><HR> 示例源码<BR>配置文件config.php<BR><php>highlight_file(APP_PATH.'/Conf/config.php');</php><BR>
+	控制器IndexAction类<BR><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php>
+	</TD>
+ </TR>
+ </TABLE>
+</div>
+ </BODY>
+</HTML>

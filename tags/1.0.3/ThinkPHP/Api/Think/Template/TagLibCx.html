@@ -1,0 +1,1621 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+			<!-- template designed by Marco Von Ballmoos  -->
+			<title>Docs For Class TagLibCx</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+						<script src="../../media/lib/classTree.js"></script>
+												<script language="javascript" type="text/javascript">
+				var imgPlus = new Image();
+				var imgMinus = new Image();
+				imgPlus.src = "../../media/images/plus.png";
+				imgMinus.src = "../../media/images/minus.png";
+				
+				function showNode(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+							var oImg = document.layers["img" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+							var oImg = document.all["img" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+							var oImg = document.getElementById("img" + Node);
+									break;
+							}
+					oImg.src = imgMinus.src;
+					oTable.style.display = "block";
+				}
+				
+				function hideNode(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+							var oImg = document.layers["img" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+							var oImg = document.all["img" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+							var oImg = document.getElementById("img" + Node);
+									break;
+							}
+					oImg.src = imgPlus.src;
+					oTable.style.display = "none";
+				}
+				
+				function nodeIsVisible(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+									break;
+							}
+					return (oTable && oTable.style.display == "block");
+				}
+				
+				function toggleNodeVisibility(Node){
+					if (nodeIsVisible(Node)){
+						hideNode(Node);
+					}else{
+						showNode(Node);
+					}
+				}
+			</script>
+					</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class TagLibCx</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-vars">Vars</a>
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">CX标签库解析类</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> liu21st &lt;<a href="mailto:liu21st@gmail.com">liu21st@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Id$</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Think---Template---TagLib---TagLibCx.class.php.html">/Think/Template/TagLib/TagLibCx.class.php</a> (line <span class="field">26</span>)
+		</p>
+		
+				
+		<pre><a href="../../Think/Core/Base.html">Base</a>
+   |
+   --<a href="../../Think/Template/TagLib.html">TagLib</a>
+      |
+      --TagLibCx</pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-vars">Vars</a>
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+										
+				<div class="method-definition">
+					static 						<span class="method-result">TagLibCx</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">&$template</span>, <span class="var-type">object</span>&nbsp;<span class="var-name">$template</span>)
+									</div>
+																																																																																																																																																																																																																																																																																																																										
+				<div class="method-definition">
+											<span class="method-result">string|void</span>
+										<a href="#_access" title="details" class="method-name">_access</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#_case" title="details" class="method-name">_case</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#_comment" title="details" class="method-name">_comment</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string|void</span>
+										<a href="#_compare" title="details" class="method-name">_compare</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">'eq'</span>])
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#_default" title="details" class="method-name">_default</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_defined" title="details" class="method-name">_defined</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_egt" title="details" class="method-name">_egt</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#_else" title="details" class="method-name">_else</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#_elseif" title="details" class="method-name">_elseif</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_elt" title="details" class="method-name">_elt</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_eq" title="details" class="method-name">_eq</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_equal" title="details" class="method-name">_equal</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_foreach" title="details" class="method-name">_foreach</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_gt" title="details" class="method-name">_gt</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_heq" title="details" class="method-name">_heq</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#_if" title="details" class="method-name">_if</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#_include" title="details" class="method-name">_include</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string|void</span>
+										<a href="#_iterate" title="details" class="method-name">_iterate</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_layout" title="details" class="method-name">_layout</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_lt" title="details" class="method-name">_lt</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_neq" title="details" class="method-name">_neq</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_nheq" title="details" class="method-name">_nheq</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string|void</span>
+										<a href="#_noaccess" title="details" class="method-name">_noaccess</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string|void</span>
+										<a href="#_nosession" title="details" class="method-name">_nosession</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_notequal" title="details" class="method-name">_notequal</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string|void</span>
+										<a href="#_notpresent" title="details" class="method-name">_notpresent</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#_php" title="details" class="method-name">_php</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string|void</span>
+										<a href="#_present" title="details" class="method-name">_present</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_resultset" title="details" class="method-name">_resultset</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string|void</span>
+										<a href="#_session" title="details" class="method-name">_session</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_subeach" title="details" class="method-name">_subeach</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_sublist" title="details" class="method-name">_sublist</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#_switch" title="details" class="method-name">_switch</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_url" title="details" class="method-name">_url</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_var" title="details" class="method-name">_var</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>)
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#_volist" title="details" class="method-name">_volist</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+									</div>
+											</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			
+							<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../../Think/Template/TagLib.html">TagLib</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Think/Template/TagLib.html#var$comparison">TagLib::$comparison</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Think/Template/TagLib.html#var$parse">TagLib::$parse</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Think/Template/TagLib.html#var$tagLib">TagLib::$tagLib</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Think/Template/TagLib.html#var$tagList">TagLib::$tagList</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Think/Template/TagLib.html#var$tpl">TagLib::$tpl</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Think/Template/TagLib.html#var$valid">TagLib::$valid</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Think/Template/TagLib.html#var$xml">TagLib::$xml</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-vars">Vars</a>
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static __construct</span> (line <span class="line-number">39</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">架构函数</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		static <span class="method-result">TagLibCx</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">&$template</span>, <span class="var-type">object</span>&nbsp;<span class="var-name">$template</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">object</span>
+				<span class="var-name">$template</span><span class="var-description">: 当前模板对象</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">&$template</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Think/Template/TagLib.html#method__construct">TagLib::__construct()</a></dt>
+						<dd>架构函数</dd>
+					</dl>
+			
+	</div>
+<a name="method_access" id="_access"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_access</span> (line <span class="line-number">593</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">access标签解析</p>
+<p class="description"><p>如果有模块和操作权限则输出，默认为当前模块和操作  格式： &lt;access module=&quot;&quot; action=&quot;&quot; &gt;content&lt;/access&gt;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string|void</span>
+		<span class="method-name">
+			_access
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_case" id="_case"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_case</span> (line <span class="line-number">339</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">case标签解析 需要配合switch才有效</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			_case
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_comment" id="_comment"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_comment</span> (line <span class="line-number">85</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">comment标签解析</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			_comment
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_compare" id="_compare"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_compare</span> (line <span class="line-number">391</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">compare标签解析</p>
+<p class="description"><p>用于值的比较 支持 eq neq gt lt egt elt heq nheq 默认是eq  格式： &lt;compare name=&quot;&quot; type=&quot;eq&quot; value=&quot;&quot; &gt;content&lt;/compare&gt;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string|void</span>
+		<span class="method-name">
+			_compare
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">'eq'</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$type</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_default" id="_default"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_default</span> (line <span class="line-number">372</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">default标签解析 需要配合switch才有效</p>
+<p class="description"><p>使用： &lt;default /&gt;ddfdf</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			_default
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_defined" id="_defined"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_defined</span> (line <span class="line-number">226</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_defined
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_egt" id="_egt"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_egt</span> (line <span class="line-number">436</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_egt
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_else" id="_else"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_else</span> (line <span class="line-number">292</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">else标签解析</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			_else
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_elseif" id="_elseif"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_elseif</span> (line <span class="line-number">274</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">else标签解析</p>
+<p class="description"><p>格式：见if标签</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			_elseif
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_elt" id="_elt"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_elt</span> (line <span class="line-number">440</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_elt
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_eq" id="_eq"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_eq</span> (line <span class="line-number">412</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_eq
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_equal" id="_equal"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_equal</span> (line <span class="line-number">416</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_equal
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_foreach" id="_foreach"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_foreach</span> (line <span class="line-number">175</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_foreach
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_gt" id="_gt"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_gt</span> (line <span class="line-number">428</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_gt
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_heq" id="_heq"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_heq</span> (line <span class="line-number">444</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_heq
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_if" id="_if"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_if</span> (line <span class="line-number">254</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">if标签解析</p>
+<p class="description"><p>格式：  &lt;if condition=&quot; $a eq 1&quot; &gt;  &lt;elseif condition=&quot;$a eq 2&quot; /&gt;  &lt;else /&gt;  &lt;/if&gt;  表达式支持 eq neq gt egt lt elt == &gt; &gt;= &lt; &lt;= or and || &amp;&amp;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			_if
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_include" id="_include"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_include</span> (line <span class="line-number">60</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">include标签解析</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			_include
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_iterate" id="_iterate"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_iterate</span> (line <span class="line-number">126</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">iterator标签解析 循环输出iterator变量的值</p>
+<p class="description"><p>格式：  &lt;iterate name=&quot;userList&quot; id=&quot;user&quot; empty=&quot;&quot; &gt;  {user.username}  {user.email}  &lt;/iterate&gt;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string|void</span>
+		<span class="method-name">
+			_iterate
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_layout" id="_layout"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_layout</span> (line <span class="line-number">625</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_layout
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_lt" id="_lt"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_lt</span> (line <span class="line-number">432</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_lt
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_neq" id="_neq"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_neq</span> (line <span class="line-number">420</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_neq
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_nheq" id="_nheq"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_nheq</span> (line <span class="line-number">448</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_nheq
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_noaccess" id="_noaccess"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_noaccess</span> (line <span class="line-number">616</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">noaccess标签解析</p>
+<p class="description"><p>如果没有模块和操作权限则输出，默认为当前模块和操作  格式： &lt;noaccess module=&quot;&quot; action=&quot;&quot; &gt;content&lt;/noaccess&gt;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string|void</span>
+		<span class="method-name">
+			_noaccess
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_nosession" id="_nosession"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_nosession</span> (line <span class="line-number">552</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">notsession标签解析</p>
+<p class="description"><p>如果某个session变量没有设置 则输出内容  格式： &lt;notsession name=&quot;&quot; &gt;content&lt;/notsession&gt;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string|void</span>
+		<span class="method-name">
+			_nosession
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_notequal" id="_notequal"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_notequal</span> (line <span class="line-number">424</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_notequal
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_notpresent" id="_notpresent"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_notpresent</span> (line <span class="line-number">489</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">notpresent标签解析</p>
+<p class="description"><p>如果某个变量没有设置，则输出内容  格式： &lt;notpresent name=&quot;&quot; &gt;content&lt;/notpresent&gt;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string|void</span>
+		<span class="method-name">
+			_notpresent
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_php" id="_php"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_php</span> (line <span class="line-number">104</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">php标签解析</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			_php
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_present" id="_present"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_present</span> (line <span class="line-number">466</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">present标签解析</p>
+<p class="description"><p>如果某个变量已经设置 则输出内容  格式： &lt;present name=&quot;&quot; &gt;content&lt;/present&gt;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string|void</span>
+		<span class="method-name">
+			_present
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_resultset" id="_resultset"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_resultset</span> (line <span class="line-number">167</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_resultset
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_session" id="_session"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_session</span> (line <span class="line-number">512</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">session标签解析</p>
+<p class="description"><p>如果某个session变量已经设置 则输出内容  格式： &lt;session name=&quot;&quot; &gt;content&lt;/session&gt;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string|void</span>
+		<span class="method-name">
+			_session
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_subeach" id="_subeach"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_subeach</span> (line <span class="line-number">201</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_subeach
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_sublist" id="_sublist"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_sublist</span> (line <span class="line-number">171</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_sublist
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_switch" id="_switch"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_switch</span> (line <span class="line-number">315</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">switch标签解析</p>
+<p class="description"><p>格式：  &lt;switch name=&quot;$a.name&quot; &gt;  &lt;case value=&quot;1&quot; break=&quot;false&quot;&gt;1&lt;/case&gt;  &lt;case value=&quot;2&quot; &gt;2&lt;/case&gt;  &lt;default /&gt;other  &lt;/switch&gt;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			_switch
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$attr</span><span class="var-description">: 标签属性</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$content</span><span class="var-description">: 标签内容</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_url" id="_url"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_url</span> (line <span class="line-number">206</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_url
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_var" id="_var"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">_var</span> (line <span class="line-number">214</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_var
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method_volist" id="_volist"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">_volist</span> (line <span class="line-number">163</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			_volist
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attr</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$content</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$attr</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$content</span>			</li>
+				</ul>
+		
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../Think/Template/TagLib.html">TagLib</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#method__construct">TagLib::__construct()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodautoBuildVar">TagLib::autoBuildVar()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methoddateFormat">TagLib::dateFormat()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodgetInstance">TagLib::getInstance()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodgetTagAttrList">TagLib::getTagAttrList()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodgetTagLib">TagLib::getTagLib()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodgetTagList">TagLib::getTagList()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodload">TagLib::load()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodnumericFormat">TagLib::numericFormat()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodparseCondition">TagLib::parseCondition()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodparseXmlAttr">TagLib::parseXmlAttr()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodstringFormat">TagLib::stringFormat()</a></span><br>
+													<span class="method-name"><a href="../../Think/Template/TagLib.html#methodvalid">TagLib::valid()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Thu, 27 Mar 2008 08:20:54 +0000 by 塞北的雪
+	</p>
+	</div></body>
+</html>

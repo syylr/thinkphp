@@ -1,0 +1,77 @@
+<?php 
+// CURD
+class IndexAction extends Action{
+
+	// 查询数据
+	public function index(){
+		$Form	= D("Form");
+		$list	=	$Form->top6('','*','id desc');
+		$this->assign('list',$list);
+		$this->display();		
+	}
+
+	// 写入数据
+	public function insert() {
+		$Form	=	D("Form");
+		if($vo = $Form->create()) {
+			if($Form->add()){
+				$this->success('数据保存成功！');
+			}else{
+				$this->error('数据写入错误！');
+			}
+		}else{
+			$this->error($Form->getError());
+		}
+	}
+	
+	// 更新数据
+	public function update() {
+		$Form	=	D("Form");
+		if($vo = $Form->create()) {
+			if($Form->save()){
+				$this->success('数据更新成功！');
+			}else{
+				$this->error('数据写入错误！');
+			}
+		}else{
+			$this->error($Form->getError());
+		}
+	}
+
+	public function delete() {
+		if(!empty($_POST['id'])) {
+			$Form	=	D("Form");
+			$result	=	$Form->deleteById($_POST['id']);
+			if(false !== $result) {
+				$this->ajaxReturn($_POST['id'],'删除成功！',1);
+			}else{
+				$this->error('删除出错！');
+			}
+		}else{
+			$this->error('删除项不存在！');
+		}
+	}
+
+	// 编辑数据
+	public function edit() {
+		if(!empty($_GET['id'])) {
+			$Form	=	D("Form");
+			$vo	=	$Form->getById($_GET['id']);
+			if($vo) {
+				$this->assign('vo',$vo);
+				$this->display();
+			}else{
+				exit('编辑项不存在！');
+			}
+		}else{
+			exit('编辑项不存在！');
+		}
+		
+	}
+	// 生成验证码
+	public function verify() {
+        import("ORG.Util.Image");
+       	Image::buildImageVerify(); 
+	}
+} 
+?>

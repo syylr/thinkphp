@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <TITLE>ThinkPHP示例：目录自动创建</TITLE>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+ </HEAD>
+ <BODY>
+ <div class="main">
+ <H2>ThinkPHP示例之：目录自动创建</H2>
+最新发布的版本引入了一个有特色的功能，目录自动创建。要使用该功能，需要升级到1.0.2以上版本。
+ <TABLE  cellpadding=3 cellspacing=3>
+  <TR>
+	<TD >
+	现在你不需要为需要手动创建项目的目录结构而烦恼，也不需要借助第三方的目录生成工具。您仅仅需要做的是为项目定义一个入口文件，项目的目录结构会在第一次执行的时候自动创建，而且第二次执行的时候不会有任何效率的缺失，呵呵~神奇吧！不信，来看看如何来生成吧。<P>
+	我们先删除除了Lib和Tpl目录外的所有目录，然后再次运行该项目，再看下项目下面的目录结构是不是又自动生成了。<BR>接下来，我们再删除全部的项目目录，只保留项目的入口文件，然后再次执行项目，看看效果：自动生成了一个Hello,ThinkPHP项目。
+	</TD>
+ </TR>
+ <TR>
+	<TD >示例源码<BR>入口文件<BR><php>highlight_file(APP_PATH.'/index.php');</php>
+	</TD>
+ </TR>
+ </TABLE>
+</div>
+ </BODY>
+</HTML>

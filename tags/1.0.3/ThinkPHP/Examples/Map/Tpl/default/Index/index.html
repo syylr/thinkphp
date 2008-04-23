@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <TITLE>ThinkPHP示例：字段映射</TITLE>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+ </HEAD>
+ <BODY>
+ <div class="main">
+ <H2>ThinkPHP示例之：字段映射</H2>
+要使用模型的自动创建create方法的话，ThinkPHP的表单名称就是数据表的字段名称，如果担心这样不够安全，可以定义字段映射，来隐藏实际的数据表字段名称。<BR>下面的例子就运用了字段映射定义。请注意看表单名称和字段的对应关系。
+ <TABLE cellpadding=2 cellspacing=2>
+   <FORM METHOD=POST ACTION="__URL__/insert">
+ <TR>
+	<TD class="tRight" width="12%">标题：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" NAME="name" style="height:23px" class="large bLeft"></TD>
+ </TR>
+  <TR>
+	<TD class="tRight" >邮箱：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" NAME="mail" style="height:23px" class="large bLeft"></TD>
+ </TR>
+ <TR>
+	<TD class="tRight tTop" >内容：</TD>
+	<TD><TEXTAREA NAME="remark" class="large bLeft" ROWS="8" COLS="25"></TEXTAREA></TD>
+ </TR>
+  <TR>
+	<TD class="tRight tTop" >验证码：</TD>
+	<TD><INPUT TYPE="text" NAME="verify" style="height:23px" class="small" > <img src="__URL__/verify" align="absmiddle" /> 输入对应的数字</TD>
+ </TR>
+ <TR>
+	<TD></TD>
+	<TD><INPUT TYPE="submit" class="button" value="提 交"> <INPUT TYPE="reset" class="button" value="清 空"></TD>
+ </TR>
+   </FORM>
+ <TR>
+ <TD></TD>
+	<TD ><HR></TD>
+ </TR>
+  <volist name="list" id="vo">
+  <TR>
+  <TD></TD>
+	<TD style="border-bottom:1px dotted silver">{$vo.title} <span style="color:gray">[{$vo.email} {$vo.create_time|date='Y-m-d H:i:s',###}]</span></TD>
+  </TR>
+  <TR >
+  <TD></TD>
+	<TD ><div class="content">{$vo.content|nl2br}</div></TD>
+  </TR>
+  </volist>
+ <TR>
+ <TD></TD>
+	<TD ><HR> 示例源码<BR>控制器IndexAction类<BR><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php><BR>模型FormModel类<BR><php>highlight_file(LIB_PATH.'Model/FormModel.class.php');</php></TD>
+ </TR>
+ </TABLE>
+
+</div>
+ </BODY>
+</HTML>
