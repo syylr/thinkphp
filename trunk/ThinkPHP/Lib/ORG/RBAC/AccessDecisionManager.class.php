@@ -41,7 +41,8 @@ class AccessDecisionManager extends Base
      */
     public function __construct()
     {
-        $this->roleTable = C('DB_PREFIX').'group';
+		import("Think.Db.Db");
+		$this->roleTable = C('DB_PREFIX').'group';
         $this->roleUserTable  =  C('DB_PREFIX').'groupuser';
         $this->roleAccessTable=   C('DB_PREFIX').'access';
         $this->roleNodeTable    =   C('DB_PREFIX').'node';
