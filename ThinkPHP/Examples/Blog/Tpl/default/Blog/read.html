@@ -9,7 +9,7 @@
   </div>
 	<div class="textbox-title"><H4><IMG SRC="__PUBLIC__/Images/icon_ctb.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle">  {$vo.title|ubb} </h4>
 	<div class="textbox-label"><span style="color:gray;font-weight:normal">[ <IMG SRC="__PUBLIC__/Images/write.gif" WIDTH="17" HEIGHT="16" BORDER="0" ALT="" align="absmiddle">  {$vo.cTime|toDate='Y-m-d H:i:s'} 发表在 <A HREF="__APP__/Category/{$vo:categoryId}">{$vo.category}</A>  ]</div></div>
-	<div class="textbox-content">{$vo.content} </div> 
+	<div class="textbox-content">{$vo.content|strip_tags='<p>'} </div> 
 	<present name="attachs">
 		<fieldset  style="width:75%;margin:8px;color:gray">
 		<legend >附件列表</legend>
