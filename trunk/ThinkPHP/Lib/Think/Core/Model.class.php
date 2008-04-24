@@ -338,12 +338,12 @@ class Model extends Base  implements IteratorAggregate
 		$table		=	$this->getTableName();
 		if(!empty($this->options)) {
 			// 已经有定义的查询表达式
-			$where	=	$this->options['where']?		$this->options['where']:	$where;
-			$limit		=	$this->options['limit']?		$this->options['limit']:		$limit;
-			$order	=	$this->options['order']?		$this->options['order']:	$order;
-			$lock		=	isset($this->options['lock'])?$this->options['lock']:	$lock;
-			$autoLink=	isset($this->options['link'])?	$this->options['link']:		$autoLink;
-			$table		=	$this->options['table']?		$this->options['table']:	$this->getTableName();
+			$where	=	isset($this->options['where'])?		$this->options['where']:	$where;
+			$limit		=	isset($this->options['limit'])?		$this->options['limit']:		$limit;
+			$order	=	isset($this->options['order'])?		$this->options['order']:	$order;
+			$lock		=	isset($this->options['lock'])?		$this->options['lock']:	 	$lock;
+			$autoLink=	isset($this->options['link'])?			$this->options['link']:		$autoLink;
+			$table		=	isset($this->options['table'])?		$this->options['table']:	$this->getTableName();
 			$this->options	=	array();
 		}
 		// 前置调用
@@ -398,18 +398,18 @@ class Model extends Base  implements IteratorAggregate
 		$table		=	$this->getTableName();
 		if(!empty($this->options)) {
 			// 已经有定义的查询表达式
-			$condition	=	$this->options['where']?			$this->options['where']:	$condition;
-			$table			=	$this->options['table']?			$this->options['table']:	$this->getTableName();
-			$fields		=	$this->options['field']?			$this->options['field']:	$fields;
-			$limit			=	$this->options['limit']?			$this->options['limit']:		$limit;
-			$order		=	$this->options['order']?			$this->options['order']:	$order;
-			$group		=	$this->options['group']?			$this->options['group']:	$group;
-			$having		=	$this->options['having']?			$this->options['having']:	$having;
-			$join			=	$this->options['join']?				$this->options['join']:		$join;
-			$cache		=	isset($this->options['cache'])?	$this->options['cache']:	$cache;
-			$lock			=	isset($this->options['lock'])?	$this->options['lock']:		$lock;
-			$lazy			=	isset($this->options['lazy'])?	$this->options['lazy']:	$lazy;
-			$relation		=	isset($this->options['link'])?		$this->options['link']:		$relation;
+			$condition	=	isset($this->options['where'])?			$this->options['where']:	$condition;
+			$table			=	isset($this->options['table'])?			$this->options['table']:	$this->getTableName();
+			$fields		=	isset($this->options['field'])?			$this->options['field']:	$fields;
+			$limit			=	isset($this->options['limit'])?			$this->options['limit']:		$limit;
+			$order		=	isset($this->options['order'])?			$this->options['order']:	$order;
+			$group		=	isset($this->options['group'])?			$this->options['group']:	$group;
+			$having		=	isset($this->options['having'])?		$this->options['having']:	$having;
+			$join			=	isset($this->options['join'])?			$this->options['join']:		$join;
+			$cache		=	isset($this->options['cache'])?			$this->options['cache']:	$cache;
+			$lock			=	isset($this->options['lock'])?			$this->options['lock']:		$lock;
+			$lazy			=	isset($this->options['lazy'])?			$this->options['lazy']:	$lazy;
+			$relation		=	isset($this->options['link'])?				$this->options['link']:		$relation;
 			$this->options	=	array();
 		}
 		// 前置调用
@@ -473,11 +473,11 @@ class Model extends Base  implements IteratorAggregate
 		$table		=	$this->getTableName();
 		if(!empty($this->options)) {
 			// 已经有定义的查询表达式
-			$where		=	$this->options['where']?		$this->options['where']:	$where;
-			$table			=	$this->options['table']?		$this->options['table']:	$this->getTableName();
-			$limit			=	$this->options['limit']?		$this->options['limit']:		$limit;
-			$order		=	$this->options['order']?		$this->options['order']:	$order;
-			$autoLink	=	isset($this->options['link'])?	$this->options['link']:		$autoLink;
+			$where		=	isset($this->options['where'])?		$this->options['where']:	$where;
+			$table			=	isset($this->options['table'])?		$this->options['table']:	$this->getTableName();
+			$limit			=	isset($this->options['limit'])?		$this->options['limit']:		$limit;
+			$order		=	isset($this->options['order'])?		$this->options['order']:	$order;
+			$autoLink	=	isset($this->options['link'])?			$this->options['link']:		$autoLink;
 			$this->options	=	array();
 		}
 		// 前置调用
