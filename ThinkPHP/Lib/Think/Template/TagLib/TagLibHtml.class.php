@@ -288,7 +288,7 @@ class TagLibHtml extends TagLib
         if($type=='js') {
             $parseStr = "<script language='JavaScript' src='".$file."'></script> ";
         }elseif($type=='css') {
-            $parseStr = "<link rel='stylesheet' type='text/css' href='".$file."'>";
+            $parseStr = "<link rel='stylesheet' type='text/css' href='".$file."' />";
         }
 
         return $parseStr;
@@ -315,7 +315,7 @@ class TagLibHtml extends TagLib
         if($type=='js') {
             $parseStr = "<script language='JavaScript' src='".$basepath.'/'.str_replace('.','/',$file).'.js'."'></script> ";
         }elseif($type=='css') {
-            $parseStr = "<link rel='stylesheet' type='text/css' href='".$basepath.'/'.str_replace('.','/',$file).'.css'."'>";
+            $parseStr = "<link rel='stylesheet' type='text/css' href='".$basepath.'/'.str_replace('.','/',$file).'.css'."' />";
         }
 
         return $parseStr;
