@@ -499,9 +499,6 @@ abstract class Action extends Base
             	$this->ajaxReturn();
             }
         }
-        // 普通方式跳转
-        $templateFile = TEMPLATE_PATH.'/Public/success'.C('TEMPLATE_SUFFIX');
-        //样式表文件
         if($this->get('error') ) {
             $msgTitle    =   L('_OPERATION_FAIL_');
         }else {
@@ -529,11 +526,20 @@ abstract class Action extends Base
         if($this->get('closeWin')) {
             $this->assign('jumpUrl','javascript:window.close();');
         }
-    	$this->display($templateFile);
-       
+    	$this->display(C('ACTION_JUMP_TEMPLATE'));
         // 中止执行  避免出错后继续执行
         exit ;       
     }
 	
+	// 404 错误定向
+	protected function _404($message='',$jumpUrl='',$waitSecond=3) {
+		$this->assign('msg',$message);
+		if(!empty($jumpUrl)) {
+			$this->assign('jumpUrl',$jumpUrl);
+			$this->assign('waitSecond',$waitSecond);
+		}
+    	$this->display(C('ACTION_404_TMPL'));
+	}
+
 }//类定义结束
 ?>
