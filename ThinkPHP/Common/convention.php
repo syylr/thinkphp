@@ -173,5 +173,7 @@ return  array(
 	'CALLBACK_LOAD_PATH'	=>	'',				//	反序列化对象时自动加载的路径设置
 	'UPLOAD_FILE_RULE'		=>	'uniqid',			//  文件上传命名规则 例如 time uniqid com_create_guid 等 支持自定义函数 仅适用于内置的UploadFile类
 	'LIKE_MATCH_FIELDS'		=>	'', //数据库查询的时候需要进行模糊匹配的字段
+	'ACTION_JUMP_TMPL'=>	'Public:success',
+	'ACTION_404_TMPL'=>	'Public:404',
 );
 ?>
