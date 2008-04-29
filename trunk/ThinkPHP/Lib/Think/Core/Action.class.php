@@ -541,5 +541,10 @@ abstract class Action extends Base
     	$this->display(C('ACTION_404_TMPL'));
 	}
 
+	// 默认空操作
+	public function _empty() {
+		$this->_404(C('_ERROR_ACTION_').'：[ '.MODULE_NAME.'-> '.ACTION_NAME.' ]');		
+	}
+
 }//类定义结束
 ?>
