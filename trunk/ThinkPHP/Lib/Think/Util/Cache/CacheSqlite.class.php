@@ -86,8 +86,8 @@ class CacheSqlite extends Cache
 		$name   = sqlite_escape_string($name);
         $sql = 'SELECT '.$this->options['value'].
                ' FROM '.$this->options['table'].
-               ' WHERE '.$this->options['var'].'=\''.$name.'\' AND '.$this->options['expire'].'!=-1 AND '.$this->options['expire'].'<'.time().
-               ' LIMIT 1';
+               ' WHERE '.$this->options['var'].'=\''.$name.'\' AND ('.$this->options['expire'].'==-1 OR '.$this->options['expire'].'>'.time().
+               ') LIMIT 1';
         $result = sqlite_query($this->handler, $sql);
         if (sqlite_num_rows($result)) {
             $content   =  sqlite_fetch_single($result);

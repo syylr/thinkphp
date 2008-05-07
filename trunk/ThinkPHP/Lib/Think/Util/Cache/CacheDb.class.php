@@ -98,7 +98,7 @@ class CacheDb extends Cache
     {
         $name  =  addslashes($name);
 		$this->Q(1);
-        $result  =  $this->db->getRow('select `data`,`datacrc`,`datasize` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' and `expire` !=-1 and `expire`<'.time().' limit 0,1');
+        $result  =  $this->db->getRow('select `data`,`datacrc`,`datasize` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' and (`expire` ==-1 OR `expire`>'.time().') limit 0,1');
         if(false !== $result ) {
             if(is_object($result)) {
             	$result  =  get_object_vars($result);
