@@ -137,6 +137,7 @@ return  array(
 	'CACHE_SERIAL_HEADER'	=>	"<?php\n//",	// 文件缓存开始标记
 	'CACHE_SERIAL_FOOTER'	=>	"\n?".">",	// 文件缓存结束标记
 	'SHARE_MEM_SIZE'			=>	1048576,		// 共享内存分配大小
+	'ACTION_CACHE_ON'		=>	false,		// 默认关闭Action 缓存
 
 	/* 运行时间设置 */
 	'SHOW_RUN_TIME'			=>	false,			// 运行时间显示
