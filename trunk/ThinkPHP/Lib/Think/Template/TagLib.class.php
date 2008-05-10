@@ -96,7 +96,7 @@ class TagLib extends Base
      */
     protected $tpl;
 
-	protected $comparison = array('nheq'=>'!==','heq'=>'===','neq'=>'!=','eq'=>'==','egt'=>'>=','gt'=>'>','elt'=>'<=','lt'=>'<');
+	protected $comparison = array(' nheq '=>' !== ',' heq '=>' === ',' neq '=>' != ',' eq '=>' == ',' egt '=>' >= ',' gt '=>' > ',' elt '=>' <= ',' lt '=>' < ');
 
     /**
      +----------------------------------------------------------
