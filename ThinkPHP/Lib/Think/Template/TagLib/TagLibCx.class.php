@@ -376,7 +376,7 @@ class TagLibCx extends TagLib
         $tag        = $this->parseXmlAttr($attr,'compare');
         $name       = $tag['name'];
         $value      = $tag['value'];
-		$type	 =	 $type?$type:$tag['type'];
+		$type	 =	 $tag['type']?$tag['type']:$type;
 		$type	 =	 $this->parseCondition(' '.$type.' ');
 		$varArray = explode('|',$name);
 		$name	=	array_shift($varArray);
@@ -384,7 +384,7 @@ class TagLibCx extends TagLib
 		if(count($varArray)>0) 
 			$name = $this->tpl->parseVarFunction($name,$varArray);
         if('$' == substr($value,0,1)) {
-			$value  =  $this->autoBuildVar(substr($value,1));;
+			$value  =  $this->autoBuildVar(substr($value,1));
         }else {
 			$value	=	'"'.$value.'"';
         }
