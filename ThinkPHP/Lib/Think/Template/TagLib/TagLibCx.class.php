@@ -377,7 +377,7 @@ class TagLibCx extends TagLib
         $name       = $tag['name'];
         $value      = $tag['value'];
 		$type	 =	 $type?$type:$tag['type'];
-		$type	 =	 $this->parseCondition($type);
+		$type	 =	 $this->parseCondition(' '.$type.' ');
 		$varArray = explode('|',$name);
 		$name	=	array_shift($varArray);
 		$name = $this->autoBuildVar($name);
