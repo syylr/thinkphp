@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+			<!-- template designed by Marco Von Ballmoos  -->
+			<title>Docs For Class Base</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+						<script src="../../media/lib/classTree.js"></script>
+												<script language="javascript" type="text/javascript">
+				var imgPlus = new Image();
+				var imgMinus = new Image();
+				imgPlus.src = "../../media/images/plus.png";
+				imgMinus.src = "../../media/images/minus.png";
+				
+				function showNode(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+							var oImg = document.layers["img" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+							var oImg = document.all["img" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+							var oImg = document.getElementById("img" + Node);
+									break;
+							}
+					oImg.src = imgMinus.src;
+					oTable.style.display = "block";
+				}
+				
+				function hideNode(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+							var oImg = document.layers["img" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+							var oImg = document.all["img" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+							var oImg = document.getElementById("img" + Node);
+									break;
+							}
+					oImg.src = imgPlus.src;
+					oTable.style.display = "none";
+				}
+				
+				function nodeIsVisible(Node){
+							switch(navigator.family){
+								case 'nn4':
+									// Nav 4.x code fork...
+							var oTable = document.layers["span" + Node];
+									break;
+								case 'ie4':
+									// IE 4/5 code fork...
+							var oTable = document.all["span" + Node];
+									break;
+								case 'gecko':
+									// Standards Compliant code fork...
+							var oTable = document.getElementById("span" + Node);
+									break;
+							}
+					return (oTable && oTable.style.display == "block");
+				}
+				
+				function toggleNodeVisibility(Node){
+					if (nodeIsVisible(Node)){
+						hideNode(Node);
+					}else{
+						showNode(Node);
+					}
+				}
+			</script>
+					</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Base</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+							<a href="#sec-descendents">Descendents</a>
+												</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">ThinkPHP系统基类 抽象类</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> liu21st &lt;<a href="mailto:liu21st@gmail.com">liu21st@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Id$</li>
+				<li><span class="field">abstract:</span> </li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Think---Core---Base.class.php.html">/Think/Core/Base.class.php</a> (line <span class="field">24</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+	<a name="sec-descendents"></a>
+	<div class="info-box">
+		<div class="info-box-title">Direct descendents</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+			<span class="disabled">Descendents</span>
+														</div>
+		<div class="info-box-body">
+			<table cellpadding="2" cellspacing="0" class="class-table">
+				<tr>
+					<th class="class-table-header">Class</th>
+					<th class="class-table-header">Description</th>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/Date/Date.html">Date</a></td>
+					<td>
+											日期时间操作类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/Io/Dir.html">Dir</a></td>
+					<td>
+											DirectoryIterator实现类 PHP5以上内置了DirectoryIterator类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/Net/Http.html">Http</a></td>
+					<td>
+											Http 工具类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/Net/IpLocation.html">IpLocation</a></td>
+					<td>
+											IP 地理位置查询类 修改自 CoolCode.CN
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/Net/UploadFile.html">UploadFile</a></td>
+					<td>
+											文件上传类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/RBAC/AccessDecisionManager.html">AccessDecisionManager</a></td>
+					<td>
+											访问决策管理器
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/RBAC/ProviderManager.html">ProviderManager</a></td>
+					<td>
+											认证委托管理器
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/RBAC/RBAC.html">RBAC</a></td>
+					<td>
+											基于角色的验证类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/Text/Validation.html">Validation</a></td>
+					<td>
+											数据验证类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/ArrayList.html">ArrayList</a></td>
+					<td>
+											ArrayList实现类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/HashMap.html">HashMap</a></td>
+					<td>
+											HashMap实现类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/Util/Image.html">Image</a></td>
+					<td>
+											图像操作类库
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../ORG/Util/Page.html">Page</a></td>
+					<td>
+											分页显示类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Core/Action.html">Action</a></td>
+					<td>
+											ThinkPHP Action控制器基类 抽象类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Core/App.html">App</a></td>
+					<td>
+											ThinkPHP 应用程序类 执行应用过程管理
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Core/Dispatcher.html">Dispatcher</a></td>
+					<td>
+											ThinkPHP内置的Dispatcher类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Core/Model.html">Model</a></td>
+					<td>
+											ThinkPHP Model模型类 抽象类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Core/View.html">View</a></td>
+					<td>
+											ThinkPHP 视图输出
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Db/Db.html">Db</a></td>
+					<td>
+											ThinkPHP 数据库中间层实现类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Db/ResultIterator.html">ResultIterator</a></td>
+					<td>
+											ResultIterator类 用于实现数据库的延迟加载
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Template/TagLib.html">TagLib</a></td>
+					<td>
+											ThinkPHP标签库TagLib解析基类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Template/ThinkTemplate.html">ThinkTemplate</a></td>
+					<td>
+											ThinkPHP内置模板引擎类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/Cache.html">Cache</a></td>
+					<td>
+											缓存管理类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/Cookie.html">Cookie</a></td>
+					<td>
+											Cookie管理类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/Debug.html">Debug</a></td>
+					<td>
+											系统调试类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/Filter.html">Filter</a></td>
+					<td>
+											过滤器类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/FilterDbSession.html">FilterDbSession</a></td>
+					<td>
+											数据库方式Session处理过滤器
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/HtmlCache.html">HtmlCache</a></td>
+					<td>
+											静态缓存类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/Log.html">Log</a></td>
+					<td>
+											日志处理类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/Session.html">Session</a></td>
+					<td>
+											Session管理类
+										</td>
+				</tr>
+							</table>
+		</div>
+	</div>
+
+
+
+
+	
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Thu, 27 Mar 2008 08:20:24 +0000 by 塞北的雪
+	</p>
+	</div></body>
+</html>
