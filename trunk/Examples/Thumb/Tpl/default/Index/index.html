@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <TITLE>ThinkPHP示例：缩略图生成</TITLE>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+ </HEAD>
+ <BODY>
+ <div class="main">
+ <H2>ThinkPHP示例之：缩略图生成</H2>
+ 本示例演示了如何使用内置的文件上传类库进行附件上传操作，并自动生成缩略图。
+ <div id="main" class="main" >
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+function addRow(){   
+	curFileNum++;
+	rowsnum++;
+    var row=tbl.insertRow(-1);
+	//var td = arow.insertCell();
+	var cell = document.createElement("td");
+	cell.innerHTML=' <div class="impBtn  fLeft" ><INPUT TYPE="file" id="file'+curFileNum+'" name="file'+ curFileNum +'" class="file  huge"></div><div class="fLeft hMargin"></div><INPUT TYPE="submit" value="上 传" onclick="uploading();" class="fLeft small button ">';
+	cell.align="center"
+	row.appendChild(cell); 
+	//addFileForm.num.value=rowsnum;
+}
+function deleteRow(){
+	if(tbl.rows.length>0){
+		tbl.deleteRow(rindex); //删除当前行
+		rowsnum--;    
+	}else{
+		return;
+	}
+	rindex="";
+}
+function getObject(obj){ 
+	rindex=obj.parentElement.parentElement.rowIndex;/*当前行对象*/
+}
+
+function uploading(msg){
+	document.getElementById('result').style.display = 'block';
+	document.getElementById('result').innerHTML	=	'<IMG SRC="__PUBLIC__/Images/ajaxloading.gif" WIDTH="16" HEIGHT="16" BORDER="0" ALT="" align="absmiddle"> 文件上传中～';
+	return true;
+}
+
+function uploadComplete(savename){
+	document.getElementById('img').innerHTML += '<div style="float:left;border:1px solid silver;padding:3px;margin:0px 8px"><img src="__PUBLIC__/Uploads/'+savename+'"   align="absmiddle" /></div>';
+	var name	 =	 savename.split('.');
+	document.getElementById('img').innerHTML += '<div style="float:left;border:1px solid silver;padding:3px;margin:0px 8px"><img src="__PUBLIC__/Uploads/'+name[0]+'_thumb.'+name[1]+'"   align="absmiddle" /></div>';
+}
+//-->
+</SCRIPT>
+<div class="content">
+<form id="upload" METHOD=POST action="__URL__/upload/" enctype="multipart/form-data" target="iframeUpload">
+<TABLE cellpadding=3 cellspacing=3 width="450PX">
+<TR>
+	<TD colspan="2" class="tLeft">
+	<div class="result" style="background:#E9E9F3">上传允许文件类型：gif png jpg 图像文件，大小不超过32k。</div>
+	</TD>
+</TR>
+<TR>
+	<TD class="tRight tTop"></TD>
+	<TD class="tLeft tTop">
+	<div id="result" class="result none"></div>
+	<INPUT TYPE="hidden" name="ajax" value="1">
+	<iframe name="iframeUpload" src="" width="350" height="35" frameborder=0  SCROLLING="no" style="display:NONE"></iframe>
+	<input type="hidden" name="MAX_FILE_SIZE" value="32922" />
+	<INPUT TYPE="hidden" name="_uploadFileResult" value="result">
+	<INPUT TYPE="hidden" name="_uploadFormId" value="upload">
+	<INPUT TYPE="hidden" name="_uploadFileSize" value="32922">
+	<INPUT TYPE="hidden" NAME="_uploadFileType" value="jpg,gif,png,jpeg" >
+	<INPUT TYPE="hidden" name="_uploadResponse" value="uploadComplete">
+	<INPUT TYPE="hidden" NAME="_uploadImgThumb" value="1">
+	<INPUT TYPE="hidden" NAME="_uploadThumbSuffix" value="_thumb">
+	<INPUT TYPE="hidden" NAME="_uploadThumbMaxWidth" value="50">
+	<INPUT TYPE="hidden" NAME="_uploadThumbMaxHeight" value="50">
+	<INPUT TYPE="hidden" name="_uploadSavePath" value="<?php echo APP_PATH.'/../'.'Public/Uploads/';?>" >
+	<TABLE id='tbl' style="clear:both"></TABLE>
+		<div id="img" ></div>
+</TD>
+</TR>
+<TR>
+<TD class="tRight tTop"></TD>
+	<TD  class="tLeft"><HR> 示例源码<BR>控制器IndexAction类<BR><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php></TD>
+</TR>
+</TABLE>
+</form>
+</div>
+</div>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var curFileNum = 0;
+var rowsnum=0;  //记录行数
+var rindex="";       //列索引
+var tbl	=	document.getElementById('tbl');
+addRow();
+//-->
+</SCRIPT>
+</div>
+ </BODY>
+</HTML>
