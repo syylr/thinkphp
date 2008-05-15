@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <TITLE>ThinkPHP示例：文本字段</TITLE>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+ </HEAD>
+ <BODY>
+ <div class="main">
+ <H2>ThinkPHP示例之文本字段：采用文本方式存储模型中的个别字段</H2>
+ 本示例对内容字段进行了文本方式存储，而不是保存在数据库中。
+    <FORM METHOD=POST ACTION="__URL__/insert">
+ <TABLE  cellpadding=2 cellspacing=2>
+ <TR>
+	<TD class="tRight" width="12%">标题：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" NAME="title" style="height:26px" class="large bLeft"></TD>
+ </TR>
+ <TR>
+	<TD class="tRight tTop" >内容：</TD>
+	<TD><TEXTAREA NAME="content" class="large bLeft" ROWS="8" COLS="25"></TEXTAREA><BR><span style="color:gray">( * 内容字段将采用文本方式存储 )</span></TD>
+ </TR>
+ <TR>
+	<TD></TD>
+	<TD><INPUT TYPE="submit" class="button" value="提 交"> <INPUT TYPE="reset" class="button" value="清 空"></TD>
+ </TR>
+ <TR>
+ <TD></TD>
+	<TD ><HR></TD>
+ </TR>
+  <volist name="list" id="blob">
+  <TR>
+  <TD></TD>
+	<TD style="border-bottom:1px dotted silver">{$blob.title} <span style="color:gray">[{$blob.create_time|date='Y-m-d H:i:s',###}]</span></TD>
+  </TR>
+  <TR >
+  <TD></TD>
+	<TD ><div class="content">{$blob.content|nl2br}</div></TD>
+  </TR>
+  </volist>
+ <TR>
+ <TD></TD>
+	<TD ><HR> 示例源码<BR>控制器IndexAction类<BR><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php>
+	<BR>模型BlobModel类<php>highlight_file(LIB_PATH.'Model/BlobModel.class.php');</php></TD>
+ </TR>
+ </TABLE>
+    </FORM>
+</div>
+ </BODY>
+</HTML>
