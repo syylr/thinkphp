@@ -1,0 +1,45 @@
+<taglib name="html" />
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <TITLE>ThinkPHP示例：调试方法</TITLE>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+ </HEAD>
+ <BODY>
+ <div class="main">
+ <H2>ThinkPHP示例之：调试方法</H2>
+ThinkPHP可以在没有IDE工具的情况下很好的进行调试~相关的调试方法包括：<BR>
+<div class="result" style="font-weight:normal;background:#ECECFF"><pre>
+halt($msg)  //输出错误信息，并中止执行
+system_out($msg) //输出调试信息到日志文件
+dump($var, $echo=true, $label=null)  //输出变量信息
+debug_start($label='') //记录调试开始时间
+debug_end($label='')  //输出调试范围运行时间（相同label属于一个调试范围）
+get_include_contents($filename) //获取载入文件的内容
+	更高级的调试方法是使用Debug类
+Debug::mark($name); // 标记一个调试位置
+Debug::useTime($start,$end); // 返回区间所用的时间
+Debug::useMemory($start,$end); // 返回区间所用的内存
+</pre>
+</div>
+<TABLE cellpadding=2 cellspacing=2>
+ <TR>
+ <TD></TD>
+	<TD >下面是一些调试方法的输出：<BR><div class="result" style="font-weight:normal">
+		<span style="width:120px;text-align:right">实例化：</span>{$time1}<BR>
+		<span style="width:120px;text-align:right">数 据 查 询：</span>{$time2}<BR>
+		<span style="width:120px;text-align:right">实例化并查询：</span>{$time3}<BR>
+		查询数据结果：{$list}</div>
+		<span style="color:red">如果配合页面Trace功能可以更加直观和方便地输出调试信息。</span>
+		</TD>
+ </TR>
+ <TR>
+ <TD></TD>
+	<TD >示例源码<BR>控制器IndexAction类<BR><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php></TD>
+ </TR>
+ </TABLE>
+
+</div>
+ </BODY>
+</HTML>
