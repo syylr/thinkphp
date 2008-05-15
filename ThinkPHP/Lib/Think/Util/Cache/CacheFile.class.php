@@ -98,7 +98,18 @@ class CacheFile extends Cache
      */
     private function filename($name)
     {
-        return $this->options['temp'].$this->prefix.md5($name).'.php';
+		$name	=	md5($name);
+		if(C('DATA_CACHE_SUBDIR')) {
+			// 使用子目录
+			$dir	=	$name{0};
+			if(!is_dir($this->options['temp'].$dir)) {
+				mkdir($this->options['temp'].$dir);
+			}
+			$filename	=	$dir.'/'.$this->prefix.$name.'.php';
+		}else{
+			$filename	=	$this->prefix.$name.'.php';
+		}
+        return $this->options['temp'].$filename;
     }
 
     /**
