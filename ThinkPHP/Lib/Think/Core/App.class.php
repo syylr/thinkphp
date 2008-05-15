@@ -146,8 +146,8 @@ class App extends Base
         if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
 
 		// 加载模块配置文件 并自动生成配置缓存文件
-		if(file_exists(CONFIG_PATH.'m_'.MODULE_NAME.'Config.php')) {
-			C(array_change_key_case(include CONFIG_PATH.'m_'.MODULE_NAME.'Config.php'));
+		if(file_exists(CONFIG_PATH.MODULE_NAME.'_config.php')) {
+			C(array_change_key_case(include CONFIG_PATH.MODULE_NAME.'_config.php'));
 		}
 
 		//	启用页面防刷新机制

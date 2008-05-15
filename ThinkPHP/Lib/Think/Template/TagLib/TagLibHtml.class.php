@@ -75,39 +75,6 @@ class TagLibHtml extends TagLib
 
     /**
      +----------------------------------------------------------
-     * form标签解析 是否需要引入表单验证脚本
-     * 格式： <html:form validation="true" />
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @param string $attr 标签属性
-     +----------------------------------------------------------
-     * @return string|void
-     +----------------------------------------------------------
-     */
-    public function _form($attr,$content) 
-    {
-        $tag	= $this->parseXmlAttr($attr,'form');
-        $text	= $tag['text'];
-        $validation  = $tag['validation'];
-        $js		= '<script language="JavaScript" src="'.WEB_URL.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/public/'.'js/CheckForm.js"></script>';
-        $parseStr = '';
-        if($validation == 'true' || $validation == 1 ) {
-            $attr       = preg_replace('/validation=(.+?)\s/is',' onsubmit="return Check(this);" ',$attr);
-            $parseStr  .= $js.'<br/><form '.$attr.' >';
-
-        }else {
-            $attr       = preg_replace('/validation=(.+?)\s/is',' ',$attr);
-        	$parseStr   = '<form '.$attr.' >';
-        }
-        $parseStr .= $this->tpl->parse($content);
-        $parseStr .= '</form>';
-        return $parseStr;
-    }
-
-
-    /**
-     +----------------------------------------------------------
      * select标签解析
      * 格式： <html:select options="name" selected="value" />
      +----------------------------------------------------------
@@ -198,7 +165,6 @@ class TagLibHtml extends TagLib
             }else {
                 $parseStr .= '<input type="checkbox" name="'.$name.'[]" value="'.$key.'">'.$val.$separator;
             }
-            
         }
         return $parseStr;
     }
@@ -290,7 +256,6 @@ class TagLibHtml extends TagLib
         }elseif($type=='css') {
             $parseStr = "<link rel='stylesheet' type='text/css' href='".$file."' />";
         }
-
         return $parseStr;
     }
 
@@ -317,7 +282,6 @@ class TagLibHtml extends TagLib
         }elseif($type=='css') {
             $parseStr = "<link rel='stylesheet' type='text/css' href='".$basepath.'/'.str_replace('.','/',$file).'.css'."' />";
         }
-
         return $parseStr;
     }
 

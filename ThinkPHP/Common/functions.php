@@ -1290,33 +1290,33 @@ function clearCache($type=0,$path=NULL) {
 function buildAppDir() {
 	// 没有创建项目目录的话自动创建
 	if(!is_dir(APP_PATH)){
-		mk_dir(APP_PATH);
+		mk_dir(APP_PATH,0777);
 	}
 	if(is_writeable(APP_PATH)) {
 		if(!is_dir(LIB_PATH)) 
-			mkdir(LIB_PATH);				// 创建项目应用目录
+			mkdir(LIB_PATH,0777);				// 创建项目应用目录
 		if(!is_dir(CONFIG_PATH)) 
-			mkdir(CONFIG_PATH);		//	创建项目配置目录
+			mkdir(CONFIG_PATH,0777);		//	创建项目配置目录
 		if(!is_dir(COMMON_PATH)) 
-			mkdir(COMMON_PATH);	//	创建项目公共目录
+			mkdir(COMMON_PATH,0777);	//	创建项目公共目录
 		if(!is_dir(LANG_PATH)) 
-			mkdir(LANG_PATH);			//	创建项目语言包目录
+			mkdir(LANG_PATH,0777);			//	创建项目语言包目录
 		if(!is_dir(CACHE_PATH)) 
-			mkdir(CACHE_PATH);		//	创建模板缓存目录
+			mkdir(CACHE_PATH,0777);		//	创建模板缓存目录
 		if(!is_dir(TMPL_PATH)) 
-			mkdir(TMPL_PATH);			//	创建模板目录
+			mkdir(TMPL_PATH,0777);			//	创建模板目录
 		if(!is_dir(TMPL_PATH.'default/')) 
-			mkdir(TMPL_PATH.'default/');			//	创建模板默认主题目录
+			mkdir(TMPL_PATH.'default/',0777);			//	创建模板默认主题目录
 		if(!is_dir(LOG_PATH)) 
-			mkdir(LOG_PATH);			//	创建项目日志目录
+			mkdir(LOG_PATH,0777);			//	创建项目日志目录
 		if(!is_dir(TEMP_PATH)) 
-			mkdir(TEMP_PATH);			//	创建临时缓存目录
+			mkdir(TEMP_PATH,0777);			//	创建临时缓存目录
 		if(!is_dir(DATA_PATH)) 
-			mkdir(DATA_PATH);			//	创建数据缓存目录
+			mkdir(DATA_PATH,0777);			//	创建数据缓存目录
 		if(!is_dir(LIB_PATH.'Model/')) 
-			mkdir(LIB_PATH.'Model/');	//	创建模型目录
+			mkdir(LIB_PATH.'Model/',0777);	//	创建模型目录
 		if(!is_dir(LIB_PATH.'Action/')) 
-			mkdir(LIB_PATH.'Action/');	//	创建控制器目录
+			mkdir(LIB_PATH.'Action/',0777);	//	创建控制器目录
 		// 目录安全写入
 		if(!defined('BUILD_DIR_SECURE')) define('BUILD_DIR_SECURE',false);
 		if(BUILD_DIR_SECURE) {
