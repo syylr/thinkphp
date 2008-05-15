@@ -1,0 +1,134 @@
+[1.0.4 版本] 2008-5-15
+修正哈希子目录缓存方式
+模块配置文件命名改为：模块名+_config.php
+修正Compare标签
+修正CX标签库的判断标签
+修正模板引擎的IF标签的条件BUG
+修改多数据库连接和切换机制 取消addConnect方法的eqType参数，避免了因来回切换的时候的错误
+修正Db缓存和Sqlite缓存的数据过期判断
+增加项目配置检测，如果项目配置文件发生修改 则重新生成编译项目缓存 
+增加跳转页面模板和404模板配置配置方式和Action类的display方法templateFile参数一致，默认配置： 'ACTION_JUMP_TMPL'=> 'Public:success', 'ACTION_404_TMPL'=> 'Public:404'
+Action类增加404操作方法页面跳转操作和404操作支持模板文件配置
+修正html标签库的link和import标签
+增加数据查询的IS NULL 和 IS NOT NULL支持
+修正连贯操作的一些警告错误
+完善join分析 支持left right等方式
+修正模板引擎在开启短标签的情况下无法正常输出xml标识的问题
+修正ORG.Date.Date类的maxDayOfMonth方法
+完善多数据库连接的切换
+修改命令行自动创建工具build 
+修正连贯操作的field方法的判断错误 
+修正Db类的一处where条件判断的小问题 
+rand_string加上中文随机字符串生成 
+修正兼容方法json_encode对布尔值的判断 
+修正ArrayList类的addall方法 
+修正max min avg sum等查询方法返回浮点型数据错误的问题 
+修正数组方式查询的自己使用Like问题 
+iterate标签增加mod属性 用于计算循环变量的取模替换原来的odd属性 
+增加Input类，用于输入数据管理 
+删除已经废弃的目录检查插件 
+优化模板引擎解析 避免多次实例化模板解析类并简化模板解析类的写法 去掉架构方法定义 
+修改mobile验证的正则 
+增加了分页类关于负数的判断 
+部分CX标签的属性可以支持特殊模板变量 
+F方法生成的文件会自动加上THINK_PATH判断 避免直接执行  
+取消了当指定模块和操作不存在的时候执行默认模块和默认操作，由用户自己定义空模块和空操作来处理。 
+增加了连贯操作的data方法，用于指定要操作的数据 
+去掉了已经废弃的三个配置参数 DB_CACHE_ON DB_CACHE_TIME DB_CACHE_MAX 
+增加表单提交的MAGIC_QUOTES_GPC判断 
+model类的query和execute方法支持使用__TABLE__字符串系统会自动替换成当前模型对应的表名  
+调整了空操作和直接判断模板文件的顺序空操作优先执行 
+修正Cookie类支持关闭浏览器就失效的情况设置COOKIE_EXPIRE为0或者空字符串或者在使用的时候传递参数0 Cookie::set($name,$value,0); 
+项目编译缓存文件也加上是否去掉注释的开关 
+
+[1.0.3 版本] 2008-3-16
+增加空模块支持 如果指定的模块不存在会首先定位是否存在Empty模块
+增加核心编译文件的去除空白和注释的开关，在入口文件定义 STRIP_RUNTIME_SPACE 常量为false 可以关闭去除空白和注释
+Action缓存由原来的userCache成员属性控制改为项目参数 ACTION_CACHE_ON 控制，便于动态控制
+增加数据库字段缓存的开关 惯例配置增加DB_FIELDS_CACHE 用以设置数据库字段是否缓存，默认进行缓存
+修正xcache和sqlite缓存方式的读写次数记录
+使用视图模型的时候，如果主键是id，不需要再定义getPk方法
+修正多语言和多模板的cookie问题
+入口文件免设置APP_NAME APP_PATH
+完善Cookie类
+修正模板检查的时候组件化的支持
+模型类的查询操作支持连贯方法
+去掉了一些废弃的惯例配置参数 包括：DATA_CACHE_ON 和 DATA_CACHE_MAX
+惯例配置增加了DATA_CACHE_SUBDIR 参数控制文件缓存方式是否自动使用子目录哈希缓存
+在项目根目录不存在的情况下自动创建
+完善对跨库查询的支持
+目录自动创建支持写入安全文件
+
+[ 1.0.2 版本 ] 2008-2-21
+Model类增加toArray方法
+修正因Log类的改动导致Trace错误信息无法正常显示的问题
+数据查询返回的数据集由ArrayObject对象改成数组
+修正Model类的create方法在定义字段映射的下面的bug
+修正虚拟模型下面create方法的bug
+Model类的facade方法增加数据表字段的检测
+优化Image类的showAdvVerify方法
+修正标签库的compare标签
+Trace配置文件由原来的_trace.php更名为trace.php
+项目调试配置文件由原来的_debug.php更名为debug.php
+项目配置文件由原来的_config.php更名为config.php
+路由定义文件由原来的_routes.php 更名为 routes.php
+静态定义文件由原来的_htmls.php 更名为 htmls.php
+Model类的create方法无需type参数，自动判断新增和编辑模型数据
+增加第一次运行目录自动生成功能（只需要定义入口文件）
+默认项目编译缓存目录为Temp目录
+
+[ 1.0.1版本 ] 2008-2-2
+修正Db类在Oracle下面的parseLimit方法判断
+优化数据库驱动类的查询结果获取
+Model 类增加字段的表达式插入和更新支持
+完善了Db类的条件查询字段中带有空格的处理
+Model类增加了delConnect方法用于删除动态增加的数据库连接
+增强了分布式数据库的支持 可以设置是否需要读写分离
+Model类增加智能切换功能 switchConnect方法可以自动识别是否是相同的数据库连接类型
+增加了组件模块的URL分割定义配置 COMPONENT_DEPR 包括对操作链的设置采用相同的参数定义
+修正Model类的count等统计方法会自动缓存的问题 DB类默认关闭查询缓存
+修正RBAC组件的权限判断
+修正组件模块方式下面的模板文件../Public的替换
+修正Html标签库的list标签的actionlist属性的支持
+修正PDO类在某些数据库下面的getAll方法的BUG
+增加核心缓存文件的开关功能 在入口文件里面设置 CACHE_RUNTIME 为 false
+修正了使用组件模块的时候模板文件中__URL__的解析问题
+修正模板和语言的切换cookie
+Model类增加addConnect和switchConnect方法 用于支持多数据库的连接
+修正了语言包的缓存导致切换语言无效的问题
+Db类增加多数据库连接的内置支持
+修正Model类在某些数据库下面where条件表达式不支持where 1 的情况
+Db类增加getLastSql方法用于获取最后一次查询的sql语句
+完善Log类的操作以及优化错误日志的写入
+修正model的数据库连接配置读取
+在Ajax返回之前保存日志记录
+完善compare标签
+改进Vendor函数的baseUrl参数定义
+改进项目语言包的定义 不同语言分成不同子目录
+简化了query方法的数据库缓存
+增加clearCache方法，用于清空项目相关缓存目录
+增加firebird数据库驱动支持
+修正pgsql驱动
+修正~app.php 文件的编译缓存路径的问题 
+增加编译缓存路径的设置 RUNTIME_PATH
+
+[ 1.0.0 ] 2007-12-25 
+优化了执行效率和内存开销 
+Import方法增加同名检测和类检测 
+完善PHP 5.2.0以下版本的支持 
+去掉了核心对Config、Language、Cookie和Session类库的依赖 
+去掉了Action类内置的默认操作 
+改进了MySqli的驱动类库 
+修正了主键不是自动增长的时候Model的add方法返回错误 
+修正了mysqli的escape_string方法 
+修正了PDO的连接params参数问题 
+修正了Model的findAll的关联查询问题 
+修正了Model类的getModelName方法问题 
+修正了RBAC的模块大小写设置 
+去掉volist resultset标签，均作为iterate标签的别名 
+增加了项目编译机制和核心类库编译机制 
+标签库定义增加标签的别名定义 
+XML模版结束标签增加对空格的支持 
+增加compare标签和eq neq gt egt lt elt heq 和nheq标签别名 
+增加了多模版和多语言的开关 
+RBAC认证增加了操作的认证设置，之前只支持模块的认证设置
