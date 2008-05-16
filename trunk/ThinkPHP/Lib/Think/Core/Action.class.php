@@ -526,7 +526,7 @@ abstract class Action extends Base
         if($this->get('closeWin')) {
             $this->assign('jumpUrl','javascript:window.close();');
         }
-    	$this->display(C('ACTION_JUMP_TEMPLATE'));
+    	$this->display(C('ACTION_JUMP_TMPL'));
         // 中止执行  避免出错后继续执行
         exit ;       
     }
