@@ -877,7 +877,7 @@ class Model extends Base  implements IteratorAggregate
 		}
 		// 检查非数据字段
 		foreach ($data as $key=>$val){
-			if(!$this->viewModel) {
+			if(!$this->viewModel && empty($this->_link)) {
 				if(!in_array($key,$this->fields,true)) {
 					unset($data[$key]);
 				}
