@@ -96,7 +96,7 @@ class App extends Base
 		// 在部署模式下会自动在第一次执行的时候编译项目
 		if(file_exists(RUNTIME_PATH.'~app.php') && filemtime(RUNTIME_PATH.'~app.php')>filemtime(CONFIG_PATH.'config.php')) {
 			// 直接读取编译后的项目文件
-			C(array_change_key_case(include RUNTIME_PATH.'~app.php'));
+			C(include RUNTIME_PATH.'~app.php');
 		}else{
 			// 预编译项目
 			$this->build();
