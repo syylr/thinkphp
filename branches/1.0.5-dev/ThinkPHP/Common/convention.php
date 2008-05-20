@@ -55,6 +55,7 @@ return  array(
 
 	/* 错误设置 */
 	'DEBUG_MODE'				=>	false,	 // 调试模式默认关闭
+	'SHOW_ERROR_MSG'		=>	false,	// 显示详细错误信息 可以在关闭调试模式的情况下显示详细错误信息 默认关闭
 	'ERROR_MESSAGE'			=>	'您浏览的页面暂时发生了错误！请稍后再试～',	// 错误显示信息 非调试模式有效
 	'ERROR_PAGE'					=>	'',	// 错误定向页面
 
