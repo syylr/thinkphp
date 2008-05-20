@@ -1285,10 +1285,8 @@ class Model extends Base  implements IteratorAggregate
 								$relationData   =  $model->findAll($mappingCondition,$mappingFields,$mappingOrder,$mappingLimit);
 								break;
 							case MANY_TO_MANY:
-								if(empty($mappingCondition)) {
-									$pk   =  is_array($result)?$result[$this->getPk()]:$result->{$this->getPk()};
-									$mappingCondition = "{$mappingFk}={$pk}";
-								}
+								$pk   =  is_array($result)?$result[$this->getPk()]:$result->{$this->getPk()};
+								$mappingCondition = "{$mappingFk}={$pk}";
 								$mappingOrder =  $val['mapping_order'];
 								$mappingLimit =  $val['mapping_limit'];
 								$mappingRelationFk = $val['relation_foreign_key']?$val['relation_foreign_key']:$model->name.'_id';
