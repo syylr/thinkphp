@@ -132,7 +132,7 @@ function url($action=ACTION_NAME,$module=MODULE_NAME,$route='',$app=APP_NAME,$pa
  */
 function halt($error) {
     $e = array();
-    if(C('DEBUG_MODE')){
+    if(C('DEBUG_MODE') || C('SHOW_ERROR_MSG')){
         //调试模式下输出错误信息
         if(!is_array($error)) {
             $trace = debug_backtrace();
