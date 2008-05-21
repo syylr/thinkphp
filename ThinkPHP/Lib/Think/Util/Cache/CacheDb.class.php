@@ -152,7 +152,7 @@ class CacheDb extends Cache
         $map['cachekey']	 =	 $name;
         $map['data']	=	$data	 ;
         $map['datacrc']	=	$crc;
-        $map['expire']	=	($expireTime==-1)?-1: (time()+$expire) ;//缓存有效期为－1表示永久缓存
+        $map['expire']	=	($expire==-1)?-1: (time()+$expire) ;//缓存有效期为－1表示永久缓存
         $map['datasize']	=	strlen($data);
         $result  =  $this->db->getRow('select `id` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' limit 0,1');
         if(false !== $result ) {
