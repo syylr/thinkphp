@@ -926,7 +926,7 @@ class Model extends Base  implements IteratorAggregate
 			 $data = $this->viewCondition;
 		 }elseif(!is_string($data)) {
 			$data	 =	 $this->_facade($data);
-			$baseCondition = $this->viewCondition;
+			$baseCondition = empty($this->viewCondition)?array():$this->viewCondition;
 			$view	=	array();
 			// 检查视图字段
 			foreach ($this->viewFields as $key=>$val){
