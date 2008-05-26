@@ -586,7 +586,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
           $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
       }
       if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
-      $classfile = $baseUrl.str_replace('.', '/', $class).$ext;
+      $classfile = $baseUrl.str_replace(array('.','#'), array('/','.'), $class).$ext;
 	  if(false !== strpos($classfile,'*') || false !== strpos($classfile,'?') ) {
 			// 导入匹配的文件
 			$match	=	glob($classfile);
