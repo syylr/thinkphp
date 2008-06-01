@@ -454,8 +454,10 @@ class App extends Base
 
         //网站公共文件地址
         define('WEB_PUBLIC_URL', WEB_URL.'/Public');
-        //项目公共文件地址
-        define('APP_PUBLIC_URL', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.'Public'); 
+        //项目模板目录 
+        define('APP_TMPL_URL', WEB_URL.'/'.APP_NAME.'/'.$tmplDir); 
+        //项目公共文件目录
+        define('APP_PUBLIC_URL', APP_TMPL_URL.'Public'); 
 
         return ;
     }
