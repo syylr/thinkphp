@@ -180,6 +180,8 @@ class  ThinkTemplate extends Base
         $tmplContent = str_ireplace('../public',APP_PUBLIC_URL,$tmplContent);
         //网站公共目录
         $tmplContent = str_replace('__PUBLIC__',WEB_PUBLIC_URL,$tmplContent);
+		// 项目模板目录
+		$tmplContent = str_replace('__TMPL__',APP_TMPL_URL,$tmplContent);
         //网站根目录
         $tmplContent = str_replace('__ROOT__',__ROOT__,$tmplContent);
         //当前项目地址
