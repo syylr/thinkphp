@@ -128,12 +128,14 @@ class TagLibCx extends TagLib
 		if(!empty($offset)) {
 			$parseStr  .= '<?php '.$name.'= array_slice('.$name.','.$offset.','.$length.') ?>';
 		}
-		$parseStr .= '<?php if( count('.$name.')==0 ) echo "'.$empty.'" ?>';
+		$parseStr .= '<?php if( count('.$name.')==0 ) : echo "'.$empty.'" ; ?>';
+		$parseStr .= '<?php else: ?>';
 		$parseStr .= '<?php foreach('.$name.' as $key=>$'.$id.'): ?>';
 		$parseStr .= '<?php ++$'.$key.';?>';
 		$parseStr .= '<?php $mod = (($'.$key.' % '.$mod.' )==0)?>';
 		$parseStr .= $this->tpl->parse($content);
 		$parseStr .= '<?php endforeach; ?>';
+		$parseStr .=  '<?php endif; ?>';
 		$parseStr .=  '<?php endif; ?>';
 		$_iterateParseCache[$cacheIterateId] = $parseStr;
         
