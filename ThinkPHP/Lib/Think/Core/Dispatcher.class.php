@@ -40,7 +40,11 @@ class Dispatcher extends Base
         $urlMode  =  C('URL_MODEL');
         if($urlMode == URL_REWRITE ) {
             //当前项目地址
-            define('PHP_FILE',dirname(_PHP_FILE_));
+			$url	=	dirname(_PHP_FILE_);
+			if($url == '/' || $url == '\\') {
+				$url	=	'';
+			}
+            define('PHP_FILE',$url);
         }else {
             //当前项目地址
             define('PHP_FILE',_PHP_FILE_);
