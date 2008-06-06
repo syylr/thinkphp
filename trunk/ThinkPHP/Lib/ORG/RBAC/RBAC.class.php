@@ -55,7 +55,7 @@ class RBAC extends Base
     {
             // 如果使用普通权限模式，保存当前用户的访问权限列表
             // 对管理员开发所有权限
-            if(C('USER_AUTH_TYPE') !=2 && !$_SESSION['administrator'] ) {
+            if(C('USER_AUTH_TYPE') !=2 && !$_SESSION[C('ADMIN_AUTH_KEY')] ) {
                 $_SESSION['_ACCESS_LIST']	=	RBAC::getAccessList($authId);
             }	
             return ;
@@ -93,44 +93,41 @@ class RBAC extends Base
     static function checkAccess() 
     {
         //如果项目要求认证，并且当前模块需要认证，则进行权限认证
-        if( C('USER_AUTH_ON') ){
-			$_module	=	array();
-			$_action	=	array();
-            if("" != C('REQUIRE_AUTH_MODULE')) {
-                //需要认证的模块
-                $_module['yes'] = explode(',',strtoupper(C('REQUIRE_AUTH_MODULE')));
-            }elseif('' != C('NOT_AUTH_MODULE')){
-                //无需认证的模块
-                $_module['no'] = explode(',',strtoupper(C('NOT_AUTH_MODULE')));  
-            }
-			if(!empty($_module)) {
-				//检查当前模块是否需要认证
-				if((!empty($_module['no']) && !in_array(strtoupper(MODULE_NAME),$_module['no'])) || (!empty($_module['yes']) && in_array(strtoupper(MODULE_NAME),$_module['yes']))) {
-					if("" != C('REQUIRE_AUTH_ACTION')) {
-						//需要认证的操作
-						$_action['yes'] = explode(',',strtoupper(C('REQUIRE_AUTH_ACTION')));
-					}elseif('' != C('NOT_AUTH_ACTION')) {
-						//无需认证的操作
-						$_action['no'] = explode(',',strtoupper(C('NOT_AUTH_ACTION')));  
-					}
-					if(!empty($_action)) {
-						//检查当前操作是否需要认证
-						if((!empty($_action['no']) && !in_array(strtoupper(ACTION_NAME),$_action['no'])) || (!empty($_action['yes']) && in_array(strtoupper(ACTION_NAME),$_action['yes']))) {
-							return true;
-						}else {
-							return false;
-						}
-					}else{
-						return true;
-					}
-				}else {
-					return false;
+		$_module	=	array();
+		$_action	=	array();
+		if("" != C('REQUIRE_AUTH_MODULE')) {
+			//需要认证的模块
+			$_module['yes'] = explode(',',strtoupper(C('REQUIRE_AUTH_MODULE')));
+		}elseif('' != C('NOT_AUTH_MODULE')){
+			//无需认证的模块
+			$_module['no'] = explode(',',strtoupper(C('NOT_AUTH_MODULE')));  
+		}
+		if(!empty($_module)) {
+			//检查当前模块是否需要认证
+			if((!empty($_module['no']) && !in_array(strtoupper(MODULE_NAME),$_module['no'])) || (!empty($_module['yes']) && in_array(strtoupper(MODULE_NAME),$_module['yes']))) {
+				if("" != C('REQUIRE_AUTH_ACTION')) {
+					//需要认证的操作
+					$_action['yes'] = explode(',',strtoupper(C('REQUIRE_AUTH_ACTION')));
+				}elseif('' != C('NOT_AUTH_ACTION')) {
+					//无需认证的操作
+					$_action['no'] = explode(',',strtoupper(C('NOT_AUTH_ACTION')));  
 				}
-			}else{
-				return true;
+				if(!empty($_action)) {
+					//检查当前操作是否需要认证
+					if((!empty($_action['no']) && !in_array(strtoupper(ACTION_NAME),$_action['no'])) || (!empty($_action['yes']) && in_array(strtoupper(ACTION_NAME),$_action['yes']))) {
+						return true;
+					}else {
+						return false;
+					}
+				}else{
+					return true;
+				}
+			}else {
+				return false;
 			}
-
-        }
+		}else{
+			return true;
+		}
         return false;	
     }
 
@@ -146,7 +143,7 @@ class RBAC extends Base
             }
             //存在认证识别号，则进行进一步的访问决策
             $accessGuid   =   md5(APP_NAME.MODULE_NAME.ACTION_NAME);
-            if(!$_SESSION['administrator']) {//管理员无需认证
+            if(!$_SESSION[C('ADMIN_AUTH_KEY')]) {//管理员无需认证
                 if(C('USER_AUTH_TYPE')==2) {
                     //加强验证和即时验证模式 更加安全 后台权限修改可以即时生效
                     //通过数据库进行访问检查
@@ -154,13 +151,14 @@ class RBAC extends Base
                 }else {
                     // 如果是管理员或者当前操作已经认证过，无需再次认证
                     if( $_SESSION[$accessGuid]) {
-                        return ;
+                        return true;
                     }
                     //登录验证模式，比较登录后保存的权限访问列表
                     $accessList = $_SESSION['_ACCESS_LIST'];
                 }
                 if(!isset($accessList[strtoupper(APP_NAME)][strtoupper(MODULE_NAME)][strtoupper(ACTION_NAME)])) {
-                    throw_exception(L('_VALID_ACCESS_'));
+                    //throw_exception(L('_VALID_ACCESS_'));
+					return false;
                 }else {
                     $_SESSION[$accessGuid]	=	true;
                 }
