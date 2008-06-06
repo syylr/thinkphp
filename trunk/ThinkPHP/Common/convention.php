@@ -107,6 +107,7 @@ return  array(
 	'USER_AUTH_ON'				=>	false,		// 默认不启用用户认证
 	'USER_AUTH_TYPE'			=>	1,		// 默认认证类型 1 登录认证 2 实时认证
 	'USER_AUTH_KEY'			=>	'authId',	// 用户认证SESSION标记
+	'ADMIN_AUTH_KEY'			=>	'administrator',
 	'AUTH_PWD_ENCODER'		=>	'md5',	// 用户认证密码加密方式
 	'USER_AUTH_PROVIDER'	=>	'DaoAuthentictionProvider',	 // 默认认证委托器
 	'USER_AUTH_GATEWAY'	=>	'/Public/login',	// 默认认证网关
