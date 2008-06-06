@@ -173,7 +173,10 @@ class App extends Base
 		if(C('USER_AUTH_ON')) {
 			// 启用权限认证 调用RBAC组件
 			import('ORG.RBAC.RBAC');
-			RBAC::AccessDecision();
+			if(!RBAC::AccessDecision()) {
+				// 没有权限 抛出异常
+				throw_exception(L('_VALID_ACCESS_'));
+			}
 		}
 
 		if(C('HTML_CACHE_ON')) {
