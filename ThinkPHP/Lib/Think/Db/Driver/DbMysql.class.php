@@ -165,11 +165,22 @@ Class DbMysql extends Db{
         }
     }
 
+    /**
+     +----------------------------------------------------------
+     * 启动事务
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
 	public function startTrans() {
+		$this->initConnect(true);
+        if ( !$this->_linkID ) return false;
 		//数据rollback 支持
 		if ($this->transTimes == 0) {
-			//@mysql_query('SET AUTOCOMMIT=0', $this->_linkID);
-			//@mysql_query('BEGIN', $this->_linkID);
 			mysql_query('START TRANSACTION', $this->_linkID);
 		}
 		$this->transTimes++;
@@ -191,7 +202,6 @@ Class DbMysql extends Db{
     {
         if ($this->transTimes > 0) {
             $result = mysql_query('COMMIT', $this->_linkID);
-            //$result = @mysql_query('SET AUTOCOMMIT=1', $this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -216,7 +226,6 @@ Class DbMysql extends Db{
     {
         if ($this->transTimes > 0) {
             $result = mysql_query('ROLLBACK', $this->_linkID);
-            //$result = @mysql_query('SET AUTOCOMMIT=1', $this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
