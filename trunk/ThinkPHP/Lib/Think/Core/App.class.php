@@ -509,6 +509,13 @@ class App extends Base
      */
     public function exec()
     {
+		// 导入公共类
+		if(!empty(C('AUTO_LOAD_CLASS'))) {
+			$import	=	explode(',',C('AUTO_LOAD_CLASS'));
+			foreach ($import as $key=>$class){
+				import($class);
+			}
+		}
         //创建Action控制器实例
 		if(defined('C_MODULE_NAME')) {
 			$module  =  A(C_MODULE_NAME);
