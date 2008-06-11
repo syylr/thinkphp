@@ -510,8 +510,9 @@ class App extends Base
     public function exec()
     {
 		// 导入公共类
-		if(!empty(C('AUTO_LOAD_CLASS'))) {
-			$import	=	explode(',',C('AUTO_LOAD_CLASS'));
+		$_autoload	=	C('AUTO_LOAD_CLASS');
+		if(!empty($_autoload)) {
+			$import	=	explode(',',$_autoload);
 			foreach ($import as $key=>$class){
 				import($class);
 			}
