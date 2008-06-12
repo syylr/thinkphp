@@ -174,8 +174,12 @@ class App extends Base
 			// 启用权限认证 调用RBAC组件
 			import('ORG.RBAC.RBAC');
 			if(!RBAC::AccessDecision()) {
-				// 没有权限 抛出异常
-				throw_exception(L('_VALID_ACCESS_'));
+				// 没有权限 抛出错误
+				if(C('RBAC_ERROR_PAGE')) {
+					redirect(C('RBAC_ERROR_PAGE'));
+				}else{
+					throw_exception(L('_VALID_ACCESS_'));
+				}
 			}
 		}
 

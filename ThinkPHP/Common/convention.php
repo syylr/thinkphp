@@ -113,6 +113,7 @@ return  array(
 	'USER_AUTH_GATEWAY'	=>	'/Public/login',	// 默认认证网关
 	'NOT_AUTH_MODULE'		=>	'Public',		// 默认无需认证模块
 	'REQUIRE_AUTH_MODULE'=>	'',		// 默认需要认证模块
+	'RBAC_ERROR_PAGE'		=>	'',		// RBAC认证没有权限的错误页面
 
 	/* SESSION设置 */
 	'SESSION_NAME'				=>	'ThinkID',		// 默认Session_name 如果需要不同项目共享SESSION 可以设置相同
