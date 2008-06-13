@@ -161,7 +161,9 @@ class Db extends Base
 		// 检查驱动类
 		if(class_exists($dbClass)) {
 			$db = new $dbClass($db_config);
-			$db->dbType = $this->dbType.'  '.$db_config['dsn'];
+			if(!empty($db_config['dsn'])) {
+				$db->dbType = $this->dbType.'  '.$db_config['dsn'];
+			}
 		}else {
 			// 类没有定义
 			throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
@@ -344,11 +346,11 @@ class Db extends Base
         if($info['scheme']){
             $dsn = array(
             'dbms'     => $info['scheme'], 
-            'username' => $info['user'] ? $info['user'] : '', 
-            'password' => $info['pass'] ? $info['pass'] : '', 
-            'hostname' => $info['host'] ? $info['host'] : '', 
-            'hostport' => $info['port'] ? $info['port'] : '', 
-            'database' => $info['path'] ? substr($info['path'],1) : ''
+            'username' => isset($info['user']) ? $info['user'] : '', 
+            'password' => isset($info['pass']) ? $info['pass'] : '', 
+            'hostname' => isset($info['host']) ? $info['host'] : '', 
+            'hostport' => isset($info['port']) ? $info['port'] : '', 
+            'database' => isset($info['path']) ? substr($info['path'],1) : ''
             );
         }else {
             preg_match('/^(.*?)\:\/\/(.*?)\:(.*?)\@(.*?)\:([0-9]{1, 6})\/(.*?)$/',trim($dsnStr),$matches);
