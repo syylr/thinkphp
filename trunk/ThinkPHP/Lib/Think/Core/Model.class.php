@@ -2989,16 +2989,24 @@ class Model extends Base  implements IteratorAggregate
      * @access public 
      +----------------------------------------------------------
      * @param mixed $config 数据库连接信息
+	 * 支持批量添加 例如 array(1=>$config1,2=>$config2)
 	 * @param mixed $linkNum  创建的连接序号
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-	public function addConnect($config,$linkNum) {
+	public function addConnect($config,$linkNum=NULL) {
 		if(isset($this->_db[$linkNum])) {
 			return false;
 		}
-		// 连接创建一个新的实例
+		if(NULL === $linkNum && is_array($config)) {
+			// 支持批量增加数据库连接
+			foreach ($config as $key=>$val){
+				$this->_db[$key]			=	 Db::getInstance($val);
+			}
+			return true;
+		}
+		// 创建一个新的实例
 		$this->_db[$linkNum]			=	 Db::getInstance($config);
 		return true;
 	}
