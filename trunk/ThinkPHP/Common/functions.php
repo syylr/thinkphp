@@ -438,10 +438,10 @@ function get_instance_of($className,$method='',$args=array())
  */
 function __autoload($classname)
 {
-	// 自动加载当前项目的Actioon类和Dao类
+	// 自动加载当前项目的Actioon类和Model类
 	if(substr($classname,-5)=="Model") {
 		if(!import('@.Model.'.$classname)){
-			// 如果加载失败 尝试加载组件Dao类库
+			// 如果加载失败 尝试加载组件Model类库
 			import("@.*.Model.".$classname);
 		}
 	}elseif(substr($classname,-6)=="Action"){
