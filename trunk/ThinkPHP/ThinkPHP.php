@@ -21,7 +21,7 @@ $GLOBALS['_beginTime'] = microtime(TRUE);
 
 // ThinkPHP系统目录定义
 if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
-if(!defined('APP_NAME')) define('APP_NAME', hash('md5',THINK_PATH));
+if(!defined('APP_NAME')) define('APP_NAME', md5(THINK_PATH);
 if(!defined('APP_PATH')) define('APP_PATH', dirname(THINK_PATH).'/'.APP_NAME);
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Temp/');
 
