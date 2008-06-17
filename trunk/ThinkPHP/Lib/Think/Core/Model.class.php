@@ -71,6 +71,8 @@ class Model extends Base  implements IteratorAggregate
 
 	// 上次错误信息
 	protected $error = '';
+	// 验证错误信息
+	protected $validateError	=	array();
 
 	// 包含的聚合对象
 	protected $aggregation = array();
@@ -2610,9 +2612,13 @@ class Model extends Base  implements IteratorAggregate
 	private function autoValidation($data,$type) {
 		// 属性验证
 		if(!empty($this->_validate)) {
-			// 如果设置了Vo验证
+			// 如果设置了数据自动验证
 			// 则进行数据验证
 			import("ORG.Text.Validation");
+			// 是否多字段验证
+			$multiValidate	=	C('MULTI_FIELD_VALIDATE');
+			// 重置验证错误信息
+			$this->validateError	=	array();
 			foreach($this->_validate as $key=>$val) {
 				// 验证因子定义格式
 				// array(field,rule,message,condition,append,when)
@@ -2626,32 +2632,65 @@ class Model extends Base  implements IteratorAggregate
 					switch($val[3]) {
 						case MUST_TO_VALIDATE:	 // 必须验证 不管表单是否有设置该字段
 							if(!$this->_validationField($data,$val)){
-								$this->error	=	$val[2];
-								return false;
+								if($multiValidate) {
+									$this->validateError[$val[0]]	=	$val[2];
+								}else{
+									$this->error	=	$val[2];
+									return false;
+								}
 							}
 							break;
 						case VALUE_TO_VAILIDATE:	// 值不为空的时候才验证
 							if('' != trim($data[$val[0]])){
 								if(!$this->_validationField($data,$val)){
-									$this->error	=	$val[2];
-									return false;
+									if($multiValidate) {
+										$this->validateError[$val[0]]	=	$val[2];
+									}else{
+										$this->error	=	$val[2];
+										return false;
+									}
 								}
 							}
 							break;
 						default:	// 默认表单存在该字段就验证
 							if(isset($data[$val[0]])){
 								if(!$this->_validationField($data,$val)){
-									$this->error	=	$val[2];
-									return false;
+									if($multiValidate) {
+										$this->validateError[$val[0]]	=	$val[2];
+									}else{
+										$this->error	=	$val[2];
+										return false;
+									}
 								}
 							}
 					}
 				}
 			}
 		}
-		// TODO 数据类型验证
-		//  判断数据类型是否符合
-		return true;
+		if(!empty($this->validateError)) {
+			return false;
+		}else{
+			// TODO 数据类型验证
+			//  判断数据类型是否符合
+			return true;
+		}
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 返回验证的错误信息
+     +----------------------------------------------------------
+     * @access public 
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	protected function getValidateError() {
+		if(!empty($this->validateError)) {
+			return $this->validateError;
+		}else{
+			return $this->error;
+		}
 	}
 
 	/**
