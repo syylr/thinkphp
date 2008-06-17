@@ -156,6 +156,7 @@ return  array(
 	'TMPL_R_DELIM'				=>	'}',			// 模板引擎普通标签结束标记
 	'TAGLIB_BEGIN'				=>	'<',			// 标签库标签开始标记
 	'TAGLIB_END'					=>	'>',			// 标签库标签结束标记
+	'TAG_NESTED_LEVEL'		=>	3,				// 标签库
 
 	/* Cookie设置 */
 	'COOKIE_EXPIRE'				=>	3600,		// Coodie有效期

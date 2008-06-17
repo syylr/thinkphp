@@ -438,27 +438,44 @@ class  ThinkTemplate extends Base
             $tagList =  $tLib->getTagList();
             //遍历标签列表进行模板标签解析
             foreach($tagList as $tag) {
+				// 实际要解析的标签名称
                 if( !$hide) {
-                    $startTag = $tagLib.':'.$tag['name'];
+                    $start = $tagLib.':'.$tag['name'];
                 }else {
-                	$startTag = $tag['name'];
+                	$start = $tag['name'];
                 }
-                $endTag = $startTag;
-				if(false !== stripos($content,C('TAGLIB_BEGIN').$startTag)) {
-					if(empty($tag['attribute'])){
-						// 无属性标签
-						if($tag['content'] !='empty'){
-							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-						}else{
-							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+				// 检查可嵌套标签以及嵌套级别
+				if($tag['nested'] && C('TAG_NESTED_LEVEL')>1) {
+					$level	 =	 C('TAG_NESTED_LEVEL');
+				}else{
+					$level	 =	 1;
+				}
+				// 支持多级标签嵌套 格式
+				//  <volist name="list" id="vo">
+				//  <volist1 name="vo['sub']" id="sub">
+				//  {$sub.name}
+				//  </volist1>
+				//  </volist>
+				for($i=0;$i<$level;$i++) {
+					$extend	=	$i ? $i : '';
+					$startTag	=	$start.$extend;
+					$endTag = $startTag;
+					if(false !== stripos($content,C('TAGLIB_BEGIN').$startTag)) {
+						if(empty($tag['attribute'])){
+							// 无属性标签
+							if($tag['content'] !='empty'){
+								$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+							}else{
+								$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+							}
+						}elseif($tag['content'] !='empty') {//闭合标签解析
+							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.+?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+							
+						}else {//开放标签解析
+							//$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+							// 开始标签必须有一个空格
+							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
 						}
-					}elseif($tag['content'] !='empty') {//闭合标签解析
-						$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.+?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-						
-					}else {//开放标签解析
-						//$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-						// 开始标签必须有一个空格
-						$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
 					}
 				}
             }
