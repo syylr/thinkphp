@@ -191,7 +191,9 @@ class App extends Base
         apply_filter('app_init');
 
 		// 记录应用初始化时间
-		$GLOBALS['_initTime'] = microtime(TRUE);
+		if(C('SHOW_RUN_TIME')){
+			$GLOBALS['_initTime'] = microtime(TRUE);
+		}
 
         return ;
     }
