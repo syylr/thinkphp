@@ -582,7 +582,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
           $baseUrl =  THINK_PATH.'/'.LIB_DIR.'/';
       }else {
           // 加载其他项目应用类库
-          $class =  str_replace($class_strut[0],'',$class);
+		  $class	=	substr_replace($class, '', 0,strlen($class_strut[0])+1); 
           $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
       }
       if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
