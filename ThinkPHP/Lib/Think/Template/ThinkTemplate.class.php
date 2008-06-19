@@ -727,7 +727,7 @@ class  ThinkTemplate extends Base
         if(count($vars)==3){
             $vars[2] = trim($vars[2]);
             switch($vars[1]){
-                case 'SERVER':$parseStr = '$_SERVER[\''.$vars[2].'\']';break;
+                case 'SERVER':$parseStr = '$_SERVER[\''.strtoupper($vars[2]).'\']';break;
                 case 'GET':$parseStr = '$_GET[\''.$vars[2].'\']';break;
                 case 'POST':$parseStr = '$_POST[\''.$vars[2].'\']';break;
                 case 'COOKIE':$parseStr = '$_COOKIE[\''.$vars[2].'\']';break;
