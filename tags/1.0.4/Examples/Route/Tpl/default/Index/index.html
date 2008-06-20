@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <TITLE>ThinkPHP示例：URL路由</TITLE>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+ </HEAD>
+ <BODY>
+ <div class="main">
+ <H2>ThinkPHP示例之：URL路由</H2>
+配置URL路由定义文件，设置简单路由和泛路由<BR>
+ <TABLE  cellpadding=3 cellspacing=3>
+  <TR>
+	<TD ><div class="result">当前URL：<BR>{$Think.server.PHP_SELF} <BR>路由到模块 <span style="color:red">{$Think.const.MODULE_NAME}</span> 的<span style="color:red">{$Think.const.ACTION_NAME}</span> 操作<BR>
+	参数:<BR>
+	<volist name="vars" id="v">
+	{$key}=>{$v}<BR>
+	</volist>
+	</div></TD>
+ </TR>
+ <TR>
+	<TD class="tLeft" >
+	简单路由：<A HREF="__APP__/Category/1">/Category/1</A><BR>
+	泛路由1：<A HREF="__APP__/Blog/1">/Blog/1</A><BR>
+	泛路由2：<A HREF="__APP__/Blog/2008/2">/Blog/2008/2</A><BR>
+	</TD>
+ </TR>
+ <TR>
+	<TD ><HR> 示例源码<BR>配置文件config.php<BR> <php>highlight_file(CONFIG_PATH.'config.php');</php><BR>
+	路由定义文件routes.php<BR> <php>highlight_file(CONFIG_PATH.'routes.php');</php><BR>
+	控制器IndexAction类<BR><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php><BR>
+	控制器BlogAction类<BR><php>highlight_file(LIB_PATH.'Action/BlogAction.class.php');</php>
+	</TD>
+ </TR>
+ </TABLE>
+</div>
+ </BODY>
+</HTML>
