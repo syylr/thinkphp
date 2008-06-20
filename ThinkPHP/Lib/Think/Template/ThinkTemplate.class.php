@@ -180,8 +180,6 @@ class  ThinkTemplate extends Base
         $tmplContent = str_ireplace('../public',APP_PUBLIC_URL,$tmplContent);
         //网站公共目录
         $tmplContent = str_replace('__PUBLIC__',WEB_PUBLIC_URL,$tmplContent);
-		// 项目模板目录
-		$tmplContent = str_replace('__TMPL__',APP_TMPL_URL,$tmplContent);
         //网站根目录
         $tmplContent = str_replace('__ROOT__',__ROOT__,$tmplContent);
         //当前项目地址
@@ -438,44 +436,27 @@ class  ThinkTemplate extends Base
             $tagList =  $tLib->getTagList();
             //遍历标签列表进行模板标签解析
             foreach($tagList as $tag) {
-				// 实际要解析的标签名称
                 if( !$hide) {
-                    $start = $tagLib.':'.$tag['name'];
+                    $startTag = $tagLib.':'.$tag['name'];
                 }else {
-                	$start = $tag['name'];
+                	$startTag = $tag['name'];
                 }
-				// 检查可嵌套标签以及嵌套级别
-				if($tag['nested'] && C('TAG_NESTED_LEVEL')>1) {
-					$level	 =	 C('TAG_NESTED_LEVEL');
-				}else{
-					$level	 =	 1;
-				}
-				// 支持多级标签嵌套 格式
-				//  <volist name="list" id="vo">
-				//  <volist1 name="vo['sub']" id="sub">
-				//  {$sub.name}
-				//  </volist1>
-				//  </volist>
-				for($i=0;$i<$level;$i++) {
-					$extend	=	$i ? $i : '';
-					$startTag	=	$start.$extend;
-					$endTag = $startTag;
-					if(false !== stripos($content,C('TAGLIB_BEGIN').$startTag)) {
-						if(empty($tag['attribute'])){
-							// 无属性标签
-							if($tag['content'] !='empty'){
-								$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-							}else{
-								$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
-							}
-						}elseif($tag['content'] !='empty') {//闭合标签解析
-							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.+?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-							
-						}else {//开放标签解析
-							//$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-							// 开始标签必须有一个空格
-							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+                $endTag = $startTag;
+				if(false !== stripos($content,C('TAGLIB_BEGIN').$startTag)) {
+					if(empty($tag['attribute'])){
+						// 无属性标签
+						if($tag['content'] !='empty'){
+							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+						}else{
+							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
 						}
+					}elseif($tag['content'] !='empty') {//闭合标签解析
+						$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.+?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+						
+					}else {//开放标签解析
+						//$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+						// 开始标签必须有一个空格
+						$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
 					}
 				}
             }
@@ -727,7 +708,7 @@ class  ThinkTemplate extends Base
         if(count($vars)==3){
             $vars[2] = trim($vars[2]);
             switch($vars[1]){
-                case 'SERVER':$parseStr = '$_SERVER[\''.strtoupper($vars[2]).'\']';break;
+                case 'SERVER':$parseStr = '$_SERVER[\''.$vars[2].'\']';break;
                 case 'GET':$parseStr = '$_GET[\''.$vars[2].'\']';break;
                 case 'POST':$parseStr = '$_POST[\''.$vars[2].'\']';break;
                 case 'COOKIE':$parseStr = '$_COOKIE[\''.$vars[2].'\']';break;

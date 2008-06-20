@@ -107,13 +107,11 @@ return  array(
 	'USER_AUTH_ON'				=>	false,		// 默认不启用用户认证
 	'USER_AUTH_TYPE'			=>	1,		// 默认认证类型 1 登录认证 2 实时认证
 	'USER_AUTH_KEY'			=>	'authId',	// 用户认证SESSION标记
-	'ADMIN_AUTH_KEY'			=>	'administrator',
 	'AUTH_PWD_ENCODER'		=>	'md5',	// 用户认证密码加密方式
 	'USER_AUTH_PROVIDER'	=>	'DaoAuthentictionProvider',	 // 默认认证委托器
 	'USER_AUTH_GATEWAY'	=>	'/Public/login',	// 默认认证网关
 	'NOT_AUTH_MODULE'		=>	'Public',		// 默认无需认证模块
 	'REQUIRE_AUTH_MODULE'=>	'',		// 默认需要认证模块
-	'RBAC_ERROR_PAGE'		=>	'',		// RBAC认证没有权限的错误页面
 
 	/* SESSION设置 */
 	'SESSION_NAME'				=>	'ThinkID',		// 默认Session_name 如果需要不同项目共享SESSION 可以设置相同
@@ -156,7 +154,6 @@ return  array(
 	'TMPL_R_DELIM'				=>	'}',			// 模板引擎普通标签结束标记
 	'TAGLIB_BEGIN'				=>	'<',			// 标签库标签开始标记
 	'TAGLIB_END'					=>	'>',			// 标签库标签结束标记
-	'TAG_NESTED_LEVEL'		=>	3,				// 标签库
 
 	/* Cookie设置 */
 	'COOKIE_EXPIRE'				=>	3600,		// Coodie有效期
@@ -174,7 +171,6 @@ return  array(
 
 	/* 其它设置 */
 	'AUTO_LOAD_PATH'			=>	'Think.Util.',	//	 __autoLoad 的路径设置 当前项目的Model和Action类会自动加载，无需设置 注意搜索顺序
-	'AUTO_LOAD_CLASS'		=>	'',		// 初始化需要导入的公共类 使用import的导入机制 例如 @.Action.CommonAction
 	'CALLBACK_LOAD_PATH'	=>	'',				//	反序列化对象时自动加载的路径设置
 	'UPLOAD_FILE_RULE'		=>	'uniqid',			//  文件上传命名规则 例如 time uniqid com_create_guid 等 支持自定义函数 仅适用于内置的UploadFile类
 	'LIKE_MATCH_FIELDS'		=>	'', //数据库查询的时候需要进行模糊匹配的字段

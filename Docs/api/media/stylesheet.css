@@ -2,7 +2,7 @@ a { color: #0000FF; text-decoration: none; }
 a:hover { color: #FF0000; text-decoration: underline; }
 a:active { color: #FF0000; text-decoration: underline; }
 
-body { background-color: #EEEEEE; font-family: ËÎÌו,Verdana, Arial, sans-serif }
+body { background-color: #EEEEEE; font-family: Verdana, Arial, sans-serif }
 body, table { font-size: 10pt }
 a img { border: 0px; }
 dd { margin-left: 0px; padding-left: 1em; }

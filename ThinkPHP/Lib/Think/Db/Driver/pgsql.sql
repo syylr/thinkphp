@@ -1,14 +1,3 @@
-
-CREATE TYPE "public"."tablestruct" AS (
-  "fields_key_name" varchar(100),
-  "fields_name" VARCHAR(200),
-  "fields_type" VARCHAR(20),
-  "fields_length" BIGINT,
-  "fields_not_null" VARCHAR(500),
-  "fields_default" VARCHAR(500),
-  "fields_comment" VARCHAR(1000)
-);
-
 -- Function: plpgsql_call_handler()
 
 -- DROP FUNCTION plpgsql_call_handler();

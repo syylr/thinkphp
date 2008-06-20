@@ -339,8 +339,6 @@ class View extends Base
 
         //根据不同模版引擎进行处理
         if('PHP'==$this->type || empty($this->type)) {
-			// 模板阵列变量分解成为独立变量
-			extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
         	// 默认使用PHP模版
             include $templateFile;
         }elseif('THINK'==$this->type){

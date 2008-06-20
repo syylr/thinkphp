@@ -180,8 +180,6 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      */
 	public function startTrans() {
-		$this->initConnect(true);
-        if ( !$this->_linkID ) return false;
 		//数据rollback 支持
 		if ($this->transTimes == 0) {
 			$this->_linkID->beginTransaction();

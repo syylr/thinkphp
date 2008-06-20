@@ -54,9 +54,7 @@ Class DbMysql extends Db{
         if ( !isset($this->linkID[$linkNum]) ) {
 			if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'mysql_pconnect':'mysql_connect';
-			// 处理不带端口号的socket连接情况
-			$host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
-			$this->linkID[$linkNum] = $conn( $host, $config['username'], $config['password']);
+            $this->linkID[$linkNum] = $conn( $config['hostname'] . ':' . $config['hostport'], $config['username'], $config['password']);
             if ( !$this->linkID[$linkNum]) {
                 throw_exception(mysql_error());
                 return False;
@@ -165,22 +163,11 @@ Class DbMysql extends Db{
         }
     }
 
-    /**
-     +----------------------------------------------------------
-     * 启动事务
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
 	public function startTrans() {
-		$this->initConnect(true);
-        if ( !$this->_linkID ) return false;
 		//数据rollback 支持
 		if ($this->transTimes == 0) {
+			//@mysql_query('SET AUTOCOMMIT=0', $this->_linkID);
+			//@mysql_query('BEGIN', $this->_linkID);
 			mysql_query('START TRANSACTION', $this->_linkID);
 		}
 		$this->transTimes++;
@@ -202,6 +189,7 @@ Class DbMysql extends Db{
     {
         if ($this->transTimes > 0) {
             $result = mysql_query('COMMIT', $this->_linkID);
+            //$result = @mysql_query('SET AUTOCOMMIT=1', $this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -226,6 +214,7 @@ Class DbMysql extends Db{
     {
         if ($this->transTimes > 0) {
             $result = mysql_query('ROLLBACK', $this->_linkID);
+            //$result = @mysql_query('SET AUTOCOMMIT=1', $this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());

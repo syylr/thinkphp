@@ -49,8 +49,8 @@ class CacheMemcache extends Cache
         $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
         $this->handler  = &new Memcache;
         $this->connected = $options['timeout'] === false ?
-            $this->handler->$func($options['host'], $options['port']) :
-            $this->handler->$func($options['host'], $options['port'], $options['timeout']);
+            $this->handler->$func($host, $port) :
+            $this->handler->$func($host, $port, $timeout);
         $this->type = strtoupper(substr(__CLASS__,6));
     }
 

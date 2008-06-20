@@ -71,8 +71,6 @@ class Model extends Base  implements IteratorAggregate
 
 	// 上次错误信息
 	protected $error = '';
-	// 验证错误信息
-	protected $validateError	=	array();
 
 	// 包含的聚合对象
 	protected $aggregation = array();
@@ -138,8 +136,8 @@ class Model extends Base  implements IteratorAggregate
 				// 设置默认的数据库连接
 				$this->_db[0]	=	&$this->db;
 				// 设置表前后缀
-				$this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
-				$this->tableSuffix = $this->tableSuffix?$this->tableSuffix:C('DB_SUFFIX');
+				$this->tablePrefix = C('DB_PREFIX')|'';
+				$this->tableSuffix = C('DB_SUFFIX')|'';
 				// 数据表字段检测
 				$this->_checkTableInfo();
 				// 静态模型
@@ -928,7 +926,7 @@ class Model extends Base  implements IteratorAggregate
 			 $data = $this->viewCondition;
 		 }elseif(!is_string($data)) {
 			$data	 =	 $this->_facade($data);
-			$baseCondition = empty($this->viewCondition)?array():$this->viewCondition;
+			$baseCondition = $this->viewCondition;
 			$view	=	array();
 			// 检查视图字段
 			foreach ($this->viewFields as $key=>$val){
@@ -1287,8 +1285,10 @@ class Model extends Base  implements IteratorAggregate
 								$relationData   =  $model->findAll($mappingCondition,$mappingFields,$mappingOrder,$mappingLimit);
 								break;
 							case MANY_TO_MANY:
-								$pk   =  is_array($result)?$result[$this->getPk()]:$result->{$this->getPk()};
-								$mappingCondition = "{$mappingFk}={$pk}";
+								if(empty($mappingCondition)) {
+									$pk   =  is_array($result)?$result[$this->getPk()]:$result->{$this->getPk()};
+									$mappingCondition = "{$mappingFk}={$pk}";
+								}
 								$mappingOrder =  $val['mapping_order'];
 								$mappingLimit =  $val['mapping_limit'];
 								$mappingRelationFk = $val['relation_foreign_key']?$val['relation_foreign_key']:$model->name.'_id';
@@ -2612,13 +2612,9 @@ class Model extends Base  implements IteratorAggregate
 	private function autoValidation($data,$type) {
 		// 属性验证
 		if(!empty($this->_validate)) {
-			// 如果设置了数据自动验证
+			// 如果设置了Vo验证
 			// 则进行数据验证
 			import("ORG.Text.Validation");
-			// 是否多字段验证
-			$multiValidate	=	C('MULTI_FIELD_VALIDATE');
-			// 重置验证错误信息
-			$this->validateError	=	array();
 			foreach($this->_validate as $key=>$val) {
 				// 验证因子定义格式
 				// array(field,rule,message,condition,append,when)
@@ -2632,65 +2628,32 @@ class Model extends Base  implements IteratorAggregate
 					switch($val[3]) {
 						case MUST_TO_VALIDATE:	 // 必须验证 不管表单是否有设置该字段
 							if(!$this->_validationField($data,$val)){
-								if($multiValidate) {
-									$this->validateError[$val[0]]	=	$val[2];
-								}else{
-									$this->error	=	$val[2];
-									return false;
-								}
+								$this->error	=	$val[2];
+								return false;
 							}
 							break;
 						case VALUE_TO_VAILIDATE:	// 值不为空的时候才验证
 							if('' != trim($data[$val[0]])){
 								if(!$this->_validationField($data,$val)){
-									if($multiValidate) {
-										$this->validateError[$val[0]]	=	$val[2];
-									}else{
-										$this->error	=	$val[2];
-										return false;
-									}
+									$this->error	=	$val[2];
+									return false;
 								}
 							}
 							break;
 						default:	// 默认表单存在该字段就验证
 							if(isset($data[$val[0]])){
 								if(!$this->_validationField($data,$val)){
-									if($multiValidate) {
-										$this->validateError[$val[0]]	=	$val[2];
-									}else{
-										$this->error	=	$val[2];
-										return false;
-									}
+									$this->error	=	$val[2];
+									return false;
 								}
 							}
 					}
 				}
 			}
 		}
-		if(!empty($this->validateError)) {
-			return false;
-		}else{
-			// TODO 数据类型验证
-			//  判断数据类型是否符合
-			return true;
-		}
-	}
-
-	/**
-     +----------------------------------------------------------
-     * 返回验证的错误信息
-     +----------------------------------------------------------
-     * @access public 
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-	protected function getValidateError() {
-		if(!empty($this->validateError)) {
-			return $this->validateError;
-		}else{
-			return $this->error;
-		}
+		// TODO 数据类型验证
+		//  判断数据类型是否符合
+		return true;
 	}
 
 	/**
@@ -3028,24 +2991,16 @@ class Model extends Base  implements IteratorAggregate
      * @access public 
      +----------------------------------------------------------
      * @param mixed $config 数据库连接信息
-	 * 支持批量添加 例如 array(1=>$config1,2=>$config2)
 	 * @param mixed $linkNum  创建的连接序号
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-	public function addConnect($config,$linkNum=NULL) {
+	public function addConnect($config,$linkNum) {
 		if(isset($this->_db[$linkNum])) {
 			return false;
 		}
-		if(NULL === $linkNum && is_array($config)) {
-			// 支持批量增加数据库连接
-			foreach ($config as $key=>$val){
-				$this->_db[$key]			=	 Db::getInstance($val);
-			}
-			return true;
-		}
-		// 创建一个新的实例
+		// 连接创建一个新的实例
 		$this->_db[$linkNum]			=	 Db::getInstance($config);
 		return true;
 	}

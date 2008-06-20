@@ -61,9 +61,9 @@ class CacheDb extends Cache
             );
         }
         $this->options = $options;
-		import('Think.Db.Db');
         $this->db  = DB::getInstance();
-        $this->connected = is_resource($this->db);
+        $this->handler = $this->db->connect();
+        $this->connected = is_resource($this->handler);
         $this->type = strtoupper(substr(__CLASS__,6));
 
     }
@@ -149,12 +149,12 @@ class CacheDb extends Cache
         	$crc  =  '';
         }
         $expire =  !empty($expireTime)? $expireTime : $this->options['expire'];
-        $map    = array();
-        $map['cachekey']	 =	 $name;
-        $map['data']	=	$data	 ;
-        $map['datacrc']	=	$crc;
-        $map['expire']	=	($expire==-1)?-1: (time()+$expire) ;//缓存有效期为－1表示永久缓存
-        $map['datasize']	=	strlen($data);
+        $map    = new HashMap();
+        $map->put('cachekey',$name);
+        $map->put('data',$data);
+        $map->put('datacrc',$crc);
+        $map->put('expire',($expireTime==-1)?-1: (time()+$expire) );//缓存有效期为－1表示永久缓存
+        $map->put('datasize',strlen($data));
         $result  =  $this->db->getRow('select `id` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' limit 0,1');
         if(false !== $result ) {
         	//更新记录

@@ -438,10 +438,10 @@ function get_instance_of($className,$method='',$args=array())
  */
 function __autoload($classname)
 {
-	// 自动加载当前项目的Actioon类和Model类
+	// 自动加载当前项目的Actioon类和Dao类
 	if(substr($classname,-5)=="Model") {
 		if(!import('@.Model.'.$classname)){
-			// 如果加载失败 尝试加载组件Model类库
+			// 如果加载失败 尝试加载组件Dao类库
 			import("@.*.Model.".$classname);
 		}
 	}elseif(substr($classname,-6)=="Action"){
@@ -582,11 +582,11 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
           $baseUrl =  THINK_PATH.'/'.LIB_DIR.'/';
       }else {
           // 加载其他项目应用类库
-		  $class	=	substr_replace($class, '', 0,strlen($class_strut[0])+1); 
+          $class =  str_replace($class_strut[0],'',$class);
           $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
       }
       if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
-      $classfile = $baseUrl.str_replace(array('.','#'), array('/','.'), $class).$ext;
+      $classfile = $baseUrl.str_replace('.', '/', $class).$ext;
 	  if(false !== strpos($classfile,'*') || false !== strpos($classfile,'?') ) {
 			// 导入匹配的文件
 			$match	=	glob($classfile);

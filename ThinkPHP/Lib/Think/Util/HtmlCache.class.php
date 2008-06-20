@@ -84,7 +84,7 @@ class HtmlCache extends Base
 				self::$cacheTime = $time;
 				$cacheName	=	$rule.C('HTML_FILE_SUFFIX');	
 				self::$cacheFile = $cacheName;
-				define('HTML_FILE_NAME',HTML_PATH . $cacheName);
+				define('HTML_FILE_NAME',C('HTML_PATH') . $cacheName);
 				if (self::checkHTMLCache(HTML_FILE_NAME,$time)) {//静态页面有效
 					if(C('HTML_READ_TYPE')==1) {
 						// 重定向到静态页面

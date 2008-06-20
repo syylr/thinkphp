@@ -278,9 +278,9 @@ class TagLibHtml extends TagLib
         $basepath   = !empty($tag['basepath'])?$tag['basepath']:WEB_PUBLIC_URL;
         $type       = !empty($tag['type'])?  strtolower($tag['type']):'js';
         if($type=='js') {
-            $parseStr = "<script language='JavaScript' src='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$file).'.js'."'></script> ";
+            $parseStr = "<script language='JavaScript' src='".$basepath.'/'.str_replace('.','/',$file).'.js'."'></script> ";
         }elseif($type=='css') {
-            $parseStr = "<link rel='stylesheet' type='text/css' href='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$file).'.css'."' />";
+            $parseStr = "<link rel='stylesheet' type='text/css' href='".$basepath.'/'.str_replace('.','/',$file).'.css'."' />";
         }
         return $parseStr;
     }

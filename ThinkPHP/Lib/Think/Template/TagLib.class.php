@@ -186,7 +186,6 @@ class TagLib extends Base
 				$list[] =  array(
 								'name'=>$tags->name,
 								'content'=>$tags->bodycontent,
-								'nested'=>isset($tags->nested)?$tags->nested:0,
 								'attribute'=>isset($tags->attribute)?$tags->attribute:'',
 								);
 				if(isset($tags->alias)) {
@@ -195,7 +194,6 @@ class TagLib extends Base
 						$list[] =  array(
 										'name'=>$tag,
 										'content'=>$tags->bodycontent,
-										'nested'=>isset($tags->nested)?$tags->nested:0,
 										'attribute'=>isset($tags->attribute)?$tags->attribute:'',
 										);
 					}
@@ -206,7 +204,6 @@ class TagLib extends Base
 					$list[] =  array(
 									'name'=>$tag['name'],
 									'content'=>$tag['bodycontent'],
-									'nested'=>isset($tag['nested'])?$tag['nested']:0,
 									'attribute'=>isset($tag['attribute'])?$tag['attribute']:'',
 									);
 					if(isset($tag['alias'])) {
@@ -215,7 +212,6 @@ class TagLib extends Base
 							$list[] =  array(
 											'name'=>$tag1,
 											'content'=>$tag['bodycontent'],
-											'nested'=>isset($tag['nested'])?$tag['nested']:0,
 											'attribute'=>isset($tag['attribute'])?$tag['attribute']:'',
 											);
 						}

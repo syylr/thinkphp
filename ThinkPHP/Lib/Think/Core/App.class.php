@@ -96,7 +96,7 @@ class App extends Base
 		// 在部署模式下会自动在第一次执行的时候编译项目
 		if(file_exists(RUNTIME_PATH.'~app.php') && filemtime(RUNTIME_PATH.'~app.php')>filemtime(CONFIG_PATH.'config.php')) {
 			// 直接读取编译后的项目文件
-			C(include RUNTIME_PATH.'~app.php');
+			C(array_change_key_case(include RUNTIME_PATH.'~app.php'));
 		}else{
 			// 预编译项目
 			$this->build();
@@ -126,7 +126,7 @@ class App extends Base
 		if(C('DISPATCH_ON')) {
 			if( 'Think'== C('DISPATCH_NAME') ) {
 				// 使用内置的ThinkDispatcher调度器
-				import('Think.Util.Dispatcher');
+				import('Think.Core.Dispatcher');
 				Dispatcher::dispatch();
 			}else{
 				// 加载第三方调度器
@@ -173,14 +173,7 @@ class App extends Base
 		if(C('USER_AUTH_ON')) {
 			// 启用权限认证 调用RBAC组件
 			import('ORG.RBAC.RBAC');
-			if(!RBAC::AccessDecision()) {
-				// 没有权限 抛出错误
-				if(C('RBAC_ERROR_PAGE')) {
-					redirect(C('RBAC_ERROR_PAGE'));
-				}else{
-					throw_exception(L('_VALID_ACCESS_'));
-				}
-			}
+			RBAC::AccessDecision();
 		}
 
 		if(C('HTML_CACHE_ON')) {
@@ -191,9 +184,7 @@ class App extends Base
         apply_filter('app_init');
 
 		// 记录应用初始化时间
-		if(C('SHOW_RUN_TIME')){
-			$GLOBALS['_initTime'] = microtime(TRUE);
-		}
+		$GLOBALS['_initTime'] = microtime(TRUE);
 
         return ;
     }
@@ -463,10 +454,8 @@ class App extends Base
 
         //网站公共文件地址
         define('WEB_PUBLIC_URL', WEB_URL.'/Public');
-        //项目模板目录 
-        define('APP_TMPL_URL', WEB_URL.'/'.APP_NAME.'/'.$tmplDir); 
-        //项目公共文件目录
-        define('APP_PUBLIC_URL', APP_TMPL_URL.'Public'); 
+        //项目公共文件地址
+        define('APP_PUBLIC_URL', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.'Public'); 
 
         return ;
     }
@@ -515,14 +504,6 @@ class App extends Base
      */
     public function exec()
     {
-		// 导入公共类
-		$_autoload	=	C('AUTO_LOAD_CLASS');
-		if(!empty($_autoload)) {
-			$import	=	explode(',',$_autoload);
-			foreach ($import as $key=>$class){
-				import($class);
-			}
-		}
         //创建Action控制器实例
 		if(defined('C_MODULE_NAME')) {
 			$module  =  A(C_MODULE_NAME);
