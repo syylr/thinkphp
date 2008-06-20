@@ -126,7 +126,7 @@ class App extends Base
 		if(C('DISPATCH_ON')) {
 			if( 'Think'== C('DISPATCH_NAME') ) {
 				// 使用内置的ThinkDispatcher调度器
-				import('Think.Core.Dispatcher');
+				import('Think.Util.Dispatcher');
 				Dispatcher::dispatch();
 			}else{
 				// 加载第三方调度器
