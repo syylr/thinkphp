@@ -1,0 +1,22 @@
+<TABLE class="list shadow" cellpadding=0 cellspacing=0 >
+<tr>
+	<td height='5' colspan=7 class="topTd" ></td>
+</tr>
+<TR class="row" >
+	<th class="tCenter space">菜单导航</th>
+</TR>
+<iterate id="item" name="menu" >
+<neq name="item['name']|strtolower" value="public" >
+<neq name="item['name']|strtolower" value="index" >
+<eq name="item['access']" value="1" >
+<TR class="row " >
+	<TD><IMG SRC="../Public/images/comment.gif" WIDTH="9" HEIGHT="9" BORDER="0" align="absmiddle" ALT=""> <A HREF="__APP__/{$item['name']}/index/">{$item['title']}</A></TD>
+</TR>
+</eq>
+</neq>
+</neq>
+</iterate>
+<tr>
+	<td height='5' colspan=7 class="bottomTd"></td>
+</tr>
+</TABLE>

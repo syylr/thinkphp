@@ -1,0 +1,40 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+
+<div id="main" class="main" >
+<div class="content">
+<div class="title">新增用户 [ <A HREF="__URL__">返回列表</A> ]</div>
+<FORM METHOD=POST id="form1" action="__URL__/insert/">
+<TABLE cellpadding=3 cellspacing=3>
+<TR>
+	<TD class="tRight" >用户名：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeftRequire" check='^\S+$' warning="用户名不能为空,且不能含有空格" NAME="account"></TD>
+</TR>
+<TR>
+	<TD class="tRight" >昵称：</TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeft" NAME="nickname"></TD>
+</TR>
+<TR>
+	<TD class="tRight">密码：</TD>
+	<TD class="tLeft"><INPUT TYPE="password" class="medium bLeftRequire"  NAME="password"></TD>
+</TR>
+<TR>
+	<TD class="tRight">重复密码：</TD>
+	<TD class="tLeft"><INPUT TYPE="password" class="medium bLeftRequire"  NAME="repassword"></TD>
+</TR>
+<TR>
+	<TD class="tRight tTop">备  注：</TD>
+	<TD class="tLeft"><TEXTAREA class="large bLeft"  NAME="remark" ROWS="5" COLS="57"></TEXTAREA></TD>
+</TR>
+<TR>
+	<TD ></TD>
+	<TD class="center">
+	<INPUT TYPE="submit" value="保 存" class="button">
+	<INPUT TYPE="reset" class="button" value="清 空" >
+	</TD>
+</TR>
+</TABLE>
+</FORM>
+</div>
+</div>
+<include file="../Public/footer" />
