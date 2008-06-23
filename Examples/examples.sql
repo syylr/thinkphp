@@ -28,6 +28,7 @@ CREATE TABLE `think_form` (
   `title` varchar(255) NOT NULL,
   `content` varchar(255) NOT NULL,
   `create_time` int(11) unsigned NOT NULL,
+  `update_time` int(11) unsigned NOT NULL,
   `status` tinyint(1) unsigned NOT NULL,
   `email` varchar(50) NOT NULL,
   PRIMARY KEY  (`id`)
