@@ -45,11 +45,13 @@ class Dispatcher extends Base
 				$url	=	'';
 			}
             define('PHP_FILE',$url);
-        }else {
+        }elseif($urlMode == URL_COMPAT){
+			define('PHP_FILE',_PHP_FILE_.'?'.C('VAR_PATHINFO').'=');
+		}else {
             //当前项目地址
             define('PHP_FILE',_PHP_FILE_);
         }
-        if($urlMode == URL_PATHINFO || $urlMode == URL_REWRITE) {
+        if($urlMode == URL_PATHINFO || $urlMode == URL_REWRITE || || $urlMode == URL_COMPAT) {
 			// 检查PATHINFO
 			if(!empty($_GET[C('VAR_PATHINFO')])) {
 				// 兼容PATHINFO 参数
