@@ -34,7 +34,7 @@ class CacheMemcache extends Cache
     function __construct($options='')
     {
         if ( !extension_loaded('memcache') ) {    
-            throw_exception(L('系统不支持memcache'));
+            throw_exception(L('_NOT_SUPPERT_').':memcache');
         }
         if(empty($options)) {
             $options = array

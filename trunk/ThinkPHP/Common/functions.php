@@ -599,7 +599,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
 							// 冲突检测
 							$class = basename($val,$ext);
 							if(isset($_class[$class])) {
-								throw_exception($class.'类名冲突');
+								throw_exception($class.L('_CLASS_CONFLICT_'));
 							}
 							$_class[$class] = $val;
 					   }
@@ -616,7 +616,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
 				// 冲突检测
 				$class = basename($classfile,$ext);
 				if(isset($_class[strtolower($class)])) {
-					throw_exception('类名冲突:'.$_class[strtolower($class)].' '.$classfile);
+					throw_exception(L('_CLASS_CONFLICT_').':'.$_class[strtolower($class)].' '.$classfile);
 				}
 				$_class[strtolower($class)] = $classfile;
 		  }
@@ -851,7 +851,7 @@ function use_compiler($tag)
 	if(is_callable($GLOBALS['template_compiler'][strtoupper($tag)])) {
 		call_user_func_array($GLOBALS['template_compiler'][strtoupper($tag)],$args);    
 	}else{
-		throw_exception('模板引擎错误：'.C('TMPL_ENGINE_TYPE'));
+		throw_exception(L('_TEMPLATE_ERROR_').'：'.C('TMPL_ENGINE_TYPE'));
 	}
     return ;
 }

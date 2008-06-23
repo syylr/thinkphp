@@ -34,7 +34,7 @@ class CacheSqlite extends Cache
     public function __construct($options='')
     {
         if ( !extension_loaded('sqlite') ) {    
-            throw_exception(L('系统不支持sqlite'));
+            throw_exception(L('_NOT_SUPPERT_').':sqlite');
         }
         if(empty($options)){
             $options= array

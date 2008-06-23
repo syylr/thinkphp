@@ -109,7 +109,7 @@ class  ThinkTemplate extends Base
             $tmplContent = $this->compiler($tmplContent,$charset); 
             //重写Cache文件
             if( false === file_put_contents($tmplCacheFile,trim($tmplContent))) {
-                throw_exception(L('模版缓存文件写入失败！'));
+                throw_exception(L('_CACHE_WRITE_ERROR_'));
             }
         }
         return $tmplCacheFile;

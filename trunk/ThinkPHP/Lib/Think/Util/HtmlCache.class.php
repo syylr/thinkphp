@@ -124,7 +124,7 @@ class HtmlCache extends Base
 					mk_dir(dirname(HTML_FILE_NAME));
 				}
 				if( false === file_put_contents( HTML_FILE_NAME , $content )) {
-					throw_exception(L('文件写入失败！'));
+					throw_exception(L('_CACHE_WRITE_ERROR_'));
 				}
 			}
 		}

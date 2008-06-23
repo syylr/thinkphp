@@ -34,7 +34,7 @@ class CacheShmop extends Cache
     public function __construct($options='')
     {
         if ( !extension_loaded('shmop') ) {    
-            throw_exception(L('系统不支持shmop'));
+            throw_exception(L('_NOT_SUPPERT_').':shmop');
         }
         if(!empty($options)){
             $options = array(

@@ -72,7 +72,7 @@ class ProviderManager extends Base
         if (require_cache( $providerPath . $authProvider . '.class.php'))    
                 $provider = new $authProvider();
         else 
-            throw_exception(L('系统暂时不支持委托方式: ') .$authProvider);
+            throw_exception(L('_NOT_SUPPORT_PROVIDER_').': ' .$authProvider);
         return $provider;
     }
 }//类定义结束

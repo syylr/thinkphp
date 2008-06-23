@@ -55,7 +55,7 @@ return Array(
 	'_NOT_LOAD_DB_'=>'无法加载数据库',
 	'_NOT_SUPPORT_DB_'=>'系统暂时不支持数据库',
 	'_NO_DB_CONFIG_'=>'没有定义数据库配置',
-	'_NOT_SUPPERT_'=>'不支持',
+	'_NOT_SUPPERT_'=>'系统不支持',
 
 	'_CACHE_TYPE_INVALID_'=>'无法加载缓存类型',
 	'_CONFIG_FILE_INVALID_'=>'无法加载配置文件',
@@ -68,6 +68,11 @@ return Array(
 	//  数据库
 	'_DB_TYPE_NOT_EXIST_'=>	'没有指定数据库类型或该类库不存在！',
 	'_DB_CONNECT_ERROR_'=>	'数据库连接失败！',	
+	'_CLASS_CONFLICT_'=>'类名冲突',
+	'_TEMPLATE_ERROR_'=>'模板引擎错误',
+	'_CACHE_WRITE_ERROR_'=>'缓存文件写入失败！',
+	'_DOWN_FILE_NOT_EXIST_'=>'下载文件不存在！',
+	'_NOT_SUPPORT_PROVIDER_'=>'系统暂时不支持委托方式',
 );
 
 ?>
