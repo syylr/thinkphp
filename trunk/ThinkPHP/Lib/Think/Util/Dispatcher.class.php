@@ -51,7 +51,7 @@ class Dispatcher extends Base
             //当前项目地址
             define('PHP_FILE',_PHP_FILE_);
         }
-        if($urlMode == URL_PATHINFO || $urlMode == URL_REWRITE || || $urlMode == URL_COMPAT) {
+        if($urlMode == URL_PATHINFO || $urlMode == URL_REWRITE || $urlMode == URL_COMPAT) {
 			// 检查PATHINFO
 			if(!empty($_GET[C('VAR_PATHINFO')])) {
 				// 兼容PATHINFO 参数
