@@ -35,7 +35,7 @@ class CacheApc extends Cache
     function __construct($options='')
     {
 		if(!function_exists('apc_cache_info')) {
-			throw_exception(L('系统不支持Apc'));
+			throw_exception(L('_NOT_SUPPERT_').':Apc');
 		}
 		$this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
         $this->type = strtoupper(substr(__CLASS__,6));

@@ -54,7 +54,7 @@ class Http extends Base
         }elseif($content != '') {
             $length = strlen($content);
         }else {
-            throw_exception($filename.L('下载文件不存在！'));
+            throw_exception($filename.L('_DOWN_FILE_NOT_EXIST_'));
         }
         if(empty($showname)) {
             $showname = $filename;
