@@ -105,6 +105,7 @@ define('DATA_TYPE_ARRAY',0);
 define('URL_COMMON',      0);   //普通模式
 define('URL_PATHINFO',    1);   //PATHINFO模式
 define('URL_REWRITE',     2);   //REWRITE模式
+define('URL_COMPAT',		3);		// 兼容模式
 
 //	版本信息
 define('THINK_VERSION', '1.0.4');
