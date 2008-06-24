@@ -554,6 +554,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
       //echo('<br>'.$class.$baseUrl);
       static $_file = array();
 	  static $_class = array();
+	  $class	=	str_replace(array('.','#'), array('/','.'), $class);
       if(isset($_file[strtolower($class.$baseUrl)]))
             return true;
       else 
@@ -567,14 +568,14 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
             //相对路径调用
       	    $isPath =  true;
       }
-      $class_strut = explode(".",$class);
+      $class_strut = explode("/",$class);
       if('*' == $class_strut[0] || isset($isPath) ) {
       	//多级目录加载支持
         //用于子目录递归调用
       }
       elseif(APP_NAME == $class_strut[0]) {
           //加载当前项目应用类库
-          $class =  str_replace(APP_NAME.'.',LIB_DIR.'.',$class);
+          $class =  str_replace(APP_NAME.'/',LIB_DIR.'/',$class);
       }
       elseif(in_array(strtolower($class_strut[0]),array('think','org','com'))) {
           //加载ThinkPHP基类库或者公共类库
@@ -586,7 +587,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
           $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
       }
       if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
-      $classfile = $baseUrl.str_replace(array('.','#'), array('/','.'), $class).$ext;
+      $classfile = $baseUrl . $class . $ext;
 	  if(false !== strpos($classfile,'*') || false !== strpos($classfile,'?') ) {
 			// 导入匹配的文件
 			$match	=	glob($classfile);
