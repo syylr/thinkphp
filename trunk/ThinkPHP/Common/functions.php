@@ -487,6 +487,7 @@ function unserialize_callback($classname)
 	}
 }
 
+$GLOBALS['include_file'] = 0;
 /**
  +----------------------------------------------------------
  * 优化的include_once
@@ -498,19 +499,21 @@ function unserialize_callback($classname)
  */
 function include_cache($filename)
 {
-    static $_importFiles = array();
-    if(file_exists($filename)){
-        if (!isset($_importFiles[$filename])) {
+    static $_import = array();
+    if (!isset($_import[$filename])) {
+        if(file_exists($filename)){
             include $filename;
-            $_importFiles[$filename] = true;
-            return true;
+            $GLOBALS['include_file']++;
+            $_import[$filename] = true;
         }
-        return false;
+        else
+        {
+            $_import[$filename] = false;
+        }
     }
-    return false;
+    return $_import[$filename];
 }
 
-$GLOBALS['include_file'] = 0;
 /**
  +----------------------------------------------------------
  * 优化的require_once
@@ -522,17 +525,19 @@ $GLOBALS['include_file'] = 0;
  */
 function require_cache($filename)
 {
-    static $_importFiles = array();
-    if(file_exists($filename)){
-        if (!isset($_importFiles[$filename])) {
+    static $_import = array();
+    if (!isset($_import[$filename])) {
+        if(file_exists($filename)){
             require $filename;
-			$GLOBALS['include_file']++;
-            $_importFiles[$filename] = true;
-            return true;
+            $GLOBALS['include_file']++;
+            $_import[$filename] = true;
         }
-        return false;
+        else
+        {
+            $_import[$filename] = false;
+        }
     }
-    return false;
+    return $_import[$filename];
 }
 
 /**
