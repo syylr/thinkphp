@@ -125,7 +125,7 @@ class TagLibCx extends TagLib
 		$name = $this->autoBuildVar($name);
 		$parseStr  =  '<?php if(isset('.$name.')): ?>';
 		$parseStr	.= '<?php $'.$key.' = 0; ?>';
-		if(!empty($offset)) {
+		if(!empty($length)) {
 			$parseStr  .= '<?php '.$name.'= array_slice('.$name.','.$offset.','.$length.') ?>';
 		}
 		$parseStr .= '<?php if( count('.$name.')==0 ) : echo "'.$empty.'" ; ?>';
