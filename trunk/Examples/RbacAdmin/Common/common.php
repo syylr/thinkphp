@@ -34,11 +34,9 @@ function getGroupName($id)
 		return $name[$id];
 	}
 	$Group	=	D("Group");
-	$list	=	$Group->field('id,name')->findAll();
-	$nameList	=	$list->getCol('id,name');
-	$name	=	$nameList[$id];
-	Session::set('groupName',$nameList);
+	$list	=	$Group->getFields('id,name');
+	$name	=	$list[$id];
+	Session::set('groupName',$list);
     return $name;
-
 }
 ?>

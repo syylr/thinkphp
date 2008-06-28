@@ -7,7 +7,7 @@ function selectGroup(){
  var result= PopModalWindow('__APP__/Group/select/parentId/0',268,360);
  if(typeof(result) == "undefined") return;
 	$('groupName').value=result[0][0];
-	$('parentId').value=result[0][1];
+	$('pid').value=result[0][1];
 }
 //-->
 </SCRIPT>
@@ -24,7 +24,7 @@ function selectGroup(){
 </TR>
 <TR>
 	<TD class="tRight" >上级组：</TD>
-	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeft"  NAME="groupName" value="{$vo.parentId|getGroupName}"><INPUT TYPE="hidden" class="medium bLeft" NAME="parentId" value="{$vo.parentId}"> <a href="javascript:selectGroup()" ><IMG SRC="../Public/images/search.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" align="absmiddle"></a></TD>
+	<TD class="tLeft" ><INPUT TYPE="text" class="medium bLeft"  NAME="groupName" value="{$vo.pid|getGroupName}"><INPUT TYPE="hidden" class="medium bLeft" NAME="pid" value="{$vo.pid}"> <a href="javascript:selectGroup()" ><IMG SRC="../Public/images/search.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="" align="absmiddle"></a></TD>
 </TR>
 <TR>
 	<TD class="tRight">组状态：</TD>
