@@ -368,5 +368,17 @@ class GroupAction extends PublicAction
 		$this->assign('page',$page); 
 		$this->display(); 
 	}
+
+    public function select()
+    {
+        $map = $this->_search();
+        //创建数据对象
+        $Group = D('Group');
+        //查找满足条件的列表数据
+        $list     = $Group->field('id,name')->findAll();
+        $this->assign('list',$list);
+        $this->display();
+        return;
+    }
 }//类定义结束
 ?>
