@@ -1058,30 +1058,30 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */	
 	public function checkGroup($group) {
-		 if(empty($group)) {
-			 $group = $this->getPk();
-		 }
-		$groups = explode(',',$group);
-		$_group = array();
-		foreach ($groups as $group){
-			$array = explode(' ',$group);
-			$field	 =	 $array[0];
-			$sort	 =	 isset($array[1])?$array[1]:'';
-			// 解析成视图字段
-			foreach ($this->viewFields as $name=>$val){
-				if(false !== $_field = array_search($field,$val)) {
-					// 存在视图字段
-					if(is_numeric($_field)) {
-						$field =	 $name.'.'.$field;
-					}else{
-						$field	 =	 $name.'.'.$_field;
+		 if(!empty($group)) {
+			//$group = $this->getPk();
+			$groups = explode(',',$group);
+			$_group = array();
+			foreach ($groups as $group){
+				$array = explode(' ',$group);
+				$field	 =	 $array[0];
+				$sort	 =	 isset($array[1])?$array[1]:'';
+				// 解析成视图字段
+				foreach ($this->viewFields as $name=>$val){
+					if(false !== $_field = array_search($field,$val)) {
+						// 存在视图字段
+						if(is_numeric($_field)) {
+							$field =	 $name.'.'.$field;
+						}else{
+							$field	 =	 $name.'.'.$_field;
+						}
+						break;
 					}
-					break;
 				}
+				$_group[$field] = $field.' '.$sort;
 			}
-			$_group[$field] = $field.' '.$sort;
-		}
-		$group	=	$_group;
+			$group	=	$_group;
+		 }
 		return $group;
 	}
 
