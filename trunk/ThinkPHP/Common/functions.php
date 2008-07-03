@@ -1050,8 +1050,8 @@ function D($className='',$appName='@')
 	if(empty($className)) {
 		return new  Model();
 	}
-	if(isset($_model[$className])) {
-		return $_model[$className];
+	if(isset($_model[$appName.$className])) {
+		return $_model[$appName.$className];
 	}
 	if(strpos($className,C('COMPONENT_DEPR'))) {
 		$array	=	explode(C('COMPONENT_DEPR'),$className);
@@ -1075,7 +1075,7 @@ function D($className='',$appName='@')
 	}
     if(class_exists($className)) {
         $model = new $className();
-		$_model[$className] =	$model;
+		$_model[$appName.$className] =	$model;
         return $model;    	
     }else {
     	return false;
@@ -1085,8 +1085,8 @@ function D($className='',$appName='@')
 function A($className,$appName='@') 
 {
 	static $_action = array();
-	if(isset($_action[$className])) {
-		return $_action[$className];
+	if(isset($_action[$appName.$className])) {
+		return $_action[$appName.$className];
 	}
 	if(strpos($className,C('COMPONENT_DEPR'))) {
 		$array	=	explode(C('COMPONENT_DEPR'),$className);
@@ -1110,7 +1110,7 @@ function A($className,$appName='@')
 	}
     if(class_exists($className)) {
         $action = new $className();
-		$_actioin[$className] =	$action;
+		$_actioin[$appName.$className] =	$action;
         return $action;    	
     }else {
     	return false;
