@@ -190,11 +190,7 @@ class UploadFile extends Base
 
 		// 获取上传的文件信息
 		// 对$_FILES数组信息处理
-		if(!empty($_FILES['name'])) {
-			$files	 =	 $this->dealFiles($_FILES);
-		}else{
-			$files	 =	 $_FILES;
-		}
+		$files	 =	 $this->dealFiles($_FILES);
         foreach($files as $key => $file) {
             //过滤无效的上传
             if(!empty($file['name'])) {
@@ -270,14 +266,21 @@ class UploadFile extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	private function dealFiles(&$files) {
+	private function dealFiles($files) {
 	   $fileArray = array();
-	   $count = count($files['name']);
-	   $keys = array_keys($files);
-	   for ($i=0; $i<$count; $i++) {
-		   foreach ($keys as $key) {
-			   $fileArray[$i][$key] = $files[$key][$i];
+	   foreach ($files as $file){
+		   if(is_array($file['name'])) {
+			   $keys = array_keys($file);
+			   $count	 =	 count($file['name']);
+			   for ($i=0; $i<$count; $i++) {
+				   foreach ($keys as $key) {
+					   $fileArray[$i][$key] = $file[$key][$i];
+				   }
+			   }
+		   }else{
+			   $fileArray	=	$files;
 		   }
+		   break;
 	   }
 	   return $fileArray;
 	}
