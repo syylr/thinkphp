@@ -1049,8 +1049,6 @@ function D($className='',$appName='@')
 	static $_model = array();
 	if(empty($className)) {
 		return new  Model();
-	}else{
-	   	$className =  C('MODEL_CLASS_PREFIX').$className.C('MODEL_CLASS_SUFFIX');
 	}
 	if(isset($_model[$className])) {
 		return $_model[$className];
@@ -1058,11 +1056,21 @@ function D($className='',$appName='@')
 	if(strpos($className,C('COMPONENT_DEPR'))) {
 		$array	=	explode(C('COMPONENT_DEPR'),$className);
 		$className = array_pop($array);
-		import($appName.'.'.implode('.',$array).'.Model.'.$className);
+		$className =  C('MODEL_CLASS_PREFIX').$className.C('MODEL_CLASS_SUFFIX');
+		if(C('COMPONENT_TYPE')==1) {
+			import($appName.'.'.implode('.',$array).'.Model.'.$className);
+		}else{
+			import($appName.'.Model.'.implode('.',$array).'.'.$className);
+		}
 	}else{
+		$className =  C('MODEL_CLASS_PREFIX').$className.C('MODEL_CLASS_SUFFIX');
 		if(!import($appName.'.Model.'.$className)) {
 			// 如果加载失败 尝试自动匹配
-			import($appName.'.*.Model.'.$className);
+			f(C('COMPONENT_TYPE')==1) {
+				import($appName.'.*.Model.'.$className);
+			}else{
+				import($appName.'.Model.*.'.$className);
+			}
 		}
 	}
     if(class_exists($className)) {
@@ -1077,18 +1085,27 @@ function D($className='',$appName='@')
 function A($className,$appName='@') 
 {
 	static $_action = array();
-	$className =  C('CONTR_CLASS_PREFIX').$className.C('CONTR_CLASS_SUFFIX');
 	if(isset($_action[$className])) {
 		return $_action[$className];
 	}
 	if(strpos($className,C('COMPONENT_DEPR'))) {
 		$array	=	explode(C('COMPONENT_DEPR'),$className);
 		$className = array_pop($array);
-		import($appName.'.'.implode('.',$array).'.Action.'.$className);
+		$className =  C('CONTR_CLASS_PREFIX').$className.C('CONTR_CLASS_SUFFIX');
+		if(C('COMPONENT_TYPE')==1) {
+			import($appName.'.'.implode('.',$array).'.Action.'.$className);
+		}else{
+			import($appName.'.Action.'.implode('.',$array).'.'.$className);
+		}
 	}else{
+		$className =  C('CONTR_CLASS_PREFIX').$className.C('CONTR_CLASS_SUFFIX');
 		if(!import($appName.'.Action.'.$className)) {
 			// 如果加载失败 尝试加载组件类库
-			import($appName.'.*.Action.'.$className);
+			if(C('COMPONENT_TYPE')==1) {
+				import($appName.'.*.Action.'.$className);
+			}else{
+				import($appName.'.Action.*.'.$className);
+			}
 		}
 	}
     if(class_exists($className)) {

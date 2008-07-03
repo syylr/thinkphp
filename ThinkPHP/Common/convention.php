@@ -41,6 +41,7 @@ return  array(
 	'PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号 
 	'ROUTER_ON'					=>	true,	// 启用路由判断
 	'COMPONENT_DEPR'			=>	'@',		// 组件模块和操作的URL分割符
+	'COMPONENT_TYPE'			=>	1,	 //组件目录结构  1 Lib\User\Action\ 2 Lib\Action\User\
 
 	/* 日志设置 */
 	'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
