@@ -1066,7 +1066,7 @@ function D($className='',$appName='@')
 		$className =  C('MODEL_CLASS_PREFIX').$className.C('MODEL_CLASS_SUFFIX');
 		if(!import($appName.'.Model.'.$className)) {
 			// 如果加载失败 尝试自动匹配
-			f(C('COMPONENT_TYPE')==1) {
+			if(C('COMPONENT_TYPE')==1) {
 				import($appName.'.*.Model.'.$className);
 			}else{
 				import($appName.'.Model.*.'.$className);
