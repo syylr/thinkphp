@@ -153,6 +153,9 @@ class HtmlCache extends Base
 			// 模板文件如果更新静态文件需要更新
 			return false;
 		}
+		elseif(!is_numeric($cacheTime) && function_exists($cacheTime)){
+			return $cacheTime($cacheFile);
+		}
 		elseif ($cacheTime != -1 && time() > filemtime($cacheFile)+$cacheTime) {
 			// 文件是否在有效期
 			return false;
