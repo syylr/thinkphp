@@ -40,7 +40,11 @@ class Image extends Base
     static function getImageInfo($img) {
         $imageInfo = getimagesize($img);
         if( $imageInfo!== false) {
-            $imageType = strtolower(substr(image_type_to_extension($imageInfo[2]),1));
+			if(function_exists(image_type_to_extension)){
+				$imageType = strtolower(substr(image_type_to_extension($imageInfo[2]),1));
+			}else{
+				$imageType = strtolower(substr($img,strrpos($img,'.')+1));
+			}
             $imageSize = filesize($img);
             $info = array(
                 "width"=>$imageInfo[0],
