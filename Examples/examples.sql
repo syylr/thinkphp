@@ -260,7 +260,7 @@ CREATE TABLE `think_node` (
 --
 
 INSERT INTO `think_node` (`id`, `name`, `title`, `status`, `remark`, `seqNo`, `pid`, `level`, `type`) VALUES
-(1, 'Admin', '后台项目', 1, '后台管理项目', NULL, 0, 1, 0),
+(1, 'RbacAdmin', '后台项目', 1, '后台管理项目', NULL, 0, 1, 0),
 (2, 'Public', '公共模块', 1, '项目公共模块', NULL, 1, 2, 0),
 (3, 'Index', '默认模块', 1, '项目默认模块', NULL, 1, 2, 0),
 (4, 'Node', '节点管理', 1, '授权节点管理', NULL, 1, 2, 0),
