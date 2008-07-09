@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -106,7 +106,7 @@ function url($action=ACTION_NAME,$module=MODULE_NAME,$route='',$app=APP_NAME,$pa
 		}
 		if(C('HTML_URL_SUFFIX')) {
 			$url .= C('HTML_URL_SUFFIX');
-		}	
+		}
 	}else{
 		$params	=	http_build_query($params);
 		if(!empty($route)) {
@@ -120,7 +120,7 @@ function url($action=ACTION_NAME,$module=MODULE_NAME,$route='',$app=APP_NAME,$pa
 
 /**
  +----------------------------------------------------------
- * 错误输出 
+ * 错误输出
  * 在调试模式下面会输出详细的错误信息
  * 否则就定向到指定的错误页面
  +----------------------------------------------------------
@@ -162,12 +162,12 @@ function halt($error) {
 	        include THINK_PATH.'/Tpl/ThinkException.tpl.php';
 		}
     }
-    else 
+    else
     {
         //否则定向到错误页面
 		$error_page	=	C('ERROR_PAGE');
         if(!empty($error_page)){
-            redirect($error_page); 
+            redirect($error_page);
         }else {
             $e['message'] = C('ERROR_MESSAGE');
 			if(C('EXCEPTION_TMPL_FILE')) {
@@ -179,7 +179,7 @@ function halt($error) {
 			}
         }
     }
-    exit;    	
+    exit;
 }
 
 /**
@@ -187,7 +187,7 @@ function halt($error) {
  * URL重定向
  +----------------------------------------------------------
  * @static
- * @access public 
+ * @access public
  +----------------------------------------------------------
  * @param string $url  要定向的URL地址
  * @param integer $time  定向的延迟时间，单位为秒
@@ -205,7 +205,7 @@ function redirect($url,$time=0,$msg='')
         // redirect
         header("Content-Type:text/html; charset=".C('OUTPUT_CHARSET'));
         if(0===$time) {
-        	header("Location: ".$url); 
+        	header("Location: ".$url);
         }else {
             header("refresh:{$time};url={$url}");
             echo($msg);
@@ -315,7 +315,7 @@ function dump($var, $echo=true,$label=null, $strict=true)
             $output = "<pre>".$label.htmlspecialchars($output,ENT_QUOTES,C('OUTPUT_CHARSET'))."</pre>";
         } else {
             $output = $label . " : " . print_r($var, true);
-        }    	
+        }
     }else {
         ob_start();
         var_dump($var);
@@ -325,8 +325,8 @@ function dump($var, $echo=true,$label=null, $strict=true)
             $output = '<pre>'
                     . $label
                     . htmlspecialchars($output, ENT_QUOTES,C('OUTPUT_CHARSET'))
-                    . '</pre>';    	
-        }    	
+                    . '</pre>';
+        }
     }
     if ($echo) {
         echo($output);
@@ -399,7 +399,7 @@ function auto_charset($fContents,$from='',$to=''){
  * @return object
  +----------------------------------------------------------
  */
-function get_instance_of($className,$method='',$args=array()) 
+function get_instance_of($className,$method='',$args=array())
 {
     static $_instance = array();
 	if(empty($args)) {
@@ -412,15 +412,15 @@ function get_instance_of($className,$method='',$args=array())
             $o = new $className();
             if(method_exists($o,$method)){
                 if(!empty($args)) {
-                	$_instance[$identify] = call_user_func_array(array(&$o, $method), $args);;
+                	$_instance[$identify] = call_user_func_array(array(&$o, $method), $args);
                 }else {
                 	$_instance[$identify] = $o->$method();
                 }
             }
-            else 
+            else
                 $_instance[$identify] = $o;
         }
-        else 
+        else
             halt(L('_CLASS_NOT_EXIST_'));
     }
     return $_instance[$identify];
@@ -466,14 +466,14 @@ function __autoload($classname)
 
 /**
  +----------------------------------------------------------
- * 反序列化对象时自动回调方法 
+ * 反序列化对象时自动回调方法
  +----------------------------------------------------------
  * @param string $classname 对象类名
  +----------------------------------------------------------
  * @return void
  +----------------------------------------------------------
  */
-function unserialize_callback($classname) 
+function unserialize_callback($classname)
 {
 	// 根据自动加载路径设置进行尝试搜索
 	if(C('CALLBACK_LOAD_PATH')) {
@@ -543,7 +543,7 @@ function require_cache($filename)
 /**
  +----------------------------------------------------------
  * 导入所需的类库 支持目录和* 同java的Import
- * 本函数有缓存功能 
+ * 本函数有缓存功能
  +----------------------------------------------------------
  * @param string $class 类库命名空间字符串
  * @param string $baseUrl 起始路径
@@ -562,7 +562,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
 	  $class	=	str_replace(array('.','#'), array('/','.'), $class);
       if(isset($_file[strtolower($class.$baseUrl)]))
             return true;
-      else 
+      else
             $_file[strtolower($class.$baseUrl)] = true;
       //if (preg_match('/[^a-z0-9\-_.*]/i', $class)) throw_exception('Import非法的类名或者目录！');
       if( 0 === strpos($class,'@')) 	$class =  str_replace('@',APP_NAME,$class);
@@ -588,7 +588,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
           $baseUrl =  THINK_PATH.'/'.LIB_DIR.'/';
       }else {
           // 加载其他项目应用类库
-		  $class	=	substr_replace($class, '', 0,strlen($class_strut[0])+1); 
+		  $class	=	substr_replace($class, '', 0,strlen($class_strut[0])+1);
           $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
       }
       if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
@@ -612,7 +612,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
 						//导入类库文件
 						$result	=	require_cache($val);
 				   }
-			   } 
+			   }
 	           return $result;
 			}else{
 	           return false;
@@ -627,13 +627,13 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
 				$_class[strtolower($class)] = $classfile;
 		  }
             //导入目录下的指定类库文件
-            return require_cache($classfile);      
+            return require_cache($classfile);
 	  }
-} 
+}
 
 /**
  +----------------------------------------------------------
- * import方法的别名 
+ * import方法的别名
  +----------------------------------------------------------
  * @param string $package 包名
  * @param string $baseUrl 起始路径
@@ -661,7 +661,7 @@ function vendor($class,$baseUrl = '',$ext='.php',$subdir=false)
 
 /**
  +----------------------------------------------------------
- * 根据PHP各种类型变量生成唯一标识号 
+ * 根据PHP各种类型变量生成唯一标识号
  +----------------------------------------------------------
  * @param mixed $mix 变量
  +----------------------------------------------------------
@@ -705,7 +705,7 @@ function is_instance_of($object, $className)
  * @return Array
  +----------------------------------------------------------
  */
-function get_plugins($path=PLUGIN_PATH,$app=APP_NAME,$ext='.php') 
+function get_plugins($path=PLUGIN_PATH,$app=APP_NAME,$ext='.php')
 {
 	static $plugins = array ();
     if(isset($plugins[$app])) {
@@ -722,17 +722,17 @@ function get_plugins($path=PLUGIN_PATH,$app=APP_NAME,$ext='.php')
     $dir = glob ( $path . '/*' );
     if($dir) {
        foreach($dir as $val) {
-            if(is_dir($val)){    
+            if(is_dir($val)){
                 $subdir = glob($val.'/*'.$ext);
                 if($subdir) {
-                    foreach($subdir as $file) 
+                    foreach($subdir as $file)
                         $plugin_files[] = $file;
                 }
-            }else{    
-                if (strrchr($val, '.') == $ext) 
+            }else{
+                if (strrchr($val, '.') == $ext)
                     $plugin_files[] = $val;
             }
-       } 
+       }
        */
 
     $dir = dir($path);
@@ -740,7 +740,7 @@ function get_plugins($path=PLUGIN_PATH,$app=APP_NAME,$ext='.php')
         $plugin_files = array();
         while (false !== ($file = $dir->read())) {
             if($file == "." || $file == "..")   continue;
-            if(is_dir($path.'/'.$file)){    
+            if(is_dir($path.'/'.$file)){
                     $subdir =  dir($path.'/'.$file);
                     if ($subdir) {
                         while (($subfile = $subdir->read()) !== false) {
@@ -749,12 +749,12 @@ function get_plugins($path=PLUGIN_PATH,$app=APP_NAME,$ext='.php')
                                 $plugin_files[] = "$file/$subfile";
                         }
                         $subdir->close();
-                    }            
-            }else{    
+                    }
+            }else{
                 $plugin_files[] = $file;
             }
-        }    
-        $dir->close(); 
+        }
+        $dir->close();
 
         //对插件文件排序
         if(count($plugin_files)>1) {
@@ -770,7 +770,7 @@ function get_plugins($path=PLUGIN_PATH,$app=APP_NAME,$ext='.php')
             }
             $plugins[$app][] = $plugin_data;
         }
-       return $plugins[$app];    	
+       return $plugins[$app];
     }else {
     	return array();
     }
@@ -805,7 +805,7 @@ function get_plugin_info($plugin_file) {
             $author_name = '<a href="'.trim($author_uri[1]).'" target="_blank">'.$author_name[1].'</a>';
         }else {
             $author_name = $author_name[1];
-        }    	
+        }
     }else {
     	$author_name = '';
     }
@@ -822,7 +822,7 @@ function get_plugin_info($plugin_file) {
  * @return boolean
  +----------------------------------------------------------
  */
-function add_compiler($tag,$compiler) 
+function add_compiler($tag,$compiler)
 {
 	$GLOBALS['template_compiler'][strtoupper($tag)] = $compiler ;
     return ;
@@ -837,11 +837,11 @@ function add_compiler($tag,$compiler)
  * @return boolean
  +----------------------------------------------------------
  */
-function use_compiler($tag) 
+function use_compiler($tag)
 {
 	$args = array_slice(func_get_args(), 1);
 	if(is_callable($GLOBALS['template_compiler'][strtoupper($tag)])) {
-		call_user_func_array($GLOBALS['template_compiler'][strtoupper($tag)],$args);    
+		call_user_func_array($GLOBALS['template_compiler'][strtoupper($tag)],$args);
 	}else{
 		throw_exception(L('_TEMPLATE_ERROR_').'：'.C('TMPL_ENGINE_TYPE'));
 	}
@@ -860,7 +860,7 @@ function use_compiler($tag)
  * @return boolean
  +----------------------------------------------------------
  */
-function add_filter($tag,$function,$priority = 10,$args = 1) 
+function add_filter($tag,$function,$priority = 10,$args = 1)
 {
     static $_filter = array();
 	if ( isset($_filter[APP_NAME.'_'.$tag]["$priority"]) ) {
@@ -911,7 +911,7 @@ function remove_filter($tag, $function_to_remove, $priority = 10) {
  * @return boolean
  +----------------------------------------------------------
  */
-function apply_filter($tag,$string='') 
+function apply_filter($tag,$string='')
 {
 	if (!isset($_SESSION['_filters']) ||  !isset($_SESSION['_filters'][APP_NAME.'_'.$tag]) ) {
 		return $string;
@@ -924,12 +924,12 @@ function apply_filter($tag,$string='')
 			foreach($functions as $function) {
                 if(is_callable($function['function'])) {
                     $args = array_merge(array($string), $args);
-                    $string = call_user_func_array($function['function'],$args);                 	
+                    $string = call_user_func_array($function['function'],$args);
                 }
 			}
 		}
 	}
-	return $string;	
+	return $string;
 }
 
 /**
@@ -937,7 +937,7 @@ function apply_filter($tag,$string='')
  * 字符串截取，支持中文和其他编码
  +----------------------------------------------------------
  * @static
- * @access public 
+ * @access public
  +----------------------------------------------------------
  * @param string $str 需要转换的字符串
  * @param string $start 开始位置
@@ -969,48 +969,48 @@ function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true)
  +----------------------------------------------------------
  * 产生随机字串，可用来自动生成密码 默认长度6位 字母和数字混合
  +----------------------------------------------------------
- * @param string $len 长度 
- * @param string $type 字串类型 
+ * @param string $len 长度
+ * @param string $type 字串类型
  * 0 字母 1 数字 其它 混合
- * @param string $addChars 额外字符 
+ * @param string $addChars 额外字符
  +----------------------------------------------------------
  * @return string
  +----------------------------------------------------------
  */
-function rand_string($len=6,$type='',$addChars='') { 
+function rand_string($len=6,$type='',$addChars='') {
     $str ='';
-    switch($type) { 
+    switch($type) {
         case 0:
-            $chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.$addChars; 
+            $chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.$addChars;
             break;
         case 1:
-            $chars= str_repeat('0123456789',3); 
+            $chars= str_repeat('0123456789',3);
             break;
         case 2:
-            $chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.$addChars; 
+            $chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.$addChars;
             break;
         case 3:
-            $chars='abcdefghijklmnopqrstuvwxyz'.$addChars; 
+            $chars='abcdefghijklmnopqrstuvwxyz'.$addChars;
             break;
 		case 4:
 			$chars = "们以我到他会作时要动国产的一是工就年阶义发成部民可出能方进在了不和有大这主中人上为来分生对于学下级地个用同行面说种过命度革而多子后自社加小机也经力线本电高量长党得实家定深法表着水理化争现所二起政三好十战无农使性前等反体合斗路图把结第里正新开论之物从当两些还天资事队批点育重其思与间内去因件日利相由压员气业代全组数果期导平各基或月毛然如应形想制心样干都向变关问比展那它最及外没看治提五解系林者米群头意只明四道马认次文通但条较克又公孔领军流入接席位情运器并飞原油放立题质指建区验活众很教决特此常石强极土少已根共直团统式转别造切九你取西持总料连任志观调七么山程百报更见必真保热委手改管处己将修支识病象几先老光专什六型具示复安带每东增则完风回南广劳轮科北打积车计给节做务被整联步类集号列温装即毫知轴研单色坚据速防史拉世设达尔场织历花受求传口断况采精金界品判参层止边清至万确究书术状厂须离再目海交权且儿青才证低越际八试规斯近注办布门铁需走议县兵固除般引齿千胜细影济白格效置推空配刀叶率述今选养德话查差半敌始片施响收华觉备名红续均药标记难存测士身紧液派准斤角降维板许破述技消底床田势端感往神便贺村构照容非搞亚磨族火段算适讲按值美态黄易彪服早班麦削信排台声该击素张密害侯草何树肥继右属市严径螺检左页抗苏显苦英快称坏移约巴材省黑武培著河帝仅针怎植京助升王眼她抓含苗副杂普谈围食射源例致酸旧却充足短划剂宣环落首尺波承粉践府鱼随考刻靠够满夫失包住促枝局菌杆周护岩师举曲春元超负砂封换太模贫减阳扬江析亩木言球朝医校古呢稻宋听唯输滑站另卫字鼓刚写刘微略范供阿块某功套友限项余倒卷创律雨让骨远帮初皮播优占死毒圈伟季训控激找叫云互跟裂粮粒母练塞钢顶策双留误础吸阻故寸盾晚丝女散焊功株亲院冷彻弹错散商视艺灭版烈零室轻血倍缺厘泵察绝富城冲喷壤简否柱李望盘磁雄似困巩益洲脱投送奴侧润盖挥距触星松送获兴独官混纪依未突架宽冬章湿偏纹吃执阀矿寨责熟稳夺硬价努翻奇甲预职评读背协损棉侵灰虽矛厚罗泥辟告卵箱掌氧恩爱停曾溶营终纲孟钱待尽俄缩沙退陈讨奋械载胞幼哪剥迫旋征槽倒握担仍呀鲜吧卡粗介钻逐弱脚怕盐末阴丰雾冠丙街莱贝辐肠付吉渗瑞惊顿挤秒悬姆烂森糖圣凹陶词迟蚕亿矩康遵牧遭幅园腔订香肉弟屋敏恢忘编印蜂急拿扩伤飞露核缘游振操央伍域甚迅辉异序免纸夜乡久隶缸夹念兰映沟乙吗儒杀汽磷艰晶插埃燃欢铁补咱芽永瓦倾阵碳演威附牙芽永瓦斜灌欧献顺猪洋腐请透司危括脉宜笑若尾束壮暴企菜穗楚汉愈绿拖牛份染既秋遍锻玉夏疗尖殖井费州访吹荣铜沿替滚客召旱悟刺脑措贯藏敢令隙炉壳硫煤迎铸粘探临薄旬善福纵择礼愿伏残雷延烟句纯渐耕跑泽慢栽鲁赤繁境潮横掉锥希池败船假亮谓托伙哲怀割摆贡呈劲财仪沉炼麻罪祖息车穿货销齐鼠抽画饲龙库守筑房歌寒喜哥洗蚀废纳腹乎录镜妇恶脂庄擦险赞钟摇典柄辩竹谷卖乱虚桥奥伯赶垂途额壁网截野遗静谋弄挂课镇妄盛耐援扎虑键归符庆聚绕摩忙舞遇索顾胶羊湖钉仁音迹碎伸灯避泛亡答勇频皇柳哈揭甘诺概宪浓岛袭谁洪谢炮浇斑讯懂灵蛋闭孩释乳巨徒私银伊景坦累匀霉杜乐勒隔弯绩招绍胡呼痛峰零柴簧午跳居尚丁秦稍追梁折耗碱殊岗挖氏刃剧堆赫荷胸衡勤膜篇登驻案刊秧缓凸役剪川雪链渔啦脸户洛孢勃盟买杨宗焦赛旗滤硅炭股坐蒸凝竟陷枪黎救冒暗洞犯筒您宋弧爆谬涂味津臂障褐陆啊健尊豆拔莫抵桑坡缝警挑污冰柬嘴啥饭塑寄赵喊垫丹渡耳刨虎笔稀昆浪萨茶滴浅拥穴覆伦娘吨浸袖珠雌妈紫戏塔锤震岁貌洁剖牢锋疑霸闪埔猛诉刷狠忽灾闹乔唐漏闻沈熔氯荒茎男凡抢像浆旁玻亦忠唱蒙予纷捕锁尤乘乌智淡允叛畜俘摸锈扫毕璃宝芯爷鉴秘净蒋钙肩腾枯抛轨堂拌爸循诱祝励肯酒绳穷塘燥泡袋朗喂铝软渠颗惯贸粪综墙趋彼届墨碍启逆卸航衣孙龄岭骗休借".$addChars;
 			break;
         default :
             // 默认去掉了容易混淆的字符oOLl和数字01，要添加请使用addChars参数
-            $chars='ABCDEFGHIJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'.$addChars; 
+            $chars='ABCDEFGHIJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'.$addChars;
             break;
     }
     if($len>10 ) {//位数过长重复字符串一定次数
-        $chars= $type==1? str_repeat($chars,$len) : str_repeat($chars,5); 
+        $chars= $type==1? str_repeat($chars,$len) : str_repeat($chars,5);
     }
 	if($type!=4) {
 		$chars   =   str_shuffle($chars);
 		$str     =   substr($chars,0,$len);
 	}else{
 		// 中文随机字
-		for($i=0;$i<$len;$i++){   
-		  $str.= msubstr($chars, floor(mt_rand(0,mb_strlen($chars,'utf-8')-1)),1);   
-		} 
+		for($i=0;$i<$len;$i++){
+		  $str.= msubstr($chars, floor(mt_rand(0,mb_strlen($chars,'utf-8')-1)),1);
+		}
 	}
     return $str;
 }
@@ -1024,13 +1024,13 @@ function rand_string($len=6,$type='',$addChars='') {
  * @return string
  +----------------------------------------------------------
  */
-function build_verify ($length=4,$mode=1) { 
+function build_verify ($length=4,$mode=1) {
     return rand_string($length,$mode);
 }
 
 /**
  +----------------------------------------------------------
- * stripslashes扩展 可用于数组 
+ * stripslashes扩展 可用于数组
  +----------------------------------------------------------
  * @param mixed $value 变量
  +----------------------------------------------------------
@@ -1041,10 +1041,10 @@ if(!function_exists('stripslashes_deep')) {
     function stripslashes_deep($value) {
        $value = is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value);
        return $value;
-    }	
+    }
 }
 
-function D($className='',$appName='@') 
+function D($className='',$appName='@')
 {
 	static $_model = array();
 	if(empty($className)) {
@@ -1076,13 +1076,13 @@ function D($className='',$appName='@')
     if(class_exists($className)) {
         $model = new $className();
 		$_model[$appName.$className] =	$model;
-        return $model;    	
+        return $model;
     }else {
     	return false;
     }
 }
 
-function A($className,$appName='@') 
+function A($className,$appName='@')
 {
 	static $_action = array();
 	if(isset($_action[$appName.$className])) {
@@ -1111,7 +1111,7 @@ function A($className,$appName='@')
     if(class_exists($className)) {
         $action = new $className();
 		$_actioin[$appName.$className] =	$action;
-        return $action;    	
+        return $action;
     }else {
     	return false;
     }
@@ -1216,7 +1216,7 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
 	// 获取缓存数据
 	if(file_exists($filename) && false !== $content = file_get_contents($filename)) {
 		$expire  =  (int)substr($content,44, 12);
-		if($expire != -1 && time() > filemtime($filename) + $expire) { 
+		if($expire != -1 && time() > filemtime($filename) + $expire) {
 			//缓存过期删除缓存文件
 			unlink($filename);
 			return false;
@@ -1254,8 +1254,8 @@ function I($class,$baseUrl = '',$ext='.class.php') {
 function xml_encode($data,$encoding='utf-8',$root="think") {
 	$xml = '<?xml version="1.0" encoding="'.$encoding.'"?>';
 	$xml.= '<'.$root.'>';
-	$xml.= data_to_xml($data);   
-	$xml.= '</'.$root.'>'; 
+	$xml.= data_to_xml($data);
+	$xml.= '</'.$root.'>';
 	return $xml;
 }
 
@@ -1292,7 +1292,7 @@ function clearCache($type=0,$path=NULL) {
 			}
 		}
 		import("ORG.Io.Dir");
-		Dir::del($path);   
+		Dir::del($path);
 	}
 
 // 创建项目目录结构
@@ -1302,29 +1302,29 @@ function buildAppDir() {
 		mk_dir(APP_PATH,0777);
 	}
 	if(is_writeable(APP_PATH)) {
-		if(!is_dir(LIB_PATH)) 
+		if(!is_dir(LIB_PATH))
 			mkdir(LIB_PATH,0777);				// 创建项目应用目录
-		if(!is_dir(CONFIG_PATH)) 
+		if(!is_dir(CONFIG_PATH))
 			mkdir(CONFIG_PATH,0777);		//	创建项目配置目录
-		if(!is_dir(COMMON_PATH)) 
+		if(!is_dir(COMMON_PATH))
 			mkdir(COMMON_PATH,0777);	//	创建项目公共目录
-		if(!is_dir(LANG_PATH)) 
+		if(!is_dir(LANG_PATH))
 			mkdir(LANG_PATH,0777);			//	创建项目语言包目录
-		if(!is_dir(CACHE_PATH)) 
+		if(!is_dir(CACHE_PATH))
 			mkdir(CACHE_PATH,0777);		//	创建模板缓存目录
-		if(!is_dir(TMPL_PATH)) 
+		if(!is_dir(TMPL_PATH))
 			mkdir(TMPL_PATH,0777);			//	创建模板目录
-		if(!is_dir(TMPL_PATH.'default/')) 
+		if(!is_dir(TMPL_PATH.'default/'))
 			mkdir(TMPL_PATH.'default/',0777);			//	创建模板默认主题目录
-		if(!is_dir(LOG_PATH)) 
+		if(!is_dir(LOG_PATH))
 			mkdir(LOG_PATH,0777);			//	创建项目日志目录
-		if(!is_dir(TEMP_PATH)) 
+		if(!is_dir(TEMP_PATH))
 			mkdir(TEMP_PATH,0777);			//	创建临时缓存目录
-		if(!is_dir(DATA_PATH)) 
+		if(!is_dir(DATA_PATH))
 			mkdir(DATA_PATH,0777);			//	创建数据缓存目录
-		if(!is_dir(LIB_PATH.'Model/')) 
+		if(!is_dir(LIB_PATH.'Model/'))
 			mkdir(LIB_PATH.'Model/',0777);	//	创建模型目录
-		if(!is_dir(LIB_PATH.'Action/')) 
+		if(!is_dir(LIB_PATH.'Action/'))
 			mkdir(LIB_PATH.'Action/',0777);	//	创建控制器目录
 		// 目录安全写入
 		if(!defined('BUILD_DIR_SECURE')) define('BUILD_DIR_SECURE',false);
@@ -1351,15 +1351,15 @@ function buildAppDir() {
 		}
 		// 写入测试Action
 		if(!file_exists(LIB_PATH.'Action/IndexAction.class.php')) {
-			$content	 =	 
-'<?php 
+			$content	 =
+'<?php
 // 本类由系统自动生成，仅供测试用途
 class IndexAction extends Action{
 	public function index(){
 		header("Content-Type:text/html; charset=utf-8");
 		echo "<div style=\'font-weight:normal;color:blue;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;font-size:14px;font-family:Tahoma\'>^_^ Hello,欢迎使用<span style=\'font-weight:bold;color:red\'>ThinkPHP</span></div>";
 	}
-} 
+}
 ?>';
 			file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
 		}
