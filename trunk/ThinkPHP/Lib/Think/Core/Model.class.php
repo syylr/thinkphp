@@ -1227,13 +1227,14 @@ class Model extends Base  implements IteratorAggregate
 					if(empty($name) || $mappingName == $name) {
 						$mappingType = !empty($val['mapping_type'])?$val['mapping_type']:$val;	//  关联类型
 						$mappingClass  = !empty($val['class_name'])?$val['class_name']:$key;			//  关联类名
-						$mappingFk   =  !empty($val['foreign_key'])?$val['foreign_key']:$this->name.'_id';		//  关联外键
 						$mappingFields = !empty($val['mapping_fields'])?$val['mapping_fields']:'*';		// 映射字段
 						$mappingCondition = !empty($val['condition'])?$val['condition']:'1=1';			// 关联条件
 						if(strtoupper($mappingClass)==strtoupper($this->name)) {
 							// 自引用关联 获取父键名
-							$mappingParentKey = !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
-						}
+							$mappingFk   =   !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
+						}else{
+                            $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:$this->name.'_id';		//  关联外键
+                        }
 						// 获取关联模型对象
 						$model = D($mappingClass);
 						switch($mappingType) {
@@ -1363,21 +1364,19 @@ class Model extends Base  implements IteratorAggregate
 						// 操作制定的关联
 						$mappingType = !empty($val['mapping_type'])?$val['mapping_type']:$val;	//  关联类型
 						$mappingClass  = !empty($val['class_name'])?$val['class_name']:$key;			//  关联类名
-						$mappingFk   =  $val['foreign_key']?$val['foreign_key']:$this->name.'_id';		//  关联外键
-						$mappingFields = $val['mapping_fields'];		// 映射字段
 						// 当前数据对象主键值
 						$pk	=	$data[$this->getPk()];
 						$mappingCondition = "{$mappingFk}={$pk}";
 						if(strtoupper($mappingClass)==strtoupper($this->name)) {
 							// 自引用关联 获取父键名
-							$mappingParentKey = !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
-						}
+							$mappingFk   =   !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
+						}else{
+                            $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:$this->name.'_id';		//  关联外键
+                        }
 						// 获取关联model对象
 						$model = D($mappingClass);
-						$mappingData	=	isset($relation['data'])?$relation['data']:$data[$mappingName];
-						if(is_instance_of($mappingData,'HashMap') || is_instance_of($mappingData,'ResultSet')){
-							$mappingData = $mappingData->toArray();
-						}elseif(is_object($mappingData)){
+						$mappingData	=	$data[$mappingName];
+						if(is_object($mappingData)){
 							$mappingData =	 get_object_vars($mappingData);
 						}
 						if(!empty($mappingData)) {
