@@ -258,7 +258,13 @@ class Model extends Base  implements IteratorAggregate
 					unset($this->data[$field]);
 				}
 			}
-		}
+		}elseif(strtolower(substr($method,0,8))=='relation'){
+            $type	 =	 strtoupper(substr($method,8));
+            if(in_array($type,array('ADD','SAVE','DEL'),true)) {
+                array_unshift($args,$type);
+                return call_user_func_array(array(&$this, 'opRelation'), $args);
+            }
+        }
 		return;
 	}
 
