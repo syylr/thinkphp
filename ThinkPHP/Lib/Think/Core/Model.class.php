@@ -1202,27 +1202,25 @@ class Model extends Base  implements IteratorAggregate
 	/**
      +----------------------------------------------------------
      * 获取返回数据的关联记录
-	 * relation['name'] 关联名称 relation['type'] 关联类型
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
      * @param mixed $result  返回数据
-     * @param array $relation  关联信息
+     * @param string $name  关联名称
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function getRelation(&$result,$relation=array())
+	public function getRelation(&$result,$name='')
 	{
 		if(!empty($this->_link)) {
-			foreach($this->_link as $val) {
-				if(empty($relation['type']) || $val['mapping_type']==$relation['type']) {
-					$mappingName =  !empty($val['mapping_name'])?$val['mapping_name']:$val['class_name'];	// 映射名称
-					if(empty($relation['name']) || $mappingName == $relation['name']) {
-						$mappingType = $val['mapping_type'];	//  关联类型
-						$mappingClass  = $val['class_name'];			//  关联类名
+			foreach($this->_link as $key=>$val) {
+					$mappingName =  !empty($val['mapping_name'])?$val['mapping_name']:$key;	// 映射名称
+					if(empty($name) || $mappingName == $name) {
+						$mappingType = !empty($val['mapping_type'])?$val['mapping_type']:$val;	//  关联类型
+						$mappingClass  = !empty($val['class_name'])?$val['class_name']:$key;			//  关联类名
 						$mappingFk   =  !empty($val['foreign_key'])?$val['foreign_key']:$this->name.'_id';		//  关联外键
 						$mappingFields = !empty($val['mapping_fields'])?$val['mapping_fields']:'*';		// 映射字段
 						$mappingCondition = !empty($val['condition'])?$val['condition']:'1=1';			// 关联条件
@@ -1296,7 +1294,6 @@ class Model extends Base  implements IteratorAggregate
 							$result->$mappingName = $relationData;
 						}
 					}
-				}
 			}
 		}
 		return $result;
@@ -1309,24 +1306,17 @@ class Model extends Base  implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      * @param mixed $result  返回数据
-     * @param array $relation  关联信息
+     * @param string $name  关联名称
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function getRelations(&$resultSet,$relation=array()) {
+	public function getRelations(&$resultSet,$name='') {
 		// 获取记录集的主键列表
-		/*
-		$pk = array();
 		foreach($resultSet as $key=>$val) {
-			$val	=	(array)$val;
-			$pk[$key]	=	$val[$this->getPk()];
-		}
-		$pks	=	implode(',',array_unique($pk));*/
-		foreach($resultSet as $key=>$val) {
-			$val  = $this->getRelation($val,$relation);
+			$val  = $this->getRelation($val,$name);
 			$resultSet[$key]	=	$val;
 		}
 	}
@@ -1339,14 +1329,14 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @param string $opType  操作方式 ADD SAVE DEL
      * @param mixed $data  数据对象
-     * @param array $relation 关联信息
+     * @param string $name 关联名称
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function opRelation($opType,$data,$relation=array())
+	public function opRelation($opType,$data,$name='')
 	{
 		$result	=	false;
 		// 把HashMap对象转换成数组
@@ -1360,17 +1350,15 @@ class Model extends Base  implements IteratorAggregate
 		}
 		if(!empty($this->_link)) {
 			// 遍历关联定义
-			foreach($this->_link as $val) {
-				if(empty($relation['type']) || $val['mapping_type']==$relation['type']) {
+			foreach($this->_link as $key=>$val) {
 					// 操作制定关联类型
-					$mappingName =  $val['mapping_name']?$val['mapping_name']:$val['class_name'];	// 映射名称
-					if(empty($relation['name']) || $mappingName == $relation['name']) {
+					$mappingName =  $val['mapping_name']?$val['mapping_name']:$key;	// 映射名称
+					if(empty($name) || $mappingName == $name) {
 						// 操作制定的关联
-						$mappingType = $val['mapping_type'];	//  关联类型
-						$mappingClass  = $val['class_name'];			//  关联类名
+						$mappingType = !empty($val['mapping_type'])?$val['mapping_type']:$val;	//  关联类型
+						$mappingClass  = !empty($val['class_name'])?$val['class_name']:$key;			//  关联类名
 						$mappingFk   =  $val['foreign_key']?$val['foreign_key']:$this->name.'_id';		//  关联外键
 						$mappingFields = $val['mapping_fields'];		// 映射字段
-						//$mappingCondition = $val['condition'];			// 关联条件
 						// 当前数据对象主键值
 						$pk	=	$data[$this->getPk()];
 						$mappingCondition = "{$mappingFk}={$pk}";
@@ -1459,7 +1447,6 @@ class Model extends Base  implements IteratorAggregate
 									}
 									break;
 							}
-						}
 					}
 				}
 			}
