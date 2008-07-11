@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -65,7 +65,7 @@ class Model extends Base  implements IteratorAggregate
 
 	// 查询表达式参数
 	protected $options	=	array();
-	
+
 	// 数据列表信息
 	protected $dataList	=	array();
 
@@ -78,8 +78,6 @@ class Model extends Base  implements IteratorAggregate
 	protected $aggregation = array();
 	// 是否为复合对象
 	protected $composite = false;
-	// 是否为静态模型
-	protected $staticModel = false;
 	// 是否为视图模型
 	protected $viewModel = false;
 
@@ -104,10 +102,10 @@ class Model extends Base  implements IteratorAggregate
 
 	/**
      +----------------------------------------------------------
-     * 架构函数 
+     * 架构函数
 	 * 取得DB类的实例对象 数据表字段检查
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $data 要创建的数据对象内容
      +----------------------------------------------------------
@@ -120,34 +118,23 @@ class Model extends Base  implements IteratorAggregate
 		$this->name	=	$this->getModelName();
 		// 如果不是复合对象进行数据库初始化操作
 		if(!$this->composite) {
-			// 静态模型
-			if($this->staticModel && S($this->name)) {
-				// 获取数据后生成静态缓存
-				$this->dataList	=	S($this->name);
-			}else{
-				import("Think.Db.Db");
-				// 获取数据库操作对象
-				if(!empty($this->connection)) {
-					// 当前模型有独立的数据库连接信息
-					$this->db = Db::getInstance($this->connection);
-				}else{
-					$this->db = Db::getInstance();
-				}
-				// 设置数据库的返回数据格式
-				$this->db->resultType	=	C('DATA_RESULT_TYPE');
-				// 设置默认的数据库连接
-				$this->_db[0]	=	&$this->db;
-				// 设置表前后缀
-				$this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
-				$this->tableSuffix = $this->tableSuffix?$this->tableSuffix:C('DB_SUFFIX');
-				// 数据表字段检测
-				$this->_checkTableInfo();
-				// 静态模型
-				if($this->staticModel) {
-					// 获取数据后生成静态缓存
-					S($this->name,$this->findAll());
-				}
-			}
+            import("Think.Db.Db");
+            // 获取数据库操作对象
+            if(!empty($this->connection)) {
+                // 当前模型有独立的数据库连接信息
+                $this->db = Db::getInstance($this->connection);
+            }else{
+                $this->db = Db::getInstance();
+            }
+            // 设置数据库的返回数据格式
+            $this->db->resultType	=	C('DATA_RESULT_TYPE');
+            // 设置默认的数据库连接
+            $this->_db[0]	=	&$this->db;
+            // 设置表前后缀
+            $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
+            $this->tableSuffix = $this->tableSuffix?$this->tableSuffix:C('DB_SUFFIX');
+            // 数据表字段检测
+            $this->_checkTableInfo();
 		}
 		// 如果有data数据进行实例化，则创建数据对象
 		if(!empty($data)) {
@@ -160,7 +147,7 @@ class Model extends Base  implements IteratorAggregate
      * 取得模型实例对象
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return mixed 返回数据模型实例
      +----------------------------------------------------------
@@ -174,7 +161,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 设置数据对象的值 （魔术方法）
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param string $name 名称
      * @param mixed $value 值
@@ -191,7 +178,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取数据对象的值 （魔术方法）
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param string $name 名称
      +----------------------------------------------------------
@@ -212,7 +199,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 利用__call方法重载 实现一些特殊的Model方法 （魔术方法）
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param string $method 方法名称
      * @param mixed $args 调用参数
@@ -282,7 +269,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 数据库Create操作入口
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param array $data 要create的数据
      * @param boolean $autoLink 是否关联写入
@@ -316,7 +303,7 @@ class Model extends Base  implements IteratorAggregate
 			return $insertId ?	$insertId	: $result;
 		}
 	}
-	// Create回调方法 before after 
+	// Create回调方法 before after
 	protected function _before_create(&$data) {return true;}
 	protected function _after_create(&$data) {}
 
@@ -324,7 +311,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 数据库Update操作入口
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param array $data 要create的数据
      * @param mixed $where 更新条件
@@ -370,7 +357,7 @@ class Model extends Base  implements IteratorAggregate
 			return true;
 		}
 	}
-	// 更新回调方法 
+	// 更新回调方法
 	protected function _before_update(&$data,$where) {return true;}
 	protected function _after_update(&$data,$where) {}
 
@@ -378,16 +365,16 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 数据库Read操作入口
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param mixed $condition 查询条件
      * @param string $fields 查询字段
      * @param boolean $all 是否返回多个数据
-     * @param string $order 
-     * @param string $limit 
-     * @param string $group 
-     * @param string $having 
-     * @param string $join 
+     * @param string $order
+     * @param string $limit
+     * @param string $group
+     * @param string $having
+     * @param string $join
      * @param boolean $cache 是否查询缓存
      * @param boolean $relation 是否关联查询
      * @param boolean $lazy 是否惰性查询
@@ -460,12 +447,12 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 数据库Delete操作入口
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param mixed $data 删除的数据
      * @param mixed $condition 查询条件
-     * @param string $limit 
-     * @param string $order 
+     * @param string $limit
+     * @param string $order
      * @param boolean $autoLink 是否关联删除
      +----------------------------------------------------------
      * @return boolean
@@ -514,7 +501,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 数据库Query操作入口(使用SQL语句的Query）
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param mixed $sql 查询的SQL语句
      * @param boolean $cache 是否使用查询缓存
@@ -557,7 +544,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 数据表字段检测 并自动缓存
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -584,7 +571,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 强制刷新数据表信息
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -630,7 +617,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取数据集的文本字段
      +----------------------------------------------------------
-     * @access pubic 
+     * @access pubic
      +----------------------------------------------------------
      * @param mixed $resultSet 查询的数据
      * @param string $field 查询的字段
@@ -651,7 +638,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取数据的文本字段
      +----------------------------------------------------------
-     * @access pubic 
+     * @access pubic
      +----------------------------------------------------------
      * @param mixed $data 查询的数据
      * @param string $field 查询的字段
@@ -688,7 +675,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 保存File方式的字段
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $data 保存的数据
      +----------------------------------------------------------
@@ -710,7 +697,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 删除File方式的字段
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $data 保存的数据
      * @param string $field 查询的字段
@@ -738,7 +725,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取Iterator因子
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return Iterate
      +----------------------------------------------------------
@@ -763,7 +750,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 把数据对象转换成数组
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
@@ -782,7 +769,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 新增数据 支持数组、HashMap对象、std对象、数据对象
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $data 数据
      * @param boolean $autoLink 自动关联写入
@@ -833,7 +820,7 @@ class Model extends Base  implements IteratorAggregate
      * 对保存到数据库的数据对象进行处理
 	 * 统一使用数组方式到数据库中间层 facade字段支持
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $data 要操作的数据
      +----------------------------------------------------------
@@ -914,7 +901,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 检查条件中的视图字段
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $data 条件表达式
      +----------------------------------------------------------
@@ -922,7 +909,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
-     */	
+     */
 	public function checkCondition($data) {
 		 if((empty($data) || (is_instance_of($data,'HashMap') && $data->isEmpty())) && !empty($this->viewCondition)) {
 			 $data = $this->viewCondition;
@@ -962,7 +949,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 检查fields表达式中的视图字段
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $fields 字段
      +----------------------------------------------------------
@@ -970,7 +957,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
-     */	
+     */
 	public function checkFields($fields) {
 		if(empty($fields) || '*'==$fields ) {
 			// 获取全部视图字段
@@ -1008,7 +995,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 检查Order表达式中的视图字段
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $order 字段
      +----------------------------------------------------------
@@ -1016,7 +1003,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
-     */	
+     */
 	public function checkOrder($order) {
 		 if(!empty($order)) {
 			$orders = explode(',',$order);
@@ -1048,7 +1035,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 检查Group表达式中的视图字段
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $group 字段
      +----------------------------------------------------------
@@ -1056,7 +1043,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
-     */	
+     */
 	public function checkGroup($group) {
 		 if(!empty($group)) {
 			//$group = $this->getPk();
@@ -1089,7 +1076,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 批量新增数据
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $dataList 数据列表
      * @param boolean $autoLink 自动关联操作
@@ -1114,7 +1101,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 更新数据
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $data 要更新的数据
      * @param mixed $where 更新数据的条件
@@ -1167,7 +1154,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 检查乐观锁
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param array $data  当前数据
      * @param mixed $where 查询条件
@@ -1217,7 +1204,7 @@ class Model extends Base  implements IteratorAggregate
      * 获取返回数据的关联记录
 	 * relation['name'] 关联名称 relation['type'] 关联类型
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $result  返回数据
      * @param array $relation  关联信息
@@ -1319,7 +1306,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取返回数据集的关联记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $result  返回数据
      * @param array $relation  关联信息
@@ -1348,7 +1335,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 操作关联数据
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $opType  操作方式 ADD SAVE DEL
      * @param mixed $data  数据对象
@@ -1484,7 +1471,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据主键删除数据
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $id 主键值
      * @param boolean $autoLink  是否关联删除
@@ -1502,7 +1489,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据多个主键删除数据
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $ids 多个主键值
      * @param integer $limit 要删除的记录数
@@ -1521,7 +1508,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据某个字段删除数据
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field 字段名称
      * @param mixed $value 字段值
@@ -1542,7 +1529,7 @@ class Model extends Base  implements IteratorAggregate
      * 根据条件删除表数据
      * 如果成功返回删除记录个数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $data 删除条件
      * @param integer $limit 要删除的记录数
@@ -1576,7 +1563,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据条件删除数据
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $condition 删除条件
      * @param boolean $autoLink  是否关联删除
@@ -1606,7 +1593,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 清空表数据
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -1627,7 +1614,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据主键得到一条记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param int $id 主键的值
      * @param string $fields 字段名，默认为*
@@ -1649,7 +1636,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据主键范围得到多个记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $ids 主键的范围 如 1,3,4,7 array(1,2,3)
      * @param string $fields 字段名，默认为*
@@ -1674,7 +1661,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据某个字段得到一条记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field 字段名称
      * @param mixed $value 字段的值
@@ -1697,7 +1684,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据某个字段获取全部记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field 字段名称
      * @param mixed $value 字段的值
@@ -1720,7 +1707,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据条件得到一条记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $condition 条件
      * @param string $fields 字段名，默认为*
@@ -1747,7 +1734,7 @@ class Model extends Base  implements IteratorAggregate
      * 根据条件得到一条记录
      * 并且返回关联记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $condition 条件
      * @param string $fields 字段名，默认为*
@@ -1768,14 +1755,14 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查找记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $condition  条件
      * @param string $fields  查询字段
      * @param string $order  排序
-     * @param string $limit  
-     * @param string $group  
-     * @param string $having 
+     * @param string $limit
+     * @param string $group
+     * @param string $having
      * @param string $join
      * @param boolean $cache 是否读取缓存
      * @param mixed $relation 是否关联查询
@@ -1788,9 +1775,6 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function findAll($condition='',$fields='*',$order='',$limit='',$group='',$having='',$join='',$cache=false,$relation=false,$lazy=false)
 	{
-		if($this->staticModel) {
-			return $this->dataList;
-		}
 		if(is_string($condition) && preg_match('/^\d+(\,\d+)+$/',$condition)) {
 			return $this->getByIds($condition,$fields,$order,$limit,$cache,$relation,$lazy);
 		}
@@ -1801,14 +1785,14 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询记录并返回相应的关联记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $condition  条件
      * @param string $fields  查询字段
      * @param string $order  排序
-     * @param string $limit  
-     * @param string $group  
-     * @param string $having 
+     * @param string $limit
+     * @param string $group
+     * @param string $having
      * @param string $join
      * @param boolean $cache 是否读取缓存
      * @param boolean $lazy 是否惰性查询
@@ -1827,14 +1811,14 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查找前N个记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param integer $count 记录个数 
+     * @param integer $count 记录个数
      * @param mixed $condition  条件
      * @param string $fields  查询字段
      * @param string $order  排序
-     * @param string $group  
-     * @param string $having 
+     * @param string $group
+     * @param string $having
      * @param string $join
      * @param boolean $cache 是否读取缓存
      * @param mixed $relation 是否关联查询
@@ -1853,7 +1837,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * SQL查询
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $sql  SQL指令
      * @param boolean $cache  是否缓存
@@ -1883,7 +1867,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 执行SQL语句
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $sql  SQL指令
      +----------------------------------------------------------
@@ -1912,7 +1896,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取一条记录的某个字段值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  查询条件
@@ -1936,7 +1920,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取数据集的个别字段值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field 字段名称
      * @param mixed $condition  条件
@@ -1963,7 +1947,7 @@ class Model extends Base  implements IteratorAggregate
 	 * 支持使用数据库字段和方法
 	 * 例如 setField('score','(score+1)','id=5');
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param string $value  字段值
@@ -1986,7 +1970,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 字段值增长
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  条件
@@ -2009,7 +1993,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 字段值减少
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  条件
@@ -2032,7 +2016,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取查询结果中的某个字段值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param ArrayObject $rs  查询结果
      * @param string $field  字段名
@@ -2057,7 +2041,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取查询结果中的多个字段值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param ArrayObject $rs  查询结果
      * @param string $field  字段名用逗号分割多个
@@ -2093,7 +2077,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 统计满足条件的记录个数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $condition  条件
      * @param string $field  要统计的字段 默认为*
@@ -2115,7 +2099,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 取得某个字段的最大值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  条件
@@ -2137,7 +2121,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 取得某个字段的最小值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  条件
@@ -2159,7 +2143,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 统计某个字段的总和
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  条件
@@ -2181,7 +2165,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 统计某个字段的平均值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  条件
@@ -2204,7 +2188,7 @@ class Model extends Base  implements IteratorAggregate
      * 查询符合条件的第N条记录
      * 0 表示第一条记录 -1 表示最后一条记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $position 记录位置
      * @param mixed $condition 条件
@@ -2245,7 +2229,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取满足条件的第一条记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $condition 条件
      * @param string $fields 字段名，默认为*
@@ -2263,7 +2247,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取满足条件的第后一条记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $condition 条件
      * @param string $fields 字段名，默认为*
@@ -2281,7 +2265,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 记录乐观锁
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $data 数据对象
      +----------------------------------------------------------
@@ -2304,7 +2288,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 把查询结果转换为数据（集）对象
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $resultSet 查询结果记录集
      * @param Boolean $returnList 是否返回记录集
@@ -2376,7 +2360,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 创建数据对象 但不保存到数据库
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $data 创建数据
      * @param string $type 创建类型
@@ -2418,7 +2402,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 创建数据列表对象 但不保存到数据库
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $dataList 数据列表
      * @param string $type 创建类型
@@ -2453,7 +2437,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 创建数据对象 但不保存到数据库
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param mixed $data 创建数据
      * @param string $type 创建类型
@@ -2547,7 +2531,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 自动表单处理
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param array $data 创建数据
      * @param string $type 创建类型
@@ -2599,7 +2583,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 自动表单验证
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param array $data 创建数据
      * @param string $type 创建类型
@@ -2680,7 +2664,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 返回验证的错误信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -2697,7 +2681,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据验证因子验证字段
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param array $data 创建数据
      * @param string $val 验证规则
@@ -2761,7 +2745,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 得到当前的数据对象名称
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -2784,7 +2768,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 得到完整的数据表名
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -2822,7 +2806,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 得到关联的数据表名
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $relation 关联对象
      +----------------------------------------------------------
@@ -2842,7 +2826,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 开启惰性查询
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -2859,7 +2843,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 关闭惰性查询
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -2876,7 +2860,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 开启锁机制
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -2893,7 +2877,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 关闭锁机制
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -2910,7 +2894,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 启动事务
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -2928,7 +2912,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 提交事务
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -2944,7 +2928,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 事务回滚
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -2960,7 +2944,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 得到主键名称
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -2973,7 +2957,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 返回当前错误信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -2986,7 +2970,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 返回数据库字段信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -2999,7 +2983,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 返回最后插入的ID
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -3012,7 +2996,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 返回最后执行的sql语句
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -3025,7 +3009,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 增加数据库连接
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $config 数据库连接信息
 	 * 支持批量添加 例如 array(1=>$config1,2=>$config2)
@@ -3054,7 +3038,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 删除数据库连接
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
 	 * @param integer $linkNum  创建的连接序号
      +----------------------------------------------------------
@@ -3073,7 +3057,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 切换数据库连接
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
 	 * @param integer $linkNum  创建的连接序号
      +----------------------------------------------------------
@@ -3094,9 +3078,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装 where
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param mixed $where 
+     * @param mixed $where
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
@@ -3110,9 +3094,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装 order
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param string $order 
+     * @param string $order
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
@@ -3126,9 +3110,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装 table
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param mixed $table 
+     * @param mixed $table
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
@@ -3142,9 +3126,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装 group
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param string $group 
+     * @param string $group
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
@@ -3158,9 +3142,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装 field
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param string $field 
+     * @param string $field
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
@@ -3174,9 +3158,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装 limit
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param array $limit 
+     * @param array $limit
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
@@ -3190,9 +3174,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装 join
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param array $join 
+     * @param array $join
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
@@ -3206,9 +3190,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装 having
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param string $having 
+     * @param string $having
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
@@ -3222,7 +3206,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装 惰性
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param boolean $lazy 惰性查询
      +----------------------------------------------------------
@@ -3238,7 +3222,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装lock
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param boolean $lock 是否锁定
      +----------------------------------------------------------
@@ -3254,7 +3238,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装lock
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param boolean $lock 是否锁定
      +----------------------------------------------------------
@@ -3270,7 +3254,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 查询SQL组装
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $sql sql语句
      +----------------------------------------------------------
@@ -3281,12 +3265,12 @@ class Model extends Base  implements IteratorAggregate
 		$this->options['sql']	=	$sql;
 		return $this;
 	}
-	
+
 	/**
      +----------------------------------------------------------
      * 数据SQL组装
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $data 要插入或者保存的数据
      +----------------------------------------------------------
