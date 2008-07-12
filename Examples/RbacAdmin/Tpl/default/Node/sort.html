@@ -12,7 +12,7 @@ sendForm('form1','__URL__/saveSort/','result');
 //-->
 </SCRIPT>
 <div id="result" class="result none"></div>
-<html:import type="js" file="Js.Form.SortSelect" />
+<html:link type="js" href="../Public/Js/Form/SortSelect.js" />
 <FORM METHOD=POST name = 'form1' >
 <html:sort source="sortList" title="模块排序" size="15" show="title" />
 <div align="center">
@@ -25,10 +25,10 @@ sendForm('form1','__URL__/saveSort/','result');
 <TR >
 	<TD width="75%" align="right">
 	<div class="solid">
-	<SELECT class="multiSelect" name="sort" size="15">
+	<SELECT class="MultiSelect" name="sort" size="15">
 	<?php $i=1; ?>
-<voList name="sortList" id="module" >
-<option value="{vo:module|id}"><?php echo $i++; ?>.{vo:module|title}</option>
+<voList name="sortList" id="vo" >
+<option value="{$vo.id}"><?php echo $i++; ?>.{$vo.title}</option>
 </voList>
 </SELECT></div></TD>
 	<TD width="20" valign="top">
@@ -45,7 +45,7 @@ sendForm('form1','__URL__/saveSort/','result');
 <TR>
 	<TD colspan=2 align="center">
 	<div style="width:85%"><INPUT TYPE="hidden" name="seqNoList">
-	<INPUT TYPE="hidden" name="_AJAX_SUBMIT_" VALUE="1">
+	<INPUT TYPE="hidden" name="ajax" VALUE="1">
 <input type="button" value="确 定" onclick="saveSort()" class="submit hMargin small " /> 
 <input type="reset" value="取 消" onclick="history.back()" class="submit hMargin small " />
 </div>
