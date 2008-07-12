@@ -132,8 +132,8 @@ class NodeAction extends PublicAction
             $Node->startTrans();
             foreach($col as $val) {
                 $val    =   explode(':',$val);
-                $model->id	=	$val[0];
-                $model->seqNo	=	$val[1];
+                $Node->id	=	$val[0];
+                $Node->seqNo	=	$val[1];
                 $result =   $Node->save();
                 if(!$result) {
                     break;
@@ -145,7 +145,7 @@ class NodeAction extends PublicAction
                 //采用普通方式跳转刷新页面
                 $this->success('更新成功');
             }else {
-                $this->error($model->getError());
+                $this->error($Node->getError());
             }
         }
     }
