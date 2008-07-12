@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -22,7 +22,7 @@
 class NodeAction extends PublicAction
 {//类定义开始
 
-	public function add() 
+	public function add()
 	{
 		$dao = D("Node");
 		if(Session::is_set('currentNodeId')) {
@@ -53,7 +53,7 @@ class NodeAction extends PublicAction
 	}
 
     // 节点访问权限
-    public function access() 
+    public function access()
     {
         //读取系统权限组列表
         $groupDao    =   D("Group");
@@ -74,15 +74,15 @@ class NodeAction extends PublicAction
             $dao = D("Node");
             $list = $dao->getNodeGroupList($nodeId);
             $nodeGroupList = $list->getCol('id,id');
-                
+
 		}
 		$this->assign('nodeGroupList',$nodeGroupList);
         $this->assign('groupList',$groupList);
-        $this->display();    	
+        $this->display();
     }
 
     // 设置节点权限
-    public function setAccess() 
+    public function setAccess()
     {
         $id     = $_POST['nodeGroupId'];
 		$nodeId	=	$_POST['nodeId'];
@@ -96,34 +96,63 @@ class NodeAction extends PublicAction
 			$this->assign("jumpUrl",$_SERVER["HTTP_REFERER"]);
 		}
 
-		$this->forward();    	
+		$this->forward();
     }
-	
+
 	// 节点排序
-    public function sort() 
+    public function sort()
     {
-		$dao	= D("Node");
+		$Node	= D("Node");
         if(!empty($_GET['pid'])) {
         	$pid  = $_GET['pid'];
         }else {
    	        $pid  = Session::get('currentNodeId');
         }
-		$vo = $dao->getById($pid);
+		$vo = $Node->getById($pid);
         if($vo) {
         	$level   =  $vo['level']+1;
         }else {
         	$level   =  1;
         }
         $this->assign('level',$level);
-        $sortList   =   $dao->findAll('pid='.$pid.' and level='.$level,'','*','seqNo asc');
+        $sortList   =   $Node->where('pid='.$pid.' and level='.$level)->order('seqNo asc')->findAll();
         $this->assign("sortList",$sortList);
         $this->display();
         return ;
     }
 
-	public function index() 
-	{ 
-		$Node = D("Node"); 
+    function saveSort()
+    {
+        $seqNoList  =   $_POST['seqNoList'];
+        if(!empty($seqNoList)) {
+            //更新数据对象
+            $Node    = D('Node');
+            $col    =   explode(',',$seqNoList);
+            //启动事务
+            $Node->startTrans();
+            foreach($col as $val) {
+                $val    =   explode(':',$val);
+                $model->id	=	$val[0];
+                $model->seqNo	=	$val[1];
+                $result =   $Node->save();
+                if(!$result) {
+                    break;
+                }
+            }
+            //提交事务
+            $Node->commit();
+            if($result) {
+                //采用普通方式跳转刷新页面
+                $this->success('更新成功');
+            }else {
+                $this->error($model->getError());
+            }
+        }
+    }
+
+	public function index()
+	{
+		$Node = D("Node");
 
 		$field = '*'; // 如果是查询的视图,这里必须写清楚查那些列
 		if(isset($_GET['pid']))
@@ -141,20 +170,20 @@ class NodeAction extends PublicAction
 		}else {
 			$this->assign('level',1);
 		}
-		$count= $Node->count($where); 
- 
-		import("ORG.Util.Page"); 
-		if(!empty($_REQUEST['listRows'])) { 
-			$listRows = $_REQUEST['listRows']; 
-			}else{ 
-			$listRows=20; 
-		} 
-		$p= new Page($count,$listRows); 
- 		$list=$Node->findAll($where,$field,'id desc',$p->firstRow.','.$p->listRows); 
+		$count= $Node->count($where);
+
+		import("ORG.Util.Page");
+		if(!empty($_REQUEST['listRows'])) {
+			$listRows = $_REQUEST['listRows'];
+			}else{
+			$listRows=20;
+		}
+		$p= new Page($count,$listRows);
+ 		$list=$Node->findAll($where,$field,'id desc',$p->firstRow.','.$p->listRows);
 		$page=$p->show();
-		$this->assign('list',$list); 
-		$this->assign('page',$page); 
-		$this->display(); 
+		$this->assign('list',$list);
+		$this->assign('page',$page);
+		$this->display();
 	}
 }
 ?>
