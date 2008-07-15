@@ -1078,6 +1078,7 @@ function D($className='',$appName='@')
 		$_model[$appName.$className] =	$model;
         return $model;
     }else {
+        throw_exception($className.L('_MODEL_NOT_EXIST_'));
     	return false;
     }
 }
@@ -1113,6 +1114,7 @@ function A($className,$appName='@')
 		$_actioin[$appName.$className] =	$action;
         return $action;
     }else {
+        throw_exception($className.L('_ACTION_NOT_EXIST_'));
     	return false;
     }
 }

@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -31,6 +31,8 @@ return Array(
 	'_ACTION_'=>'操作',
 	'_APP_CONFIG_NOT_EXIST_'=>'项目配置文件不存在！',
 	'_ROUTER_NOT_EXIST_'=>'路由不存在或者没有定义',
+	'_ACTION_NOT_EXIST_'=>'控制器不存在或者没有定义',
+	'_MODEL_NOT_EXIST_'=>'模型不存在或者没有定义',
 	'_VALID_ACCESS_'=>'没有权限',
 	//  错误提示
 
@@ -67,7 +69,7 @@ return Array(
 	'_UNSERIALIZE_CLASS_NOT_EXIST_'=>'反序列化的时候缺少类库',
 	//  数据库
 	'_DB_TYPE_NOT_EXIST_'=>	'没有指定数据库类型或该类库不存在！',
-	'_DB_CONNECT_ERROR_'=>	'数据库连接失败！',	
+	'_DB_CONNECT_ERROR_'=>	'数据库连接失败！',
 	'_CLASS_CONFLICT_'=>'类名冲突',
 	'_TEMPLATE_ERROR_'=>'模板引擎错误',
 	'_CACHE_WRITE_ERROR_'=>'缓存文件写入失败！',
