@@ -1114,7 +1114,6 @@ function A($className,$appName='@')
 		$_actioin[$appName.$className] =	$action;
         return $action;
     }else {
-        throw_exception($className.L('_ACTION_NOT_EXIST_'));
     	return false;
     }
 }
