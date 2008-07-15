@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -43,7 +43,7 @@ class View extends Base
      +----------------------------------------------------------
      * 取得模板对象实例
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return Template
      +----------------------------------------------------------
@@ -65,10 +65,10 @@ class View extends Base
      +----------------------------------------------------------
      * 模板变量赋值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param mixed $name 
-     * @param mixed $value  
+     * @param mixed $name
+     * @param mixed $value
      +----------------------------------------------------------
      */
     public function assign($name,$value=''){
@@ -83,10 +83,10 @@ class View extends Base
      +----------------------------------------------------------
      * Trace变量赋值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param mixed $name 
-     * @param mixed $value  
+     * @param mixed $name
+     * @param mixed $value
      +----------------------------------------------------------
      */
 	public function trace($title,$value='') {
@@ -101,11 +101,11 @@ class View extends Base
      +----------------------------------------------------------
      * 取得模板变量的值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param string $name 
+     * @param string $name
      +----------------------------------------------------------
-     * @return mixed 
+     * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -130,14 +130,14 @@ class View extends Base
      +----------------------------------------------------------
      * 加载模板和页面输出 可以返回输出内容
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $templateFile 模板文件名 留空为自动获取
      * @param string $charset 模板输出字符集
      * @param string $contentType 输出类型
-     * @param string $varPrefix 模板变量前缀  
+     * @param string $varPrefix 模板变量前缀
      +----------------------------------------------------------
-     * @return mixed 
+     * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -151,11 +151,11 @@ class View extends Base
      +----------------------------------------------------------
      * 显示运行时间、数据库操作、缓存次数、内存使用信息
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param string $startTime 开始时间
      +----------------------------------------------------------
-     * @return string 
+     * @return string
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -198,7 +198,7 @@ class View extends Base
      +----------------------------------------------------------
      * 输出布局模板
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $layout 指定要输出的布局模板
      * @param string $charset 输出编码
@@ -209,7 +209,7 @@ class View extends Base
      * @return void
      +----------------------------------------------------------
      */
-	public function layout($layoutFile,$charset='',$contentType='text/html',$varPrefix='',$display=true) 
+	public function layout($layoutFile,$charset='',$contentType='text/html',$varPrefix='',$display=true)
 	{
 		$startTime = microtime(TRUE);
 		// 获取布局模板文件
@@ -239,7 +239,7 @@ class View extends Base
      * 检查缓存文件是否有效
      * 如果无效则需要重新编译
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $tmplTemplateFile  模板文件名
      +----------------------------------------------------------
@@ -256,12 +256,12 @@ class View extends Base
         }
         elseif (!C('TMPL_CACHE_ON')){
             return false;
-        }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) { 
+        }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
             // 模板文件如果有更新则缓存需要更新
-            return false; 
-        } elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) { 
+            return false;
+        } elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) {
             // 缓存是否在有效期
-            return false; 
+            return false;
         }
         //缓存有效
         return true;
@@ -271,18 +271,18 @@ class View extends Base
      +----------------------------------------------------------
      * 加载模板和页面输出
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $templateFile 模板文件名 留空为自动获取
      * @param string $charset 模板输出字符集
      * @param string $contentType 输出类型
-     * @param string $varPrefix 模板变量前缀      
-     * @param integer $mode 0 返回 1 输出 2 下载 
+     * @param string $varPrefix 模板变量前缀
+     * @param integer $mode 0 返回 1 输出 2 下载
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function fetch($templateFile='',$charset='',$contentType='text/html',$varPrefix='',$display=false) 
+    public function fetch($templateFile='',$charset='',$contentType='text/html',$varPrefix='',$display=false)
     {
 		$startTime = microtime(TRUE);
         if(null===$templateFile) {
@@ -305,12 +305,12 @@ class View extends Base
 		$zlibCompress   =  ini_get('zlib.output_compression');
 		if(empty($zlibCompress) && function_exists('ini_set')) {
 			ini_set( 'zlib.output_compression', 1 );
-		} 
+		}
         // 缓存初始化过滤
         apply_filter('ob_init');
         //页面缓存
-       	ob_start(); 
-        ob_implicit_flush(0); 
+       	ob_start();
+        ob_implicit_flush(0);
         // 缓存开启后执行的过滤
         apply_filter('ob_start');
 
@@ -332,7 +332,7 @@ class View extends Base
 		}
 
         if(!file_exists($templateFile)){
-            throw_exception(L('_TEMPLATE_NOT_EXIST_'));        
+            throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
         }
         // 模版变量过滤
         $this->tVar = apply_filter('template_var',$this->tVar);
@@ -351,11 +351,11 @@ class View extends Base
 				import('Think.Template.ThinkTemplate');
 				$tpl = ThinkTemplate::getInstance();
 				// 编译并加载模板文件
-				$tpl->load($templateFile,$charset,$this->tVar,$varPrefix); 
+				$tpl->load($templateFile,$charset,$this->tVar,$varPrefix);
 			}else{
 				// 缓存有效 直接载入模板缓存
 				// 模板阵列变量分解成为独立变量
-				extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix); 
+				extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
 				//载入模版缓存文件
 				include CACHE_PATH.md5($templateFile).C('CACHFILE_SUFFIX');
 			}
@@ -377,7 +377,7 @@ class View extends Base
 
         if($display) {
 			$showTime	=	$this->showTime($startTime);
-			echo $content; 
+			echo $content;
 			if(C('SHOW_RUN_TIME')) {
 				echo '<div  id="think_run_time" class="think_run_time">'.$showTime.'</div>';
 			}
