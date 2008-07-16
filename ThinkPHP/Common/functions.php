@@ -169,7 +169,9 @@ function halt($error) {
         if(!empty($error_page)){
             redirect($error_page);
         }else {
-            if(!C('SHOW_ERROR_MSG')) {
+            if(C('SHOW_ERROR_MSG')) {
+                $e['message'] =  is_array($error)?$error['message']:$error;
+            }else{
                 $e['message'] = C('ERROR_MESSAGE');
             }
 			if(C('EXCEPTION_TMPL_FILE')) {
