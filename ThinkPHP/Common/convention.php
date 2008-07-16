@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -34,11 +34,11 @@ return  array(
 	'DISPATCH_NAME'			=>	'Think',	// 默认的Dispatcher名称
 	// URL模式： 0 普通模式 1 PATHINFO 2 REWRITE
 	'URL_MODEL'					=>	1,		// 默认为PATHINFO 模式，提供最好的用户体验和SEO支持
-	// PATHINFO 模式 
+	// PATHINFO 模式
 	// 普通模式1 参数没有顺序/m/module/a/action/id/1
 	// 智能模式2 自动识别模块和操作/module/action/id/1/ 或者 /module,action,id,1/...
 	'PATH_MODEL'					=>	2,	// 默认采用智能模式
-	'PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号 
+	'PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号
 	'ROUTER_ON'					=>	true,	// 启用路由判断
 	'COMPONENT_DEPR'			=>	'@',		// 组件模块和操作的URL分割符
 	'COMPONENT_TYPE'			=>	1,	 //组件目录结构  1 Lib\User\Action\ 2 Lib\Action\User\
@@ -58,6 +58,7 @@ return  array(
 	'DEBUG_MODE'				=>	false,	 // 调试模式默认关闭
 	'ERROR_MESSAGE'			=>	'您浏览的页面暂时发生了错误！请稍后再试～',	// 错误显示信息 非调试模式有效
 	'ERROR_PAGE'					=>	'',	// 错误定向页面
+    'SHOW_ERROR_MSG'        =>   true,
 
 	/* 系统变量设置 */
 	'VAR_PATHINFO'				=>	's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于PATH_MODEL 和 PATH_DEPR
@@ -119,7 +120,7 @@ return  array(
 	/* SESSION设置 */
 	'SESSION_NAME'				=>	'ThinkID',		// 默认Session_name 如果需要不同项目共享SESSION 可以设置相同
 	'SESSION_PATH'				=>	'',			// 采用默认的Session save path
-	'SESSION_TYPE'				=>	'File',			// 默认Session类型 支持 DB 和 File 
+	'SESSION_TYPE'				=>	'File',			// 默认Session类型 支持 DB 和 File
 	'SESSION_EXPIRE'			=>	'300000',		// 默认Session有效期
 	'SESSION_TABLE'				=>	'think_session',	// 数据库Session方式表名
 	'SESSION_CALLBACK'		=>	'',			// 反序列化对象的回调方法
@@ -165,7 +166,7 @@ return  array(
 	'COOKIE_PATH'				=>	'/',			// Cookie路径
 	'COOKIE_PREFIX'				=>	'', // Cookie前缀 避免冲突
 
-	/* 分页设置 */	
+	/* 分页设置 */
 	'PAGE_NUMBERS'				=>	5,			// 分页显示页数
 	'LIST_NUMBERS'				=>	20,			// 分页每页显示记录数
 
