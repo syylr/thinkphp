@@ -1,3 +1,46 @@
+[1.0.5beta 版本 ] 2008-7-16
+修正自引用关联
+增加动态方法用于关联的写入和更新、删除 relationAdd relationSave relationDel 
+修改关联操作的定义
+取消静态模型功能
+Debug类支持内存占用峰值查看
+增加静态页面缓存失效触发方法支持
+完善D和A方法的跨项目调用
+完善对多文件上传的识别 
+完善组件Action和Model的调用 
+视图模型不会自动加上group by 如果需要使用group方法 
+改进了require_cache方法 
+增加兼容URL模式定义 在不支持pathinfo的环境下面更加方便 
+Dispatcher类移到Think.Util 
+修正使用import导入其他项目的类库的时候的一个bug 
+修正htmlCache类的一处bug 
+支持模板标签的多级嵌套 
+数据验证支持多字段 推荐使用getValidateError方法获取返回的错误提示信息 
+增加类库导入和自动加载文档 
+model类的addConnect方法增加批量增加连接的支持 
+增加RBAC认证没有权限的错误页面配置支持 
+增加自动导入公共类库的支持配置 AUTO_LOAD_CLASS 即可
+修正数据库驱动的事务启动 增加数据库连接检测 
+修正RBAC的委托认证类
+Model类可以单独设置表前缀和后缀 不受全局影响
+修改rbac的权限认证方法AccessDecision的返回值 不直接抛出异常 由App类抛出异常 方便在Action里面手动控制决策访问
+惯例配置增加认证管理员名称设置 
+修正在某些环境下REWRITE模式下面 Dispatcher导致模板链接错误的问题
+修正cx的iterate标签 
+模板文件增加模板目录支持在模板文件中使用 __TMPL__ 系统会自动替换成项目的模板目录
+html:import 标签支持导入带有.号的js或者css文件
+import方法支持导入带有.号的类文件 使用#替换 
+修正视图模型 没有定义基础条件情况下的bug 
+修正pgsql.sql文件 
+完善mysql的数据库连接 支持不带端口号的socket连接 
+修改默认的调试配置文件设置 
+修正cacheDb类
+惯例配置增加SHOW_ERROR_MSG设置是否显示详细错误信息 可以在关闭调试模式的情况下显示详细错误信息 默认关闭
+除了调试模式以外，增加错误信息显示开关 
+修正MANY_TO_MANY关联查询的一处条件问题 
+优化项目编译文件加载 
+修正memcache缓存 
+
 [1.0.4 版本] 2008-5-16
 修正关联写入和数据字段过滤的冲突
 修正哈希子目录缓存方式
