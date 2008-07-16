@@ -2054,7 +2054,11 @@ class Model extends Base  implements IteratorAggregate
 				if($length>1) {
 					$cols[$result[$field[0]]]	=	'';
 					for($i=1; $i<$length; $i++) {
-						$cols[$result[$field[0]]] .= $result[$field[$i]].$sepa;
+                        if($i+1<$length){
+                            $cols[$result[$field[0]]] .= $result[$field[$i]].$sepa;
+                        }else{
+                            $cols[$result[$field[0]]] .= $result[$field[$i]];
+                        }
 					}
 				}else{
 					$cols[]	 =	 $result[$field];
