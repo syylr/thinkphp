@@ -169,7 +169,9 @@ function halt($error) {
         if(!empty($error_page)){
             redirect($error_page);
         }else {
-            $e['message'] = C('ERROR_MESSAGE');
+            if(!C('SHOW_ERROR_MSG')) {
+                $e['message'] = C('ERROR_MESSAGE');
+            }
 			if(C('EXCEPTION_TMPL_FILE')) {
 				// 定义了异常页面模板
 				include C('EXCEPTION_TMPL_FILE');
