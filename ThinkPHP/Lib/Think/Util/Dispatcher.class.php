@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -30,12 +30,12 @@ class Dispatcher extends Base
      +----------------------------------------------------------
      * URL映射到控制器对象
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    static function dispatch() 
+    static function dispatch()
     {
         $urlMode  =  C('URL_MODEL');
         if($urlMode == URL_REWRITE ) {
@@ -60,7 +60,7 @@ class Dispatcher extends Base
 			}elseif(!isset($_SERVER["PATH_INFO"]))
 			{
 				$_SERVER['PATH_INFO'] = "";
-			}elseif (empty($_SERVER["PATH_INFO"])) 
+			}elseif (empty($_SERVER["PATH_INFO"]))
 			{
 				// 在FastCGI模式下面 $_SERVER["PATH_INFO"] 为空
 				$_SERVER['PATH_INFO'] = str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['REQUEST_URI']);
@@ -81,19 +81,19 @@ class Dispatcher extends Base
 					$_URL .= $_GET[$_varModule].$_depr.$_GET[$_varAction].$_depr;
 					unset($_GET[$_varModule],$_GET[$_varAction]);
 				}
-				foreach ($_GET as $_VAR => $_VAL) { 
+				foreach ($_GET as $_VAR => $_VAL) {
 					if('' != trim($_GET[$_VAR])) {
 						if($_pathModel==2) {
-							$_URL .= $_VAR.$_depr.$_VAL.$_depr;
+							$_URL .= $_VAR.$_depr.rawurlencode($_VAL).$_depr;
 						}else{
-							$_URL .= $_VAR.'/'.$_VAL.'/';
+							$_URL .= $_VAR.'/'.rawurlencode($_VAL).'/';
 						}
 					}
 				}
 				if($_depr==',') $_URL = substr($_URL, 0, -1).'/';
 
 				//重定向成规范的URL格式
-				redirect(PHP_FILE.$_URL); 
+				redirect(PHP_FILE.$_URL);
 
             }else {
 				if(C('ROUTER_ON')) {
@@ -108,7 +108,7 @@ class Dispatcher extends Base
         }else {
             // URL_COMMON 模式
             if(!empty($_SERVER['PATH_INFO']) ) {
-                $pathinfo = self :: getPathInfo(); 
+                $pathinfo = self :: getPathInfo();
                 $_GET = array_merge($_GET,$pathinfo);
                 if(!empty($_POST)) {
                     $_POST = array_merge($_POST,$pathinfo);
@@ -116,21 +116,21 @@ class Dispatcher extends Base
                     // 把pathinfo方式转换成query变量
                     $jumpUrl = PHP_FILE.'?'.http_build_query($_GET);
                     //重定向成规范的URL格式
-                    redirect($jumpUrl);       
+                    redirect($jumpUrl);
                 }
             }else {
                 // 正常模式
                 // 过滤重复的query_string
                 $query  = explode('&',trim($_SERVER['QUERY_STRING'],'&'));
                 if(count($query) != count($_GET) && count($_GET)>0) {
-                    $_URL  =  '';  
-                    foreach ($_GET as $_VAR => $_VAL) { 
-                        $_URL .= $_VAR.'='.$_VAL.'&';
+                    $_URL  =  '';
+                    foreach ($_GET as $_VAR => $_VAL) {
+                        $_URL .= $_VAR.'='.rawurlencode($_VAL).'&';
                     }
                     $jumpUrl = PHP_FILE.'?'.substr($_URL,0,-1);
                     //重定向成规范的URL格式
-                    redirect($jumpUrl);             	
-                }       
+                    redirect($jumpUrl);
+                }
 				//  检查路由规则
 				if(isset($_GET[C('VAR_ROUTER')])) {
 					self::routerCheck();
@@ -145,26 +145,26 @@ class Dispatcher extends Base
      +----------------------------------------------------------
      * 字符MagicQuote转义过滤
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-	private static function MagicQuote() 
+	private static function MagicQuote()
 	{
         if ( get_magic_quotes_gpc() ) {
            $_POST = stripslashes_deep($_POST);
            $_GET = stripslashes_deep($_GET);
            $_COOKIE = stripslashes_deep($_COOKIE);
            $_REQUEST= stripslashes_deep($_REQUEST);
-        } 
+        }
 	}
 
     /**
      +----------------------------------------------------------
      * 路由检测
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -246,7 +246,7 @@ class Dispatcher extends Base
      +----------------------------------------------------------
      * 获得PATH_INFO信息
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
