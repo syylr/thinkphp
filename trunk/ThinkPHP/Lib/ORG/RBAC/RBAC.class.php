@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -28,11 +28,11 @@
 // REQUIRE_AUTH_MODULE  需要认证模块
 // NOT_AUTH_MODULE 无需认证模块
 // USER_AUTH_GATEWAY 认证网关
-class RBAC extends Base 
+class RBAC extends Base
 {
 
     //委托身份认证方法
-    static function authenticate($map,$model='User',$provider='') 
+    static function authenticate($map,$model='User',$provider='')
     {
             //调用委托管理器进行身份认证
             import("ORG.RBAC.ProviderManager");
@@ -41,7 +41,7 @@ class RBAC extends Base
 			}
             $authProvider   =   ProviderManager::getInstance($provider);
             //使用给定的Map进行认证
-            if($authProvider->authenticate($map,$model)) {	
+            if($authProvider->authenticate($map,$model)) {
                 $authInfo   =   $authProvider->data;
                 return $authInfo;
             }else {
@@ -51,18 +51,18 @@ class RBAC extends Base
     }
 
     //用于检测用户权限的方法,并保存到Session中
-    static function saveAccessList($authId=null) 
+    static function saveAccessList($authId=null)
     {
             // 如果使用普通权限模式，保存当前用户的访问权限列表
             // 对管理员开发所有权限
             if(C('USER_AUTH_TYPE') !=2 ) {
                 $_SESSION['_ACCESS_LIST']	=	RBAC::getAccessList($authId);
-            }	
+            }
             return ;
     }
 
     //取得用户的授权列表
-    static function getAccessList($authId=null,$type='File') 
+    static function getAccessList($authId=null,$type='File')
     {
             if(null===$authId) {
                 $authId = $_SESSION[C('USER_AUTH_KEY')];
@@ -90,7 +90,7 @@ class RBAC extends Base
 	}
 
     //检查当前操作是否需要认证
-    static function checkAccess() 
+    static function checkAccess()
     {
         //如果项目要求认证，并且当前模块需要认证，则进行权限认证
 		$_module	=	array();
@@ -100,7 +100,7 @@ class RBAC extends Base
 			$_module['yes'] = explode(',',strtoupper(C('REQUIRE_AUTH_MODULE')));
 		}elseif('' != C('NOT_AUTH_MODULE')){
 			//无需认证的模块
-			$_module['no'] = explode(',',strtoupper(C('NOT_AUTH_MODULE')));  
+			$_module['no'] = explode(',',strtoupper(C('NOT_AUTH_MODULE')));
 		}
 		if(!empty($_module)) {
 			//检查当前模块是否需要认证
@@ -110,7 +110,7 @@ class RBAC extends Base
 					$_action['yes'] = explode(',',strtoupper(C('REQUIRE_AUTH_ACTION')));
 				}elseif('' != C('NOT_AUTH_ACTION')) {
 					//无需认证的操作
-					$_action['no'] = explode(',',strtoupper(C('NOT_AUTH_ACTION')));  
+					$_action['no'] = explode(',',strtoupper(C('NOT_AUTH_ACTION')));
 				}
 				if(!empty($_action)) {
 					//检查当前操作是否需要认证
@@ -128,11 +128,11 @@ class RBAC extends Base
 		}else{
 			return true;
 		}
-        return false;	
+        return false;
     }
 
     //权限认证的过滤器方法
-    static function AccessDecision() 
+    static function AccessDecision()
     {
         //检查是否需要认证
         if(RBAC::checkAccess()) {
@@ -156,7 +156,9 @@ class RBAC extends Base
                     //登录验证模式，比较登录后保存的权限访问列表
                     $accessList = $_SESSION['_ACCESS_LIST'];
                 }
-                if(!isset($accessList[strtoupper(APP_NAME)][strtoupper(MODULE_NAME)][strtoupper(ACTION_NAME)])) {
+                //判断是否为组件化模式，如果是，验证其全模块名
+                $module = defined('C_MODULE_NAME')?  C_MODULE_NAME   :   MODULE_NAME;
+                if(!isset($accessList[strtoupper(APP_NAME)][strtoupper($module)][strtoupper(ACTION_NAME)])) {
                     //throw_exception(L('_VALID_ACCESS_'));
 					return false;
                 }else {
@@ -165,6 +167,6 @@ class RBAC extends Base
             }
         }
         return true;
-    }	
+    }
 }//end class
 ?>
