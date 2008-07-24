@@ -236,7 +236,7 @@ class UploadFile extends Base
                 }
                 if(function_exists($this->hashType)) {
                     $fun =  $this->hashType;
-                    $file['hash']   =  $fun($file['savepath'].$file['savename']);
+                    $file['hash']   =  $fun(auto_charset($file['savepath'].$file['savename'],'utf-8','gbk'));
                 }
                 //上传成功后保存文件信息，供其他地方调用
                 unset($file['tmp_name'],$file['error']);
