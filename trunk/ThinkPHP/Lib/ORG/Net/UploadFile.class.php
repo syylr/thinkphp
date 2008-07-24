@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -74,7 +74,7 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function __construct($maxSize='',$allowExts='',$allowTypes='',$savePath=UPLOAD_PATH,$saveRule='')
@@ -108,7 +108,7 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 上传一个文件
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param mixed $name 数据
      * @param string $value  数据表名
@@ -118,7 +118,7 @@ class UploadFile extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    private function save($file) 
+    private function save($file)
     {
         $filename = $file['savepath'].$file['savename'];
 		if(!$this->uploadReplace && file_exists($filename)) {
@@ -126,7 +126,7 @@ class UploadFile extends Base
 			$this->error	=	'文件已经存在！'.$filename;
 			return false;
 		}
-        if(!move_uploaded_file($file['tmp_name'], $filename)) {
+        if(!move_uploaded_file($file['tmp_name'], auto_charset($filename,'utf-8','gbk'))) {
 			$this->error = '文件上传保存错误！';
             return false;
         }
@@ -140,7 +140,7 @@ class UploadFile extends Base
                 $thumbHeight   =  explode(',',$this->thumbMaxHeight);
                 $thumbSuffix = explode(',',$this->thumbSuffix);
                 for($i=0,$len=count($thumbWidth); $i<$len; $i++) {
-                    $thumbname = Image::thumb($filename,'','',$thumbWidth[$i],$thumbHeight[$i],true,$thumbSuffix[$i]);                	
+                    $thumbname = Image::thumb($filename,'','',$thumbWidth[$i],$thumbHeight[$i],true,$thumbSuffix[$i]);
                 }
             }
         }
@@ -155,16 +155,16 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 上传文件
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param string $savePath  上传文件保存路径 
+     * @param string $savePath  上传文件保存路径
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function upload($savePath ='') 
+    public function upload($savePath ='')
     {
         //如果不指定保存文件名，则由系统默认
         if(empty($savepath)) {
@@ -182,7 +182,7 @@ class UploadFile extends Base
         }else {
         	if(!is_writeable($savePath)) {
                 $this->error  =  '上传目录'.$savePath.'不可写';
-                return false;        		
+                return false;
         	}
         }
         $fileInfo = array();
@@ -236,7 +236,7 @@ class UploadFile extends Base
                 }
                 if(function_exists($this->hashType)) {
                     $fun =  $this->hashType;
-                    $file['hash']   =  $fun($file['savepath'].$file['savename']);                	
+                    $file['hash']   =  $fun($file['savepath'].$file['savename']);
                 }
                 //上传成功后保存文件信息，供其他地方调用
                 unset($file['tmp_name'],$file['error']);
@@ -245,10 +245,10 @@ class UploadFile extends Base
             }
         }
         if($isUpload) {
-            $this->uploadFileInfo = $fileInfo;    
+            $this->uploadFileInfo = $fileInfo;
             return true;
         }else {
-            $this->error  =  '没有选择上传文件';       
+            $this->error  =  '没有选择上传文件';
             return false;
         }
     }
@@ -257,7 +257,7 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 转换上传文件数组变量为正确的方式
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param array $files  上传的文件变量
      +----------------------------------------------------------
@@ -289,16 +289,16 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 获取错误代码信息
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
-     * @param string $errorNo  错误号码 
+     * @param string $errorNo  错误号码
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function error($errorNo) 
+    protected function error($errorNo)
     {
          switch($errorNo) {
             case 1:
@@ -329,14 +329,14 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 根据上传文件命名规则取得保存文件名
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param string $filename 数据
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    private function getSaveName($filename) 
+    private function getSaveName($filename)
     {
         $rule = $this->saveRule;
         if(empty($rule)) {//没有定义命名规则，则保持文件名不变
@@ -357,14 +357,14 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 检查上传的文件类型是否合法
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param string $type 数据
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    private function checkType($type) 
+    private function checkType($type)
     {
         if(!empty($this->allowTypes)) {
             return in_array(strtolower($type),$this->allowTypes);
@@ -377,14 +377,14 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 检查上传的文件后缀是否合法
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param string $ext 后缀名
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    private function checkExt($ext) 
+    private function checkExt($ext)
     {
         if(!empty($this->allowExts)) {
             return in_array(strtolower($ext),$this->allowExts);
@@ -396,14 +396,14 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 检查文件大小是否合法
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param integer $size 数据
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    private function checkSize($size) 
+    private function checkSize($size)
     {
         return !($size > $this->maxSize) || (-1 == $this->maxSize);
     }
@@ -412,14 +412,14 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 检查文件是否非法提交
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param string $filename 文件名
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    private function checkUpload($filename) 
+    private function checkUpload($filename)
     {
         return is_uploaded_file($filename);
     }
@@ -428,14 +428,14 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 取得上传文件的后缀
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param string $filename 文件名
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    private function getExt($filename) 
+    private function getExt($filename)
     {
         $pathinfo = pathinfo($filename);
         return $pathinfo['extension'];
@@ -445,12 +445,12 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 取得上传文件的信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      */
-    public function getUploadFileInfo() 
+    public function getUploadFileInfo()
     {
         return $this->uploadFileInfo;
     }
@@ -459,12 +459,12 @@ class UploadFile extends Base
      +----------------------------------------------------------
      * 取得最后一次错误信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function getErrorMsg() 
+    public function getErrorMsg()
     {
         return $this->error;
     }
