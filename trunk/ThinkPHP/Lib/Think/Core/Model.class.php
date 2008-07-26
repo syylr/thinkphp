@@ -1213,13 +1213,14 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @param mixed $result  返回数据
      * @param string $name  关联名称
+	 * @param boolean $return 是否返回关联数据
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function getRelation(&$result,$name='')
+	public function getRelation(&$result,$name='',$return=false)
 	{
 		if(!empty($this->_link)) {
 			foreach($this->_link as $key=>$val) {
@@ -1295,10 +1296,14 @@ class Model extends Base  implements IteratorAggregate
 								$relationData	=	$this->_query($sql);
 								break;
 						}
-						if(is_array($result)) {
-							$result[$mappingName] = $relationData;
+						if(!$return){
+							if(is_array($result)) {
+								$result[$mappingName] = $relationData;
+							}else{
+								$result->$mappingName = $relationData;
+							}
 						}else{
-							$result->$mappingName = $relationData;
+							return $relationData;
 						}
 					}
 			}
@@ -1351,7 +1356,9 @@ class Model extends Base  implements IteratorAggregate
 			$data = $data->toArray();
 		}elseif(is_object($data)){
 			$data	 =	 get_object_vars($data);
-		}elseif(!is_array($data)){
+		}elseif(empty($data) && !empty($this->data)){
+            $data = $this->data;
+        }elseif(!is_array($data)){
 			// 数据无效返回
 			return false;
 		}
@@ -1436,7 +1443,7 @@ class Model extends Base  implements IteratorAggregate
 										// 删除关联表数据
 										$this->db->remove($mappingCondition,$mappingRelationTable);
 										// 插入关联表数据
-										$sql  = 'INSERT INTO '.$mappingRelationTable.' ('.$mappingFk.','.$mappingRelationFk.') SELECT a.'.$this->getPk().',b.'.$model->getPk().' FROM '.$this->getTableName().' AS a ,'.$model->getTableName()." AS b where a.".$this->getPk().' ='. $pk.' AND  b.'.$model->getPk().' IN ('.$relationData.") ";
+										$sql  = 'INSERT INTO '.$mappingRelationTable.' ('.$mappingFk.','.$mappingRelationFk.') SELECT a.'.$this->getPk().',b.'.$model->getPk().' FROM '.$this->getTableName().' AS a ,'.$model->getTableName()." AS b where a.".$this->getPk().' ='. $pk.' AND  b.'.$model->getPk().' IN ('.$relationId.") ";
 										$result	=	$model->execute($sql);
 										if($result) {
 											// 提交事务
@@ -3277,5 +3284,25 @@ class Model extends Base  implements IteratorAggregate
 		$this->options['data']	=	$data;
 		return $this;
 	}
+
+	/**
+     +----------------------------------------------------------
+     * 关联数据获取 仅用于查询后
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $name 关联名称
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+	public function relationGet($name) {
+		if(empty($this->data)) {
+			return false;
+		}
+		$relation	= $this->getRelation($this->data,$name,true);
+		return $relation;
+	}
+
 };
 ?>
