@@ -264,6 +264,8 @@ class Model extends Base  implements IteratorAggregate
                 array_unshift($args,$type);
                 return call_user_func_array(array(&$this, 'opRelation'), $args);
             }
+        }else{
+            throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
         }
 		return;
 	}
