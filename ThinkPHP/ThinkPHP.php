@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -15,7 +15,9 @@
  * ThinkPHP公共文件
  +------------------------------------------------------------------------------
  */
-
+if(version_compare(PHP_VERSION,'5.0.0','<') ) {
+    die('ThinkPHP 1.* require PHP > 5.0 !');
+}
 //记录开始运行时间
 $GLOBALS['_beginTime'] = microtime(TRUE);
 
@@ -58,7 +60,7 @@ if(file_exists(RUNTIME_PATH.'~runtime.php')) {
 		if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
 			$fun	=	'file_get_contents';
 		}else{
-			$fun	=	'php_strip_whitespace';		
+			$fun	=	'php_strip_whitespace';
 		}
 		// 生成核心文件的缓存 去掉文件空白以减少大小
 		$content	 =	 $fun(THINK_PATH.'/Common/defines.php');
@@ -75,7 +77,7 @@ if(file_exists(RUNTIME_PATH.'~runtime.php')) {
 		// 加载兼容函数
 		require THINK_PATH.'/Common/compat.php';
 		if($cache) {
-			$content .=	 $fun(THINK_PATH.'/Common/compat.php');	
+			$content .=	 $fun(THINK_PATH.'/Common/compat.php');
 		}
 	}
 	if($cache) {
