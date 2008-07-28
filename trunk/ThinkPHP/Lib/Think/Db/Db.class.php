@@ -397,9 +397,7 @@ class Db extends Base
     protected function parseTables($tables)
     {
         if(is_array($tables)) {
-			if(0 === strpos($this->getDbType(),'MYSQL')) {
-				array_walk($tables, array($this, 'addSpecialChar'));
-			}
+			array_walk($tables, array($this, 'addSpecialChar'));
 			$tablesStr = implode(',', $tables);
 		}
         else if(is_string($tables)) {
@@ -487,10 +485,8 @@ class Db extends Base
 			foreach ($where as $key=>$val){
 				if(strpos($key,',')) {
 					$key	=	explode(',',$key);
-					if(0 === strpos($this->getDbType(),'MYSQL')) {
-						array_walk($key, array($this, 'addSpecialChar'));
-					}
-				}elseif(0 === strpos($this->getDbType(),'MYSQL')) {
+					array_walk($key, array($this, 'addSpecialChar'));
+				}else{
 					$key = $this->addSpecialChar($key);
 				}
 				$whereStr .= "( ";
@@ -728,16 +724,12 @@ class Db extends Base
     protected function parseFields($fields)
     {
         if(is_array($fields)) {
-            if(0 === strpos($this->getDbType(),'MYSQL')) {
-                array_walk($fields, array($this, 'addSpecialChar'));
-            }
+            array_walk($fields, array($this, 'addSpecialChar'));
             $fieldsStr = implode(',', $fields);
         }else if(is_string($fields) && !empty($fields)) {
             if( false === strpos($fields,'`') ) {
                 $fields = explode(',',$fields);
-                if(0 === strpos($this->getDbType(),'MYSQL')) {
-            	    array_walk($fields, array($this, 'addSpecialChar'));
-                }
+          	    array_walk($fields, array($this, 'addSpecialChar'));
                 $fieldsStr = implode(',', $fields);
             }else {
             	$fieldsStr = $fields;
@@ -795,9 +787,7 @@ class Db extends Base
         $sets    = auto_charset($sets,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
         if(is_array($sets)){
             foreach ($sets as $key=>$val){
-				if(0 === strpos($this->getDbType(),'MYSQL')) {
-					$key	=	$this->addSpecialChar($key);
-				}
+				$key	=	$this->addSpecialChar($key);
 				if(is_array($val) && strtolower($val[0]) == 'exp') {
 					$val	=	$val[1];						// 使用表达式
 				}elseif(!is_null($val) && is_scalar($val)){
@@ -878,11 +868,13 @@ class Db extends Base
      */
     protected function addSpecialChar(&$value)
     {
-        if( '*' == $value ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
-            //如果包含* 或者 使用了sql方法 则不作处理
-        }
-        elseif(false === strpos($value,'`') ) {
-            $value = '`'.trim($value).'`';
+        if(0 === strpos($this->getDbType(),'MYSQL')) {
+            if( '*' == $value ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
+                //如果包含* 或者 使用了sql方法 则不作处理
+            }
+            elseif(false === strpos($value,'`') ) {
+                $value = '`'.trim($value).'`';
+            }
         }
         return $value;
     }
@@ -1111,9 +1103,7 @@ class Db extends Base
         //转换数据库编码
         $data    = auto_charset($data,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
         $fields = array_keys($data);
-        if(0 === strpos($this->getDbType(),'MYSQL')) {
-        	array_walk($fields, array($this, 'addSpecialChar'));
-        }
+       	array_walk($fields, array($this, 'addSpecialChar'));
         $fieldsStr = implode(',', $fields);
         $values = array_values($data);
         //array_walk($values, array($this, 'fieldFormat'));
