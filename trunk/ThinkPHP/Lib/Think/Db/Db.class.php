@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -105,13 +105,13 @@ class Db extends Base
      +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param array $config 数据库配置数组
      +----------------------------------------------------------
      */
-    function __construct($config=''){    
-		$this->resultType = C('DATA_RESULT_TYPE'); 
+    function __construct($config=''){
+		$this->resultType = C('DATA_RESULT_TYPE');
 		return $this->factory($config);
 	}
 
@@ -120,12 +120,12 @@ class Db extends Base
      * 取得数据库类实例
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return mixed 返回数据库驱动类
      +----------------------------------------------------------
      */
-    public static function getInstance() 
+    public static function getInstance()
     {
         $args = func_get_args();
         return get_instance_of(__CLASS__,'factory',$args);
@@ -135,7 +135,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 加载数据库 支持配置文件或者 DSN
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $db_config 数据库配置信息
      +----------------------------------------------------------
@@ -155,8 +155,8 @@ class Db extends Base
 		$this->dbType = ucwords(strtolower($db_config['dbms']));
 		// 读取系统数据库驱动目录
 		$dbClass = 'Db'. $this->dbType;
-		$dbDriverPath = dirname(__FILE__).'/Driver/';      
-		require_cache( $dbDriverPath . $dbClass . '.class.php');     	
+		$dbDriverPath = dirname(__FILE__).'/Driver/';
+		require_cache( $dbDriverPath . $dbClass . '.class.php');
 
 		// 检查驱动类
 		if(class_exists($dbClass)) {
@@ -175,7 +175,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 分析数据库配置信息，支持数组和DSN
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param mixed $db_config 数据库配置信息
      +----------------------------------------------------------
@@ -191,11 +191,11 @@ class Db extends Base
         }else if(empty($db_config)){
             // 如果配置为空，读取配置文件设置
             $db_config = array (
-                'dbms'     => C('DB_TYPE'), 
-                'username' => C('DB_USER'), 
-                'password' => C('DB_PWD'), 
-                'hostname' => C('DB_HOST'), 
-                'hostport' => C('DB_PORT'), 
+                'dbms'     => C('DB_TYPE'),
+                'username' => C('DB_USER'),
+                'password' => C('DB_PWD'),
+                'hostname' => C('DB_HOST'),
+                'hostport' => C('DB_PORT'),
                 'database' => C('DB_NAME'),
 				'dsn'		=>	C('DB_DSN'),
 				'params'=> C('DB_PARAMS'),
@@ -208,7 +208,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 增加数据库连接(相同类型的)
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $config 数据库连接信息
 	 * @param mixed $linkNum  创建的连接序号
@@ -230,12 +230,12 @@ class Db extends Base
 		// 创建新的数据库连接
 		return $this->connect($db_config,$linkNum);
 	}
-	
+
     /**
      +----------------------------------------------------------
      * 切换数据库连接
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
 	 * @param integer $linkNum  创建的连接序号
      +----------------------------------------------------------
@@ -258,7 +258,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 初始化数据库连接
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param boolean $master 主服务器
      +----------------------------------------------------------
@@ -281,7 +281,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 连接分布式服务器
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param boolean $master 主服务器
      +----------------------------------------------------------
@@ -314,13 +314,13 @@ class Db extends Base
 		}
 		$db_config = array(
 			'username'=>	 isset($_config['username'][$r])?$_config['username'][$r]:$_config['username'][0],
-			'password' => isset($_config['password'][$r])?$_config['password'][$r]:$_config['password'][0], 
-			'hostname' => isset($_config['hostname'][$r])?$_config['hostname'][$r]:$_config['hostname'][0], 
-			'hostport' =>	 isset($_config['hostport'][$r])?$_config['hostport'][$r]:$_config['hostport'][0], 
+			'password' => isset($_config['password'][$r])?$_config['password'][$r]:$_config['password'][0],
+			'hostname' => isset($_config['hostname'][$r])?$_config['hostname'][$r]:$_config['hostname'][0],
+			'hostport' =>	 isset($_config['hostport'][$r])?$_config['hostport'][$r]:$_config['hostport'][0],
 			'database' =>	 isset($_config['database'][$r])?$_config['database'][$r]:$_config['database'][0],
 			'dsn'	=>	isset($_config['dsn'][$r])?$_config['dsn'][$r]:$_config['dsn'][0],
 			'params'	=>	isset($_config['params'][$r])?$_config['params'][$r]:$_config['params'][0],
-		);	
+		);
 		return $this->connect($db_config,$r);
 	}
 
@@ -330,36 +330,36 @@ class Db extends Base
      * 格式： mysql://username:passwd@localhost:3306/DbName
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param string $dsnStr  
+     * @param string $dsnStr
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function parseDSN($dsnStr) 
+    public function parseDSN($dsnStr)
     {
         if( empty($dsnStr) ){return false;}
         $info = parse_url($dsnStr);
         if($info['scheme']){
             $dsn = array(
-            'dbms'     => $info['scheme'], 
-            'username' => isset($info['user']) ? $info['user'] : '', 
-            'password' => isset($info['pass']) ? $info['pass'] : '', 
-            'hostname' => isset($info['host']) ? $info['host'] : '', 
-            'hostport' => isset($info['port']) ? $info['port'] : '', 
+            'dbms'     => $info['scheme'],
+            'username' => isset($info['user']) ? $info['user'] : '',
+            'password' => isset($info['pass']) ? $info['pass'] : '',
+            'hostname' => isset($info['host']) ? $info['host'] : '',
+            'hostport' => isset($info['port']) ? $info['port'] : '',
             'database' => isset($info['path']) ? substr($info['path'],1) : ''
             );
         }else {
             preg_match('/^(.*?)\:\/\/(.*?)\:(.*?)\@(.*?)\:([0-9]{1, 6})\/(.*?)$/',trim($dsnStr),$matches);
             $dsn = array (
-            'dbms'     => $matches[1], 
-            'username' => $matches[2], 
-            'password' => $matches[3], 
-            'hostname' => $matches[4], 
-            'hostport' => $matches[5], 
+            'dbms'     => $matches[1],
+            'username' => $matches[2],
+            'password' => $matches[3],
+            'hostname' => $matches[4],
+            'hostport' => $matches[5],
             'database' => $matches[6]
             );
         }
@@ -370,7 +370,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 数据库调试 记录当前SQL
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      */
 	protected function debug() {
@@ -385,7 +385,7 @@ class Db extends Base
      +----------------------------------------------------------
      * table分析
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $tables  数据表名
      +----------------------------------------------------------
@@ -397,13 +397,13 @@ class Db extends Base
     protected function parseTables($tables)
     {
         if(is_array($tables)) {
-			if('MYSQL' == $this->getDbType()) {
+			if(0 === strpos($this->getDbType(),'MYSQL')) {
 				array_walk($tables, array($this, 'addSpecialChar'));
 			}
 			$tablesStr = implode(',', $tables);
 		}
         else if(is_string($tables)) {
-			if('MYSQL' == $this->getDbType() && false === strpos($tables,'`')) {
+			if(0 === strpos($this->getDbType(),'MYSQL') && false === strpos($tables,'`')) {
 				$tablesStr =  '`'.trim($tables).'`';
 			}else{
 				$tablesStr = $tables;
@@ -416,7 +416,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 返回数据库的类型 如果使用PDO 会进一步分析
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -455,7 +455,7 @@ class Db extends Base
      +----------------------------------------------------------
      * where分析
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $where 查询条件
      +----------------------------------------------------------
@@ -467,9 +467,9 @@ class Db extends Base
     protected function parseWhere($where)
     {
         $whereStr = '';
-		if(is_string($where) || is_null($where)) { 
+		if(is_string($where) || is_null($where)) {
             //支持String作为条件 如使用 > like 等
-            $whereStr = $where; 
+            $whereStr = $where;
         }else{
             if(is_instance_of($where,'HashMap')){
 				$where	=	$where->toArray();
@@ -487,10 +487,10 @@ class Db extends Base
 			foreach ($where as $key=>$val){
 				if(strpos($key,',')) {
 					$key	=	explode(',',$key);
-					if('MYSQL' == $this->getDbType()) {
+					if(0 === strpos($this->getDbType(),'MYSQL')) {
 						array_walk($key, array($this, 'addSpecialChar'));
 					}
-				}elseif('MYSQL' == $this->getDbType()) {
+				}elseif(0 === strpos($this->getDbType(),'MYSQL')) {
 					$key = $this->addSpecialChar($key);
 				}
 				$whereStr .= "( ";
@@ -561,7 +561,7 @@ class Db extends Base
 						$whereStr .= $key." LIKE ".$this->fieldFormat($val);
 					}else {
 						$whereStr .= $key." = ".$this->fieldFormat($val);
-					}                    	
+					}
 				}
 				$whereStr .= ' )'.$operate;
 			}
@@ -574,7 +574,7 @@ class Db extends Base
      +----------------------------------------------------------
      * order分析
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $order 排序
      +----------------------------------------------------------
@@ -586,9 +586,9 @@ class Db extends Base
     protected function parseOrder($order)
     {
         $orderStr = '';
-        if(is_array($order))     
+        if(is_array($order))
             $orderStr .= ' ORDER BY '.implode(',', $order);
-        else if(is_string($order) && !empty($order)) 
+        else if(is_string($order) && !empty($order))
             $orderStr .= ' ORDER BY '.$order;
         return $orderStr;
     }
@@ -597,7 +597,7 @@ class Db extends Base
      +----------------------------------------------------------
      * join分析
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $join Join表达式
      +----------------------------------------------------------
@@ -623,9 +623,9 @@ class Db extends Base
      +----------------------------------------------------------
      * limit分析
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
-     * @param string $limit  
+     * @param string $limit
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -645,7 +645,7 @@ class Db extends Base
 				}else{
 					$limitStr .= ' LIMIT '.$limit[0].' ';
 				}
-				
+
 			}elseif('MSSQL'== $dbType){
 				// MsSQL
 				$limitStr = ' TOP '.$limit.' ';
@@ -672,9 +672,9 @@ class Db extends Base
      +----------------------------------------------------------
      * group分析
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
-     * @param mixed $group  
+     * @param mixed $group
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -684,9 +684,9 @@ class Db extends Base
     protected function parseGroup($group)
     {
         $groupStr = '';
-        if(is_array($group))     
+        if(is_array($group))
             $groupStr .= ' GROUP BY '.implode(',', $group);
-        else if(is_string($group) && !empty($group)) 
+        else if(is_string($group) && !empty($group))
             $groupStr .= ' GROUP BY '.$group;
         return empty($groupStr)?'':$groupStr;
     }
@@ -695,9 +695,9 @@ class Db extends Base
      +----------------------------------------------------------
      * having分析
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
-     * @param string $having  
+     * @param string $having
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -707,7 +707,7 @@ class Db extends Base
     protected function parseHaving($having)
     {
         $havingStr = '';
-        if(is_string($having) && !empty($having))     
+        if(is_string($having) && !empty($having))
             $havingStr .= ' HAVING '.$having;
         return $havingStr;
     }
@@ -716,7 +716,7 @@ class Db extends Base
      +----------------------------------------------------------
      * fields分析
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $fields
      +----------------------------------------------------------
@@ -728,21 +728,21 @@ class Db extends Base
     protected function parseFields($fields)
     {
         if(is_array($fields)) {
-            if('MYSQL' == $this->getDbType()) {
+            if(0 === strpos($this->getDbType(),'MYSQL')) {
                 array_walk($fields, array($this, 'addSpecialChar'));
             }
             $fieldsStr = implode(',', $fields);
         }else if(is_string($fields) && !empty($fields)) {
             if( false === strpos($fields,'`') ) {
                 $fields = explode(',',$fields);
-                if('MYSQL' == $this->getDbType()) {
+                if(0 === strpos($this->getDbType(),'MYSQL')) {
             	    array_walk($fields, array($this, 'addSpecialChar'));
                 }
                 $fieldsStr = implode(',', $fields);
             }else {
             	$fieldsStr = $fields;
             }
-        }else 
+        }else
             $fieldsStr = '*';
         return $fieldsStr;
     }
@@ -751,7 +751,7 @@ class Db extends Base
      +----------------------------------------------------------
      * value分析
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $values
      +----------------------------------------------------------
@@ -766,7 +766,7 @@ class Db extends Base
             array_walk($values, array($this, 'fieldFormat'));
             $valuesStr = implode(',', $values);
         }
-        else if(is_string($values)) 
+        else if(is_string($values))
             $valuesStr = $values;
         return $valuesStr;
     }
@@ -775,7 +775,7 @@ class Db extends Base
      +----------------------------------------------------------
      * set分析
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $sets
      +----------------------------------------------------------
@@ -795,7 +795,7 @@ class Db extends Base
         $sets    = auto_charset($sets,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
         if(is_array($sets)){
             foreach ($sets as $key=>$val){
-				if('MYSQL' == $this->getDbType()) {
+				if(0 === strpos($this->getDbType(),'MYSQL')) {
 					$key	=	$this->addSpecialChar($key);
 				}
 				if(is_array($val) && strtolower($val[0]) == 'exp') {
@@ -809,17 +809,17 @@ class Db extends Base
 				$setsStr .= "$key = ".$val.",";
             }
             $setsStr = substr($setsStr,0,-1);
-        }else if(is_string($sets)) { 
-            $setsStr = $sets; 
+        }else if(is_string($sets)) {
+            $setsStr = $sets;
         }
         return $setsStr;
     }
 
     /**
      +----------------------------------------------------------
-     * 设置锁机制 
+     * 设置锁机制
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -837,16 +837,16 @@ class Db extends Base
      +----------------------------------------------------------
      * 字段格式化
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
-     * @param mixed $value  
+     * @param mixed $value
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function fieldFormat(&$value) 
+    protected function fieldFormat(&$value)
     {
         if(is_int($value)) {
             $value = intval($value);
@@ -867,16 +867,16 @@ class Db extends Base
      * 字段和表名添加` 符合
      * 保证指令中使用关键字不出错 针对mysql
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
-     * @param mixed $value  
+     * @param mixed $value
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function addSpecialChar(&$value) 
+    protected function addSpecialChar(&$value)
     {
         if( '*' == $value ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
             //如果包含* 或者 使用了sql方法 则不作处理
@@ -891,7 +891,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 是否为数据库更改操作
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param string $query  SQL指令
      +----------------------------------------------------------
@@ -918,7 +918,7 @@ class Db extends Base
      * 查询数据方法，支持动态缓存
      * 动态缓存方式为可配置，默认为文件方式
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $sql  查询语句
      * @param boolean $cache  是否缓存查询
@@ -953,7 +953,7 @@ class Db extends Base
         $data = $this->_query();
         if($cache){
             //如果启用数据库缓存则重新缓存
-             S($guid,$data);                    	
+             S($guid,$data);
         }
         return $data;
     }
@@ -962,7 +962,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 延时查询方法
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $sql  查询语句
      +----------------------------------------------------------
@@ -981,7 +981,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 数据库操作方法
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $sql  执行语句
      +----------------------------------------------------------
@@ -1005,7 +1005,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 自动判断进行查询或者执行操作
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $sql SQL指令
      +----------------------------------------------------------
@@ -1014,7 +1014,7 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function autoExec($sql='',$lazy=false,$lock=false,$cache=false) 
+    public function autoExec($sql='',$lazy=false,$lock=false,$cache=false)
     {
         if(empty($sql)) {
         	$sql  = $this->queryStr;
@@ -1028,15 +1028,15 @@ class Db extends Base
 
     /**
      +----------------------------------------------------------
-     * 查找记录 
+     * 查找记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $where 数据
      * @param string $tables  数据表名
      * @param string $fields  字段名
      * @param string $order  排序
-     * @param string $limit  
+     * @param string $limit
      * @param string $group
      * @param string $having
      * @param boolean $cache 是否缓存
@@ -1076,7 +1076,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 插入记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $map 数据
      * @param string $table  数据表名
@@ -1111,7 +1111,7 @@ class Db extends Base
         //转换数据库编码
         $data    = auto_charset($data,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
         $fields = array_keys($data);
-        if('MYSQL' == $this->getDbType()) {
+        if(0 === strpos($this->getDbType(),'MYSQL')) {
         	array_walk($fields, array($this, 'addSpecialChar'));
         }
         $fieldsStr = implode(',', $fields);
@@ -1127,7 +1127,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 插入多个记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $map 数据列表
      * @param string $table  数据表名
@@ -1139,11 +1139,11 @@ class Db extends Base
      */
     public function addAll($map,$table)
     {
-		if('MYSQL'==$this->getDbType()) {
+		if(0 === strpos($this->getDbType(),'MYSQL')) {
 			//转换数据库编码
 			$fields = array_keys((array)$map[0]);
 			array_walk($fields, array($this, 'addSpecialChar'));
-			$fieldsStr = implode(',', $fields);	
+			$fieldsStr = implode(',', $fields);
 			$values = array();
 			foreach ($map as $data){
 				// 去掉复合对象 保证关联数据属性不会被保存导致错误
@@ -1155,7 +1155,7 @@ class Db extends Base
 				$_data    = auto_charset($_data,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
 				$_values = array_values($_data);
 				array_walk($_values, array($this, 'fieldFormat'));
-				$values[] = '( '.implode(',', $_values).' )';			
+				$values[] = '( '.implode(',', $_values).' )';
 			}
 			$valuesStr = implode(',',$values);
 			$this->queryStr =    'INSERT INTO '.$table.' ('.$fieldsStr.') VALUES '.$valuesStr;
@@ -1173,11 +1173,11 @@ class Db extends Base
      +----------------------------------------------------------
      * 删除记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $where 为条件Map、Array或者String
      * @param string $table  数据表名
-     * @param string $limit  
+     * @param string $limit
      * @param string $order
      +----------------------------------------------------------
      * @return false | integer
@@ -1195,12 +1195,12 @@ class Db extends Base
      +----------------------------------------------------------
      * 更新记录
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $sets 数据
      * @param string $table  数据表名
      * @param string $where  更新条件
-     * @param string $limit  
+     * @param string $limit
      * @param string $order
      * @param boolean $lock 是否加锁
      +----------------------------------------------------------
@@ -1219,12 +1219,12 @@ class Db extends Base
      +----------------------------------------------------------
      * 保存某个字段的值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field 要保存的字段名
      * @param string $value  字段值
      * @param string $table  数据表
-     * @param string $where 保存条件  
+     * @param string $where 保存条件
      * @param boolean $asString 字段值是否为字符串
      +----------------------------------------------------------
      * @return void
@@ -1246,12 +1246,12 @@ class Db extends Base
      +----------------------------------------------------------
      * 增加某个字段的值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field 要保存的字段名
      * @param string $table  数据表
-     * @param string $where 保存条件  
-     * @param integer $step 
+     * @param string $where 保存条件
+     * @param integer $step
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -1266,12 +1266,12 @@ class Db extends Base
      +----------------------------------------------------------
      * 减少某个字段的值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $field 要保存的字段名
      * @param string $table  数据表
-     * @param string $where 保存条件  
-     * @param integer $step 
+     * @param string $where 保存条件
+     * @param integer $step
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -1286,9 +1286,9 @@ class Db extends Base
      +----------------------------------------------------------
      * 查询次数更新或者查询
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param mixed $times 
+     * @param mixed $times
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -1310,9 +1310,9 @@ class Db extends Base
      +----------------------------------------------------------
      * 写入次数更新或者查询
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
-     * @param mixed $times 
+     * @param mixed $times
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -1334,7 +1334,7 @@ class Db extends Base
      +----------------------------------------------------------
      * 获取最近一次查询的sql语句
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
