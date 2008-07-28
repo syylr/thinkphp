@@ -1350,7 +1350,7 @@ class Model extends Base  implements IteratorAggregate
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function opRelation($opType,$data,$name='')
+	public function opRelation($opType,$data='',$name='')
 	{
 		$result	=	false;
 		// 把HashMap对象转换成数组
