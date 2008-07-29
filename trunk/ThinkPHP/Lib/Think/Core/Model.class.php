@@ -1678,7 +1678,8 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getBy($field,$value,$fields='*',$cache=false,$relation=false,$lazy=false)
 	{
-		return $this->_read($field."='{$value}'",$fields,false,null,null,null,null,null,$cache,$relation,$lazy);
+        $condition[$field]  =  $value;
+		return $this->_read($condition,$fields,false,null,null,null,null,null,$cache,$relation,$lazy);
 	}
 
 	/**
@@ -1701,7 +1702,8 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getByAll($field,$value,$fields='*',$cache=false,$relation=false,$lazy=true)
 	{
-		return $this->_read($field."='{$value}'",$fields,true,null,null,null,null,null,$cache,$relation,$lazy);
+        $condition[$field]  =  $value;
+		return $this->_read($condition,$fields,true,null,null,null,null,null,$cache,$relation,$lazy);
 	}
 
 	/**
