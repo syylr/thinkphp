@@ -182,5 +182,6 @@ return  array(
 	'LIKE_MATCH_FIELDS'		=>	'', //数据库查询的时候需要进行模糊匹配的字段
 	'ACTION_JUMP_TMPL'=>	'Public:success',
 	'ACTION_404_TMPL'=>	'Public:404',
+    'FIELDS_DEPR'                 =>   ',',
 );
 ?>

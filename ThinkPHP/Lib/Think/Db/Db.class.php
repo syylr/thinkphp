@@ -483,7 +483,7 @@ class Db extends Base
 				$operate	=	' AND ';
 			}
 			foreach ($where as $key=>$val){
-				if(strpos($key,',')) {
+				if(strpos($key,C('FIELDS_DEPR'))) {
 					$key	=	explode(',',$key);
 					array_walk($key, array($this, 'addSpecialChar'));
 				}else{
