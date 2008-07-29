@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -27,13 +27,13 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      * 架构函数 读取数据库配置信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param array $config 数据库配置数组
      +----------------------------------------------------------
      */
-    public function __construct($config=''){    
-        if ( !extension_loaded('mysql') ) {    
+    public function __construct($config=''){
+        if ( !extension_loaded('mysql') ) {
             throw_exception(L('_NOT_SUPPERT_').':mysql');
         }
 		if(!empty($config)) {
@@ -45,7 +45,7 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      * 连接数据库方法
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -66,7 +66,7 @@ Class DbMysql extends Db{
                 return False;
             }
             $this->dbVersion = mysql_get_server_info($this->linkID[$linkNum]);
-            if ($this->dbVersion >= "4.1") { 
+            if ($this->dbVersion >= "4.1") {
                 //使用UTF8存取数据库 需要mysql 4.1.0以上支持
                 mysql_query("SET NAMES '".C('DB_CHARSET')."'", $this->linkID[$linkNum]);
             }
@@ -82,7 +82,7 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      * 释放查询结果
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function free() {
@@ -95,7 +95,7 @@ Class DbMysql extends Db{
      * 执行查询 主要针对 SELECT, SHOW 等指令
      * 返回数据集
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -125,7 +125,7 @@ Class DbMysql extends Db{
             $this->numRows = mysql_num_rows($this->queryID);
             //$this->numCols = mysql_num_fields($this->queryID);
             $this->resultSet = $this->getAll();
-            return $this->resultSet;              	
+            return $this->resultSet;
         }
     }
 
@@ -133,7 +133,7 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      * 执行语句 针对 INSERT, UPDATE 以及DELETE
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -157,11 +157,12 @@ Class DbMysql extends Db{
 		$result	=	mysql_query($this->queryStr, $this->_linkID) ;
 		$this->debug();
         if ( false === $result) {
+            //if ( $this->debug ) throw_exception($this->error());
             return false;
         } else {
             $this->numRows = mysql_affected_rows($this->_linkID);
             $this->lastInsID = mysql_insert_id($this->_linkID);
-            return $this->numRows;            	
+            return $this->numRows;
         }
     }
 
@@ -169,7 +170,7 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      * 启动事务
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -191,7 +192,7 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      * 用于非自动提交状态下面的查询提交
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -215,7 +216,7 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      * 事务回滚
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -240,7 +241,7 @@ Class DbMysql extends Db{
      * 获得下一条查询结果 简易数据集获取方法
      * 查询结果放到 result 数组中
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -268,7 +269,7 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      * 获得一条查询结果
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $seek 指针位置
      * @param string $str  SQL指令
@@ -305,7 +306,7 @@ Class DbMysql extends Db{
      * 获得所有的查询数据
      * 查询结果放到 resultSet 数组中
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $resultType  数据集类型
      +----------------------------------------------------------
@@ -337,12 +338,12 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      * 取得数据表的字段信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function getFields($tableName) { 
+    public function getFields($tableName) {
         $this->_query('SHOW COLUMNS FROM '.$tableName);
         $result =   $this->getAll();
         $info   =   array();
@@ -360,18 +361,18 @@ Class DbMysql extends Db{
             );
         }
         return $info;
-    } 
+    }
 
     /**
      +----------------------------------------------------------
      * 取得数据库的表信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function getTables($dbName='') { 
+    public function getTables($dbName='') {
         $this->_query('SHOW TABLES');
         $result =   $this->getAll();
         $info   =   array();
@@ -379,32 +380,32 @@ Class DbMysql extends Db{
             $info[$key] = current($val);
         }
         return $info;
-    } 
+    }
 
     /**
      +----------------------------------------------------------
      * 关闭数据库
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function close() { 
+    public function close() {
         if (!empty($this->queryID))
             mysql_free_result($this->queryID);
         if (!mysql_close($this->_linkID)){
             throw_exception($this->error());
         }
         $this->_linkID = 0;
-    } 
+    }
 
     /**
      +----------------------------------------------------------
      * 数据库错误信息
      * 并显示当前的SQL语句
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -423,7 +424,7 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      * SQL指令安全过滤
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $str  SQL字符串
      +----------------------------------------------------------
@@ -432,9 +433,9 @@ Class DbMysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function escape_string($str) { 
-        return mysql_escape_string($str); 
-    } 
+    public function escape_string($str) {
+        return mysql_escape_string($str);
+    }
 
 }//类定义结束
 ?>
