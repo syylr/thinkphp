@@ -376,7 +376,7 @@ class Db extends Base
 	protected function debug() {
 		// 记录操作结束时间
 		if ( $this->debug || C('SQL_DEBUG_LOG')) 	{
-			$runtime	=	number_format((array_sum(explode(' ', microtime())) - $this->beginTime), 6);
+			$runtime	=	number_format(microtime(TRUE) - $this->beginTime), 6);
 			Log::record(" RunTime:".$runtime."s SQL = ".$this->queryStr,SQL_LOG_DEBUG);
 		}
 	}
@@ -1292,7 +1292,7 @@ class Db extends Base
 		}else{
 			$_times++;
 			// 记录开始执行时间
-			$this->beginTime = array_sum(explode(' ', microtime()));
+			$this->beginTime = microtime(TRUE);
 		}
 	}
 
@@ -1316,7 +1316,7 @@ class Db extends Base
 		}else{
 			$_times++;
 			// 记录开始执行时间
-			$this->beginTime = array_sum(explode(' ', microtime()));
+			$this->beginTime = microtime(TRUE);
 		}
 	}
 
