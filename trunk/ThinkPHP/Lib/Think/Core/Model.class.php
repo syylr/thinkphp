@@ -1522,7 +1522,8 @@ class Model extends Base  implements IteratorAggregate
      */
 	// 根据某个字段的值删除记录
 	public function deleteBy($field,$value,$limit='',$order='',$autoLink=false) {
-		return $this->_delete(false,$field."='$value'",$limit,$order,$autoLink);
+        $condition[$field]  =  $value;
+		return $this->_delete(false,$condition,$limit,$order,$autoLink);
 	}
 
 	/**
