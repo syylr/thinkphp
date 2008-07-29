@@ -376,7 +376,7 @@ class Db extends Base
 	protected function debug() {
 		// 记录操作结束时间
 		if ( $this->debug || C('SQL_DEBUG_LOG')) 	{
-			$runtime	=	number_format(microtime(TRUE) - $this->beginTime), 6);
+			$runtime	=	number_format(microtime(TRUE) - $this->beginTime, 6);
 			Log::record(" RunTime:".$runtime."s SQL = ".$this->queryStr,SQL_LOG_DEBUG);
 		}
 	}
