@@ -484,7 +484,7 @@ class Db extends Base
 			}
 			foreach ($where as $key=>$val){
 				if(strpos($key,C('FIELDS_DEPR'))) {
-					$key	=	explode(',',$key);
+					$key	=	explode(C('FIELDS_DEPR'),$key);
 					array_walk($key, array($this, 'addSpecialChar'));
 				}else{
 					$key = $this->addSpecialChar($key);
