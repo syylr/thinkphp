@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -30,21 +30,21 @@ class TagLibHtml extends TagLib
      * editor标签解析 插入可视化编辑器
      * 格式： <html:editor id="editor" name="remark" type="FCKeditor" content="{$vo.remark}" />
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _editor($attr) 
+    public function _editor($attr)
     {
         $tag        =	$this->parseXmlAttr($attr,'editor');
-        $id			=	!empty($tag['id'])?$tag['id']: '_editor';       
-		$name   	=	$tag['name'];   
-        $style   	    =	$tag['style'];   
-        $width		=	!empty($tag['width'])?$tag['width']: '100%';    
-        $height     =	!empty($tag['height'])?$tag['height'] :'320px';    
+        $id			=	!empty($tag['id'])?$tag['id']: '_editor';
+		$name   	=	$tag['name'];
+        $style   	    =	$tag['style'];
+        $width		=	!empty($tag['width'])?$tag['width']: '100%';
+        $height     =	!empty($tag['height'])?$tag['height'] :'320px';
         $content    =   $tag['content'];
         $type       =   $tag['type'] ;
 		switch(strtoupper($type)) {
@@ -62,7 +62,7 @@ class TagLibHtml extends TagLib
             	break;
             case 'MINI':
             	$parseStr  =  '<div class="smartEditor" style="'.$style.'"><script type="text/javascript" src="__ROOT__/Public/Js/smartEditor/smartEditor.js"></script><div id="tools" ><select onchange=setColor(options[this.selectedIndex].value) style="width:35px" name="color"><OPTION value="" selected>颜色</OPTION><OPTION style="background: skyblue;" value=skyblue></OPTION> <OPTION style="background: royalblue" value=royalblue></OPTION> <OPTION style="background: blue" value=blue></OPTION> <OPTION style="background: darkblue" value=darkblue></OPTION> <OPTION style="background: orange" value=orange></OPTION> <OPTION style="background: orangered" value=orangered></OPTION> <OPTION style="background: crimson" value=crimson></OPTION> <OPTION style="background: red" value=red></OPTION> <OPTION style="background: firebrick" value=firebrick></OPTION> <OPTION style="background: darkred" value=darkred></OPTION> <OPTION style="background: green" value=green></OPTION> <OPTION style="background: limegreen" value=limegreen></OPTION> <OPTION style="background: seagreen" value=seagreen></OPTION> <OPTION style="background: deeppink" value=deeppink></OPTION> <OPTION style="background: tomato" value=tomato></OPTION> <OPTION style="background: coral" value=coral></OPTION> <OPTION style="background: purple" value=purple></OPTION> <OPTION style="background: indigo" value=indigo></OPTION> <OPTION style="background: burlywood" value=burlywood></OPTION> <OPTION style="background: sandybrown" value=sandybrown></OPTION> <OPTION style="background: sienna" value=sienna></OPTION> <OPTION style="background: chocolate" value=chocolate></OPTION> <OPTION style="background: teal" value=teal></OPTION> <OPTION style="background: silver" value=silver></OPTION></select><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/bold.gif"  onclick="format(\'bold\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="斜体"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/italic.gif" onclick="format(\'italic\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="粗体"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/underline.gif"  onclick="format(\'underline\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="下划线">	<IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/strikethrough.gif"  onclick="format(\'strikethrough\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="下划线"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/separator.gif"   WIDTH="2" HEIGHT="20" BORDER="0" ALT=""><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/numlist.gif" onclick="format(\'Insertorderedlist\')"  WIDTH="20" HEIGHT="20" BORDER="0" ALT="数字编号"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/bullist.gif" onclick="format(\'Insertunorderedlist\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="项目编号"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/separator.gif"   WIDTH="2" HEIGHT="20" BORDER="0" ALT=""><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/indent.gif" onclick="format(\'Indent\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="增加缩进"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/outdent.gif" onclick="format(\'Outdent\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="减少缩进"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/separator.gif"   WIDTH="2" HEIGHT="20" BORDER="0" ALT=""><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/link.gif" onclick="createLink()" WIDTH="20" HEIGHT="20" BORDER="0" ALT="添加链接"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/unlink.gif" onclick="format(\'Unlink\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="取消链接"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/image.gif" onclick="selectImage(\''.__APP__.'/Attach/select/module/'.MODULE_NAME.'\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="添加图片"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/separator.gif"   WIDTH="2" HEIGHT="20" BORDER="0" ALT=""><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/cut.gif" onclick="format(\'Cut\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="剪切"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/copy.gif" onclick="format(\'Copy\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="拷贝"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/paste.gif" onclick="format(\'Paste\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="粘贴"><IMG SRC="'.WEB_PUBLIC_URL.'/Js/smartEditor/images/removeformat.gif" onclick="format(\'RemoveFormat\')" WIDTH="20" HEIGHT="20" BORDER="0" ALT="清除格式"></div><textarea name="'.$name.'" id="sourceEditor" style="border:none;display:none" >'.$content.'</textarea><div style="'.$style.'" contentEditable="true" id="'.$id.'" >'.$content.'</div></div><SCRIPT LANGUAGE="JavaScript">function saveEditor(){document.getElementById("'.$name.'").value = document.getElementById("'.$id.'").innerHTML;} document.getElementById("'.$id.'").onblur=saveEditor;</SCRIPT>';
-            	break;            
+            	break;
             case 'UBB':
 				$parseStr	=	'<script type="text/javascript" src="__ROOT__/Public/Js/UbbEditor.js"></script><div style="padding:1px;width:'.$width.';border:1px solid silver;float:left;"><SCRIPT LANGUAGE="JavaScript"> showTool(); </SCRIPT></div><div><TEXTAREA id="UBBEditor" NAME="'.$name.'"  style="clear:both;float:none;width:'.$width.';height:'.$height.'" >'.$content.'</TEXTAREA></div><div style="padding:1px;width:'.$width.';border:1px solid silver;float:left;"><SCRIPT LANGUAGE="JavaScript">showEmot();  </SCRIPT></div>';
 				break;
@@ -78,14 +78,14 @@ class TagLibHtml extends TagLib
      * select标签解析
      * 格式： <html:select options="name" selected="value" />
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _select($attr) 
+    public function _select($attr)
     {
         $tag        = $this->parseXmlAttr($attr,'select');
         $name       = $tag['name'];
@@ -100,7 +100,7 @@ class TagLibHtml extends TagLib
         $style      = $tag['style'];
         $ondblclick = $tag['dblclick'];
 		$onchange	= $tag['change'];
-        
+
         if(!empty($multiple)) {
             $parseStr = '<select id="'.$id.'" name="'.$name.'" ondblclick="'.$ondblclick.'" onchange="'.$onchange.'" multiple="multiple" class="'.$style.'" size="'.$size.'" >';
         }else {
@@ -142,14 +142,14 @@ class TagLibHtml extends TagLib
      * checkbox标签解析
      * 格式： <html:checkbox checkboxs="" checked="" />
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _checkbox($attr) 
+    public function _checkbox($attr)
     {
         $tag        = $this->parseXmlAttr($attr,'checkbox');
         $name       = $tag['name'];
@@ -173,16 +173,16 @@ class TagLibHtml extends TagLib
      +----------------------------------------------------------
      * mulitSelect标签解析
      * 格式： <html:list datasource="" show="" />
-     * 
+     *
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function _multiCheckBox($attr) 
+    public function _multiCheckBox($attr)
     {
         $tag        = $this->parseXmlAttr($attr,'mulitCheckBox');
         $id         = $tag['id'];                   //表格ID
@@ -204,14 +204,14 @@ class TagLibHtml extends TagLib
      * radio标签解析
      * 格式： <html:radio radios="name" checked="value" />
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _radio($attr) 
+    public function _radio($attr)
     {
         $tag        = $this->parseXmlAttr($attr,'radio');
         $name       = $tag['name'];
@@ -227,7 +227,7 @@ class TagLibHtml extends TagLib
             }else {
                 $parseStr .= '<input type="radio" name="'.$name.'[]" value="'.$key.'">'.$val.$separator;
             }
-            
+
         }
         return $parseStr;
     }
@@ -237,14 +237,14 @@ class TagLibHtml extends TagLib
      * link标签解析
      * 格式： <html:link file="" type="" />
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _link($attr) 
+    public function _link($attr)
     {
         $tag        = $this->parseXmlAttr($attr,'link');
         $file       = $tag['href'];
@@ -264,14 +264,14 @@ class TagLibHtml extends TagLib
      * link标签解析
      * 格式： <html:link file="" type="" />
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _import($attr) 
+    public function _import($attr)
     {
         $tag        = $this->parseXmlAttr($attr,'import');
         $file       = $tag['file'];
@@ -290,14 +290,14 @@ class TagLibHtml extends TagLib
      * imageLink标签解析
      * 格式： <html:imageLink type="" value="" />
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _imgLink($attr) 
+    public function _imgLink($attr)
     {
         $tag        = $this->parseXmlAttr($attr,'imgLink');
         $name       = $tag['name'];                //名称
@@ -319,26 +319,26 @@ class TagLibHtml extends TagLib
      * swf标签解析 插入flash文件
      * 格式： <html:swf type="" value="" />
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _swf($attr,$content) 
+    public function _swf($attr,$content)
     {
         $tag        =	$this->parseXmlAttr($attr,'swf');
-        $id			=	$tag['id'];           
-        $src		=	$tag['src'];           
-        $width		=	$tag['width'];    
+        $id			=	$tag['id'];
+        $src		=	$tag['src'];
+        $width		=	$tag['width'];
 		$parm		=	$tag['parm'];
 		$vars		=	$tag['vars'];
 		$bgcolor	=	$tag['bgcolor'];
-        $height     =	$tag['height'];      
-        $version    =	$tag['version'];     
-        $autoinstall=	$tag['autoinstall'];  
-		
+        $height     =	$tag['height'];
+        $version    =	$tag['version'];
+        $autoinstall=	$tag['autoinstall'];
+
         $parseStr   = '<div id="flashcontent">'.$content.'</div><script type="text/javascript">';
 		$parseStr	.='// <![CDATA['."\r\n";
 		$parseStr	.= 'var so = new SWFObject("'.$src.'", "'.$id.'", "'.$width.'", "'.$height.'", "'.$version.'", "'.$bgcolor.'","'.$autoinstall.'");'."\r\n";
@@ -356,14 +356,14 @@ class TagLibHtml extends TagLib
      * imageBtn标签解析
      * 格式： <html:imageBtn type="" value="" />
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _imageBtn($attr) 
+    public function _imageBtn($attr)
     {
         $tag        = $this->parseXmlAttr($attr,'imageBtn');
         $name       = $tag['name'];                //名称
@@ -378,7 +378,7 @@ class TagLibHtml extends TagLib
         }else {
         	$parseStr   = '<div class="'.$style.'" ><INPUT TYPE="'.$type.'" id="'.$id.'"  name="'.$name.'" value="'.$value.'" onclick="'.$click.'" class="button"></div>';
         }
-        
+
         return $parseStr;
     }
 
@@ -386,16 +386,16 @@ class TagLibHtml extends TagLib
      +----------------------------------------------------------
      * mulitSelect标签解析
      * 格式： <html:list datasource="" show="" />
-     * 
+     *
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function _multiSelect($attr) 
+    public function _multiSelect($attr)
     {
         $tag        = $this->parseXmlAttr($attr,'mulitSelect');
         $id         = $tag['id'];                   //表格ID
@@ -435,16 +435,16 @@ class TagLibHtml extends TagLib
      +----------------------------------------------------------
      * list标签解析
      * 格式： <html:list datasource="" show="" />
-     * 
+     *
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function _list($attr) 
+    public function _list($attr)
     {
         $tag        = $this->parseXmlAttr($attr,'list');
         $id         = $tag['id'];                       //表格ID
@@ -457,7 +457,7 @@ class TagLibHtml extends TagLib
         if(isset($tag['actionlist'])) {
             $actionlist = explode(',',trim($tag['actionlist']));    //指定功能列表
         }
-        
+
         if(substr($tag['show'],0,1)=='$') {
             $show   = $this->tpl->get(substr($tag['show'],1));
         }else {
@@ -466,7 +466,7 @@ class TagLibHtml extends TagLib
         $show       = explode(',',$show);                //列表显示字段列表
 
         //计算表格的列数
-        $colNum     = count($show);           
+        $colNum     = count($show);
         if(!empty($checkbox))   $colNum++;
         if(!empty($action))     $colNum++;
 
@@ -481,7 +481,7 @@ class TagLibHtml extends TagLib
         	$fields[] = explode(':',$val);
         }
         if(!empty($checkbox) && 'true'==strtolower($checkbox)) {//如果指定需要显示checkbox列
-            $parseStr .='<th width="8"><input type="checkbox" id="check" onclick="CheckAll(\''.$id.'\')"></th>';            
+            $parseStr .='<th width="8"><input type="checkbox" id="check" onclick="CheckAll(\''.$id.'\')"></th>';
         }
         foreach($fields as $field) {//显示指定的字段
             $property = explode('|',$field[0]);
@@ -497,7 +497,7 @@ class TagLibHtml extends TagLib
         if(!empty($action)) {//如果指定显示操作功能列
             $parseStr .= '<th >操作</th>';
         }
-        
+
         $parseStr .= '</TR>';
         $parseStr .= '<volist name="'.$datasource.'" id="'.$name.'" ><TR class="row" onmouseover="over()" onmouseout="out()" onclick="change()" >';	//支持鼠标移动单元行颜色变化 具体方法在js中定义
 
@@ -518,17 +518,20 @@ class TagLibHtml extends TagLib
                     $parseStr .= '<a href="javascript:'.$field[2].'(\'{$'.$name.'.'.$pk.'}\')">';
                 }
             }
-            $property = explode('|',$field[0]);
-            if(count($property)>1) {
-                $parseStr .= '{$'.$name.'.'.$property[0].'|'.$property[1].'}';
-            }else {
-                $parseStr .= '{$'.$name.'.'.$field[0].'}';
+            $propertys = explode('^',$field[0]);
+            foreach ($propertys as $property){
+                $unit = explode('|',$property);
+                if(count($unit)>1) {
+                    $parseStr .= '{$'.$name.'.'.$unit[0].'|'.$unit[1].'} ';
+                }else {
+                    $parseStr .= '{$'.$name.'.'.$property.'} ';
+                }
             }
             if(!empty($field[2])) {
                 $parseStr .= '</a>';
             }
             $parseStr .= '</TD>';
-            
+
         }
         if(!empty($action)) {//显示功能操作
             if(!empty($actionlist[0])) {//显示指定的功能项
@@ -544,11 +547,11 @@ class TagLibHtml extends TagLib
                         }else {
                             $parseStr .= '<A HREF="javascript:'.$a[0].'(\'{$'.$name.'.'.$pk.'}\')"><?php if(0== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[1].'<?php } ?><?php if(1== (is_array($'.$name.')?$'.$name.'["status"]:$'.$name.'->status)){ ?>'.$b[0].'<?php } ?></A> ';
                         }
-                        
+
                     }else {
                         $parseStr .= '<A HREF="javascript:'.$a[0].'(\'{$'.$name.'.'.$pk.'}\')">'.$a[1].'</A> ';
                     }
-                    
+
                 }
                 $parseStr .= '</TD>';
             }else { //显示默认的功能项，包括编辑、删除
@@ -561,6 +564,6 @@ class TagLibHtml extends TagLib
         return $parseStr;
     }
 
-	
+
 }//类定义结束
 ?>
