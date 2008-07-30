@@ -38,7 +38,7 @@ class Debug extends Base
      */
     static public function mark($name)
     {
-    	self::$marker['time'][$name]  =  microtime();
+    	self::$marker['time'][$name]  =  microtime(TRUE);
         if(MEMORY_LIMIT_ON) {
         	self::$marker['mem'][$name] = memory_get_usage();
             self::$marker['peak'][$name] = function_exists('memory_get_peak_usage')?memory_get_peak_usage(): self::$marker['mem'][$name];
@@ -64,14 +64,11 @@ class Debug extends Base
 		{
 			return '';
 		}
-
 		if ( ! isset(self::$marker['time'][$end]))
 		{
-			self::$marker['time'][$end] = microtime();
+			self::$marker['time'][$end] = microtime(TRUE);
 		}
-        $startTime    =  array_sum(explode(' ', self::$marker['time'][$start]));
-        $endTime     =  array_sum(explode(' ', self::$marker['time'][$end]));
-        return number_format($endTime - $startTime, $decimals);
+        return number_format(self::$marker['time'][$end] - self::$marker['time'][$start], $decimals);
     }
 
     /**
@@ -95,14 +92,11 @@ class Debug extends Base
 		{
 			return '';
 		}
-
 		if ( ! isset(self::$marker['mem'][$end]))
 		{
 			self::$marker['mem'][$end] = memory_get_usage();
 		}
-        $startMem    =  array_sum(explode(' ', self::$marker['mem'][$start]));
-        $endMem     =  array_sum(explode(' ', self::$marker['mem'][$end]));
-        return number_format(($endMem - $startMem)/1024);
+        return number_format((self::$marker['mem'][$end] - self::$marker['mem'][$start])/1024);
     }
 
     /**
