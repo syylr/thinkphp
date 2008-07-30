@@ -48,7 +48,8 @@ class UploadFile extends Base
     public $thumbSuffix   =  '_thumb';
 	// 压缩图片文件上传
 	public $zipImages = false;
-
+    // 启用子目录保存文件
+    public $autoSub   =  false;
     // 上传文件保存路径
     public $savePath = '';
 
@@ -121,6 +122,15 @@ class UploadFile extends Base
     private function save($file)
     {
         $filename = $file['savepath'].$file['savename'];
+        if($this->autoSub) {
+            // 使用哈希子目录保存文件
+            $name = md5($file['savename']);
+            $dir	=	$name{0};
+            if(!is_dir($file['savepath'].$dir)) {
+                mkdir($file['savepath'].$dir);
+            }
+            $filename   =  $file['savepath'].$dir.'/'.$file['savename'];
+        }
 		if(!$this->uploadReplace && file_exists($filename)) {
 			// 不覆盖同名文件
 			$this->error	=	'文件已经存在！'.$filename;
