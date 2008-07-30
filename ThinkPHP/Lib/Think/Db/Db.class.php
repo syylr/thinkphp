@@ -163,6 +163,8 @@ class Db extends Base
 			$db = new $dbClass($db_config);
 			if(!empty($db_config['dsn'])) {
 				$db->dbType = $this->dbType.'  '.$db_config['dsn'];
+            }else{
+                $db->dbType = $this->dbType;
 			}
 		}else {
 			// 类没有定义
