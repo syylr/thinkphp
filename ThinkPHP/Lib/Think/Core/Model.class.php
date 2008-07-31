@@ -1245,6 +1245,29 @@ class Model extends Base  implements IteratorAggregate
 								$pk   =  is_array($result)?$result[$this->getPk()]:$result->{$this->getPk()};
 								$mappingCondition .= " AND {$mappingFk}={$pk}";
 								$relationData   =  $model->find($mappingCondition,$mappingFields,false,false);
+								if(isset($val['as_fields'])) {
+									// 支持直接把关联的字段值映射成数据对象中的某个字段
+									$fields	=	explode(',',$val['as_fields']);
+									foreach ($fields as $field){
+										$fieldAs = explode(':',$field);
+										if(count($fieldAs)>1) {
+											$fieldFrom = $fieldAs[0];
+											$fieldTo		=	$fieldAs[1];
+										}else{
+											$fieldFrom	 =	 $field;
+											$fieldTo		=	$field;
+										}
+										$fieldVal	 =	 is_array($relationData)?$relationData[$fieldFrom]:$relationData->$fieldFrom;
+										if(isset($fieldVal)) {
+											if(is_array($result)) {
+												$result[$fieldTo]	=	$fieldVal;
+											}else{
+												$result->$fieldTo	=	$fieldVal;
+											}
+										}
+									}
+                                    unset($relationData);
+								}
 								break;
 							case BELONGS_TO:
 								$fk   =  is_array($result)?$result[$mappingFk]:$result->{$mappingFk};
@@ -1271,6 +1294,7 @@ class Model extends Base  implements IteratorAggregate
 											}
 										}
 									}
+                                    unset($relationData);
 								}
 								break;
 							case HAS_MANY:
