@@ -1236,7 +1236,7 @@ class Model extends Base  implements IteratorAggregate
 							// 自引用关联 获取父键名
 							$mappingFk   =   !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
 						}else{
-                            $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:$this->name.'_id';		//  关联外键
+                            $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:strtolower($this->name).'_id';		//  关联外键
                         }
 						// 获取关联模型对象
 						$model = D($mappingClass);
@@ -1380,7 +1380,7 @@ class Model extends Base  implements IteratorAggregate
 							// 自引用关联 获取父键名
 							$mappingFk   =   !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
 						}else{
-                            $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:$this->name.'_id';		//  关联外键
+                            $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:strtolower($this->name).'_id';		//  关联外键
                         }
 						// 获取关联model对象
 						$model = D($mappingClass);
