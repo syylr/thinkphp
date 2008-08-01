@@ -2097,7 +2097,7 @@ class Model extends Base  implements IteratorAggregate
                         }
 					}
 				}else{
-					$cols[]	 =	 $result[$field];
+					$cols[]	 =	 $result[$field[0]];
 				}
 			}
 			return $cols;
