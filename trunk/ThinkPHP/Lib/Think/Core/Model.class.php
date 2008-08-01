@@ -980,7 +980,9 @@ class Model extends Base  implements IteratorAggregate
 				}
 			}
 		}else{
-			$fields	=	explode(',',$fields);
+			if(!is_array($fields)) {
+                $fields	=	explode(',',$fields);
+            }
 			// 解析成视图字段
 			foreach ($this->viewFields as $name=>$val){
 				foreach ($fields as $key=>$field){
@@ -1936,6 +1938,9 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getField($field,$condition='')
 	{
+        if(empty($condition) && isset($this->options['where'])) {
+            $condition   =  $this->options['where'];
+        }
 		if($this->viewModel) {
 			$condition	=	$this->checkCondition($condition);
 			$field	=	$this->checkFields($field);
@@ -1961,6 +1966,9 @@ class Model extends Base  implements IteratorAggregate
      */
 	public function getFields($field,$condition='',$sepa=' ')
 	{
+        if(empty($condition) && isset($this->options['where'])) {
+            $condition   =  $this->options['where'];
+        }
 		if($this->viewModel) {
 			$condition	=	$this->checkCondition($condition);
 			$field	=	$this->checkFields($field);
@@ -1977,8 +1985,8 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $field  字段名
-     * @param string $value  字段值
+     * @param string|array $field  字段名
+     * @param string|array $value  字段值
      * @param mixed $condition  条件
      +----------------------------------------------------------
      * @return boolean
@@ -1987,6 +1995,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	public function setField($field,$value,$condition='') {
+        if(empty($condition) && isset($this->options['where'])) {
+            $condition   =  $this->options['where'];
+        }
 		if($this->viewModel) {
 			$condition	=	$this->checkCondition($condition);
 			$field	=	$this->checkFields($field);
@@ -2010,6 +2021,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	public function setInc($field,$condition='',$step=1) {
+        if(empty($condition) && isset($this->options['where'])) {
+            $condition   =  $this->options['where'];
+        }
 		if($this->viewModel) {
 			$condition	=	$this->checkCondition($condition);
 			$field	=	$this->checkFields($field);
@@ -2033,6 +2047,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
 	public function setDec($field,$condition='',$step=1) {
+        if(empty($condition) && isset($this->options['where'])) {
+            $condition   =  $this->options['where'];
+        }
 		if($this->viewModel) {
 			$condition	=	$this->checkCondition($condition);
 			$field	=	$this->checkFields($field);

@@ -1225,12 +1225,19 @@ class Db extends Base
      +----------------------------------------------------------
      */
 	public function setField($field,$value,$table,$condition,$asString=false) {
-		if(false === strpos($value,'(') || $asString) {
-			// 更新字段内容为纯字符串
-			// 如果有'(' 视为 SQL指令更新
-			$value	=	'"'.$value.'"';
+        $this->queryStr	=	'UPDATE '.$table.' SET ';
+        if(strpos($field,',')) {
+            $field =  explode(',',$field);
+        }
+        if(is_array($field)) {
+            $count   =  count($field);
+            for($i=0;$i<$count;$i++) {
+                $this->queryStr	.= $this->addSpecialChar($field[$i]).'='.$this->fieldFormat($value[$i]).',';
+            }
+        }else{
+            $this->queryStr	.= $this->addSpecialChar($field[$i]).'='.$this->fieldFormat($value[$i]).',';
 		}
-		$this->queryStr	=	'UPDATE '.$table.' SET '.$field.'='.$value.$this->parseWhere($condition);
+		$this->queryStr	=	substr($this->queryStr,0,-1).$this->parseWhere($condition);
 		return $this->execute();
 	}
 
