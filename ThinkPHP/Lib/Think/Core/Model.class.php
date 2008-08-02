@@ -809,11 +809,6 @@ class Model extends Base  implements IteratorAggregate
 			$this->error = L('_DATA_TYPE_INVALID_');
 			return false;
 		}
-		if($this->fields['_autoInc'] && isset($data[$this->getPk()])) {
-			//如果主键为自动增长类型
-			//删除主键属数据 由数据库自动生成
-			unset($data[$this->getPk()]);
-		}
 		// 记录乐观锁
 		if($this->optimLock && !isset($data[$this->optimLock]) ) {
 			if(in_array($this->optimLock,$this->fields,true)) {
