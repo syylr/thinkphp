@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -35,15 +35,15 @@ class  ThinkTemplate extends Base
 
     /**
      +----------------------------------------------------------
-     * 取得模板实例对象 
+     * 取得模板实例对象
      * 静态方法
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return App
      +----------------------------------------------------------
      */
-    static function  getInstance() 
+    static function  getInstance()
     {
         return get_instance_of(__CLASS__);
     }
@@ -66,7 +66,7 @@ class  ThinkTemplate extends Base
 		$this->tVar = $templateVar;
 		$templateCacheFile  =  $this->loadTemplate($templateFile,$charset);
 		// 模板阵列变量分解成为独立变量
-		extract($templateVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix); 
+		extract($templateVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
 		//载入模版缓存文件
 		include $templateCacheFile;
 	}
@@ -75,7 +75,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * 加载主模板并缓存
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $tmplTemplateFile 模板文件
      * @param string $varPrefix  模板变量前缀
@@ -93,7 +93,7 @@ class  ThinkTemplate extends Base
         if(!file_exists($tmplTemplateFile)){
             $tmplTemplateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$tmplTemplateFile.C('TEMPLATE_SUFFIX');
             if(!file_exists($tmplTemplateFile)){
-                throw_exception(L('_TEMPLATE_NOT_EXIST_'));        
+                throw_exception(L('_TEMPLATE_NOT_EXIST_'));
             }
         }
         $this->templateFile    =  $tmplTemplateFile;
@@ -102,11 +102,11 @@ class  ThinkTemplate extends Base
         $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
         $tmplContent = '';
         // 检查Cache文件是否需要更新
-        if (!$this->checkCache($tmplTemplateFile)) { 
+        if (!$this->checkCache($tmplTemplateFile)) {
             // 需要更新模版 读出原模板内容
-            $tmplContent = file_get_contents($tmplTemplateFile);     
+            $tmplContent = file_get_contents($tmplTemplateFile);
             //编译模板内容
-            $tmplContent = $this->compiler($tmplContent,$charset); 
+            $tmplContent = $this->compiler($tmplContent,$charset);
             //重写Cache文件
             if( false === file_put_contents($tmplCacheFile,trim($tmplContent))) {
                 throw_exception(L('_CACHE_WRITE_ERROR_'));
@@ -119,7 +119,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * 重新编译项目全部模版
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $tmplContent 模板内容
      * @param string $charset  模板输出字符集
@@ -129,7 +129,7 @@ class  ThinkTemplate extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function buildAllTemplate($tmplPath=TMPL_PATH) 
+    public function buildAllTemplate($tmplPath=TMPL_PATH)
     {
         // 遍历模版目录
         $themes =  scandir($tmplPath);
@@ -140,14 +140,14 @@ class  ThinkTemplate extends Base
                 foreach($actions as $key=>$file) {
                     //读出原模板内容
                     $tmplTemplateFile =  ($tmplPath.$theme.'/'.$module.'/'.$file);
-                    $tmplContent = file_get_contents($tmplTemplateFile);        
+                    $tmplContent = file_get_contents($tmplTemplateFile);
                     //编译模板内容
-                    $tmplContent = $this->compiler($tmplContent); 
+                    $tmplContent = $this->compiler($tmplContent);
                     //重写Cache文件
                     $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
                     if( false === file_put_contents($tmplCacheFile,trim($tmplContent))) {
                         system_out('模版缓存文件'.$tmplCacheFile.'写入失败！');
-                    }                  	
+                    }
                 }
             }
         }
@@ -158,7 +158,7 @@ class  ThinkTemplate extends Base
      * 编译模板文件内容
      * 包括模板解析、同步路径和编码转换
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $tmplContent 模板内容
      * @param string $charset  模板输出字符集
@@ -215,7 +215,7 @@ class  ThinkTemplate extends Base
      * 检查缓存文件是否有效
      * 如果无效则需要重新更新
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $tmplTemplateFile  模板文件名
      +----------------------------------------------------------
@@ -231,12 +231,12 @@ class  ThinkTemplate extends Base
             return false;
         }elseif (!C('TMPL_CACHE_ON')){
             return false;
-        }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) { 
+        }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
             // 模板文件如果有更新则缓存需要更新
-            return false; 
-        }elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) { 
+            return false;
+        }elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) {
             // 缓存是否在有效期
-            return false; 
+            return false;
         }
         //缓存有效
         return true;
@@ -246,7 +246,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * 清除缓存或者静态文件
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $filename  缓存文件名
      +----------------------------------------------------------
@@ -255,19 +255,19 @@ class  ThinkTemplate extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function cleanCache($filename) 
-    { 
+    protected function cleanCache($filename)
+    {
         if(file_exists($filename)){
             unlink($filename);
         }
         return;
-    } 
+    }
 
     /**
      +----------------------------------------------------------
      * 清除缓存目录下面的文件
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $cacheDir  缓存目录名
      +----------------------------------------------------------
@@ -276,7 +276,7 @@ class  ThinkTemplate extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function cleanDir($cacheDir=CACHE_PATH) 
+    protected function cleanDir($cacheDir=CACHE_PATH)
     {
         if ( $dir = opendir( $cacheDir ) )
         {
@@ -296,7 +296,7 @@ class  ThinkTemplate extends Base
      * 模板解析入口
      * 支持普通标签和TagLib解析 支持自定义标签库
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $content 要解析的模板内容
      +----------------------------------------------------------
@@ -317,7 +317,7 @@ class  ThinkTemplate extends Base
         $this->getIncludeTagLib($content);
         if(!empty($this->tagLib)) {
             // 如果有引入TagLib库
-            // 则对导入的TagLib进行解析 
+            // 则对导入的TagLib进行解析
             foreach($this->tagLib as $tagLibName=>$tagLibClass) {
                 if(empty($tagLibClass)) {
                 	import('Think.Template.TagLib.TagLib'.ucwords(strtolower($tagLibName)));
@@ -329,7 +329,7 @@ class  ThinkTemplate extends Base
         }
         // 内置了CX标签库支持 无需使用taglib标签导入就可以使用
         // 并且无需添加cx前缀 ，可以直接写成
-        // <include file='' /> 
+        // <include file='' />
         // <volist id='' name='' ></volist>
         // 的形式
         import('Think.Template.TagLib.TagLibCx');
@@ -345,7 +345,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * 替换页面中的literal标签
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $content  模板内容
      +----------------------------------------------------------
@@ -369,7 +369,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * 还原被替换的literal标签
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $tag  literal标签序号
      +----------------------------------------------------------
@@ -389,14 +389,14 @@ class  ThinkTemplate extends Base
      * 搜索模板页面中包含的TagLib库
      * 并返回列表
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $content  模板内容
      +----------------------------------------------------------
      * @return string|false
      +----------------------------------------------------------
      */
-    public function getIncludeTagLib(& $content) 
+    public function getIncludeTagLib(& $content)
     {
         //搜索是否有TagLib标签
         $find = preg_match('/'.C('TAGLIB_BEGIN').'taglib\s(.+?)\s\/'.C('TAGLIB_END').'\W/is',$content,$matches);
@@ -421,7 +421,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * TagLib库解析
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $tagLib 要解析的标签库
      * @param string $content 要解析的模板内容
@@ -430,10 +430,10 @@ class  ThinkTemplate extends Base
      * @return string
      +----------------------------------------------------------
      */
-    public function parseTagLib($tagLib,&$content,$hide=false) 
+    public function parseTagLib($tagLib,&$content,$hide=false)
     {
         $tLib =  get_instance_of('TagLib'.ucwords(strtolower($tagLib)));
-        if($tLib->valid()) { 
+        if($tLib->valid()) {
             //如果标签库有效则取出支持标签列表
             $tagList =  $tLib->getTagList();
             //遍历标签列表进行模板标签解析
@@ -470,7 +470,7 @@ class  ThinkTemplate extends Base
 							}
 						}elseif($tag['content'] !='empty') {//闭合标签解析
 							$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.+?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-							
+
 						}else {//开放标签解析
 							//$content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
 							// 开始标签必须有一个空格
@@ -487,7 +487,7 @@ class  ThinkTemplate extends Base
      * 解析标签库的标签
      * 需要调用对应的标签库文件解析类
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $tagLib  标签库名称
      * @param string $tag  标签名
@@ -497,14 +497,14 @@ class  ThinkTemplate extends Base
      * @return string|false
      +----------------------------------------------------------
      */
-    public function parseXmlTag($tagLib,$tag,$attr,$content) 
+    public function parseXmlTag($tagLib,$tag,$attr,$content)
     {
         //if (MAGIC_QUOTES_GPC) {
             $attr = stripslashes($attr);
             $content = stripslashes($content);
         //}
         $tLib =  get_instance_of('TagLib'.ucwords(strtolower($tagLib)));
-        if($tLib->valid()) {	
+        if($tLib->valid()) {
 	        $parse = '_'.$tag;
 	        $content = trim($content);
             return $tLib->$parse($attr,$content);
@@ -516,7 +516,7 @@ class  ThinkTemplate extends Base
      * 模板标签解析
      * 格式： {TagName:args [|content] }
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $tagStr 标签内容
      +----------------------------------------------------------
@@ -526,9 +526,9 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      */
     public function parseTag($tagStr){
-        //if (MAGIC_QUOTES_GPC) 
+        //if (MAGIC_QUOTES_GPC)
 			$tagStr = stripslashes($tagStr);
-        //还原非模板标签 
+        //还原非模板标签
         if(preg_match('/^[\s|\d]/is',$tagStr)){
             //过滤空格和数字打头的标签
             return C('TMPL_L_DELIM') . $tagStr .C('TMPL_R_DELIM');
@@ -595,7 +595,7 @@ class  ThinkTemplate extends Base
      * 模板变量解析,支持使用函数
      * 格式： {$varname|function1|function2=arg1,arg2}
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $varStr 变量数据
      +----------------------------------------------------------
@@ -609,7 +609,7 @@ class  ThinkTemplate extends Base
         static $_varParseList = array();
         //如果已经解析过该变量字串，则直接返回变量值
         if(isset($_varParseList[$varStr])) return $_varParseList[$varStr];
-        $parseStr =''; 
+        $parseStr ='';
         $varExists = true;
         if(!empty($varStr)){
             $varArray = explode('|',$varStr);
@@ -647,19 +647,13 @@ class  ThinkTemplate extends Base
                 $name = "$$var";
             }
             //检测变量是否有定义，防止输出Notice错误
-            if(substr($var,0,6)!='Think.' && !isset($this->tVar[$var]) && !isset($var) ) 
+            if(substr($var,0,6)!='Think.' && !isset($this->tVar[$var]) && !isset($var) )
                 $varExists = false;
             //对变量使用函数
             if(count($varArray)>0) {
                 $name = $this->parseVarFunction($name,$varArray);
             }
-
-            if( empty($name) ) $varExists = false;
-
-            //变量存在而且有值就echo
-            if( $varExists ){
-                $parseStr = '<?php echo '.$name.' ?>';
-            }
+            $parseStr = '<?php echo ('.$name.') ?>';
         }
         $_varParseList[$varStr] = $parseStr;
         return $parseStr;
@@ -670,7 +664,7 @@ class  ThinkTemplate extends Base
      * 对模板变量使用函数
      * 格式 {$varname|function1|function2=arg1,arg2}
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 变量名
      * @param array $varArray  函数列表
@@ -689,16 +683,22 @@ class  ThinkTemplate extends Base
             $args = explode('=',$varArray[$i]);
             //模板函数过滤
             $args[0] = trim($args[0]);
-            if(!in_array($args[0],$template_deny_funs)){
-                if(isset($args[1])){
-                    if(strstr($args[1],'###')){
-                        $args[1] = str_replace('###',$name,$args[1]);
-                        $name = "$args[0]($args[1])";
-                    }else{
-                        $name = "$args[0]($name,$args[1])";
+            switch(strtolower($args[0])) {
+            case 'default':  // 特殊模板函数
+                $name   = '('.$name.')?('.$name.'):'.$args[1];
+                break;
+            default:  // 通用模板函数
+                if(!in_array($args[0],$template_deny_funs)){
+                    if(isset($args[1])){
+                        if(strstr($args[1],'###')){
+                            $args[1] = str_replace('###',$name,$args[1]);
+                            $name = "$args[0]($args[1])";
+                        }else{
+                            $name = "$args[0]($name,$args[1])";
+                        }
+                    }else if(!empty($args[0])){
+                        $name = "$args[0]($name)";
                     }
-                }else if(!empty($args[0])){
-                    $name = "$args[0]($name)";
                 }
             }
         }
@@ -710,7 +710,7 @@ class  ThinkTemplate extends Base
      * 特殊模板变量解析
      * 格式 以 $Think. 打头的变量属于特殊模板变量
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $varStr  变量字符串
      +----------------------------------------------------------
@@ -742,7 +742,7 @@ class  ThinkTemplate extends Base
         }else if(count($vars)==2){
             switch($vars[1]){
                 case 'NOW':$parseStr = "date('Y-m-d g:i a',time())";break;
-                case 'VERSION':$parseStr = 'THINK_VERSION';break;    
+                case 'VERSION':$parseStr = 'THINK_VERSION';break;
                 case 'TEMPLATE':$parseStr = 'C("TMPL_FILE_NAME")';break;
                 case 'LDELIM':$parseStr = 'C("TMPL_L_DELIM")';break;
                 case 'RDELIM':$parseStr = 'C("TMPL_R_DELIM")';break;
@@ -756,7 +756,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * 加载公共模板并缓存 和当前模板在同一路径，否则使用相对路径
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $tmplPublicName  公共模板文件名
      +----------------------------------------------------------
@@ -785,7 +785,7 @@ class  ThinkTemplate extends Base
 				$tmplTemplateFile = dirname($this->templateFile).'/'.$tmplPublicName;
 			}
 			$tmplTemplateFile .=  C('TEMPLATE_SUFFIX');
-            $parseStr = file_get_contents($tmplTemplateFile);        
+            $parseStr = file_get_contents($tmplTemplateFile);
         }
         //再次对包含文件进行模板分析
         return $this->parse($parseStr);
