@@ -1235,7 +1235,7 @@ class Db extends Base
                 $this->queryStr	.= $this->addSpecialChar($field[$i]).'='.$this->fieldFormat($value[$i]).',';
             }
         }else{
-            $this->queryStr	.= $this->addSpecialChar($field[$i]).'='.$this->fieldFormat($value[$i]).',';
+            $this->queryStr	.= $this->addSpecialChar($field).'='.$this->fieldFormat($value).',';
 		}
 		$this->queryStr	=	substr($this->queryStr,0,-1).$this->parseWhere($condition);
 		return $this->execute();
