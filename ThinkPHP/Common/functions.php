@@ -1115,7 +1115,7 @@ function A($className,$appName='@')
 	}
     if(class_exists($className)) {
         $action = new $className();
-		$_actioin[$appName.$className] =	$action;
+		$_action[$appName.$className] =	$action;
         return $action;
     }else {
     	return false;
