@@ -70,6 +70,10 @@ Class DbMysql extends Db{
                 //使用UTF8存取数据库 需要mysql 4.1.0以上支持
                 mysql_query("SET NAMES '".C('DB_CHARSET')."'", $this->linkID[$linkNum]);
             }
+            //设置 sql_model
+            if($this->dbVersion >'5.0.1'){
+                mysql_query("SET sql_mode=''",$this->linkID[$linkNum]);
+            }
 			// 标记连接成功
 			$this->connected	=	true;
             // 注销数据库连接配置信息

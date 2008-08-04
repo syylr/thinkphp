@@ -73,6 +73,10 @@ Class DbMysqli extends Db{
                 // 设置数据库编码 需要mysql 4.1.0以上支持
                 $this->linkID[$linkNum]->query("SET NAMES '".C('DB_CHARSET')."'");
             }
+            //设置 sql_model
+            if($this->dbVersion >'5.0.1'){
+                $this->linkID[$linkNum]->query("SET sql_mode=''");
+            }
 			// 标记连接成功
 			$this->connected	=	true;
             //注销数据库安全信息
