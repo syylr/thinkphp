@@ -21,16 +21,16 @@
  +------------------------------------------------------------------------------
  */
 if (!defined('THINK_PATH')) exit();
-//	 系统信息
+//   系统信息
 if(version_compare(PHP_VERSION,'6.0.0','<') ) {
-	@set_magic_quotes_runtime (0);
-	define('MAGIC_QUOTES_GPC',get_magic_quotes_gpc()?True:False);
+    @set_magic_quotes_runtime (0);
+    define('MAGIC_QUOTES_GPC',get_magic_quotes_gpc()?True:False);
 }
 define('OUTPUT_GZIP_ON',ini_get('output_handler') || ini_get('zlib.output_compression') );
 define('MEMORY_LIMIT_ON',function_exists('memory_get_usage')?true:false);
 // 记录内存初始使用
 if(MEMORY_LIMIT_ON) {
-	 $GLOBALS['_startUseMems'] = memory_get_usage();
+     $GLOBALS['_startUseMems'] = memory_get_usage();
 }
 define('PHP_SAPI_NAME',php_sapi_name());
 define('IS_APACHE',strstr($_SERVER['SERVER_SOFTWARE'], 'Apache') || strstr($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed') );
@@ -43,22 +43,22 @@ define('NOW',time() );
 
 // 当前文件名
 if(!defined('_PHP_FILE_')) {
-	if(IS_CGI) {
-		//CGI/FASTCGI模式下
-		$_temp  = explode('.php',$_SERVER["PHP_SELF"]);
-		define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
-	}else {
-		define('_PHP_FILE_',	rtrim($_SERVER["SCRIPT_NAME"],'/'));
-	}
+    if(IS_CGI) {
+        //CGI/FASTCGI模式下
+        $_temp  = explode('.php',$_SERVER["PHP_SELF"]);
+        define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
+    }else {
+        define('_PHP_FILE_',    rtrim($_SERVER["SCRIPT_NAME"],'/'));
+    }
 }
 if(!defined('WEB_URL')) {
-	// 网站URL根目录
-	if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
-		$_root = dirname(dirname(_PHP_FILE_));
-	}else {
-		$_root = dirname(_PHP_FILE_);
-	}
-	define('WEB_URL',	(($_root=='/' || $_root=='\\')?'':$_root));
+    // 网站URL根目录
+    if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
+        $_root = dirname(dirname(_PHP_FILE_));
+    }else {
+        $_root = dirname(_PHP_FILE_);
+    }
+    define('WEB_URL',   (($_root=='/' || $_root=='\\')?'':$_root));
 }
 
 define('VENDOR_PATH',THINK_PATH.'/Vendor/');
@@ -78,7 +78,7 @@ define('TMPL_DIR',     'Tpl');
 if (!defined('ADMIN_PATH')) define('ADMIN_PATH', APP_PATH.'/../Admin/');
 define('TMPL_PATH',APP_PATH.'/'.TMPL_DIR.'/');
 define('HTML_PATH',APP_PATH.'/'.HTML_DIR.'/'); //
-define('COMMON_PATH',	APP_PATH.'/Common/'); // 项目公共目录
+define('COMMON_PATH',   APP_PATH.'/Common/'); // 项目公共目录
 define('LIB_PATH',         APP_PATH.'/'.LIB_DIR.'/'); //
 define('CACHE_PATH',   APP_PATH.'/'.CACHE_DIR.'/'); //
 define('CONFIG_PATH',  APP_PATH.'/'.CONF_DIR.'/'); //
@@ -90,7 +90,7 @@ define('PLUGIN_PATH', APP_PATH.'/PlugIns/'); //
 define('DATA_PATH', APP_PATH.'/Data/'); //
 
 
-// 	调试和Log设置
+//  调试和Log设置
 define('WEB_LOG_ERROR',0);
 define('WEB_LOG_DEBUG',1);
 define('SQL_LOG_DEBUG',2);
@@ -107,8 +107,8 @@ define('DATA_TYPE_ARRAY',0);
 define('URL_COMMON',      0);   //普通模式
 define('URL_PATHINFO',    1);   //PATHINFO模式
 define('URL_REWRITE',     2);   //REWRITE模式
-define('URL_COMPAT',		3);		// 兼容模式
+define('URL_COMPAT',        3);     // 兼容模式
 
-//	版本信息
+//  版本信息
 define('THINK_VERSION', '1.0.5beta');
 ?>

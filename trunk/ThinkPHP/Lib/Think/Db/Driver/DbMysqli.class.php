@@ -36,9 +36,9 @@ Class DbMysqli extends Db{
         if ( !extension_loaded('mysqli') ) {
             throw_exception(L('_NOT_SUPPERT_').':mysqli');
         }
-		if(!empty($config)) {
-			$this->config	=	$config;
-		}
+        if(!empty($config)) {
+            $this->config   =   $config;
+        }
     }
 
     /**
@@ -52,7 +52,7 @@ Class DbMysqli extends Db{
      */
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
-			if(empty($config))	$config	=	$this->config;
+            if(empty($config))  $config =   $this->config;
             $this->linkID[$linkNum] = new mysqli(
                                 $config['hostname'],
                                 $config['username'],
@@ -77,8 +77,8 @@ Class DbMysqli extends Db{
             if($this->dbVersion >'5.0.1'){
                 $this->linkID[$linkNum]->query("SET sql_mode=''");
             }
-			// 标记连接成功
-			$this->connected	=	true;
+            // 标记连接成功
+            $this->connected    =   true;
             //注销数据库安全信息
             if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
@@ -112,27 +112,27 @@ Class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     protected function _query($str='') {
-		$this->initConnect(false);
+        $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-			$this->startTrans();
+            $this->startTrans();
         }else {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
 
         $this->queryTimes ++;
-		$this->Q(1);
+        $this->Q(1);
         $this->queryID = $this->_linkID->query($this->queryStr);
-		$this->debug();
+        $this->debug();
         if ( !$this->queryID ) {
             //if ( $this->debug ) throw_exception($this->error());
             return false;
         } else {
-            $this->numRows = $this->queryID->num_rows;
-            $this->numCols = $this->queryID->field_count;
-            $this->resultSet = $this->getAll();
+            $this->numRows  = $this->queryID->num_rows;
+            $this->numCols    = $this->queryID->field_count;
+            $this->resultSet    = $this->getAll();
             return $this->resultSet;
         }
     }
@@ -151,19 +151,19 @@ Class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     protected function _execute($str='') {
-		$this->initConnect(true);
+        $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-			$this->startTrans();
+            $this->startTrans();
         }else {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
         $this->writeTimes ++;
-		$this->W(1);
-		$result	=	$this->_linkID->query($this->queryStr);
-		$this->debug();
+        $this->W(1);
+        $result =   $this->_linkID->query($this->queryStr);
+        $this->debug();
         if ( false === $result ) {
             //if ( $this->debug ) throw_exception($this->error());
             return false;
@@ -185,15 +185,15 @@ Class DbMysqli extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function startTrans() {
-		$this->initConnect(true);
-		//数据rollback 支持
-		if ($this->transTimes == 0) {
-			$this->_linkID->autocommit(false);
-		}
-		$this->transTimes++;
-		return ;
-	}
+    public function startTrans() {
+        $this->initConnect(true);
+        //数据rollback 支持
+        if ($this->transTimes == 0) {
+            $this->_linkID->autocommit(false);
+        }
+        $this->transTimes++;
+        return ;
+    }
 
     /**
      +----------------------------------------------------------
@@ -305,7 +305,7 @@ Class DbMysqli extends Db{
             }
             return $result;
         }else {
-        	return false;
+            return false;
         }
     }
 
@@ -334,11 +334,11 @@ Class DbMysqli extends Db{
         //$info   = $this->queryID->fetch_fields();
         if($this->numRows>0) {
             if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-			// 判断数据返回类型
-			$fun	=	$resultType== DATA_TYPE_OBJ?'fetch_object':'fetch_assoc';
+            // 判断数据返回类型
+            $fun    =   $resultType== DATA_TYPE_OBJ?'fetch_object':'fetch_assoc';
             //返回数据集
             for($i=0;$i<$this->numRows ;$i++ ){
-	            $result[$i] = $this->queryID->$fun();
+                $result[$i] = $this->queryID->$fun();
             }
             $this->queryID->data_seek(0);
         }
@@ -359,9 +359,9 @@ Class DbMysqli extends Db{
         $result =   $this->getAll();
         $info   =   array();
         foreach ($result as $key => $val) {
-			if(is_object($val)) {
-				$val	=	get_object_vars($val);
-			}
+            if(is_object($val)) {
+                $val    =   get_object_vars($val);
+            }
             $info[$val['Field']] = array(
                 'name'    => $val['Field'],
                 'type'    => $val['Type'],
@@ -449,11 +449,11 @@ Class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     function escape_string($str) {
-		if($this->_linkID) {
-	        return  $this->_linkID->real_escape_string($str);
-		}else{
-			return addslashes($str);
-		}
+        if($this->_linkID) {
+            return  $this->_linkID->real_escape_string($str);
+        }else{
+            return addslashes($str);
+        }
     }
 
 }//类定义结束

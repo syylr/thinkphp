@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -51,7 +51,7 @@ class Validation extends Base
      +----------------------------------------------------------
      * 验证数据项
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $checkName 验证的数据类型名或正则式
      * @param string $value  要验证的数据
@@ -61,7 +61,7 @@ class Validation extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    static function check($value,$checkName) 
+    static function check($value,$checkName)
     {
         $matchRegex = self::getRegex($checkName);
         return preg_match($matchRegex,trim($value));
@@ -71,7 +71,7 @@ class Validation extends Base
      +----------------------------------------------------------
      * 取得验证类型的正则表达式
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 验证类型名称
      +----------------------------------------------------------
@@ -80,12 +80,12 @@ class Validation extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    static function getRegex($name) 
+    static function getRegex($name)
     {
         if(isset(self::$regex[strtolower($name)])) {
             return self::$regex[strtolower($name)];
         }else {
-        	return $name;
+            return $name;
         }
     }
 

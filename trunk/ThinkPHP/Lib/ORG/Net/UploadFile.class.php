@@ -31,30 +31,30 @@ class UploadFile extends Base
     public $supportMulti = true;
 
     // 允许上传的文件后缀
-	//  留空不作后缀检查
+    //  留空不作后缀检查
     public $allowExts = array();
 
     // 允许上传的文件类型
-	// 留空不做检查
+    // 留空不做检查
     public $allowTypes = array();
 
-	// 使用对上传图片进行缩略图处理
+    // 使用对上传图片进行缩略图处理
     public $thumb   =  false;
-	// 缩略图最大宽度
+    // 缩略图最大宽度
     public $thumbMaxWidth;
-	// 缩略图最大高度
+    // 缩略图最大高度
     public $thumbMaxHeight;
-	// 缩略图后缀
+    // 缩略图后缀
     public $thumbSuffix   =  '_thumb';
-	// 压缩图片文件上传
-	public $zipImages = false;
+    // 压缩图片文件上传
+    public $zipImages = false;
     // 启用子目录保存文件
     public $autoSub   =  false;
     // 上传文件保存路径
     public $savePath = '';
 
-	// 存在同名是否覆盖
-	public $uploadReplace = false;
+    // 存在同名是否覆盖
+    public $uploadReplace = false;
 
     // 上传文件命名规则
     // 例如可以是 time uniqid com_create_guid 等
@@ -85,23 +85,23 @@ class UploadFile extends Base
         }
         if(!empty($allowExts)) {
             if(is_array($allowExts)) {
-            	$this->allowExts = array_map('strtolower',$allowExts);
+                $this->allowExts = array_map('strtolower',$allowExts);
             }else {
-            	$this->allowExts = explode(',',strtolower($allowExts));
+                $this->allowExts = explode(',',strtolower($allowExts));
             }
         }
         if(!empty($allowTypes)) {
             if(is_array($allowTypes)) {
-            	$this->allowTypes = array_map('strtolower',$allowTypes);
+                $this->allowTypes = array_map('strtolower',$allowTypes);
             }else {
-            	$this->allowTypes = explode(',',strtolower($allowTypes));
+                $this->allowTypes = explode(',',strtolower($allowTypes));
             }
         }
         if(!empty($saveRule)) {
             $this->saveRule = $saveRule;
         }else{
-			$this->saveRule	=	C('UPLOAD_FILE_RULE');
-		}
+            $this->saveRule =   C('UPLOAD_FILE_RULE');
+        }
         $this->savePath = $savePath;
     }
 
@@ -125,27 +125,27 @@ class UploadFile extends Base
         if($this->autoSub) {
             // 使用哈希子目录保存文件
             $name = md5($file['savename']);
-            $dir	=	$name{0};
+            $dir    =   $name{0};
             if(!is_dir($file['savepath'].$dir)) {
                 mkdir($file['savepath'].$dir);
             }
             $filename   =  $file['savepath'].$dir.'/'.$file['savename'];
         }
-		if(!$this->uploadReplace && file_exists($filename)) {
-			// 不覆盖同名文件
-			$this->error	=	'文件已经存在！'.$filename;
-			return false;
-		}
+        if(!$this->uploadReplace && file_exists($filename)) {
+            // 不覆盖同名文件
+            $this->error    =   '文件已经存在！'.$filename;
+            return false;
+        }
         if(!move_uploaded_file($file['tmp_name'], auto_charset($filename,'utf-8','gbk'))) {
-			$this->error = '文件上传保存错误！';
+            $this->error = '文件上传保存错误！';
             return false;
         }
         if($this->thumb) {
-        	// 生成图像缩略图
+            // 生成图像缩略图
             import("ORG.Util.Image");
             $image =  Image::getImageInfo($filename);
             if(false !== $image) {
-            	//是图像文件生成缩略图
+                //是图像文件生成缩略图
                 $thumbWidth = explode(',',$this->thumbMaxWidth);
                 $thumbHeight   =  explode(',',$this->thumbMaxHeight);
                 $thumbSuffix = explode(',',$this->thumbSuffix);
@@ -154,10 +154,10 @@ class UploadFile extends Base
                 }
             }
         }
-		if($this->zipImags) {
-			// TODO 对图片压缩包在线解压
+        if($this->zipImags) {
+            // TODO 对图片压缩包在线解压
 
-		}
+        }
         return true;
     }
 
@@ -182,25 +182,25 @@ class UploadFile extends Base
         }
         // 检查上传目录
         if(!is_dir($savePath)) {
-			// 检查目录是否编码后的
-			if(is_dir(base64_decode($savePath))) {
-				$savePath	=	base64_decode($savePath);
-			}else{
-				$this->error  =  '上传目录'.$savePath.'不存在';
-				return false;
-			}
+            // 检查目录是否编码后的
+            if(is_dir(base64_decode($savePath))) {
+                $savePath   =   base64_decode($savePath);
+            }else{
+                $this->error  =  '上传目录'.$savePath.'不存在';
+                return false;
+            }
         }else {
-        	if(!is_writeable($savePath)) {
+            if(!is_writeable($savePath)) {
                 $this->error  =  '上传目录'.$savePath.'不可写';
                 return false;
-        	}
+            }
         }
         $fileInfo = array();
         $isUpload   = false;
 
-		// 获取上传的文件信息
-		// 对$_FILES数组信息处理
-		$files	 =	 $this->dealFiles($_FILES);
+        // 获取上传的文件信息
+        // 对$_FILES数组信息处理
+        $files   =   $this->dealFiles($_FILES);
         foreach($files as $key => $file) {
             //过滤无效的上传
             if(!empty($file['name'])) {
@@ -276,24 +276,24 @@ class UploadFile extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	private function dealFiles($files) {
-	   $fileArray = array();
-	   foreach ($files as $file){
-		   if(is_array($file['name'])) {
-			   $keys = array_keys($file);
-			   $count	 =	 count($file['name']);
-			   for ($i=0; $i<$count; $i++) {
-				   foreach ($keys as $key) {
-					   $fileArray[$i][$key] = $file[$key][$i];
-				   }
-			   }
-		   }else{
-			   $fileArray	=	$files;
-		   }
-		   break;
-	   }
-	   return $fileArray;
-	}
+    private function dealFiles($files) {
+       $fileArray = array();
+       foreach ($files as $file){
+           if(is_array($file['name'])) {
+               $keys = array_keys($file);
+               $count    =   count($file['name']);
+               for ($i=0; $i<$count; $i++) {
+                   foreach ($keys as $key) {
+                       $fileArray[$i][$key] = $file[$key][$i];
+                   }
+               }
+           }else{
+               $fileArray   =   $files;
+           }
+           break;
+       }
+       return $fileArray;
+    }
 
     /**
      +----------------------------------------------------------
@@ -354,10 +354,10 @@ class UploadFile extends Base
         }else {
             if(function_exists($rule)) {
                 //使用函数生成一个唯一文件标识号
-            	$saveName = $rule().".".$filename['extension'];
+                $saveName = $rule().".".$filename['extension'];
             }else {
                 //使用给定的文件名作为标识号
-            	$saveName = $rule.".".$filename['extension'];
+                $saveName = $rule.".".$filename['extension'];
             }
         }
         return $saveName;

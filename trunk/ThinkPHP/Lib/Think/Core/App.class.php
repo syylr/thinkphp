@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class App extends Base 
+class App extends Base
 {//类定义开始
 
     /**
@@ -48,7 +48,7 @@ class App extends Base
      +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 应用名称
      * @param string $id  应用标识号
@@ -57,22 +57,22 @@ class App extends Base
      +----------------------------------------------------------
      */
     public function __construct($name='App',$id='')
-    {    
+    {
         $this->name = $name;
         $this->id   =  $id ;//| create_guid();
     }
 
     /**
      +----------------------------------------------------------
-     * 取得应用实例对象 
+     * 取得应用实例对象
      * 静态方法
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return App
      +----------------------------------------------------------
      */
-    public static function  getInstance() 
+    public static function  getInstance()
     {
         return get_instance_of(__CLASS__);
     }
@@ -81,7 +81,7 @@ class App extends Base
      +----------------------------------------------------------
      * 应用程序初始化
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -103,7 +103,7 @@ class App extends Base
 		}
 
         // 设置系统时区 PHP5支持
-        if(function_exists('date_default_timezone_set')) 
+        if(function_exists('date_default_timezone_set'))
             date_default_timezone_set(C('TIME_ZONE'));
 
         if('FILE' != strtoupper(C('SESSION_TYPE'))) {
@@ -116,7 +116,7 @@ class App extends Base
 
         // 加载插件 必须在Session开启之后加载插件
 		if(C('THINK_PLUGIN_ON')) {
-	        $this->loadPlugIn();  
+	        $this->loadPlugIn();
 		}
 
         // 应用调度过滤器
@@ -202,12 +202,12 @@ class App extends Base
      +----------------------------------------------------------
 	 * 读取配置信息 编译项目
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-	private function build() 
+	private function build()
 	{
 		// 加载惯例配置文件
 		C(array_change_key_case(include THINK_PATH.'/Common/convention.php'));
@@ -248,18 +248,18 @@ class App extends Base
      +----------------------------------------------------------
      * 获得实际的模块名称
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
     private function getModule()
     {
-        $module = isset($_POST[C('VAR_MODULE')]) ? 
+        $module = isset($_POST[C('VAR_MODULE')]) ?
             $_POST[C('VAR_MODULE')] :
             (isset($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:'');
         // 如果 $module 为空，则赋予默认值
-        if (empty($module)) $module = C('DEFAULT_MODULE'); 
+        if (empty($module)) $module = C('DEFAULT_MODULE');
 		// 检查组件模块
 		if(strpos($module,C('COMPONENT_DEPR'))) {
 			// 记录完整的模块名
@@ -277,22 +277,22 @@ class App extends Base
 				$module	=	$modules[$module];
 			}
 		}
-        return $module; 
+        return $module;
     }
 
     /**
      +----------------------------------------------------------
      * 获得实际的操作名称
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
     private function getAction()
     {
-        $action   = isset($_POST[C('VAR_ACTION')]) ? 
-            $_POST[C('VAR_ACTION')] : 
+        $action   = isset($_POST[C('VAR_ACTION')]) ?
+            $_POST[C('VAR_ACTION')] :
             (isset($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:'');
         // 如果 $action 为空，则赋予默认值
         if (empty($action)) $action = C('DEFAULT_ACTION');
@@ -313,7 +313,7 @@ class App extends Base
 				$action	=	$actions[$action];
 			}
 		}
-        return $action; 
+        return $action;
     }
 
     /**
@@ -321,7 +321,7 @@ class App extends Base
      * 语言检查
      * 检查浏览器支持语言，并自动加载语言包
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -362,18 +362,18 @@ class App extends Base
 				if (file_exists(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
 					L(include THINK_PATH.'/Lang/'.LANG_SET.'.php');
 				}else{
-					L(include THINK_PATH.'/Lang/'.$defaultLang.'.php');    
+					L(include THINK_PATH.'/Lang/'.$defaultLang.'.php');
 				}
 
 			// 读取项目（公共）语言包
 			if (file_exists(LANG_PATH.LANG_SET.'/common.php'))
-				L(include LANG_PATH.LANG_SET.'/common.php');  
+				L(include LANG_PATH.LANG_SET.'/common.php');
 			else
 				L(include LANG_PATH.$defaultLang.'/common.php');
 
 			// 读取当前模块的语言包
 			if (file_exists(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
-				L(include LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php');  
+				L(include LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php');
 
 				// 写入语言包缓存文件
 				$content  = "<?php\nreturn ".var_export(L(),true).";\n?>";
@@ -390,7 +390,7 @@ class App extends Base
      +----------------------------------------------------------
      * 模板检查，如果不存在使用默认
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -418,14 +418,14 @@ class App extends Base
 				$templateSet =    C('DEFAULT_TEMPLATE');
 			}
 			//模版名称
-			define('TEMPLATE_NAME',$templateSet); 
+			define('TEMPLATE_NAME',$templateSet);
 			// 当前模版路径
-			define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME.'/'); 
+			define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME.'/');
 			$tmplDir	=	TMPL_DIR.'/'.TEMPLATE_NAME.'/';
 		}else{
 			// 把模版目录直接放置项目模版文件
 			// 该模式下面没有TEMPLATE_NAME常量
-			define('TEMPLATE_PATH',TMPL_PATH); 
+			define('TEMPLATE_PATH',TMPL_PATH);
 			$tmplDir	=	TMPL_DIR.'/';
 		}
 
@@ -444,24 +444,24 @@ class App extends Base
 	        // 当前模块地址
 	        define('__URL__',PHP_FILE.'/'.C_MODULE_NAME);
 		    //当前操作地址
-	        define('__ACTION__',__URL__.'/'.$action);  
+	        define('__ACTION__',__URL__.'/'.$action);
 	        C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('COMPONENT_DEPR'),'/',C_MODULE_NAME).'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
 	        define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.str_replace(C('COMPONENT_DEPR'),'/',C_MODULE_NAME));
 		}else{
 		    // 当前模块地址
 	        define('__URL__',PHP_FILE.'/'.$module);
 		    //当前操作地址
-	        define('__ACTION__',__URL__.'/'.$action);  
+	        define('__ACTION__',__URL__.'/'.$action);
 	        C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
 	        define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
 		}
 
         //网站公共文件地址
         define('WEB_PUBLIC_URL', WEB_URL.'/Public');
-        //项目模板目录 
-        define('APP_TMPL_URL', WEB_URL.'/'.APP_NAME.'/'.$tmplDir); 
+        //项目模板目录
+        define('APP_TMPL_URL', WEB_URL.'/'.APP_NAME.'/'.$tmplDir);
         //项目公共文件目录
-        define('APP_PUBLIC_URL', APP_TMPL_URL.'Public'); 
+        define('APP_PUBLIC_URL', APP_TMPL_URL.'Public');
 
         return ;
     }
@@ -470,7 +470,7 @@ class App extends Base
      +----------------------------------------------------------
      * 加载插件
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -485,7 +485,7 @@ class App extends Base
 			$common_plugins = get_plugins(THINK_PATH.'/PlugIns','Think');// 公共插件
 			$app_plugins = get_plugins();// 项目插件
 			// 合并插件数据
-			$plugins    = array_merge($common_plugins,$app_plugins);   
+			$plugins    = array_merge($common_plugins,$app_plugins);
 			// 缓存插件数据
 			$content	=	'';
 			foreach($plugins as $key=>$val) {
@@ -501,7 +501,7 @@ class App extends Base
      +----------------------------------------------------------
      * 执行应用程序
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -529,7 +529,7 @@ class App extends Base
 			$module	=	A("Empty");
 			if(!$module) {
 				// 模块不存在 抛出异常
-				throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);    
+				throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
 			}
 		}
 
@@ -543,7 +543,7 @@ class App extends Base
 			}
 		}else{
 			//如果存在前置操作，首先执行
-			if (method_exists($module,'_before_'.$action)) {    
+			if (method_exists($module,'_before_'.$action)) {
 				$module->{'_before_'.$action}();
 			}
 			//执行操作
@@ -551,7 +551,7 @@ class App extends Base
 			//如果存在后置操作，继续执行
 			if (method_exists($module,'_after_'.$action)) {
 				$module->{'_after_'.$action}();
-			}  
+			}
 		}
         // 执行应用结束过滤器
         apply_filter('app_end');
@@ -567,7 +567,7 @@ class App extends Base
      +----------------------------------------------------------
      * 运行应用实例 入口文件使用的快捷方法
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -584,7 +584,7 @@ class App extends Base
      +----------------------------------------------------------
      * 自定义异常处理
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $e 异常对象
      +----------------------------------------------------------
@@ -598,7 +598,7 @@ class App extends Base
      +----------------------------------------------------------
      * 自定义错误处理
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param int $errno 错误类型
      * @param string $errstr 错误信息
@@ -611,8 +611,8 @@ class App extends Base
     public function appError($errno, $errstr, $errfile, $errline)
     {
       switch ($errno) {
-          case E_ERROR: 
-          case E_USER_ERROR: 
+          case E_ERROR:
+          case E_USER_ERROR:
               $errorStr = "错误：[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
               if(C('WEB_LOG_RECORD')){
                  Log::record($errorStr);
@@ -623,7 +623,7 @@ class App extends Base
           case E_STRICT:
           case E_USER_WARNING:
           case E_USER_NOTICE:
-          default: 
+          default:
 			$errorStr = "注意：[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
 			Log::record($errorStr);
              break;

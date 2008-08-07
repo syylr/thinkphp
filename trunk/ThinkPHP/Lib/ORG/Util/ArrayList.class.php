@@ -1,18 +1,18 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
 /**
  +------------------------------------------------------------------------------
- * ArrayList实现类 
+ * ArrayList实现类
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Think
@@ -38,7 +38,7 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $elements  初始化数组元素
      +----------------------------------------------------------
@@ -54,12 +54,12 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 若要获得迭代因子，通过getIterator方法实现
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return ArrayObject
      +----------------------------------------------------------
      */
-    public function getIterator() 
+    public function getIterator()
     {
         return new ArrayObject($this->_elements);
     }
@@ -68,7 +68,7 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 增加元素
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $element  要添加的元素
      +----------------------------------------------------------
@@ -80,23 +80,23 @@ class ArrayList extends Base implements IteratorAggregate
         return (array_push($this->_elements, $element)) ? true : false;
     }
 
-	// 
-    public function unshift($element) 
+    //
+    public function unshift($element)
     {
-    	return (array_unshift($this->_elements,$element))?true : false;
+        return (array_unshift($this->_elements,$element))?true : false;
     }
 
-	// 
-    public function pop() 
+    //
+    public function pop()
     {
-    	return array_pop($this->_elements);
+        return array_pop($this->_elements);
     }
 
     /**
      +----------------------------------------------------------
      * 增加元素列表
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param ArrayList $list  元素列表
      +----------------------------------------------------------
@@ -108,9 +108,9 @@ class ArrayList extends Base implements IteratorAggregate
     public function addAll($list)
     {
         $before = $this->size();
-		foreach( $list as $element) {
-			$this->add($element);
-		}
+        foreach( $list as $element) {
+            $this->add($element);
+        }
         $after = $this->size();
         return ($before < $after);
     }
@@ -119,7 +119,7 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 清除所有元素
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function clear()
@@ -131,7 +131,7 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 是否包含某个元素
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $element  查找元素
      +----------------------------------------------------------
@@ -147,7 +147,7 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 根据索引取得元素
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $index 索引
      +----------------------------------------------------------
@@ -164,7 +164,7 @@ class ArrayList extends Base implements IteratorAggregate
      * 查找匹配元素，并返回第一个元素所在位置
      * 注意 可能存在0的索引位置 因此要用===False来判断查找失败
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $element  查找元素
      +----------------------------------------------------------
@@ -182,7 +182,7 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 判断元素是否为空
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -196,7 +196,7 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 最后一个匹配的元素位置
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $element  查找元素
      +----------------------------------------------------------
@@ -210,7 +210,7 @@ class ArrayList extends Base implements IteratorAggregate
         }
     }
 
-    public function toJson() 
+    public function toJson()
     {
         return json_encode($this->_elements);
     }
@@ -220,7 +220,7 @@ class ArrayList extends Base implements IteratorAggregate
      * 根据索引移除元素
      * 返回被移除的元素
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $index 索引
      +----------------------------------------------------------
@@ -238,7 +238,7 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 移出一定范围的数组列表
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $offset  开始移除位置
      * @param integer $length  移除长度
@@ -253,18 +253,18 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 移出重复的值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
-	public function unique() {
-		$this->_elements = array_unique($this->_elements);
-	}
+    public function unique() {
+        $this->_elements = array_unique($this->_elements);
+    }
 
     /**
      +----------------------------------------------------------
      * 取出一定范围的数组列表
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $offset  开始位置
      * @param integer $length  长度
@@ -280,7 +280,7 @@ class ArrayList extends Base implements IteratorAggregate
      * 设置列表元素
      * 返回修改之前的值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $index 索引
      * @param mixed $element  元素
@@ -299,7 +299,7 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 获取列表长度
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
@@ -313,7 +313,7 @@ class ArrayList extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 转换成数组
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------

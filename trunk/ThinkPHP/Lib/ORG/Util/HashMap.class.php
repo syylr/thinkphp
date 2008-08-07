@@ -1,18 +1,18 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
 /**
  +------------------------------------------------------------------------------
- * HashMap实现类 
+ * HashMap实现类
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Think
@@ -38,7 +38,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $values  初始化数组元素
      +----------------------------------------------------------
@@ -54,12 +54,12 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取Iterator因子
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return Iterate
      +----------------------------------------------------------
      */
-    public function getIterator() 
+    public function getIterator()
     {
         return new ArrayObject($this->_values);
     }
@@ -68,7 +68,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 清除Map数据
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function clear()
@@ -80,7 +80,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 检查Map中是否指定key
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $key  键名
      +----------------------------------------------------------
@@ -96,7 +96,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * Map是否包含指定value
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $value  键值
      +----------------------------------------------------------
@@ -112,7 +112,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * Map中是否包含指定的key和对应的value
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $key  键名
      * @param string $value  键值
@@ -133,7 +133,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 根据Key取得Map中的value
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $key  键名
      +----------------------------------------------------------
@@ -153,7 +153,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * Map是否为空
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -167,7 +167,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * Map对象转换为数组
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
@@ -181,7 +181,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 返回Map中的key数组
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
@@ -196,7 +196,7 @@ class HashMap extends Base  implements IteratorAggregate
      * 放入指定的Key和value到Map，如果存在同名键名，则覆盖
      * 如果存在的话返回之前的值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $key  键名
      * @param string $value  键值
@@ -211,19 +211,19 @@ class HashMap extends Base  implements IteratorAggregate
         return $previous;
     }
 
-	private function __get($name) {
-		return $this->get($name);
-	}
+    private function __get($name) {
+        return $this->get($name);
+    }
 
-	private function __set($name,$value) {
-		return $this->put($name,$value);
-	}
+    private function __set($name,$value) {
+        return $this->put($name,$value);
+    }
 
     /**
      +----------------------------------------------------------
      * 批量放入values到Map
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param array $values  数组
      +----------------------------------------------------------
@@ -242,7 +242,7 @@ class HashMap extends Base  implements IteratorAggregate
      * 移出Map中指定的键名value
      * 返回移除的值
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $key 键名
      +----------------------------------------------------------
@@ -260,7 +260,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 取得Map对象的长度
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
@@ -274,7 +274,7 @@ class HashMap extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 返回Map中的value数组
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------

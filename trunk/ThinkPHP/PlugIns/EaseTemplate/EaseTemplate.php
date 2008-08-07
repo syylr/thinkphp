@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
 Plugin Name: EaseTemplate
 Template URI: http://www.systn.com
@@ -14,12 +14,12 @@ function EaseTemplate($templateFile,$templateVar,$charset,$varPrefix='')
     $CacheDir = substr(CACHE_PATH,0,-1);
     $TemplateDir = substr(TMPL_PATH,0,-1);
     include PLUGIN_PATH."EaseTemplate/template.php";
-	$tpl = new EaseTemplate(
-	  array(
-		'CacheDir'=>$CacheDir,
-		'TemplateDir'=>$TemplateDir,
-		'TplType'=>'html'
-		 )
+    $tpl = new EaseTemplate(
+      array(
+        'CacheDir'=>$CacheDir,
+        'TemplateDir'=>$TemplateDir,
+        'TplType'=>'html'
+         )
     );
     $tpl->set_var($templateVar);
     $tpl->set_file($templateFile);

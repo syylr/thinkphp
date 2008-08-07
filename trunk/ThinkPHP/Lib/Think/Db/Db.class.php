@@ -26,80 +26,80 @@
 class Db extends Base
 {
 
-	// 数据库类型
-    protected $dbType        = null;
+    // 数据库类型
+    protected $dbType           = null;
 
     // 数据库版本
-    protected $dbVersion    = null;
+    protected $dbVersion        = null;
 
     // 是否自动释放查询结果
-    protected $autoFree    = false;
+    protected $autoFree         = false;
 
     // 是否自动提交查询
-    protected $autoCommit  = true;
+    protected $autoCommit     = true;
 
     // 是否显示调试信息 如果启用会在日志文件记录sql语句
-    protected $debug       = false;
+    protected $debug             = false;
 
     // 是否使用永久连接
-    protected $pconnect     = false;
+    protected $pconnect         = false;
 
     // 当前SQL指令
-    protected $queryStr = '';
+    protected $queryStr          = '';
 
     // 当前结果
-    protected $result = null;
+    protected $result              = null;
 
     // 当前查询的结果数据集
-    protected $resultSet = null;
+    protected $resultSet         = null;
 
     // 数据集返回类型 0 返回数组 1 返回对象
-    public $resultType = DATA_TYPE_ARRAY;
+    public $resultType            = DATA_TYPE_ARRAY;
 
     // 当前查询返回的字段集
-    protected $fields = null;
+    protected $fields              = null;
 
     // 最后插入ID
-    protected $lastInsID = null;
+    protected $lastInsID         = null;
 
     // 返回或者影响记录数
-    protected $numRows = 0;
+    protected $numRows        = 0;
 
     // 返回字段数
-    protected $numCols = 0;
+    protected $numCols          = 0;
 
     // 查询次数
-    protected $queryTimes = 0;
+    protected $queryTimes     = 0;
 
     // 写入次数
-    protected $writeTimes = 0;
+    protected $writeTimes       = 0;
 
     // 事务指令数
-    protected $transTimes = 0;
+    protected $transTimes      = 0;
 
     // 错误信息
-    protected $error = '';
+    protected $error              = '';
 
     // 数据库连接ID 支持多个连接
-    protected $linkID  = array();
+    protected $linkID              = array();
 
-	// 当前连接ID
-	protected $_linkID	=	null;
+    // 当前连接ID
+    protected $_linkID            =   null;
 
     // 当前查询ID
-    protected $queryID = null;
+    protected $queryID          = null;
 
-	// 是否已经连接数据库
-	protected $connected = false;
+    // 是否已经连接数据库
+    protected $connected       = false;
 
-	// 数据库连接参数配置
-	protected $config = '';
+    // 数据库连接参数配置
+    protected $config             = '';
 
-	// 数据库表达式
-    protected $comparison = array('eq'=>'=','neq'=>'!=','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','like'=>'LIKE','between'=>'BETWEEN','notnull'=>'IS NOT NULL','null'=>'IS NULL');
+    // 数据库表达式
+    protected $comparison      = array('eq'=>'=','neq'=>'!=','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','like'=>'LIKE','between'=>'BETWEEN','notnull'=>'IS NOT NULL','null'=>'IS NULL');
 
-	// SQL 执行时间记录
-	protected $beginTime;
+    // SQL 执行时间记录
+    protected $beginTime;
 
     /**
      +----------------------------------------------------------
@@ -111,9 +111,9 @@ class Db extends Base
      +----------------------------------------------------------
      */
     function __construct($config=''){
-		$this->resultType = C('DATA_RESULT_TYPE');
-		return $this->factory($config);
-	}
+        $this->resultType = C('DATA_RESULT_TYPE');
+        return $this->factory($config);
+    }
 
     /**
      +----------------------------------------------------------
@@ -147,30 +147,30 @@ class Db extends Base
     public function &factory($db_config='')
     {
         // 读取数据库配置
-		$db_config = $this->parseConfig($db_config);
-		if(empty($db_config['dbms'])) {
-			throw_exception(L('_NO_DB_CONFIG_'));
-		}
+        $db_config = $this->parseConfig($db_config);
+        if(empty($db_config['dbms'])) {
+            throw_exception(L('_NO_DB_CONFIG_'));
+        }
         // 数据库类型
-		$this->dbType = ucwords(strtolower($db_config['dbms']));
-		// 读取系统数据库驱动目录
-		$dbClass = 'Db'. $this->dbType;
-		$dbDriverPath = dirname(__FILE__).'/Driver/';
-		require_cache( $dbDriverPath . $dbClass . '.class.php');
+        $this->dbType = ucwords(strtolower($db_config['dbms']));
+        // 读取系统数据库驱动目录
+        $dbClass = 'Db'. $this->dbType;
+        $dbDriverPath = dirname(__FILE__).'/Driver/';
+        require_cache( $dbDriverPath . $dbClass . '.class.php');
 
-		// 检查驱动类
-		if(class_exists($dbClass)) {
-			$db = new $dbClass($db_config);
-			if(!empty($db_config['dsn'])) {
-				$db->dbType = $this->dbType.'  '.$db_config['dsn'];
+        // 检查驱动类
+        if(class_exists($dbClass)) {
+            $db = new $dbClass($db_config);
+            if(!empty($db_config['dsn'])) {
+                $db->dbType = $this->dbType.'  '.$db_config['dsn'];
             }else{
                 $db->dbType = $this->dbType;
-			}
-		}else {
-			// 类没有定义
-			throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
-		}
-		return $db;
+            }
+        }else {
+            // 类没有定义
+            throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
+        }
+        return $db;
     }
 
     /**
@@ -186,25 +186,25 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	private function parseConfig($db_config='') {
+    private function parseConfig($db_config='') {
         if ( !empty($db_config) && is_string($db_config)) {
             // 如果DSN字符串则进行解析
             $db_config = $this->parseDSN($db_config);
         }else if(empty($db_config)){
             // 如果配置为空，读取配置文件设置
             $db_config = array (
-                'dbms'     => C('DB_TYPE'),
-                'username' => C('DB_USER'),
-                'password' => C('DB_PWD'),
-                'hostname' => C('DB_HOST'),
-                'hostport' => C('DB_PORT'),
-                'database' => C('DB_NAME'),
-				'dsn'		=>	C('DB_DSN'),
-				'params'=> C('DB_PARAMS'),
+                'dbms'        =>   C('DB_TYPE'),
+                'username'  =>   C('DB_USER'),
+                'password'   =>   C('DB_PWD'),
+                'hostname'  =>   C('DB_HOST'),
+                'hostport'    =>   C('DB_PORT'),
+                'database'   =>   C('DB_NAME'),
+                'dsn'          =>   C('DB_DSN'),
+                'params'     =>   C('DB_PARAMS'),
             );
         }
-		return $db_config;
-	}
+        return $db_config;
+    }
 
     /**
      +----------------------------------------------------------
@@ -213,25 +213,25 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      * @param mixed $config 数据库连接信息
-	 * @param mixed $linkNum  创建的连接序号
+     * @param mixed $linkNum  创建的连接序号
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function addConnect($config,$linkNum=null) {
-		$db_config	=	$this->parseConfig($config);
-		if(empty($linkNum)) {
-			$linkNum	 =	 count($this->linkID);
-		}
-		if(isset($this->linkID[$linkNum])) {
-			// 已经存在连接
-			return false;
-		}
-		// 创建新的数据库连接
-		return $this->connect($db_config,$linkNum);
-	}
+    public function addConnect($config,$linkNum=null) {
+        $db_config  =   $this->parseConfig($config);
+        if(empty($linkNum)) {
+            $linkNum     =   count($this->linkID);
+        }
+        if(isset($this->linkID[$linkNum])) {
+            // 已经存在连接
+            return false;
+        }
+        // 创建新的数据库连接
+        return $this->connect($db_config,$linkNum);
+    }
 
     /**
      +----------------------------------------------------------
@@ -239,22 +239,22 @@ class Db extends Base
      +----------------------------------------------------------
      * @access protected
      +----------------------------------------------------------
-	 * @param integer $linkNum  创建的连接序号
+     * @param integer $linkNum  创建的连接序号
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function switchConnect($linkNum) {
-		if(isset($this->linkID[$linkNum])) {
-			// 存在指定的数据库连接序号
-			$this->_linkID	=	$this->linkID[$linkNum];
-			return true;
-		}else{
-			return false;
-		}
-	}
+    public function switchConnect($linkNum) {
+        if(isset($this->linkID[$linkNum])) {
+            // 存在指定的数据库连接序号
+            $this->_linkID  =   $this->linkID[$linkNum];
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     /**
      +----------------------------------------------------------
@@ -269,15 +269,15 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	protected function initConnect($master=true) {
-		if(1 == C('DB_DEPLOY_TYPE')) {
-			// 采用分布式数据库
-			$this->_linkID = $this->multiConnect($master);
-		}else{
-			// 默认单数据库
-			if ( !$this->connected ) $this->_linkID = $this->connect();
-		}
-	}
+    protected function initConnect($master=true) {
+        if(1 == C('DB_DEPLOY_TYPE')) {
+            // 采用分布式数据库
+            $this->_linkID = $this->multiConnect($master);
+        }else{
+            // 默认单数据库
+            if ( !$this->connected ) $this->_linkID = $this->connect();
+        }
+    }
 
     /**
      +----------------------------------------------------------
@@ -292,39 +292,39 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	protected function multiConnect($master=false) {
-		static $_config = array();
-		if(empty($_config)) {
-			// 缓存分布式数据库配置解析
-			foreach ($this->config as $key=>$val){
-				$_config[$key]	 	=	explode(',',$val);
-			}
-		}
-		// 数据库读写是否分离
-		if(C('DB_RW_SEPARATE')){
-			// 主从式采用读写分离
-			if($master) {
-				// 默认主服务器是连接第一个数据库配置
-				$r	=	0;
-			}else{
-				// 读操作连接从服务器
-				$r = floor(mt_rand(1,count($_config['hostname'])-1));	// 每次随机连接的数据库
-			}
-		}else{
-			// 读写操作不区分服务器
-			$r = floor(mt_rand(0,count($_config['hostname'])-1));	// 每次随机连接的数据库
-		}
-		$db_config = array(
-			'username'=>	 isset($_config['username'][$r])?$_config['username'][$r]:$_config['username'][0],
-			'password' => isset($_config['password'][$r])?$_config['password'][$r]:$_config['password'][0],
-			'hostname' => isset($_config['hostname'][$r])?$_config['hostname'][$r]:$_config['hostname'][0],
-			'hostport' =>	 isset($_config['hostport'][$r])?$_config['hostport'][$r]:$_config['hostport'][0],
-			'database' =>	 isset($_config['database'][$r])?$_config['database'][$r]:$_config['database'][0],
-			'dsn'	=>	isset($_config['dsn'][$r])?$_config['dsn'][$r]:$_config['dsn'][0],
-			'params'	=>	isset($_config['params'][$r])?$_config['params'][$r]:$_config['params'][0],
-		);
-		return $this->connect($db_config,$r);
-	}
+    protected function multiConnect($master=false) {
+        static $_config = array();
+        if(empty($_config)) {
+            // 缓存分布式数据库配置解析
+            foreach ($this->config as $key=>$val){
+                $_config[$key]      =   explode(',',$val);
+            }
+        }
+        // 数据库读写是否分离
+        if(C('DB_RW_SEPARATE')){
+            // 主从式采用读写分离
+            if($master) {
+                // 默认主服务器是连接第一个数据库配置
+                $r  =   0;
+            }else{
+                // 读操作连接从服务器
+                $r = floor(mt_rand(1,count($_config['hostname'])-1));   // 每次随机连接的数据库
+            }
+        }else{
+            // 读写操作不区分服务器
+            $r = floor(mt_rand(0,count($_config['hostname'])-1));   // 每次随机连接的数据库
+        }
+        $db_config = array(
+            'username'  =>   isset($_config['username'][$r])?$_config['username'][$r]:$_config['username'][0],
+            'password'   =>   isset($_config['password'][$r])?$_config['password'][$r]:$_config['password'][0],
+            'hostname'  =>   isset($_config['hostname'][$r])?$_config['hostname'][$r]:$_config['hostname'][0],
+            'hostport'    =>   isset($_config['hostport'][$r])?$_config['hostport'][$r]:$_config['hostport'][0],
+            'database'   =>   isset($_config['database'][$r])?$_config['database'][$r]:$_config['database'][0],
+            'dsn'          =>   isset($_config['dsn'][$r])?$_config['dsn'][$r]:$_config['dsn'][0],
+            'params'     =>   isset($_config['params'][$r])?$_config['params'][$r]:$_config['params'][0],
+        );
+        return $this->connect($db_config,$r);
+    }
 
     /**
      +----------------------------------------------------------
@@ -347,22 +347,22 @@ class Db extends Base
         $info = parse_url($dsnStr);
         if($info['scheme']){
             $dsn = array(
-            'dbms'     => $info['scheme'],
-            'username' => isset($info['user']) ? $info['user'] : '',
-            'password' => isset($info['pass']) ? $info['pass'] : '',
-            'hostname' => isset($info['host']) ? $info['host'] : '',
-            'hostport' => isset($info['port']) ? $info['port'] : '',
-            'database' => isset($info['path']) ? substr($info['path'],1) : ''
+            'dbms'        => $info['scheme'],
+            'username'  => isset($info['user']) ? $info['user'] : '',
+            'password'   => isset($info['pass']) ? $info['pass'] : '',
+            'hostname'  => isset($info['host']) ? $info['host'] : '',
+            'hostport'    => isset($info['port']) ? $info['port'] : '',
+            'database'   => isset($info['path']) ? substr($info['path'],1) : ''
             );
         }else {
             preg_match('/^(.*?)\:\/\/(.*?)\:(.*?)\@(.*?)\:([0-9]{1, 6})\/(.*?)$/',trim($dsnStr),$matches);
             $dsn = array (
-            'dbms'     => $matches[1],
-            'username' => $matches[2],
-            'password' => $matches[3],
-            'hostname' => $matches[4],
-            'hostport' => $matches[5],
-            'database' => $matches[6]
+            'dbms'        => $matches[1],
+            'username'  => $matches[2],
+            'password'   => $matches[3],
+            'hostname'  => $matches[4],
+            'hostport'    => $matches[5],
+            'database'   => $matches[6]
             );
         }
         return $dsn;
@@ -375,13 +375,13 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      */
-	protected function debug() {
-		// 记录操作结束时间
-		if ( $this->debug || C('SQL_DEBUG_LOG')) 	{
-			$runtime	=	number_format(microtime(TRUE) - $this->beginTime, 6);
-			Log::record(" RunTime:".$runtime."s SQL = ".$this->queryStr,SQL_LOG_DEBUG);
-		}
-	}
+    protected function debug() {
+        // 记录操作结束时间
+        if ( $this->debug || C('SQL_DEBUG_LOG'))    {
+            $runtime    =   number_format(microtime(TRUE) - $this->beginTime, 6);
+            Log::record(" RunTime:".$runtime."s SQL = ".$this->queryStr,SQL_LOG_DEBUG);
+        }
+    }
 
     /**
      +----------------------------------------------------------
@@ -399,16 +399,16 @@ class Db extends Base
     protected function parseTables($tables)
     {
         if(is_array($tables)) {
-			array_walk($tables, array($this, 'addSpecialChar'));
-			$tablesStr = implode(',', $tables);
-		}
+            array_walk($tables, array($this, 'addSpecialChar'));
+            $tablesStr = implode(',', $tables);
+        }
         else if(is_string($tables)) {
-			if(0 === strpos($this->getDbType(),'MYSQL') && false === strpos($tables,'`')) {
-				$tablesStr =  '`'.trim($tables).'`';
-			}else{
-				$tablesStr = $tables;
-			}
-		}
+            if(0 === strpos($this->getDbType(),'MYSQL') && false === strpos($tables,'`')) {
+                $tablesStr =  '`'.trim($tables).'`';
+            }else{
+                $tablesStr = $tables;
+            }
+        }
         return $tablesStr;
     }
 
@@ -423,33 +423,33 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	protected function getDbType() {
-		$array	=	explode(' ',$this->dbType);
-		if('PDO' != strtoupper($array[0])) {
-			return strtoupper($array[0]);
-		}else{
-			if(false !== strpos(strtoupper($this->dbType),'MYSQL')) {
-				return 'MYSQL';
-			}elseif(false !== strpos(strtoupper($this->dbType),'MSSQL')){
-				return 'MSSQL';
-			}elseif(false !== strpos(strtoupper($this->dbType),'PGSQL')){
-				return 'PGSQL';
-			}elseif(false !== strpos(strtoupper($this->dbType),'SQLITE')){
-				return 'SQLITE';
-			}elseif(false !== strpos(strtoupper($this->dbType),'OCI')){
-				return 'ORACLE';
-			}elseif(false !== strpos(strtoupper($this->dbType),'IBM')){
-				return 'DB2';
-			}elseif(false !== strpos(strtoupper($this->dbType),'ODBC')){
-				return 'ODBC';
-			}elseif(false !== strpos(strtoupper($this->dbType),'FIREBIRD')){
-				// Firebird 剑雷 2007.12.29
-				return 'IBASE';
-			}else{
-				return $this->dbType;
-			}
-		}
-	}
+    protected function getDbType() {
+        $array  =   explode(' ',$this->dbType);
+        if('PDO' != strtoupper($array[0])) {
+            return strtoupper($array[0]);
+        }else{
+            if(false !== strpos(strtoupper($this->dbType),'MYSQL')) {
+                return 'MYSQL';
+            }elseif(false !== strpos(strtoupper($this->dbType),'MSSQL')){
+                return 'MSSQL';
+            }elseif(false !== strpos(strtoupper($this->dbType),'PGSQL')){
+                return 'PGSQL';
+            }elseif(false !== strpos(strtoupper($this->dbType),'SQLITE')){
+                return 'SQLITE';
+            }elseif(false !== strpos(strtoupper($this->dbType),'OCI')){
+                return 'ORACLE';
+            }elseif(false !== strpos(strtoupper($this->dbType),'IBM')){
+                return 'DB2';
+            }elseif(false !== strpos(strtoupper($this->dbType),'ODBC')){
+                return 'ODBC';
+            }elseif(false !== strpos(strtoupper($this->dbType),'FIREBIRD')){
+                // Firebird 剑雷 2007.12.29
+                return 'IBASE';
+            }else{
+                return $this->dbType;
+            }
+        }
+    }
 
     /**
      +----------------------------------------------------------
@@ -467,103 +467,103 @@ class Db extends Base
     protected function parseWhere($where)
     {
         $whereStr = '';
-		if(is_string($where) || is_null($where)) {
+        if(is_string($where) || is_null($where)) {
             //支持String作为条件 如使用 > like 等
             $whereStr = $where;
         }else{
             if(is_instance_of($where,'HashMap')){
-				$where	=	$where->toArray();
-			}elseif(is_object($where)){
+                $where  =   $where->toArray();
+            }elseif(is_object($where)){
                 $where = get_object_vars($where);
             }
-			if(array_key_exists('_logic',$where)) {
-				// 定义逻辑运算规则 例如 OR XOR AND NOT
-				$operate	=	' '.strtoupper($where['_logic']).' ';
-				unset($where['_logic']);
-			}else{
-				// 默认进行 AND 运算
-				$operate	=	' AND ';
-			}
-			foreach ($where as $key=>$val){
-				if(strpos($key,C('FIELDS_DEPR'))) {
-					$key	=	explode(C('FIELDS_DEPR'),$key);
-					array_walk($key, array($this, 'addSpecialChar'));
-				}else{
-					$key = $this->addSpecialChar($key);
-				}
-				$whereStr .= "( ";
-				if(is_array($val)) {
-						if(is_array($key)) {
-							// 多字段组合查询
-							$num	=	count($key);
-							if(empty($val[$num])) $val[$num]	=	'AND'; // 运算规则默认为AND
-							for ($i=0;$i<$num;$i++){
-								if(is_array($val[$i])) {
-									// 判断条件
-									if(is_string($val[$i][0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE)F$/i',$val[$i][0])) {
-										$op	=	$this->comparison[strtolower(substr($val[$i][0],0,-1))];
-										$str[] = ' ('.$key[$i].' '.$op.' '.$val[$i][1].') ';
-									}elseif(is_string($val[$i][0]) && preg_match('/IN/i',$val[$i][0])){
-										$zone	=	is_array($val[$i][1])? implode(',',$val[$i][1]):$val[$i][1];
-										$str[] =  ' ('.$key[$i].' '.strtoupper($val[$i][0]).' ('.$zone.') )';
-									}elseif(is_string($val[$i][0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE|NULL|NOTNULL|BETWEEN)$/i',$val[$i][0])){
-										$op	=	$this->comparison[strtolower($val[$i][0])];
-										$str[] = ' ('.$key[$i].' '.$op.' '.$this->fieldFormat($val[$i][1]).') ';
-									}else{
-										$str[] = ' ('.$key[$i].' '.$val[$i][0].' '.$this->fieldFormat($val[$i][1]).') ';
-									}
-								}else{
-									// 默认为 ＝
-									$str[] = ' ('.$key[$i].' = '.$this->fieldFormat($val[$i]).') ';
-								}
-							}
-							$whereStr .= implode(strtoupper($val[$num]),$str);
-						}else{
-							if(is_string($val[0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE|NULL|NOTNULL|BETWEEN)$/i',$val[0])) {
-								// 是否存在比较运算
-								$whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
-							}elseif(is_string($val[0]) && preg_match('/IN/i',$val[0])){
-								// 支持 IN 运算
-								$zone	=	is_array($val[1])? implode(',',$val[1]):$val[1];
-								$whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
-							}elseif(is_string($val[0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE)F$/i',$val[0])){
-								$whereStr .= $key.' '.$this->comparison[strtolower(substr($val[0],0,-1))].' '.$val[1];
-							}else {
-								// 区间比较只有两个段
-								if(is_array($val[0])) {
-									// 给出运算符
-									$operate1	=	$this->comparison[strtolower($val[0][0])];
-									$data1	=	$val[0][1];
-								}else{
-									// 默认的运算符
-									$operate1	=	'>=';
-									$data1	=	$val[0];
-								}
-								if(is_array($val[1])) {
-									$operate2	=	$this->comparison[strtolower($val[1][0])];
-									$data2	=	$val[1][1];
-								}else{
-									$operate2	=	'<=';
-									$data2	=	$val[1];
-								}
-								if(empty($val[2])) $val[2]	=	'AND'; // 运算规则默认为AND
-								if(in_array(strtoupper(trim($val[2])),array('AND','OR','XOR'))) {
-									$whereStr .= $key.' '.$operate1.' '.$this->fieldFormat($data1).' '.$val[2].' '.$key.' '.$operate2.' '.$this->fieldFormat($data2);
-								}
-							}
-						}
-				}else {
-					//对字符串类型字段采用模糊匹配
-					if(C('LIKE_MATCH_FIELDS') && preg_match('/('.C('LIKE_MATCH_FIELDS').')/i',$key)) {
-						$val = '%'.$val.'%';
-						$whereStr .= $key." LIKE ".$this->fieldFormat($val);
-					}else {
-						$whereStr .= $key." = ".$this->fieldFormat($val);
-					}
-				}
-				$whereStr .= ' )'.$operate;
-			}
-			$whereStr = substr($whereStr,0,-strlen($operate));
+            if(array_key_exists('_logic',$where)) {
+                // 定义逻辑运算规则 例如 OR XOR AND NOT
+                $operate    =   ' '.strtoupper($where['_logic']).' ';
+                unset($where['_logic']);
+            }else{
+                // 默认进行 AND 运算
+                $operate    =   ' AND ';
+            }
+            foreach ($where as $key=>$val){
+                if(strpos($key,C('FIELDS_DEPR'))) {
+                    $key    =   explode(C('FIELDS_DEPR'),$key);
+                    array_walk($key, array($this, 'addSpecialChar'));
+                }else{
+                    $key = $this->addSpecialChar($key);
+                }
+                $whereStr .= "( ";
+                if(is_array($val)) {
+                        if(is_array($key)) {
+                            // 多字段组合查询
+                            $num    =   count($key);
+                            if(empty($val[$num])) $val[$num]    =   'AND'; // 运算规则默认为AND
+                            for ($i=0;$i<$num;$i++){
+                                if(is_array($val[$i])) {
+                                    // 判断条件
+                                    if(is_string($val[$i][0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE)F$/i',$val[$i][0])) {
+                                        $op =   $this->comparison[strtolower(substr($val[$i][0],0,-1))];
+                                        $str[] = ' ('.$key[$i].' '.$op.' '.$val[$i][1].') ';
+                                    }elseif(is_string($val[$i][0]) && preg_match('/IN/i',$val[$i][0])){
+                                        $zone   =   is_array($val[$i][1])? implode(',',$val[$i][1]):$val[$i][1];
+                                        $str[] =  ' ('.$key[$i].' '.strtoupper($val[$i][0]).' ('.$zone.') )';
+                                    }elseif(is_string($val[$i][0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE|NULL|NOTNULL|BETWEEN)$/i',$val[$i][0])){
+                                        $op =   $this->comparison[strtolower($val[$i][0])];
+                                        $str[] = ' ('.$key[$i].' '.$op.' '.$this->fieldFormat($val[$i][1]).') ';
+                                    }else{
+                                        $str[] = ' ('.$key[$i].' '.$val[$i][0].' '.$this->fieldFormat($val[$i][1]).') ';
+                                    }
+                                }else{
+                                    // 默认为 ＝
+                                    $str[] = ' ('.$key[$i].' = '.$this->fieldFormat($val[$i]).') ';
+                                }
+                            }
+                            $whereStr .= implode(strtoupper($val[$num]),$str);
+                        }else{
+                            if(is_string($val[0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE|NULL|NOTNULL|BETWEEN)$/i',$val[0])) {
+                                // 是否存在比较运算
+                                $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
+                            }elseif(is_string($val[0]) && preg_match('/IN/i',$val[0])){
+                                // 支持 IN 运算
+                                $zone   =   is_array($val[1])? implode(',',$val[1]):$val[1];
+                                $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
+                            }elseif(is_string($val[0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE)F$/i',$val[0])){
+                                $whereStr .= $key.' '.$this->comparison[strtolower(substr($val[0],0,-1))].' '.$val[1];
+                            }else {
+                                // 区间比较只有两个段
+                                if(is_array($val[0])) {
+                                    // 给出运算符
+                                    $operate1   =   $this->comparison[strtolower($val[0][0])];
+                                    $data1  =   $val[0][1];
+                                }else{
+                                    // 默认的运算符
+                                    $operate1   =   '>=';
+                                    $data1  =   $val[0];
+                                }
+                                if(is_array($val[1])) {
+                                    $operate2   =   $this->comparison[strtolower($val[1][0])];
+                                    $data2  =   $val[1][1];
+                                }else{
+                                    $operate2   =   '<=';
+                                    $data2  =   $val[1];
+                                }
+                                if(empty($val[2])) $val[2]  =   'AND'; // 运算规则默认为AND
+                                if(in_array(strtoupper(trim($val[2])),array('AND','OR','XOR'))) {
+                                    $whereStr .= $key.' '.$operate1.' '.$this->fieldFormat($data1).' '.$val[2].' '.$key.' '.$operate2.' '.$this->fieldFormat($data2);
+                                }
+                            }
+                        }
+                }else {
+                    //对字符串类型字段采用模糊匹配
+                    if(C('LIKE_MATCH_FIELDS') && preg_match('/('.C('LIKE_MATCH_FIELDS').')/i',$key)) {
+                        $val = '%'.$val.'%';
+                        $whereStr .= $key." LIKE ".$this->fieldFormat($val);
+                    }else {
+                        $whereStr .= $key." = ".$this->fieldFormat($val);
+                    }
+                }
+                $whereStr .= ' )'.$operate;
+            }
+            $whereStr = substr($whereStr,0,-strlen($operate));
         }
         return empty($whereStr)?'':' WHERE '.$whereStr;
     }
@@ -606,14 +606,14 @@ class Db extends Base
      */
     protected function parseJoin($join)
     {
-		$joinStr = '';
-		if(!empty($join)) {
-			if(is_array($join)) {
-				$joinStr .= ' '.strtoupper($join[0]).' JOIN ' . $join[1].' ';
-			}else{
-				$joinStr .= ' LEFT JOIN ' .$join;
-			}
-		}
+        $joinStr = '';
+        if(!empty($join)) {
+            if(is_array($join)) {
+                $joinStr .= ' '.strtoupper($join[0]).' JOIN ' . $join[1].' ';
+            }else{
+                $joinStr .= ' LEFT JOIN ' .$join;
+            }
+        }
         return $joinStr;
     }
 
@@ -634,35 +634,35 @@ class Db extends Base
     {
         $limitStr    = '';
         if(!empty($limit)) {
-			$dbType	 =	 $this->getDbType();
-			if(in_array($dbType,array('PGSQL','SQLITE'))) {
-				// PgSQL
-				$limit	=	explode(',',$limit);
-				if(count($limit)>1) {
-					$limitStr .= ' LIMIT '.$limit[1].' OFFSET '.$limit[0].' ';
-				}else{
-					$limitStr .= ' LIMIT '.$limit[0].' ';
-				}
+            $dbType  =   $this->getDbType();
+            if(in_array($dbType,array('PGSQL','SQLITE'))) {
+                // PgSQL
+                $limit  =   explode(',',$limit);
+                if(count($limit)>1) {
+                    $limitStr .= ' LIMIT '.$limit[1].' OFFSET '.$limit[0].' ';
+                }else{
+                    $limitStr .= ' LIMIT '.$limit[0].' ';
+                }
 
-			}elseif('MSSQL'== $dbType){
-				// MsSQL
-				$limitStr = ' TOP '.$limit.' ';
-			}elseif('IBASE'== $dbType){
-				// Firebird 剑雷 2007.12.29
-				$limit	=	explode(',',$limit);
-				if(count($limit)>1) {
-				  $limitStr = ' FIRST '.$limit[1].' SKIP '.$limit[0].' ';
-				}else{
-				  $limitStr = ' FIRST '.$limit[0].' ';
-				}
-			}elseif('ORACLE'==$dbType){
-				// TODO oracle的limit
-				$limitStr .= '';
-			}else{
-				// 其它数据库
-	            $limitStr .= ' LIMIT '.$limit.' ';
-			}
-		}
+            }elseif('MSSQL'== $dbType){
+                // MsSQL
+                $limitStr = ' TOP '.$limit.' ';
+            }elseif('IBASE'== $dbType){
+                // Firebird 剑雷 2007.12.29
+                $limit  =   explode(',',$limit);
+                if(count($limit)>1) {
+                  $limitStr = ' FIRST '.$limit[1].' SKIP '.$limit[0].' ';
+                }else{
+                  $limitStr = ' FIRST '.$limit[0].' ';
+                }
+            }elseif('ORACLE'==$dbType){
+                // TODO oracle的limit
+                $limitStr .= '';
+            }else{
+                // 其它数据库
+                $limitStr .= ' LIMIT '.$limit.' ';
+            }
+        }
         return $limitStr;
     }
 
@@ -731,10 +731,10 @@ class Db extends Base
         }else if(is_string($fields) && !empty($fields)) {
             if( false === strpos($fields,'`') ) {
                 $fields = explode(',',$fields);
-          	    array_walk($fields, array($this, 'addSpecialChar'));
+                array_walk($fields, array($this, 'addSpecialChar'));
                 $fieldsStr = implode(',', $fields);
             }else {
-            	$fieldsStr = $fields;
+                $fieldsStr = $fields;
             }
         }else
             $fieldsStr = '*';
@@ -789,16 +789,16 @@ class Db extends Base
         $sets    = auto_charset($sets,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
         if(is_array($sets)){
             foreach ($sets as $key=>$val){
-				$key	=	$this->addSpecialChar($key);
-				if(is_array($val) && strtolower($val[0]) == 'exp') {
-					$val	=	$val[1];						// 使用表达式
-				}elseif(!is_null($val) && is_scalar($val)){
-					$val	=	$this->fieldFormat($val);
-				}else{
-					// 过滤控制和复合对象
-					continue;
-				}
-				$setsStr .= "$key = ".$val.",";
+                $key    =   $this->addSpecialChar($key);
+                if(is_array($val) && strtolower($val[0]) == 'exp') {
+                    $val    =   $val[1];                        // 使用表达式
+                }elseif(!is_null($val) && is_scalar($val)){
+                    $val    =   $this->fieldFormat($val);
+                }else{
+                    // 过滤控制和复合对象
+                    continue;
+                }
+                $setsStr .= "$key = ".$val.",";
             }
             $setsStr = substr($setsStr,0,-1);
         }else if(is_string($sets)) {
@@ -818,12 +818,12 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	protected function setLockMode() {
-		if('ORACLE' == $this->getDbType()) {
-			return ' FOR UPDATE NOWAIT ';
-		}
-		return ' FOR UPDATE ';
-	}
+    protected function setLockMode() {
+        if('ORACLE' == $this->getDbType()) {
+            return ' FOR UPDATE NOWAIT ';
+        }
+        return ' FOR UPDATE ';
+    }
 
     /**
      +----------------------------------------------------------
@@ -845,10 +845,10 @@ class Db extends Base
         } else if(is_float($value)) {
             $value = floatval($value);
         } elseif(preg_match('/^\(\w*(\+|\-|\*|\/)?\w*\)$/i',$value)){
-			// 支持在字段的值里面直接使用其它字段
-			// 例如 (score+1) (name) 必须包含括号
-			$value = $this->escape_string($value);
-		}else if(is_string($value)) {
+            // 支持在字段的值里面直接使用其它字段
+            // 例如 (score+1) (name) 必须包含括号
+            $value = $this->escape_string($value);
+        }else if(is_string($value)) {
             $value = '\''.$this->escape_string($value).'\'';
         }
         return $value;
@@ -928,17 +928,17 @@ class Db extends Base
         if(!empty($sql)) {
             $this->queryStr = $sql;
         }
-		if($lock) {
-			$this->queryStr .= $this->setLockMode();
-		}
-		if($lazy) {
-			// 延时读取数据库
-			return $this->lazyQuery($this->queryStr);
-		}
+        if($lock) {
+            $this->queryStr .= $this->setLockMode();
+        }
+        if($lazy) {
+            // 延时读取数据库
+            return $this->lazyQuery($this->queryStr);
+        }
         if($cache) {// 启用数据库缓存
             $guid   =   md5($this->queryStr);
             //获取缓存数据
-			$data = S($guid);
+            $data = S($guid);
             if(!empty($data)){
                 return $data;
             }
@@ -965,11 +965,11 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function lazyQuery($sql='') {
-		// 返回ResultIterator对象 在操作数据的时候再进行读取
-		import("Think.Db.ResultIterator");
-		return new ResultIterator($sql);
-	}
+    public function lazyQuery($sql='') {
+        // 返回ResultIterator对象 在操作数据的时候再进行读取
+        import("Think.Db.ResultIterator");
+        return new ResultIterator($sql);
+    }
 
     /**
      +----------------------------------------------------------
@@ -987,11 +987,11 @@ class Db extends Base
     public function execute($sql='',$lock=false)
     {
         if(empty($sql)) {
-        	$sql  = $this->queryStr;
+            $sql  = $this->queryStr;
         }
-		if($lock) {
-			$sql .= $this->setLockMode();
-		}
+        if($lock) {
+            $sql .= $this->setLockMode();
+        }
         return $this->_execute($sql);
     }
 
@@ -1011,12 +1011,12 @@ class Db extends Base
     public function autoExec($sql='',$lazy=false,$lock=false,$cache=false)
     {
         if(empty($sql)) {
-        	$sql  = $this->queryStr;
+            $sql  = $this->queryStr;
         }
         if($this->isMainIps($sql)) {
-        	$this->execute($sql,$lock);
+            $this->execute($sql,$lock);
         }else {
-        	$this->query($sql,$cache,$lazy,$lock);
+            $this->query($sql,$cache,$lazy,$lock);
         }
     }
 
@@ -1044,25 +1044,25 @@ class Db extends Base
      */
     public function find($where,$tables,$fields='*',$order=null,$limit=null,$group=null,$having=null,$join=null,$cache=false,$lazy=false,$lock=false)
     {
-		if(in_array($this->getDbType(),array('MSSQL','IBASE'),true) ) {
-			$this->queryStr = 'SELECT '.$this->parseLimit($limit)
-							.$this->parseFields($fields)
-							.' FROM '.$tables
-							.$this->parseJoin($join)
-							.$this->parseWhere($where)
-							.$this->parseGroup($group)
-							.$this->parseHaving($having)
-							.$this->parseOrder($order);
-		}else{
-			$this->queryStr = 'SELECT '.$this->parseFields($fields)
-							.' FROM '.$tables
-							.$this->parseJoin($join)
-							.$this->parseWhere($where)
-							.$this->parseGroup($group)
-							.$this->parseHaving($having)
-							.$this->parseOrder($order)
-							.$this->parseLimit($limit);
-		}
+        if(in_array($this->getDbType(),array('MSSQL','IBASE'),true) ) {
+            $this->queryStr = 'SELECT '.$this->parseLimit($limit)
+                            .$this->parseFields($fields)
+                            .' FROM '.$tables
+                            .$this->parseJoin($join)
+                            .$this->parseWhere($where)
+                            .$this->parseGroup($group)
+                            .$this->parseHaving($having)
+                            .$this->parseOrder($order);
+        }else{
+            $this->queryStr = 'SELECT '.$this->parseFields($fields)
+                            .' FROM '.$tables
+                            .$this->parseJoin($join)
+                            .$this->parseWhere($where)
+                            .$this->parseGroup($group)
+                            .$this->parseHaving($having)
+                            .$this->parseOrder($order)
+                            .$this->parseLimit($limit);
+        }
         return $this->query('',$cache,$lazy,$lock);
     }
 
@@ -1083,29 +1083,29 @@ class Db extends Base
      */
     public function add($map,$table,$multi=false)
     {
-		if($multi) {
-			return $this->addAll($map,$table);
-		}
+        if($multi) {
+            return $this->addAll($map,$table);
+        }
         if(!is_array($map)) {
             if(!is_instance_of($map,'HashMap')){
                 throw_exception(L('_DATA_TYPE_INVALID_'));
             }
         }
-		foreach ($map as $key=>$val){
-			if(is_array($val) && strtolower($val[0]) == 'exp') {
-				$val	=	$val[1];						// 使用表达式
-			}elseif (is_scalar($val)){
-				$val	=	$this->fieldFormat($val);
-			}else{
-				// 去掉复合对象
-				continue;
-			}
-			$data[$key]	=	$val;
-		}
+        foreach ($map as $key=>$val){
+            if(is_array($val) && strtolower($val[0]) == 'exp') {
+                $val    =   $val[1];                        // 使用表达式
+            }elseif (is_scalar($val)){
+                $val    =   $this->fieldFormat($val);
+            }else{
+                // 去掉复合对象
+                continue;
+            }
+            $data[$key] =   $val;
+        }
         //转换数据库编码
         $data    = auto_charset($data,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
         $fields = array_keys($data);
-       	array_walk($fields, array($this, 'addSpecialChar'));
+        array_walk($fields, array($this, 'addSpecialChar'));
         $fieldsStr = implode(',', $fields);
         $values = array_values($data);
         //array_walk($values, array($this, 'fieldFormat'));
@@ -1131,34 +1131,34 @@ class Db extends Base
      */
     public function addAll($map,$table)
     {
-		if(0 === strpos($this->getDbType(),'MYSQL')) {
-			//转换数据库编码
-			$fields = array_keys((array)$map[0]);
-			array_walk($fields, array($this, 'addSpecialChar'));
-			$fieldsStr = implode(',', $fields);
-			$values = array();
-			foreach ($map as $data){
-				// 去掉复合对象 保证关联数据属性不会被保存导致错误
-				foreach ($data as $key=>$val){
-					if(is_scalar($val)) {
-						$_data[$key]	=	$val;
-					}
-				}
-				$_data    = auto_charset($_data,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
-				$_values = array_values($_data);
-				array_walk($_values, array($this, 'fieldFormat'));
-				$values[] = '( '.implode(',', $_values).' )';
-			}
-			$valuesStr = implode(',',$values);
-			$this->queryStr =    'INSERT INTO '.$table.' ('.$fieldsStr.') VALUES '.$valuesStr;
-			return $this->execute();
-		}else{
-			$this->startTrans();
-			foreach ($map as $data){
-				$this->add($data,$table);
-			}
-			$this->commit();
-		}
+        if(0 === strpos($this->getDbType(),'MYSQL')) {
+            //转换数据库编码
+            $fields = array_keys((array)$map[0]);
+            array_walk($fields, array($this, 'addSpecialChar'));
+            $fieldsStr = implode(',', $fields);
+            $values = array();
+            foreach ($map as $data){
+                // 去掉复合对象 保证关联数据属性不会被保存导致错误
+                foreach ($data as $key=>$val){
+                    if(is_scalar($val)) {
+                        $_data[$key]    =   $val;
+                    }
+                }
+                $_data    = auto_charset($_data,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
+                $_values = array_values($_data);
+                array_walk($_values, array($this, 'fieldFormat'));
+                $values[] = '( '.implode(',', $_values).' )';
+            }
+            $valuesStr = implode(',',$values);
+            $this->queryStr =    'INSERT INTO '.$table.' ('.$fieldsStr.') VALUES '.$valuesStr;
+            return $this->execute();
+        }else{
+            $this->startTrans();
+            foreach ($map as $data){
+                $this->add($data,$table);
+            }
+            $this->commit();
+        }
     }
 
     /**
@@ -1224,22 +1224,22 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function setField($field,$value,$table,$condition,$asString=false) {
-        $this->queryStr	=	'UPDATE '.$table.' SET ';
+    public function setField($field,$value,$table,$condition,$asString=false) {
+        $this->queryStr =   'UPDATE '.$table.' SET ';
         if(strpos($field,',')) {
             $field =  explode(',',$field);
         }
         if(is_array($field)) {
             $count   =  count($field);
             for($i=0;$i<$count;$i++) {
-                $this->queryStr	.= $this->addSpecialChar($field[$i]).'='.$this->fieldFormat($value[$i]).',';
+                $this->queryStr .= $this->addSpecialChar($field[$i]).'='.$this->fieldFormat($value[$i]).',';
             }
         }else{
-            $this->queryStr	.= $this->addSpecialChar($field).'='.$this->fieldFormat($value).',';
-		}
-		$this->queryStr	=	substr($this->queryStr,0,-1).$this->parseWhere($condition);
-		return $this->execute();
-	}
+            $this->queryStr .= $this->addSpecialChar($field).'='.$this->fieldFormat($value).',';
+        }
+        $this->queryStr =   substr($this->queryStr,0,-1).$this->parseWhere($condition);
+        return $this->execute();
+    }
 
     /**
      +----------------------------------------------------------
@@ -1257,9 +1257,9 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function setInc($field,$table,$condition,$step=1) {
-		return $this->setField($field,'('.$field.'+'.$step.')',$table,$condition);
-	}
+    public function setInc($field,$table,$condition,$step=1) {
+        return $this->setField($field,'('.$field.'+'.$step.')',$table,$condition);
+    }
 
     /**
      +----------------------------------------------------------
@@ -1277,9 +1277,9 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function setDec($field,$table,$condition,$step=1) {
-		return $this->setField($field,'('.$field.'-'.$step.')',$table,$condition);
-	}
+    public function setDec($field,$table,$condition,$step=1) {
+        return $this->setField($field,'('.$field.'-'.$step.')',$table,$condition);
+    }
 
     /**
      +----------------------------------------------------------
@@ -1294,16 +1294,16 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function Q($times='') {
-		static $_times = 0;
-		if(empty($times)) {
-			return $_times;
-		}else{
-			$_times++;
-			// 记录开始执行时间
-			$this->beginTime = microtime(TRUE);
-		}
-	}
+    public function Q($times='') {
+        static $_times = 0;
+        if(empty($times)) {
+            return $_times;
+        }else{
+            $_times++;
+            // 记录开始执行时间
+            $this->beginTime = microtime(TRUE);
+        }
+    }
 
     /**
      +----------------------------------------------------------
@@ -1318,16 +1318,16 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function W($times='') {
-		static $_times = 0;
-		if(empty($times)) {
-			return $_times;
-		}else{
-			$_times++;
-			// 记录开始执行时间
-			$this->beginTime = microtime(TRUE);
-		}
-	}
+    public function W($times='') {
+        static $_times = 0;
+        if(empty($times)) {
+            return $_times;
+        }else{
+            $_times++;
+            // 记录开始执行时间
+            $this->beginTime = microtime(TRUE);
+        }
+    }
 
     /**
      +----------------------------------------------------------
@@ -1338,9 +1338,9 @@ class Db extends Base
      * @return string
      +----------------------------------------------------------
      */
-	public function getLastSql() {
-		return $this->queryStr;
-	}
+    public function getLastSql() {
+        return $this->queryStr;
+    }
 
 }//类定义结束
 ?>

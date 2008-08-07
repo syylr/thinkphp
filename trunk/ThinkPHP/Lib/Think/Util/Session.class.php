@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -33,14 +33,14 @@ class Session extends Base
      * 启动Session
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
     static function start()
     {
-	    session_start();
+        session_start();
         if (!isset($_SESSION['__HTTP_Session_Info'])) {
             $_SESSION['__HTTP_Session_Info'] = HTTP_SESSION_STARTED;
         } else {
@@ -54,7 +54,7 @@ class Session extends Base
      * 暂停Session
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -69,7 +69,7 @@ class Session extends Base
      * 清空Session
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -85,7 +85,7 @@ class Session extends Base
      * 清空Session
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -93,7 +93,7 @@ class Session extends Base
     static function clear()
     {
         unset($_SESSION);
-		session_destroy();
+        session_destroy();
     }
 
     /**
@@ -101,7 +101,7 @@ class Session extends Base
      * 销毁Session
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -114,10 +114,10 @@ class Session extends Base
 
     /**
      +----------------------------------------------------------
-     * 检测SessionID 
+     * 检测SessionID
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -143,10 +143,10 @@ class Session extends Base
      +----------------------------------------------------------
      * 设置或者获取当前Session name
      +----------------------------------------------------------
-     * @param string $name session名称 
+     * @param string $name session名称
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string 返回之前的Session name
      +----------------------------------------------------------
@@ -163,7 +163,7 @@ class Session extends Base
      * @param string $id sessionID
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void 返回之前的sessionID
      +----------------------------------------------------------
@@ -179,12 +179,12 @@ class Session extends Base
      +----------------------------------------------------------
      * @param string $path 保存路径名
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    static function path($path = null) 
+    static function path($path = null)
     {
         return !empty($path)? session_save_path($path):session_save_path();
     }
@@ -193,11 +193,11 @@ class Session extends Base
      +----------------------------------------------------------
      * 设置Session 过期时间
      +----------------------------------------------------------
-     * @param integer $time 过期时间 
-     * @param boolean $add  是否为增加时间 
+     * @param integer $time 过期时间
+     * @param boolean $add  是否为增加时间
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -222,11 +222,11 @@ class Session extends Base
      +----------------------------------------------------------
      * 设置Session 闲置时间
      +----------------------------------------------------------
-     * @param integer $time 闲置时间 
-     * @param boolean $add  是否为增加时间 
+     * @param integer $time 闲置时间
+     * @param boolean $add  是否为增加时间
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -245,7 +245,7 @@ class Session extends Base
      * 取得Session 有效时间
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -264,7 +264,7 @@ class Session extends Base
      * 检查Session 是否过期
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -283,7 +283,7 @@ class Session extends Base
      * 检查Session 是否闲置
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -302,7 +302,7 @@ class Session extends Base
      * 更新Session 闲置时间
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
@@ -317,10 +317,10 @@ class Session extends Base
      * 设置Session 对象反序列化时候的回调函数
      * 返回之前设置
      +----------------------------------------------------------
-     * @param string $callback  回调函数方法名 
+     * @param string $callback  回调函数方法名
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -340,10 +340,10 @@ class Session extends Base
      * 设置Session 是否使用cookie
      * 返回之前设置
      +----------------------------------------------------------
-     * @param boolean $useCookies  是否使用cookie 
+     * @param boolean $useCookies  是否使用cookie
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -361,10 +361,10 @@ class Session extends Base
      +----------------------------------------------------------
      * 检查Session 是否新建
      +----------------------------------------------------------
-     * @param boolean $useCookies  是否使用cookie 
+     * @param boolean $useCookies  是否使用cookie
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -381,10 +381,10 @@ class Session extends Base
      * 取得当前项目的Session 值
      * 返回之前设置
      +----------------------------------------------------------
-     * @param string $name   
+     * @param string $name
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -403,10 +403,10 @@ class Session extends Base
      * 取得当前项目的Session 值
      * 返回之前设置
      +----------------------------------------------------------
-     * @param string $name   
+     * @param string $name
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -414,9 +414,9 @@ class Session extends Base
     static function get($name)
     {
         if(isset($_SESSION[$name])) {
-        	return $_SESSION[$name];
+            return $_SESSION[$name];
         }else {
-        	return null;
+            return null;
         }
     }
 
@@ -425,11 +425,11 @@ class Session extends Base
      * 设置当前项目的Session 值
      * 返回之前设置
      +----------------------------------------------------------
-     * @param string $name   
-     * @param mixed  $value   
+     * @param string $name
+     * @param mixed  $value
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -453,11 +453,11 @@ class Session extends Base
      * 设置当前项目的Session 值
      * 返回之前设置
      +----------------------------------------------------------
-     * @param string $name   
-     * @param mixed  $value   
+     * @param string $name
+     * @param mixed  $value
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -476,10 +476,10 @@ class Session extends Base
      +----------------------------------------------------------
      * 检查Session 值是否已经设置
      +----------------------------------------------------------
-     * @param string $name   
+     * @param string $name
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -494,10 +494,10 @@ class Session extends Base
      +----------------------------------------------------------
      * 检查Session 值是否已经设置
      +----------------------------------------------------------
-     * @param string $name   
+     * @param string $name
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -511,10 +511,10 @@ class Session extends Base
      +----------------------------------------------------------
      * 设置或者获取 Session localname
      +----------------------------------------------------------
-     * @param string $name   
+     * @param string $name
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -533,7 +533,7 @@ class Session extends Base
      * Session 初始化
      +----------------------------------------------------------
      * @static
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
@@ -544,12 +544,12 @@ class Session extends Base
         if (is_null(Session::detectID())) {
             Session::id(uniqid(dechex(mt_rand())));
         }
-		// 设置Session有效域名
-		Session::setCookieDomain(C('COOKIE_DOMAIN'));
+        // 设置Session有效域名
+        Session::setCookieDomain(C('COOKIE_DOMAIN'));
         //设置当前项目运行脚本作为Session本地名
         Session::localName(APP_NAME);
-		Session::name(C('SESSION_NAME'));
-		Session::path(C('SESSION_PATH'));
+        Session::name(C('SESSION_NAME'));
+        Session::path(C('SESSION_PATH'));
         Session::setCallback(C('SESSION_CALLBACK'));
     }
 
@@ -558,10 +558,10 @@ class Session extends Base
      * 设置Session use_trans_sid
      * 返回之前设置
      +----------------------------------------------------------
-     * @param string $useTransSID   
+     * @param string $useTransSID
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -580,10 +580,10 @@ class Session extends Base
      * 设置Session cookie_domain
      * 返回之前设置
      +----------------------------------------------------------
-     * @param string $sessionDomain   
+     * @param string $sessionDomain
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -603,10 +603,10 @@ class Session extends Base
      * 设置Session gc_maxlifetime值
      * 返回之前设置
      +----------------------------------------------------------
-     * @param string $gc_maxlifetime   
+     * @param string $gc_maxlifetime
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -625,10 +625,10 @@ class Session extends Base
      * 设置Session gc_probability 值
      * 返回之前设置
      +----------------------------------------------------------
-     * @param string $gc_maxlifetime   
+     * @param string $gc_maxlifetime
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -646,12 +646,12 @@ class Session extends Base
      +----------------------------------------------------------
      * 当前Session文件名
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    static function getFilename() 
+    static function getFilename()
     {
         return Session::path().'/sess_'.session_id();
     }
