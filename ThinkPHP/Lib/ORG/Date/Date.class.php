@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -33,7 +33,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $date;      
+     protected $date;
 
     /**
      +----------------------------------------------------------
@@ -43,7 +43,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $timezone;      
+     protected $timezone;
 
     /**
      +----------------------------------------------------------
@@ -53,7 +53,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $year;      
+     protected $year;
 
     /**
      +----------------------------------------------------------
@@ -63,7 +63,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $month;      
+     protected $month;
 
     /**
      +----------------------------------------------------------
@@ -73,7 +73,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $day;      
+     protected $day;
 
     /**
      +----------------------------------------------------------
@@ -83,7 +83,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $hour;      
+     protected $hour;
 
     /**
      +----------------------------------------------------------
@@ -93,7 +93,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $minute;      
+     protected $minute;
 
     /**
      +----------------------------------------------------------
@@ -103,7 +103,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $second;      
+     protected $second;
 
     /**
      +----------------------------------------------------------
@@ -113,7 +113,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $weekday;      
+     protected $weekday;
 
     /**
      +----------------------------------------------------------
@@ -123,7 +123,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $cWeekday;      
+     protected $cWeekday;
 
     /**
      +----------------------------------------------------------
@@ -133,7 +133,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $yDay;      
+     protected $yDay;
 
     /**
      +----------------------------------------------------------
@@ -143,7 +143,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $cMonth;      
+     protected $cMonth;
 
     /**
      +----------------------------------------------------------
@@ -153,7 +153,7 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $CDATE;      
+     protected $CDATE;
 
     /**
      +----------------------------------------------------------
@@ -163,17 +163,17 @@ class Date extends Base
      * @access protected
      +----------------------------------------------------------
      */
-     protected $YMD;      
+     protected $YMD;
 
     /**
      +----------------------------------------------------------
-     * 时间的输出表示 
+     * 时间的输出表示
      +----------------------------------------------------------
      * @var string
      * @access protected
      +----------------------------------------------------------
      */
-     protected $CTIME;      
+     protected $CTIME;
      protected $Week = array("日","一","二","三","四","五","六");
 
     /**
@@ -184,7 +184,7 @@ class Date extends Base
      * @param mixed $date  日期
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function __construct($date='')
@@ -193,14 +193,14 @@ class Date extends Base
         $this->date =   $this->parse($date);
         $this->setDate($this->date);
     }
-    
+
     /**
      +----------------------------------------------------------
-     * 日期分析 
+     * 日期分析
      * 返回时间戳
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $date 日期
      +----------------------------------------------------------
@@ -209,7 +209,7 @@ class Date extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function parse($date) 
+    public function parse($date)
     {
         if (is_string($date)) {
             if (($date == "") || strtotime($date) == -1) {
@@ -244,7 +244,7 @@ class Date extends Base
      +----------------------------------------------------------
      * 验证日期数据是否有效
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $date 日期数据
      +----------------------------------------------------------
@@ -253,9 +253,9 @@ class Date extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function valid($date) 
+    public function valid($date)
     {
-        
+
     }
 
 
@@ -264,7 +264,7 @@ class Date extends Base
      * 日期参数设置
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $date  日期时间戳
      +----------------------------------------------------------
@@ -273,7 +273,7 @@ class Date extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function setDate($date) 
+    public function setDate($date)
     {
         $dateArray  =   getdate($date);
         $this->date         =   $dateArray[0];            //时间戳
@@ -291,7 +291,7 @@ class Date extends Base
 
         $this->CDATE        =   $this->format("%Y-%m-%d");//日期表示
         $this->YMD          =   $this->format("%Y%m%d");  //简单日期
-        $this->CTIME        =   $this->format("%H:%M:%S");//时间表示    
+        $this->CTIME        =   $this->format("%H:%M:%S");//时间表示
 
         return ;
     }
@@ -301,7 +301,7 @@ class Date extends Base
      * 日期格式化
      * 默认返回 1970-01-01 11:30:45 格式
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $format  格式化参数
      +----------------------------------------------------------
@@ -319,22 +319,22 @@ class Date extends Base
      * 是否为闰年
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function isLeapYear() 
+    public function isLeapYear()
     {
-	    return ((($this->year % 4) == 0) && (($this->year % 100) != 0) || (($this->year % 400) == 0));
+        return ((($this->year % 4) == 0) && (($this->year % 100) != 0) || (($this->year % 400) == 0));
     }
 
     /**
      +----------------------------------------------------------
      * 计算日期差
-     * 
+     *
      *  w - weeks
      *  d - days
      *  h - hours
@@ -342,7 +342,7 @@ class Date extends Base
      *  s - seconds
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $date 要比较的日期
      * @param string $elaps  比较跨度
@@ -352,7 +352,7 @@ class Date extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function dateDiff($date, $elaps = "d") 
+    public function dateDiff($date, $elaps = "d")
     {
         $__DAYS_PER_WEEK__       = (7);
         $__DAYS_PER_MONTH__       = (30);
@@ -374,14 +374,14 @@ class Date extends Base
                 break;
             case "h"://转换成小时
                 $__DAYSELAPS =  $__DAYSELAPS * $__HOURS_IN_A_DAY__;
-                break;        
+                break;
             case "m"://转换成分钟
-                $__DAYSELAPS =  $__DAYSELAPS * $__MINUTES_IN_A_DAY__;  
+                $__DAYSELAPS =  $__DAYSELAPS * $__MINUTES_IN_A_DAY__;
                 break;
             case "s"://转换成秒
                 $__DAYSELAPS =  $__DAYSELAPS * $__SECONDS_IN_A_DAY__;
-                break;        
-        } 
+                break;
+        }
         return $__DAYSELAPS;
     }
 
@@ -390,35 +390,35 @@ class Date extends Base
      * 人性化的计算日期差
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $time 要比较的时间
-     * @param mixed $precision 返回的精度 
+     * @param mixed $precision 返回的精度
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function timeDiff( $time ,$precision=false) {     
+    public function timeDiff( $time ,$precision=false) {
         if(!is_numeric($precision) && !is_bool($precision)) {
             static $_diff = array('y'=>'年','M'=>'个月','d'=>'天','w'=>'周','s'=>'秒','h'=>'小时','m'=>'分钟');
-        	return ceil($this->dateDiff($time,$precision)).$_diff[$precision].'前';
+            return ceil($this->dateDiff($time,$precision)).$_diff[$precision].'前';
         }
         $diff = abs($this->parse($time) - $this->date);
         static $chunks = array(array(31536000,'年'),array(2592000,'个月'),array(604800,'周'),array(86400,'天'),array(3600 ,'小时'),array(60,'分钟'),array(1,'秒'));
         $count =0;
         $since = '';
         for($i=0;$i<count($chunks);$i++) {
-        	if($diff>=$chunks[$i][0]) {
+            if($diff>=$chunks[$i][0]) {
                 $num   =  floor($diff/$chunks[$i][0]);
-        		$since .= sprintf('%d'.$chunks[$i][1],$num);
+                $since .= sprintf('%d'.$chunks[$i][1],$num);
                 $diff =  (int)($diff-$chunks[$i][0]*$num);
                 $count++;
                 if(!$precision || $count>=$precision) {
-                	break;
+                    break;
                 }
-        	}
+            }
        }
         return $since.'前';
     }
@@ -428,7 +428,7 @@ class Date extends Base
      * 计算月份的第一天
      * 返回Date对象
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -437,9 +437,9 @@ class Date extends Base
      */
     public function firstDayOfMonth() {
         return (new Date(strftime("%Y-%m-%d", mktime(0, 0, 0,
-                               $this->month,           
-                               1, 
-                               $this->year ))));           
+                               $this->month,
+                               1,
+                               $this->year ))));
     }
 
     /**
@@ -447,7 +447,7 @@ class Date extends Base
      * 计算年份的第一天
      * 返回Date对象
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -458,15 +458,15 @@ class Date extends Base
         return (new Date(strftime("%Y-%m-%d", mktime(0, 0, 0,
                                1,
                                1,
-                               $this->year))));           
-    } 
+                               $this->year))));
+    }
 
     /**
      +----------------------------------------------------------
      * 计算月份的最后一天
      * 返回Date对象
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -475,9 +475,9 @@ class Date extends Base
      */
     public function lastDayOfMonth() {
         return (new Date(strftime("%Y-%m-%d", mktime(0, 0, 0,
-                               $this->month + 1,    
-                               0,                   
-                               $this->year ))));     
+                               $this->month + 1,
+                               0,
+                               $this->year ))));
     }
 
     /**
@@ -485,7 +485,7 @@ class Date extends Base
      * 计算年份的最后一天
      * 返回Date对象
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -494,33 +494,33 @@ class Date extends Base
      */
     public function lastDayOfYear() {
         return (new Date(strftime("%Y-%m-%d", mktime(0, 0, 0,
-                               1,                   
-                               0,                   
-                               $this->year + 1)))); 
+                               1,
+                               0,
+                               $this->year + 1))));
     }
 
     /**
      +----------------------------------------------------------
      * 计算月份的最大天数
-     * 
+     *
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function maxDayOfMonth() 
+    public function maxDayOfMonth()
     {
         $result = $this->dateDiff(strtotime($this->dateAdd(1,'m')),'d');
-        return $result;    	
+        return $result;
     }
 
     /**
      +----------------------------------------------------------
      * 取得指定间隔日期
-     * 
+     *
      *    yyyy - 年
      *    q    - 季度
      *    m    - 月
@@ -532,7 +532,7 @@ class Date extends Base
      *    n    - 分钟
      *    s    - 秒
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $number 间隔数目
      * @param string $interval  比较类型
@@ -542,7 +542,7 @@ class Date extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function dateAdd($number = 0, $interval = "d") 
+    public function dateAdd($number = 0, $interval = "d")
     {
         $hours =  $this->hour;
         $minutes =  $this->minute;
@@ -593,8 +593,8 @@ class Date extends Base
             case "s":
                 //---Add $number to seconds
                 $seconds += $number;
-                break;        
-        } 
+                break;
+        }
 
         return (new Date(mktime($hours,
                                 $minutes,
@@ -611,7 +611,7 @@ class Date extends Base
      * 用于日和月、周
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $number 日期数字
      +----------------------------------------------------------
@@ -621,34 +621,34 @@ class Date extends Base
      +----------------------------------------------------------
      */
     public function  numberToCh($number)
-    {  
+    {
         $number = intval($number);
-        $array  = array('一','二','三','四','五','六','七','八','九','十');  
+        $array  = array('一','二','三','四','五','六','七','八','九','十');
         $str = '';
-        if($number  ==0)  { $str .= "十" ;}  
-        if($number  <  10){  
+        if($number  ==0)  { $str .= "十" ;}
+        if($number  <  10){
            $str .= $array[$number-1] ;
-        }  
-        elseif($number  <  20  ){  
+        }
+        elseif($number  <  20  ){
            $str .= "十".$array[$number-11];
-        }  
-        elseif($number  <  30  ){  
+        }
+        elseif($number  <  30  ){
            $str .= "二十".$array[$number-21];
-        }  
-        else{  
+        }
+        else{
            $str .= "三十".$array[$number-31];
-        }  
+        }
         return $str;
-    } 
+    }
 
 
     /**
      +----------------------------------------------------------
      * 年份数字转中文
-     * 
+     *
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $yearStr 年份数字
      * @param boolean $flag 是否显示公元
@@ -657,24 +657,24 @@ class Date extends Base
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
-     */   
-    public function  yearToCh( $yearStr ,$flag=false ){  
-        $array = array('零','一','二','三','四','五','六','七','八','九');  
+     */
+    public function  yearToCh( $yearStr ,$flag=false ){
+        $array = array('零','一','二','三','四','五','六','七','八','九');
         $str = $flag? '公元' : '';
-        for($i=0;$i<4;$i++){  
+        for($i=0;$i<4;$i++){
             $str .= $array[substr($yearStr,$i,1)];
-        }  
+        }
         return $str;
     }
 
     /**
      +----------------------------------------------------------
-     * 	判断日期 所属 干支 生肖 星座
+     *  判断日期 所属 干支 生肖 星座
      *  type 参数：XZ 星座 GZ 干支 SX 生肖
-     * 
+     *
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $type  获取信息类型
      +----------------------------------------------------------
@@ -683,7 +683,7 @@ class Date extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function magicInfo($type) 
+    public function magicInfo($type)
     {
         $result = '';
         $m      =   $this->month;
@@ -724,7 +724,7 @@ class Date extends Base
     }
 
 
-    public function __toString() 
+    public function __toString()
     {
         return $this->format();
     }

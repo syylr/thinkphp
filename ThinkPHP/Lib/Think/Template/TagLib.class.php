@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -96,46 +96,46 @@ class TagLib extends Base
      */
     protected $tpl;
 
-	protected $comparison = array(' nheq '=>' !== ',' heq '=>' === ',' neq '=>' != ',' eq '=>' == ',' egt '=>' >= ',' gt '=>' > ',' elt '=>' <= ',' lt '=>' < ');
+    protected $comparison = array(' nheq '=>' !== ',' heq '=>' === ',' neq '=>' != ',' eq '=>' == ',' egt '=>' >= ',' gt '=>' > ',' elt '=>' <= ',' lt '=>' < ');
 
     /**
      +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function __construct($tagLib='',$filename='')
     {
-		if(empty($tagLib)) {
-			$tagLib	=	strtolower(substr(get_class($this),6));
-		}
-        $this->tagLib = $tagLib;
-        $this->tpl = ThinkTemplate::getInstance();
+        if(empty($tagLib)) {
+            $tagLib =   strtolower(substr(get_class($this),6));
+        }
+        $this->tagLib  = $tagLib;
+        $this->tpl       = ThinkTemplate::getInstance();
         if(!empty($filename)) {
             $this->xml = $filename;
         }else {
             $this->xml = dirname(__FILE__).'/Tags/'.$tagLib.'.xml';
         }
-		$this->load();
+        $this->load();
     }
 
-	public function load() {
-		$array = (array)(simplexml_load_file($this->xml));
-		if($array !== false) {
-			$this->parse = $array;
-			$this->valid = true;
-		}else{
-			$this->valid = false;
-		}
-	}
+    public function load() {
+        $array = (array)(simplexml_load_file($this->xml));
+        if($array !== false) {
+            $this->parse = $array;
+            $this->valid = true;
+        }else{
+            $this->valid = false;
+        }
+    }
 
     /**
      +----------------------------------------------------------
      * 分析TagLib文件的信息是否有效
      * 有效则转换成数组
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param mixed $name 数据
      * @param string $value  数据表名
@@ -145,23 +145,23 @@ class TagLib extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function valid() 
+    public function valid()
     {
-		return $this->valid;
+        return $this->valid;
     }
 
     /**
      +----------------------------------------------------------
      * 获取TagLib名称
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function getTagLib() 
+    public function getTagLib()
     {
         return $this->tagLib;
     }
@@ -170,58 +170,58 @@ class TagLib extends Base
      +----------------------------------------------------------
      * 获取Tag列表
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function getTagList() 
+    public function getTagList()
     {
         if(empty($this->tagList)) {
             $tags = $this->parse['tag'];
             $list = array();
-			if(is_object($tags)) {
-				$list[] =  array(
-								'name'=>$tags->name,
-								'content'=>$tags->bodycontent,
-								'nested'=>isset($tags->nested)?$tags->nested:0,
-								'attribute'=>isset($tags->attribute)?$tags->attribute:'',
-								);
-				if(isset($tags->alias)) {
-					$alias	=	explode(',',$tag->alias);
-					foreach ($alias as $tag){
-						$list[] =  array(
-										'name'=>$tag,
-										'content'=>$tags->bodycontent,
-										'nested'=>isset($tags->nested)?$tags->nested:0,
-										'attribute'=>isset($tags->attribute)?$tags->attribute:'',
-										);
-					}
-				}
-			}else{
-				foreach($tags as $tag) {
-					$tag = (array)$tag;
-					$list[] =  array(
-									'name'=>$tag['name'],
-									'content'=>$tag['bodycontent'],
-									'nested'=>isset($tag['nested'])?$tag['nested']:0,
-									'attribute'=>isset($tag['attribute'])?$tag['attribute']:'',
-									);
-					if(isset($tag['alias'])) {
-						$alias	=	explode(',',$tag['alias']);
-						foreach ($alias as $tag1){
-							$list[] =  array(
-											'name'=>$tag1,
-											'content'=>$tag['bodycontent'],
-											'nested'=>isset($tag['nested'])?$tag['nested']:0,
-											'attribute'=>isset($tag['attribute'])?$tag['attribute']:'',
-											);
-						}
-					}
-				}
-			}
+            if(is_object($tags)) {
+                $list[] =  array(
+                    'name'=>$tags->name,
+                    'content'=>$tags->bodycontent,
+                    'nested'=>isset($tags->nested)?$tags->nested:0,
+                    'attribute'=>isset($tags->attribute)?$tags->attribute:'',
+                    );
+                if(isset($tags->alias)) {
+                    $alias  =   explode(',',$tag->alias);
+                    foreach ($alias as $tag){
+                        $list[] =  array(
+                            'name'=>$tag,
+                            'content'=>$tags->bodycontent,
+                            'nested'=>isset($tags->nested)?$tags->nested:0,
+                            'attribute'=>isset($tags->attribute)?$tags->attribute:'',
+                            );
+                    }
+                }
+            }else{
+                foreach($tags as $tag) {
+                    $tag = (array)$tag;
+                    $list[] =  array(
+                        'name'=>$tag['name'],
+                        'content'=>$tag['bodycontent'],
+                        'nested'=>isset($tag['nested'])?$tag['nested']:0,
+                        'attribute'=>isset($tag['attribute'])?$tag['attribute']:'',
+                        );
+                    if(isset($tag['alias'])) {
+                        $alias  =   explode(',',$tag['alias']);
+                        foreach ($alias as $tag1){
+                            $list[] =  array(
+                                'name'=>$tag1,
+                                'content'=>$tag['bodycontent'],
+                                'nested'=>isset($tag['nested'])?$tag['nested']:0,
+                                'attribute'=>isset($tag['attribute'])?$tag['attribute']:'',
+                                );
+                        }
+                    }
+                }
+            }
             $this->tagList = $list;
         }
         return $this->tagList;
@@ -231,14 +231,14 @@ class TagLib extends Base
      +----------------------------------------------------------
      * 获取某个Tag属性的信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function getTagAttrList($tagName) 
+    public function getTagAttrList($tagName)
     {
         static $_tagCache   = array();
         $_tagCacheId        =   md5($this->tagLib.$tagName);
@@ -248,27 +248,27 @@ class TagLib extends Base
         $list = array();
         $tags = $this->parse['tag'];
         foreach($tags as $tag) {
-			$tag = (array)$tag; 
+            $tag = (array)$tag;
             if( strtolower($tag['name']) == strtolower($tagName)) {
-				if(isset($tag['attribute'])) {
-					if(is_object($tag['attribute'])) {
-						// 只有一个属性
-							$attr = $tag['attribute'];
-							$list[] = array(
-											'name'=>$attr->name,
-											'required'=>$attr->required
-											);
-					}else{
-						// 存在多个属性
-						foreach($tag['attribute'] as $attr) {
-							$attr = (array)$attr;
-							$list[] = array(
-											'name'=>$attr['name'],
-											'required'=>$attr['required']
-											);
-						}
-					}
-				}
+                if(isset($tag['attribute'])) {
+                    if(is_object($tag['attribute'])) {
+                        // 只有一个属性
+                        $attr = $tag['attribute'];
+                        $list[] = array(
+                            'name'=>$attr->name,
+                            'required'=>$attr->required
+                            );
+                    }else{
+                        // 存在多个属性
+                        foreach($tag['attribute'] as $attr) {
+                            $attr = (array)$attr;
+                            $list[] = array(
+                                'name'=>$attr['name'],
+                                'required'=>$attr['required']
+                                );
+                        }
+                    }
+                }
             }
         }
         $_tagCache[$_tagCacheId]    =   $list;
@@ -279,23 +279,23 @@ class TagLib extends Base
      +----------------------------------------------------------
      * TagLib标签属性分析 返回标签属性数组
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $tagStr 标签内容
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      */
-    public function parseXmlAttr($attr,$tag) 
+    public function parseXmlAttr($attr,$tag)
     {
         //XML解析安全过滤
         $attr = str_replace("<","&lt;", $attr);
         $attr = str_replace(">","&gt;", $attr);
         $xml =  '<tpl><tag '.$attr.' /></tpl>';
-		$xml = simplexml_load_string($xml);
-		$xml = (array)($xml->tag->attributes());
-		$array = array_change_key_case($xml['@attributes']);
-        $attrs	= $this->getTagAttrList($tag);
+        $xml = simplexml_load_string($xml);
+        $xml = (array)($xml->tag->attributes());
+        $array = array_change_key_case($xml['@attributes']);
+        $attrs  = $this->getTagAttrList($tag);
         foreach($attrs as $val) {
             if( !isset($array[strtolower($val['name'])])) {
                 $array[strtolower($val['name'])] = '';
@@ -308,23 +308,23 @@ class TagLib extends Base
      +----------------------------------------------------------
      * 解析条件表达式
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $condition 表达式标签内容
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      */
-	public function parseCondition($condition) {
-		$condition = str_ireplace(array_keys($this->comparison),array_values($this->comparison),$condition);
-		return $condition;
-	}
+    public function parseCondition($condition) {
+        $condition = str_ireplace(array_keys($this->comparison),array_values($this->comparison),$condition);
+        return $condition;
+    }
 
     /**
      +----------------------------------------------------------
-     * 日期格式化 
+     * 日期格式化
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $var 变量
      * @param string $format 格式
@@ -332,21 +332,21 @@ class TagLib extends Base
      * @return string
      +----------------------------------------------------------
      */
-    public function dateFormat($var,$format,$true=false) 
+    public function dateFormat($var,$format,$true=false)
     {
         if($true) {
             $tmplContent = 'date( "'.$format.'", intval('.$var.') )';
         }else {
-        	$tmplContent = 'date( "'.$format.'", strtotime('.$var.') )';
+            $tmplContent = 'date( "'.$format.'", strtotime('.$var.') )';
         }
         return $tmplContent;
     }
 
     /**
      +----------------------------------------------------------
-     * 字符串格式化 
+     * 字符串格式化
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $var 变量
      * @param string $format 格式
@@ -354,7 +354,7 @@ class TagLib extends Base
      * @return string
      +----------------------------------------------------------
      */
-    public function stringFormat($var,$format) 
+    public function stringFormat($var,$format)
     {
         $tmplContent = 'sprintf("'.$format.'", '.$var.')';
         return $tmplContent;
@@ -362,9 +362,9 @@ class TagLib extends Base
 
     /**
      +----------------------------------------------------------
-     * 字符串格式化 
+     * 字符串格式化
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $var 变量
      * @param string $format 格式
@@ -372,7 +372,7 @@ class TagLib extends Base
      * @return string
      +----------------------------------------------------------
      */
-    public function numericFormat($var,$format) 
+    public function numericFormat($var,$format)
     {
         $tmplContent = 'number_format("'.$var.'")';
         return $tmplContent;
@@ -380,38 +380,38 @@ class TagLib extends Base
 
     /**
      +----------------------------------------------------------
-     * 自动识别构建变量 
+     * 自动识别构建变量
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 变量描述
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-	public function autoBuildVar($name) {
-		if(substr($name,0,6)=='Think.'){
-			// 特殊变量
-			return $this->parseThinkVar($name);
-		}elseif(strpos($name,'.')) {
-			// 数组和对象自动判断支持
-			$vars = explode('.',$name);
-			$name = 'is_array($'.$vars[0].')?$'.$vars[0].'["'.$vars[1].'"]:$'.$vars[0].'->'.$vars[1];
+    public function autoBuildVar($name) {
+        if('Think.' == substr($name,0,6)){
+            // 特殊变量
+            return $this->parseThinkVar($name);
+        }elseif(strpos($name,'.')) {
+            // 数组和对象自动判断支持
+            $vars = explode('.',$name);
+            $name = 'is_array($'.$vars[0].')?$'.$vars[0].'["'.$vars[1].'"]:$'.$vars[0].'->'.$vars[1];
         }elseif(strpos($name,':')){
-			// 额外的对象方式支持
-			$name	=	'$'.str_replace(':','->',$name);
-		}elseif(!defined($name)) {
-			$name = '$'.$name;
-		}
-		return $name;
-	}
+            // 额外的对象方式支持
+            $name   =   '$'.str_replace(':','->',$name);
+        }elseif(!defined($name)) {
+            $name = '$'.$name;
+        }
+        return $name;
+    }
 
     /**
      +----------------------------------------------------------
      * 用于标签属性里面的特殊模板变量解析
      * 格式 以 Think. 打头的变量属于特殊模板变量
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $varStr  变量字符串
      +----------------------------------------------------------
@@ -426,25 +426,25 @@ class TagLib extends Base
         if(count($vars)==3){
             $vars[2] = trim($vars[2]);
             switch($vars[1]){
-                case 'SERVER':$parseStr = '$_SERVER[\''.$vars[2].'\']';break;
-                case 'GET':$parseStr = '$_GET[\''.$vars[2].'\']';break;
-                case 'POST':$parseStr = '$_POST[\''.$vars[2].'\']';break;
-                case 'COOKIE':$parseStr = '$_COOKIE[\''.$vars[2].'\']';break;
-                case 'SESSION':$parseStr = '$_SESSION[\''.$vars[2].'\']';break;
-                case 'ENV':$parseStr = '$_ENV[\''.$vars[2].'\']';break;
-                case 'REQUEST':$parseStr = '$_REQUEST[\''.$vars[2].'\']';break;
-                case 'CONST':$parseStr = strtoupper($vars[2]);break;
-                case 'LANG':$parseStr = 'L("'.$vars[2].'")';break;
-				case 'CONFIG':$parseStr = 'C("'.$vars[2].'")';break;
+                case 'SERVER':    $parseStr = '$_SERVER[\''.$vars[2].'\']';break;
+                case 'GET':         $parseStr = '$_GET[\''.$vars[2].'\']';break;
+                case 'POST':       $parseStr = '$_POST[\''.$vars[2].'\']';break;
+                case 'COOKIE':    $parseStr = '$_COOKIE[\''.$vars[2].'\']';break;
+                case 'SESSION':   $parseStr = '$_SESSION[\''.$vars[2].'\']';break;
+                case 'ENV':         $parseStr = '$_ENV[\''.$vars[2].'\']';break;
+                case 'REQUEST':  $parseStr = '$_REQUEST[\''.$vars[2].'\']';break;
+                case 'CONST':     $parseStr = strtoupper($vars[2]);break;
+                case 'LANG':       $parseStr = 'L("'.$vars[2].'")';break;
+                case 'CONFIG':    $parseStr = 'C("'.$vars[2].'")';break;
                 default:break;
             }
         }else if(count($vars)==2){
             switch($vars[1]){
-                case 'NOW':$parseStr = "date('Y-m-d g:i a',time())";break;
-                case 'VERSION':$parseStr = 'THINK_VERSION';break;    
+                case 'NOW':       $parseStr = "date('Y-m-d g:i a',time())";break;
+                case 'VERSION':  $parseStr = 'THINK_VERSION';break;
                 case 'TEMPLATE':$parseStr = 'C("TMPL_FILE_NAME")';break;
-                case 'LDELIM':$parseStr = 'C("TMPL_L_DELIM")';break;
-                case 'RDELIM':$parseStr = 'C("TMPL_R_DELIM")';break;
+                case 'LDELIM':    $parseStr = 'C("TMPL_L_DELIM")';break;
+                case 'RDELIM':    $parseStr = 'C("TMPL_R_DELIM")';break;
             }
             if(defined($vars[1])){ $parseStr = strtoupper($vars[1]);}
         }

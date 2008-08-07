@@ -36,9 +36,9 @@ Class DbMysql extends Db{
         if ( !extension_loaded('mysql') ) {
             throw_exception(L('_NOT_SUPPERT_').':mysql');
         }
-		if(!empty($config)) {
-			$this->config	=	$config;
-		}
+        if(!empty($config)) {
+            $this->config   =   $config;
+        }
     }
 
     /**
@@ -52,11 +52,11 @@ Class DbMysql extends Db{
      */
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
-			if(empty($config))	$config	=	$this->config;
+            if(empty($config))  $config =   $this->config;
             $conn = $this->pconnect ? 'mysql_pconnect':'mysql_connect';
-			// 处理不带端口号的socket连接情况
-			$host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
-			$this->linkID[$linkNum] = $conn( $host, $config['username'], $config['password'],true);
+            // 处理不带端口号的socket连接情况
+            $host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
+            $this->linkID[$linkNum] = $conn( $host, $config['username'], $config['password'],true);
             if ( !$this->linkID[$linkNum]) {
                 throw_exception(mysql_error());
                 return False;
@@ -74,8 +74,8 @@ Class DbMysql extends Db{
             if($this->dbVersion >'5.0.1'){
                 mysql_query("SET sql_mode=''",$this->linkID[$linkNum]);
             }
-			// 标记连接成功
-			$this->connected	=	true;
+            // 标记连接成功
+            $this->connected    =   true;
             // 注销数据库连接配置信息
             if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
@@ -109,19 +109,19 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      */
     protected function _query($str='') {
-		$this->initConnect(false);
+        $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-			$this->startTrans();
+            $this->startTrans();
         }else {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
         $this->queryTimes++;
-		$this->Q(1);
+        $this->Q(1);
         $this->queryID = mysql_query($this->queryStr, $this->_linkID);
-		$this->debug();
+        $this->debug();
         if ( !$this->queryID ) {
             //if ( $this->debug ) throw_exception($this->error());
             return false;
@@ -147,19 +147,19 @@ Class DbMysql extends Db{
      +----------------------------------------------------------
      */
     protected function _execute($str='') {
-		$this->initConnect(true);
+        $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-			$this->startTrans();
+            $this->startTrans();
         }else {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
         $this->writeTimes++;
-		$this->W(1);
-		$result	=	mysql_query($this->queryStr, $this->_linkID) ;
-		$this->debug();
+        $this->W(1);
+        $result =   mysql_query($this->queryStr, $this->_linkID) ;
+        $this->debug();
         if ( false === $result) {
             //if ( $this->debug ) throw_exception($this->error());
             return false;
@@ -181,16 +181,16 @@ Class DbMysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function startTrans() {
-		$this->initConnect(true);
+    public function startTrans() {
+        $this->initConnect(true);
         if ( !$this->_linkID ) return false;
-		//数据rollback 支持
-		if ($this->transTimes == 0) {
-			mysql_query('START TRANSACTION', $this->_linkID);
-		}
-		$this->transTimes++;
-		return ;
-	}
+        //数据rollback 支持
+        if ($this->transTimes == 0) {
+            mysql_query('START TRANSACTION', $this->_linkID);
+        }
+        $this->transTimes++;
+        return ;
+    }
 
     /**
      +----------------------------------------------------------
@@ -301,7 +301,7 @@ Class DbMysql extends Db{
             }
             return $result;
         }else {
-        	return false;
+            return false;
         }
     }
 
@@ -328,12 +328,12 @@ Class DbMysql extends Db{
         //返回数据集
         $result = array();
         if($this->numRows >0) {
-			if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-			$fun	=	$resultType== DATA_TYPE_OBJ?'mysql_fetch_object':'mysql_fetch_assoc';
-			while($row = $fun($this->queryID)){
-				$result[]	=	$row;
-			}
-			mysql_data_seek($this->queryID,0);
+            if(is_null($resultType)){ $resultType   =  $this->resultType ; }
+            $fun    =   $resultType== DATA_TYPE_OBJ?'mysql_fetch_object':'mysql_fetch_assoc';
+            while($row = $fun($this->queryID)){
+                $result[]   =   $row;
+            }
+            mysql_data_seek($this->queryID,0);
         }
         return $result;
     }
@@ -352,9 +352,9 @@ Class DbMysql extends Db{
         $result =   $this->getAll();
         $info   =   array();
         foreach ($result as $key => $val) {
-			if(is_object($val)) {
-				$val	=	get_object_vars($val);
-			}
+            if(is_object($val)) {
+                $val    =   get_object_vars($val);
+            }
             $info[$val['Field']] = array(
                 'name'    => $val['Field'],
                 'type'    => $val['Type'],

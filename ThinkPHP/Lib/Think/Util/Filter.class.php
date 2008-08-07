@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -26,10 +26,10 @@ class Filter extends Base
     /**
      +----------------------------------------------------------
      * 加载过滤器
-     * 
+     *
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $filterNames  过滤器名称
      * @param string $method  执行的方法名称
@@ -39,7 +39,7 @@ class Filter extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    static  function load($filterNames,$method='execute') 
+    static  function load($filterNames,$method='execute')
     {
         $filterPath = dirname(__FILE__).'/Filter/';
         $filters    =   explode(',',$filterNames);
@@ -47,14 +47,14 @@ class Filter extends Base
         foreach($filters as $key=>$val) {
             if(strpos($val,'.')) {
                 $filterClass = strtolower(substr(strrchr($val, '.'),1));
-            	import($val);
+                import($val);
             }else {
                 $filterClass = 'Filter'.$val ;
                 require_cache( $filterPath.$filterClass . '.class.php');
             }
             if(class_exists($filterClass)) {
                 $filter = get_instance_of($filterClass);
-                $filter->{$method}();            	
+                $filter->{$method}();
             }
         }
         return ;

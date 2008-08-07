@@ -1,16 +1,16 @@
-<?php 
+<?php
     /*
-    Plugin Name: varFilter 
+    Plugin Name: varFilter
     Plugin URI: http://thinkphp.cn
     Description: 变量安全过滤插件
     Author: 流年
     Version: 1.0
     Author URI: http://blog.liu21st.com/
-    */ 
-    
+    */
+
 /**
  +----------------------------------------------------------
- * 变量过滤 
+ * 变量过滤
  +----------------------------------------------------------
  * @param mixed $value 变量
  +----------------------------------------------------------
@@ -33,17 +33,17 @@ function var_filter_deep($value) {
  * 变量安全过滤
  +----------------------------------------------------------
  * @static
- * @access public 
+ * @access public
  +----------------------------------------------------------
  * @return string
  +----------------------------------------------------------
  */
-function varFilter () 
+function varFilter ()
 {
    $_GET     = var_filter_deep($_GET);
    $_POST    = var_filter_deep($_POST);
    $_REQUEST = var_filter_deep($_REQUEST);
 }
 
-   add_filter('app_init','varFilter');
+add_filter('app_init','varFilter');
 ?>

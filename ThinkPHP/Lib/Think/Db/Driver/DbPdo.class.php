@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -23,54 +23,54 @@
  */
 Class DbPdo extends Db{
 
-	protected $PDOStatement = null;
+    protected $PDOStatement = null;
 
     /**
      +----------------------------------------------------------
      * 架构函数 读取数据库配置信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param array $config 数据库配置数组
      +----------------------------------------------------------
      */
-    public function __construct($config=''){    
-        if ( !class_exists('PDO') ) {    
+    public function __construct($config=''){
+        if ( !class_exists('PDO') ) {
             throw_exception(L('_NOT_SUPPERT_').':PDO');
         }
-		if(!empty($config)) {
-			$this->config	=	$config;
-			if(empty($this->config['params'])) {
-				$this->config['params']	=	array();
-			}
-		}
+        if(!empty($config)) {
+            $this->config   =   $config;
+            if(empty($this->config['params'])) {
+                $this->config['params'] =   array();
+            }
+        }
     }
 
     /**
      +----------------------------------------------------------
      * 连接数据库方法
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
-			if(empty($config))	$config	=	$this->config;
-			if($this->pconnect) {
-				$config['params'][constant('PDO::ATTR_PERSISTENT')] = true;
-			}
+            if(empty($config))  $config =   $this->config;
+            if($this->pconnect) {
+                $config['params'][constant('PDO::ATTR_PERSISTENT')] = true;
+            }
             $this->linkID[$linkNum] = new PDO( $config['dsn'], $config['username'], $config['password'],$config['params']);
             if ( !$this->linkID[$linkNum]) {
                 throw_exception('PDO CONNECT ERROR');
                 return false;
             }
-			$this->linkID[$linkNum]->exec('SET NAMES '.C('DB_CHARSET'));  
-			// 因个别驱动不支持getAttribute方法 暂时注释
+            $this->linkID[$linkNum]->exec('SET NAMES '.C('DB_CHARSET'));
+            // 因个别驱动不支持getAttribute方法 暂时注释
             //$this->dbVersion = $this->linkID[$linkNum]->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
-			// 标记连接成功
-			$this->connected	=	true;
+            // 标记连接成功
+            $this->connected    =   true;
             // 注销数据库连接配置信息
             if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
@@ -81,7 +81,7 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      * 释放查询结果
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function free() {
@@ -93,7 +93,7 @@ Class DbPdo extends Db{
      * 执行查询 主要针对 SELECT, SHOW 等指令
      * 返回数据集
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -103,20 +103,20 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      */
     protected function _query($str='') {
-		$this->initConnect(false);
+        $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-			//$this->startTrans();
+            //$this->startTrans();
         }else {
             //释放前次的查询结果
             if ( !empty($this->PDOStatement) ) {    $this->free();    }
         }
         $this->queryTimes++;
-		$this->Q(1);
+        $this->Q(1);
         $this->PDOStatement = $this->_linkID->prepare($this->queryStr);
-		$result	=	$this->PDOStatement->execute();
-		$this->debug();
+        $result =   $this->PDOStatement->execute();
+        $this->debug();
         if ( !$result ) {
             //if ( $this->debug ) throw_exception($this->error());
             return false;
@@ -125,9 +125,9 @@ Class DbPdo extends Db{
             $this->resultSet = $this->getAll();
             $this->numRows = count( $this->resultSet );
             if ( $this->numRows > 0 ){
-                return $this->resultSet;              	
+                return $this->resultSet;
             }
-            return false;            	
+            return false;
         }
     }
 
@@ -135,7 +135,7 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      * 执行语句 针对 INSERT, UPDATE 以及DELETE
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -145,26 +145,26 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      */
     protected function _execute($str='') {
-		$this->initConnect(true);
+        $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-			$this->startTrans();
+            $this->startTrans();
         }else {
             //释放前次的查询结果
             if ( !empty($this->PDOStatement) ) {    $this->free();    }
         }
         $this->writeTimes++;
-		$this->W(1);
-		$result	=	$this->_linkID->exec($this->queryStr);
-		$this->debug();
+        $this->W(1);
+        $result =   $this->_linkID->exec($this->queryStr);
+        $this->debug();
         if ( false === $result) {
             //if ( $this->debug ) throw_exception($this->error());
             return false;
         } else {
-			$this->numRows = $result;
+            $this->numRows = $result;
             $this->lastInsID = $this->_linkID->lastInsertId();
-            return $this->numRows;            	
+            return $this->numRows;
         }
     }
 
@@ -172,29 +172,29 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      * 启动事务
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function startTrans() {
-		$this->initConnect(true);
+    public function startTrans() {
+        $this->initConnect(true);
         if ( !$this->_linkID ) return false;
-		//数据rollback 支持
-		if ($this->transTimes == 0) {
-			$this->_linkID->beginTransaction();
-		}
-		$this->transTimes++;
-		return ;
-	}
+        //数据rollback 支持
+        if ($this->transTimes == 0) {
+            $this->_linkID->beginTransaction();
+        }
+        $this->transTimes++;
+        return ;
+    }
 
     /**
      +----------------------------------------------------------
      * 用于非自动提交状态下面的查询提交
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -218,7 +218,7 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      * 事务回滚
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -243,7 +243,7 @@ Class DbPdo extends Db{
      * 获得下一条查询结果 简易数据集获取方法
      * 查询结果放到 result 数组中
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -271,7 +271,7 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      * 获得一条查询结果
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param integer $seek 指针位置
      * @param string $str  SQL指令
@@ -287,14 +287,14 @@ Class DbPdo extends Db{
             throw_exception($this->error());
             return false;
         }
-		if($this->resultType== DATA_TYPE_OBJ){
-			//返回对象集
-			$result = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'),constant('PDO::FETCH_ORI_NEXT'),$seek);
-		}else{
-			// 返回数组集
-			$result = $this->PDOStatement->fetch(constant('PDO::FETCH_ASSOC'),constant('PDO::FETCH_ORI_NEXT'),$seek);
-		}
-		return $result;
+        if($this->resultType== DATA_TYPE_OBJ){
+            //返回对象集
+            $result = $this->PDOStatement->fetch(constant('PDO::FETCH_OBJ'),constant('PDO::FETCH_ORI_NEXT'),$seek);
+        }else{
+            // 返回数组集
+            $result = $this->PDOStatement->fetch(constant('PDO::FETCH_ASSOC'),constant('PDO::FETCH_ORI_NEXT'),$seek);
+        }
+        return $result;
     }
 
     /**
@@ -302,7 +302,7 @@ Class DbPdo extends Db{
      * 获得所有的查询数据
      * 查询结果放到 resultSet 数组中
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $resultType  数据集类型
      +----------------------------------------------------------
@@ -319,12 +319,12 @@ Class DbPdo extends Db{
         }
         //返回数据集
         $result = array();
-		if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-		if($resultType== DATA_TYPE_ARRAY){
-			$result	=	$this->PDOStatement->fetchAll(constant('PDO::FETCH_ASSOC'));
-		}else{
-			$result	=	$this->PDOStatement->fetchAll(constant('PDO::FETCH_OBJ'));
-		}
+        if(is_null($resultType)){ $resultType   =  $this->resultType ; }
+        if($resultType== DATA_TYPE_ARRAY){
+            $result =   $this->PDOStatement->fetchAll(constant('PDO::FETCH_ASSOC'));
+        }else{
+            $result =   $this->PDOStatement->fetchAll(constant('PDO::FETCH_OBJ'));
+        }
         return $result;
     }
 
@@ -332,16 +332,16 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      * 取得数据表的字段信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function getFields($tableName) { 
-		$this->initConnect(true);
-        $sth	=	$this->_linkID->prepare('DESCRIBE '.$tableName);
-		$sth->execute();
-		$result = $sth->fetchAll(constant('PDO::FETCH_ASSOC'));
+    public function getFields($tableName) {
+        $this->initConnect(true);
+        $sth    =   $this->_linkID->prepare('DESCRIBE '.$tableName);
+        $sth->execute();
+        $result = $sth->fetchAll(constant('PDO::FETCH_ASSOC'));
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$val['Field']] = array(
@@ -354,45 +354,45 @@ Class DbPdo extends Db{
             );
         }
         return $info;
-    } 
+    }
 
     /**
      +----------------------------------------------------------
      * 取得数据库的表信息
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function getTables($dbName='') { 
+    public function getTables($dbName='') {
         $result = $this->_query('SHOW TABLES');
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
         }
         return $info;
-    } 
+    }
 
     /**
      +----------------------------------------------------------
      * 关闭数据库
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function close() { 
+    public function close() {
         $this->_linkID = null;
-    } 
+    }
 
     /**
      +----------------------------------------------------------
      * 数据库错误信息
      * 并显示当前的SQL语句
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -401,7 +401,7 @@ Class DbPdo extends Db{
      */
     public function error() {
         $error = $this->PDOStatement->errorInfo();
-		$this->error = $error[2];
+        $this->error = $error[2];
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
@@ -412,7 +412,7 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      * SQL指令安全过滤
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $str  SQL指令
      +----------------------------------------------------------
@@ -421,9 +421,9 @@ Class DbPdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function escape_string($str) { 
-		return addslashes($str);
-    } 
+    public function escape_string($str) {
+        return addslashes($str);
+    }
 
 }//类定义结束
 ?>

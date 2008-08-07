@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -33,16 +33,16 @@ class AccessDecisionManager extends Base
     /**
      +----------------------------------------------------------
      * 架构函数
-     * 
+     *
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function __construct()
     {
-		import("Think.Db.Db");
-		$this->roleTable = C('DB_PREFIX').'group';
+        import("Think.Db.Db");
+        $this->roleTable = C('DB_PREFIX').'group';
         $this->roleUserTable  =  C('DB_PREFIX').'groupuser';
         $this->roleAccessTable=   C('DB_PREFIX').'access';
         $this->roleNodeTable    =   C('DB_PREFIX').'node';
@@ -58,7 +58,7 @@ class AccessDecisionManager extends Base
      * @param string $module 模块名
      * @param string $action 操作名
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function decide($authId,$app=APP_NAME,$module=MODULE_NAME,$action=ACTION_NAME)
@@ -85,7 +85,7 @@ class AccessDecisionManager extends Base
      +----------------------------------------------------------
      * @param string $appPrefix 数据库前缀
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function getAccessList($authId)
@@ -101,9 +101,9 @@ class AccessDecisionManager extends Base
         $apps =   $db->query($sql);
         $access =  array();
         foreach($apps as $key=>$app) {
-			$app	=	(array)$app;
-			$appId	=	$app['id'];
-			$appName	 =	 $app['name'];
+            $app    =   (array)$app;
+            $appId  =   $app['id'];
+            $appName     =   $app['name'];
             // 读取项目的模块权限
             $access[strtoupper($appName)]   =  array();
             $sql    =   "select d.id,d.name from ".
@@ -112,56 +112,56 @@ class AccessDecisionManager extends Base
                         $this->roleAccessTable." as c ,".
                         $this->roleNodeTable." as d ".
                         "where b.userId={$authId} and b.groupId=a.id and ( c.groupId=a.id  or (c.groupId=a.pid and a.pid!=0 ) ) and a.status=1 and c.nodeId=d.id and d.level=2 and d.pid={$appId} and d.status=1";
-            $modules =   $db->query($sql);      
-			// 判断是否存在公共模块的权限
-			$publicAction  = array();
+            $modules =   $db->query($sql);
+            // 判断是否存在公共模块的权限
+            $publicAction  = array();
             foreach($modules as $key=>$module) {
-				$module	=	(array)$module;
-				$moduleId	 =	 $module['id'];
-				$moduleName = $module['name'];
-				if('PUBLIC'== strtoupper($moduleName)) {
-					$sql    =   "select d.id,d.name from ".
-								$this->roleTable." as a,".
-								$this->roleUserTable." as b,".
-								$this->roleAccessTable." as c ,".
-								$this->roleNodeTable." as d ".
-								"where b.userId={$authId} and b.groupId=a.id and ( c.groupId=a.id  or (c.groupId=a.pid and a.pid!=0 ) )  and a.status=1 and  c.nodeId=d.id and d.pid={$moduleId} and d.level=3 and d.status=1";
-					$rs =   $db->query($sql);    
-					foreach ($rs as $a){
-						$a	 =	 (array)$a;
-						$publicAction[$a['name']]	 =	 $a['id'];
-					}
-					unset($modules[$key]);
-					break;
-				}
-			}
+                $module =   (array)$module;
+                $moduleId    =   $module['id'];
+                $moduleName = $module['name'];
+                if('PUBLIC'== strtoupper($moduleName)) {
+                    $sql    =   "select d.id,d.name from ".
+                                $this->roleTable." as a,".
+                                $this->roleUserTable." as b,".
+                                $this->roleAccessTable." as c ,".
+                                $this->roleNodeTable." as d ".
+                                "where b.userId={$authId} and b.groupId=a.id and ( c.groupId=a.id  or (c.groupId=a.pid and a.pid!=0 ) )  and a.status=1 and  c.nodeId=d.id and d.pid={$moduleId} and d.level=3 and d.status=1";
+                    $rs =   $db->query($sql);
+                    foreach ($rs as $a){
+                        $a   =   (array)$a;
+                        $publicAction[$a['name']]    =   $a['id'];
+                    }
+                    unset($modules[$key]);
+                    break;
+                }
+            }
             // 依次读取模块的操作权限
             foreach($modules as $key=>$module) {
-				$module	=	(array)$module;
-				$moduleId	 =	 $module['id'];
-				$moduleName = $module['name'];
-				$sql    =   "select d.id,d.name from ".
-							$this->roleTable." as a,".
-							$this->roleUserTable." as b,".
-							$this->roleAccessTable." as c ,".
-							$this->roleNodeTable." as d ".
-							"where b.userId={$authId} and b.groupId=a.id and ( c.groupId=a.id  or (c.groupId=a.pid and a.pid!=0 ) )  and a.status=1 and  c.nodeId=d.id and d.pid={$moduleId} and d.level=3 and d.status=1";
-				$rs =   $db->query($sql);    
-				$action = array();
-				foreach ($rs as $a){
-					$a	 =	 (array)$a;
-					$action[$a['name']]	 =	 $a['id'];
-				}
-				// 和公共模块的操作权限合并
-				$action += $publicAction;
+                $module =   (array)$module;
+                $moduleId    =   $module['id'];
+                $moduleName = $module['name'];
+                $sql    =   "select d.id,d.name from ".
+                            $this->roleTable." as a,".
+                            $this->roleUserTable." as b,".
+                            $this->roleAccessTable." as c ,".
+                            $this->roleNodeTable." as d ".
+                            "where b.userId={$authId} and b.groupId=a.id and ( c.groupId=a.id  or (c.groupId=a.pid and a.pid!=0 ) )  and a.status=1 and  c.nodeId=d.id and d.pid={$moduleId} and d.level=3 and d.status=1";
+                $rs =   $db->query($sql);
+                $action = array();
+                foreach ($rs as $a){
+                    $a   =   (array)$a;
+                    $action[$a['name']]  =   $a['id'];
+                }
+                // 和公共模块的操作权限合并
+                $action += $publicAction;
                 $access[strtoupper($appName)][strtoupper($moduleName)]   =  array_change_key_case($action,CASE_UPPER);
             }
         }
         return $access;
     }
 
-	// 读取模块所属的记录访问权限
-	public function getModuleAccessList($authId,$module) {
+    // 读取模块所属的记录访问权限
+    public function getModuleAccessList($authId,$module) {
         // 读取模块权限
         $db     =   DB::getInstance();
         $sql    =   "select c.nodeId from ".
@@ -170,12 +170,12 @@ class AccessDecisionManager extends Base
                     $this->roleAccessTable." as c ".
                     "where b.userId={$authId} and b.groupId=a.id and ( c.groupId=a.id  or (c.groupId=a.pid and a.pid!=0 ) ) and a.status=1 and  c.module='{$module}' and c.status=1";
         $rs =   $db->query($sql);
-		$access	=	array();
-		foreach ($rs as $node){
-			$node	=	(array)$node;
-			$access[]	=	$node['nodeId'];
-		}
-		return $access;
-	}
+        $access =   array();
+        foreach ($rs as $node){
+            $node   =   (array)$node;
+            $access[]   =   $node['nodeId'];
+        }
+        return $access;
+    }
 }//类定义结束
 ?>

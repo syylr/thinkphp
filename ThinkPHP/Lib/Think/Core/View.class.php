@@ -34,10 +34,10 @@ class View extends Base
      */
     protected $tVar        =  array();
 
-	protected $trace		  = array();
+    protected $trace       = array();
 
-	// 使用的模板引擎类型
-	protected $type	=	'';
+    // 使用的模板引擎类型
+    protected $type        =   '';
 
    /**
      +----------------------------------------------------------
@@ -52,14 +52,14 @@ class View extends Base
         return get_instance_of(__CLASS__);
     }
 
-	// 构造函数
-	public function __construct($type='') {
-		if(!empty($type)) {
-			$this->type	=	$type;
-		}else{
-			$this->type	=	strtoupper(C('TMPL_ENGINE_TYPE'));
-		}
-	}
+    // 构造函数
+    public function __construct($type='') {
+        if(!empty($type)) {
+            $this->type =   $type;
+        }else{
+            $this->type =   strtoupper(C('TMPL_ENGINE_TYPE'));
+        }
+    }
 
     /**
      +----------------------------------------------------------
@@ -73,9 +73,9 @@ class View extends Base
      */
     public function assign($name,$value=''){
         if(is_array($name)) {
-        	$this->tVar   =  array_merge($this->tVar,$name);
+            $this->tVar   =  array_merge($this->tVar,$name);
         }else {
-   	        $this->tVar[$name] = $value;
+            $this->tVar[$name] = $value;
         }
     }
 
@@ -89,13 +89,13 @@ class View extends Base
      * @param mixed $value
      +----------------------------------------------------------
      */
-	public function trace($title,$value='') {
+    public function trace($title,$value='') {
         if(is_array($title)) {
-        	$this->trace   =  array_merge($this->trace,$title);
+            $this->trace   =  array_merge($this->trace,$title);
         }else {
-   	        $this->trace[$title] = $value;
+            $this->trace[$title] = $value;
         }
-	}
+    }
 
     /**
      +----------------------------------------------------------
@@ -114,17 +114,17 @@ class View extends Base
         if(isset($this->tVar[$name])) {
             return $this->tVar[$name];
         }else {
-        	return false;
+            return false;
         }
     }
 
-	private function __set($name,$value) {
-		$this->assign($name,$value);
-	}
+    private function __set($name,$value) {
+        $this->assign($name,$value);
+    }
 
-	private function __get($name) {
-		return $this->get($name);
-	}
+    private function __get($name) {
+        return $this->get($name);
+    }
 
     /**
      +----------------------------------------------------------
@@ -160,39 +160,39 @@ class View extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	protected function showTime($startTime) {
-		if(C('SHOW_RUN_TIME')) {
-			// 显示运行时间
-			$endTime = microtime(TRUE);
-			$total_run_time	=	number_format(($endTime - $GLOBALS['_beginTime']), 3);
-			$showTime	=	'Process: '.$total_run_time.'s ';
-			if(C('SHOW_ADV_TIME')) {
-				// 显示详细运行时间
-				$_load_time	=	number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3);
-				$_init_time	=	number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3);
-				$_exec_time	=	number_format(($startTime  -$GLOBALS['_initTime'] ), 3);
-				$_parse_time	=	number_format(($endTime - $startTime), 3);
-				$showTime .= '( Load:'.$_load_time.'s Init:'.$_init_time.'s Exec:'.$_exec_time.'s Template:'.$_parse_time.'s )';
-			}
-			if(C('SHOW_DB_TIMES') && class_exists('Db',false) ) {
-				// 显示数据库操作次数
-				$db	=	Db::getInstance();
-				$showTime .= ' | DB :'.$db->Q().' queries '.$db->W().' writes ';
-			}
-			if(C('SHOW_CACHE_TIMES') && class_exists('Cache',false)) {
-				// 显示数据库操作次数
-				$cache	=	Cache::getInstance();
-				$showTime .= ' | Cache :'.$cache->Q().' gets '.$cache->W().' writes ';
-			}
-			if(MEMORY_LIMIT_ON && C('SHOW_USE_MEM')) {
-				// 显示内存开销
-				$startMem    =  array_sum(explode(' ', $GLOBALS['_startUseMems']));
-				$endMem     =  array_sum(explode(' ', memory_get_usage()));
-				$showTime .= ' | UseMem:'. number_format(($endMem - $startMem)/1024).' kb';
-			}
-			return $showTime;
-		}
-	}
+    protected function showTime($startTime) {
+        if(C('SHOW_RUN_TIME')) {
+            // 显示运行时间
+            $endTime = microtime(TRUE);
+            $total_run_time =   number_format(($endTime - $GLOBALS['_beginTime']), 3);
+            $showTime   =   'Process: '.$total_run_time.'s ';
+            if(C('SHOW_ADV_TIME')) {
+                // 显示详细运行时间
+                $_load_time =   number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3);
+                $_init_time =   number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3);
+                $_exec_time =   number_format(($startTime  -$GLOBALS['_initTime'] ), 3);
+                $_parse_time    =   number_format(($endTime - $startTime), 3);
+                $showTime .= '( Load:'.$_load_time.'s Init:'.$_init_time.'s Exec:'.$_exec_time.'s Template:'.$_parse_time.'s )';
+            }
+            if(C('SHOW_DB_TIMES') && class_exists('Db',false) ) {
+                // 显示数据库操作次数
+                $db =   Db::getInstance();
+                $showTime .= ' | DB :'.$db->Q().' queries '.$db->W().' writes ';
+            }
+            if(C('SHOW_CACHE_TIMES') && class_exists('Cache',false)) {
+                // 显示数据库操作次数
+                $cache  =   Cache::getInstance();
+                $showTime .= ' | Cache :'.$cache->Q().' gets '.$cache->W().' writes ';
+            }
+            if(MEMORY_LIMIT_ON && C('SHOW_USE_MEM')) {
+                // 显示内存开销
+                $startMem    =  array_sum(explode(' ', $GLOBALS['_startUseMems']));
+                $endMem     =  array_sum(explode(' ', memory_get_usage()));
+                $showTime .= ' | UseMem:'. number_format(($endMem - $startMem)/1024).' kb';
+            }
+            return $showTime;
+        }
+    }
 
     /**
      +----------------------------------------------------------
@@ -209,30 +209,30 @@ class View extends Base
      * @return void
      +----------------------------------------------------------
      */
-	public function layout($layoutFile,$charset='',$contentType='text/html',$varPrefix='',$display=true)
-	{
-		$startTime = microtime(TRUE);
-		// 获取布局模板文件
-		$content	=	$this->fetch('layout:'.$layoutFile,$charset,$contentType,$varPrefix,true);
-		// 查找布局包含的页面
-		$find = preg_match_all('/<!-- layout::(.+?)::(.+?) -->/is',$content,$matches);
-		if($find) {
-			for ($i=0; $i< $find; $i++) {
-				// 读取相关的页面模板替换布局单元
-				$content	=	str_replace($matches[0][$i],$this->fetch($matches[1][$i],$charset,$contentType,$varPrefix),$content);
-			}
-		}
-		if($display) {
-			$showTime	=	$this->showTime($startTime);
-			echo $content;
-			if(C('SHOW_RUN_TIME')) {
-				echo '<div  id="think_run_time" class="think_run_time">'.$showTime.'</div>';
-			}
-		}else{
-			return $content;
-		}
-		return ;
-	}
+    public function layout($layoutFile,$charset='',$contentType='text/html',$varPrefix='',$display=true)
+    {
+        $startTime = microtime(TRUE);
+        // 获取布局模板文件
+        $content    =   $this->fetch('layout:'.$layoutFile,$charset,$contentType,$varPrefix,true);
+        // 查找布局包含的页面
+        $find = preg_match_all('/<!-- layout::(.+?)::(.+?) -->/is',$content,$matches);
+        if($find) {
+            for ($i=0; $i< $find; $i++) {
+                // 读取相关的页面模板替换布局单元
+                $content    =   str_replace($matches[0][$i],$this->fetch($matches[1][$i],$charset,$contentType,$varPrefix),$content);
+            }
+        }
+        if($display) {
+            $showTime   =   $this->showTime($startTime);
+            echo $content;
+            if(C('SHOW_RUN_TIME')) {
+                echo '<div  id="think_run_time" class="think_run_time">'.$showTime.'</div>';
+            }
+        }else{
+            return $content;
+        }
+        return ;
+    }
 
     /**
      +----------------------------------------------------------
@@ -284,32 +284,32 @@ class View extends Base
      */
     public function fetch($templateFile='',$charset='',$contentType='text/html',$varPrefix='',$display=false)
     {
-		$startTime = microtime(TRUE);
+        $startTime = microtime(TRUE);
         if(null===$templateFile) {
             // 使用null参数作为模版名直接返回不做任何输出
-        	return ;
+            return ;
         }
-		if('layout::'==substr($templateFile,0,8)) {
-			$this->layout(substr($templateFile,8));
-			return ;
-		}
-		if(empty($charset)) {
-			$charset = C('OUTPUT_CHARSET');
-		}
+        if('layout::'==substr($templateFile,0,8)) {
+            $this->layout(substr($templateFile,8));
+            return ;
+        }
+        if(empty($charset)) {
+            $charset = C('OUTPUT_CHARSET');
+        }
         // 网页字符编码
         header("Content-Type:".$contentType."; charset=".$charset);
         header("Cache-control: private");  //支持页面回跳
 
         // 设置输出缓存
         ini_set('output_buffering',4096);
-		$zlibCompress   =  ini_get('zlib.output_compression');
-		if(empty($zlibCompress) && function_exists('ini_set')) {
-			ini_set( 'zlib.output_compression', 1 );
-		}
+        $zlibCompress   =  ini_get('zlib.output_compression');
+        if(empty($zlibCompress) && function_exists('ini_set')) {
+            ini_set( 'zlib.output_compression', 1 );
+        }
         // 缓存初始化过滤
         apply_filter('ob_init');
         //页面缓存
-       	ob_start();
+        ob_start();
         ob_implicit_flush(0);
         // 缓存开启后执行的过滤
         apply_filter('ob_start');
@@ -318,18 +318,18 @@ class View extends Base
         $templateFile = apply_filter('template_file',$templateFile);
 
         if(''==$templateFile) {
-			// 如果模板文件名为空 按照默认规则定位
+            // 如果模板文件名为空 按照默认规则定位
             $templateFile = C('TMPL_FILE_NAME');
         }elseif(strpos($templateFile,'@')){
-			// 引入其它主题的操作模板 必须带上模块名称 例如 blue@User:add
-			$templateFile	=	TMPL_PATH.'/'.str_replace(array('@',':'),'/',$templateFile).C('TEMPLATE_SUFFIX');
-		}elseif(strpos($templateFile,':')){
-			// 引入其它模块的操作模板
-			$templateFile	=	TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).C('TEMPLATE_SUFFIX');
-		}elseif(!file_exists($templateFile))	{
-			// 引入当前模块的其它操作模板
-			$templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TEMPLATE_SUFFIX');
-		}
+            // 引入其它主题的操作模板 必须带上模块名称 例如 blue@User:add
+            $templateFile   =   TMPL_PATH.'/'.str_replace(array('@',':'),'/',$templateFile).C('TEMPLATE_SUFFIX');
+        }elseif(strpos($templateFile,':')){
+            // 引入其它模块的操作模板
+            $templateFile   =   TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).C('TEMPLATE_SUFFIX');
+        }elseif(!file_exists($templateFile))    {
+            // 引入当前模块的其它操作模板
+            $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TEMPLATE_SUFFIX');
+        }
 
         if(!file_exists($templateFile)){
             throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
@@ -339,27 +339,27 @@ class View extends Base
 
         //根据不同模版引擎进行处理
         if('PHP'==$this->type || empty($this->type)) {
-			// 模板阵列变量分解成为独立变量
-			extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
-        	// 默认使用PHP模版
+            // 模板阵列变量分解成为独立变量
+            extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
+            // 默认使用PHP模版
             include $templateFile;
         }elseif('THINK'==$this->type){
-			// 使用内置的ThinkTemplate模板引擎
-			if(!$this->checkCache($templateFile)) {
-				// 缓存无效 重新编译
-				$compiler	=	true;
-				import('Think.Template.ThinkTemplate');
-				$tpl = ThinkTemplate::getInstance();
-				// 编译并加载模板文件
-				$tpl->load($templateFile,$charset,$this->tVar,$varPrefix);
-			}else{
-				// 缓存有效 直接载入模板缓存
-				// 模板阵列变量分解成为独立变量
-				extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
-				//载入模版缓存文件
-				include CACHE_PATH.md5($templateFile).C('CACHFILE_SUFFIX');
-			}
-		}else {
+            // 使用内置的ThinkTemplate模板引擎
+            if(!$this->checkCache($templateFile)) {
+                // 缓存无效 重新编译
+                $compiler   =   true;
+                import('Think.Template.ThinkTemplate');
+                $tpl = ThinkTemplate::getInstance();
+                // 编译并加载模板文件
+                $tpl->load($templateFile,$charset,$this->tVar,$varPrefix);
+            }else{
+                // 缓存有效 直接载入模板缓存
+                // 模板阵列变量分解成为独立变量
+                extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
+                //载入模版缓存文件
+                include CACHE_PATH.md5($templateFile).C('CACHFILE_SUFFIX');
+            }
+        }else {
             // 通过插件的方式扩展第三方模板引擎
             use_compiler(C('TMPL_ENGINE_TYPE'),$templateFile,$this->tVar,$charset,$varPrefix);
         }
@@ -370,58 +370,58 @@ class View extends Base
         // 输出过滤
         $content = apply_filter('ob_content',$content);
 
-		if(C('HTML_CACHE_ON')) {
-			// 写入静态文件
-			HtmlCache::writeHTMLCache($content);
-		}
+        if(C('HTML_CACHE_ON')) {
+            // 写入静态文件
+            HtmlCache::writeHTMLCache($content);
+        }
 
         if($display) {
-			$showTime	=	$this->showTime($startTime);
-			echo $content;
-			if(C('SHOW_RUN_TIME')) {
-				echo '<div  id="think_run_time" class="think_run_time">'.$showTime.'</div>';
-			}
-			if(C('SHOW_PAGE_TRACE')) {
-				// 显示页面Trace信息 读取Trace定义文件
-				// 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
-				$traceFile	=	CONFIG_PATH.'trace.php';
-				 if(file_exists($traceFile)) {
-					$_trace	=	include $traceFile;
-				 }else{
-					$_trace	=	array();
-				 }
-				 // 系统默认显示信息
-				$this->trace('当前页面',	$_SERVER['PHP_SELF']);
-				$this->trace('请求方法',	$_SERVER['REQUEST_METHOD']);
-				$this->trace('通信协议',	$_SERVER['SERVER_PROTOCOL']);
-				$this->trace('请求时间',	date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
-				$this->trace('用户代理',	$_SERVER['HTTP_USER_AGENT']);
-				$this->trace('会话ID'	,	session_id());
-				$this->trace('运行数据',	$showTime);
-				$this->trace('输出编码',	$charset);
-				$this->trace('加载类库',	$GLOBALS['include_file']);
-				$this->trace('模板编译',	!empty($compiler)?'重新编译':'读取缓存');
-				if(isset(Log::$log[SQL_LOG_DEBUG])) {
-					$log	=	Log::$log[SQL_LOG_DEBUG];
-					$this->trace('SQL记录',is_array($log)?count($log).'条SQL<br/>'.implode('<br/>',$log):'无SQL记录');
-				}else{
-					$this->trace('SQL记录','无SQL记录');
-				}
-				if(isset(Log::$log[WEB_LOG_ERROR])) {
-					$log	=	Log::$log[WEB_LOG_ERROR];
-					$this->trace('错误记录',is_array($log)?count($log).'条错误<br/>'.implode('<br/>',$log):'无错误记录');
-				}else{
-					$this->trace('错误记录','无错误记录');
-				}
-				$_trace	=	array_merge($_trace,$this->trace);
-				$_trace = auto_charset($_trace,'utf-8');
-				$_title	=	auto_charset('页面Trace信息','utf-8');
-				// 调用Trace页面模板
-				include THINK_PATH.'/Tpl/PageTrace.tpl.php';
-			}
+            $showTime   =   $this->showTime($startTime);
+            echo $content;
+            if(C('SHOW_RUN_TIME')) {
+                echo '<div  id="think_run_time" class="think_run_time">'.$showTime.'</div>';
+            }
+            if(C('SHOW_PAGE_TRACE')) {
+                // 显示页面Trace信息 读取Trace定义文件
+                // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
+                $traceFile  =   CONFIG_PATH.'trace.php';
+                 if(file_exists($traceFile)) {
+                    $_trace =   include $traceFile;
+                 }else{
+                    $_trace =   array();
+                 }
+                 // 系统默认显示信息
+                $this->trace('当前页面',    $_SERVER['PHP_SELF']);
+                $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
+                $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
+                $this->trace('请求时间',    date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
+                $this->trace('用户代理',    $_SERVER['HTTP_USER_AGENT']);
+                $this->trace('会话ID'   ,   session_id());
+                $this->trace('运行数据',    $showTime);
+                $this->trace('输出编码',    $charset);
+                $this->trace('加载类库',    $GLOBALS['include_file']);
+                $this->trace('模板编译',    !empty($compiler)?'重新编译':'读取缓存');
+                if(isset(Log::$log[SQL_LOG_DEBUG])) {
+                    $log    =   Log::$log[SQL_LOG_DEBUG];
+                    $this->trace('SQL记录',is_array($log)?count($log).'条SQL<br/>'.implode('<br/>',$log):'无SQL记录');
+                }else{
+                    $this->trace('SQL记录','无SQL记录');
+                }
+                if(isset(Log::$log[WEB_LOG_ERROR])) {
+                    $log    =   Log::$log[WEB_LOG_ERROR];
+                    $this->trace('错误记录',is_array($log)?count($log).'条错误<br/>'.implode('<br/>',$log):'无错误记录');
+                }else{
+                    $this->trace('错误记录','无错误记录');
+                }
+                $_trace =   array_merge($_trace,$this->trace);
+                $_trace = auto_charset($_trace,'utf-8');
+                $_title =   auto_charset('页面Trace信息','utf-8');
+                // 调用Trace页面模板
+                include THINK_PATH.'/Tpl/PageTrace.tpl.php';
+            }
             return null;
         }else {
-			return $content;
+            return $content;
         }
     }
 }//

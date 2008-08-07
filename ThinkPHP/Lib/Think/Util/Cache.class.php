@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -88,7 +88,7 @@ class Cache extends Base
      +----------------------------------------------------------
      * 连接缓存
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $type 缓存类型
      * @param array $options  配置数组
@@ -104,7 +104,7 @@ class Cache extends Base
             $type = C('DATA_CACHE_TYPE');
         }
         if(Session::is_set('CACHE_'.strtoupper($type))) {
-        	$cacheClass   = Session::get('CACHE_'.strtoupper($type));
+            $cacheClass   = Session::get('CACHE_'.strtoupper($type));
         }else {
             $cachePath = dirname(__FILE__).'/Cache/';
             $cacheClass = 'Cache'.ucwords(strtolower(trim($type)));
@@ -118,57 +118,57 @@ class Cache extends Base
         return $cache;
     }
 
-	protected function __get($name) {
-		return $this->get($name);
-	}
+    protected function __get($name) {
+        return $this->get($name);
+    }
 
-	protected function __set($name,$value) {
-		return $this->set($name,$value);
-	}
+    protected function __set($name,$value) {
+        return $this->set($name,$value);
+    }
 
-	public function setOptions($name,$value) {
-		$this->options[$name]	=	$value;
-	}
+    public function setOptions($name,$value) {
+        $this->options[$name]   =   $value;
+    }
 
-	public function getOptions($name) {
-		return $this->options[$name];
-	}
+    public function getOptions($name) {
+        return $this->options[$name];
+    }
     /**
      +----------------------------------------------------------
      * 取得缓存类实例
      +----------------------------------------------------------
      * @static
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    static function getInstance() 
+    static function getInstance()
     {
        $param = func_get_args();
         return get_instance_of(__CLASS__,'connect',$param);
     }
 
-	// 读取缓存次数
-	public function Q($times='') {
-		static $_times = 0;
-		if(empty($times)) {
-			return $_times;
-		}else{
-			$_times++;
-		}
-	}
+    // 读取缓存次数
+    public function Q($times='') {
+        static $_times = 0;
+        if(empty($times)) {
+            return $_times;
+        }else{
+            $_times++;
+        }
+    }
 
-	// 写入缓存次数
-	public  function W($times='') {
-		static $_times = 0;
-		if(empty($times)) {
-			return $_times;
-		}else{
-			$_times++;
-		}
-	}
+    // 写入缓存次数
+    public  function W($times='') {
+        static $_times = 0;
+        if(empty($times)) {
+            return $_times;
+        }else{
+            $_times++;
+        }
+    }
 }//类定义结束
 ?>

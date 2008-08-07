@@ -130,6 +130,7 @@ return  array(
 	'DB_DEPLOY_TYPE'			=>	0,			// 数据库部署方式 0 集中式（单一服务器） 1 分布式（主从服务器）
 	'SQL_DEBUG_LOG'			=>	false,			// 记录SQL语句到日志文件
 	'DB_FIELDS_CACHE'			=>	true,			// 缓存数据表字段信息
+    'SQL_MODE'                    =>   '',          // SQL MODE 针对mysql
 
 	/* 数据缓存设置 */
 	'DATA_CACHE_TIME'		=>	-1,			// 数据缓存有效期

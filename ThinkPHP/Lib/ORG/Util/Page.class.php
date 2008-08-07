@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -32,7 +32,7 @@ class Page extends Base
      * @access protected
      +----------------------------------------------------------
      */
-    protected $firstRow	;
+    protected $firstRow ;
 
     /**
      +----------------------------------------------------------
@@ -42,7 +42,7 @@ class Page extends Base
      * @access protected
      +----------------------------------------------------------
      */
-    protected $listRows	;
+    protected $listRows ;
 
     /**
      +----------------------------------------------------------
@@ -103,7 +103,7 @@ class Page extends Base
      +----------------------------------------------------------
      */
     protected $rollPage   ;
-    
+
     /**
      +----------------------------------------------------------
      * 分页记录名称
@@ -113,14 +113,14 @@ class Page extends Base
      +----------------------------------------------------------
      */
 
-	// 分页显示定制
-    protected $config   =	array('header'=>'条记录','prev'=>'上一页','next'=>'下一页','first'=>'第一页','last'=>'最后一页');
+    // 分页显示定制
+    protected $config   =   array('header'=>'条记录','prev'=>'上一页','next'=>'下一页','first'=>'第一页','last'=>'最后一页');
 
     /**
      +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param array $totalRows  总的记录数
      * @param array $firstRow  起始记录位置
@@ -129,14 +129,14 @@ class Page extends Base
      +----------------------------------------------------------
      */
     public function __construct($totalRows,$listRows='',$parameter='')
-    {    
+    {
         $this->totalRows = $totalRows;
         $this->parameter = $parameter;
         $this->rollPage = C('PAGE_NUMBERS');
         $this->listRows = !empty($listRows)?$listRows:C('LIST_NUMBERS');
         $this->totalPages = ceil($this->totalRows/$this->listRows);     //总页数
         $this->coolPages  = ceil($this->totalPages/$this->rollPage);
-		$this->nowPage  = !empty($_GET[C('VAR_PAGE')])&&($_GET[C('VAR_PAGE')] >0)?$_GET[C('VAR_PAGE')]:1;
+        $this->nowPage  = !empty($_GET[C('VAR_PAGE')])&&($_GET[C('VAR_PAGE')] >0)?$_GET[C('VAR_PAGE')]:1;
 
         if(!empty($this->totalPages) && $this->nowPage>$this->totalPages) {
             $this->nowPage = $this->totalPages;
@@ -144,18 +144,18 @@ class Page extends Base
         $this->firstRow = $this->listRows*($this->nowPage-1);
     }
 
-	public function setConfig($name,$value) {
-		if(isset($this->config[$name])) {
-			$this->config[$name]	=	$value;
-		}
-	}
+    public function setConfig($name,$value) {
+        if(isset($this->config[$name])) {
+            $this->config[$name]    =   $value;
+        }
+    }
 
     /**
      +----------------------------------------------------------
      * 分页显示
      * 用于在页面显示的分页栏的输出
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -164,7 +164,7 @@ class Page extends Base
 
         if(0 == $this->totalRows) return;
         $nowCoolPage      = ceil($this->nowPage/$this->rollPage);
-		$url  =  $_SERVER['REQUEST_URI'].(strpos($_SERVER['REQUEST_URI'],'?')?'':"?").$this->parameter;
+        $url  =  $_SERVER['REQUEST_URI'].(strpos($_SERVER['REQUEST_URI'],'?')?'':"?").$this->parameter;
 
         //上下翻页字符串
         $upRow   = $this->nowPage-1;
@@ -214,7 +214,7 @@ class Page extends Base
                 }
             }
         }
-        $pageStr = '共'.$this->totalRows.' '.$this->config['header'].'/'.$this->totalPages.'页 '.$upPage.' '.$downPage.' '.$theFirst.' '.$prePage.' '.$linkPage.' '.$nextPage.' '.$theEnd; 
+        $pageStr = '共'.$this->totalRows.' '.$this->config['header'].'/'.$this->totalPages.'页 '.$upPage.' '.$downPage.' '.$theFirst.' '.$prePage.' '.$linkPage.' '.$nextPage.' '.$theEnd;
         if($isArray) {
             $pageArray['totalRows'] =   $this->totalRows;
             $pageArray['upPage']    =   $url.'&'.C('VAR_PAGE')."=$upRow";
@@ -225,8 +225,8 @@ class Page extends Base
             $pageArray['nextPages'] =   $url.'&'.C('VAR_PAGE')."=$nextRow";
             $pageArray['prePages']  =   $url.'&'.C('VAR_PAGE')."=$preRow";
             $pageArray['linkPages'] =   $linkPage;
-			$pageArray['nowPage'] =   $this->nowPage;
-        	return $pageArray;
+            $pageArray['nowPage'] =   $this->nowPage;
+            return $pageArray;
         }
         return $pageStr;
     }
