@@ -335,12 +335,12 @@ class Model extends Base  implements IteratorAggregate
         $table      =   $this->getTableName();
         if(!empty($this->options)) {
             // 已经有定义的查询表达式
-            $where  =   isset($this->options['where'])?     $this->options['where']:    $where;
+            $where   =   isset($this->options['where'])?     $this->options['where']:    $where;
             $limit      =   isset($this->options['limit'])?     $this->options['limit']:        $limit;
-            $order  =   isset($this->options['order'])?     $this->options['order']:    $order;
-            $lock       =   isset($this->options['lock'])?      $this->options['lock']:     $lock;
+            $order    =   isset($this->options['order'])?     $this->options['order']:    $order;
+            $lock      =   isset($this->options['lock'])?      $this->options['lock']:     $lock;
             $autoLink=  isset($this->options['link'])?          $this->options['link']:     $autoLink;
-            $table      =   isset($this->options['table'])?     $this->options['table']:    $this->getTableName();
+            $table     =   isset($this->options['table'])?     $this->options['table']:    $this->getTableName();
             $this->options  =   array();
         }
         // 前置调用
@@ -396,17 +396,17 @@ class Model extends Base  implements IteratorAggregate
         if(!empty($this->options)) {
             // 已经有定义的查询表达式
             $condition  =   isset($this->options['where'])?         $this->options['where']:    $condition;
-            $table          =   isset($this->options['table'])?         $this->options['table']:    $this->getTableName();
-            $fields     =   isset($this->options['field'])?         $this->options['field']:    $fields;
-            $limit          =   isset($this->options['limit'])?         $this->options['limit']:        $limit;
+            $table       =   isset($this->options['table'])?         $this->options['table']:    $this->getTableName();
+            $fields       =   isset($this->options['field'])?         $this->options['field']:    $fields;
+            $limit        =   isset($this->options['limit'])?         $this->options['limit']:        $limit;
             $order      =   isset($this->options['order'])?         $this->options['order']:    $order;
             $group      =   isset($this->options['group'])?         $this->options['group']:    $group;
             $having     =   isset($this->options['having'])?        $this->options['having']:   $having;
-            $join           =   isset($this->options['join'])?          $this->options['join']:     $join;
+            $join         =   isset($this->options['join'])?          $this->options['join']:     $join;
             $cache      =   isset($this->options['cache'])?         $this->options['cache']:    $cache;
-            $lock           =   isset($this->options['lock'])?          $this->options['lock']:     $lock;
-            $lazy           =   isset($this->options['lazy'])?          $this->options['lazy']: $lazy;
-            $relation       =   isset($this->options['link'])?              $this->options['link']:     $relation;
+            $lock         =   isset($this->options['lock'])?          $this->options['lock']:     $lock;
+            $lazy        =   isset($this->options['lazy'])?          $this->options['lazy']: $lazy;
+            $relation    =   isset($this->options['link'])?              $this->options['link']:     $relation;
             $this->options  =   array();
         }
         // 前置调用
@@ -1396,13 +1396,13 @@ class Model extends Base  implements IteratorAggregate
                         $mappingClass  = !empty($val['class_name'])?$val['class_name']:$key;            //  关联类名
                         // 当前数据对象主键值
                         $pk =   $data[$this->getPk()];
-                        $mappingCondition = "{$mappingFk}={$pk}";
                         if(strtoupper($mappingClass)==strtoupper($this->name)) {
                             // 自引用关联 获取父键名
                             $mappingFk   =   !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
                         }else{
                             $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:strtolower($this->name).'_id';     //  关联外键
                         }
+                        $mappingCondition = "{$mappingFk}={$pk}";
                         // 获取关联model对象
                         $model = D($mappingClass);
                         $mappingData    =   $data[$mappingName];
