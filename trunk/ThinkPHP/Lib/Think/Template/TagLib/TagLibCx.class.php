@@ -190,9 +190,12 @@ class TagLibCx extends TagLib
 
     public function _url($attr) {
         $tag      = $this->parseXmlAttr($attr,'url');
-        $action   =   $tag['action'];
-        $module =   $tag['module'];
-        $parseStr=   '<?php echo url('.$action.','.$module.');?>';
+        $action   =   !empty($tag['action'])?$tag['action']:ACTION_NAME;
+        $module =   !empty($tag['module'])?$tag['module']:MODULE_NAME;
+        $route     =   !empty($tag['route'])?$tag['route']:'';
+        $app     =   !empty($tag['app'])?$tag['app']:APP_NAME;
+        $params =  !empty($tag['params'])?$tag['params']:'';
+        $parseStr=   '<?php echo url("'.$action.'","'.$module.'","'.$route.'","'.$app.'","'.$params.'");?>';
         return $parseStr;
     }
 
