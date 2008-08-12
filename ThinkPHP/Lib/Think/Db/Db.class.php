@@ -1055,7 +1055,7 @@ class Db extends Base
                             .$this->parseOrder($order);
         }else{
             $this->queryStr = 'SELECT '.$this->parseFields($fields)
-                            .' FROM '.$tables
+                            .' FROM '.$this->parseTables($tables)
                             .$this->parseJoin($join)
                             .$this->parseWhere($where)
                             .$this->parseGroup($group)
@@ -1111,7 +1111,7 @@ class Db extends Base
         //array_walk($values, array($this, 'fieldFormat'));
 
         $valuesStr = implode(',', $values);
-        $this->queryStr =    'INSERT INTO '.$table.' ('.$fieldsStr.') VALUES ('.$valuesStr.')';
+        $this->queryStr =    'INSERT INTO '.$this->parseTables($table).' ('.$fieldsStr.') VALUES ('.$valuesStr.')';
         return $this->execute();
     }
 
@@ -1150,7 +1150,7 @@ class Db extends Base
                 $values[] = '( '.implode(',', $_values).' )';
             }
             $valuesStr = implode(',',$values);
-            $this->queryStr =    'INSERT INTO '.$table.' ('.$fieldsStr.') VALUES '.$valuesStr;
+            $this->queryStr =    'INSERT INTO '.$this->parseTables($table).' ('.$fieldsStr.') VALUES '.$valuesStr;
             return $this->execute();
         }else{
             $this->startTrans();
@@ -1179,7 +1179,7 @@ class Db extends Base
      */
     public function remove($where,$table,$limit='',$order='')
     {
-        $this->queryStr = 'DELETE FROM '.$table.$this->parseWhere($where).$this->parseOrder($order).$this->parseLimit($limit);
+        $this->queryStr = 'DELETE FROM '.$this->parseTables($table).$this->parseWhere($where).$this->parseOrder($order).$this->parseLimit($limit);
         return $this->execute();
     }
 
@@ -1203,7 +1203,7 @@ class Db extends Base
      */
     public function save($sets,$table,$where,$limit=0,$order='',$lock=false)
     {
-        $this->queryStr = 'UPDATE '.$table.' SET '.$this->parseSets($sets).$this->parseWhere($where).$this->parseOrder($order).$this->parseLimit($limit);
+        $this->queryStr = 'UPDATE '.$this->parseTables($table).' SET '.$this->parseSets($sets).$this->parseWhere($where).$this->parseOrder($order).$this->parseLimit($limit);
         return $this->execute('',$lock);
     }
 
@@ -1225,7 +1225,7 @@ class Db extends Base
      +----------------------------------------------------------
      */
     public function setField($field,$value,$table,$condition,$asString=false) {
-        $this->queryStr =   'UPDATE '.$table.' SET ';
+        $this->queryStr =   'UPDATE '.$this->parseTables($table).' SET ';
         if(strpos($field,',')) {
             $field =  explode(',',$field);
         }
