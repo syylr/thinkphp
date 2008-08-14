@@ -3345,5 +3345,91 @@ class Model extends Base  implements IteratorAggregate
         return $relation;
     }
 
+    /**
+     +----------------------------------------------------------
+     * 对查询结果集进行排序
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $field 排序的字段名
+     * @param array $sortby 排序类型 asc arsort natcaseror
+     * @param array $list 查询结果
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function sortBy($field, $sortby='asc', $list='' ) {
+       if(empty($list) && !empty($this->dataList)) {
+           $list     =   $this->dataList;
+       }
+       if(is_array($list)){
+           $refer = $resultSet = array();
+           foreach ($list as $i => $data) {
+                if(is_object($data)) {
+                    $data    =   get_object_vars($data);
+                }
+               $refer[$i] = &$data[$field];
+           }
+           switch ($sortby) {
+               case 'asc': // 正向排序
+                    asort($refer);
+                    break;
+               case 'desc':// 逆向排序
+                    arsort($refer);
+                    break;
+               case 'nat': // 自然排序
+                    natcasesort($refer);
+                    break;
+           }
+           foreach ( $refer as $key=> $val) {
+               $resultSet[] = &$list[$key];
+           }
+           return $resultSet;
+       }
+       return false;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 把返回的数据集转换成Tree
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $list 要转换的数据集
+     * @param string $pid parent标记字段
+     * @param string $level level标记字段
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function toTree($list=null, $pk='id',$pid = 'pid',$child = '_child')
+    {
+        if(null === $list) {
+            // 默认直接取查询返回的结果集合
+            $list   =   &$this->dataList;
+        }
+        // 创建Tree
+        $tree = array();
+        if(is_array($list)) {
+            // 创建基于主键的数组引用
+            $refer = array();
+            foreach ($list as $key => $data) {
+                $refer[$data[$pk]] =& $list[$key];
+            }
+            foreach ($list as $key => $data) {
+                // 判断是否存在parent
+                $parentId = $data[$pid];
+                if ($parentId) {
+                    if (isset($refer[$parentId])) {
+                        $parent =& $refer[$parentId];
+                        $parent[$child][] =& $list[$key];
+                    }
+                } else {
+                    $tree[] =& $list[$key];
+                }
+            }
+        }
+        return $tree;
+    }
 };
 ?>
