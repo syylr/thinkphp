@@ -57,9 +57,9 @@ class Dispatcher extends Base
                 // 兼容PATHINFO 参数
                 $_SERVER['PATH_INFO']   =   $_GET[C('VAR_PATHINFO')];
                 unset($_GET[C('VAR_PATHINFO')]);
-            }elseif(!isset($_SERVER["PATH_INFO"]))
+            }elseif(!isset($_SERVER["PATH_INFO"]) && isset($_SERVER['ORIG_PATH_INFO']))
             {
-                $_SERVER['PATH_INFO'] = "";
+                $_SERVER['PATH_INFO'] = $_SERVER['ORIG_PATH_INFO'];
             }elseif (empty($_SERVER["PATH_INFO"]))
             {
                 // 在FastCGI模式下面 $_SERVER["PATH_INFO"] 为空
