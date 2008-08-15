@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -35,7 +35,7 @@ class PublicAction extends Action {
                 $menu   =   $_SESSION['menu'.$_SESSION[C('USER_AUTH_KEY')]];
             }else {
                 //读取数据库模块列表生成菜单项
-                $node    =   D("Node"); 
+                $node    =   D("Node");
 				$id	=	$node->getField("id","name='".APP_NAME."'");
                 $list	=	$node->where('level=2 AND  status=1 AND pid='.$id)->field('id,name,title')->order('seqNo asc')->findAll();
 
@@ -48,7 +48,7 @@ class PublicAction extends Action {
                     }
                 }
                 //缓存菜单访问
-                $_SESSION['menu'.$_SESSION[C('USER_AUTH_KEY')]]	=	$menu;       
+                $_SESSION['menu'.$_SESSION[C('USER_AUTH_KEY')]]	=	$menu;
             }
             $this->assign('menu',$menu);
             $this->assign("login",true);
@@ -70,7 +70,7 @@ class PublicAction extends Action {
         $map            =   array();
         $map["account"]	=	$_POST['account'];
         $map["status"]	=	array('gt',0);
-	
+
 		$authInfo = $User->find($map);
         //使用用户名、密码和状态的方式进行认证
         if(false === $authInfo) {
@@ -104,54 +104,53 @@ class PublicAction extends Action {
 		}
 	}
 
-    public function logout() 
+    public function logout()
     {
         if(isset($_SESSION[C('USER_AUTH_KEY')])) {
-			unset($_SESSION[C('USER_AUTH_KEY')]);
 			unset($_SESSION['menu'.$_SESSION[C('USER_AUTH_KEY')]]);
-            $this->assign("message",'登出成功！');
+			unset($_SESSION[C('USER_AUTH_KEY')]);
             $this->assign("jumpUrl",__URL__.'/login/');
+            $this->success('登出成功！');
         }else {
-            $this->assign('error', '已经登出！');
+            $this->error( '已经登出！');
         }
-        $this->forward();
     }
 
     /**
      +----------------------------------------------------------
      * 验证码显示
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      * @throws FcsException
      +----------------------------------------------------------
      */
-    function verify() 
+    function verify()
     {
         import("ORG.Util.Image");
         if(isset($_REQUEST['adv'])) {
-        	Image::showAdvVerify(); 
+        	Image::showAdvVerify();
         }else {
-        	Image::buildImageVerify(); 
+        	Image::buildImageVerify();
         }
     }
 
     /**
      +----------------------------------------------------------
      * 取得操作成功后要返回的URL地址
-     * 默认返回当前模块的默认操作 
+     * 默认返回当前模块的默认操作
      * 可以在action控制器中重载
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getReturnUrl() 
+    function getReturnUrl()
     {
         return __URL__.'?'.C('VAR_MODULE').'='.MODULE_NAME.'&'.C('VAR_ACTION').'='.C('DEFAULT_ACTION');
     }
@@ -159,7 +158,7 @@ class PublicAction extends Action {
 	public function index()
     {
         //列表过滤器，生成查询Map对象
-        $map = $this->_search();		
+        $map = $this->_search();
         if(method_exists($this,'_filter')) {
             $this->_filter($map);
         }
@@ -175,16 +174,16 @@ class PublicAction extends Action {
      * 根据表单生成查询条件
      * 进行列表过滤
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
-     * @param string $name 数据对象名称 
+     * @param string $name 数据对象名称
      +----------------------------------------------------------
      * @return HashMap
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function _search($name='') 
+    protected function _search($name='')
     {
         //生成查询条件
 		if(empty($name)) {
@@ -205,19 +204,19 @@ class PublicAction extends Action {
      * 根据表单生成查询条件
      * 进行列表过滤
      +----------------------------------------------------------
-     * @access protected 
+     * @access protected
      +----------------------------------------------------------
-     * @param Model $model 数据对象 
-     * @param HashMap $map 过滤条件 
-     * @param string $sortBy 排序 
-     * @param boolean $asc 是否正序 
+     * @param Model $model 数据对象
+     * @param HashMap $map 过滤条件
+     * @param string $sortBy 排序
+     * @param boolean $asc 是否正序
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function _list($model,$map,$sortBy='',$asc=true) 
+    protected function _list($model,$map,$sortBy='',$asc=true)
     {
         //排序字段 默认为主键名
         if(isset($_REQUEST['order'])) {
@@ -252,7 +251,7 @@ class PublicAction extends Action {
 						$p->parameter	.= $key.'[]='.urlencode($t)."&";
 					}
 				}else{
-					$p->parameter   .=   "$key=".urlencode($val)."&";        
+					$p->parameter   .=   "$key=".urlencode($val)."&";
 				}
 			}
 			//分页显示
@@ -272,7 +271,7 @@ class PublicAction extends Action {
         return ;
     }
 
-   function insert() 
+   function insert()
     {
 		$model	=	D($this->name);
         if(false === $model->create()) {
@@ -283,7 +282,7 @@ class PublicAction extends Action {
         if($id) { //保存成功
             //成功提示
             $this->success(L('_INSERT_SUCCESS_'));
-        }else { 
+        }else {
             //失败提示
             $this->error(L('_INSERT_FAIL_'));
         }
@@ -324,7 +323,7 @@ class PublicAction extends Action {
      +----------------------------------------------------------
      * 默认删除操作
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -342,19 +341,19 @@ class PublicAction extends Action {
                     $this->success(L('_DELETE_SUCCESS_'));
                 }else {
                     $this->error(L('_DELETE_FAIL_'));
-                }        	
+                }
             }else {
                 $this->error('非法操作');
-            }        	
+            }
         }
     }
 
     /**
      +----------------------------------------------------------
      * 默认禁用操作
-     * 
+     *
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -364,7 +363,7 @@ class PublicAction extends Action {
     function forbid()
     {
 		$model	=	D($this->name);
-        $condition = 'id IN ('.$_GET['id'].')'; 
+        $condition = 'id IN ('.$_GET['id'].')';
         if($model->forbid($condition)){
             $this->assign("message",'状态禁用成功！');
             $this->assign("jumpUrl",$this->getReturnUrl());
@@ -377,9 +376,9 @@ class PublicAction extends Action {
     /**
      +----------------------------------------------------------
      * 默认恢复操作
-     * 
+     *
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -390,7 +389,7 @@ class PublicAction extends Action {
     {
         //恢复指定记录
 		$model	=	D($this->name);
-        $condition = 'id IN ('.$_GET['id'].')'; 
+        $condition = 'id IN ('.$_GET['id'].')';
         if($model->resume($condition)){
             $this->assign("message",'状态恢复成功！');
             $this->assign("jumpUrl",$this->getReturnUrl());
