@@ -118,8 +118,10 @@ Class DbPgsql extends Db{
         $this->queryID = pg_query($this->_linkID,$this->queryStr );
         $this->debug();
         if ( !$this->queryID ) {
-            throw_exception($this->error());
-            return false;
+            if ( $this->debug || C('DEBUG_MODE'))
+                throw_exception($this->error());
+            else
+                return false;
         } else {
             $this->numRows = pg_num_rows($this->queryID);
             //$this->numCols = pg_num_fields($this->queryID);
@@ -166,8 +168,10 @@ Class DbPgsql extends Db{
         $result =   pg_query($this->_linkID,$this->queryStr.$tableName);
         $this->debug();
         if ( false === $result ) {
-            //throw_exception($this->error());
-            return false;
+            if ( $this->debug || C('DEBUG_MODE'))
+                throw_exception($this->error());
+            else
+                return false;
         } else {
             $this->numRows = pg_affected_rows($result);
             if($tableName!=""){

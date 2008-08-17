@@ -127,8 +127,10 @@ Class DbMysqli extends Db{
         $this->queryID = $this->_linkID->query($this->queryStr);
         $this->debug();
         if ( !$this->queryID ) {
-            //if ( $this->debug ) throw_exception($this->error());
-            return false;
+            if ( $this->debug || C('DEBUG_MODE'))
+                throw_exception($this->error());
+            else
+                return false;
         } else {
             $this->numRows  = $this->queryID->num_rows;
             $this->numCols    = $this->queryID->field_count;
@@ -165,8 +167,10 @@ Class DbMysqli extends Db{
         $result =   $this->_linkID->query($this->queryStr);
         $this->debug();
         if ( false === $result ) {
-            //if ( $this->debug ) throw_exception($this->error());
-            return false;
+            if ( $this->debug || C('DEBUG_MODE'))
+                throw_exception($this->error());
+            else
+                return false;
         } else {
             $this->numRows = $this->_linkID->affected_rows;
             $this->lastInsID = $this->_linkID->insert_id;
