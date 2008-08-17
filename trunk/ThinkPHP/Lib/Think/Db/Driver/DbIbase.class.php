@@ -122,7 +122,10 @@ Class DbIbase extends Db{
         $this->queryID = ibase_query($this->_linkID, $this->queryStr);
         $this->debug();
         if ( !$this->queryID ) {
-            return false;
+            if ( $this->debug || C('DEBUG_MODE'))
+                throw_exception($this->error());
+            else
+                return false;
         } else {
             //$this->numCols = ibase_num_fields($this->queryID);
             $this->resultSet = $this->getAll();
@@ -159,7 +162,10 @@ Class DbIbase extends Db{
         $result =   ibase_query($this->_linkID, $this->queryStr) ;
         $this->debug();
         if ( false === $result) {
-            return false;
+            if ( $this->debug || C('DEBUG_MODE'))
+                throw_exception($this->error());
+            else
+                return false;
         } else {
             $this->numRows = ibase_affected_rows($this->_linkID);
             //剑雷 2007.12.28

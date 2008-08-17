@@ -118,8 +118,10 @@ Class DbPdo extends Db{
         $result =   $this->PDOStatement->execute();
         $this->debug();
         if ( !$result ) {
-            //if ( $this->debug ) throw_exception($this->error());
-            return false;
+            if ( $this->debug || C('DEBUG_MODE'))
+                throw_exception($this->error());
+            else
+                return false;
         } else {
             //$this->numCols = $this->PDOStatement->columnCount();
             $this->resultSet = $this->getAll();
@@ -159,8 +161,10 @@ Class DbPdo extends Db{
         $result =   $this->_linkID->exec($this->queryStr);
         $this->debug();
         if ( false === $result) {
-            //if ( $this->debug ) throw_exception($this->error());
-            return false;
+            if ( $this->debug || C('DEBUG_MODE'))
+                throw_exception($this->error());
+            else
+                return false;
         } else {
             $this->numRows = $result;
             $this->lastInsID = $this->_linkID->lastInsertId();

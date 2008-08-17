@@ -123,8 +123,10 @@ Class DbMysql extends Db{
         $this->queryID = mysql_query($this->queryStr, $this->_linkID);
         $this->debug();
         if ( !$this->queryID ) {
-            //if ( $this->debug ) throw_exception($this->error());
-            return false;
+            if ( $this->debug || C('DEBUG_MODE'))
+                throw_exception($this->error());
+            else
+                return false;
         } else {
             $this->numRows = mysql_num_rows($this->queryID);
             //$this->numCols = mysql_num_fields($this->queryID);
@@ -161,8 +163,10 @@ Class DbMysql extends Db{
         $result =   mysql_query($this->queryStr, $this->_linkID) ;
         $this->debug();
         if ( false === $result) {
-            //if ( $this->debug ) throw_exception($this->error());
-            return false;
+            if ( $this->debug || C('DEBUG_MODE'))
+                throw_exception($this->error());
+            else
+                return false;
         } else {
             $this->numRows = mysql_affected_rows($this->_linkID);
             $this->lastInsID = mysql_insert_id($this->_linkID);
