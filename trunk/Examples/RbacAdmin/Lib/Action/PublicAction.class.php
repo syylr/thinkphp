@@ -109,6 +109,7 @@ class PublicAction extends Action {
         if(isset($_SESSION[C('USER_AUTH_KEY')])) {
 			unset($_SESSION['menu'.$_SESSION[C('USER_AUTH_KEY')]]);
 			unset($_SESSION[C('USER_AUTH_KEY')]);
+            unset($_SESSION['administrator']);
             $this->assign("jumpUrl",__URL__.'/login/');
             $this->success('登出成功！');
         }else {
