@@ -184,5 +184,8 @@ return  array(
 	'ACTION_JUMP_TMPL'=>	'Public:success',    // 页面跳转的模板文件
 	'ACTION_404_TMPL'=>	'Public:404',         // 404错误的模板文件
     'FIELDS_DEPR'                 =>   ',',   // 多字段查询的分隔符
+    'TOKEN_ON'                    =>   true,
+    'TOKEN_NAME'                =>   'think_html_token',    // 表单令牌名称
+    'TOKEN_TYPE'                 =>    'md5',
 );
 ?>
