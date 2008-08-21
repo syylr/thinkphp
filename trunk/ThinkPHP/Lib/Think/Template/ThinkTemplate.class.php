@@ -200,10 +200,8 @@ class  ThinkTemplate extends Base
         if(C('TEMPLATE_CHARSET') != $charset) {
             $tmplContent = str_ireplace('charset='.C('TEMPLATE_CHARSET'), 'charset='.$charset, $tmplContent);
         }
-        if(C('TOKEN_ON')) {
-            // 开启令牌验证
-            $tmplContent =  preg_replace('/<\/form(\s*)>/is','<input type="hidden" name="<?php echo C("TOKEN_NAME");?>" value="<?php echo Session::get(C("TOKEN_NAME")); ?>"/></form>',$tmplContent);
-        }
+        // 令牌验证
+        $tmplContent =  preg_replace('/<\/form(\s*)>/is','<?php if(C("TOKEN_ON")):?><input type="hidden" name="<?php echo C("TOKEN_NAME");?>" value="<?php echo Session::get(C("TOKEN_NAME")); ?>"/><?php endif;?></form>',$tmplContent);
         // 模版过滤插件调用
         $tmplContent =  apply_filter('tmpl_replace',$tmplContent);
 
