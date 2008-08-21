@@ -542,5 +542,25 @@ abstract class Action extends Base
         $this->display(C('ACTION_404_TMPL'));
     }
 
+    // 生成令牌
+    protected function saveToken(){
+        $tokenType = C('TOKEN_TYPE');
+        $token = $tokenType(microtime(TRUE));
+        Session::set(C('TOKEN_NAME'),$token);
+    }
+
+    // 验证令牌
+    protected function isValidToken($reset=false){
+        $tokenName   =  C('TOKEN_NAME');
+        if($_REQUEST[$tokenName]==Session::get($tokenName)){
+            $valid=true;
+            $this->saveToken();
+        }else {
+            $valid=false;
+            if($reset)    $this->saveToken();
+        }
+        return $valid;
+    }
+
 }//类定义结束
 ?>
