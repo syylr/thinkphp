@@ -252,7 +252,7 @@ class TagLibHtml extends TagLib
                     strtolower($tag['type']):
                     strtolower(substr(strrchr($file, '.'),1));
         if($type=='js') {
-            $parseStr = "<script language='JavaScript' src='".$file."'></script> ";
+            $parseStr = "<script type='text/javascript' src='".$file."'></script> ";
         }elseif($type=='css') {
             $parseStr = "<link rel='stylesheet' type='text/css' href='".$file."' />";
         }
@@ -278,7 +278,7 @@ class TagLibHtml extends TagLib
         $basepath   = !empty($tag['basepath'])?$tag['basepath']:WEB_PUBLIC_URL;
         $type       = !empty($tag['type'])?  strtolower($tag['type']):'js';
         if($type=='js') {
-            $parseStr = "<script language='JavaScript' src='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$file).'.js'."'></script> ";
+            $parseStr = "<script type='text/javascript' src='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$file).'.js'."'></script> ";
         }elseif($type=='css') {
             $parseStr = "<link rel='stylesheet' type='text/css' href='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$file).'.css'."' />";
         }
