@@ -844,15 +844,13 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function fieldFormat(&$value)
+    protected function fieldFormat(&$value,$asString=true)
     {
         if(is_int($value)) {
             $value = intval($value);
         } else if(is_float($value)) {
             $value = floatval($value);
-        } elseif(preg_match('/^\(\w*(\+|\-|\*|\/)?\w*\)$/i',$value)){
-            // 支持在字段的值里面直接使用其它字段
-            // 例如 (score+1) (name) 必须包含括号
+        }elseif(!$asString){
             $value = $this->escape_string($value);
         }else if(is_string($value)) {
             $value = '\''.$this->escape_string($value).'\'';
@@ -1230,7 +1228,7 @@ class Db extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function setField($field,$value,$table,$condition,$asString=false) {
+    public function setField($field,$value,$table,$condition,$asString=true) {
         $this->queryStr =   'UPDATE '.$table.' SET ';
         if(strpos($field,',')) {
             $field =  explode(',',$field);
@@ -1241,7 +1239,7 @@ class Db extends Base
                 $this->queryStr .= $this->addSpecialChar($field[$i]).'='.$this->fieldFormat($value[$i]).',';
             }
         }else{
-            $this->queryStr .= $this->addSpecialChar($field).'='.$this->fieldFormat($value).',';
+            $this->queryStr .= $this->addSpecialChar($field).'='.$this->fieldFormat($value,$asString).',';
         }
         $this->queryStr =   substr($this->queryStr,0,-1).$this->parseWhere($condition);
         return $this->execute();
@@ -1264,7 +1262,7 @@ class Db extends Base
      +----------------------------------------------------------
      */
     public function setInc($field,$table,$condition,$step=1) {
-        return $this->setField($field,'('.$field.'+'.$step.')',$table,$condition);
+        return $this->setField($field,'('.$field.'+'.$step.')',$table,$condition,false);
     }
 
     /**
@@ -1284,7 +1282,7 @@ class Db extends Base
      +----------------------------------------------------------
      */
     public function setDec($field,$table,$condition,$step=1) {
-        return $this->setField($field,'('.$field.'-'.$step.')',$table,$condition);
+        return $this->setField($field,'('.$field.'-'.$step.')',$table,$condition,false);
     }
 
     /**
