@@ -609,7 +609,13 @@ class Db extends Base
         $joinStr = '';
         if(!empty($join)) {
             if(is_array($join)) {
-                $joinStr .= ' '.strtoupper($join[0]).' JOIN ' . $join[1].' ';
+                foreach ($join as $key=>$_join){
+                    if(false !== stripos($_join,'JOIN')) {
+                        $joinStr .= ' '.$_join;
+                    }else{
+                        $joinStr .= ' LEFT JOIN ' .$_join;
+                    }
+                }
             }else{
                 $joinStr .= ' LEFT JOIN ' .$join;
             }

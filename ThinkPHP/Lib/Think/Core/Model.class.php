@@ -3226,7 +3226,11 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function join($join) {
-        $this->options['join']  =   $join;
+        if(is_array($join)) {
+            $this->options['join'] =  $join;
+        }else{
+            $this->options['join'][]  =   $join;
+        }
         return $this;
     }
 
