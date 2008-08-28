@@ -347,9 +347,6 @@ class Action extends Base
      */
     function ajaxReturn($data='',$info='',$status='',$type='')
     {
-        // 保证AJAX返回后也能保存日志
-        if(C('WEB_LOG_RECORD')) Log::save();
-
         $result  =  array();
         if($status === '') {
             $status  = $this->get('error')?0:1;

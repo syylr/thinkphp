@@ -43,7 +43,7 @@ class App extends Base
      +----------------------------------------------------------
      */
     var $id;
-
+    var $debug =  array();
     /**
      +----------------------------------------------------------
      * 架构函数
@@ -548,8 +548,24 @@ class App extends Base
 			if (method_exists($module,'_before_'.$action)) {
 				$module->{'_before_'.$action}();
 			}
-			//执行操作
-			$module->{$action}();
+            if(!method_exists($module,$action)) {
+                // 方法未定义
+                // 如果定义了_empty操作 则调用
+                if(method_exists($module,'_empty')) {
+                    $module->_empty();
+                }else {
+                    // 检查是否存在模版 如果有直接输出模版
+                    if(file_exists(C('TMPL_FILE_NAME'))) {
+                        $module->display();
+                    }else{
+                        // 调试模式抛出异常
+                        throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
+                    }
+                }
+            }else{
+                //执行操作
+                $module->{$action}();
+            }
 			//如果存在后置操作，继续执行
 			if (method_exists($module,'_after_'.$action)) {
 				$module->{'_after_'.$action}();
@@ -559,8 +575,9 @@ class App extends Base
         apply_filter('app_end');
 
 		// 写入错误日志
-        if(C('WEB_LOG_RECORD'))
-            Log::save();
+        if(C('WEB_LOG_RECORD')){
+            Log::write(trim(implode('',$this->debug)));
+        }
 
         return ;
     }
@@ -617,8 +634,7 @@ class App extends Base
           case E_USER_ERROR:
               $errorStr = "错误：[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
               if(C('WEB_LOG_RECORD')){
-                 Log::record($errorStr);
-				 Log::save();
+                  $this->debug[] = $errorStr;
               }
               halt($errorStr);
               break;
@@ -627,7 +643,9 @@ class App extends Base
           case E_USER_NOTICE:
           default:
 			$errorStr = "注意：[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
-			Log::record($errorStr);
+              if(C('WEB_LOG_RECORD')){
+                  $this->debug[] = $errorStr;
+              }
              break;
       }
     }

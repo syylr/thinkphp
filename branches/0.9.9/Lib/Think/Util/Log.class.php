@@ -34,6 +34,15 @@ class Log extends Base
 
     var $log =   array();
 
+    function & getInstance()
+    {
+        static $_instance = array();
+        if (!isset($_instance[0])){
+            $_instance[0] = & new Log();
+        }
+        return $_instance[0];
+    }
+
     /**
      +----------------------------------------------------------
      * 记录日志
@@ -49,15 +58,17 @@ class Log extends Base
      */
     function record($message,$type=WEB_LOG_ERROR) {
         $now = date('[ y-m-d H:i:s ]');
-        $log  =  $this->$log[$type];
-        $log[] =   "\n$now\n$message";
+        if(!isset($this->log[$type])) {
+            $this->log[$type] =  array();
+        }
+        $this->log[$type][] =   "\n$now\n$message";
     }
 
     function getLog($type='') {
         if(!empty($type)) {
-            return $this->$log[$type];
+            return $this->log[$type];
         }else{
-            return $this->$log;
+            return $this->log;
         }
     }
     /**
@@ -85,7 +96,7 @@ class Log extends Base
         if(!is_writable(LOG_PATH)){
             halt(L('_FILE_NOT_WRITEABLE_').':'.LOG_PATH);
         }
-        foreach ($this->$log as $type=>$logs){
+        foreach ($this->log as $type=>$logs){
             //检测日志文件大小，超过配置大小则备份日志文件重新生成
             $destination    =   $_type[$type];
             if(file_exists($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){

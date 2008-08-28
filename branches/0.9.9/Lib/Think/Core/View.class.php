@@ -386,14 +386,13 @@ class View extends Base
                 $this->trace('当前页面',    $_SERVER['PHP_SELF']);
                 $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
                 $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
-                $this->trace('请求时间',    date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
+                $this->trace('请求时间',    date('Y-m-d H:i:s',time()));
                 $this->trace('用户代理',    $_SERVER['HTTP_USER_AGENT']);
                 $this->trace('会话ID'   ,   session_id());
                 $this->trace('运行数据',    $showTime);
                 $this->trace('输出编码',    $charset);
                 $this->trace('加载类库',    $GLOBALS['include_file']);
                 $this->trace('模板编译',    !empty($compiler)?'重新编译':'读取缓存');
-
                 $_trace =   array_merge($_trace,$this->trace);
                 $_trace = auto_charset($_trace,'utf-8');
                 $_title =   auto_charset('页面Trace信息','utf-8');

@@ -43,9 +43,13 @@ class  ThinkTemplate extends Base
      * @return App
      +----------------------------------------------------------
      */
-    function  getInstance()
+    function & getInstance()
     {
-        return get_instance_of(__CLASS__);
+        static $_instance = array();
+        if (!isset($_instance[0])){
+            $_instance[0] = & new ThinkTemplate();
+        }
+        return $_instance[0];
     }
 
     // 模板变量获取和设置
@@ -316,11 +320,11 @@ class  ThinkTemplate extends Base
         // 标签库只需要定义一次，允许引入多个一次
         // 一般放在文件的最前面
         // 格式：<taglib name="cx,html" class="Think.Util.TagLib.TagLib_Cx,Think.Util.TagLib.TagLib_Html" />
-        $this->getIncludeTagLib($content);
-        if(!empty($this->tagLib)) {
+        $tagLib = $this->getIncludeTagLib($content);
+        if(!empty($tagLib)) {
             // 如果有引入TagLib库
             // 则对导入的TagLib进行解析
-            foreach($this->tagLib as $tagLibName=>$tagLibClass) {
+            foreach($tagLib as $tagLibName=>$tagLibClass) {
                 if(empty($tagLibClass)) {
                     import('Think.Template.TagLib.TagLib'.ucwords(strtolower($tagLibName)));
                 }else {
@@ -414,8 +418,9 @@ class  ThinkTemplate extends Base
             $tagLibClass  =  isset($array['class'])?explode(',',$array['class']):array_fill(0,count($tagLibName),'');
             $tagLibList  = array_combine($tagLibName,$tagLibClass);
             $this->tagLib = $tagLibList;
+            return $tagLibList;
         }
-        return;
+        return false;
     }
 
     /**
