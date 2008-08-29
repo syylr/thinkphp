@@ -420,7 +420,7 @@ class App extends Base
 			//模版名称
 			define('TEMPLATE_NAME',$templateSet);
 			// 当前模版路径
-			define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME.'/');
+			define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME);
 			$tmplDir	=	TMPL_DIR.'/'.TEMPLATE_NAME.'/';
 		}else{
 			// 把模版目录直接放置项目模版文件
