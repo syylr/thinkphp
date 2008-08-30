@@ -1410,7 +1410,7 @@ class Model extends Base  implements IteratorAggregate
                         if(is_object($mappingData)){
                             $mappingData =   get_object_vars($mappingData);
                         }
-                        if(!empty($mappingData)) {
+                        if(!empty($mappingData) || $opType == 'DEL') {
                             switch($mappingType) {
                                 case HAS_ONE:
                                     switch (strtoupper($opType)){
