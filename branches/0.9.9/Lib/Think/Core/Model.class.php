@@ -1068,9 +1068,10 @@ class Model extends Base
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
         }
-        if(empty($where) && isset($data[$this->getPk()])) {
-            $where  = $this->getPk()."=".$data[$this->getPk()];
-            unset($data[$this->getPk()]);
+        $pk   =  $this->getPk();
+        if(empty($where) && isset($data[$pk]) && !is_array($data[$pk])) {
+            $where  = $pk."=".$data[$pk];
+            unset($data[$pk]);
         }
         // 检查乐观锁
         if(!$this->checkLockVersion($data,$where)) {
@@ -1498,9 +1499,10 @@ class Model extends Base
         if(empty($data)) {
             $data    =   $this->data;
         }
-        if(is_array($data) && isset($data[$this->getPk()])) {
+        $pk   =  $this->getPk();
+        if(is_array($data) && isset($data[$pk]) && !is_array($data[$pk])) {
             $data   =   $this->_facade($data);
-            $where  = $this->getPk()."=".$data[$this->getPk()];
+            $where  = $pk."=".$data[$pk];
         }else {
             $where  =   $data;
         }
