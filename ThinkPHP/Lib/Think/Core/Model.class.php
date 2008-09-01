@@ -2834,9 +2834,18 @@ class Model extends Base  implements IteratorAggregate
                         $viewTable .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
                         $tableName .= strtolower($viewTable).' '.$key;
                     }
-                    $tableName   = '('.$tableName.') JOIN ';
+                    if(isset($view['_on'])) {
+                        $tableName .= ' ON '.$view['_on'];
+                    }
+                    if(isset($view['_type'])) {
+                        $type = $view['_type'];
+                    }else{
+                        $type = '';
+                    }
+                    $tableName   .= ' '.$type.' JOIN ';
+                    $len  =  strlen($type.'_JOIN ');
                 }
-                $tableName = substr($tableName,0,-6);
+                $tableName = substr($tableName,0,-$len);
                 $this->trueTableName    =   $tableName;
             }else{
                 $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
