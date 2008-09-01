@@ -970,6 +970,7 @@ class Model extends Base  implements IteratorAggregate
                     if(is_numeric($key)) {
                         $fields[]    =   $name.'.'.$field.' AS '.$field;
                     }elseif('_' != substr($key,0,1)) {
+                        // 以_开头的为特殊定义
                         $fields[]    =   $name.'.'.$key.' AS '.$field;
                     }
                 }
@@ -2827,17 +2828,21 @@ class Model extends Base  implements IteratorAggregate
                 foreach ($this->viewFields as $key=>$view){
                     $Model  =   D($key);
                     if($Model) {
+                        // 存在模型 获取模型定义的数据表名称
                         $tableName .= $Model->getTableName().' '.$key;
                     }else{
+                        // 直接把key作为表名来对待
                         $viewTable  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
                         $viewTable .= $key;
                         $viewTable .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
                         $tableName .= strtolower($viewTable).' '.$key;
                     }
                     if(isset($view['_on'])) {
+                        // 支持ON 条件定义
                         $tableName .= ' ON '.$view['_on'];
                     }
                     if(isset($view['_type'])) {
+                        // 指定JOIN类型 例如 RIGHT INNER LEFT 下一个表有效
                         $type = $view['_type'];
                     }else{
                         $type = '';
