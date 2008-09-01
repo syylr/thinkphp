@@ -2847,7 +2847,7 @@ class Model extends Base  implements IteratorAggregate
                     }else{
                         $type = '';
                     }
-                    $tableName   .= ' '.$type.' JOIN ';
+                    $tableName   .= ' '.strtoupper($type).' JOIN ';
                     $len  =  strlen($type.'_JOIN ');
                 }
                 $tableName = substr($tableName,0,-$len);
