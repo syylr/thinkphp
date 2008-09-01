@@ -969,7 +969,7 @@ class Model extends Base  implements IteratorAggregate
                 foreach ($val as $key=>$field){
                     if(is_numeric($key)) {
                         $fields[]    =   $name.'.'.$field.' AS '.$field;
-                    }else{
+                    }elseif('_' != substr($key,0,1)) {
                         $fields[]    =   $name.'.'.$key.' AS '.$field;
                     }
                 }
