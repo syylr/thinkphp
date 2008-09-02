@@ -1992,7 +1992,7 @@ class Model extends Base  implements IteratorAggregate
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function setField($field,$value,$condition='') {
+    public function setField($field,$value,$condition='',$asString=true) {
         if(empty($condition) && isset($this->options['where'])) {
             $condition   =  $this->options['where'];
         }
@@ -2000,7 +2000,7 @@ class Model extends Base  implements IteratorAggregate
             $condition   =   $this->checkCondition($condition);
             $field         =   $this->checkFields($field);
         }
-        return $this->db->setField($field,$value,$this->getTableName(),$condition);
+        return $this->db->setField($field,$value,$this->getTableName(),$condition,$asString);
     }
 
     /**
