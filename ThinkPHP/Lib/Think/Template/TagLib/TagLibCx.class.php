@@ -246,7 +246,7 @@ class TagLibCx extends TagLib
     public function _if($attr,$content) {
         $tag          = $this->parseXmlAttr($attr,'if');
         $condition   = $this->parseCondition($tag['condition']);
-        $parseStr  .= '<?php if('.$condition.'): ?>'.$content.'<?php endif; ?>';
+        $parseStr  = '<?php if('.$condition.'): ?>'.$content.'<?php endif; ?>';
         return $parseStr;
     }
 
