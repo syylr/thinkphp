@@ -48,6 +48,9 @@ class Model extends Base
     // 模型名称
     var $name = '';
 
+    // 数据库名称
+    var $dbName  =  '';
+
     // 数据表名（不包含表前缀）
     var $tableName = '';
 
@@ -2767,6 +2770,9 @@ class Model extends Base
                 $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
                 $tableName .= $this->tableName?$this->tableName:$this->name;
                 $tableName .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
+                if(!empty($this->dbName)) {
+                    $tableName    =  $this->dbName.'.'.$tableName;
+                }
                 $this->trueTableName    =   strtolower($tableName);
             }
         }
