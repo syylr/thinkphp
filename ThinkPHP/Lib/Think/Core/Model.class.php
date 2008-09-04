@@ -48,6 +48,9 @@ class Model extends Base  implements IteratorAggregate
     // 模型名称
     protected $name = '';
 
+    // 数据库名称
+    protected $dbName  = '';
+
     // 数据表名（不包含表前缀）
     protected $tableName = '';
 
@@ -2856,6 +2859,9 @@ class Model extends Base  implements IteratorAggregate
                 $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
                 $tableName .= $this->tableName?$this->tableName:$this->name;
                 $tableName .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
+                if(!empty($this->dbName)) {
+                    $tableName    =  $this->dbName.'.'.$tableName;
+                }
                 $this->trueTableName    =   strtolower($tableName);
             }
         }
