@@ -59,18 +59,17 @@ Class DbIbase extends Db{
             $this->linkID[$linkNum] = $conn( $config['hostname'].'/'.$config['hostport'].':'.$config['database'], $config['username'], $config['password']);
             if ( !$this->linkID[$linkNum]) {
                 throw_exception(ibase_errmsg());
-                return False;
             }
-        //剑雷 2007.12.28
-       if ( ($svc = ibase_service_attach($config['hostname'], $config['username'], $config['password'])) != FALSE)
-        {
-            $ibase_info = ibase_server_info ($svc, IBASE_SVC_SERVER_VERSION) . '/' . ibase_server_info($svc, IBASE_SVC_IMPLEMENTATION);
-            ibase_service_detach ($svc);
-        }
-        else
-        {
-            $ibase_info = 'Unable to Determine';
-        }
+            //剑雷 2007.12.28
+           if ( ($svc = ibase_service_attach($config['hostname'], $config['username'], $config['password'])) != FALSE)
+            {
+                $ibase_info = ibase_server_info ($svc, IBASE_SVC_SERVER_VERSION) . '/' . ibase_server_info($svc, IBASE_SVC_IMPLEMENTATION);
+                ibase_service_detach ($svc);
+            }
+            else
+            {
+                $ibase_info = 'Unable to Determine';
+            }
             $this->dbVersion = $ibase_info;
 
             // 标记连接成功

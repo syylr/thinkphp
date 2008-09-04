@@ -65,7 +65,6 @@ Class DbPgsql extends Db{
 
             if (pg_connection_status($this->linkID[$linkNum]) !== 0){
                 throw_exception($this->error(false));
-                return false;
             }
             $pgInfo = pg_version($this->linkID[$linkNum]);
             $this->dbVersion = $pgInfo['server'];

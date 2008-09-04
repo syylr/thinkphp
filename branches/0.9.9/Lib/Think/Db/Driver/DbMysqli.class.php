@@ -61,7 +61,6 @@ Class DbMysqli extends Db{
                                 $config['hostport']);
             if ( !$this->linkID[$linkNum]) {
                 throw_exception(mysqli_connect_error());
-                return false;
             }
             if($this->autoCommit){
                 $this->linkID[$linkNum]->autocommit( true);

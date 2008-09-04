@@ -64,7 +64,6 @@ Class DbPdo extends Db{
             $this->linkID[$linkNum] = new PDO( $config['dsn'], $config['username'], $config['password'],$config['params']);
             if ( !$this->linkID[$linkNum]) {
                 throw_exception('PDO CONNECT ERROR');
-                return false;
             }
             $this->linkID[$linkNum]->exec('SET NAMES '.C('DB_CHARSET'));
             // 因个别驱动不支持getAttribute方法 暂时注释
