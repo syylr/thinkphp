@@ -185,7 +185,7 @@ return  array(
 	'ACTION_404_TMPL'=>	'Public:404',         // 404错误的模板文件
     'FIELDS_DEPR'                 =>   ',',   // 多字段查询的分隔符
     'TOKEN_ON'                    =>   true,     // 开启令牌验证
-    'TOKEN_NAME'                =>   'think_html_token',    // 令牌名称
-    'TOKEN_TYPE'                 =>    'md5',   // 令牌验证字符串生成方式
+    'TOKEN_NAME'                =>   'think_html_token',    // 令牌验证的表单隐藏字段名称
+    'TOKEN_TYPE'                 =>    'md5',   // 令牌验证哈希规则
 );
 ?>
