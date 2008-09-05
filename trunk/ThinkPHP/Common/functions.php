@@ -1057,6 +1057,7 @@ function D($className='',$appName='@')
     if(isset($_model[$appName.$className])) {
         return $_model[$appName.$className];
     }
+    $OriClassName = $className;
     if(strpos($className,C('COMPONENT_DEPR'))) {
         $array  =   explode(C('COMPONENT_DEPR'),$className);
         $className = array_pop($array);
@@ -1079,7 +1080,7 @@ function D($className='',$appName='@')
     }
     if(class_exists($className)) {
         $model = new $className();
-        $_model[$appName.$className] =  $model;
+        $_model[$appName.$OriClassName] =  $model;
         return $model;
     }else {
         throw_exception($className.L('_MODEL_NOT_EXIST_'));
@@ -1093,6 +1094,7 @@ function A($className,$appName='@')
     if(isset($_action[$appName.$className])) {
         return $_action[$appName.$className];
     }
+    $OriClassName = $className;
     if(strpos($className,C('COMPONENT_DEPR'))) {
         $array  =   explode(C('COMPONENT_DEPR'),$className);
         $className = array_pop($array);
@@ -1115,7 +1117,7 @@ function A($className,$appName='@')
     }
     if(class_exists($className)) {
         $action = new $className();
-        $_action[$appName.$className] = $action;
+        $_action[$appName.$OriClassName] = $action;
         return $action;
     }else {
         return false;
