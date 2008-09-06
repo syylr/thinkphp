@@ -187,5 +187,6 @@ return  array(
     'TOKEN_ON'                    =>   true,     // 开启令牌验证
     'TOKEN_NAME'                =>   'think_html_token',    // 令牌验证的表单隐藏字段名称
     'TOKEN_TYPE'                 =>    'md5',   // 令牌验证哈希规则
+    'APP_DOMAIN_DEPLOY'     =>  false,     // 是否使用独立域名部署项目
 );
 ?>
