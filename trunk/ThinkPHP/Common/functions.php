@@ -1163,7 +1163,7 @@ function C($name='',$value=null) {
     if(isset($_config[strtolower($name)])) {
         return $_config[strtolower($name)];
     }else{
-        return false;
+        return NULL;
     }
 }
 
