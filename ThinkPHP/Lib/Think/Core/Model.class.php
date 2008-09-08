@@ -2844,11 +2844,11 @@ class Model extends Base  implements IteratorAggregate
                         // 支持ON 条件定义
                         $tableName .= ' ON '.$view['_on'];
                     }
-                    if(isset($view['_type'])) {
+                    if(!empty($view['_type'])) {
                         // 指定JOIN类型 例如 RIGHT INNER LEFT 下一个表有效
                         $type = $view['_type'];
                     }else{
-                        $type = '';
+                        $type = 'LEFT';
                     }
                     $tableName   .= ' '.strtoupper($type).' JOIN ';
                     $len  =  strlen($type.'_JOIN ');
