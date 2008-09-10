@@ -87,17 +87,20 @@ abstract class Action extends Base
      */
     protected function _initialize()
     {
-        //判断是否有Action缓存
-        if(C('ACTION_CACHE_ON') && in_array(ACTION_NAME,$this->_cacheAction,true)) {
-            $content    =   S(md5(__SELF__));
-            if($content) {
-                echo $content;
-                exit;
+        if($this->isGet()) {
+            //判断是否有Action缓存
+            if(C('ACTION_CACHE_ON') && in_array(ACTION_NAME,$this->_cacheAction,true)) {
+                $content    =   S(md5(__SELF__));
+                if($content) {
+                    echo $content;
+                    exit;
+                }
             }
         }
         return ;
     }
 
+    // 判断是否为AjAX提交
     protected function isAjax() {
         if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) ) {
             if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])=='xmlhttprequest')
@@ -108,6 +111,76 @@ abstract class Action extends Base
             return true;
         }
         return false;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否POST请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
+    protected function isPost()
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']) == 'post';
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否GET请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
+    protected function isGet()
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']) == 'get';
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否Head请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
+    protected function isHead()
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']) == 'head';
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否Put请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
+    protected function isPut()
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']) == 'put';
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否DELETE请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
+    protected function isDelete()
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']) == 'delete';
     }
 
     /**
@@ -409,6 +482,10 @@ abstract class Action extends Base
             // 返回xml格式数据
             header("Content-Type:text/xml; charset=".C('OUTPUT_CHARSET'));
             exit(xml_encode($result));
+        }elseif(strtoupper($type)=='EVAL'){
+            // 返回可执行的js脚本
+            header("Content-Type:text/html; charset=".C('OUTPUT_CHARSET'));
+            exit($data);
         }else{
             // TODO 增加其它格式
         }
