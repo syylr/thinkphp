@@ -77,7 +77,9 @@ class ResultIterator extends Base implements IteratorAggregate
         if(empty($this->data)) {
             $this->db   =   Db::getInstance();
             $this->data =   $this->db->query($this->sql);
-            $this->size  =   count($this->data);
+            if(is_array($this->data)) {
+                $this->size  =   count($this->data);
+            }
         }
         return $this->data;
     }
@@ -98,5 +100,30 @@ class ResultIterator extends Base implements IteratorAggregate
         return $this->size;
     }
 
+    /**
+     +----------------------------------------------------------
+     * 获取要执行的SQL
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return integer
+     +----------------------------------------------------------
+     */
+    public function getSql() {
+        return $this->sql;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 重置查询结果
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return integer
+     +----------------------------------------------------------
+     */
+    public function resetData() {
+        $this->data = null;
+    }
 };
 ?>
