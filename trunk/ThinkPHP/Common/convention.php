@@ -42,6 +42,7 @@ return  array(
 	'ROUTER_ON'					=>	true,	// 启用路由判断
 	'COMPONENT_DEPR'			=>	'@',		// 组件模块和操作的URL分割符
 	'COMPONENT_TYPE'			=>	1,	 //组件目录结构  1 Lib\User\Action\ 2 Lib\Action\User\
+    'URL_CASE_INSENSITIVE'  =>   false, // URL是否不区分大小写
 
 	/* 日志设置 */
 	'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
@@ -115,7 +116,7 @@ return  array(
 	'USER_AUTH_GATEWAY'	=>	'/Public/login',	// 默认认证网关
 	'NOT_AUTH_MODULE'		=>	'Public',		// 默认无需认证模块
 	'REQUIRE_AUTH_MODULE'=>	'',		// 默认需要认证模块
-	'RBAC_ERROR_PAGE'		=>	'',		// RBAC认证没有权限的错误页面
+	'RBAC_ERROR_PAGE'	        =>	'',		// RBAC认证没有权限的错误页面
 
 	/* SESSION设置 */
 	'SESSION_NAME'				=>	'ThinkID',		// 默认Session_name 如果需要不同项目共享SESSION 可以设置相同
