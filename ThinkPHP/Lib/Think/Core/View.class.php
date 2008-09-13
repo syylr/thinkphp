@@ -322,7 +322,7 @@ class View extends Base
             $templateFile = C('TMPL_FILE_NAME');
         }elseif(strpos($templateFile,'@')){
             // 引入其它主题的操作模板 必须带上模块名称 例如 blue@User:add
-            $templateFile   =   TMPL_PATH.'/'.str_replace(array('@',':'),'/',$templateFile).C('TEMPLATE_SUFFIX');
+            $templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).C('TEMPLATE_SUFFIX');
         }elseif(strpos($templateFile,':')){
             // 引入其它模块的操作模板
             $templateFile   =   TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).C('TEMPLATE_SUFFIX');
