@@ -277,6 +277,10 @@ class App extends Base
 				$module	=	$modules[$module];
 			}
 		}
+        if(C('URL_CASE_INSENSITIVE')) {
+            // URL地址不区分大小写
+            $module = ucwords(strtolower($module));
+        }
         return $module;
     }
 
@@ -455,7 +459,6 @@ class App extends Base
 	        C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
 	        define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
 		}
-
         //网站公共文件地址
         define('WEB_PUBLIC_URL', WEB_URL.'/Public');
         //项目模板目录
