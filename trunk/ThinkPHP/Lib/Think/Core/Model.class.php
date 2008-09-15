@@ -354,7 +354,8 @@ class Model extends Base  implements IteratorAggregate
         if($this->viewModel) {
             $where  =   $this->checkCondition($where);
         }
-        if(false === $this->db->save($data,$table,$where,$limit,$order,$lock)){
+        $result  =  $this->db->save($data,$table,$where,$limit,$order,$lock);
+        if(false ===$result ){
             $this->error = L('_OPERATION_WRONG_');
             return false;
         }else {
@@ -365,7 +366,7 @@ class Model extends Base  implements IteratorAggregate
             }
             // 后置调用
             $this->_after_update($data,$where);
-            return true;
+            return $result;
         }
     }
     // 更新回调方法
