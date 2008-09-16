@@ -123,7 +123,7 @@ class TagLibCx extends TagLib
         $key     =   !empty($tag['key'])?$tag['key']:'i';
         $mod    =   isset($tag['mod'])?$tag['mod']:'2';
         $name   = $this->autoBuildVar($name);
-        $parseStr  =  '<?php if(isset('.$name.')): ?>';
+        $parseStr  =  '<?php if(is_array('.$name.')): ?>';
         $parseStr   .= '<?php $'.$key.' = 0; ?>';
         if(!empty($length)) {
             $parseStr  .= '<?php '.$name.'= array_slice('.$name.','.$offset.','.$length.') ?>';
