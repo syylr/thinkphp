@@ -123,7 +123,7 @@ class TagLibHtml extends TagLib
         }else if(!empty($values)) {
             $parseStr   .= '<?php  for($i=0;$i<count($'.$values.');$i++) { ?>';
             if(!empty($selected)) {
-                $parseStr   .= '<?php if(!empty($'.$selected.') && ($'.$selected.' == $'.$values.'[$i] || in_array($'.$values.'[$i],$'.$selected.'))) { ?>';
+                $parseStr   .= '<?php if(isset($'.$selected.') && ((is_string($'.$selected.') && $'.$selected.' == $'.$values.'[$i]) || (is_array($'.$selected.') && in_array($'.$values.'[$i],$'.$selected.')))) { ?>';
                 $parseStr   .= '<option selected="selected" value="<?php echo $'.$values.'[$i] ?>"><?php echo $'.$output.'[$i] ?></option>';
                 $parseStr   .= '<?php }else { ?><option value="<?php echo $'.$values.'[$i] ?>"><?php echo $'.$output.'[$i] ?></option>';
                 $parseStr   .= '<?php } ?>';
