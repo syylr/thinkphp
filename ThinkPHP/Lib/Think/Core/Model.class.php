@@ -2849,7 +2849,7 @@ class Model extends Base  implements IteratorAggregate
                         // 指定JOIN类型 例如 RIGHT INNER LEFT 下一个表有效
                         $type = $view['_type'];
                     }else{
-                        $type = 'LEFT';
+                        $type = '';
                     }
                     $tableName   .= ' '.strtoupper($type).' JOIN ';
                     $len  =  strlen($type.'_JOIN ');
