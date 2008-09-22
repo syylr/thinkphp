@@ -1528,6 +1528,9 @@ class Model extends Base  implements IteratorAggregate
      */
     public function deleteByIds($ids,$limit='',$order='',$autoLink=false)
     {
+        if(is_array($ids)) {
+            $ids    =    implode(',',$ids);
+        }
         return $this->_delete(false,$this->getPk()." IN ($ids)",$limit,$order,$autoLink);
     }
 
@@ -3067,7 +3070,7 @@ class Model extends Base  implements IteratorAggregate
      * @return string
      +----------------------------------------------------------
      */
-    public function getNumRows() {
+    public function getAffectRows() {
         return $this->db->numRows;
     }
 
