@@ -102,7 +102,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getATime()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['atime'];
     }
 
@@ -117,7 +117,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getCTime()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['ctime'];
     }
 
@@ -132,7 +132,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getChildren()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         if($current['isDir']){
             return new Dir($current['pathname']);
         }
@@ -150,7 +150,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getFilename()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['filename'];
     }
 
@@ -165,7 +165,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getGroup()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['group'];
     }
 
@@ -180,7 +180,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getInode()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['inode'];
     }
 
@@ -195,7 +195,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getMTime()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['mtime'];
     }
 
@@ -210,7 +210,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getOwner()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['owner'];
     }
 
@@ -225,7 +225,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getPath()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['path'];
     }
 
@@ -240,7 +240,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getPathname()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['pathname'];
     }
 
@@ -255,7 +255,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getPerms()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['perms'];
     }
 
@@ -270,7 +270,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getSize()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['size'];
     }
 
@@ -285,7 +285,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function getType()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['type'];
     }
 
@@ -300,7 +300,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function isDir()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['isDir'];
     }
 
@@ -315,7 +315,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function isFile()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['isFile'];
     }
 
@@ -330,7 +330,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function isLink()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['isLink'];
     }
 
@@ -346,7 +346,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function isExecutable()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['isExecutable'];
     }
 
@@ -362,7 +362,7 @@ class Dir extends Base implements IteratorAggregate
      */
     function isReadable()
     {
-        $current = $this->current($this->_values);
+        $current = current($this->_values);
         return $current['isReadable'];
     }
 
