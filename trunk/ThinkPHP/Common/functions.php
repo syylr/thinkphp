@@ -1228,7 +1228,8 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
             unlink($filename);
             return false;
         }
-        $value  =    eval(substr($content,57,-2));
+        $str       = substr($content,57,-2);
+        $value    = eval($str);
         $_cache[$name]   =   $value;
     }else{
         $value  =   false;
