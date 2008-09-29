@@ -2773,8 +2773,19 @@ class Model extends Base  implements IteratorAggregate
                 }
                 break;
             case 'unique': // 验证某个值是否唯一
-                if($this->getBy($val[0],$data[$val[0]])) {
-                    return false;
+                if(is_array($val[0])) {
+                    // 支持多个字段验证
+                    $map = array();
+                    foreach ($val[0] as $field){
+                        $map[$field]   =  $data[$field];
+                    }
+                    if($this->find($map)) {
+                        return false;
+                    }
+                }else{
+                    if($this->getBy($val[0],$data[$val[0]])) {
+                        return false;
+                    }
                 }
                 break;
             case 'regex':
