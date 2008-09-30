@@ -626,6 +626,50 @@ class Model extends Base  implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
+     * 获取数据的时候过滤数据字段
+     +----------------------------------------------------------
+     * @access pubic
+     +----------------------------------------------------------
+     * @param mixed $result 查询的数据
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function filterFields(&$result) {
+        if(!empty($this->_filter)) {
+            foreach ($this->_filter as $field=>$filter){
+                $fun  =  $filter[1];
+                if(is_array($result) && isset($result[$field])) {
+                    $result[$field]  =  $fun($result[$field]);
+                }elseif(isset($result->$field)){
+                    $result->$field =  $fun($result->$field);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取数据列表的时候过滤数据字段
+     +----------------------------------------------------------
+     * @access pubic
+     +----------------------------------------------------------
+     * @param array $resultSet 查询的数据集
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function filterListFields(&$resultSet) {
+        if(!empty($this->_filter)) {
+            foreach ($resultSet as $key=>$result){
+                $resultSet[$key]  =  $this->filterFields($result);
+            }
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
      * 获取数据集的文本字段
      +----------------------------------------------------------
      * @access pubic
@@ -888,6 +932,16 @@ class Model extends Base  implements IteratorAggregate
                         $this->blobValues[$this->name.'_@@_?id_@@_'.$field] =   $data[$field];
                     }
                     unset($data[$field]);
+                }
+            }
+        }
+        // 写入数据的时候检查需要过滤的数据字段
+        // $_filter  =  array('field'=>array('fun1','fun2'));
+        if(!empty($this->_filter)) {
+            foreach ($this->_filter as $field=>$filter){
+                if(isset($data[$field])) {
+                    $fun              =  $filter[0];
+                    $data[$field]   =  $fun($data[$field]);
                 }
             }
         }
@@ -2376,6 +2430,8 @@ class Model extends Base  implements IteratorAggregate
                 $this->cacheLockVersion($result);
                 // 获取Blob数据
                 $this->getBlobFields($result);
+                // 判断数据过滤
+                $this->filterFields($result);
                 // 获取关联记录
                 if( $this->autoReadRelations || $relation ) {
                     $result  =  $this->getRelation($result,$relation);
@@ -2392,7 +2448,8 @@ class Model extends Base  implements IteratorAggregate
                 }
                 // 获取Blob数据
                 $this->getListBlobFields($resultSet);
-
+                // 判断数据过滤
+                $this->filterListFields($resultSet);
                 // 返回数据集对象
                 if( $this->autoReadRelations || $relation ) {
                     // 获取数据集的关联记录
