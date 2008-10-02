@@ -379,7 +379,7 @@ abstract class Action extends Base
      * @return mixed
      +----------------------------------------------------------
      */
-    private function __call($method,$parms) {
+    public function __call($method,$parms) {
         if(strtolower($method) == strtolower(ACTION_NAME.C('ACTION_SUFFIX'))) {
             // 如果定义了_empty操作 则调用
             if(method_exists($this,'_empty')) {
