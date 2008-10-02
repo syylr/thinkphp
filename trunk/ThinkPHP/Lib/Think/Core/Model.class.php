@@ -164,7 +164,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 设置数据对象的值 （魔术方法）
      +----------------------------------------------------------
-     * @access private
+     * @access public
      +----------------------------------------------------------
      * @param string $name 名称
      * @param mixed $value 值
@@ -172,7 +172,7 @@ class Model extends Base  implements IteratorAggregate
      * @return void
      +----------------------------------------------------------
      */
-    private function __set($name,$value) {
+    public function __set($name,$value) {
         // 设置数据对象属性
         $this->data[$name]  =   $value;
     }
@@ -181,14 +181,14 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 获取数据对象的值 （魔术方法）
      +----------------------------------------------------------
-     * @access private
+     * @access public
      +----------------------------------------------------------
      * @param string $name 名称
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    private function __get($name) {
+    public function __get($name) {
         if(isset($this->data[$name])) {
             return $this->data[$name];
         }elseif(property_exists($this,$name)){
@@ -202,7 +202,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * 利用__call方法重载 实现一些特殊的Model方法 （魔术方法）
      +----------------------------------------------------------
-     * @access private
+     * @access public
      +----------------------------------------------------------
      * @param string $method 方法名称
      * @param mixed $args 调用参数
@@ -210,7 +210,7 @@ class Model extends Base  implements IteratorAggregate
      * @return mixed
      +----------------------------------------------------------
      */
-    private function __call($method,$args) {
+    public function __call($method,$args) {
         if(strtolower(substr($method,0,5))=='getby') {
             // 根据某个字段获取记录
             $field   =   strtolower(substr($method,5));
