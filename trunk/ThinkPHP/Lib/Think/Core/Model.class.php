@@ -2830,6 +2830,9 @@ class Model extends Base  implements IteratorAggregate
                 }
                 break;
             case 'unique': // 验证某个值是否唯一
+                if(is_string($val[0]) && strpos($val[0],',')) {
+                    $val[0]  =  explode(',',$val[0]);
+                }
                 if(is_array($val[0])) {
                     // 支持多个字段验证
                     $map = array();
