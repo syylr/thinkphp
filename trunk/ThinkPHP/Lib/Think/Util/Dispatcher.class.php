@@ -176,6 +176,10 @@ class Dispatcher extends Base
             if(!is_array($routes)) {
                 $routes =   $_routes;
             }
+            if(C('HTML_URL_SUFFIX')) {
+                $suffix =   substr(C('HTML_URL_SUFFIX'),1);
+                $_SERVER['PATH_INFO']   =   preg_replace('/\.'.$suffix.'$/','',$_SERVER['PATH_INFO']);
+            }
             if(isset($_GET[C('VAR_ROUTER')])) {
                 // 存在路由变量
                 $routeName  =   $_GET[C('VAR_ROUTER')];
