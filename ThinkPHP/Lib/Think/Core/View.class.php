@@ -212,8 +212,13 @@ class View extends Base
     public function layout($layoutFile,$charset='',$contentType='text/html',$varPrefix='',$display=true)
     {
         $startTime = microtime(TRUE);
+        if(false === strpos($layoutFile,':')) {
+            // 默认获取layout下面的布局文件
+            // 如果不是需要另外指定 例如 Public:index
+            $layoutFile  =  'layout:'.$layoutFile;
+        }
         // 获取布局模板文件
-        $content    =   $this->fetch('layout:'.$layoutFile,$charset,$contentType,$varPrefix,true);
+        $content    =   $this->fetch($layoutFile,$charset,$contentType,$varPrefix);
         // 查找布局包含的页面
         $find = preg_match_all('/<!-- layout::(.+?)::(.+?) -->/is',$content,$matches);
         if($find) {
