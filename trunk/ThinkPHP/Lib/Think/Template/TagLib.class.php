@@ -117,6 +117,10 @@ class TagLib extends Base
         }else {
             $this->xml = dirname(__FILE__).'/Tags/'.$tagLib.'.xml';
         }
+        if(method_exists($this,'_initialize')) {
+            // 检测初始化方法 可以定义标签库名称以及对xml定义文件进行重新定位
+            $this->_initialize();
+        }
         $this->load();
     }
 
