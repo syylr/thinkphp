@@ -219,6 +219,10 @@ class View extends Base
         if($find) {
             for ($i=0; $i< $find; $i++) {
                 // 读取相关的页面模板替换布局单元
+                if(0===strpos($matches[1][$i],'$')){
+                    // 动态布局
+                    $matches[1][$i]  =  $this->get(substr($matches[1][$i],1));
+                }
                 $content    =   str_replace($matches[0][$i],$this->fetch($matches[1][$i],$charset,$contentType,$varPrefix),$content);
             }
         }
