@@ -92,8 +92,7 @@ class Session extends Base
      */
     static function clear()
     {
-        unset($_SESSION);
-        session_destroy();
+        $_SESSION = array();
     }
 
     /**
