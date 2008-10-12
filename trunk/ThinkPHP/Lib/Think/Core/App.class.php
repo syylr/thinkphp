@@ -217,13 +217,13 @@ class App extends Base
 			C(array_change_key_case(include CONFIG_PATH.'config.php'));
 		}
         // 加载项目公共文件
-		if(file_exists(APP_PATH.'/Common/common.php')) {
-	       	include APP_PATH.'/Common/common.php';
+		if(file_exists(COMMON_PATH.'common.php')) {
+	       	include COMMON_PATH.'common.php';
 			if(!C('DEBUG_MODE')) {
 				if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
-					$common	= file_get_contents(APP_PATH.'/Common/common.php');
+					$common	= file_get_contents(COMMON_PATH.'common.php');
 				}else{
-					$common	= php_strip_whitespace(APP_PATH.'/Common/common.php');
+					$common	= php_strip_whitespace(COMMON_PATH.'common.php');
 				}
 			}
 		}
@@ -241,6 +241,13 @@ class App extends Base
 			$content  = $common."<?php\nreturn ".var_export(C(),true).";\n?>";
 			file_put_contents(RUNTIME_PATH.'~app.php',$content);
 		}
+        if(C('AUTO_SETUP_ON')) {
+            // 开启项目自动安装支持
+            if(file_exists(COMMON_PATH.'setup.php') && !file_exists(APP_PATH.'install.ok')) {
+                include COMMON_PATH.'setup.php';
+                file_put_contents(APP_PATH.'install.ok','install ok');
+            }
+        }
 		return ;
 	}
 
