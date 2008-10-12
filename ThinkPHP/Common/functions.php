@@ -593,7 +593,10 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
       }else {
           // 加载其他项目应用类库
           $class    =   substr_replace($class, '', 0,strlen($class_strut[0])+1);
-          $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
+          if(empty($baseUrl)) {
+              $baseUrl  =  '../';
+          }
+          $baseUrl =  APP_PATH.'/'.$baseUrl.$class_strut[0].'/'.LIB_DIR.'/';
       }
       if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
       $classfile = $baseUrl . $class . $ext;
@@ -1048,7 +1051,7 @@ if(!function_exists('stripslashes_deep')) {
     }
 }
 
-function D($className='',$appName='@')
+function D($className='',$appName='@',$level=0)
 {
     static $_model = array();
     if(empty($className)) {
@@ -1057,24 +1060,25 @@ function D($className='',$appName='@')
     if(isset($_model[$appName.$className])) {
         return $_model[$appName.$className];
     }
+    $baseUrl = $level<0?'./':str_repeat('../',$level+1);
     $OriClassName = $className;
     if(strpos($className,C('COMPONENT_DEPR'))) {
         $array  =   explode(C('COMPONENT_DEPR'),$className);
         $className = array_pop($array);
         $className =  C('MODEL_CLASS_PREFIX').$className.C('MODEL_CLASS_SUFFIX');
         if(C('COMPONENT_TYPE')==1) {
-            import($appName.'.'.implode('.',$array).'.Model.'.$className);
+            import($appName.'.'.implode('.',$array).'.Model.'.$className,$baseUrl);
         }else{
-            import($appName.'.Model.'.implode('.',$array).'.'.$className);
+            import($appName.'.Model.'.implode('.',$array).'.'.$className,$baseUrl);
         }
     }else{
         $className =  C('MODEL_CLASS_PREFIX').$className.C('MODEL_CLASS_SUFFIX');
         if(!import($appName.'.Model.'.$className)) {
             // 如果加载失败 尝试自动匹配
             if(C('COMPONENT_TYPE')==1) {
-                import($appName.'.*.Model.'.$className);
+                import($appName.'.*.Model.'.$className,$baseUrl);
             }else{
-                import($appName.'.Model.*.'.$className);
+                import($appName.'.Model.*.'.$className,$baseUrl);
             }
         }
     }
@@ -1088,30 +1092,31 @@ function D($className='',$appName='@')
     }
 }
 
-function A($className,$appName='@')
+function A($className,$appName='@',$level=0)
 {
     static $_action = array();
     if(isset($_action[$appName.$className])) {
         return $_action[$appName.$className];
     }
+    $baseUrl = $level<0?'./':str_repeat('../',$level+1);
     $OriClassName = $className;
     if(strpos($className,C('COMPONENT_DEPR'))) {
         $array  =   explode(C('COMPONENT_DEPR'),$className);
         $className = array_pop($array);
         $className =  C('CONTR_CLASS_PREFIX').$className.C('CONTR_CLASS_SUFFIX');
         if(C('COMPONENT_TYPE')==1) {
-            import($appName.'.'.implode('.',$array).'.Action.'.$className);
+            import($appName.'.'.implode('.',$array).'.Action.'.$className,$baseUrl);
         }else{
-            import($appName.'.Action.'.implode('.',$array).'.'.$className);
+            import($appName.'.Action.'.implode('.',$array).'.'.$className,$baseUrl);
         }
     }else{
         $className =  C('CONTR_CLASS_PREFIX').$className.C('CONTR_CLASS_SUFFIX');
         if(!import($appName.'.Action.'.$className)) {
             // 如果加载失败 尝试加载组件类库
             if(C('COMPONENT_TYPE')==1) {
-                import($appName.'.*.Action.'.$className);
+                import($appName.'.*.Action.'.$className,$baseUrl);
             }else{
-                import($appName.'.Action.*.'.$className);
+                import($appName.'.Action.*.'.$className,$baseUrl);
             }
         }
     }
