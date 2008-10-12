@@ -50,6 +50,7 @@ return  array(
 
 	/* 插件设置 */
 	'THINK_PLUGIN_ON'			=>	false,	// 默认启用插件机制
+    'APP_AUTO_SETUP'           =>   false, // 是否启动自动安装支持
 
 	/* 防刷新设置 */
 	'LIMIT_RESFLESH_ON'		=>	false,	// 默认关闭防刷新机制
@@ -75,6 +76,8 @@ return  array(
 	/* 模块和操作设置 */
 	'DEFAULT_MODULE'			=>	'Index', // 默认模块名称
 	'DEFAULT_ACTION'			=>	'index', // 默认操作名称
+    'MODULE_REDIRECT'        =>   '',  // 模块伪装
+    'ACTION_REDIRECT'         =>   '', //  操作伪装
 
 	/* 模板设置 */
 	'TMPL_CACHE_ON'			=>	true,		// 默认开启模板编译缓存 false 的话每次都重新编译模板
@@ -103,6 +106,7 @@ return  array(
 
 	/* 语言时区设置 */
 	'LANG_SWITCH_ON'			=>	false,	 // 默认关闭多语言包功能
+    'LANG_CACHE_ON'           =>    false, // 默认关闭语言包的缓存 大型应用可以开启 按照模块的语言包来缓存
 	'DEFAULT_LANGUAGE'		=>	'zh-cn',	 // 默认语言
 	'TIME_ZONE'					=>	'PRC',		 // 默认时区
 
@@ -167,6 +171,7 @@ return  array(
 	'COOKIE_DOMAIN'			=>	'',	// Cookie有效域名
 	'COOKIE_PATH'				=>	'/',			// Cookie路径
 	'COOKIE_PREFIX'				=>	'', // Cookie前缀 避免冲突
+    'COOKIE_SECRET_KEY'     =>   '',  // Cookie 加密Key
 
 	/* 分页设置 */
 	'PAGE_NUMBERS'				=>	5,			// 分页显示页数
