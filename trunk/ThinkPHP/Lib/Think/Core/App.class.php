@@ -241,7 +241,7 @@ class App extends Base
 			$content  = $common."<?php\nreturn ".var_export(C(),true).";\n?>";
 			file_put_contents(RUNTIME_PATH.'~app.php',$content);
 		}
-        if(C('AUTO_SETUP_ON')) {
+        if(C('APP_AUTO_SETUP')) {
             // 开启项目自动安装支持
             if(file_exists(COMMON_PATH.'setup.php') && !file_exists(APP_PATH.'install.ok')) {
                 include COMMON_PATH.'setup.php';
