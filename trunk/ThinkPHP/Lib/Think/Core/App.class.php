@@ -358,7 +358,7 @@ class App extends Base
 
 			// 定义当前语言
 			define('LANG_SET',$langSet);
-			if(file_exists(TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php')) {
+			if(C('LANG_CACHE_ON') && file_exists(TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php')) {
 				// 加载语言包缓存文件
 				L(include TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php');
 			}else{
@@ -369,19 +369,21 @@ class App extends Base
 					L(include THINK_PATH.'/Lang/'.$defaultLang.'.php');
 				}
 
-			// 读取项目（公共）语言包
-			if (file_exists(LANG_PATH.LANG_SET.'/common.php'))
-				L(include LANG_PATH.LANG_SET.'/common.php');
-			else
-				L(include LANG_PATH.$defaultLang.'/common.php');
+                // 读取项目（公共）语言包
+                if (file_exists(LANG_PATH.LANG_SET.'/common.php'))
+                    L(include LANG_PATH.LANG_SET.'/common.php');
+                else
+                    L(include LANG_PATH.$defaultLang.'/common.php');
 
-			// 读取当前模块的语言包
-			if (file_exists(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
-				L(include LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php');
+                // 读取当前模块的语言包
+                if (file_exists(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
+                    L(include LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php');
 
-				// 写入语言包缓存文件
-				$content  = "<?php\nreturn ".var_export(L(),true).";\n?>";
-				file_put_contents(TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php',$content);
+                if(C('LANG_CACHE_ON')) {
+                    // 写入语言包缓存文件
+                    $content  = "<?php\nreturn ".var_export(L(),true).";\n?>";
+                    file_put_contents(TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php',$content);
+                }
 			}
 		}else{
 			// 不使用语言包功能，仅仅加载框架语言文件
