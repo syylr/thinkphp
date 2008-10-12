@@ -639,10 +639,20 @@ class Model extends Base  implements IteratorAggregate
         if(!empty($this->_filter)) {
             foreach ($this->_filter as $field=>$filter){
                 $fun  =  $filter[1];
-                if(is_array($result) && isset($result[$field])) {
-                    $result[$field]  =  $fun($result[$field]);
-                }elseif(isset($result->$field)){
-                    $result->$field =  $fun($result->$field);
+                if(isset($filter[2]) && $filter[2]){
+                    // 传递整个数据对象作为参数
+                    if(is_array($result)) {
+                        $result[$field]  =  $fun($result);
+                    }else{
+                        $result->$field =  $fun($result);
+                    }
+                }else{
+                    // 传递字段的值作为参数
+                    if(is_array($result) && isset($result[$field])) {
+                        $result[$field]  =  $fun($result[$field]);
+                    }elseif(isset($result->$field)){
+                        $result->$field =  $fun($result->$field);
+                    }
                 }
             }
         }
@@ -941,7 +951,13 @@ class Model extends Base  implements IteratorAggregate
             foreach ($this->_filter as $field=>$filter){
                 if(isset($data[$field])) {
                     $fun              =  $filter[0];
-                    $data[$field]   =  $fun($data[$field]);
+                    if(isset($filter[2]) && $filter[2]) {
+                        // 传递整个数据对象作为参数
+                        $data[$field]   =  $fun($data);
+                    }else{
+                        // 传递字段的值作为参数
+                        $data[$field]   =  $fun($data[$field]);
+                    }
                 }
             }
         }
