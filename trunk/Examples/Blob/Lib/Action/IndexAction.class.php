@@ -1,9 +1,10 @@
-<?php 
+<?php
 class IndexAction extends Action {
 	// 首页显示数据列表
 	public function index() {
 		$Blob	= D("Blob");
-		$list	=	$Blob->top6('','*','id desc');
+        // 按照id排序显示前5条记录
+		$list	=	$Blob->order('id desc')->limit(5)->findAll();
 		$this->assign('list',$list);
 		$this->display();
 	}

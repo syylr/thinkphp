@@ -1,13 +1,13 @@
-<?php 
+<?php
 // CURD
 class IndexAction extends Action{
 
 	// 查询数据
 	public function index(){
 		$Form	= D("Form");
-		$list	=	$Form->top6('','*','id desc');
+		$list	=	$Form->limit(5)->order('id desc')->findAll();
 		$this->assign('list',$list);
-		$this->display();		
+		$this->display();
 	}
 
 	// 写入数据
@@ -23,7 +23,7 @@ class IndexAction extends Action{
 			$this->error($Form->getError());
 		}
 	}
-	
+
 	// 更新数据
 	public function update() {
 		$Form	=	D("Form");
@@ -66,12 +66,12 @@ class IndexAction extends Action{
 		}else{
 			exit('编辑项不存在！');
 		}
-		
+
 	}
 	// 生成验证码
 	public function verify() {
         import("ORG.Util.Image");
-       	Image::buildImageVerify(); 
+       	Image::buildImageVerify();
 	}
-} 
+}
 ?>

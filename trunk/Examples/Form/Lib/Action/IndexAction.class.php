@@ -1,9 +1,10 @@
-<?php 
+<?php
 class IndexAction extends Action{
 	// 首页
 	public function index(){
 		$Form	= D("Form");
-		$list	=	$Form->top6('','*','id desc');
+        // 按照id排序显示前6条记录
+		$list	=	$Form->order('id desc')->top6();
 		$this->assign('list',$list);
 		$this->display();
 	}
@@ -22,7 +23,7 @@ class IndexAction extends Action{
 	// 生成验证码
 	public function verify() {
         import("ORG.Util.Image");
-       	Image::buildImageVerify(); 
+       	Image::buildImageVerify();
 	}
-} 
+}
 ?>

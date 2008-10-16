@@ -1,4 +1,4 @@
-<?php 
+<?php
 class IndexAction extends Action{
 	// 首页
 	public function index(){
@@ -9,9 +9,9 @@ class IndexAction extends Action{
 
 		$Form	= D("Form");
 		// 随便进行几个查询，来显示页面的SQL查询记录
-		$Form->findAll('','id,title','id desc','0,6');
+		$Form->field('id,title')->order('id desc')->limit('0,6')->findAll();
 		$vo	=	$Form->find();
-		$Form->top3('','id,title','id desc');
+		$Form->field('id,title')->order('id desc')->top3();
 
 		// 增加自己的调试Trace信息
 		$this->trace('调试数据',dump($vo,false));
@@ -19,5 +19,5 @@ class IndexAction extends Action{
 		$this->display();
 	}
 
-} 
+}
 ?>
