@@ -1,4 +1,4 @@
-<?php 
+<?php
 import("@.Action.PublicAction");
 class BlogAction extends PublicAction {
 
@@ -8,9 +8,9 @@ class BlogAction extends PublicAction {
 		$this->assign("category",$cate);
 		if(ACTION_NAME != 'add') {
 			$Blog	=	D("Blog");
-			$new = $Blog->top8("status=1","id,readCount,commentCount,categoryId,cTime,title",'cTime desc');
+			$new = $Blog->where("status=1")->field("id,readCount,commentCount,categoryId,cTime,title")->order('cTime desc')->top10();
 			$Comment = D("Comment");
-			$comment	=	$Comment->top8("module='Blog' and status=1","","id desc");
+			$comment	=	$Comment->where("module='Blog' and status=1")->order("id desc")->top8();
 			$this->assign("lastArticles",$new);
 			$this->assign("lastComments",$comment);
 
@@ -27,7 +27,7 @@ class BlogAction extends PublicAction {
 				}
 				$_SESSION['BlogArchiveList']	=	$list;
 			}else {
-				$list  = $_SESSION['BlogArchiveList'];        	
+				$list  = $_SESSION['BlogArchiveList'];
 			}
 			$this->assign('monthList',$list);
 		}
@@ -53,14 +53,14 @@ class BlogAction extends PublicAction {
 		$p          = new Page($count,$listRows);
 		$p->setConfig('header' ,'篇日志 ');
 		$this->assign("mode",$_GET['mode']);
-		$list	=	$Blog->findAll(array('status'=>1),$fields,'id desc',$p->firstRow.','.$p->listRows);
+		$list	=	$Blog->where('status=1')->field($fields)->order('id desc')->limit($p->firstRow.','.$p->listRows)->findAll();
 		$page  = $p->show();
 		$this->assign("list",$list);
 		$this->assign("page",       $page);
 
 		// 标签列表
         $dao = D("Tag");
-        $list  = $dao->findAll("module='Blog'",'id,name,count','count desc','0,25');
+        $list  = $dao->where("module='Blog'")->field('id,name,count')->order('count desc')->limit('0,25')->findAll();
         $this->assign('tags',$list);
 
 		$stat = array();
@@ -128,33 +128,33 @@ class BlogAction extends PublicAction {
 		}
 	}
     // 获取归档日志
-    public function archive() 
+    public function archive()
     {
     	if(checkdate($_REQUEST['month'],'01',$_REQUEST['year'] ) )
         {
                 $begin_time    = strtotime($_REQUEST['year'].$_REQUEST['month'].'01');
-                $end_time = strtotime('+1 month',$begin_time); 
+                $end_time = strtotime('+1 month',$begin_time);
                 $dao = D("BlogView");
                 $this->assign('date',$begin_time);
-                $this->assign('title',toDate($begin_time,'Y年m月').' 归档日志'); 
+                $this->assign('title',toDate($begin_time,'Y年m月').' 归档日志');
 				$where	=	array('cTime'=>array(array('gt',$begin_time),array('lt', $end_time)),'status'=>1);
                 $count  =  $dao->count($where);
                 //创建分页对象
 				$fields	=	'id,title,category,categoryId,cTime,readCount,commentCount';
                 //分页查询数据
-                $voList     = $dao->findAll($where,$fields,'cTime desc'); 
+                $voList     = $dao->where($where)->field($fields)->order('cTime desc')->findAll();
                 //分页显示
                 //模板赋值显示
                 $this->assign('list',       $voList);
 				$this->assign("count",$count);
     	}else {
                 $this->redirect('index');
-                return ;            
+                return ;
         }
         $this->display();
     }
 
-  public function tag() 
+  public function tag()
     {
     	$dao = D("Tag");
         if(!empty($_GET['name'])) {
@@ -174,7 +174,7 @@ class BlogAction extends PublicAction {
 				//分页显示
 				$page       = $p->show();
 				//模板赋值显示
-				$this->assign("page",       $page);    
+				$this->assign("page",       $page);
 				$this->assign('list',$list);
 			}
 			$this->assign('tag',$name);
@@ -187,7 +187,7 @@ class BlogAction extends PublicAction {
     }
 
     // 查看分类日志
-    public function category() 
+    public function category()
     {
     	$id   =  $_REQUEST['id'];
         if(!empty($id)) {
@@ -203,7 +203,7 @@ class BlogAction extends PublicAction {
 				$fields	=	'id,title,categoryId,cTime,readCount,commentCount';
                 $p          = new Page($count,$listRows);
                 //分页查询数据
-                $voList     = $dao->findAll(array("status"=>1,'categoryId'=>$id),$fields,'cTime desc',$p->firstRow.','.$p->listRows);         
+                $voList     = $dao->where(array("status"=>1,'categoryId'=>$id))->field($fields)->order('cTime desc')->limit($p->firstRow.','.$p->listRows)->findAll();
                 //分页显示
                 $page       = $p->show();
                 //模板赋值显示
@@ -218,7 +218,7 @@ class BlogAction extends PublicAction {
         }else {
         	$this->redirect('index');
         }
-        $this->display(); 
+        $this->display();
         return ;
     }
 

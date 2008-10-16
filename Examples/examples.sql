@@ -247,7 +247,7 @@ CREATE TABLE `think_node` (
   `remark` varchar(255) default NULL,
   `seqNo` smallint(6) unsigned default NULL,
   `pid` smallint(6) unsigned NOT NULL default '0',
-  `level` tinyint(1) unsigned NOT NULL,
+  `level` tinyint(1) unsigned NOT NULL default '0',
   `type` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `name` (`name`),
