@@ -49,7 +49,7 @@ class Log extends Base
      */
     static function record($message,$type=WEB_LOG_ERROR) {
         $now = date('[ y-m-d H:i:s ]');
-        self::$log[$type][] =   "\n$now\n$message";
+        self::$log[$type][] =   "\r\n$now\r\n$message";
     }
 
     /**
@@ -127,7 +127,7 @@ class Log extends Base
         if(file_exists($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
               rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
         }
-        error_log("$now\n$message\n", FILE_LOG,$destination );
+        error_log("$now\r\n$message\r\n", FILE_LOG,$destination );
         clearstatcache();
     }
 
