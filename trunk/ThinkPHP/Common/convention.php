@@ -43,6 +43,7 @@ return  array(
 	'COMPONENT_DEPR'			=>	'@',		// 组件模块和操作的URL分割符
 	'COMPONENT_TYPE'			=>	1,	 //组件目录结构  1 Lib\User\Action\ 2 Lib\Action\User\
     'URL_CASE_INSENSITIVE'  =>   false, // URL是否不区分大小写
+    'CHECK_FILE_CASE'  =>   false, // 是否检查文件的大小写 对Windows平台有效
 
 	/* 日志设置 */
 	'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
