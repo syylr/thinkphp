@@ -171,7 +171,7 @@ class Dispatcher extends Base
      */
     private static function routerCheck() {
         // 搜索路由映射 把路由名称解析为对应的模块和操作
-        if(file_exists(CONFIG_PATH.'routes.php')) {
+        if(file_exists_case(CONFIG_PATH.'routes.php')) {
             $routes = include CONFIG_PATH.'routes.php';
             if(!is_array($routes)) {
                 $routes =   $_routes;

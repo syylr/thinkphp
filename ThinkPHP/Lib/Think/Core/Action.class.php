@@ -386,7 +386,7 @@ abstract class Action extends Base
                 $this->_empty();
             }else {
                 // 检查是否存在模版 如果有直接输出模版
-                if(file_exists(C('TMPL_FILE_NAME'))) {
+                if(file_exists_case(C('TMPL_FILE_NAME'))) {
                     $this->display();
                 }else{
                     // 调试模式抛出异常

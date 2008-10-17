@@ -213,11 +213,11 @@ class App extends Base
 		C(array_change_key_case(include THINK_PATH.'/Common/convention.php'));
 
         // 加载项目配置文件
-		if(file_exists(CONFIG_PATH.'config.php')) {
+		if(file_exists_case(CONFIG_PATH.'config.php')) {
 			C(array_change_key_case(include CONFIG_PATH.'config.php'));
 		}
         // 加载项目公共文件
-		if(file_exists(COMMON_PATH.'common.php')) {
+		if(file_exists_case(COMMON_PATH.'common.php')) {
 	       	include COMMON_PATH.'common.php';
 			if(!C('DEBUG_MODE')) {
 				if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
@@ -231,7 +231,7 @@ class App extends Base
 		if(C('DEBUG_MODE')) {
 			// 加载系统默认的开发模式配置文件
 			C(array_change_key_case(include THINK_PATH.'/Common/debug.php'));
-			if(file_exists(CONFIG_PATH.'debug.php')) {
+			if(file_exists_case(CONFIG_PATH.'debug.php')) {
 				// 允许项目增加开发模式配置定义
 				C(array_change_key_case(include CONFIG_PATH.'debug.php'));
 			}
@@ -243,7 +243,7 @@ class App extends Base
 		}
         if(C('APP_AUTO_SETUP')) {
             // 开启项目自动安装支持
-            if(file_exists(COMMON_PATH.'setup.php') && !file_exists(APP_PATH.'install.ok')) {
+            if(file_exists_case(COMMON_PATH.'setup.php') && !file_exists(APP_PATH.'install.ok')) {
                 include COMMON_PATH.'setup.php';
                 file_put_contents(APP_PATH.'install.ok','install ok');
             }
@@ -370,20 +370,20 @@ class App extends Base
 				L(include TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php');
 			}else{
 				// 加载框架语言包
-				if (file_exists(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
+				if (file_exists_case(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
 					L(include THINK_PATH.'/Lang/'.LANG_SET.'.php');
 				}else{
 					L(include THINK_PATH.'/Lang/'.$defaultLang.'.php');
 				}
 
                 // 读取项目（公共）语言包
-                if (file_exists(LANG_PATH.LANG_SET.'/common.php'))
+                if (file_exists_case(LANG_PATH.LANG_SET.'/common.php'))
                     L(include LANG_PATH.LANG_SET.'/common.php');
                 else
                     L(include LANG_PATH.$defaultLang.'/common.php');
 
                 // 读取当前模块的语言包
-                if (file_exists(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
+                if (file_exists_case(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
                     L(include LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php');
 
                 if(C('LANG_CACHE_ON')) {
