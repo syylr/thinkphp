@@ -211,7 +211,20 @@ class View extends Base
         if($find) {
             for ($i=0; $i< $find; $i++) {
                 // 读取相关的页面模板替换布局单元
-                $content    =   str_replace($matches[0][$i],$this->fetch($matches[1][$i],$charset,$contentType,$varPrefix),$content);
+                if(0===strpos($matches[1][$i],'$')){
+                    // 动态布局
+                    $matches[1][$i]  =  $this->get(substr($matches[1][$i],1));
+                }
+                // 检查布局缓存是否有效
+                $guid =  md5($matches[1][$i]);
+                $cache  =  S($guid);
+                if($cache) {
+                    $layoutContent = $cache;
+                }else{
+                    $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType,$varPrefix);
+                    S($guid,$layoutContent,$matches[2][$i]);
+                }
+                $content    =   str_replace($matches[0][$i],$layoutContent,$content);
             }
         }
         if($display) {
@@ -323,7 +336,7 @@ class View extends Base
             $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TEMPLATE_SUFFIX');
         }
 
-        if(!file_exists($templateFile)){
+        if(!file_exists_case($templateFile)){
             throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
         }
         // 模版变量过滤
