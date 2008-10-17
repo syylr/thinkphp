@@ -349,7 +349,7 @@ class View extends Base
             $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TEMPLATE_SUFFIX');
         }
 
-        if(!file_exists($templateFile)){
+        if(!file_exists_case($templateFile)){
             throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
         }
         // 模版变量过滤
