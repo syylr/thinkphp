@@ -547,7 +547,7 @@ function require_cache($filename)
 // 区分大小写的文件存在判断
 function file_exists_case($filename) {
     if(file_exists($filename)) {
-        if(IS_WIN) {
+        if(IS_WIN && C('CHECK_FILE_CASE')) {
             $files =  scandir(dirname($filename));
             if(!in_array(basename($filename),$files)) {
                 return false;
