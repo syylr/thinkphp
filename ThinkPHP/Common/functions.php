@@ -531,7 +531,7 @@ function require_cache($filename)
 {
     static $_import = array();
     if (!isset($_import[$filename])) {
-        if(file_exists($filename)){
+        if(file_exists_case($filename)){
             require $filename;
             $GLOBALS['include_file']++;
             $_import[$filename] = true;
@@ -542,6 +542,20 @@ function require_cache($filename)
         }
     }
     return $_import[$filename];
+}
+
+// 区分大小写的文件存在判断
+function file_exists_case($filename) {
+    if(file_exists($filename)) {
+        if(IS_WIN) {
+            $files =  scandir(dirname($filename));
+            if(!in_array(basename($filename),$files)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 /**
