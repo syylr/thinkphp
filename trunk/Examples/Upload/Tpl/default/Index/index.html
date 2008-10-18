@@ -12,17 +12,6 @@
  <div id="main" class="main" >
 <SCRIPT LANGUAGE="JavaScript">
 <!--
-function addRow(){   
-	curFileNum++;
-	rowsnum++;
-    var row=tbl.insertRow(-1);
-	//var td = arow.insertCell();
-	var cell = document.createElement("td");
-	cell.innerHTML='<div class="fLeft hMargin"><IMG SRC="__PUBLIC__/Images/del.gif"  style="cursor:hand" onfocus="javascript:getObject(this)" onclick="deleteRow();" WIDTH="20" HEIGHT="20" BORDER="0" ALT="删除" align="absmiddle"></div> <div class="impBtn  fLeft" ><INPUT TYPE="file" id="file'+curFileNum+'" name="file'+ curFileNum +'" class="file  huge"></div><div class="fLeft hMargin"></div>';
-	cell.align="center"
-	row.appendChild(cell); 
-	//addFileForm.num.value=rowsnum;
-}
 function deleteRow(){
 	if(tbl.rows.length>0){
 		tbl.deleteRow(rindex); //删除当前行
@@ -32,8 +21,24 @@ function deleteRow(){
 	}
 	rindex="";
 }
+
+function addRow(){   
+    curFileNum++;
+    rowsnum++;
+    var row=tbl.insertRow(-1);
+    //var td = arow.insertCell();
+    var cell = document.createElement("td");
+    cell.innerHTML='<div class="fLeft hMargin"><IMG SRC="__PUBLIC__/Images/del.gif"  style="cursor:hand" onclick="getObject(this);deleteRow();" WIDTH="20" HEIGHT="20" BORDER="0" ALT="删除" align="absmiddle"></div> <div class="impBtn  fLeft" ><INPUT TYPE="file" id="file'+curFileNum+'" name="file'+ curFileNum +'" class="file  huge"></div><div class="fLeft hMargin"></div>';
+    cell.align="center"
+    row.appendChild(cell); 
+    //addFileForm.num.value=rowsnum;
+}
+
 function getObject(obj){ 
-	rindex=obj.parentElement.parentElement.rowIndex;/*当前行对象*/
+     while(obj.tagName.toLowerCase()!="tr"){
+        obj=obj.parentNode;
+      }
+      rindex=obj.rowIndex;
 }
 
 function uploading(msg){
