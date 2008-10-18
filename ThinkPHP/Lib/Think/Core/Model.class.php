@@ -3216,7 +3216,27 @@ class Model extends Base  implements IteratorAggregate
      */
     public function delConnect($linkNum) {
         if(isset($this->_db[$linkNum])) {
+            $this->_db[$linkNum]->close();
             unset($this->_db[$linkNum]);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 关闭数据库连接
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param integer $linkNum  创建的连接序号
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function closeConnect($linkNum) {
+        if(isset($this->_db[$linkNum])) {
+            $this->_db[$linkNum]->close();
             return true;
         }
         return false;
