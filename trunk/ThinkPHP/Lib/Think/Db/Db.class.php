@@ -68,12 +68,6 @@ class Db extends Base
     // 返回字段数
     protected $numCols          = 0;
 
-    // 查询次数
-    protected $queryTimes     = 0;
-
-    // 写入次数
-    protected $writeTimes       = 0;
-
     // 事务指令数
     protected $transTimes      = 0;
 
