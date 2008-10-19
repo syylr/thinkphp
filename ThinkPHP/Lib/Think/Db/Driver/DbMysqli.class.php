@@ -120,8 +120,6 @@ Class DbMysqli extends Db{
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-
-        $this->queryTimes ++;
         $this->Q(1);
         $this->queryID = $this->_linkID->query($this->queryStr);
         $this->debug();
@@ -161,7 +159,6 @@ Class DbMysqli extends Db{
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-        $this->writeTimes ++;
         $this->W(1);
         $result =   $this->_linkID->query($this->queryStr);
         $this->debug();

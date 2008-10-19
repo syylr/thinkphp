@@ -111,7 +111,6 @@ Class DbPdo extends Db{
             //释放前次的查询结果
             if ( !empty($this->PDOStatement) ) {    $this->free();    }
         }
-        $this->queryTimes++;
         $this->Q(1);
         $this->PDOStatement = $this->_linkID->prepare($this->queryStr);
         $result =   $this->PDOStatement->execute();
@@ -155,7 +154,6 @@ Class DbPdo extends Db{
             //释放前次的查询结果
             if ( !empty($this->PDOStatement) ) {    $this->free();    }
         }
-        $this->writeTimes++;
         $this->W(1);
         $result =   $this->_linkID->exec($this->queryStr);
         $this->debug();

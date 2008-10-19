@@ -116,7 +116,6 @@ Class DbIbase extends Db{
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-        $this->queryTimes++;
         $this->Q(1);
         $this->queryID = ibase_query($this->_linkID, $this->queryStr);
         $this->debug();
@@ -156,7 +155,6 @@ Class DbIbase extends Db{
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-        $this->writeTimes++;
         $this->W(1);
         $result =   ibase_query($this->_linkID, $this->queryStr) ;
         $this->debug();
