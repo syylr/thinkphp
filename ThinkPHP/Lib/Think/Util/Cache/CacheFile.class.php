@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -28,7 +28,7 @@ class CacheFile extends Cache
      +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     public function __construct($options='')
@@ -50,12 +50,12 @@ class CacheFile extends Cache
      +----------------------------------------------------------
      * 初始化检查
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
      */
-    private function init() 
+    private function init()
     {
         $stat = stat($this->options['temp']);
 		$dir_perms = $stat['mode'] & 0007777; // Get the permission bits.
@@ -73,7 +73,7 @@ class CacheFile extends Cache
      +----------------------------------------------------------
      * 是否连接
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -87,7 +87,7 @@ class CacheFile extends Cache
      +----------------------------------------------------------
      * 取得变量的存储文件名
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      +----------------------------------------------------------
@@ -116,7 +116,7 @@ class CacheFile extends Cache
      +----------------------------------------------------------
      * 读取缓存
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      +----------------------------------------------------------
@@ -133,7 +133,7 @@ class CacheFile extends Cache
         $content    =   file_get_contents($filename);
         if( false !== $content) {
             $expire  =  (int)substr($content,strlen(C('CACHE_SERIAL_HEADER')), 12);
-            if($expire != -1 && time() > filemtime($filename) + $expire) { 
+            if($expire != -1 && time() > filemtime($filename) + $expire) {
                 //缓存过期删除缓存文件
                 unlink($filename);
                 return false;
@@ -163,7 +163,7 @@ class CacheFile extends Cache
      +----------------------------------------------------------
      * 写入缓存
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      * @param mixed $value  存储数据
@@ -175,7 +175,7 @@ class CacheFile extends Cache
     public function set($name,$value,$expire='')
     {
 		$this->W(1);
-        if(empty($expire)) {
+        if('' === $expire) {
         	$expire =  $this->expire;
         }
         $filename   =   $this->filename($name);
@@ -203,7 +203,7 @@ class CacheFile extends Cache
      +----------------------------------------------------------
      * 删除缓存
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      +----------------------------------------------------------
@@ -219,7 +219,7 @@ class CacheFile extends Cache
      +----------------------------------------------------------
      * 清除缓存
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      +----------------------------------------------------------
