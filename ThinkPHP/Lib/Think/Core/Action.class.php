@@ -360,11 +360,11 @@ abstract class Action extends Base
         return $this->view->get($name);
     }
 
-    protected function __set($name,$value) {
+    public function __set($name,$value) {
         $this->assign($name,$value);
     }
 
-    protected function __get($name) {
+    public function __get($name) {
         return $this->get($name);
     }
 
