@@ -2836,7 +2836,7 @@ class Model extends Base  implements IteratorAggregate
                 }
                 break;
             case 'in': // 验证是否在某个数组范围之内
-                if(!in_array($data[$val[0]] ,$data[$val[1]]) ) {
+                if(!in_array($data[$val[0]] ,$val[1]) ) {
                     return false;
                 }
                 break;
