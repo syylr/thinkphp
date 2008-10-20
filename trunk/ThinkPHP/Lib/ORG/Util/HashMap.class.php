@@ -211,11 +211,11 @@ class HashMap extends Base  implements IteratorAggregate
         return $previous;
     }
 
-    private function __get($name) {
+    public function __get($name) {
         return $this->get($name);
     }
 
-    private function __set($name,$value) {
+    public function __set($name,$value) {
         return $this->put($name,$value);
     }
 
