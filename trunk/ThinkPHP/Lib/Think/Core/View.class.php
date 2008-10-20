@@ -74,6 +74,11 @@ class View extends Base
     public function assign($name,$value=''){
         if(is_array($name)) {
             $this->tVar   =  array_merge($this->tVar,$name);
+        }elseif(is_object($name)){
+            foreach($name as $key =>$val)
+            {
+                $this->tVar[$key] = $val;
+            }
         }else {
             $this->tVar[$name] = $value;
         }
