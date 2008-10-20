@@ -89,6 +89,7 @@ return  array(
 	'CACHFILE_SUFFIX'			=>	'.php',	// 默认模板缓存后缀
 	'TEMPLATE_CHARSET'		=>	'utf-8',	// 模板模板编码
 	'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
+    'DEFAULT_LAYOUT'         =>    'layout:index', // 默认布局模板文件
 
 	/* 模型设置 */
 	'CONTR_CLASS_PREFIX'	=>	'',
