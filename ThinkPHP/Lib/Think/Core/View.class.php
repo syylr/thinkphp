@@ -209,9 +209,13 @@ class View extends Base
      * @return void
      +----------------------------------------------------------
      */
-    public function layout($layoutFile,$charset='',$contentType='text/html',$varPrefix='',$display=true)
+    public function layout($layoutFile='',$charset='',$contentType='text/html',$varPrefix='',$display=true)
     {
         $startTime = microtime(TRUE);
+        if(empty($layoutFile)) {
+            // 留空获取默认配置的布局模板文件
+            $layoutFile  =  C('DEFAULT_LAYOUT');
+        }
         if(false === strpos($layoutFile,':')) {
             // 默认获取layout下面的布局文件
             // 如果不是需要另外指定 例如 Public:index
