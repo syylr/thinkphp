@@ -34,7 +34,7 @@ abstract class Base
      * @param $value  属性值
      +----------------------------------------------------------
      */
-    private function __set($name ,$value)
+    public function __set($name ,$value)
     {
         if(property_exists($this,$name)){
             $this->$name = $value;
@@ -52,7 +52,7 @@ abstract class Base
      * @return mixed
      +----------------------------------------------------------
      */
-    private function __get($name)
+    public function __get($name)
     {
         if(isset($this->$name)){
             return $this->$name;
