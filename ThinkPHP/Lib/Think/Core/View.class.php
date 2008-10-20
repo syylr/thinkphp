@@ -228,14 +228,19 @@ class View extends Base
                     // 动态布局
                     $matches[1][$i]  =  $this->get(substr($matches[1][$i],1));
                 }
-                // 检查布局缓存是否有效
-                $guid =  md5($matches[1][$i]);
-                $cache  =  S($guid);
-                if($cache) {
-                    $layoutContent = $cache;
+                if(0 != $matches[2][$i] ) {
+                    // 设置了布局缓存
+                    // 检查布局缓存是否有效
+                    $guid =  md5($matches[1][$i]);
+                    $cache  =  S($guid);
+                    if($cache) {
+                        $layoutContent = $cache;
+                    }else{
+                        $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType,$varPrefix);
+                        S($guid,$layoutContent,$matches[2][$i]);
+                    }
                 }else{
                     $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType,$varPrefix);
-                    S($guid,$layoutContent,$matches[2][$i]);
                 }
                 $content    =   str_replace($matches[0][$i],$layoutContent,$content);
             }
