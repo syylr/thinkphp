@@ -118,11 +118,11 @@ class Cache extends Base
         return $cache;
     }
 
-    protected function __get($name) {
+    public function __get($name) {
         return $this->get($name);
     }
 
-    protected function __set($name,$value) {
+    public function __set($name,$value) {
         return $this->set($name,$value);
     }
 
