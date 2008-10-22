@@ -224,7 +224,7 @@ class View extends Base
         if(false === strpos($layoutFile,':')) {
             // 默认获取layout下面的布局文件
             // 如果不是需要另外指定 例如 Public:index
-            $layoutFile  =  'layout:'.$layoutFile;
+            $layoutFile  =  'Layout:'.$layoutFile;
         }
         // 获取布局模板文件
         $content    =   $this->fetch($layoutFile,$charset,$contentType,$varPrefix);
