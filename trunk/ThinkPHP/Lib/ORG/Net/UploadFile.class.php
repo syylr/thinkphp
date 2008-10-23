@@ -205,6 +205,7 @@ class UploadFile extends Base
             //过滤无效的上传
             if(!empty($file['name'])) {
                 //登记上传文件的扩展信息
+                $file['key']          =  $key;
                 $file['extension']  = $this->getExt($file['name']);
                 $file['savepath']   = $savePath;
                 $file['savename']   = $this->getSaveName($file);
