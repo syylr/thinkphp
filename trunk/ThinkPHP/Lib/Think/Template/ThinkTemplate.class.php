@@ -409,6 +409,9 @@ class  ThinkTemplate extends Base
             $tagLibs = $matches[1];
             $xml =  '<tpl><tag '.$tagLibs.' /></tpl>';
             $xml = simplexml_load_string($xml);
+            if(!$xml) {
+                throw_exception(L('_XML_TAG_ERROR_'));
+            }
             $xml = (array)($xml->tag->attributes());
             $array = array_change_key_case($xml['@attributes']);
             $tagLibName =  explode(',',$array['name']);
