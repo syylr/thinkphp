@@ -297,6 +297,9 @@ class TagLib extends Base
         $attr = str_replace(">","&gt;", $attr);
         $xml =  '<tpl><tag '.$attr.' /></tpl>';
         $xml = simplexml_load_string($xml);
+        if(!$xml) {
+            throw_exception(L('_XML_TAG_ERROR_').' : '.$attr);
+        }
         $xml = (array)($xml->tag->attributes());
         $array = array_change_key_case($xml['@attributes']);
         $attrs  = $this->getTagAttrList($tag);
