@@ -34,6 +34,7 @@ return Array(
     '_ACTION_NOT_EXIST_'=>'控制器不存在或者没有定义',
     '_MODEL_NOT_EXIST_'=>'模型不存在或者没有定义',
     '_VALID_ACCESS_'=>'没有权限',
+    '_XML_TAG_ERROR_'=>'XML标签语法错误',
     //  错误提示
 
     '_WAITING_GOTO_EXIST_'=>    '请等待系统转向...',
