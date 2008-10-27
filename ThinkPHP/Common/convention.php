@@ -138,6 +138,8 @@ return  array(
 	'SQL_DEBUG_LOG'			=>	false,			// 记录SQL语句到日志文件
 	'DB_FIELDS_CACHE'			=>	true,			// 缓存数据表字段信息
     'SQL_MODE'                    =>   '',          // SQL MODE 针对mysql
+    'FIELDS_DEPR'                 =>   ',',   // 多字段查询的分隔符
+    'TABLE_DESCRIBE_SQL'     =>   '',             //  取得数据表的字段信息的SQL语句
 
 	/* 数据缓存设置 */
 	'DATA_CACHE_TIME'		=>	-1,			// 数据缓存有效期
@@ -191,7 +193,6 @@ return  array(
 	'LIKE_MATCH_FIELDS'		=>	'', //数据库查询的时候需要进行模糊匹配的字段
 	'ACTION_JUMP_TMPL'=>	'Public:success',    // 页面跳转的模板文件
 	'ACTION_404_TMPL'=>	'Public:404',         // 404错误的模板文件
-    'FIELDS_DEPR'                 =>   ',',   // 多字段查询的分隔符
     'TOKEN_ON'                    =>   true,     // 开启令牌验证
     'TOKEN_NAME'                =>   'think_html_token',    // 令牌验证的表单隐藏字段名称
     'TOKEN_TYPE'                 =>    'md5',   // 令牌验证哈希规则
