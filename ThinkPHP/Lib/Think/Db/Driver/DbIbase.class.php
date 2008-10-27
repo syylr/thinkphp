@@ -456,8 +456,7 @@ Class DbIbase extends Db{
      +----------------------------------------------------------
      */
     public function getFields($tableName) {
-        $this->_query('SELECT RDB$FIELD_NAME AS FIELD, RDB$DEFAULT_VALUE AS DEFAULT1, RDB$NULL_FLAG AS NULL1 FROM RDB$RELATION_FIELDS WHERE RDB$RELATION_NAME=UPPER(\''.$tableName.'\') ORDER By RDB$FIELD_POSITION');
-        $result =   $this->getAll();
+        $result   =  $this->_query('SELECT RDB$FIELD_NAME AS FIELD, RDB$DEFAULT_VALUE AS DEFAULT1, RDB$NULL_FLAG AS NULL1 FROM RDB$RELATION_FIELDS WHERE RDB$RELATION_NAME=UPPER(\''.$tableName.'\') ORDER By RDB$FIELD_POSITION');
         $info   =   array();
         foreach ($result as $key => $val) {
             if(is_object($val)) {
@@ -508,8 +507,7 @@ where a.rdb$constraint_type=\'PRIMARY KEY\' and a.rdb$relation_name=UPPER(\''.$t
      */
     public function getTables($dbName='') {
         $sql='SELECT DISTINCT RDB$RELATION_NAME FROM RDB$RELATION_FIELDS WHERE RDB$SYSTEM_FLAG=0';
-        $this->_query($sql);
-        $result =   $this->getAll();
+        $result   =  $this->_query($sql);
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = trim(current($val));
