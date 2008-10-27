@@ -340,7 +340,13 @@ Class DbPdo extends Db{
      */
     public function getFields($tableName) {
         $this->initConnect(true);
-        $sth    =   $this->_linkID->prepare('DESCRIBE '.$tableName);
+        if(C('TABLE_DESCRIBE_SQL')) {
+            // 定义特殊的字段查询SQL
+            $sql   = str_replace('%table%',$tableName,C('TABLE_DESCRIBE_SQL'));
+        }else{
+            $sql   = 'DESCRIBE '.$tableName;
+        }
+        $sth    =   $this->_linkID->prepare($sql);
         $sth->execute();
         $result = $sth->fetchAll(constant('PDO::FETCH_ASSOC'));
         $info   =   array();
