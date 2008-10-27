@@ -59,7 +59,7 @@ Class DbMysqli extends Db{
                                 $config['password'],
                                 $config['database'],
                                 $config['hostport']);
-            if ( !$this->linkID[$linkNum]) {
+            if (mysqli_connect_errno()) {
                 throw_exception(mysqli_connect_error());
             }
             if($this->autoCommit){
