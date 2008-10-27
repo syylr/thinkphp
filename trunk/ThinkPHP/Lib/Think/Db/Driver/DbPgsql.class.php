@@ -361,8 +361,7 @@ Class DbPgsql extends Db{
      +----------------------------------------------------------
      */
     public function getFields($tableName) {
-        $this->_query("select fields_name as \"Field\",fields_type as \"Type\",fields_not_null as \"Null\",fields_key_name as \"Key\",fields_default as \"Default\",fields_default as \"Extra\" from table_msg('{$tableName}');");
-        $result =   $this->getAll();
+        $result   =  $this->_query("select fields_name as \"Field\",fields_type as \"Type\",fields_not_null as \"Null\",fields_key_name as \"Key\",fields_default as \"Default\",fields_default as \"Extra\" from table_msg('{$tableName}');");
         $info   =   array();
         foreach ($result as $key => $val) {
             if(is_object($val)) {
@@ -391,7 +390,6 @@ Class DbPgsql extends Db{
      */
     public function getTables($dbName='') {
         $result = $this->_query("select tablename as Tables_in_test from pg_tables where  schemaname ='public'");
-        $result = $result->toArray();
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = current($val);

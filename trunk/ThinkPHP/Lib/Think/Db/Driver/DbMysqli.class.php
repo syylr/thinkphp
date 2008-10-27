@@ -355,8 +355,7 @@ Class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     function getFields($tableName) {
-        $this->_query('SHOW COLUMNS FROM '.$tableName);
-        $result =   $this->getAll();
+        $result =   $this->_query('SHOW COLUMNS FROM '.$tableName);
         $info   =   array();
         foreach ($result as $key => $val) {
             if(is_object($val)) {
@@ -384,8 +383,12 @@ Class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     function getTables($dbName='') {
-        $this->_query('SHOW TABLES');
-        $result =   $this->getAll();
+        if(!empty($dbName)) {
+           $sql    = 'SHOW TABLES FROM '.$dbName;
+        }else{
+           $sql    = 'SHOW TABLES ';
+        }
+        $result =   $this->_query($sql);
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
