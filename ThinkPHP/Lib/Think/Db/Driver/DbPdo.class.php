@@ -156,7 +156,8 @@ Class DbPdo extends Db{
             if ( !empty($this->PDOStatement) ) {    $this->free();    }
         }
         $this->W(1);
-        $result =   $this->_linkID->exec($this->queryStr);
+		$this->PDOStatement	=	$this->_linkID->prepare($this->queryStr);
+        $result	=	$this->PDOStatement->execute();
         $this->debug();
         if ( false === $result) {
             if ( $this->debug || C('DEBUG_MODE'))
