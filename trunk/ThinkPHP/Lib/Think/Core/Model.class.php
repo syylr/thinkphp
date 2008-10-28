@@ -2738,6 +2738,10 @@ class Model extends Base  implements IteratorAggregate
                 // when 验证时间: all add edit 默认为all
                 // 判断是否需要执行验证
                 if(empty($val[5]) || $val[5]=='all' || strtolower($val[5])==strtolower($type) ) {
+                    if(0==strpos($val[2],'{%') && strpos($val[2],'}')) {
+                        // 支持提示信息的多语言 使用 {%语言定义} 方式
+                        $val[2]  =  L(substr($val[2],2,-1));
+                    }
                     // 判断验证条件
                     switch($val[3]) {
                         case MUST_TO_VALIDATE:   // 必须验证 不管表单是否有设置该字段
