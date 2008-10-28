@@ -511,8 +511,16 @@ class TagLibHtml extends TagLib
                 // 支持列表字段链接功能 具体方法由JS函数实现
                 $href = explode('|',$field[2]);
                 if(count($href)>1) {
-                    //指定链接传的字段值
-                    $parseStr .= '<a href="javascript:'.$href[0].'(\'{$'.$name.'.'.$href[1].'}\')">';
+                    // 支持多个字段传递
+                    $array = explode('^',$href[1]);
+                    if(count($array)>1) {
+                        foreach ($array as $a){
+                            $temp[] =  '\'{$'.$name.'.'.$a.'|addslashes}\'';
+                        }
+                        $parseStr .= '<a href="javascript:'.$href[0].'('.implode(',',$temp).')">';
+                    }else{
+                        $parseStr .= '<a href="javascript:'.$href[0].'(\'{$'.$name.'.'.$href[1].'|addslashes}\')">';
+                    }
                 }else {
                     //如果没有指定默认传编号值
                     $parseStr .= '<a href="javascript:'.$field[2].'(\'{$'.$name.'.'.$pk.'}\')">';
