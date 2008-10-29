@@ -21,23 +21,19 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-// 配置文件增加设置
-// USER_AUTH_ON 是否需要认证
-// USER_AUTH_TYPE 认证类型
-// USER_AUTH_KEY 认证识别号
-// REQUIRE_AUTH_MODULE  需要认证模块
-// NOT_AUTH_MODULE 无需认证模块
-// USER_AUTH_GATEWAY 认证网关
 class RBAC extends Base
 {
 
     //委托身份认证方法
-    static function authenticate($map,$model='User',$provider='')
+    static function authenticate($map,$model='',$provider='')
     {
         //调用委托管理器进行身份认证
         import("ORG.RBAC.ProviderManager");
         if(empty($provider)) {
             $provider   =   C('USER_AUTH_PROVIDER');
+        }
+        if(empty($model)) {
+            $model	=	C('USER_AUTH_MODEL');
         }
         $authProvider   =   ProviderManager::getInstance($provider);
         //使用给定的Map进行认证
