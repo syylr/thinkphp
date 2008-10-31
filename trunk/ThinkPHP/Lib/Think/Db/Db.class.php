@@ -90,7 +90,7 @@ class Db extends Base
     protected $config             = '';
 
     // 数据库表达式
-    protected $comparison      = array('eq'=>'=','neq'=>'!=','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','like'=>'LIKE','between'=>'BETWEEN','notnull'=>'IS NOT NULL','null'=>'IS NULL');
+    protected $comparison      = array('eq'=>'=','neq'=>'!=','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','notlike'=>'NOT LIKE','like'=>'LIKE','between'=>'BETWEEN','notnull'=>'IS NOT NULL','null'=>'IS NULL');
 
     // SQL 执行时间记录
     protected $beginTime;
@@ -494,13 +494,13 @@ class Db extends Base
                             for ($i=0;$i<$num;$i++){
                                 if(is_array($val[$i])) {
                                     // 判断条件
-                                    if(is_string($val[$i][0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE)F$/i',$val[$i][0])) {
+                                    if(is_string($val[$i][0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)F$/i',$val[$i][0])) {
                                         $op =   $this->comparison[strtolower(substr($val[$i][0],0,-1))];
                                         $str[] = ' ('.$key[$i].' '.$op.' '.$val[$i][1].') ';
                                     }elseif(is_string($val[$i][0]) && preg_match('/IN/i',$val[$i][0])){
                                         $zone   =   is_array($val[$i][1])? implode(',',$val[$i][1]):$val[$i][1];
                                         $str[] =  ' ('.$key[$i].' '.strtoupper($val[$i][0]).' ('.$zone.') )';
-                                    }elseif(is_string($val[$i][0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE|NULL|NOTNULL|BETWEEN)$/i',$val[$i][0])){
+                                    }elseif(is_string($val[$i][0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE|NULL|NOTNULL|BETWEEN)$/i',$val[$i][0])){
                                         $op =   $this->comparison[strtolower($val[$i][0])];
                                         $str[] = ' ('.$key[$i].' '.$op.' '.$this->fieldFormat($val[$i][1]).') ';
                                     }else{
@@ -513,14 +513,14 @@ class Db extends Base
                             }
                             $whereStr .= implode(strtoupper($val[$num]),$str);
                         }else{
-                            if(is_string($val[0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE|NULL|NOTNULL|BETWEEN)$/i',$val[0])) {
+                            if(is_string($val[0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE|NULL|NOTNULL|BETWEEN)$/i',$val[0])) {
                                 // 是否存在比较运算
                                 $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->fieldFormat($val[1]);
                             }elseif(is_string($val[0]) && preg_match('/IN/i',$val[0])){
                                 // 支持 IN 运算
                                 $zone   =   is_array($val[1])? implode(',',$val[1]):$val[1];
                                 $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
-                            }elseif(is_string($val[0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|LIKE)F$/i',$val[0])){
+                            }elseif(is_string($val[0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)F$/i',$val[0])){
                                 $whereStr .= $key.' '.$this->comparison[strtolower(substr($val[0],0,-1))].' '.$val[1];
                             }else {
                                 // 区间比较只有两个段
