@@ -506,7 +506,7 @@ abstract class Action extends Base
      * @return void
      +----------------------------------------------------------
      */
-    public function forward($action='_dispatch_jump',$module=MODULE_NAME,$app=APP_NAME,$exit=false,$delay=0)
+    public function forward($action='_dispatch_jump',$module='',$app=APP_NAME,$exit=false,$delay=0)
     {
         if(!empty($delay)) {
             //指定延时跳转 单位为秒
@@ -516,6 +516,9 @@ abstract class Action extends Base
             //通过类似 array(&$module,$action)的方式调用
             call_user_func($action);
         }else {
+            if(empty($module)) {
+                $module = defined('C_MODULE_NAME')?C_MODULE_NAME:MODULE_NAME;
+            }
             if( MODULE_NAME!= $module) {
                 $class =     A($module,$app);
                 call_user_func(array(&$class,$action));
@@ -548,7 +551,10 @@ abstract class Action extends Base
      * @return void
      +----------------------------------------------------------
      */
-    public function redirect($action,$module=MODULE_NAME,$route='',$app=APP_NAME,$params=array(),$delay=0,$msg='') {
+    public function redirect($action,$module='',$route='',$app=APP_NAME,$params=array(),$delay=0,$msg='') {
+        if(empty($module)) {
+            $module = defined('C_MODULE_NAME')?C_MODULE_NAME:MODULE_NAME;
+        }
         $url    =   url($action,$module,$route,$app,$params);
         redirect($url,$delay,$msg);
     }
