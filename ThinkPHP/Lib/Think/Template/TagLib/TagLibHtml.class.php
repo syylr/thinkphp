@@ -499,7 +499,7 @@ class TagLibHtml extends TagLib
         }
 
         $parseStr .= '</tr>';
-        $parseStr .= '<volist name="'.$datasource.'" id="'.$name.'" ><tr class="row" onmouseover="over()" onmouseout="out()" onclick="change()" >';	//支持鼠标移动单元行颜色变化 具体方法在js中定义
+        $parseStr .= '<volist name="'.$datasource.'" id="'.$name.'" ><tr class="row" onmouseover="over(event)" onmouseout="out(event)" onclick="change(event)" >';	//支持鼠标移动单元行颜色变化 具体方法在js中定义
 
         if(!empty($checkbox)) {//如果需要显示checkbox 则在每行开头显示checkbox
             $parseStr .= '<td><input type="checkbox" name="key"	value="{$'.$name.'.'.$pk.'}"></td>';
