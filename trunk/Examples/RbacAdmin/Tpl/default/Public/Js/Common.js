@@ -278,7 +278,7 @@ function getSelectCheckboxValues(){
  function   change(e)   
   {   
 	  var e = e || event;
-	  var   oObj   =   e.srcElement;   
+	var   oObj   =   e.srcElement   ||   e.target;  
 	  if(oObj.tagName.toLowerCase()   ==   "td")   
 	  {   
 		  	  /*
@@ -307,7 +307,7 @@ function getSelectCheckboxValues(){
   function   out(e)   
   {   
 var e = e || event;
-  var   oObj   =   e.srcElement;   
+	var   oObj   =   e.srcElement   ||   e.target;  
   if(oObj.tagName.toLowerCase()   ==   "td")   
   {   
   var   oTr   =   oObj.parentNode;   
@@ -319,7 +319,7 @@ var e = e || event;
   function   over(e)   
   {   
 var e = e || event;
-  var   oObj   =   e.srcElement;   
+	var   oObj   =   e.srcElement   ||   e.target;  
   if(oObj.tagName.toLowerCase()   ==   "td")   
   {   
   var   oTr   =   oObj.parentNode;   
