@@ -383,7 +383,7 @@ abstract class Action extends Base
         if(strtolower($method) == strtolower(ACTION_NAME.C('ACTION_SUFFIX'))) {
             // 如果定义了_empty操作 则调用
             if(method_exists($this,'_empty')) {
-                $this->_empty();
+                $this->_empty($method,$parms);
             }else {
                 // 检查是否存在模版 如果有直接输出模版
                 if(file_exists_case(C('TMPL_FILE_NAME'))) {
