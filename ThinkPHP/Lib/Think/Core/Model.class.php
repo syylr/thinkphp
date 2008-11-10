@@ -1315,7 +1315,7 @@ class Model extends Base  implements IteratorAggregate
                         switch($mappingType) {
                             case HAS_ONE:
                                 $pk   =  is_array($result)?$result[$this->getPk()]:$result->{$this->getPk()};
-                                $mappingCondition .= " AND {$mappingFk}={$pk}";
+                                $mappingCondition .= " AND {$mappingFk}='{$pk}'";
                                 $relationData   =  $model->find($mappingCondition,$mappingFields,false,false);
                                 if(isset($val['as_fields'])) {
                                     // 支持直接把关联的字段值映射成数据对象中的某个字段
@@ -1343,7 +1343,7 @@ class Model extends Base  implements IteratorAggregate
                                 break;
                             case BELONGS_TO:
                                 $fk   =  is_array($result)?$result[$mappingFk]:$result->{$mappingFk};
-                                $mappingCondition .= " AND {$model->getPk()}={$fk}";
+                                $mappingCondition .= " AND {$model->getPk()}='{$fk}'";
                                 $relationData   =  $model->find($mappingCondition,$mappingFields,false,false);
                                 if(isset($val['as_fields'])) {
                                     // 支持直接把关联的字段值映射成数据对象中的某个字段
@@ -1379,7 +1379,7 @@ class Model extends Base  implements IteratorAggregate
                                 break;
                             case MANY_TO_MANY:
                                 $pk   =  is_array($result)?$result[$this->getPk()]:$result->{$this->getPk()};
-                                $mappingCondition = "{$mappingFk}={$pk}";
+                                $mappingCondition = "{$mappingFk}='{$pk}'";
                                 $mappingOrder =  $val['mapping_order'];
                                 $mappingLimit =  $val['mapping_limit'];
                                 $mappingRelationFk = $val['relation_foreign_key']?$val['relation_foreign_key']:$model->name.'_id';
