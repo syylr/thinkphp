@@ -354,12 +354,12 @@ function dump($var, $echo=true,$label=null, $strict=true)
 function auto_charset($fContents,$from='',$to=''){
     if(empty($from)) $from = C('TEMPLATE_CHARSET');
     if(empty($to))  $to =   C('OUTPUT_CHARSET');
+    $from   =  strtoupper($from)=='UTF8'? 'utf-8':$from;
+    $to       =  strtoupper($to)=='UTF8'? 'utf-8':$to;
     if( strtoupper($from) === strtoupper($to) || empty($fContents) || (is_scalar($fContents) && !is_string($fContents)) ){
         //如果编码相同或者非字符串标量则不转换
         return $fContents;
     }
-    $from   =  strtoupper($from)=='UTF8'? 'utf-8':$from;
-    $to       =  strtoupper($to)=='UTF8'? 'utf-8':$to;
     if(is_string($fContents) ) {
         if(function_exists('mb_convert_encoding')){
             return mb_convert_encoding ($fContents, $to, $from);
@@ -710,6 +710,9 @@ function to_guid_string($mix)
  */
 function is_instance_of($object, $className)
 {
+	if (!is_object($object) && !is_string($object)) {
+		return false;
+	}
     return $object instanceof $className;
 }
 
