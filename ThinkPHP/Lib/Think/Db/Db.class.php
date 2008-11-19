@@ -523,26 +523,41 @@ class Db extends Base
                             }elseif(is_string($val[0]) && preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)F$/i',$val[0])){
                                 $whereStr .= $key.' '.$this->comparison[strtolower(substr($val[0],0,-1))].' '.$val[1];
                             }else {
-                                // 区间比较只有两个段
-                                if(is_array($val[0])) {
-                                    // 给出运算符
-                                    $operate1   =   $this->comparison[strtolower($val[0][0])];
-                                    $data1  =   $val[0][1];
+                                if(($count = count($val))>2) {
+                                    if(in_array(strtoupper(trim($val[$count-1])),array('AND','OR','XOR'))) {
+                                        $rule = strtoupper(trim($val[$count-1]));
+                                        $count   =  $count -1;
+                                    }else{
+                                        $rule = 'AND';
+                                    }
+                                    for($i=0;$i<$count;$i++) {
+                                        $op = is_array($val[$i])?$this->comparison[strtolower($val[$i][0])]:'=';
+                                        $data = is_array($val[$i])?$val[$i][1]:$val[$i];
+                                        $whereStr .= '('.$key.' '.$op.' '.$this->fieldFormat($data).') '.$rule.' ';
+                                    }
+                                    $whereStr = substr($whereStr,0,-4);
                                 }else{
-                                    // 默认的运算符
-                                    $operate1   =   '>=';
-                                    $data1  =   $val[0];
-                                }
-                                if(is_array($val[1])) {
-                                    $operate2   =   $this->comparison[strtolower($val[1][0])];
-                                    $data2  =   $val[1][1];
-                                }else{
-                                    $operate2   =   '<=';
-                                    $data2  =   $val[1];
-                                }
-                                if(empty($val[2])) $val[2]  =   'AND'; // 运算规则默认为AND
-                                if(in_array(strtoupper(trim($val[2])),array('AND','OR','XOR'))) {
-                                    $whereStr .= $key.' '.$operate1.' '.$this->fieldFormat($data1).' '.$val[2].' '.$key.' '.$operate2.' '.$this->fieldFormat($data2);
+                                    // 区间比较只有两个段
+                                    if(is_array($val[0])) {
+                                        // 给出运算符
+                                        $operate1   =   $this->comparison[strtolower($val[0][0])];
+                                        $data1  =   $val[0][1];
+                                    }else{
+                                        // 默认的运算符
+                                        $operate1   =   '>=';
+                                        $data1  =   $val[0];
+                                    }
+                                    if(is_array($val[1])) {
+                                        $operate2   =   $this->comparison[strtolower($val[1][0])];
+                                        $data2  =   $val[1][1];
+                                    }else{
+                                        $operate2   =   '<=';
+                                        $data2  =   $val[1];
+                                    }
+                                    if(empty($val[2])) $val[2]  =   'AND'; // 运算规则默认为AND
+                                    if(in_array(strtoupper(trim($val[2])),array('AND','OR','XOR'))) {
+                                        $whereStr .= $key.' '.$operate1.' '.$this->fieldFormat($data1).' '.$val[2].' '.$key.' '.$operate2.' '.$this->fieldFormat($data2);
+                                    }
                                 }
                             }
                         }
