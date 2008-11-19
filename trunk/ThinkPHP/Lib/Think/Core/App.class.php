@@ -225,6 +225,9 @@ class App extends Base
 				}else{
 					$common	= php_strip_whitespace(COMMON_PATH.'common.php');
 				}
+                if('?>' != substr(trim($common),-2)) {
+                    $common .= ' ?>';
+                }
 			}
 		}
 		// 如果是调试模式加载调试模式配置文件
