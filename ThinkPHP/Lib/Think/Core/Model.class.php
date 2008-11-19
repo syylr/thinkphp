@@ -2951,7 +2951,13 @@ class Model extends Base  implements IteratorAggregate
                 $this->trueTableName    =   $tableName;
             }else{
                 $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
-                $tableName .= $this->tableName?$this->tableName:$this->name;
+                if(empty($this->tableName)) {
+                    $name = preg_replace("/[A-Z]/", "_\\0", $this->name);
+                    $name   = strtolower(trim($name, "_"));
+                    $tableName .= $name;
+                }else{
+                    $tableName .= $this->tableName;
+                }
                 $tableName .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
                 if(!empty($this->dbName)) {
                     $tableName    =  $this->dbName.'.'.$tableName;
