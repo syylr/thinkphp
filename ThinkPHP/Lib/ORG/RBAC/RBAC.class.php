@@ -58,7 +58,7 @@ class RBAC extends Base
     }
 
     //取得用户的授权列表
-    static function getAccessList($authId=null,$type='File')
+    static function getAccessList($authId=null)
     {
         if(null===$authId) {
             $authId = $_SESSION[C('USER_AUTH_KEY')];
@@ -66,12 +66,12 @@ class RBAC extends Base
         //获取权限访问列表
         import("ORG.RBAC.AccessDecisionManager");
         $accessManager = new AccessDecisionManager();
-        $accessList = $accessManager->getAccessList($authId,$type);
+        $accessList = $accessManager->getAccessList($authId);
         return $accessList;
     }
 
     // 取得模块的所属记录访问权限列表 返回有权限的记录ID数组
-    static function getRecordAccessList($authId=null,$module='',$type='File') {
+    static function getRecordAccessList($authId=null,$module='') {
         if(null===$authId) {
             $authId = $_SESSION[C('USER_AUTH_KEY')];
         }
@@ -81,7 +81,7 @@ class RBAC extends Base
         //获取权限访问列表
         import("ORG.RBAC.AccessDecisionManager");
         $accessManager = new AccessDecisionManager();
-        $accessList = $accessManager->getModuleAccessList($authId,$module,$type);
+        $accessList = $accessManager->getModuleAccessList($authId,$module);
         return $accessList;
     }
 
@@ -128,7 +128,7 @@ class RBAC extends Base
     }
 
     //权限认证的过滤器方法
-    static function AccessDecision()
+    static function AccessDecision($appName=APP_NAME)
     {
         //检查是否需要认证
         if(RBAC::checkAccess()) {
@@ -138,7 +138,7 @@ class RBAC extends Base
                 redirect(PHP_FILE.C('USER_AUTH_GATEWAY'));
             }
             //存在认证识别号，则进行进一步的访问决策
-            $accessGuid   =   md5(APP_NAME.MODULE_NAME.ACTION_NAME);
+            $accessGuid   =   md5($appName.MODULE_NAME.ACTION_NAME);
             if(!$_SESSION[C('ADMIN_AUTH_KEY')]) {//管理员无需认证
                 if(C('USER_AUTH_TYPE')==2) {
                     //加强验证和即时验证模式 更加安全 后台权限修改可以即时生效
@@ -154,7 +154,7 @@ class RBAC extends Base
                 }
                 //判断是否为组件化模式，如果是，验证其全模块名
                 $module = defined('C_MODULE_NAME')?  C_MODULE_NAME   :   MODULE_NAME;
-                if(!isset($accessList[strtoupper(APP_NAME)][strtoupper($module)][strtoupper(ACTION_NAME)])) {
+                if(!isset($accessList[strtoupper($appName)][strtoupper($module)][strtoupper(ACTION_NAME)])) {
                     //throw_exception(L('_VALID_ACCESS_'));
                     return false;
                 }else {
