@@ -167,7 +167,7 @@ class BlogAction extends PublicAction {
 			$fields	=	'a.id,a.categoryId,a.cTime,a.readCount,a.commentCount,a.title,c.title as category';
             $count  =  $dao->count("tagId  in ('$tagId')");
             $p          = new Page($count,$listRows);
-            $p->recordName   =  '篇';
+            $p->setConfig('header' ,'篇日志 ');
             $dao = D("Blog");
             $list     = $dao->query("select ".$fields." from ".C('DB_PREFIX').'blog as a,'.C('DB_PREFIX').'tagged as b, '.C('DB_PREFIX').'category as c where b.tagId  in ('.$tagId.') and a.categoryId= c.id and a.status=1  and a.id=b.recordId order by a.id desc limit '.$p->firstRow.','.$p->listRows);
 			if($list) {
