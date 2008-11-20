@@ -338,16 +338,19 @@ class View extends Base
         if(empty($zlibCompress) && function_exists('ini_set')) {
             ini_set( 'zlib.output_compression', 1 );
         }
-        // 缓存初始化过滤
-        apply_filter('ob_init');
+        if(C('THINK_PLUGIN_ON')) {
+            // 缓存初始化过滤
+            apply_filter('ob_init');
+        }
         //页面缓存
         ob_start();
         ob_implicit_flush(0);
-        // 缓存开启后执行的过滤
-        apply_filter('ob_start');
-
-        // 模版文件名过滤
-        $templateFile = apply_filter('template_file',$templateFile);
+        if(C('THINK_PLUGIN_ON')) {
+            // 缓存开启后执行的过滤
+            apply_filter('ob_start');
+            // 模版文件名过滤
+            $templateFile = apply_filter('template_file',$templateFile);
+        }
 
         if(''==$templateFile) {
             // 如果模板文件名为空 按照默认规则定位
@@ -366,8 +369,10 @@ class View extends Base
         if(!file_exists_case($templateFile)){
             throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
         }
-        // 模版变量过滤
-        $this->tVar = apply_filter('template_var',$this->tVar);
+        if(C('THINK_PLUGIN_ON')) {
+            // 模版变量过滤
+            $this->tVar = apply_filter('template_var',$this->tVar);
+        }
 
         //根据不同模版引擎进行处理
         if('PHP'==$this->type || empty($this->type)) {
@@ -391,7 +396,7 @@ class View extends Base
                 //载入模版缓存文件
                 include CACHE_PATH.md5($templateFile).C('CACHFILE_SUFFIX');
             }
-        }else {
+        }elseif(C('THINK_PLUGIN_ON')) {
             // 通过插件的方式扩展第三方模板引擎
             use_compiler(C('TMPL_ENGINE_TYPE'),$templateFile,$this->tVar,$charset,$varPrefix);
         }
@@ -399,8 +404,10 @@ class View extends Base
         $content = ob_get_clean();
         // 输出编码转换
         $content = auto_charset($content,C('TEMPLATE_CHARSET'),$charset);
-        // 输出过滤
-        $content = apply_filter('ob_content',$content);
+        if(C('THINK_PLUGIN_ON')) {
+            // 输出过滤
+            $content = apply_filter('ob_content',$content);
+        }
 
         if(C('HTML_CACHE_ON')) {
             // 写入静态文件

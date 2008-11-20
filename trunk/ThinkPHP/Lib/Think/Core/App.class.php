@@ -128,7 +128,7 @@ class App extends Base
 				// 使用内置的ThinkDispatcher调度器
 				import('Think.Util.Dispatcher');
 				Dispatcher::dispatch();
-			}else{
+			}elseif(C('THINK_PLUGIN_ON')) {
 				// 加载第三方调度器
 		        apply_filter('app_dispatch');
 			}
@@ -187,8 +187,10 @@ class App extends Base
 			import('Think.Util.HtmlCache');
 			HtmlCache::readHTMLCache();
 		}
-        // 应用初始化过滤插件
-        apply_filter('app_init');
+        if(C('THINK_PLUGIN_ON')) {
+            // 应用初始化过滤插件
+            apply_filter('app_init');
+        }
 
 		// 记录应用初始化时间
 		if(C('SHOW_RUN_TIME')){
@@ -497,6 +499,8 @@ class App extends Base
      */
     private function loadPlugIn()
     {
+        // 加载插件必须的函数
+        include THINK_PATH.'/Common/plugin.php';
         //加载有效插件文件
 		if(file_exists(RUNTIME_PATH.'~plugins.php')) {
 			include RUNTIME_PATH.'~plugins.php';
@@ -573,8 +577,10 @@ class App extends Base
 				$module->{'_after_'.$action}();
 			}
 		}
-        // 执行应用结束过滤器
-        apply_filter('app_end');
+        if(C('THINK_PLUGIN_ON')) {
+            // 执行应用结束过滤器
+            apply_filter('app_end');
+        }
 
 		// 写入错误日志
         if(C('WEB_LOG_RECORD'))
