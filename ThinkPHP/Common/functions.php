@@ -687,8 +687,6 @@ function is_instance_of($object, $className)
     return $object instanceof $className;
 }
 
-
-
 /**
  +----------------------------------------------------------
  * 字符串截取，支持中文和其他编码
