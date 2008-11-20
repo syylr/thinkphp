@@ -54,7 +54,6 @@ Class DbMysql extends Db{
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
-            $conn = $this->pconnect ? 'mysql_pconnect':'mysql_connect';
             // 处理不带端口号的socket连接情况
             $host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
             if($this->pconnect) {
