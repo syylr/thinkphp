@@ -1055,6 +1055,4 @@ function clearCache($type=0,$path=NULL) {
         import("ORG.Io.Dir");
         Dir::del($path);
     }
-
-
 ?>
