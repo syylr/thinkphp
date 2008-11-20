@@ -36,7 +36,8 @@ if(file_exists(RUNTIME_PATH.'~runtime.php')) {
     require THINK_PATH."/Common/defines.php";
     // 系统函数库
     require THINK_PATH."/Common/functions.php";
-
+    // 加载编译需要的函数文件
+    require THINK_PATH."/Common/runtime.php";
     // 第一次运行检查项目目录结构 如果不存在则自动创建
     if(!file_exists(RUNTIME_PATH)) {
         // 创建项目目录结构

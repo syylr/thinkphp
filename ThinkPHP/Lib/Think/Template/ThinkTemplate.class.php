@@ -202,8 +202,10 @@ class  ThinkTemplate extends Base
         }
         // 令牌验证
         $tmplContent =  preg_replace('/<\/form(\s*)>/is','<?php if(C("TOKEN_ON")):?><input type="hidden" name="<?php echo C("TOKEN_NAME");?>" value="<?php echo Session::get(C("TOKEN_NAME")); ?>"/><?php endif;?></form>',$tmplContent);
-        // 模版过滤插件调用
-        $tmplContent =  apply_filter('tmpl_replace',$tmplContent);
+        if(C('HTML_CACHE_ON')) {
+            // 模版过滤插件调用
+            $tmplContent =  apply_filter('tmpl_replace',$tmplContent);
+        }
 
         // 还原被替换的Literal标签
         $tmplContent = preg_replace('/<!--###literal(\d)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
