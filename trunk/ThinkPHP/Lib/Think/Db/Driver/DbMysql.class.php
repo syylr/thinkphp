@@ -10,6 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
+define('CLIENT_MULTI_RESULTS', 131072);
 /**
  +------------------------------------------------------------------------------
  * Mysql数据库驱动类
@@ -56,7 +57,11 @@ Class DbMysql extends Db{
             $conn = $this->pconnect ? 'mysql_pconnect':'mysql_connect';
             // 处理不带端口号的socket连接情况
             $host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
-            $this->linkID[$linkNum] = $conn( $host, $config['username'], $config['password'],true);
+            if($this->pconnect) {
+                $this->linkID[$linkNum] = mysql_pconnect( $host, $config['username'], $config['password'],CLIENT_MULTI_RESULTS);
+            }else{
+                $this->linkID[$linkNum] = mysql_connect( $host, $config['username'], $config['password'],true,CLIENT_MULTI_RESULTS);
+            }
             if ( !$this->linkID[$linkNum]) {
                 throw_exception(mysql_error());
             }
