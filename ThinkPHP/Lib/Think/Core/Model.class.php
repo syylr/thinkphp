@@ -3573,11 +3573,12 @@ class Model extends Base  implements IteratorAggregate
             // 创建基于主键的数组引用
             $refer = array();
             foreach ($list as $key => $data) {
-                $refer[$data[$pk]] =& $list[$key];
+                $_key = is_object($data)?$data->$pk:$data[$pk];
+                $refer[$_key] =& $list[$key];
             }
             foreach ($list as $key => $data) {
                 // 判断是否存在parent
-                $parentId = $data[$pid];
+                $parentId = is_object($data)?$data->$pid:$data[$pid];
                 if ($parentId) {
                     if (isset($refer[$parentId])) {
                         $parent =& $refer[$parentId];
