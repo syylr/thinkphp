@@ -1371,7 +1371,7 @@ class Model extends Base  implements IteratorAggregate
                                 break;
                             case HAS_MANY:
                                 $pk   =  is_array($result)?$result[$this->getPk()]:$result->{$this->getPk()};
-                                $mappingCondition = "{$mappingFk}={$pk}";
+                                $mappingCondition .= " AND {$mappingFk}='{$pk}'";
                                 $mappingOrder =  !empty($val['mapping_order'])?$val['mapping_order']:'';
                                 $mappingLimit =  !empty($val['mapping_limit'])?$val['mapping_limit']:'';
                                 // 延时获取关联记录
@@ -1379,7 +1379,7 @@ class Model extends Base  implements IteratorAggregate
                                 break;
                             case MANY_TO_MANY:
                                 $pk   =  is_array($result)?$result[$this->getPk()]:$result->{$this->getPk()};
-                                $mappingCondition = "{$mappingFk}='{$pk}'";
+                                $mappingCondition .= " AND {$mappingFk}='{$pk}'";
                                 $mappingOrder =  $val['mapping_order'];
                                 $mappingLimit =  $val['mapping_limit'];
                                 $mappingRelationFk = $val['relation_foreign_key']?$val['relation_foreign_key']:$model->name.'_id';
