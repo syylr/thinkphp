@@ -594,11 +594,12 @@ class Model extends Base  implements IteratorAggregate
             $this->fields = array();
             $this->fields['_autoInc'] = false;
             foreach ($this->viewFields as $name=>$val){
+                $k = isset($val['_as'])?$val['_as']:$name;
                 foreach ($val as $key=>$field){
                     if(is_numeric($key)) {
-                        $this->fields[] =   $name.'.'.$field;
+                        $this->fields[] =   $k.'.'.$field;
                     }else{
-                        $this->fields[] =   $name.'.'.$key;
+                        $this->fields[] =   $k.'.'.$key;
                     }
                 }
             }
@@ -995,13 +996,14 @@ class Model extends Base  implements IteratorAggregate
             $view   =   array();
             // 检查视图字段
             foreach ($this->viewFields as $key=>$val){
+                $k = isset($val['_as'])?$val['_as']:$key;
                 foreach ($data as $name=>$value){
                     if(false !== $field = array_search($name,$val)) {
                         // 存在视图字段
                         if(is_numeric($field)) {
-                            $_key   =   $key.'.'.$name;
+                            $_key   =   $k.'.'.$name;
                         }else{
-                            $_key   =   $key.'.'.$field;
+                            $_key   =   $k.'.'.$field;
                         }
                         $view[$_key]    =   $value;
                         unset($data[$name]);
@@ -1039,12 +1041,13 @@ class Model extends Base  implements IteratorAggregate
             // 获取全部视图字段
             $fields =   array();
             foreach ($this->viewFields as $name=>$val){
+                $k = isset($val['_as'])?$val['_as']:$name;
                 foreach ($val as $key=>$field){
                     if(is_numeric($key)) {
-                        $fields[]    =   $name.'.'.$field.' AS '.$field;
+                        $fields[]    =   $k.'.'.$field.' AS '.$field;
                     }elseif('_' != substr($key,0,1)) {
                         // 以_开头的为特殊定义
-                        $fields[]    =   $name.'.'.$key.' AS '.$field;
+                        $fields[]    =   $k.'.'.$key.' AS '.$field;
                     }
                 }
             }
@@ -1054,13 +1057,14 @@ class Model extends Base  implements IteratorAggregate
             }
             // 解析成视图字段
             foreach ($this->viewFields as $name=>$val){
+                $k = isset($val['_as'])?$val['_as']:$name;
                 foreach ($fields as $key=>$field){
                     if(false !== $_field = array_search($field,$val)) {
                         // 存在视图字段
                         if(is_numeric($_field)) {
-                            $fields[$key]    =   $name.'.'.$field.' AS '.$field;
+                            $fields[$key]    =   $k.'.'.$field.' AS '.$field;
                         }else{
-                            $fields[$key]    =   $name.'.'.$_field.' AS '.$field;
+                            $fields[$key]    =   $k.'.'.$_field.' AS '.$field;
                         }
                     }
                 }
@@ -1093,12 +1097,13 @@ class Model extends Base  implements IteratorAggregate
                 $sort   =   isset($array[1])?$array[1]:'ASC';
                 // 解析成视图字段
                 foreach ($this->viewFields as $name=>$val){
+                    $k = isset($val['_as'])?$val['_as']:$name;
                     if(false !== $_field = array_search($field,$val)) {
                         // 存在视图字段
                         if(is_numeric($_field)) {
-                            $field     =  $name.'.'.$field;
+                            $field     =  $k.'.'.$field;
                         }else{
-                            $field     =  $name.'.'.$_field;
+                            $field     =  $k.'.'.$_field;
                         }
                         break;
                     }
@@ -1134,12 +1139,13 @@ class Model extends Base  implements IteratorAggregate
                 $sort   =   isset($array[1])?$array[1]:'';
                 // 解析成视图字段
                 foreach ($this->viewFields as $name=>$val){
+                    $k = isset($val['_as'])?$val['_as']:$name;
                     if(false !== $_field = array_search($field,$val)) {
                         // 存在视图字段
                         if(is_numeric($_field)) {
-                            $field  =  $name.'.'.$field;
+                            $field  =  $k.'.'.$field;
                         }else{
-                            $field  =  $name.'.'.$_field;
+                            $field  =  $k.'.'.$_field;
                         }
                         break;
                     }
