@@ -2926,13 +2926,18 @@ class Model extends Base  implements IteratorAggregate
                     $Model  =   D($key);
                     if($Model) {
                         // 存在模型 获取模型定义的数据表名称
-                        $tableName .= $Model->getTableName().' '.$key;
+                        $tableName .= $Model->getTableName();
                     }else{
                         // 直接把key作为表名来对待
                         $viewTable  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
                         $viewTable .= $key;
                         $viewTable .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
-                        $tableName .= strtolower($viewTable).' '.$key;
+                        $tableName .= strtolower($viewTable);
+                    }
+                    if(isset($view['_as'])) {
+                        $tableName .= ' '.$view['_as'];
+                    }else{
+                        $tableName .= ' '.$key;
                     }
                     if(isset($view['_on'])) {
                         // 支持ON 条件定义
