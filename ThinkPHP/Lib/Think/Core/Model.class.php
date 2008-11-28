@@ -1483,7 +1483,9 @@ class Model extends Base  implements IteratorAggregate
                         }else{
                             $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:strtolower($this->name).'_id';     //  关联外键
                         }
-                        $mappingCondition = "{$mappingFk}={$pk}";
+                        if(empty($val['condition'])) {
+                            $mappingCondition = "{$mappingFk}='{$pk}'";
+                        }
                         // 获取关联model对象
                         $model = D($mappingClass);
                         $mappingData    =   $data[$mappingName];
