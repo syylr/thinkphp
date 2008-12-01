@@ -11,6 +11,10 @@
 // $Id$
 
 // 输入数据管理类
+// 使用方法
+//  $Input = Input::getInstance();
+//  $Input->get('name','md5','0');
+//  $Input->session('memberId','','0');
 class Input extends Base {
 
     private $filter =   null;   // 输入过滤
