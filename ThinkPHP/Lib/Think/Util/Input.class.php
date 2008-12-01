@@ -63,20 +63,18 @@ class Input extends Base {
                     $data    =   call_user_func_array($filter,$data);
                 }
             }else{
-                if(count($args)===0) {
+                if(0==count($args) || empty($args[0]) ) {
                     return $input;
-                }else{
-                    if(array_key_exists($args[0],$input)) {
-                        // 系统变量
-                        $data    =   $input[$args[0]];
-                        $filter =   isset($args[1])?$args[1]:$this->filter;
-                        if(!empty($filter)) {
-                            $data    =   call_user_func_array($filter,$data);
-                        }
-                    }else{
-                        // 不存在指定输入
-                        $data    =   isset($args[2])?$args[2]:NULL;
+                }elseif(array_key_exists($args[0],$input)) {
+                    // 系统变量
+                    $data	 =	 $input[$args[0]];
+                    $filter	=	isset($args[1])?$args[1]:$this->filter;
+                    if(!empty($filter)) {
+                        $data	 =	 call_user_func_array($filter,$data);
                     }
+                }else{
+                    // 不存在指定输入
+                    $data	 =	 isset($args[2])?$args[2]:NULL;
                 }
             }
             return $data;
