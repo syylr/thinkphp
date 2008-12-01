@@ -200,6 +200,30 @@ class Model extends Base  implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
+     * 字符串命名风格转换
+     * type
+     * =0 将Java风格转换为C的风格
+     * =1 将C风格转换为Java的风格
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param string $name 字符串
+     * @param integer $type 转换类型
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function parseName($name,$type=0) {
+        if($type) {
+            return preg_replace("/_([a-zA-Z])/e", "strtoupper('\\1')", $name);
+        }else{
+            $name = preg_replace("/[A-Z]/", "_\\0", $name);
+            return strtolower(trim($name, "_"));
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
      * 利用__call方法重载 实现一些特殊的Model方法 （魔术方法）
      +----------------------------------------------------------
      * @access public
@@ -213,21 +237,21 @@ class Model extends Base  implements IteratorAggregate
     public function __call($method,$args) {
         if(strtolower(substr($method,0,5))=='getby') {
             // 根据某个字段获取记录
-            $field   =   strtolower(substr($method,5));
+            $field   =   $this->parseName(substr($method,5));
             if(in_array($field,$this->fields,true)) {
                 array_unshift($args,$field);
                 return call_user_func_array(array(&$this, 'getBy'), $args);
             }
         }elseif(strtolower(substr($method,0,6))=='getsby') {
             // 根据某个字段获取记录
-            $field   =   strtolower(substr($method,6));
+            $field   =   $this->parseName(substr($method,6));
             if(in_array($field,$this->fields,true)) {
                 array_unshift($args,$field);
                 return call_user_func_array(array(&$this, 'getByAll'), $args);
             }
         }elseif(strtolower(substr($method,0,3))=='get'){
             // getter 模拟 仅针对数据对象
-            $field   =   strtolower(substr($method,3));
+            $field   =   $this->parseName(substr($method,3));
             return $this->__get($field);
         }elseif(strtolower(substr($method,0,3))=='top'){
             // 获取前N条记录
@@ -236,26 +260,26 @@ class Model extends Base  implements IteratorAggregate
             return call_user_func_array(array(&$this, 'topN'), $args);
         }elseif(strtolower(substr($method,0,5))=='setby'){
             // 保存记录的某个字段
-            $field   =   strtolower(substr($method,5));
+            $field   =   $this->parseName(substr($method,5));
             if(in_array($field,$this->fields,true)) {
                 array_unshift($args,$field);
                 return call_user_func_array(array(&$this, 'setField'), $args);
             }
         }elseif(strtolower(substr($method,0,3))=='set'){
             // setter 模拟 仅针对数据对象
-            $field   =   strtolower(substr($method,3));
+            $field   =   $this->parseName(substr($method,3));
             array_unshift($args,$field);
             return call_user_func_array(array(&$this, '__set'), $args);
         }elseif(strtolower(substr($method,0,5))=='delby'){
             // 根据某个字段删除记录
-            $field   =   strtolower(substr($method,5));
+            $field   =   $this->parseName(substr($method,5));
             if(in_array($field,$this->fields,true)) {
                 array_unshift($args,$field);
                 return call_user_func_array(array(&$this, 'deleteBy'), $args);
             }
         }elseif(strtolower(substr($method,0,3))=='del'){
             // unset 数据对象
-            $field   =   strtolower(substr($method,3));
+            $field   =   $this->parseName(substr($method,3));
             if(in_array($field,$this->fields,true)) {
                 if(isset($this->data[$field])) {
                     unset($this->data[$field]);
@@ -2965,8 +2989,7 @@ class Model extends Base  implements IteratorAggregate
             }else{
                 $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
                 if(empty($this->tableName)) {
-                    $name = preg_replace("/[A-Z]/", "_\\0", $this->name);
-                    $name   = strtolower(trim($name, "_"));
+                    $name   = $this->parseName($this->name);
                     $tableName .= $name;
                 }else{
                     $tableName .= $this->tableName;
