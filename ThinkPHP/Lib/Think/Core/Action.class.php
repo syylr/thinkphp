@@ -56,12 +56,12 @@ abstract class Action extends Base
      +----------------------------------------------------------
      * 得到当前的Action对象名称
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function getActionName() {
+    protected function getActionName() {
         if(empty($this->name)) {
             $prefix     =   C('CONTR_CLASS_PREFIX');
             $suffix     =   C('CONTR_CLASS_SUFFIX');
@@ -72,6 +72,26 @@ abstract class Action extends Base
             }
         }
         return $this->name;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 得到传递的参数
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param string $type 输入数据类型
+     * @param string $name 参数名称
+     * @param string $filter 参数过滤方法
+     * @param string $default 参数默认值
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function getParam($type,$name='',$filter='',$default='') {
+            $Input   = Input::getInstance();
+            $value   =  $Input->{$type}($name,$filter,$default);
+            return $value;
     }
 
     /**
