@@ -202,7 +202,7 @@ class  ThinkTemplate extends Base
         }
         // 令牌验证
         $tmplContent =  preg_replace('/<\/form(\s*)>/is','<?php if(C("TOKEN_ON")):?><input type="hidden" name="<?php echo C("TOKEN_NAME");?>" value="<?php echo Session::get(C("TOKEN_NAME")); ?>"/><?php endif;?></form>',$tmplContent);
-        if(C('HTML_CACHE_ON')) {
+        if(C('THINK_PLUGIN_ON')) {
             // 模版过滤插件调用
             $tmplContent =  apply_filter('tmpl_replace',$tmplContent);
         }
