@@ -260,10 +260,11 @@ class View extends Base
             if(C('SHOW_RUN_TIME')) {
                 echo '<div  id="think_run_time" class="think_run_time">'.$showTime.'</div>';
             }
+            $this->showTrace($showTime,$charset);
+            return null;
         }else{
             return $content;
         }
-        return ;
     }
 
     /**
@@ -338,14 +339,15 @@ class View extends Base
         if(empty($zlibCompress) && function_exists('ini_set')) {
             ini_set( 'zlib.output_compression', 1 );
         }
-        if(C('THINK_PLUGIN_ON')) {
+        $pluginOn   =  C('THINK_PLUGIN_ON');
+        if($pluginOn) {
             // 缓存初始化过滤
             apply_filter('ob_init');
         }
         //页面缓存
         ob_start();
         ob_implicit_flush(0);
-        if(C('THINK_PLUGIN_ON')) {
+        if($pluginOn) {
             // 缓存开启后执行的过滤
             apply_filter('ob_start');
             // 模版文件名过滤
@@ -369,7 +371,7 @@ class View extends Base
         if(!file_exists_case($templateFile)){
             throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
         }
-        if(C('THINK_PLUGIN_ON')) {
+        if($pluginOn) {
             // 模版变量过滤
             $this->tVar = apply_filter('template_var',$this->tVar);
         }
@@ -396,7 +398,7 @@ class View extends Base
                 //载入模版缓存文件
                 include CACHE_PATH.md5($templateFile).C('CACHFILE_SUFFIX');
             }
-        }elseif(C('THINK_PLUGIN_ON')) {
+        }elseif($pluginOn) {
             // 通过插件的方式扩展第三方模板引擎
             use_compiler(C('TMPL_ENGINE_TYPE'),$templateFile,$this->tVar,$charset,$varPrefix);
         }
@@ -404,7 +406,7 @@ class View extends Base
         $content = ob_get_clean();
         // 输出编码转换
         $content = auto_charset($content,C('TEMPLATE_CHARSET'),$charset);
-        if(C('THINK_PLUGIN_ON')) {
+        if($pluginOn) {
             // 输出过滤
             $content = apply_filter('ob_content',$content);
         }
@@ -420,47 +422,64 @@ class View extends Base
             if(C('SHOW_RUN_TIME')) {
                 echo '<div  id="think_run_time" class="think_run_time">'.$showTime.'</div>';
             }
-            if(C('SHOW_PAGE_TRACE')) {
-                // 显示页面Trace信息 读取Trace定义文件
-                // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
-                $traceFile  =   CONFIG_PATH.'trace.php';
-                 if(file_exists_case($traceFile)) {
-                    $_trace =   include $traceFile;
-                 }else{
-                    $_trace =   array();
-                 }
-                 // 系统默认显示信息
-                $this->trace('当前页面',    $_SERVER['PHP_SELF']);
-                $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
-                $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
-                $this->trace('请求时间',    date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
-                $this->trace('用户代理',    $_SERVER['HTTP_USER_AGENT']);
-                $this->trace('会话ID'   ,   session_id());
-                $this->trace('运行数据',    $showTime);
-                $this->trace('输出编码',    $charset);
-                $this->trace('加载类库',    $GLOBALS['include_file']);
-                $this->trace('模板编译',    !empty($compiler)?'重新编译':'读取缓存');
-                if(isset(Log::$log[SQL_LOG_DEBUG])) {
-                    $log    =   Log::$log[SQL_LOG_DEBUG];
-                    $this->trace('SQL记录',is_array($log)?count($log).'条SQL<br/>'.implode('<br/>',$log):'无SQL记录');
-                }else{
-                    $this->trace('SQL记录','无SQL记录');
-                }
-                if(isset(Log::$log[WEB_LOG_ERROR])) {
-                    $log    =   Log::$log[WEB_LOG_ERROR];
-                    $this->trace('错误记录',is_array($log)?count($log).'条错误<br/>'.implode('<br/>',$log):'无错误记录');
-                }else{
-                    $this->trace('错误记录','无错误记录');
-                }
-                $_trace =   array_merge($_trace,$this->trace);
-                $_trace = auto_charset($_trace,'utf-8');
-                $_title =   auto_charset('页面Trace信息','utf-8');
-                // 调用Trace页面模板
-                include THINK_PATH.'/Tpl/PageTrace.tpl.php';
-            }
+            $this->showTrace($showTime,$charset,$compiler);
             return null;
         }else {
             return $content;
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 显示页面Trace信息
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param string $showTime 运行时间信息
+     * @param string $charset 模板输出字符集
+     * @param boolean $compiler 是否重新编译
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    protected function showTrace($showTime,$charset,$compiler=true){
+        if(C('SHOW_PAGE_TRACE')) {
+            // 显示页面Trace信息 读取Trace定义文件
+            // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
+            $traceFile  =   CONFIG_PATH.'trace.php';
+             if(file_exists_case($traceFile)) {
+                $_trace =   include $traceFile;
+             }else{
+                $_trace =   array();
+             }
+             // 系统默认显示信息
+            $this->trace('当前页面',    $_SERVER['PHP_SELF']);
+            $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
+            $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
+            $this->trace('请求时间',    date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
+            $this->trace('用户代理',    $_SERVER['HTTP_USER_AGENT']);
+            $this->trace('会话ID'   ,   session_id());
+            $this->trace('运行数据',    $showTime);
+            $this->trace('输出编码',    $charset);
+            $this->trace('加载类库',    $GLOBALS['include_file']);
+            $this->trace('模板编译',    !empty($compiler)?'重新编译':'读取缓存');
+            if(isset(Log::$log[SQL_LOG_DEBUG])) {
+                $log    =   Log::$log[SQL_LOG_DEBUG];
+                $this->trace('SQL记录',is_array($log)?count($log).'条SQL<br/>'.implode('<br/>',$log):'无SQL记录');
+            }else{
+                $this->trace('SQL记录','无SQL记录');
+            }
+            if(isset(Log::$log[WEB_LOG_ERROR])) {
+                $log    =   Log::$log[WEB_LOG_ERROR];
+                $this->trace('错误记录',is_array($log)?count($log).'条错误<br/>'.implode('<br/>',$log):'无错误记录');
+            }else{
+                $this->trace('错误记录','无错误记录');
+            }
+            $_trace =   array_merge($_trace,$this->trace);
+            $_trace = auto_charset($_trace,'utf-8');
+            $_title =   auto_charset('页面Trace信息','utf-8');
+            // 调用Trace页面模板
+            include THINK_PATH.'/Tpl/PageTrace.tpl.php';
         }
     }
 }//
