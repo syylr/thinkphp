@@ -2988,11 +2988,14 @@ class Model extends Base  implements IteratorAggregate
                 $this->trueTableName    =   $tableName;
             }else{
                 $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
-                if(empty($this->tableName)) {
+                if(!empty($this->tableName)) {
+                    $tableName .= $this->tableName;
+                }elseif(C('TABLE_NAME_IDENTIFY')){
+                    // 智能识别表名
                     $name   = $this->parseName($this->name);
                     $tableName .= $name;
                 }else{
-                    $tableName .= $this->tableName;
+                    $tableName .= $this->name;
                 }
                 $tableName .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
                 if(!empty($this->dbName)) {

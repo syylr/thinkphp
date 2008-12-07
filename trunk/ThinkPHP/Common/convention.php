@@ -92,12 +92,13 @@ return  array(
     'DEFAULT_LAYOUT'         =>    'Layout:index', // 默认布局模板文件
 
 	/* 模型设置 */
-	'CONTR_CLASS_PREFIX'	=>	'',
-	'CONTR_CLASS_SUFFIX'	=>	'Action',
-	'ACTION_PREFIX'				=>	'',
-	'ACTION_SUFFIX'				=>	'',
-	'MODEL_CLASS_PREFIX'		=>	'',
-	'MODEL_CLASS_SUFFIX'	=>	'Model',
+	'CONTR_CLASS_PREFIX'	=>	'',     // 控制器前缀
+	'CONTR_CLASS_SUFFIX'	=>	'Action',  // 控制器后缀
+	'ACTION_PREFIX'				=>	'', // 操作方法前缀
+	'ACTION_SUFFIX'				=>	'', // 操作方法后缀
+	'MODEL_CLASS_PREFIX'		=>	'', // 模型前缀
+	'MODEL_CLASS_SUFFIX'	=>	'Model',  // 模型后缀
+    'TABLE_NAME_IDENTIFY'  =>    True, // 模型对应数据表名称智能识别 UserType => user_type
 
 	/* 静态缓存设置 */
 	'HTML_FILE_SUFFIX'			=>	'.shtml',	 // 默认静态文件后缀
