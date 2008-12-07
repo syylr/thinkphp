@@ -1033,6 +1033,13 @@ function data_to_xml($data) {
     return $xml;
 }
 
+function mk_dir($dir, $mode = 0755)
+{
+  if (is_dir($dir) || @mkdir($dir,$mode)) return true;
+  if (!mk_dir(dirname($dir),$mode)) return false;
+  return @mkdir($dir,$mode);
+}
+
 // 清除缓存目录
 function clearCache($type=0,$path=NULL) {
         if(is_null($path)) {
