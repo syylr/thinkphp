@@ -2992,8 +2992,7 @@ class Model extends Base  implements IteratorAggregate
                     $tableName .= $this->tableName;
                 }elseif(C('TABLE_NAME_IDENTIFY')){
                     // 智能识别表名
-                    $name   = $this->parseName($this->name);
-                    $tableName .= $name;
+                    $tableName .= $this->parseName($this->name);
                 }else{
                     $tableName .= $this->name;
                 }
