@@ -1,12 +1,12 @@
-<?php 
+<?php
 // +----------------------------------------------------------------------
-// | ThinkPHP                                                             
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.      
+// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>                                  
+// | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -28,12 +28,12 @@ class CacheMemcache extends Cache
      +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      */
     function __construct($options='')
     {
-        if ( !extension_loaded('memcache') ) {    
+        if ( !extension_loaded('memcache') ) {
             throw_exception(L('_NOT_SUPPERT_').':memcache');
         }
         if(empty($options)) {
@@ -47,7 +47,7 @@ class CacheMemcache extends Cache
         }
         $func = $options['persistent'] ? 'pconnect' : 'connect';
         $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
-        $this->handler  = &new Memcache;
+        $this->handler  = new Memcache;
         $this->connected = $options['timeout'] === false ?
             $this->handler->$func($options['host'], $options['port']) :
             $this->handler->$func($options['host'], $options['port'], $options['timeout']);
@@ -58,7 +58,7 @@ class CacheMemcache extends Cache
      +----------------------------------------------------------
      * 是否连接
      +----------------------------------------------------------
-     * @access private 
+     * @access private
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
@@ -72,7 +72,7 @@ class CacheMemcache extends Cache
      +----------------------------------------------------------
      * 读取缓存
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      +----------------------------------------------------------
@@ -89,7 +89,7 @@ class CacheMemcache extends Cache
      +----------------------------------------------------------
      * 写入缓存
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      * @param mixed $value  存储数据
@@ -102,7 +102,7 @@ class CacheMemcache extends Cache
 		$this->W(1);
         if(isset($ttl) && is_int($ttl))
             $expire = $ttl;
-        else 
+        else
             $expire = $this->expire;
         return $this->handler->set($name, $value, 0, $expire);
     }
@@ -110,9 +110,9 @@ class CacheMemcache extends Cache
     /**
      +----------------------------------------------------------
      * 删除缓存
-     * 
+     *
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      +----------------------------------------------------------
@@ -121,7 +121,7 @@ class CacheMemcache extends Cache
      */
     public function rm($name, $ttl = false)
     {
-        return $ttl === false ? 
+        return $ttl === false ?
             $this->handler->delete($name) :
             $this->handler->delete($name, $ttl);
     }
@@ -130,7 +130,7 @@ class CacheMemcache extends Cache
      +----------------------------------------------------------
      * 清除缓存
      +----------------------------------------------------------
-     * @access public 
+     * @access public
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
