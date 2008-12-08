@@ -560,7 +560,7 @@ class Model extends Base
      * @return void
      +----------------------------------------------------------
      */
-    public function filterFields(&$result) {
+    function filterFields(&$result) {
         if(!empty($this->_filter)) {
             foreach ($this->_filter as $field=>$filter){
                 $fun  =  $filter[1];
@@ -595,7 +595,7 @@ class Model extends Base
      * @return void
      +----------------------------------------------------------
      */
-    public function filterListFields(&$resultSet) {
+    function filterListFields(&$resultSet) {
         if(!empty($this->_filter)) {
             foreach ($resultSet as $key=>$result){
                 $resultSet[$key]  =  $this->filterFields($result);
