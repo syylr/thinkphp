@@ -330,17 +330,24 @@ class TagLibCx extends TagLib
      */
     public function _case($attr,$content) {
         $tag = $this->parseXmlAttr($attr,'case');
-        $value = $tag['value'];
-        $varArray = explode('|',$value);
-        $value  =   array_shift($varArray);
+		$value = $tag['value'];
         if('$' == substr($value,0,1)) {
-            $value  =  $this->autoBuildVar(substr($value,1));
-            if(count($varArray)>0)
-                $value = $this->tpl->parseVarFunction($value,$varArray);
+            $varArray = explode('|',$value);
+            $value	=	array_shift($varArray);
+			$value  =  $this->autoBuildVar(substr($value,1));
+			if(count($varArray)>0)
+				$value = $this->tpl->parseVarFunction($value,$varArray);
+            $value   =  'case '.$value.': ';
+        }elseif(strpos($value,'|')){
+            $values  =  explode('|',$value);
+            $value   =  '';
+            foreach ($values as $val){
+                $value   .=  'case "'.addslashes($val).'": ';
+            }
         }else{
-            $value  =   '"'.$value.'"';
-        }
-        $parseStr = '<?php case '.$value.' : ?>'.$content;dump($tag['break']);
+			$value	=	'case "'.$value.'": ';
+		}
+        $parseStr = '<?php '.$value.' ?>'.$content;
 		if('' ==$tag['break'] || $tag['break']) {
 			$parseStr .= '<?php break;?>';
 		}
