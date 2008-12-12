@@ -340,8 +340,8 @@ class TagLibCx extends TagLib
         }else{
             $value  =   '"'.$value.'"';
         }
-        $parseStr = '<?php case '.$value.' : ?>'.$content;
-		if(!isset($tag['break']) || (isset($tag['break']) && $tag['break'])) {
+        $parseStr = '<?php case '.$value.' : ?>'.$content;dump($tag['break']);
+		if('' ==$tag['break'] || $tag['break']) {
 			$parseStr .= '<?php break;?>';
 		}
         return $parseStr;
