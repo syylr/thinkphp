@@ -91,6 +91,10 @@
 <name>value</name>
 <required>true</required>
 </attribute>
+<attribute>
+<name>break</name>
+<required>false</required>
+</attribute>
 </tag>
 
 <tag>
