@@ -88,7 +88,7 @@ class HtmlCache extends Base
                 if (self::checkHTMLCache(HTML_FILE_NAME,$time)) {//静态页面有效
                     if(C('HTML_READ_TYPE')==1) {
                         // 重定向到静态页面
-                        redirect(str_replace(realpath($_SERVER["DOCUMENT_ROOT"]),'',realpath(HTML_FILE_NAME)));
+                        redirect(str_replace(array(realpath($_SERVER["DOCUMENT_ROOT"]),"\\"),array('',"/"),realpath(HTML_FILE_NAME)));
                     }else {
                         // 读取静态页面输出
                         readfile(HTML_FILE_NAME);
