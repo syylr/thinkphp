@@ -32,11 +32,12 @@ return  array(
 	/* Dispatch设置 */
 	'DISPATCH_ON'				=>	true,	// 是否启用Dispatcher
 	'DISPATCH_NAME'			=>	'Think',	// 默认的Dispatcher名称
-	// URL模式： 0 普通模式 1 PATHINFO 2 REWRITE
+	// URL模式： 0 普通模式 1 PATHINFO 2 REWRITE 3 兼容模式
 	'URL_MODEL'					=>	1,		// 默认为PATHINFO 模式，提供最好的用户体验和SEO支持
 	// PATHINFO 模式
 	// 普通模式1 参数没有顺序/m/module/a/action/id/1
 	// 智能模式2 自动识别模块和操作/module/action/id/1/ 或者 /module,action,id,1/...
+	// 兼容模式3 通过一个GET变量将PATHINFO传递给dispather，默认为s index.php?s=/module/action/id/1
 	'PATH_MODEL'					=>	2,	// 默认采用智能模式
 	'PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号
 	'ROUTER_ON'					=>	true,	// 启用路由判断
