@@ -73,6 +73,7 @@ return  array(
 	'VAR_LANGUAGE'				=>	'l',		// 默认语言切换变量
 	'VAR_TEMPLATE'				=>	't',		// 默认模板切换变量
 	'VAR_AJAX_SUBMIT'			=>	'ajax', // 默认的AJAX提交变量
+	'VAR_RESFLESH'				=>	'h', //是否强制刷新,用来忽略防刷新设置,例如验证码
 
 	/* 模块和操作设置 */
 	'DEFAULT_MODULE'			=>	'Index', // 默认模块名称

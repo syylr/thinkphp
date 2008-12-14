@@ -151,7 +151,7 @@ class App extends Base
 		}
 
 		//	启用页面防刷新机制
-		if(C('LIMIT_RESFLESH_ON')) {
+		if(C('LIMIT_RESFLESH_ON') && (!isset($_REQUEST[C('VAR_RESFLESH')]) || $_REQUEST[C('VAR_RESFLESH')]!="1")) {
 			//	启用页面防刷新机制
 			$guid	=	md5($_SERVER['PHP_SELF']);
 			// 检查页面刷新间隔
