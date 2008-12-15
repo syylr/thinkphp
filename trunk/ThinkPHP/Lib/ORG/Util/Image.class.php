@@ -141,10 +141,15 @@ class Image extends Base
             $interlace  =  $interlace? 1:0;
             unset($info);
             $scale = min($maxWidth/$srcWidth, $maxHeight/$srcHeight); // 计算缩放比例
-
-            // 缩略图尺寸
-            $width  = (int)($srcWidth*$scale);
-            $height = (int)($srcHeight*$scale);
+            if($scale>=1) {
+                // 超过原图大小不再缩略
+                $width   =  $srcWidth;
+                $height  =  $srcHeight;
+            }else{
+                // 缩略图尺寸
+                $width  = (int)($srcWidth*$scale);
+                $height = (int)($srcHeight*$scale);
+            }
 
             // 载入原图
             $createFun = 'ImageCreateFrom'.($type=='jpg'?'jpeg':$type);
