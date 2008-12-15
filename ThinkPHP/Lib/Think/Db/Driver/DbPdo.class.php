@@ -353,13 +353,14 @@ Class DbPdo extends Db{
         $result = $sth->fetchAll(constant('PDO::FETCH_ASSOC'));
         $info   =   array();
         foreach ($result as $key => $val) {
-            $info[$val['Field']] = array(
-                'name'    => $val['Field'],
-                'type'    => $val['Type'],
-                'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
-                'default' => $val['Default'],
-                'primary' => (strtolower($val['Key']) == 'pri'),
-                'autoInc' => (strtolower($val['Extra']) == 'auto_increment'),
+            $name=$val['Field']?$val['Field']:$val['name'];
+            $info[$name] = array(
+                'name'    =>$name ,
+                'type'    => $val['Type']?  $val['Type'] :   $val['type'],
+                'notnull' => (bool) ($val['Null'] === ''   ||  $val['notnull'] === ''), // not null is empty, null is yes
+                'default' => $val['Default']? $val['Default'] :   $val['dflt_value'],
+                'primary' => (strtolower($val['Key']) == 'pri'  || $val['pk']),
+                'autoInc' => (strtolower($val['Extra']) == 'auto_increment'  ||  $val['pk']),
             );
         }
         return $info;
