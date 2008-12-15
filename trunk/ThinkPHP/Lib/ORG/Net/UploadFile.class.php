@@ -40,19 +40,26 @@ class UploadFile extends Base
 
     // 使用对上传图片进行缩略图处理
     public $thumb   =  false;
+    // 缩略图保存路径
+    public $thumbPath = '';
     // 缩略图最大宽度
     public $thumbMaxWidth;
     // 缩略图最大高度
     public $thumbMaxHeight;
-    // 缩略图后缀
+    // 缩略图前后缀
+    public $thumbPrefix   =  '';
     public $thumbSuffix   =  '_thumb';
     // 压缩图片文件上传
     public $zipImages = false;
     // 启用子目录保存文件
     public $autoSub   =  false;
+    // 子目录创建方式 可以使用hash date
+    public $subType   = 'hash';
+    // 日期格式的上传子目录创建格式 当subType=date 时有效
+    public $dateFormat = 'Ymd';
     // 上传文件保存路径
     public $savePath = '';
-
+    public $autoCheck = true; // 是否自动检查附件
     // 存在同名是否覆盖
     public $uploadReplace = false;
 
@@ -122,15 +129,6 @@ class UploadFile extends Base
     private function save($file)
     {
         $filename = $file['savepath'].$file['savename'];
-        if($this->autoSub) {
-            // 使用哈希子目录保存文件
-            $name = md5($file['savename']);
-            $dir    =   $name{0};
-            if(!is_dir($file['savepath'].$dir)) {
-                mkdir($file['savepath'].$dir);
-            }
-            $filename   =  $file['savepath'].$dir.'/'.$file['savename'];
-        }
         if(!$this->uploadReplace && file_exists($filename)) {
             // 不覆盖同名文件
             $this->error    =   '文件已经存在！'.$filename;
@@ -148,9 +146,12 @@ class UploadFile extends Base
                 //是图像文件生成缩略图
                 $thumbWidth = explode(',',$this->thumbMaxWidth);
                 $thumbHeight   =  explode(',',$this->thumbMaxHeight);
+                $thumbPrefix		=	explode(',',$this->thumbPrefix);
                 $thumbSuffix = explode(',',$this->thumbSuffix);
+                $thumbPath    =  $this->thumbPath?$this->thumbPath:$file['savepath'];
                 for($i=0,$len=count($thumbWidth); $i<$len; $i++) {
-                    $thumbname = Image::thumb($filename,'','',$thumbWidth[$i],$thumbHeight[$i],true,$thumbSuffix[$i]);
+                    $thumbname = $thumbPath.$thumbPrefix[$i].substr($file['savename'],0,strrpos($file['savename'], '.')).$thumbSuffix[$i].'.'.$file['extension'];
+                    Image::thumb($filename,'',$thumbname,$thumbWidth[$i],$thumbHeight[$i],true);
                 }
             }
         }
@@ -209,40 +210,15 @@ class UploadFile extends Base
                 $file['extension']  = $this->getExt($file['name']);
                 $file['savepath']   = $savePath;
                 $file['savename']   = $this->getSaveName($file);
-                if($file['error']!== 0) {
-                    //文件上传失败
-                    //捕获错误代码
-                    $this->error($file['error']);
-                    return false;
-                }
-                //文件上传成功，进行自定义规则检查
 
-                //检查文件大小
-                if(!$this->checkSize($file['size'])) {
-                    $this->error = '上传文件大小不符！';
-                    return false;
-                }
-
-                //检查文件Mime类型
-                if(!$this->checkType($file['type'])) {
-                    $this->error = '上传文件MIME类型不允许！';
-                    return false;
-                }
-                //检查文件类型
-                if(!$this->checkExt($file['extension'])) {
-                    $this->error = '上传文件类型不允许';
-                    return false;
-                }
-
-                //检查是否合法上传
-                if(!$this->checkUpload($file['tmp_name'])) {
-                    $this->error = '非法上传文件！';
-                    return false;
+                if($this->autoCheck) {
+                    // 自动检查附件
+                    if(!$this->check($file))
+                        return false;
                 }
 
                 //保存上传文件
                 if(!$this->save($file)) {
-                    //$this->error = $file['error'];
                     return false;
                 }
                 if(function_exists($this->hashType)) {
@@ -361,7 +337,84 @@ class UploadFile extends Base
                 $saveName = $rule.".".$filename['extension'];
             }
         }
+        if($this->autoSub) {
+            // 使用子目录保存文件
+            $saveName   =  $this->getSubName($filename).'/'.$saveName;
+        }
         return $saveName;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取子目录的名称
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @param array $file  上传的文件信息
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    private function getSubName($file)
+    {
+        switch($this->subType) {
+            case 'date':
+                $dir   =  date($this->dateFormat,time());
+                break;
+            case 'hash':
+            default:
+                $name = md5($file['savename']);
+                $dir	=	$name{0};
+                break;
+        }
+        if(!is_dir($file['savepath'].$dir)) {
+            mkdir($file['savepath'].$dir);
+        }
+        return $dir;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 检查上传的文件
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @param array $file 文件信息
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    private function check($file) {
+        if($file['error']!== 0) {
+            //文件上传失败
+            //捕获错误代码
+            $this->error($file['error']);
+            return false;
+        }
+        //文件上传成功，进行自定义规则检查
+        //检查文件大小
+        if(!$this->checkSize($file['size'])) {
+            $this->error = '上传文件大小不符！';
+            return false;
+        }
+
+        //检查文件Mime类型
+        if(!$this->checkType($file['type'])) {
+            $this->error = '上传文件MIME类型不允许！';
+            return false;
+        }
+        //检查文件类型
+        if(!$this->checkExt($file['extension'])) {
+            $this->error ='上传文件类型不允许';
+            return false;
+        }
+
+        //检查是否合法上传
+        if(!$this->checkUpload($file['tmp_name'])) {
+            $this->error = '非法上传文件！';
+            return false;
+        }
+        return true;
     }
 
     /**
