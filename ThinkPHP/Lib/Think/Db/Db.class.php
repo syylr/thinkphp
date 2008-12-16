@@ -177,8 +177,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     private function parseConfig($db_config='') {
         if ( !empty($db_config) && is_string($db_config)) {
@@ -211,8 +209,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function addConnect($config,$linkNum=null) {
         $db_config  =   $this->parseConfig($config);
@@ -237,8 +233,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function switchConnect($linkNum) {
         if(isset($this->linkID[$linkNum])) {
@@ -260,8 +254,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function initConnect($master=true) {
         if(1 == C('DB_DEPLOY_TYPE')) {
@@ -282,8 +274,6 @@ class Db extends Base
      * @param boolean $master 主服务器
      +----------------------------------------------------------
      * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     protected function multiConnect($master=false) {
@@ -331,8 +321,6 @@ class Db extends Base
      * @param string $dsnStr
      +----------------------------------------------------------
      * @return array
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function parseDSN($dsnStr)
@@ -387,8 +375,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function parseTables($tables)
     {
@@ -413,8 +399,6 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     protected function getDbType() {
@@ -454,8 +438,6 @@ class Db extends Base
      * @param mixed $where 查询条件
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     protected function parseWhere($where)
@@ -587,8 +569,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function parseOrder($order)
     {
@@ -609,8 +589,6 @@ class Db extends Base
      * @param mixed $join Join表达式
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     protected function parseJoin($join)
@@ -641,8 +619,6 @@ class Db extends Base
      * @param string $limit
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     protected function parseLimit($limit)
@@ -691,8 +667,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function parseGroup($group)
     {
@@ -714,8 +688,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function parseHaving($having)
     {
@@ -734,8 +706,6 @@ class Db extends Base
      * @param mixed $fields
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     protected function parseFields($fields)
@@ -766,8 +736,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function parseValues($values)
     {
@@ -789,8 +757,6 @@ class Db extends Base
      * @param mixed $sets
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     protected function parseSets($sets)
@@ -830,8 +796,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function setLockMode() {
         if('ORACLE' == $this->getDbType()) {
@@ -847,14 +811,17 @@ class Db extends Base
      * @access protected
      +----------------------------------------------------------
      * @param mixed $value
+     * @param boolean $asString 是否看成字符串
+     * @param boolean $multi 是否多数据插入
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
-    protected function fieldFormat(&$value,$asString=true)
+    protected function fieldFormat(&$value,$asString=true,$mulit=false)
     {
+        if ($multi == true) {
+            $asString = true;
+        }
         if(is_int($value)) {
             $value = intval($value);
         } else if(is_float($value)) {
@@ -877,8 +844,6 @@ class Db extends Base
      * @param mixed $value
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     protected function addSpecialChar(&$value)
@@ -903,8 +868,6 @@ class Db extends Base
      * @param string $query  SQL指令
      +----------------------------------------------------------
      * @return boolen 如果是查询操作返回false
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function isMainIps($query)
@@ -932,8 +895,6 @@ class Db extends Base
      * @param boolean $lazy  是否惰性加载
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function query($sql='',$cache=false,$lazy=false,$lock=false)
@@ -975,8 +936,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return ResultIterator
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function lazyQuery($sql='') {
         // 返回ResultIterator对象 在操作数据的时候再进行读取
@@ -993,8 +952,6 @@ class Db extends Base
      * @param string $sql  执行语句
      +----------------------------------------------------------
      * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function execute($sql='',$lock=false)
@@ -1017,8 +974,6 @@ class Db extends Base
      * @param string $sql SQL指令
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function autoExec($sql='',$lazy=false,$lock=false,$cache=false)
@@ -1050,9 +1005,7 @@ class Db extends Base
      * @param boolean $lazy 是否惰性加载
      * @param boolean $lock 是否加锁
      +----------------------------------------------------------
-     * @return ArrayObject
-     +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return array
      +----------------------------------------------------------
      */
     public function find($where,$tables,$fields='*',$order=null,$limit=null,$group=null,$having=null,$join=null,$cache=false,$lazy=false,$lock=false)
@@ -1090,8 +1043,6 @@ class Db extends Base
      * @param mixed $multi  是否插入多条记录
      +----------------------------------------------------------
      * @return false | integer
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function add($map,$table,$multi=false)
@@ -1139,8 +1090,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return false | integer
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function addAll($map,$table)
     {
@@ -1159,7 +1108,7 @@ class Db extends Base
                 }
                 $_data    = auto_charset($_data,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
                 $_values = array_values($_data);
-                array_walk($_values, array($this, 'fieldFormat'));
+                array_walk($_values, array($this, 'fieldFormat'),true);
                 $values[] = '( '.implode(',', $_values).' )';
             }
             $valuesStr = implode(',',$values);
@@ -1187,8 +1136,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return false | integer
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function remove($where,$table,$limit='',$order='')
     {
@@ -1211,8 +1158,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return false | integer
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function save($sets,$table,$where,$limit=0,$order='',$lock=false)
     {
@@ -1233,8 +1178,6 @@ class Db extends Base
      * @param boolean $asString 字段值是否为字符串
      +----------------------------------------------------------
      * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function setField($field,$value,$table,$condition,$asString=true) {
@@ -1267,8 +1210,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function setInc($field,$table,$condition,$step=1) {
         return $this->setField($field,'('.$field.'+'.$step.')',$table,$condition,false);
@@ -1287,8 +1228,6 @@ class Db extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function setDec($field,$table,$condition,$step=1) {
         return $this->setField($field,'('.$field.'-'.$step.')',$table,$condition,false);
@@ -1303,8 +1242,6 @@ class Db extends Base
      * @param mixed $times
      +----------------------------------------------------------
      * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function Q($times='') {
@@ -1327,8 +1264,6 @@ class Db extends Base
      * @param mixed $times
      +----------------------------------------------------------
      * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function W($times='') {
