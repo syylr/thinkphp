@@ -2269,7 +2269,11 @@ class Model extends Base  implements IteratorAggregate
             $condition  =   $this->checkCondition($condition);
         }
         $rs = $this->db->find($condition,$this->getTableName(),$fields);
-        return floatval($this->getCol($rs,'max'));
+        if($rs) {
+            return floatval($this->getCol($rs,'max'));
+        }else{
+            return false;
+        }
     }
 
     /**
@@ -2291,7 +2295,11 @@ class Model extends Base  implements IteratorAggregate
             $condition  =   $this->checkCondition($condition);
         }
         $rs = $this->db->find($condition,$this->getTableName(),$fields);
-        return floatval($this->getCol($rs,'min'));
+        if($rs) {
+            return floatval($this->getCol($rs,'min'));
+        }else{
+            return false;
+        }
     }
 
     /**
@@ -2313,7 +2321,11 @@ class Model extends Base  implements IteratorAggregate
             $condition  =   $this->checkCondition($condition);
         }
         $rs = $this->db->find($condition,$this->getTableName(),$fields);
-        return floatval($this->getCol($rs,'sum'));
+        if($rs) {
+            return floatval($this->getCol($rs,'sum'));
+        }else{
+            return false;
+        }
     }
 
     /**
@@ -2335,7 +2347,11 @@ class Model extends Base  implements IteratorAggregate
             $condition  =   $this->checkCondition($condition);
         }
         $rs = $this->db->find($condition,$this->getTableName(),$fields);
-        return floatval($this->getCol($rs,'avg'));
+        if($rs) {
+            return floatval($this->getCol($rs,'avg'));
+        }else{
+            return false;
+        }
     }
 
     /**
