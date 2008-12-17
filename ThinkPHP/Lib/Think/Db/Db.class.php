@@ -817,7 +817,7 @@ class Db extends Base
      * @return mixed
      +----------------------------------------------------------
      */
-    protected function fieldFormat(&$value,$asString=true,$mulit=false)
+    protected function fieldFormat(&$value,$asString=true,$multi=false)
     {
         if ($multi == true) {
             $asString = true;
