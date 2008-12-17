@@ -1115,11 +1115,11 @@ class Db extends Base
             $this->queryStr =    'INSERT INTO '.$table.' ('.$fieldsStr.') VALUES '.$valuesStr;
             return $this->execute();
         }else{
-            $this->startTrans();
+            //$this->startTrans();
             foreach ($map as $data){
                 $this->add($data,$table);
             }
-            $this->commit();
+            //$this->commit();
         }
     }
 
