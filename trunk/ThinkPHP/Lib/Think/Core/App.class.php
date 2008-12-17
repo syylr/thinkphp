@@ -384,8 +384,6 @@ class App extends Base
                 // 读取项目（公共）语言包
                 if (file_exists_case(LANG_PATH.LANG_SET.'/common.php'))
                     L(include LANG_PATH.LANG_SET.'/common.php');
-                else
-                    L(include LANG_PATH.$defaultLang.'/common.php');
 
                 // 读取当前模块的语言包
                 if (file_exists_case(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
