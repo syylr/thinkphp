@@ -900,7 +900,12 @@ function L($name='',$value=null) {
 function C($name='',$value=null) {
     static $_config = array();
     if(!is_null($value)) {
-        $_config[strtolower($name)] =   $value;
+        if(strpos($name,'.')) {
+            $array   =  explode('.',strtolower($name));
+            $_config[$array[0]][$array[1]] =   $value;
+        }else{
+            $_config[strtolower($name)] =   $value;
+        }
         return ;
     }
     if(empty($name)) {
@@ -911,7 +916,10 @@ function C($name='',$value=null) {
         $_config = array_merge($_config,array_change_key_case($name));
         return $_config;
     }
-    if(isset($_config[strtolower($name)])) {
+    if(strpos($name,'.')) {
+        $array   =  explode('.',strtolower($name));
+        return $_config[$array[0]][$array[1]];
+    }elseif(isset($_config[strtolower($name)])) {
         return $_config[strtolower($name)];
     }else{
         return NULL;
