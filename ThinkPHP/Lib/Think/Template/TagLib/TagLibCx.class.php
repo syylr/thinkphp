@@ -136,6 +136,7 @@ class TagLibCx extends TagLib
         $parseStr .= $this->tpl->parse($content);
         $parseStr .= '<?php endforeach; ?>';
         $parseStr .=  '<?php endif; ?>';
+        $parseStr .= '<?php else: echo "'.$empty.'" ;?>';
         $parseStr .=  '<?php endif; ?>';
         $_iterateParseCache[$cacheIterateId] = $parseStr;
 
