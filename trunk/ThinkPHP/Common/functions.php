@@ -69,7 +69,7 @@ function url($action=ACTION_NAME,$module=MODULE_NAME,$route='',$app=APP_NAME,$pa
                     $str .= $var.$depr.$val.$depr;
                 $str = substr($str,0,-1);
                 if(!empty($route)) {
-                    $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$route.$depr.$str;
+                    $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$route.$str;
                 }else{
                     $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$module.$depr.$action.$str;
                 }
