@@ -324,6 +324,8 @@ class TagLib extends Base
      */
     public function parseCondition($condition) {
         $condition = str_ireplace(array_keys($this->comparison),array_values($this->comparison),$condition);
+        $condition = preg_replace('/\$(\w+):(\w+)\s/is','$\\1->\\2 ',$condition);
+        $condition = preg_replace('/\$(\w+).(\w+)\s/is','(is_array($\\1)?$\\1["\\2"]:$\\1->\\2) ',$condition);
         return $condition;
     }
 
