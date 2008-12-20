@@ -126,8 +126,6 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function buildAllTemplate($tmplPath=TMPL_PATH)
     {
@@ -164,8 +162,6 @@ class  ThinkTemplate extends Base
      * @param string $charset  模板输出字符集
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     protected function compiler ( $tmplContent,$charset='')
@@ -225,8 +221,6 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function checkCache($tmplTemplateFile)
     {
@@ -256,8 +250,6 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function cleanCache($filename)
     {
@@ -276,8 +268,6 @@ class  ThinkTemplate extends Base
      * @param string $cacheDir  缓存目录名
      +----------------------------------------------------------
      * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     protected function cleanDir($cacheDir=CACHE_PATH)
@@ -305,8 +295,6 @@ class  ThinkTemplate extends Base
      * @param string $content 要解析的模板内容
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function parse($content)
@@ -522,8 +510,6 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function parseTag($tagStr){
         //if (MAGIC_QUOTES_GPC)
@@ -533,33 +519,48 @@ class  ThinkTemplate extends Base
             //过滤空格和数字打头的标签
             return C('TMPL_L_DELIM') . $tagStr .C('TMPL_R_DELIM');
         }
-        if(substr($tagStr,0,1)=='$'){
+        $flag =  substr($tagStr,0,1);
+        $name   = substr($tagStr,1);
+        if('$' == $flag){
             //解析模板变量 格式 {$varName}
-            return $this->parseVar(substr($tagStr,1));
-        }elseif(substr($tagStr,0,1)==':'){
+            return $this->parseVar($name);
+        }elseif(':' == $flag){
             // 输出某个函数的结果
-            return  '<?php echo '.substr($tagStr,1).';?>';
-        }elseif(substr($tagStr,0,1)=='~'){
+            return  '<?php echo '.$name.';?>';
+        }elseif('~' == $flag){
             // 执行某个函数
-            return  '<?php '.substr($tagStr,1).';?>';
-        }elseif(substr($tagStr,0,1)=='&'){
+            return  '<?php '.$name.';?>';
+        }elseif('&' == $flag){
             // 输出配置参数
-            return '<?php echo C("'.substr($tagStr,1).'");?>';
-        }elseif(substr($tagStr,0,1)=='%'){
+            return '<?php echo C("'.$name.'");?>';
+        }elseif('%' == $flag){
             // 输出语言变量
-            return '<?php echo L("'.substr($tagStr,1).'");?>';
-        }elseif(substr($tagStr,0,1)=='@'){
-            // 输出SESSION变量
-            return '<?php echo $_SESSION["'.substr($tagStr,1).'"];?>';
-        }elseif(substr($tagStr,0,1)=='.'){
+            return '<?php echo L("'.$name.'");?>';
+		}elseif('@' == $flag){
+			// 输出SESSION变量
+            if(strpos($name,'.')) {
+                $array   =  explode('.',$name);
+	    		return '<?php echo $_SESSION["'.$array[0].'"]["'.$array[1].'"];?>';
+            }else{
+    			return '<?php echo $_SESSION["'.$name.'"];?>';
+            }
+		}elseif('#' == $flag){
+			// 输出COOKIE变量
+            if(strpos($name,'.')) {
+                $array   =  explode('.',$name);
+	    		return '<?php echo $_COOKIE["'.$array[0].'"]["'.$array[1].'"];?>';
+            }else{
+    			return '<?php echo $_COOKIE["'.$name.'"];?>';
+            }
+		}elseif('.' == $flag){
             // 输出GET变量
-            return '<?php echo $_GET["'.substr($tagStr,1).'"];?>';
-        }elseif(substr($tagStr,0,1)=='^'){
+            return '<?php echo $_GET["'.$name.'"];?>';
+        }elseif('^' == $flag){
             // 输出POST变量
-            return '<?php echo $_POST["'.substr($tagStr,1).'"];?>';
-        }elseif(substr($tagStr,0,1)=='*'){
+            return '<?php echo $_POST["'.$name.'"];?>';
+        }elseif('*' == $flag){
             // 输出常量
-            return '<?php echo constant("'.substr($tagStr,1).'");?>';
+            return '<?php echo constant("'.$name.'");?>';
         }
 
         $tagStr = trim($tagStr);
@@ -586,7 +587,6 @@ class  ThinkTemplate extends Base
                 $parseStr = C('TMPL_L_DELIM') . $tagStr .C('TMPL_R_DELIM');
                 break;
         }
-
         return $parseStr;
     }
 
@@ -600,8 +600,6 @@ class  ThinkTemplate extends Base
      * @param string $varStr 变量数据
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function parseVar($varStr){
@@ -650,7 +648,7 @@ class  ThinkTemplate extends Base
             if(count($varArray)>0) {
                 $name = $this->parseVarFunction($name,$varArray);
             }
-            $parseStr = '<?php echo ('.$name.') ?>';
+            $parseStr = '<?php echo ('.$name.'); ?>';
         }
         $_varParseList[$varStr] = $parseStr;
         return $parseStr;
@@ -667,8 +665,6 @@ class  ThinkTemplate extends Base
      * @param array $varArray  函数列表
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function parseVarFunction($name,$varArray){
@@ -713,36 +709,58 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function parseThinkVar($varStr){
         $vars = explode('.',$varStr);
         $vars[1] = strtoupper(trim($vars[1]));
         $parseStr = '';
 
-        if(count($vars)==3){
+        if(count($vars)>=3){
             $vars[2] = trim($vars[2]);
             switch($vars[1]){
-                case 'SERVER':    $parseStr = '$_SERVER[\''.strtoupper($vars[2]).'\']';break;
-                case 'GET':         $parseStr = '$_GET[\''.$vars[2].'\']';break;
-                case 'POST':       $parseStr = '$_POST[\''.$vars[2].'\']';break;
-                case 'COOKIE':    $parseStr = '$_COOKIE[\''.$vars[2].'\']';break;
-                case 'SESSION':   $parseStr = '$_SESSION[\''.$vars[2].'\']';break;
-                case 'ENV':         $parseStr = '$_ENV[\''.$vars[2].'\']';break;
-                case 'REQUEST':  $parseStr = '$_REQUEST[\''.$vars[2].'\']';break;
-                case 'CONST':     $parseStr = strtoupper($vars[2]);break;
-                case 'LANG':       $parseStr = 'L("'.$vars[2].'")';break;
-                case 'CONFIG':    $parseStr = 'C("'.$vars[2].'")';break;
+                case 'SERVER':
+                    $parseStr = '$_SERVER[\''.strtoupper($vars[2]).'\']';break;
+                case 'GET':
+                    $parseStr = '$_GET[\''.$vars[2].'\']';break;
+                case 'POST':
+                    $parseStr = '$_POST[\''.$vars[2].'\']';break;
+                case 'COOKIE':
+                    if(isset($vars[3])) {
+                        $parseStr = '$_COOKIE[\''.$vars[2].'\'][\''.$vars[3].'\']';
+                    }else{
+                        $parseStr = '$_COOKIE[\''.$vars[2].'\']';
+                    }break;
+                case 'SESSION':
+                    if(isset($vars[3])) {
+                        $parseStr = '$_SESSION[\''.$vars[2].'\'][\''.$vars[3].'\']';
+                    }else{
+                        $parseStr = '$_SESSION[\''.$vars[2].'\']';
+                    }
+                    break;
+                case 'ENV':
+                    $parseStr = '$_ENV[\''.$vars[2].'\']';break;
+                case 'REQUEST':
+                    $parseStr = '$_REQUEST[\''.$vars[2].'\']';break;
+                case 'CONST':
+                    $parseStr = strtoupper($vars[2]);break;
+                case 'LANG':
+                    $parseStr = 'L("'.$vars[2].'")';break;
+				case 'CONFIG':
+                    $parseStr = 'C("'.$vars[2].'")';break;
                 default:break;
             }
-        }else if(2 == count($vars)){
+        }else if(count($vars)==2){
             switch($vars[1]){
-                case 'NOW':       $parseStr = "date('Y-m-d g:i a',time())";break;
-                case 'VERSION':  $parseStr = 'THINK_VERSION';break;
-                case 'TEMPLATE':$parseStr = 'C("TMPL_FILE_NAME")';break;
-                case 'LDELIM':    $parseStr = 'C("TMPL_L_DELIM")';break;
-                case 'RDELIM':    $parseStr = 'C("TMPL_R_DELIM")';break;
+                case 'NOW':
+                    $parseStr = "date('Y-m-d g:i a',time())";break;
+                case 'VERSION':
+                    $parseStr = 'THINK_VERSION';break;
+                case 'TEMPLATE':
+                    $parseStr = 'C("TMPL_FILE_NAME")';break;
+                case 'LDELIM':
+                    $parseStr = 'C("TMPL_L_DELIM")';break;
+                case 'RDELIM':
+                    $parseStr = 'C("TMPL_R_DELIM")';break;
             }
             if(defined($vars[1])){ $parseStr = strtoupper($vars[1]);}
         }
@@ -758,8 +776,6 @@ class  ThinkTemplate extends Base
      * @param string $tmplPublicName  公共模板文件名
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function parseInclude($tmplPublicName){
