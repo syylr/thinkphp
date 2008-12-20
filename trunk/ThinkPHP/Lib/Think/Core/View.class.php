@@ -375,7 +375,7 @@ class View extends Base
             // 模版变量过滤
             $this->tVar = apply_filter('template_var',$this->tVar);
         }
-
+        $compiler   =   false;
         //根据不同模版引擎进行处理
         if('PHP'==$this->type || empty($this->type)) {
             // 模板阵列变量分解成为独立变量
