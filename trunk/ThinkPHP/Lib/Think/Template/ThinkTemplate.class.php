@@ -746,6 +746,9 @@ class  ThinkTemplate extends Base
                 case 'LANG':
                     $parseStr = 'L("'.$vars[2].'")';break;
 				case 'CONFIG':
+                    if(isset($vars[3])) {
+                        $vars[2] .= '.'.$vars[3];
+                    }
                     $parseStr = 'C("'.$vars[2].'")';break;
                 default:break;
             }
