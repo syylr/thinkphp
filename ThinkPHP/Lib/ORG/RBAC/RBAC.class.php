@@ -51,7 +51,7 @@ class RBAC extends Base
     {
         // 如果使用普通权限模式，保存当前用户的访问权限列表
         // 对管理员开发所有权限
-        if(C('USER_AUTH_TYPE') !=2 ) {
+        if(C('USER_AUTH_TYPE') !=2 && !$_SESSION[C('ADMIN_AUTH_KEY')]) {
             $_SESSION['_ACCESS_LIST']   =   RBAC::getAccessList($authId);
         }
         return ;
@@ -134,8 +134,16 @@ class RBAC extends Base
         if(RBAC::checkAccess()) {
             //检查认证识别号
             if(!$_SESSION[C('USER_AUTH_KEY')]) {
-                //跳转到认证网关
-                redirect(PHP_FILE.C('USER_AUTH_GATEWAY'));
+                if(C('GUEST_AUTH_ON')) {
+                    // 开启游客授权访问
+                    if(!isset($_SESSION['_ACCESS_LIST'])) {
+                        // 保存游客权限
+                        RBAC::saveAccessList(C('GUEST_AUTH_ID'));
+                    }
+                }else{
+                    // 禁止游客访问跳转到认证网关
+                    redirect(PHP_FILE.C('USER_AUTH_GATEWAY'));
+                }
             }
             //存在认证识别号，则进行进一步的访问决策
             $accessGuid   =   md5($appName.MODULE_NAME.ACTION_NAME);
