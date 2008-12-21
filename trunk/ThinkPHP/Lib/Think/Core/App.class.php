@@ -177,7 +177,10 @@ class App extends Base
 				// 没有权限 抛出错误
 				if(C('RBAC_ERROR_PAGE')) {
 					redirect(C('RBAC_ERROR_PAGE'));
-				}else{
+				}elseif(C('GUEST_AUTH_ON')){
+                    // 开启游客授权 出错后跳转到登录网关
+                    redirect(PHP_FILE.C('USER_AUTH_GATEWAY'));
+                }else{
 					throw_exception(L('_VALID_ACCESS_'));
 				}
 			}
