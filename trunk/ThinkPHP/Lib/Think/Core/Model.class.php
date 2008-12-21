@@ -989,7 +989,7 @@ class Model extends Base  implements IteratorAggregate
         // 检查字段映射
         if(isset($this->_map)) {
             foreach ($this->_map as $key=>$val){
-                if(isset($data[$key])) {
+                if(isset($data[$key]) && $key != $val ) {
                     $data[$val] =   $data[$key];
                     unset($data[$key]);
                 }
@@ -1372,6 +1372,12 @@ class Model extends Base  implements IteratorAggregate
                                 }
                                 break;
                             case BELONGS_TO:
+                                if(strtoupper($mappingClass)==strtoupper($this->name)) {
+                                    // 自引用关联 获取父键名
+                                    $mappingFk   =   !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
+                                }else{
+                                    $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:strtolower($model->name).'_id';     //  关联外键
+                                }
                                 $fk   =  is_array($result)?$result[$mappingFk]:$result->{$mappingFk};
                                 $mappingCondition .= " AND {$model->getPk()}='{$fk}'";
                                 $relationData   =  $model->find($mappingCondition,$mappingFields,false,false);
@@ -1409,12 +1415,15 @@ class Model extends Base  implements IteratorAggregate
                                 break;
                             case MANY_TO_MANY:
                                 $pk   =  is_array($result)?$result[$this->getPk()]:$result->{$this->getPk()};
-                                $mappingCondition .= " AND {$mappingFk}='{$pk}'";
+                                $mappingCondition = " {$mappingFk}='{$pk}'";
                                 $mappingOrder =  $val['mapping_order'];
                                 $mappingLimit =  $val['mapping_limit'];
                                 $mappingRelationFk = $val['relation_foreign_key']?$val['relation_foreign_key']:$model->name.'_id';
                                 $mappingRelationTable  =  $val['relation_table']?$val['relation_table']:$this->getRelationTableName($model);
                                 $sql = "SELECT b.{$mappingFields} FROM {$mappingRelationTable} AS a, ".$model->getTableName()." AS b WHERE a.{$mappingRelationFk} = b.{$model->getPk()} AND a.{$mappingCondition}";
+                                if(!empty($val['condition'])) {
+                                    $sql   .= ' AND '.$val['condition'];
+                                }
                                 if(!empty($mappingOrder)) {
                                     $sql .= ' ORDER BY '.$mappingOrder;
                                 }
@@ -1425,10 +1434,12 @@ class Model extends Base  implements IteratorAggregate
                                 break;
                         }
                         if(!$return){
-                            if(is_array($result)) {
-                                $result[$mappingName] = $relationData;
-                            }else{
-                                $result->$mappingName = $relationData;
+                            if(!isset($val['as_fields'])) {
+                                if(is_array($result)) {
+                                    $result[$mappingName] = $relationData;
+                                }else{
+                                    $result->$mappingName = $relationData;
+                                }
                             }
                         }else{
                             return $relationData;
@@ -1545,11 +1556,10 @@ class Model extends Base  implements IteratorAggregate
                                         $model->commit();
                                         break;
                                         case 'SAVE' :   // 更新关联数据
-                                        //$mappingOrder =  $val['mapping_order'];
-                                        //$mappingLimit =  $val['mapping_limit'];
                                         $model->startTrans();
+                                        $pk   =  $model->getPk();
                                         foreach ($mappingData as $vo){
-                                            //$result   =  $model->save($vo,$mappingCondition,false,$mappingLimit,$mapppingOrder);
+                                            $mappingCondition   =  "$pk ={$vo[$pk]}";
                                             $result   =  $model->save($vo,$mappingCondition,false);
                                         }
                                         $model->commit();
@@ -3536,6 +3546,22 @@ class Model extends Base  implements IteratorAggregate
      */
     public function data($data) {
         $this->options['data']  =   $data;
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 进行关联查询
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param boolean $name 关联名称
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function relation($name) {
+        $this->options['link']  =   $name;
         return $this;
     }
 
