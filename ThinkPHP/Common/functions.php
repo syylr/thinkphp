@@ -705,10 +705,15 @@ function is_instance_of($object, $className)
  */
 function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true)
 {
+	if($suffix)
+		$suffixStr = "…";
+	else
+		$suffixStr = "";
+
     if(function_exists("mb_substr"))
-        return mb_substr($str, $start, $length, $charset);
+        return mb_substr($str, $start, $length, $charset).$suffixStr;
     elseif(function_exists('iconv_substr')) {
-        return iconv_substr($str,$start,$length,$charset);
+        return iconv_substr($str,$start,$length,$charset).$suffixStr;
     }
     $re['utf-8']   = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
     $re['gb2312'] = "/[\x01-\x7f]|[\xb0-\xf7][\xa0-\xfe]/";
@@ -716,8 +721,7 @@ function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true)
     $re['big5']   = "/[\x01-\x7f]|[\x81-\xfe]([\x40-\x7e]|\xa1-\xfe])/";
     preg_match_all($re[$charset], $str, $match);
     $slice = join("",array_slice($match[0], $start, $length));
-    if($suffix) return $slice."…";
-    return $slice;
+    return $slice.$suffixStr;
 }
 
 /**
