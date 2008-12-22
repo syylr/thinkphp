@@ -56,7 +56,9 @@ Class DbIbase extends Db{
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
             $conn = $this->pconnect ? 'ibase_pconnect':'ibase_connect';
-            $this->linkID[$linkNum] = $conn( $config['hostname'].'/'.$config['hostport'].':'.$config['database'], $config['username'], $config['password']);
+            // 处理不带端口号的socket连接情况
+            $host = $config['hostname'].($config['hostport']?"/{$config['hostport']}":'');
+            $this->linkID[$linkNum] = $conn($host.':'.$config['database'], $config['username'], $config['password'],C('DB_CHARSET'),0,3);
             if ( !$this->linkID[$linkNum]) {
                 throw_exception(ibase_errmsg());
             }
