@@ -867,8 +867,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return int
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function add($data=null,$autoLink=false,$multi=false)
     {
@@ -1008,8 +1006,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function checkCondition($data) {
          if((empty($data) || (is_instance_of($data,'HashMap') && $data->isEmpty())) && !empty($this->viewCondition)) {
@@ -1056,8 +1052,6 @@ class Model extends Base  implements IteratorAggregate
      * @param string $fields 字段
      +----------------------------------------------------------
      * @return array
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function checkFields($fields) {
@@ -1108,8 +1102,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function checkOrder($order) {
          if(!empty($order)) {
@@ -1148,8 +1140,6 @@ class Model extends Base  implements IteratorAggregate
      * @param string $group 字段
      +----------------------------------------------------------
      * @return array
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function checkGroup($group) {
@@ -1192,8 +1182,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function addAll($dataList='',$autoLink=false)
     {
@@ -1219,8 +1207,6 @@ class Model extends Base  implements IteratorAggregate
      * @param string $order  更新的顺序
      +----------------------------------------------------------
      * @return boolen
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function save($data=null,$where='',$autoLink=false,$limit=0,$order='')
@@ -1271,8 +1257,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function checkLockVersion(&$data,&$where='') {
         $pk =   $this->getPk();
@@ -1320,8 +1304,6 @@ class Model extends Base  implements IteratorAggregate
      * @param boolean $return 是否返回关联数据
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function getRelation(&$result,$name='',$return=false)
@@ -1456,12 +1438,10 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param mixed $result  返回数据
+     * @param mixed $resultSet  返回数据
      * @param string $name  关联名称
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function getRelations(&$resultSet,$name='') {
@@ -1483,8 +1463,6 @@ class Model extends Base  implements IteratorAggregate
      * @param string $name 关联名称
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function opRelation($opType,$data='',$name='')
@@ -1681,8 +1659,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function delete($data=null,$limit='',$order='',$autoLink=false)
     {
@@ -1714,8 +1690,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function deleteAll($condition='',$autoLink=false)
     {
@@ -1735,27 +1709,6 @@ class Model extends Base  implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
-     * 清空表数据
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return boolen
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-    public function clear()
-    {
-        if(false === $this->db->clear($this->getTableName())){
-            $this->error =  L('_OPERATION_WRONG_');
-            return false;
-        }else {
-            return true;
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
      * 根据主键得到一条记录
      +----------------------------------------------------------
      * @access public
@@ -1767,8 +1720,6 @@ class Model extends Base  implements IteratorAggregate
      * @param boolean $lazy 是否惰性查询
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function getById($id,$fields='*',$cache=false,$relation=false,$lazy=false)
@@ -1789,8 +1740,6 @@ class Model extends Base  implements IteratorAggregate
      * @param boolean $lazy 是否惰性查询
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function getByIds($ids,$fields='*',$order='',$limit='',$cache=false,$relation=false,$lazy=false)
@@ -1816,8 +1765,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function getBy($field,$value,$fields='*',$cache=false,$relation=false,$lazy=false)
     {
@@ -1840,8 +1787,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function getByAll($field,$value,$fields='*',$cache=false,$relation=false,$lazy=true)
     {
@@ -1862,8 +1807,6 @@ class Model extends Base  implements IteratorAggregate
      * @param boolean $lazy 是否惰性查询
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function find($condition='',$fields='*',$cache=false,$relation=false,$lazy=false)
@@ -1889,8 +1832,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function xFind($condition='',$fields='*',$cache=false,$lazy=false)
     {
@@ -1914,9 +1855,7 @@ class Model extends Base  implements IteratorAggregate
      * @param mixed $relation 是否关联查询
      * @param boolean $lazy 是否惰性查询
      +----------------------------------------------------------
-     * @return ArrayObject|ResultIterator
-     +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return array|ResultIterator
      +----------------------------------------------------------
      */
     public function findAll($condition='',$fields='*',$order='',$limit='',$group='',$having='',$join='',$cache=false,$relation=false,$lazy=false)
@@ -1943,9 +1882,7 @@ class Model extends Base  implements IteratorAggregate
      * @param boolean $cache 是否读取缓存
      * @param boolean $lazy 是否惰性查询
      +----------------------------------------------------------
-     * @return ArrayObject|ResultIterator
-     +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return array|ResultIterator
      +----------------------------------------------------------
      */
     public function xFindAll($condition='',$fields='*',$order='',$limit='',$group='',$having='',$join='',$cache=false)
@@ -1970,9 +1907,7 @@ class Model extends Base  implements IteratorAggregate
      * @param mixed $relation 是否关联查询
      * @param boolean $lazy 是否惰性查询
      +----------------------------------------------------------
-     * @return ArrayObject|ResultIterator
-     +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return array|ResultIterator
      +----------------------------------------------------------
      */
     public function topN($count,$condition='',$fields='*',$order='',$group='',$having='',$join='',$cache=false,$relation=false,$lazy=false) {
@@ -1989,9 +1924,7 @@ class Model extends Base  implements IteratorAggregate
      * @param boolean $cache  是否缓存
      * @param boolean $lazy  是否惰性查询
      +----------------------------------------------------------
-     * @return ArrayObject|ResultIterator
-     +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return array|ResultIterator
      +----------------------------------------------------------
      */
     public function query($sql,$cache=false,$lazy=false)
@@ -2018,8 +1951,6 @@ class Model extends Base  implements IteratorAggregate
      * @param string $sql  SQL指令
      +----------------------------------------------------------
      * @return false | integer
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function execute($sql='')
@@ -2049,8 +1980,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function getField($field,$condition='')
     {
@@ -2076,8 +2005,6 @@ class Model extends Base  implements IteratorAggregate
      * @param string $spea  多字段分割符号
      +----------------------------------------------------------
      * @return array
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function getFields($field,$condition='',$sepa=' ')
@@ -2107,8 +2034,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function setField($field,$value,$condition='',$asString=true) {
         if(empty($condition) && isset($this->options['where'])) {
@@ -2132,8 +2057,6 @@ class Model extends Base  implements IteratorAggregate
      * @param integer $step  增长值
      +----------------------------------------------------------
      * @return boolean
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function setInc($field,$condition='',$step=1) {
@@ -2159,8 +2082,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function setDec($field,$condition='',$step=1) {
         if(empty($condition) && isset($this->options['where'])) {
@@ -2179,12 +2100,10 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param ArrayObject $rs  查询结果
+     * @param array $rs  查询结果
      * @param string $field  字段名
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function getCol($rs,$field)
@@ -2204,13 +2123,11 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param ArrayObject $rs  查询结果
+     * @param array $rs  查询结果
      * @param string $field  字段名用逗号分割多个
      * @param string $spea  多字段分割符号
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function getCols($rs,$field,$sepa=' ') {
@@ -2452,8 +2369,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     protected function cacheLockVersion($data) {
         if($this->optimLock) {
@@ -2477,8 +2392,6 @@ class Model extends Base  implements IteratorAggregate
      * @param boolean $relation 是否获取关联
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function rsToVo($resultSet,$returnList=false,$position=0,$relation='')
@@ -2547,12 +2460,9 @@ class Model extends Base  implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      * @param mixed $data 创建数据
-     * @param string $type 创建类型
      * @param boolean $batch 批量创建
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function create($data='',$batch=false)
@@ -2589,11 +2499,8 @@ class Model extends Base  implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      * @param mixed $dataList 数据列表
-     * @param string $type 创建类型
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function createAll($dataList='')
@@ -2624,11 +2531,8 @@ class Model extends Base  implements IteratorAggregate
      * @access private
      +----------------------------------------------------------
      * @param mixed $data 创建数据
-     * @param string $type 创建类型
      +----------------------------------------------------------
      * @return mixed
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     private function _createData($data) {
@@ -2722,8 +2626,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     private function autoOperation(&$data,$type) {
         // 自动填充
@@ -2773,8 +2675,6 @@ class Model extends Base  implements IteratorAggregate
      * @param string $type 创建类型
      +----------------------------------------------------------
      * @return boolean
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     private function autoValidation($data,$type) {
@@ -2875,8 +2775,6 @@ class Model extends Base  implements IteratorAggregate
      * @param string $val 验证规则
      +----------------------------------------------------------
      * @return boolean
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     private function _validationField($data,$val) {
@@ -3060,8 +2958,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function startLazy()
     {
@@ -3076,8 +2972,6 @@ class Model extends Base  implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function stopLazy()
@@ -3094,8 +2988,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function startLock()
     {
@@ -3111,8 +3003,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function stopLock()
     {
@@ -3127,8 +3017,6 @@ class Model extends Base  implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function startTrans()
@@ -3146,8 +3034,6 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function commit()
     {
@@ -3161,8 +3047,6 @@ class Model extends Base  implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      * @return boolean
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function rollback()
