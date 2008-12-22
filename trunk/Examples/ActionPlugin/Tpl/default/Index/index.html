@@ -1,0 +1,17 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <TITLE>ThinkPHP示例：应用插件支持</TITLE>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+ </HEAD>
+ <BODY>
+ <div class="main">
+ <H2>ThinkPHP示例之：应用插件支持</H2>
+除了数据过滤插件(filter)，ThinkPHP还能支持应用插件(action)，能在不改变现有代码的情况下，在页面上控制内容输出。应用插件可以启用和禁用，同时调整插件函数的优先级可以控制输出顺序。<br />
+以下两行内容是由PlugIns目录下的action插件输出的：<br />
+{~apply_action("demo_hook")}
+通过控制插件缓存(~plugins.php)的生成和add_action函数的优先级参数，可以方便的对插件进行启用与禁用，调整输出内容的顺序。
+</div>
+ </BODY>
+</HTML>
