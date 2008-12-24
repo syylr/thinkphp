@@ -2119,6 +2119,30 @@ class Model extends Base  implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
+     * 获取查询结果中的第一个字段值
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @param array $rs  查询结果
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    protected function getFirstCol($rs)
+    {
+        if(!empty($rs) && count($rs)>0) {
+            $result    =   $rs[0];
+            if(is_object($result)) {
+                $result   =  get_object_vars($result);
+            }
+            return  reset($result);
+        }else {
+            return null;
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
      * 获取查询结果中的多个字段值
      +----------------------------------------------------------
      * @access public
@@ -2169,12 +2193,12 @@ class Model extends Base  implements IteratorAggregate
      */
     public function count($condition='',$field='*')
     {
-        $fields = 'count('.$field.') as count';
+        $fields = 'count('.$field.') as tpcount';
         if($this->viewModel) {
             $condition  =   $this->checkCondition($condition);
         }
         $rs = $this->db->find($condition,$this->getTableName(),$fields);
-        return $this->getCol($rs,'count')|0;
+        return $this->getFirstCol($rs)|0;
     }
 
     /**
@@ -2191,13 +2215,13 @@ class Model extends Base  implements IteratorAggregate
      */
     public function max($field,$condition='')
     {
-        $fields = 'MAX('.$field.') as max';
+        $fields = 'MAX('.$field.') as tpmax';
         if($this->viewModel) {
             $condition  =   $this->checkCondition($condition);
         }
         $rs = $this->db->find($condition,$this->getTableName(),$fields);
         if($rs) {
-            return floatval($this->getCol($rs,'max'));
+            return floatval($this->getFirstCol($rs));
         }else{
             return false;
         }
@@ -2217,13 +2241,13 @@ class Model extends Base  implements IteratorAggregate
      */
     public function min($field,$condition='')
     {
-        $fields = 'MIN('.$field.') as min';
+        $fields = 'MIN('.$field.') as tpmin';
         if($this->viewModel) {
             $condition  =   $this->checkCondition($condition);
         }
         $rs = $this->db->find($condition,$this->getTableName(),$fields);
         if($rs) {
-            return floatval($this->getCol($rs,'min'));
+            return floatval($this->getFirstCol($rs));
         }else{
             return false;
         }
@@ -2243,13 +2267,13 @@ class Model extends Base  implements IteratorAggregate
      */
     public function sum($field,$condition='')
     {
-        $fields = 'SUM('.$field.') as sum';
+        $fields = 'SUM('.$field.') as tpsum';
         if($this->viewModel) {
             $condition  =   $this->checkCondition($condition);
         }
         $rs = $this->db->find($condition,$this->getTableName(),$fields);
         if($rs) {
-            return floatval($this->getCol($rs,'sum'));
+            return floatval($this->getFirstCol($rs));
         }else{
             return false;
         }
@@ -2269,13 +2293,13 @@ class Model extends Base  implements IteratorAggregate
      */
     public function avg($field,$condition='')
     {
-        $fields = 'AVG('.$field.') as avg';
+        $fields = 'AVG('.$field.') as tpavg';
         if($this->viewModel) {
             $condition  =   $this->checkCondition($condition);
         }
         $rs = $this->db->find($condition,$this->getTableName(),$fields);
         if($rs) {
-            return floatval($this->getCol($rs,'avg'));
+            return floatval($this->getFirstCol($rs));
         }else{
             return false;
         }
