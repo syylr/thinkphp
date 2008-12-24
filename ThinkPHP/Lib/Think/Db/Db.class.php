@@ -95,6 +95,9 @@ class Db extends Base
     // SQL 执行时间记录
     protected $beginTime;
 
+    // 当前的数据表名称 用于oracle
+	protected $tableName = NULL;
+
     /**
      +----------------------------------------------------------
      * 架构函数
