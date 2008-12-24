@@ -131,6 +131,8 @@ class Model extends Base  implements IteratorAggregate
             }
             // 设置数据库的返回数据格式
             $this->db->resultType   =   C('DATA_RESULT_TYPE');
+            //为获得ORACLE自增LastID而统一考虑的
+            $this->db->tableName = $this->parseName($this->name);
             // 设置默认的数据库连接
             $this->_db[0]   =   &$this->db;
             // 设置表前后缀

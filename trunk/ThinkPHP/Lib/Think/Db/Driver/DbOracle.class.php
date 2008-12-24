@@ -25,7 +25,6 @@ Class DbOracle extends Db{
 
     private $mode = OCI_COMMIT_ON_SUCCESS;
 
-	protected $tableName = NULL;
     /**
      +----------------------------------------------------------
      * 架构函数 读取数据库配置信息
