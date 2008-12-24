@@ -623,7 +623,7 @@ class Db extends Base
      */
     protected function parseLimit($limit)
     {
-        $limitStr    = '';
+		$limitStr    = '';
         if(!empty($limit)) {
             $dbType  =   $this->getDbType();
             if(in_array($dbType,array('PGSQL','SQLITE'))) {
@@ -647,8 +647,9 @@ class Db extends Base
                   $limitStr = ' FIRST '.$limit[0].' ';
                 }
             }elseif('ORACLE'==$dbType){
-                // TODO oracle的limit
-                $limitStr .= '';
+                // add by wyf-wang at 2008-12-22
+				$limit = explode(',',$limit);
+                $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
             }else{
                 // 其它数据库
                 $limitStr .= ' LIMIT '.$limit.' ';
@@ -1010,25 +1011,56 @@ class Db extends Base
      */
     public function find($where,$tables,$fields='*',$order=null,$limit=null,$group=null,$having=null,$join=null,$cache=false,$lazy=false,$lock=false)
     {
-        if(in_array($this->getDbType(),array('MSSQL','IBASE'),true) ) {
-            $this->queryStr = 'SELECT '.$this->parseLimit($limit)
-                            .$this->parseFields($fields)
-                            .' FROM '.$tables
-                            .$this->parseJoin($join)
-                            .$this->parseWhere($where)
-                            .$this->parseGroup($group)
-                            .$this->parseHaving($having)
-                            .$this->parseOrder($order);
-        }else{
-            $this->queryStr = 'SELECT '.$this->parseFields($fields)
-                            .' FROM '.$tables
-                            .$this->parseJoin($join)
-                            .$this->parseWhere($where)
-                            .$this->parseGroup($group)
-                            .$this->parseHaving($having)
-                            .$this->parseOrder($order)
-                            .$this->parseLimit($limit);
-        }
+        switch($this->getDbType())
+		{
+			case 'MSSQL':
+			case 'IBASE':
+            	$this->queryStr = 'SELECT '.$this->parseLimit($limit)
+					.$this->parseFields($fields)
+					.' FROM '.$tables
+					.$this->parseJoin($join)
+					.$this->parseWhere($where)
+					.$this->parseGroup($group)
+					.$this->parseHaving($having)
+					.$this->parseOrder($order);
+
+				break;
+			case 'ORACLE':
+				if($limit)
+				{
+					$this->queryStr = "SELECT *	FROM (SELECT rownum AS numrow, thinkphp.* FROM (SELECT "
+						.$this->parseFields($fields)
+						." FROM ".$tables
+						.$this->parseJoin($join)
+						.$this->parseWhere($where)
+						.$this->parseGroup($group)
+						.$this->parseHaving($having)
+						.$this->parseOrder($order)
+						.") thinkphp) WHERE "
+						.$this->parseLimit($limit);
+				}
+				else
+				{
+					$this->queryStr = 'SELECT '.$this->parseFields($fields)
+						.' FROM '.$tables
+						.$this->parseJoin($join)
+						.$this->parseWhere($where)
+						.$this->parseGroup($group)
+						.$this->parseHaving($having)
+						.$this->parseOrder($order);
+
+				}
+				break;
+			default:
+            	$this->queryStr = 'SELECT '.$this->parseFields($fields)
+					.' FROM '.$tables
+					.$this->parseJoin($join)
+					.$this->parseWhere($where)
+					.$this->parseGroup($group)
+					.$this->parseHaving($having)
+					.$this->parseOrder($order)
+					.$this->parseLimit($limit);
+		}
         return $this->query('',$cache,$lazy,$lock);
     }
 
