@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: ZhangXuehun <zhangxuehun@sohu.com>
 // +----------------------------------------------------------------------
-// $Id$
+// $Id: DbOracle.class.php,v 1.1 2008/12/23 10:06:30 wangyufeng Exp $
 
 /**
 +------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
 * @package  Think
 * @subpackage  Db
 * @author    ZhangXuehun <zhangxuehun@sohu.com>
-* @version   $Id$
+* @version   $Id: DbOracle.class.php,v 1.1 2008/12/23 10:06:30 wangyufeng Exp $
 +------------------------------------------------------------------------------
 */
 Class DbOracle extends Db{
@@ -339,19 +339,20 @@ Class DbOracle extends Db{
      public function getFields($tableName) {
         $result = $this->_query("select a.column_name,data_type,decode(nullable,'Y',0,1) notnull,data_default,decode(a.column_name,b.column_name,1,0) pk "
                   ."from user_tab_columns a,(select column_name from user_constraints c,user_cons_columns col "
-          ."where c.constraint_name=col.constraint_name and c.constraint_type='P'and c.table_name='".strToUpper($tableName)
-          ."') b where table_name='".strToUpper($tableName)."' and a.column_name=b.column_name(+)");
+          ."where c.constraint_name=col.constraint_name and c.constraint_type='P'and c.table_name='".strtoupper($tableName)
+          ."') b where table_name='".strtoupper($tableName)."' and a.column_name=b.column_name(+)");
+
         $info   =   array();
         foreach ($result as $key => $val) {
             if(is_object($val)) {
-                  $val        =        get_object_vars($val);
+                  $val = get_object_vars($val);
             }
-            $info[strToLower($val['COLUMN_NAME'])] = array(
-                'name'    => strToLower($val['COLUMN_NAME']),
-                'type'    => strToLower($val['DATA_TYPE']),
-                'notnull' => $val['NOTNULL'],
-                'default' => $val['DATA_DEFAULT'],
-                'primary' => $val['PK'],
+            $info[strtolower($val['column_name'])] = array(
+                'name'    => strtolower($val['column_name']),
+                'type'    => strtolower($val['data_type']),
+                'notnull' => $val['notnull'],
+                'default' => $val['data_default'],
+                'primary' => $val['pk'],
                 'autoInc' => 0,
             );
         }
@@ -371,7 +372,7 @@ Class DbOracle extends Db{
         $result = $this->_query("select table_name from user_tables");
         $info   =   array();
         foreach ($result as $key => $val) {
-            $info[$key] = current($val);
+            $info[$key] = strtolower(current($val));
         }
         return $info;
     }
@@ -441,8 +442,8 @@ Class DbOracle extends Db{
      +----------------------------------------------------------
      * 获取最后插入id ,仅适用于采用序列+触发器结合生成ID的方式
 	 * 要在config.php中指定
- 		'DB_TRIGGER_PREFIX'	=>	'tr_',
-		'DB_SEQUENCE_PREFIX' =>	'ts_',
+ 		'DB_ORACLE_TRIGGER_PREFIX'	=>	'tr_',
+		'DB_ORACLE_SEQUENCE_PREFIX' =>	'ts_',
 	 * eg:表 tb_user
 	   相对tb_user的序列为：
 	 	-- Create sequence
