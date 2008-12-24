@@ -1817,7 +1817,7 @@ class Model extends Base  implements IteratorAggregate
             // 如果是数字 直接使用getById
             return $this->getById($condition,$fields,$cache,$relation,$lazy);
         }
-        return $this->_read($condition,$fields,false,null,1,null,null,null,$cache,$relation,$lazy);
+        return $this->_read($condition,$fields,false,null,null,null,null,null,$cache,$relation,$lazy);
     }
 
     /**
