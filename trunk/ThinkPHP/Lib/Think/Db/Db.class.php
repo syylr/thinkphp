@@ -639,8 +639,8 @@ class Db extends Base
                 }
 
             }elseif('MSSQL'== $dbType){
-                // MsSQL
-                $limitStr = ' TOP '.$limit.' ';
+                // MsSQL 使用驱动中的扩展方法来解析limit字串 剑雷 2008.12.24
+               $limitStr=$this->limit($limit);
             }elseif('IBASE'== $dbType){
                 // Firebird 剑雷 2007.12.29
                 $limit  =   explode(',',$limit);
