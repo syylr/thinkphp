@@ -148,6 +148,10 @@ return  array(
     'SQL_MODE'                    =>   '',          // SQL MODE 针对mysql
     'FIELDS_DEPR'                 =>   ',',   // 多字段查询的分隔符
     'TABLE_DESCRIBE_SQL'     =>   '',             //  取得数据表的字段信息的SQL语句
+    /*  下面的数据库配置参数是为Oracle提供 */
+    'DB_TRIGGER_PREFIX'	=>	'tr_',   //触发器前缀，其后与表名一致
+    'DB_SEQUENCE_PREFIX'	=>	'seq_',  //序列前缀，其后与表名一致
+    'DB_CASE_LOWER' =>	true, //隐式参数，ORACLE返回数据集，键名大小写，默认强制为true小写，以适应TP Model类如count方法等
 
 	/* 数据缓存设置 */
 	'DATA_CACHE_TIME'		=>	-1,			// 数据缓存有效期
