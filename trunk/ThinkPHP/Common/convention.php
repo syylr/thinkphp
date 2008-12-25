@@ -148,6 +148,7 @@ return  array(
     'SQL_MODE'                    =>   '',          // SQL MODE 针对mysql
     'FIELDS_DEPR'                 =>   ',',   // 多字段查询的分隔符
     'TABLE_DESCRIBE_SQL'     =>   '',             //  取得数据表的字段信息的SQL语句
+    'FETCH_TABLES_SQL'        =>  '',          //  获取数据库的表信息的SQL语句
     /*  下面的数据库配置参数是为Oracle提供 */
     'DB_TRIGGER_PREFIX'	=>	'tr_',   //触发器前缀，其后与表名一致
     'DB_SEQUENCE_PREFIX'	=>	'seq_',  //序列前缀，其后与表名一致
