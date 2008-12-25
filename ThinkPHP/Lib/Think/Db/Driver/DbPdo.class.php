@@ -346,7 +346,29 @@ Class DbPdo extends Db{
             // 定义特殊的字段查询SQL
             $sql   = str_replace('%table%',$tableName,C('TABLE_DESCRIBE_SQL'));
         }else{
-            $sql   = 'DESCRIBE '.$tableName;
+            switch($this->getDbType()) {
+                case 'MSSQL':
+                    $sql   = 'exec sp_columns '.$tableName;
+                    break;
+                case 'SQLITE':
+                    $sql   = 'PRAGMA table_info ('.$tableName.') ';
+                    break;
+                case 'ORACLE':
+                    $sql   = "select a.column_name,data_type,decode(nullable,'Y',0,1) notnull,data_default,decode(a.column_name,b.column_name,1,0) pk "
+                      ."from user_tab_columns a,(select column_name from user_constraints c,user_cons_columns col "
+                      ."where c.constraint_name=col.constraint_name and c.constraint_type='P'and c.table_name='".strtoupper($tableName)
+                      ."') b where table_name='".strtoupper($tableName)."' and a.column_name=b.column_name(+)";
+                    break;
+                case 'PGSQL':
+                    $sql   = 'select fields_name as "Field",fields_type as "Type",fields_not_null as "Null",fields_key_name as "Key",fields_default as "Default",fields_default as "Extra" from table_msg('.$tableName.');';
+                    break;
+                case 'IBASE':
+                    $sql   = "SELECT RDB$FIELD_NAME AS FIELD, RDB$DEFAULT_VALUE AS DEFAULT1, RDB$NULL_FLAG AS NULL1 FROM RDB$RELATION_FIELDS WHERE RDB$RELATION_NAME=UPPER('".$tableName."') ORDER By RDB$FIELD_POSITION";
+                    break;
+                case 'MYSQL':
+                default:
+                    $sql   = 'DESCRIBE '.$tableName;
+            }
         }
         $sth    =   $this->_linkID->prepare($sql);
         $sth->execute();
@@ -376,10 +398,36 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      */
     public function getTables($dbName='') {
-        if(!empty($dbName)) {
-           $sql    = 'SHOW TABLES FROM '.$dbName;
+        if(C('FETCH_TABLES_SQL')) {
+            // 定义特殊的表查询SQL
+            $sql   = str_replace('%db%',$dnName,C('FETCH_TABLES_SQL'));
         }else{
-           $sql    = 'SHOW TABLES ';
+            switch($this->getDbType()) {
+            case 'ORACLE':
+                $sql   = 'select table_name from user_tables';
+                break;
+            case 'MSSQL':
+                $sql   = "SELECT TABLE_NAME	FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
+                break;
+            case 'PGSQL':
+                $sql   = "select tablename as Tables_in_test from pg_tables where  schemaname ='public'";
+                break;
+            case 'IBASE':
+                $sql   = 'SELECT DISTINCT RDB$RELATION_NAME FROM RDB$RELATION_FIELDS WHERE RDB$SYSTEM_FLAG=0';
+                break;
+            case 'SQLITE':
+                $sql   = "SELECT name FROM sqlite_master WHERE type='table' "
+                         . "UNION ALL SELECT name FROM sqlite_temp_master "
+                         . "WHERE type='table' ORDER BY name";
+                 break;
+            case 'MYSQL':
+            default:
+                if(!empty($dbName)) {
+                   $sql    = 'SHOW TABLES FROM '.$dbName;
+                }else{
+                   $sql    = 'SHOW TABLES ';
+                }
+            }
         }
         $result = $this->_query($sql);
         $info   =   array();
