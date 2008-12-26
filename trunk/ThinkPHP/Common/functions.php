@@ -599,10 +599,10 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
                             $_class[$class] = $val;
                        }
                         //导入类库文件
-                        $result =   require_cache($val);
+                        require_cache($val);
                    }
                }
-               return $result;
+               return true;
             }else{
                return false;
             }
