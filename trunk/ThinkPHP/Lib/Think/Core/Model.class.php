@@ -1063,11 +1063,17 @@ class Model extends Base  implements IteratorAggregate
             foreach ($this->viewFields as $name=>$val){
                 $k = isset($val['_as'])?$val['_as']:$name;
                 foreach ($val as $key=>$field){
+                    $table = '';
+                    if( false !== strpos($field,'*') ||  false !== strpos($field,'(') || false !== strpos($field,'.')) {
+                        //如果包含* 或者 使用了sql方法 则不再添加前面的表名
+                    }else{
+                        $table .= $k.'.';
+                    }
                     if(is_numeric($key)) {
-                        $fields[]    =   $k.'.'.$field.' AS '.$field;
+                        $fields[]    =   $table.$field.' AS '.$field;
                     }elseif('_' != substr($key,0,1)) {
                         // 以_开头的为特殊定义
-                        $fields[]    =   $k.'.'.$key.' AS '.$field;
+                        $fields[]    =   $table.$key.' AS '.$field;
                     }
                 }
             }
@@ -1080,11 +1086,17 @@ class Model extends Base  implements IteratorAggregate
                 $k = isset($val['_as'])?$val['_as']:$name;
                 foreach ($fields as $key=>$field){
                     if(false !== $_field = array_search($field,$val)) {
+                        $table = '';
+                        if( false !== strpos($field,'*') ||  false !== strpos($field,'(') || false !== strpos($field,'.')) {
+                            //如果包含* 或者 使用了sql方法 则不再添加前面的表名
+                        }else{
+                            $table .= $k.'.';
+                        }
                         // 存在视图字段
                         if(is_numeric($_field)) {
-                            $fields[$key]    =   $k.'.'.$field.' AS '.$field;
+                            $fields[$key]    =   $table.$field.' AS '.$field;
                         }else{
-                            $fields[$key]    =   $k.'.'.$_field.' AS '.$field;
+                            $fields[$key]    =   $table.$_field.' AS '.$field;
                         }
                     }
                 }
