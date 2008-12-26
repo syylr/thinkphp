@@ -626,39 +626,7 @@ class Db extends Base
      */
     protected function parseLimit($limit)
     {
-		$limitStr    = '';
-        if(!empty($limit)) {
-            $dbType  =   $this->getDbType();
-            if(in_array($dbType,array('PGSQL','SQLITE'))) {
-                // PgSQL
-                $limit  =   explode(',',$limit);
-                if(count($limit)>1) {
-                    $limitStr .= ' LIMIT '.$limit[1].' OFFSET '.$limit[0].' ';
-                }else{
-                    $limitStr .= ' LIMIT '.$limit[0].' ';
-                }
-
-            }elseif('MSSQL'== $dbType){
-                // MsSQL 使用驱动中的扩展方法来解析limit字串 剑雷 2008.12.24
-               $limitStr=$this->limit($limit);
-            }elseif('IBASE'== $dbType){
-                // Firebird 剑雷 2007.12.29
-                $limit  =   explode(',',$limit);
-                if(count($limit)>1) {
-                  $limitStr = ' FIRST '.$limit[1].' SKIP '.$limit[0].' ';
-                }else{
-                  $limitStr = ' FIRST '.$limit[0].' ';
-                }
-            }elseif('ORACLE'==$dbType){
-                // add by wyf-wang at 2008-12-22
-				$limit = explode(',',$limit);
-                $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
-            }else{
-                // 其它数据库
-                $limitStr .= ' LIMIT '.$limit.' ';
-            }
-        }
-        return $limitStr;
+        return $this->limit($limit);
     }
 
     /**

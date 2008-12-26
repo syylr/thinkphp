@@ -24,6 +24,8 @@
 Class DbPdo extends Db{
 
     protected $PDOStatement = null;
+	// 初始游标位置
+	protected $offset	=	0;
 
     /**
      +----------------------------------------------------------
@@ -363,7 +365,8 @@ Class DbPdo extends Db{
                     $sql   = 'select fields_name as "Field",fields_type as "Type",fields_not_null as "Null",fields_key_name as "Key",fields_default as "Default",fields_default as "Extra" from table_msg('.$tableName.');';
                     break;
                 case 'IBASE':
-                    $sql   = "SELECT RDB$FIELD_NAME AS FIELD, RDB$DEFAULT_VALUE AS DEFAULT1, RDB$NULL_FLAG AS NULL1 FROM RDB$RELATION_FIELDS WHERE RDB$RELATION_NAME=UPPER('".$tableName."') ORDER By RDB$FIELD_POSITION";
+                    // 暂时不支持
+                    throw_exception(L('_NOT_SUPPORT_DB_').':IBASE';
                     break;
                 case 'MYSQL':
                 default:
@@ -413,7 +416,8 @@ Class DbPdo extends Db{
                 $sql   = "select tablename as Tables_in_test from pg_tables where  schemaname ='public'";
                 break;
             case 'IBASE':
-                $sql   = 'SELECT DISTINCT RDB$RELATION_NAME FROM RDB$RELATION_FIELDS WHERE RDB$SYSTEM_FLAG=0';
+                // 暂时不支持
+                throw_exception(L('_NOT_SUPPORT_DB_').':IBASE';
                 break;
             case 'SQLITE':
                 $sql   = "SELECT name FROM sqlite_master WHERE type='table' "
@@ -487,6 +491,53 @@ Class DbPdo extends Db{
     public function escape_string($str) {
         return addslashes($str);
     }
+
+    /**
+     +----------------------------------------------------------
+     * limit
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	public function limit($limit) {
+		$limitStr    = '';
+        if(!empty($limit)) {
+            switch($this->getDbType()){
+                case 'PGSQL':
+                case 'SQLITE':
+                    $limit  =   explode(',',$limit);
+                    if(count($limit)>1) {
+                        $limitStr .= ' LIMIT '.$limit[1].' OFFSET '.$limit[0].' ';
+                    }else{
+                        $limitStr .= ' LIMIT '.$limit[0].' ';
+                    }
+                    break;
+                case 'MSSQL':
+                    $limit	=	explode(',',$limit);
+                    if(count($limit)>1) {
+                        $this->offset	=	$limit[0];
+                        $limitStr	=	' TOP '.$limit[1].' ';
+                    }else{
+                        $this->offset	=0;
+                        $limitStr = ' TOP '.$limit[0].' ';
+                    }
+                    break;
+                case 'IBASE':
+                    // 暂时不支持
+                    break;
+                case 'ORACLE':
+                    $limit = explode(',',$limit);
+                    $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
+                    break;
+                case 'MYSQL':
+                default:
+                    $limitStr .= ' LIMIT '.$limit.' ';
+            }
+        }
+        return $limitStr;
+	}
 
 }//类定义结束
 ?>

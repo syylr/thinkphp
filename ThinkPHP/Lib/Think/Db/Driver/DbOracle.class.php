@@ -482,5 +482,22 @@ Class DbOracle extends Db{
 		return $vo?$vo[0]["currval"]:0;
 	}
 
+    /**
+     +----------------------------------------------------------
+     * limit
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	public function limit($limit) {
+        $limitStr    = '';
+        if(!empty($limit)) {
+            $limit = explode(',',$limit);
+            $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
+        }
+		return $limitStr;
+	}
 }//类定义结束
 ?>
