@@ -296,6 +296,7 @@ class App extends Base
             // URL地址不区分大小写
             $module = ucwords(strtolower($module));
         }
+        unset($_POST[C('VAR_MODULE')],$_GET[C('VAR_MODULE')]);
         return $module;
     }
 
@@ -332,6 +333,7 @@ class App extends Base
 				$action	=	$actions[$action];
 			}
 		}
+        unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
         return $action;
     }
 

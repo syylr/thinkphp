@@ -183,6 +183,7 @@ class Dispatcher extends Base
             if(isset($_GET[C('VAR_ROUTER')])) {
                 // 存在路由变量
                 $routeName  =   $_GET[C('VAR_ROUTER')];
+                unset($_GET[C('VAR_ROUTER')]);
             }else{
                 $paths = explode(C('PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
                 // 获取路由名称
