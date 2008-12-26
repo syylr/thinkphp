@@ -683,8 +683,16 @@ class Db extends Base
     protected function parseFields($fields)
     {
         if(is_array($fields)) {
-            array_walk($fields, array($this, 'addSpecialChar'));
-            $fieldsStr = implode(',', $fields);
+            // 完善数组方式传字段名的支持
+            // 支持 'field1'=>'field2' 这样的字段别名定义
+            $array   =  array();
+            foreach ($fields as $key=>$field){
+                if(!is_numeric($key)) {
+                    $field =  $key.' AS '.$field;
+                }
+                $array[] =  $this->addSpecialChar($field);
+            }
+            $fieldsStr = implode(',', $array);
         }else if(is_string($fields) && !empty($fields)) {
             if( false === strpos($fields,'`') ) {
                 $fields = explode(',',$fields);
@@ -693,8 +701,9 @@ class Db extends Base
             }else {
                 $fieldsStr = $fields;
             }
-        }else
+        }else{
             $fieldsStr = '*';
+        }
         return $fieldsStr;
     }
 
@@ -821,7 +830,7 @@ class Db extends Base
     protected function addSpecialChar(&$value)
     {
         if(0 === strpos($this->getDbType(),'MYSQL')) {
-            if( '*' == $value ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
+            if( false !== strpos($value,'*') ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
                 //如果包含* 或者 使用了sql方法 则不作处理
             }
             elseif(false === strpos($value,'`') ) {
