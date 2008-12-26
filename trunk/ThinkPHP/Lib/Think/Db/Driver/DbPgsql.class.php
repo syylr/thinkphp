@@ -455,5 +455,27 @@ Class DbPgsql extends Db{
         return pg_escape_string($str);
     }
 
+    /**
+     +----------------------------------------------------------
+     * limit
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	public function limit($limit) {
+        $limitStr    = '';
+        if(!empty($limit)) {
+            $limit  =   explode(',',$limit);
+            if(count($limit)>1) {
+                $limitStr .= ' LIMIT '.$limit[1].' OFFSET '.$limit[0].' ';
+            }else{
+                $limitStr .= ' LIMIT '.$limit[0].' ';
+            }
+        }
+		return $limitStr;
+	}
+
 }//类定义结束
 ?>

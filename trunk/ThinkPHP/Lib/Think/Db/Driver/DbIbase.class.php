@@ -572,5 +572,26 @@ where a.rdb$constraint_type=\'PRIMARY KEY\' and a.rdb$relation_name=UPPER(\''.$t
         return addslashes($str);
     }
 
+    /**
+     +----------------------------------------------------------
+     * limit
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	public function limit($limit) {
+        $limitStr    = '';
+        if(!empty($limit)) {
+            $limit  =   explode(',',$limit);
+            if(count($limit)>1) {
+                 $limitStr = ' FIRST '.($limit[1]-$limit[0]).' SKIP '.$limit[0].' ';
+            }else{
+              $limitStr = ' FIRST '.$limit[0].' ';
+            }
+        }
+		return $limitStr;
+	}
 }//类定义结束
 ?>

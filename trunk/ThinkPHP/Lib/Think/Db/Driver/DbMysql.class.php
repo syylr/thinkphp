@@ -448,5 +448,22 @@ Class DbMysql extends Db{
         return mysql_escape_string($str);
     }
 
+    /**
+     +----------------------------------------------------------
+     * limit
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	public function limit($limit) {
+        $limitStr    = '';
+        if(!empty($limit)) {
+            $limitStr .= ' LIMIT '.$limit.' ';
+        }
+		return $limitStr;
+	}
+
 }//类定义结束
 ?>
