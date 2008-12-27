@@ -669,9 +669,11 @@ class Db extends Base
             $array   =  array();
             foreach ($fields as $key=>$field){
                 if(!is_numeric($key)) {
-                    $field =  $key.' AS '.$field;
+                    $field =  $this->addSpecialChar($key).' AS '.$this->addSpecialChar($field);
+                }else{
+                    $field =  $this->addSpecialChar($field);
                 }
-                $array[] =  $this->addSpecialChar($field);
+                $array[] =  $field;
             }
             $fieldsStr = implode(',', $array);
         }else if(is_string($fields) && !empty($fields)) {
