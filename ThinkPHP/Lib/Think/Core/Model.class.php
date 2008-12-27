@@ -3649,13 +3649,15 @@ class Model extends Base  implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      * @param array $list 要转换的数据集
+     * @param string $id 主键标记字段
      * @param string $pid parent标记字段
-     * @param string $level level标记字段
+     * @param string $child child标记名称
+     * @param integer $root 根节点id
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      */
-    public function toTree($list=null, $pk='id',$pid = 'pid',$child = '_child')
+    public function toTree($list=null, $pk='id',$pid = 'pid',$child = '_child',$root=0)
     {
         if(null === $list) {
             // 默认直接取查询返回的结果集合
@@ -3673,13 +3675,13 @@ class Model extends Base  implements IteratorAggregate
             foreach ($list as $key => $data) {
                 // 判断是否存在parent
                 $parentId = is_object($data)?$data->$pid:$data[$pid];
-                if ($parentId) {
+                if ($root == $parentId) {
+                    $tree[] =& $list[$key];
+                }else{
                     if (isset($refer[$parentId])) {
                         $parent =& $refer[$parentId];
                         $parent[$child][] =& $list[$key];
                     }
-                } else {
-                    $tree[] =& $list[$key];
                 }
             }
         }
