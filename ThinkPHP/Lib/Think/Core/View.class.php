@@ -227,7 +227,7 @@ class View extends Base
             $layoutFile  =  'Layout:'.$layoutFile;
         }
         // 获取布局模板文件
-        $content    =   $this->fetch($layoutFile,$charset,$contentType,$varPrefix);
+        $content    =   $this->fetch($layoutFile,$charset,$contentType,$varPrefix,false,false);
         // 查找布局包含的页面
         $find = preg_match_all('/<!-- layout::(.+?)::(.+?) -->/is',$content,$matches);
         if($find) {
@@ -245,15 +245,21 @@ class View extends Base
                     if($cache) {
                         $layoutContent = $cache;
                     }else{
-                        $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType,$varPrefix);
+                        $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType,$varPrefix,false,false);
                         S($guid,$layoutContent,$matches[2][$i]);
                     }
                 }else{
-                    $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType,$varPrefix);
+                    $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType,$varPrefix,false,false);
                 }
                 $content    =   str_replace($matches[0][$i],$layoutContent,$content);
             }
         }
+		
+		if(C('HTML_CACHE_ON')) {
+            // 写入静态文件
+            HtmlCache::writeHTMLCache($content);
+        }
+
         if($display) {
             $showTime   =   $this->showTime($startTime);
             echo $content;
@@ -315,7 +321,7 @@ class View extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function fetch($templateFile='',$charset='',$contentType='text/html',$varPrefix='',$display=false)
+    public function fetch($templateFile='',$charset='',$contentType='text/html',$varPrefix='',$display=false,$htmlCache=true)
     {
         $startTime = microtime(TRUE);
         if(null===$templateFile) {
@@ -411,7 +417,7 @@ class View extends Base
             $content = apply_filter('ob_content',$content);
         }
 
-        if(C('HTML_CACHE_ON')) {
+        if(C('HTML_CACHE_ON') && $htmlCache) {
             // 写入静态文件
             HtmlCache::writeHTMLCache($content);
         }
