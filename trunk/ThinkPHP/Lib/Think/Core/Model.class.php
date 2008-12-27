@@ -310,14 +310,29 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @param array $data 要create的数据
      * @param boolean $autoLink 是否关联写入
+     * @param boolean $lock 是否加锁
+     * @param boolean $fetchSql 是否返回sql
      +----------------------------------------------------------
      * @return false|integer
      +----------------------------------------------------------
      */
-    private function _create(&$data,$autoLink=false,$multi=false) {
+    private function _create(&$data,$autoLink=false,$multi=false,$lock=false,$fetchSql=false) {
         // 前置调用
         if(!$this->_before_create($data)) {
             return false;
+        }
+        $table      =   $this->getTableName();
+        if(!empty($this->options)) {
+            // 已经有定义的查询表达式
+            $data      =   isset($this->options['data'])?      $this->options['data']:     $data;
+            $lock      =   isset($this->options['lock'])?      $this->options['lock']:     $lock;
+            $autoLink=  isset($this->options['link'])?          $this->options['link']:     $autoLink;
+            $table     =   isset($this->options['table'])?     $this->options['table']:    $this->getTableName();
+            $fetchSql = isset($this->options['fetch'])?       $this->options['fetch']:    $fetchSql;
+            $this->options  =   array();
+        }
+        if($fetchSql) {
+            return $this->db->add($data,$this->getTableName(),$multi,$lock,$fetchSql);
         }
         // 插入数据库
         if(false === $result = $this->db->add($data,$this->getTableName(),$multi)){
@@ -356,11 +371,12 @@ class Model extends Base  implements IteratorAggregate
      * @param string $order order
      * @param boolean $autoLink 是否关联写入
      * @param boolean $lock 是否加锁
+     * @param boolean $fetchSql 是否返回sql
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    private function _update(&$data,$where='',$limit='',$order='',$autoLink=false,$lock=false) {
+    private function _update(&$data,$where='',$limit='',$order='',$autoLink=false,$lock=false,$fetchSql=false) {
         $table      =   $this->getTableName();
         if(!empty($this->options)) {
             // 已经有定义的查询表达式
@@ -370,6 +386,7 @@ class Model extends Base  implements IteratorAggregate
             $lock      =   isset($this->options['lock'])?      $this->options['lock']:     $lock;
             $autoLink=  isset($this->options['link'])?          $this->options['link']:     $autoLink;
             $table     =   isset($this->options['table'])?     $this->options['table']:    $this->getTableName();
+            $fetchSql = isset($this->options['fetch'])?       $this->options['fetch']:    $fetchSql;
             $this->options  =   array();
         }
         // 前置调用
@@ -379,6 +396,10 @@ class Model extends Base  implements IteratorAggregate
         $lock    =   ($this->pessimisticLock || $lock);
         if($this->viewModel) {
             $where  =   $this->checkCondition($where);
+        }
+        if($fetchSql) {
+            // 返回SQL
+            return $this->db->save($data,$table,$where,$limit,$order,$lock,true);
         }
         if(false ===$this->db->save($data,$table,$where,$limit,$order,$lock) ){
             $this->error = L('_OPERATION_WRONG_');
@@ -416,11 +437,12 @@ class Model extends Base  implements IteratorAggregate
      * @param boolean $relation 是否关联查询
      * @param boolean $lazy 是否惰性查询
      * @param boolean $lock 是否加锁
+     * @param boolean $fetchSql 是否返回sql
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    private function _read($condition='',$fields='*',$all=false,$order='',$limit='',$group='',$having='',$join='',$cache=false,$relation=false,$lazy=false,$lock=false) {
+    private function _read($condition='',$fields='*',$all=false,$order='',$limit='',$group='',$having='',$join='',$cache=false,$relation=false,$lazy=false,$lock=false,$fetchSql=false) {
         $table      =   $this->getTableName();
         if(!empty($this->options)) {
             // 已经有定义的查询表达式
@@ -436,6 +458,7 @@ class Model extends Base  implements IteratorAggregate
             $lock         =   isset($this->options['lock'])?          $this->options['lock']:     $lock;
             $lazy        =   isset($this->options['lazy'])?          $this->options['lazy']: $lazy;
             $relation    =   isset($this->options['link'])?              $this->options['link']:     $relation;
+            $fetchSql = isset($this->options['fetch'])?       $this->options['fetch']:    $fetchSql;
             $this->options  =   array();
         }
         // 前置调用
@@ -467,6 +490,9 @@ class Model extends Base  implements IteratorAggregate
         }
         $lazy    =   ($this->lazyQuery || $lazy);
         $lock    =   ($this->pessimisticLock || $lock);
+        if($fetchSql) {
+            return $this->db->find($condition,$table,$fields,$order,$limit,$group,$having,$join,$cache,$lazy,$lock,true);
+        }
         $rs = $this->db->find($condition,$table,$fields,$order,$limit,$group,$having,$join,$cache,$lazy,$lock);
         $result =   $this->rsToVo($rs,$all,0,$relation);
         // 后置调用
@@ -491,11 +517,13 @@ class Model extends Base  implements IteratorAggregate
      * @param string $limit
      * @param string $order
      * @param boolean $autoLink 是否关联删除
+     * @param boolean $lock 是否加锁
+     * @param boolean $fetchSql 是否返回sql
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    private function _delete($data,$where='',$limit=0,$order='',$autoLink=false) {
+    private function _delete($data,$where='',$limit=0,$order='',$autoLink=false,$lock=false,$fetchSql=false) {
         $table      =   $this->getTableName();
         if(!empty($this->options)) {
             // 已经有定义的查询表达式
@@ -503,7 +531,9 @@ class Model extends Base  implements IteratorAggregate
             $table          =   isset($this->options['table'])?     $this->options['table']:    $this->getTableName();
             $limit          =   isset($this->options['limit'])?     $this->options['limit']:        $limit;
             $order      =   isset($this->options['order'])?     $this->options['order']:    $order;
+            $lock         =   isset($this->options['lock'])?          $this->options['lock']:     $lock;
             $autoLink   =   isset($this->options['link'])?          $this->options['link']:     $autoLink;
+            $fetchSql = isset($this->options['fetch'])?       $this->options['fetch']:    $fetchSql;
             $this->options  =   array();
         }
         // 前置调用
@@ -513,7 +543,10 @@ class Model extends Base  implements IteratorAggregate
         if($this->viewModel) {
             $where  =   $this->checkCondition($where);
         }
-        $result=    $this->db->remove($where,$table,$limit,$order);
+        if($fetchSql) {
+            return $this->db->remove($where,$table,$limit,$order,$lock,true);
+        }
+        $result=    $this->db->remove($where,$table,$limit,$order,$lock);
         if(false === $result ){
             $this->error =  L('_OPERATION_WRONG_');
             return false;
@@ -544,16 +577,18 @@ class Model extends Base  implements IteratorAggregate
      * @param boolean $cache 是否使用查询缓存
      * @param boolean $lazy 是否惰性查询
      * @param boolean $lock 是否加锁
+     * @param boolean $fetchSql 是否返回sql
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    private function _query($sql='',$cache=false,$lazy=false,$lock=false) {
+    private function _query($sql='',$cache=false,$lazy=false,$lock=false,$fetchSql=false) {
         if(!empty($this->options)) {
             $sql        =   isset($this->options['sql'])?           $this->options['sql']:      $sql;
             $cache  =   isset($this->options['cache'])?     $this->options['cache']:    $cache;
             $lazy       =   isset($this->options['lazy'])?      $this->options['lazy']: $lazy;
             $lock       =   isset($this->options['lock'])?      $this->options['lock']:     $lock;
+            $fetchSql = isset($this->options['fetch'])?       $this->options['fetch']:    $fetchSql;
             $this->options  =   array();
         }
         if(!$this->_before_query($sql)) {
@@ -568,6 +603,9 @@ class Model extends Base  implements IteratorAggregate
         }
         $lazy    =   ($this->lazyQuery || $lazy);
         $lock    =   ($this->pessimisticLock || $lock);
+        if($fetchSql) {
+            return $this->db->query($sql,$cache,$lazy,$lock,$fetchSql);
+        }
         $result =   $this->db->query($sql,$cache,$lazy,$lock);
         if($cache)    S($identify,$result);
         $this->_after_query($result);
@@ -1933,7 +1971,7 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $sql  SQL指令
+     * @param mixed $sql  SQL指令
      * @param boolean $cache  是否缓存
      * @param boolean $lazy  是否惰性查询
      +----------------------------------------------------------
@@ -1944,6 +1982,9 @@ class Model extends Base  implements IteratorAggregate
     {
         if(empty($sql) && !empty($this->options['sql'])) {
             $sql    =   $this->options['sql'];
+        }
+        if(is_array($sql)) {
+            return $this->patchQuery($sql);
         }
         if(!empty($sql)) {
             if(strpos($sql,'__TABLE__')) {
@@ -1980,6 +2021,37 @@ class Model extends Base  implements IteratorAggregate
         }else {
             return false;
         }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 批处理执行SQL语句
+     * 批处理的指令都认为是execute操作
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $sql  SQL批处理指令
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function patchQuery($sql=array()) {
+        if(!is_array($sql)) {
+            return false;
+        }
+        // 自动启动事务支持
+        $this->startTrans();
+        foreach ($sql as $_sql){
+            $result   =  $this->execute($_sql);
+            if(false === $result) {
+                // 发生错误自动回滚事务
+                $this->rollback();
+                return false;
+            }
+        }
+        // 提交事务
+        $this->commit();
+        return true;
     }
 
     /**
@@ -3483,6 +3555,27 @@ class Model extends Base  implements IteratorAggregate
      */
     public function relation($name) {
         $this->options['link']  =   $name;
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否返回执行的SQL
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param boolean $fetch
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function fetchSql($fetch=true) {
+        if(in_array(strtolower($fetch),array('find','findall','save','add','delete'))) {
+            $this->options['fetch'] =   true;
+            return $this->{$fetch}();
+        }else{
+            $this->options['fetch'] =   $fetch;
+        }
         return $this;
     }
 
