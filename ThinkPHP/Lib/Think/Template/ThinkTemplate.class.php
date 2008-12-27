@@ -714,7 +714,6 @@ class  ThinkTemplate extends Base
         $vars = explode('.',$varStr);
         $vars[1] = strtoupper(trim($vars[1]));
         $parseStr = '';
-
         if(count($vars)>=3){
             $vars[2] = trim($vars[2]);
             switch($vars[1]){
@@ -755,17 +754,24 @@ class  ThinkTemplate extends Base
         }else if(count($vars)==2){
             switch($vars[1]){
                 case 'NOW':
-                    $parseStr = "date('Y-m-d g:i a',time())";break;
+                    $parseStr = "date('Y-m-d g:i a',time())";
+                    break;
                 case 'VERSION':
-                    $parseStr = 'THINK_VERSION';break;
+                    $parseStr = 'THINK_VERSION';
+                    break;
                 case 'TEMPLATE':
-                    $parseStr = 'C("TMPL_FILE_NAME")';break;
+                    $parseStr = 'C("TMPL_FILE_NAME")';
+                    break;
                 case 'LDELIM':
-                    $parseStr = 'C("TMPL_L_DELIM")';break;
+                    $parseStr = 'C("TMPL_L_DELIM")';
+                    break;
                 case 'RDELIM':
-                    $parseStr = 'C("TMPL_R_DELIM")';break;
+                    $parseStr = 'C("TMPL_R_DELIM")';
+                    break;
+                default:
+                    if(defined($vars[1]))
+                        $parseStr = $vars[1];
             }
-            if(defined($vars[1])){ $parseStr = strtoupper($vars[1]);}
         }
         return $parseStr;
     }
