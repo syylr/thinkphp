@@ -46,6 +46,7 @@ Class DbPdo extends Db{
                 $this->config['params'] =   array();
             }
         }
+
     }
 
     /**
@@ -68,6 +69,8 @@ Class DbPdo extends Db{
             }catch (PDOException $e) {
                 throw_exception($e->getMessage());
             }
+            // 因为PDO的连接切换可能导致数据库类型不同，因此重新获取下当前的数据库类型
+            $this->dbType = $this->_getDsnType($config['dsn']);
             $this->linkID[$linkNum]->exec('SET NAMES '.C('DB_CHARSET'));
             // 因个别驱动不支持getAttribute方法 暂时注释
             //$this->dbVersion = $this->linkID[$linkNum]->getAttribute(constant("PDO::ATTR_SERVER_INFO"));
@@ -348,7 +351,7 @@ Class DbPdo extends Db{
             // 定义特殊的字段查询SQL
             $sql   = str_replace('%table%',$tableName,C('TABLE_DESCRIBE_SQL'));
         }else{
-            switch($this->getDbType()) {
+            switch($this->dbType) {
                 case 'MSSQL':
                     $sql   = 'exec sp_columns '.$tableName;
                     break;
@@ -356,6 +359,7 @@ Class DbPdo extends Db{
                     $sql   = 'PRAGMA table_info ('.$tableName.') ';
                     break;
                 case 'ORACLE':
+                case 'OCI':
                     $sql   = "select a.column_name,data_type,decode(nullable,'Y',0,1) notnull,data_default,decode(a.column_name,b.column_name,1,0) pk "
                       ."from user_tab_columns a,(select column_name from user_constraints c,user_cons_columns col "
                       ."where c.constraint_name=col.constraint_name and c.constraint_type='P'and c.table_name='".strtoupper($tableName)
@@ -366,7 +370,7 @@ Class DbPdo extends Db{
                     break;
                 case 'IBASE':
                     // 暂时不支持
-                    throw_exception(L('_NOT_SUPPORT_DB_').':IBASE';
+                    throw_exception(L('_NOT_SUPPORT_DB_').':IBASE');
                     break;
                 case 'MYSQL':
                 default:
@@ -405,8 +409,9 @@ Class DbPdo extends Db{
             // 定义特殊的表查询SQL
             $sql   = str_replace('%db%',$dnName,C('FETCH_TABLES_SQL'));
         }else{
-            switch($this->getDbType()) {
+            switch($this->dbType) {
             case 'ORACLE':
+            case 'OCI':
                 $sql   = 'select table_name from user_tables';
                 break;
             case 'MSSQL':
@@ -417,7 +422,7 @@ Class DbPdo extends Db{
                 break;
             case 'IBASE':
                 // 暂时不支持
-                throw_exception(L('_NOT_SUPPORT_DB_').':IBASE';
+                throw_exception(L('_NOT_SUPPORT_DB_').':IBASE');
                 break;
             case 'SQLITE':
                 $sql   = "SELECT name FROM sqlite_master WHERE type='table' "
@@ -504,7 +509,7 @@ Class DbPdo extends Db{
 	public function limit($limit) {
 		$limitStr    = '';
         if(!empty($limit)) {
-            switch($this->getDbType()){
+            switch($this->dbType){
                 case 'PGSQL':
                 case 'SQLITE':
                     $limit  =   explode(',',$limit);
@@ -528,6 +533,7 @@ Class DbPdo extends Db{
                     // 暂时不支持
                     break;
                 case 'ORACLE':
+                case 'OCI':
                     $limit = explode(',',$limit);
                     $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
                     break;
