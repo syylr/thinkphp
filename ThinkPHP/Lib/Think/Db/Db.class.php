@@ -836,11 +836,11 @@ class Db extends Base
     protected function addSpecialChar(&$value)
     {
         if(0 === strpos($this->dbType,'MYSQL')) {
-            if( false !== strpos($value,'*') ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
+            $value   =  trim($value);
+            if( false !== strpos($value,' ') || false !== strpos($value,'*') ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
                 //如果包含* 或者 使用了sql方法 则不作处理
-            }
-            elseif(false === strpos($value,'`') ) {
-                $value = '`'.trim($value).'`';
+            }else{
+                $value = '`'.$value.'`';
             }
         }
         return $value;
