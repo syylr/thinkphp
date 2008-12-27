@@ -65,7 +65,7 @@ Class DbMysql extends Db{
                 throw_exception(mysql_error());
             }
             if (!empty($config['database']) && !mysql_select_db($config['database'], $this->linkID[$linkNum]) ) {
-                throw_exception($this->error());
+                throw_exception(mysql_error());
             }
             $this->dbVersion = mysql_get_server_info($this->linkID[$linkNum]);
             if ($this->dbVersion >= "4.1") {
