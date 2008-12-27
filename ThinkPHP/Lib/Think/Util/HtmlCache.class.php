@@ -46,7 +46,10 @@ class HtmlCache extends Base
             // 'read'=>array('{id},{name}',60,'md5') 必须保证静态规则的唯一性 和 可判断性
             $htmls = include CONFIG_PATH.'htmls.php';
             if(!is_array($htmls)) {
-                $htmls  =   $_htmls;
+				//这里应该是不正确的配置格式或者不支持的格式
+				//$_htmls是一个未定义的变量,下面一句也不会使得下面的任意if else生效
+                //$htmls  =   $_htmls;
+				return ;
             }
             // 检测操作的静态规则
             if(isset($htmls[MODULE_NAME.':'.ACTION_NAME])) {
