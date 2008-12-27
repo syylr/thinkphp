@@ -158,16 +158,34 @@ class Db extends Base
         // 检查驱动类
         if(class_exists($dbClass)) {
             $db = new $dbClass($db_config);
-            if(!empty($db_config['dsn'])) {
-                $db->dbType = $this->dbType.'  '.$db_config['dsn'];
+            // 获取当前的数据库类型
+            if( 'pdo' != strtolower($db_config['dbms']) ) {
+                $db->dbType = strtoupper($this->dbType);
             }else{
-                $db->dbType = $this->dbType;
+                $db->dbType = $this->_getDsnType($db_config['dsn']);
             }
         }else {
             // 类没有定义
             throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
         }
         return $db;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 根据DSN获取数据库类型 返回大写
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @param string $dsn  dsn字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    private function _getDsnType($dsn) {
+        $match  =  explode(':',$dsn);
+        $dbType = strtoupper(trim($match[0]));
+        return $dbType;
     }
 
     /**
@@ -386,50 +404,13 @@ class Db extends Base
             $tablesStr = implode(',', $tables);
         }
         else if(is_string($tables)) {
-            if(0 === strpos($this->getDbType(),'MYSQL') && false === strpos($tables,'`')) {
+            if(0 === strpos($this->dbType,'MYSQL') && false === strpos($tables,'`')) {
                 $tablesStr =  '`'.trim($tables).'`';
             }else{
                 $tablesStr = $tables;
             }
         }
         return $tablesStr;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 返回数据库的类型 如果使用PDO 会进一步分析
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    protected function getDbType() {
-        $array  =   explode(' ',$this->dbType);
-        if('PDO' != strtoupper($array[0])) {
-            return strtoupper($array[0]);
-        }else{
-            if(false !== strpos(strtoupper($this->dbType),'MYSQL')) {
-                return 'MYSQL';
-            }elseif(false !== strpos(strtoupper($this->dbType),'MSSQL')){
-                return 'MSSQL';
-            }elseif(false !== strpos(strtoupper($this->dbType),'PGSQL')){
-                return 'PGSQL';
-            }elseif(false !== strpos(strtoupper($this->dbType),'SQLITE')){
-                return 'SQLITE';
-            }elseif(false !== strpos(strtoupper($this->dbType),'OCI')){
-                return 'ORACLE';
-            }elseif(false !== strpos(strtoupper($this->dbType),'IBM')){
-                return 'DB2';
-            }elseif(false !== strpos(strtoupper($this->dbType),'ODBC')){
-                return 'ODBC';
-            }elseif(false !== strpos(strtoupper($this->dbType),'FIREBIRD')){
-                // Firebird 剑雷 2007.12.29
-                return 'IBASE';
-            }else{
-                return $this->dbType;
-            }
-        }
     }
 
     /**
@@ -626,7 +607,7 @@ class Db extends Base
      */
     protected function parseLimit($limit)
     {
-        return $this->limit($limit);
+        return !empty($limit)?$this->limit($limit):'';
     }
 
     /**
@@ -766,7 +747,30 @@ class Db extends Base
         }else if(is_string($sets)) {
             $setsStr = $sets;
         }
-        return $setsStr;
+        return ' SET '.$setsStr;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * table分析
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array|string $tables
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function parseTable($tables) {
+        $parseStr   =   '';
+        if(is_string($tables)) {
+            $tables  =  explode(',',$tables);
+        }
+        if( 0 === strpos($this->dbType,'MYSQL')) {
+            array_walk($tables, array($this, 'addSpecialChar'));
+        }
+        $parseStr   =  implode(',',$tables);
+        return $parseStr;
     }
 
     /**
@@ -779,7 +783,7 @@ class Db extends Base
      +----------------------------------------------------------
      */
     protected function setLockMode() {
-        if('ORACLE' == $this->getDbType()) {
+        if('ORACLE' == $this->dbType || 'OCI'==$this->dbType ) {
             return ' FOR UPDATE NOWAIT ';
         }
         return ' FOR UPDATE ';
@@ -829,7 +833,7 @@ class Db extends Base
      */
     protected function addSpecialChar(&$value)
     {
-        if(0 === strpos($this->getDbType(),'MYSQL')) {
+        if(0 === strpos($this->dbType,'MYSQL')) {
             if( false !== strpos($value,'*') ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
                 //如果包含* 或者 使用了sql方法 则不作处理
             }
@@ -874,24 +878,29 @@ class Db extends Base
      * @param string $sql  查询语句
      * @param boolean $cache  是否缓存查询
      * @param boolean $lazy  是否惰性加载
+     * @param boolean $lock 是否lock
+     * @param boolean $fetchSql 是否返回SQL
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function query($sql='',$cache=false,$lazy=false,$lock=false)
+    public function query($sql='',$cache=false,$lazy=false,$lock=false,$fetchSql=false)
     {
-        if(!empty($sql)) {
-            $this->queryStr = $sql;
+        if(empty($sql)) {
+            $sql   = $this->queryStr;
         }
         if($lock) {
-            $this->queryStr .= $this->setLockMode();
+            $sql .= $this->setLockMode();
+        }
+        if($fetchSql) {
+            return $sql;
         }
         if($lazy) {
             // 延时读取数据库
-            return $this->lazyQuery($this->queryStr);
+            return $this->lazyQuery($sql);
         }
         if($cache) {// 启用数据库缓存
-            $guid   =   md5($this->queryStr);
+            $guid   =   md5($sql);
             //获取缓存数据
             $data = S($guid);
             if(!empty($data)){
@@ -899,7 +908,7 @@ class Db extends Base
             }
         }
         // 进行查询
-        $data = $this->_query();
+        $data = $this->_query($sql);
         if($cache){
             //如果启用数据库缓存则重新缓存
              S($guid,$data);
@@ -931,17 +940,22 @@ class Db extends Base
      * @access public
      +----------------------------------------------------------
      * @param string $sql  执行语句
+     * @param boolean $lock 是否lock
+     * @param boolean $fetchSql 是否返回SQL
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function execute($sql='',$lock=false)
+    public function execute($sql='',$lock=false,$fetchSql=false)
     {
         if(empty($sql)) {
             $sql  = $this->queryStr;
         }
         if($lock) {
             $sql .= $this->setLockMode();
+        }
+        if($fetchSql) {
+            return $sql;
         }
         return $this->_execute($sql);
     }
@@ -953,19 +967,23 @@ class Db extends Base
      * @access public
      +----------------------------------------------------------
      * @param string $sql SQL指令
+     * @param boolean $cache  是否缓存查询
+     * @param boolean $lazy  是否惰性加载
+     * @param boolean $lock 是否lock
+     * @param boolean $fetchSql 是否返回SQL
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function autoExec($sql='',$lazy=false,$lock=false,$cache=false)
+    public function autoExec($sql='',$lazy=false,$lock=false,$cache=false,$fetchSql=false)
     {
         if(empty($sql)) {
             $sql  = $this->queryStr;
         }
         if($this->isMainIps($sql)) {
-            $this->execute($sql,$lock);
+            $this->execute($sql,$lock,$fetchSql);
         }else {
-            $this->query($sql,$cache,$lazy,$lock);
+            $this->query($sql,$cache,$lazy,$lock,$fetchSql);
         }
     }
 
@@ -989,15 +1007,17 @@ class Db extends Base
      * @return array
      +----------------------------------------------------------
      */
-    public function find($where,$tables,$fields='*',$order=null,$limit=null,$group=null,$having=null,$join=null,$cache=false,$lazy=false,$lock=false)
+    public function find($where,$tables,$fields='*',$order=null,$limit=null,$group=null,$having=null,$join=null,$cache=false,$lazy=false,$lock=false,$fetchSql=false)
     {
-        switch($this->getDbType())
+        switch($this->dbType)
 		{
 			case 'MSSQL':
 			case 'IBASE':
+            case 'FIREBIRD':
+            case 'INTERBASE':
             	$this->queryStr = 'SELECT '.$this->parseLimit($limit)
 					.$this->parseFields($fields)
-					.' FROM '.$tables
+					.' FROM '.$this->parseTable($tables)
 					.$this->parseJoin($join)
 					.$this->parseWhere($where)
 					.$this->parseGroup($group)
@@ -1006,11 +1026,12 @@ class Db extends Base
 
 				break;
 			case 'ORACLE':
+            case 'OCI':
 				if($limit)
 				{
 					$this->queryStr = "SELECT *	FROM (SELECT rownum AS numrow, thinkphp.* FROM (SELECT "
 						.$this->parseFields($fields)
-						." FROM ".$tables
+						." FROM ".$this->parseTable($tables)
 						.$this->parseJoin($join)
 						.$this->parseWhere($where)
 						.$this->parseGroup($group)
@@ -1022,7 +1043,7 @@ class Db extends Base
 				else
 				{
 					$this->queryStr = 'SELECT '.$this->parseFields($fields)
-						.' FROM '.$tables
+						.' FROM '.$this->parseTable($tables)
 						.$this->parseJoin($join)
 						.$this->parseWhere($where)
 						.$this->parseGroup($group)
@@ -1033,7 +1054,7 @@ class Db extends Base
 				break;
 			default:
             	$this->queryStr = 'SELECT '.$this->parseFields($fields)
-					.' FROM '.$tables
+					.' FROM '.$this->parseTable($tables)
 					.$this->parseJoin($join)
 					.$this->parseWhere($where)
 					.$this->parseGroup($group)
@@ -1041,7 +1062,7 @@ class Db extends Base
 					.$this->parseOrder($order)
 					.$this->parseLimit($limit);
 		}
-        return $this->query('',$cache,$lazy,$lock);
+        return $this->query('',$cache,$lazy,$lock,$fetchSql);
     }
 
     /**
@@ -1052,12 +1073,14 @@ class Db extends Base
      +----------------------------------------------------------
      * @param mixed $map 数据
      * @param string $table  数据表名
-     * @param mixed $multi  是否插入多条记录
+     * @param boolean $multi  是否插入多条记录
+     * @param boolean $lock 是否lock
+     * @param boolean $fetchSql 是否返回SQL
      +----------------------------------------------------------
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function add($map,$table,$multi=false)
+    public function add($map,$table,$multi=false,$lock=false,$fetchSql=false)
     {
         if($multi) {
             return $this->addAll($map,$table);
@@ -1087,8 +1110,8 @@ class Db extends Base
         //array_walk($values, array($this, 'fieldFormat'));
 
         $valuesStr = implode(',', $values);
-        $this->queryStr =    'INSERT INTO '.$table.' ('.$fieldsStr.') VALUES ('.$valuesStr.')';
-        return $this->execute();
+        $this->queryStr =    'INSERT INTO '.$this->parseTable($table).' ('.$fieldsStr.') VALUES ('.$valuesStr.')';
+        return $this->execute($this->queryStr,$lock,$fetchSql);
     }
 
     /**
@@ -1099,13 +1122,15 @@ class Db extends Base
      +----------------------------------------------------------
      * @param mixed $map 数据列表
      * @param string $table  数据表名
+     * @param boolean $lock 是否lock
+     * @param boolean $fetchSql 是否返回SQL
      +----------------------------------------------------------
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function addAll($map,$table)
+    public function addAll($map,$table,$lock,$fetchSql=false)
     {
-        if(0 === strpos($this->getDbType(),'MYSQL')) {
+        if(0 === strpos($this->dbType,'MYSQL')) {
             //转换数据库编码
             $fields = array_keys((array)$map[0]);
             array_walk($fields, array($this, 'addSpecialChar'));
@@ -1124,8 +1149,8 @@ class Db extends Base
                 $values[] = '( '.implode(',', $_values).' )';
             }
             $valuesStr = implode(',',$values);
-            $this->queryStr =    'INSERT INTO '.$table.' ('.$fieldsStr.') VALUES '.$valuesStr;
-            return $this->execute();
+            $this->queryStr =    'INSERT INTO '.$this->parseTable($table).' ('.$fieldsStr.') VALUES '.$valuesStr;
+            return $this->execute($this->queryStr,$lock,$fetchSql);
         }else{
             //$this->startTrans();
             foreach ($map as $data){
@@ -1145,14 +1170,20 @@ class Db extends Base
      * @param string $table  数据表名
      * @param string $limit
      * @param string $order
+     * @param boolean $lock 是否lock
+     * @param boolean $fetchSql 是否返回SQL
      +----------------------------------------------------------
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function remove($where,$table,$limit='',$order='')
+    public function remove($where,$table,$limit='',$order='',$lock=false,$fetchSql=false)
     {
-        $this->queryStr = 'DELETE FROM '.$table.$this->parseWhere($where).$this->parseOrder($order).$this->parseLimit($limit);
-        return $this->execute();
+        $this->queryStr = 'DELETE FROM '
+                .$this->parseTable($table)
+                .$this->parseWhere($where)
+                .$this->parseOrder($order)
+                .$this->parseLimit($limit);
+        return $this->execute($this->queryStr,$lock,$fetchSql);
     }
 
     /**
@@ -1167,14 +1198,20 @@ class Db extends Base
      * @param string $limit
      * @param string $order
      * @param boolean $lock 是否加锁
+     * @param boolean $fetchSql 是否返回SQL
      +----------------------------------------------------------
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function save($sets,$table,$where,$limit=0,$order='',$lock=false)
+    public function save($sets,$table,$where,$limit=0,$order='',$lock=false,$fetchSql=false)
     {
-        $this->queryStr = 'UPDATE '.$table.' SET '.$this->parseSets($sets).$this->parseWhere($where).$this->parseOrder($order).$this->parseLimit($limit);
-        return $this->execute('',$lock);
+        $this->queryStr = 'UPDATE '
+            .$this->parseTable($table)
+            .$this->parseSets($sets)
+            .$this->parseWhere($where)
+            .$this->parseOrder($order)
+            .$this->parseLimit($limit);
+        return $this->execute($this->queryStr,$lock,$fetchSql);
     }
 
     /**
@@ -1192,8 +1229,8 @@ class Db extends Base
      * @return void
      +----------------------------------------------------------
      */
-    public function setField($field,$value,$table,$condition,$asString=true) {
-        $this->queryStr =   'UPDATE '.$table.' SET ';
+    public function setField($field,$value,$table,$condition,$asString=true,$lock=false,$fetchSql=false) {
+        $this->queryStr =   'UPDATE '.$this->parseTable($table).' SET ';
         if(strpos($field,',')) {
             $field =  explode(',',$field);
         }
@@ -1206,7 +1243,7 @@ class Db extends Base
             $this->queryStr .= $this->addSpecialChar($field).'='.$this->fieldFormat($value,$asString).',';
         }
         $this->queryStr =   substr($this->queryStr,0,-1).$this->parseWhere($condition);
-        return $this->execute();
+        return $this->execute($this->queryStr,$lock,$fetchSql);
     }
 
     /**
