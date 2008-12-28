@@ -179,7 +179,10 @@ class App extends Base
 					redirect(C('RBAC_ERROR_PAGE'));
 				}elseif(C('GUEST_AUTH_ON')){
                     // 开启游客授权 出错后跳转到登录网关
-                    redirect(PHP_FILE.C('USER_AUTH_GATEWAY'));
+					// 如果把默认网关修改为?m=Public&a=login,除了要把兼容PATHINFO模式的?s=做掉
+					// 还要考虑到rewrite模式的问题,rewrite的情况下还得把入口文件名称补上
+					// 所以干脆把USER_AUTH_GATEWAY中除了第一个/以外的/用PATH_DEPR替换
+                    redirect(PHP_FILE."/".str_replace("/",C('PATH_DEPR'),ltrim(C('USER_AUTH_GATEWAY'),'/')));
                 }else{
 					throw_exception(L('_VALID_ACCESS_'));
 				}

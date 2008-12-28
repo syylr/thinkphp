@@ -142,7 +142,10 @@ class RBAC extends Base
                     }
                 }else{
                     // 禁止游客访问跳转到认证网关
-                    redirect(PHP_FILE.C('USER_AUTH_GATEWAY'));
+					// 如果把默认网关修改为?m=Public&a=login,除了要把兼容PATHINFO模式的?s=做掉
+					// 还要考虑到rewrite模式的问题,rewrite的情况下还得把入口文件名称补上
+					// 所以干脆把USER_AUTH_GATEWAY中除了第一个/以外的/用PATH_DEPR替换
+                    redirect(PHP_FILE."/".str_replace("/",C('PATH_DEPR'),ltrim(C('USER_AUTH_GATEWAY'),'/')));
                 }
             }
             //存在认证识别号，则进行进一步的访问决策
