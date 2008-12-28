@@ -175,14 +175,14 @@ class Db extends Base
      +----------------------------------------------------------
      * 根据DSN获取数据库类型 返回大写
      +----------------------------------------------------------
-     * @access private
+     * @access protected
      +----------------------------------------------------------
      * @param string $dsn  dsn字符串
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    private function _getDsnType($dsn) {
+    protected function _getDsnType($dsn) {
         $match  =  explode(':',$dsn);
         $dbType = strtoupper(trim($match[0]));
         return $dbType;
