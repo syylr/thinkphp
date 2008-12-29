@@ -353,14 +353,20 @@ Class DbPdo extends Db{
         }else{
             switch($this->dbType) {
                 case 'MSSQL':
-                    $sql   = 'exec sp_columns '.$tableName;
+                    $sql   = "SELECT   column_name as name,   data_type as Type,   column_default as Default,   is_nullable as Null
+		FROM    information_schema.tables AS t
+		JOIN    information_schema.columns AS c
+		ON  t.table_catalog = c.table_catalog
+		AND t.table_schema  = c.table_schema
+		AND t.table_name    = c.table_name
+		WHERE   t.table_name = '$tableName'";
                     break;
                 case 'SQLITE':
                     $sql   = 'PRAGMA table_info ('.$tableName.') ';
                     break;
                 case 'ORACLE':
                 case 'OCI':
-                    $sql   = "select a.column_name,data_type,decode(nullable,'Y',0,1) notnull,data_default,decode(a.column_name,b.column_name,1,0) pk "
+                    $sql   = "select a.column_name name,data_type Type,decode(nullable,'Y',0,1) notnull,data_default Default,decode(a.column_name,b.column_name,1,0) pk "
                       ."from user_tab_columns a,(select column_name from user_constraints c,user_cons_columns col "
                       ."where c.constraint_name=col.constraint_name and c.constraint_type='P'and c.table_name='".strtoupper($tableName)
                       ."') b where table_name='".strtoupper($tableName)."' and a.column_name=b.column_name(+)";
@@ -382,12 +388,12 @@ Class DbPdo extends Db{
         $result = $sth->fetchAll(constant('PDO::FETCH_ASSOC'));
         $info   =   array();
         foreach ($result as $key => $val) {
-            $name=$val['Field']?$val['Field']:$val['name'];
+            $name= isset($val['Field'])?$val['Field']:$val['name'];
             $info[$name] = array(
                 'name'    =>$name ,
-                'type'    => $val['Type']?  $val['Type'] :   $val['type'],
+                'type'    => isset($val['Type'])?  $val['Type'] :   $val['type'],
                 'notnull' => (bool) ($val['Null'] === ''   ||  $val['notnull'] === ''), // not null is empty, null is yes
-                'default' => $val['Default']? $val['Default'] :   $val['dflt_value'],
+                'default' => isset($val['Default'])? $val['Default'] :   $val['dflt_value'],
                 'primary' => (strtolower($val['Key']) == 'pri'  || $val['pk']),
                 'autoInc' => (strtolower($val['Extra']) == 'auto_increment'  ||  $val['pk']),
             );
