@@ -254,7 +254,7 @@ class View extends Base
                 $content    =   str_replace($matches[0][$i],$layoutContent,$content);
             }
         }
-		
+
 		if(C('HTML_CACHE_ON')) {
             // 写入静态文件
             HtmlCache::writeHTMLCache($content);
@@ -383,30 +383,78 @@ class View extends Base
         }
         $compiler   =   false;
         //根据不同模版引擎进行处理
-        if('PHP'==$this->type || empty($this->type)) {
-            // 模板阵列变量分解成为独立变量
-            extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
-            // 默认使用PHP模版
-            include $templateFile;
-        }elseif('THINK'==$this->type){
-            // 使用内置的ThinkTemplate模板引擎
-            if(!$this->checkCache($templateFile)) {
-                // 缓存无效 重新编译
-                $compiler   =   true;
-                import('Think.Template.ThinkTemplate');
-                $tpl = ThinkTemplate::getInstance();
-                // 编译并加载模板文件
-                $tpl->load($templateFile,$charset,$this->tVar,$varPrefix);
-            }else{
-                // 缓存有效 直接载入模板缓存
+        switch($this->type) {
+            case 'THINK':
+                // 使用内置的ThinkTemplate模板引擎
+                if(!$this->checkCache($templateFile)) {
+                    // 缓存无效 重新编译
+                    $compiler   =   true;
+                    import('Think.Template.ThinkTemplate');
+                    $tpl = ThinkTemplate::getInstance();
+                    // 编译并加载模板文件
+                    $tpl->load($templateFile,$charset,$this->tVar,$varPrefix);
+                }else{
+                    // 缓存有效 直接载入模板缓存
+                    // 模板阵列变量分解成为独立变量
+                    extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
+                    //载入模版缓存文件
+                    include CACHE_PATH.md5($templateFile).C('CACHFILE_SUFFIX');
+                }
+                break;
+            case 'SMARTY':
+                $templateFile=substr($templateFile,strlen(TMPL_PATH));
+                vendor('SmartyTemplate.Smarty#class');
+                $tpl = new Smarty();
+                $tpl->caching = true;
+                $tpl->template_dir = TMPL_PATH;
+                $tpl->compile_dir = CACHE_PATH ;
+                $tpl->cache_dir = TEMP_PATH ;
+                $tpl->assign($this->tVar);
+                $tpl->display($templateFile);
+                break;
+            case 'SMART':
+                $templateFile=substr($templateFile,strlen(TMPL_PATH));
+                vendor('SmartTemplate.class#smarttemplate');
+                $tpl = new SmartTemplate($templateFile);
+                $tpl->caching = true;
+                $tpl->template_dir = TMPL_PATH;
+                $tpl->temp_dir = CACHE_PATH ;
+                $tpl->cache_dir = TEMP_PATH ;
+                $tpl->assign($this->tVar);
+                $tpl->output();
+                break;
+            case 'LITE':
+                $templateFile=substr($templateFile,strlen(TMPL_PATH));
+                vendor("TemplateLite.class#template");
+                $tpl = new Template_Lite();
+                $tpl->template_dir = TMPL_PATH;
+                $tpl->compile_dir = CACHE_PATH ;
+                $tpl->cache_dir = TEMP_PATH ;
+                $tpl->assign($this->tVar);
+                $tpl->display($templateFile);
+                break;
+            case 'EASE':
+                $templateFile = substr($templateFile,strlen(TMPL_PATH),-5);
+                $CacheDir = substr(CACHE_PATH,0,-1);
+                $TemplateDir = substr(TMPL_PATH,0,-1);
+                vendor('EaseTemplate.template#ease');
+                $tpl = new EaseTemplate(
+                  array(
+                    'CacheDir'=>$CacheDir,
+                    'TemplateDir'=>$TemplateDir,
+                    'TplType'=>'html'
+                     )
+                );
+                $tpl->set_var($this->tVar);
+                $tpl->set_file($templateFile);
+                $tpl->p();
+                break;
+            case 'PHP':
+            default:
                 // 模板阵列变量分解成为独立变量
                 extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
-                //载入模版缓存文件
-                include CACHE_PATH.md5($templateFile).C('CACHFILE_SUFFIX');
-            }
-        }elseif($pluginOn) {
-            // 通过插件的方式扩展第三方模板引擎
-            use_compiler(C('TMPL_ENGINE_TYPE'),$templateFile,$this->tVar,$charset,$varPrefix);
+                // 默认使用PHP模版
+                include $templateFile;
         }
         // 获取并清空缓存
         $content = ob_get_clean();
