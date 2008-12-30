@@ -384,8 +384,7 @@ class View extends Base
         $compiler   =   false;
         //根据不同模版引擎进行处理
         switch($this->type) {
-            case 'THINK':
-                // 使用内置的ThinkTemplate模板引擎
+            case 'THINK':                 // 使用内置的ThinkTemplate模板引擎
                 if(!$this->checkCache($templateFile)) {
                     // 缓存无效 重新编译
                     $compiler   =   true;
@@ -401,7 +400,7 @@ class View extends Base
                     include CACHE_PATH.md5($templateFile).C('CACHFILE_SUFFIX');
                 }
                 break;
-            case 'SMARTY':
+            case 'SMARTY':   // Smarty模板引擎
                 $templateFile=substr($templateFile,strlen(TMPL_PATH));
                 vendor('SmartyTemplate.Smarty#class');
                 $tpl = new Smarty();
@@ -412,7 +411,7 @@ class View extends Base
                 $tpl->assign($this->tVar);
                 $tpl->display($templateFile);
                 break;
-            case 'SMART':
+            case 'SMART': // SmartTemplate 模板引擎
                 $templateFile=substr($templateFile,strlen(TMPL_PATH));
                 vendor('SmartTemplate.class#smarttemplate');
                 $tpl = new SmartTemplate($templateFile);
@@ -423,7 +422,7 @@ class View extends Base
                 $tpl->assign($this->tVar);
                 $tpl->output();
                 break;
-            case 'LITE':
+            case 'LITE': // TemplateLite 模板引擎
                 $templateFile=substr($templateFile,strlen(TMPL_PATH));
                 vendor("TemplateLite.class#template");
                 $tpl = new Template_Lite();
@@ -433,7 +432,7 @@ class View extends Base
                 $tpl->assign($this->tVar);
                 $tpl->display($templateFile);
                 break;
-            case 'EASE':
+            case 'EASE': // EaseTemplate 模板引擎
                 $templateFile = substr($templateFile,strlen(TMPL_PATH),-5);
                 $CacheDir = substr(CACHE_PATH,0,-1);
                 $TemplateDir = substr(TMPL_PATH,0,-1);
@@ -449,7 +448,7 @@ class View extends Base
                 $tpl->set_file($templateFile);
                 $tpl->p();
                 break;
-            case 'PHP':
+            case 'PHP': // PHP模板引擎
             default:
                 // 模板阵列变量分解成为独立变量
                 extract($this->tVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
