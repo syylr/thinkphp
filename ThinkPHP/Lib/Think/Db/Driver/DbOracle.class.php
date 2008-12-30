@@ -442,9 +442,9 @@ Class DbOracle extends Db{
 	/**
      +----------------------------------------------------------
      * 获取最后插入id ,仅适用于采用序列+触发器结合生成ID的方式
-	 * 要在config.php中指定
- 		'DB_ORACLE_TRIGGER_PREFIX'	=>	'tr_',
-		'DB_ORACLE_SEQUENCE_PREFIX' =>	'ts_',
+	 * 在config.php中指定
+ 		'DB_TRIGGER_PREFIX'	=>	'tr_',
+		'DB_SEQUENCE_PREFIX' =>	'ts_',
 	 * eg:表 tb_user
 	   相对tb_user的序列为：
 	 	-- Create sequence
