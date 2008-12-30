@@ -180,7 +180,9 @@ Class DbPdo extends Db{
                 return false;
         } else {
             $this->numRows = $result;
-            $this->lastInsID = $this->_linkID->lastInsertId();
+            if('ORACLE' != $this->dbType &&  'OCI' != $this->dbType) {
+                $this->lastInsID = $this->_linkID->lastInsertId();
+            }
             return $this->numRows;
         }
     }
