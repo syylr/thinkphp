@@ -2654,11 +2654,12 @@ class Model extends Base  implements IteratorAggregate
             $rs     = $this->db->find($this->getPk()."='{$value}'",$this->getTableName());
             if($rs && count($rs)>0) {
                 $type    =   'edit';
+                /* 编辑更新的时候不再获取数据 只是获取表单数据来更新
                 $vo = $rs[0];
                 if(DATA_TYPE_OBJ == C('DATA_RESULT_TYPE')) {
                     // 对象模式
                     $vo =   get_object_vars($vo);
-                }
+                }*/
             }
         }
         // 对提交数据执行自动验证
