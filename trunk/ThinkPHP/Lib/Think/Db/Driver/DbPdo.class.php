@@ -180,9 +180,8 @@ Class DbPdo extends Db{
                 return false;
         } else {
             $this->numRows = $result;
-            if('ORACLE' != $this->dbType &&  'OCI' != $this->dbType) {
-                $this->lastInsID = $this->_linkID->lastInsertId();
-            }
+             //modify by wyfeng at 2008.12.30
+            preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $this->queryStr) && $this->lastInsID = $this->insert_last_id();
             return $this->numRows;
         }
     }
@@ -405,10 +404,10 @@ Class DbPdo extends Db{
             $info[strtolower($name)] = array(
                 'name'    => $name ,
                 'type'    => $val['type'],
-                'notnull' => (bool) ($val['null'] === ''   ||  $val['notnull'] === ''), // not null is empty, null is yes
-                'default' => isset($val['default'])? $val['default'] :   $val['dflt_value'],
-                'primary' => (strtolower($val['key']) == 'pri'  || $val['pk']),
-                'autoInc' => (strtolower($val['extra']) == 'auto_increment'  ||  $val['pk']),
+                'notnull' => (bool)(((isset($val['null'])) && ($val['null'] === '')) || ((isset($val['notnull'])) && ($val['notnull'] === ''))), // not null is empty, null is yes
+                'default' => isset($val['default'])? $val['default'] :(isset($val['dflt_value'])?$val['dflt_value']:""),
+                'primary' => isset($val['key'])?strtolower($val['key']) == 'pri':isset($val['pk'])?$val['pk']:false,
+                'autoInc' => isset($val['extra'])?strtolower($val['extra']) == 'auto_increment':isset($val['pk'])?$val['pk']:false,            
             );
         }
         return $info;
@@ -517,7 +516,19 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      */
     public function escape_string($str) {
-        return addslashes($str);
+        //modify by wyfeng at 2008.12.30
+         switch($this->dbType)
+         {
+            case 'PGSQL':
+            case 'SQLITE':
+            case 'MSSQL':
+            case 'IBASE':
+            case 'MYSQL':
+                return addslashes($str);
+            case 'ORACLE':
+            case 'OCI':
+                return str_ireplace("'", "''", $str);
+        }
     }
 
     /**
@@ -566,6 +577,62 @@ Class DbPdo extends Db{
             }
         }
         return $limitStr;
+	}
+
+	/**
+     +----------------------------------------------------------
+     * 获取最后插入id ,仅适用于采用序列+触发器结合生成ID的方式,
+     * ORACLE列程
+	   在config.php中指定
+ 		'DB_TRIGGER_PREFIX'	=>	'tr_',
+		'DB_SEQUENCE_PREFIX' =>	'ts_',
+	 * eg:表 tb_user
+	   相对tb_user的序列为：
+	 	-- Create sequence
+		create sequence TS_USER
+		minvalue 1
+		maxvalue 999999999999999999999999999
+		start with 1
+		increment by 1
+		nocache;
+	   相对tb_user,ts_user的触发器为：
+		create or replace trigger TR_USER
+		  before insert on "TB_USER"
+		  for each row
+		begin
+			select "TS_USER".nextval into :NEW.ID from dual;
+		end;
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $str  序列名称，默认为序列前缀+表名（无前缀）
+     +----------------------------------------------------------
+     * @return integer
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+	 */
+ 	//add by wyfeng at 2008.12.22
+	public function insert_last_id()
+	{
+		if(empty($this->tableName))
+		{
+			return 0;
+		}
+         switch($this->dbType)
+         {
+            case 'PGSQL':
+            case 'SQLITE':
+            case 'MSSQL':
+            case 'IBASE':
+            case 'MYSQL':
+                return $this->_linkID->lastInsertId();
+            case 'ORACLE':
+            case 'OCI':
+                $sequenceName = C("DB_SEQUENCE_PREFIX") . $this->tableName;
+                $vo = $this->_query("SELECT {$sequenceName}.currval currval FROM dual");
+                return $vo?$vo[0]["currval"]:0;
+        }
 	}
 
 }//类定义结束
