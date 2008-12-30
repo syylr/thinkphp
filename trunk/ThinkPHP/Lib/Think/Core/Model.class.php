@@ -1309,7 +1309,7 @@ class Model extends Base  implements IteratorAggregate
      * @return mixed
      +----------------------------------------------------------
      */
-    protected function checkLockVersion(&$data,&$where='') {
+    protected function checkLockVersion(&$data,$where='') {
         if($this->optimLock && isset($_SESSION[$identify])) {
             $pk   =  $this->getPk();
             if(isset($data[$pk])) {
