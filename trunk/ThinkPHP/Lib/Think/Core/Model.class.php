@@ -1310,16 +1310,16 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
     protected function checkLockVersion(&$data,$where='') {
+        $pk   =  $this->getPk();
+        if(isset($data[$pk])) {
+            $where  = $pk."=".$data[$pk];
+            $guid =  $data[$pk];
+        }else{
+            $guid =  to_guid_string($where);
+        }
+        // 检查乐观锁
+        $identify   = $this->name.'_'.$guid.'_lock_version';
         if($this->optimLock && isset($_SESSION[$identify])) {
-            $pk   =  $this->getPk();
-            if(isset($data[$pk])) {
-                $where  = $pk."=".$data[$pk];
-                $guid =  $data[$pk];
-            }else{
-                $guid =  to_guid_string($where);
-            }
-            // 检查乐观锁
-            $identify   = $this->name.'_'.$guid.'_lock_version';
             $lock_version = $_SESSION[$identify];
             if(!empty($where)) {
                 $vo = $this->find($where,$this->optimLock);
