@@ -1310,8 +1310,9 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
     protected function checkLockVersion(&$data,&$where='') {
-        $pk =   $this->getPk();
-        $id =   $data[$pk];
+        if(isset($data[$this->getPk()])) {
+            $id =   $data[$this->getPk()];
+        }
         if(empty($where) && isset($id) ) {
             $where  = $pk."=".$id;
         }
@@ -1340,7 +1341,6 @@ class Model extends Base  implements IteratorAggregate
                 }
             }
         }
-        //unset($data[$pk]);
         return true;
     }
 
