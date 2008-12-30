@@ -154,6 +154,7 @@ Class DbOracle extends Db{
                 if ( $this->queryID ) {    $this->free();    }
         }
         $this->W(1);
+
         $stmt = oci_parse($this->_linkID,$this->queryStr);
         $this->debug();
         if (!oci_execute($stmt)) {
@@ -353,7 +354,7 @@ Class DbOracle extends Db{
                 'notnull' => $val['notnull'],
                 'default' => $val['data_default'],
                 'primary' => $val['pk'],
-                'autoInc' => 0,
+                'autoInc' => $val['pk'],
             );
         }
         return $info;
@@ -372,7 +373,7 @@ Class DbOracle extends Db{
         $result = $this->_query("select table_name from user_tables");
         $info   =   array();
         foreach ($result as $key => $val) {
-            $info[$key] = strtolower(current($val));
+            $info[$key] = current($val);
         }
         return $info;
     }
