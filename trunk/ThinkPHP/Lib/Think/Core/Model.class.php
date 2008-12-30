@@ -1284,15 +1284,15 @@ class Model extends Base  implements IteratorAggregate
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
         }
-        $pk   =  $this->getPk();
-        if(empty($where) && isset($data[$pk]) && !is_array($data[$pk])) {
-            $where  = $pk."=".$data[$pk];
-            unset($data[$pk]);
-        }
         // 检查乐观锁
         if(!$this->checkLockVersion($data,$where)) {
             $this->error = L('_RECORD_HAS_UPDATE_');
             return false;
+        }
+        $pk   =  $this->getPk();
+        if(empty($where) && isset($data[$pk]) && !is_array($data[$pk])) {
+            $where  = $pk."=".$data[$pk];
+            unset($data[$pk]);
         }
         return $this->_update($data,$where,$limit,$order,$autoLink);
     }
@@ -1310,14 +1310,15 @@ class Model extends Base  implements IteratorAggregate
      +----------------------------------------------------------
      */
     protected function checkLockVersion(&$data,&$where='') {
-        if(isset($data[$this->getPk()])) {
-            $id =   $data[$this->getPk()];
-        }
-        if(empty($where) && isset($id) ) {
-            $where  = $pk."=".$id;
+        $pk   =  $this->getPk();
+        if(isset($data[$pk])) {
+            $where  = $pk."=".$data[$pk];
+            $guid =  $data[$pk];
+        }else{
+            $guid =  to_guid_string($where);
         }
         // 检查乐观锁
-        $identify   = $this->name.'_'.$id.'_lock_version';
+        $identify   = $this->name.'_'.$guid.'_lock_version';
         if($this->optimLock && isset($_SESSION[$identify])) {
             $lock_version = $_SESSION[$identify];
             if(!empty($where)) {
