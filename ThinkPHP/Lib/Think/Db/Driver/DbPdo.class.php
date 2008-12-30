@@ -122,7 +122,9 @@ Class DbPdo extends Db{
         }
         $this->Q(1);
         $this->PDOStatement = $this->_linkID->prepare($this->queryStr);
-
+        if(false === $this->PDOStatement) {
+            throw_exception($this->error());
+        }
         $result =   $this->PDOStatement->execute();
         $this->debug();
         if ( !$result ) {
@@ -167,6 +169,9 @@ Class DbPdo extends Db{
         $this->W(1);
 
 		$this->PDOStatement	=	$this->_linkID->prepare($this->queryStr);
+        if(false === $this->PDOStatement) {
+            throw_exception($this->error());
+        }
         $result	=	$this->PDOStatement->execute();
         $this->debug();
         if ( false === $result) {
