@@ -402,7 +402,7 @@ class View extends Base
                 break;
             case 'SMARTY':   // Smarty模板引擎
                 $templateFile=substr($templateFile,strlen(TMPL_PATH));
-                vendor('SmartyTemplate.Smarty#class');
+                vendor('Smarty.Smarty#class');
                 $tpl = new Smarty();
                 $tpl->caching = true;
                 $tpl->template_dir = TMPL_PATH;
