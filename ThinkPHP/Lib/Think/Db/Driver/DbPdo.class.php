@@ -358,7 +358,7 @@ Class DbPdo extends Db{
         }else{
             switch($this->dbType) {
                 case 'MSSQL':
-                    $sql   = "SELECT   column_name as name,   data_type as Type,   column_default as Default,   is_nullable as Null
+                    $sql   = "SELECT   column_name as name,   data_type as type,   column_default as default,   is_nullable as null
 		FROM    information_schema.tables AS t
 		JOIN    information_schema.columns AS c
 		ON  t.table_catalog = c.table_catalog
