@@ -167,7 +167,6 @@ Class DbPdo extends Db{
             if ( !empty($this->PDOStatement) ) {    $this->free();    }
         }
         $this->W(1);
-
 		$this->PDOStatement	=	$this->_linkID->prepare($this->queryStr);
         if(false === $this->PDOStatement) {
             throw_exception($this->error());
@@ -490,8 +489,12 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      */
     public function error() {
-        $error = $this->PDOStatement->errorInfo();
-        $this->error = $error[2];
+        if($this->PDOStatement) {
+            $error = $this->PDOStatement->errorInfo();
+            $this->error = $error[2];
+        }else{
+            $this->error = '';
+        }
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
