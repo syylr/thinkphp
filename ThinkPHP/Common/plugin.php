@@ -152,42 +152,6 @@ function get_plugin_info($plugin_file) {
 
 /**
  +----------------------------------------------------------
- * 动态添加模版编译引擎
- +----------------------------------------------------------
- * @param string $tag 模版引擎定义名称
- * @param string $compiler 编译器名称
- +----------------------------------------------------------
- * @return boolean
- +----------------------------------------------------------
- */
-function add_compiler($tag,$compiler)
-{
-    $GLOBALS['template_compiler'][strtoupper($tag)] = $compiler ;
-    return ;
-}
-
-/**
- +----------------------------------------------------------
- * 使用模版编译引擎
- +----------------------------------------------------------
- * @param string $tag 模版引擎定义名称
- +----------------------------------------------------------
- * @return boolean
- +----------------------------------------------------------
- */
-function use_compiler($tag)
-{
-    $args = array_slice(func_get_args(), 1);
-    if(is_callable($GLOBALS['template_compiler'][strtoupper($tag)])) {
-        call_user_func_array($GLOBALS['template_compiler'][strtoupper($tag)],$args);
-    }else{
-        throw_exception(L('_TEMPLATE_ERROR_').'：'.C('TMPL_ENGINE_TYPE'));
-    }
-    return ;
-}
-
-/**
- +----------------------------------------------------------
  * 动态添加过滤器
  +----------------------------------------------------------
  * @param string $tag 过滤器标签
