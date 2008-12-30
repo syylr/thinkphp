@@ -61,9 +61,12 @@ Class DbPdo extends Db{
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
+
             if($this->pconnect) {
                 $config['params'][constant('PDO::ATTR_PERSISTENT')] = true;
             }
+            //add by wyfeng at 2008.12.29
+            $config['params'][PDO::ATTR_CASE] = C("DB_CASE_LOWER")?PDO::CASE_LOWER:PDO::CASE_UPPER;
             try{
                 $this->linkID[$linkNum] = new PDO( $config['dsn'], $config['username'], $config['password'],$config['params']);
             }catch (PDOException $e) {
@@ -119,6 +122,7 @@ Class DbPdo extends Db{
         }
         $this->Q(1);
         $this->PDOStatement = $this->_linkID->prepare($this->queryStr);
+
         $result =   $this->PDOStatement->execute();
         $this->debug();
         if ( !$result ) {
@@ -161,6 +165,7 @@ Class DbPdo extends Db{
             if ( !empty($this->PDOStatement) ) {    $this->free();    }
         }
         $this->W(1);
+
 		$this->PDOStatement	=	$this->_linkID->prepare($this->queryStr);
         $result	=	$this->PDOStatement->execute();
         $this->debug();
@@ -366,9 +371,9 @@ Class DbPdo extends Db{
                     break;
                 case 'ORACLE':
                 case 'OCI':
-                    $sql   = "select a.column_name name,data_type Type,decode(nullable,'Y',0,1) notnull,data_default Default,decode(a.column_name,b.column_name,1,0) pk "
-                      ."from user_tab_columns a,(select column_name from user_constraints c,user_cons_columns col "
-                      ."where c.constraint_name=col.constraint_name and c.constraint_type='P'and c.table_name='".strtoupper($tableName)
+                    $sql   = "SELECT a.column_name name,data_type Type,decode(nullable,'Y',0,1) notnull,data_default \"Default\",decode(a.column_name,b.column_name,1,0) pk "
+                      ."FROM user_tab_columns a,(SELECT column_name FROM user_constraints c,user_cons_columns col "
+                      ."WHERE c.constraint_name=col.constraint_name AND c.constraint_type='P' and c.table_name='".strtoupper($tableName)
                       ."') b where table_name='".strtoupper($tableName)."' and a.column_name=b.column_name(+)";
                     break;
                 case 'PGSQL':
@@ -383,19 +388,21 @@ Class DbPdo extends Db{
                     $sql   = 'DESCRIBE '.$tableName;
             }
         }
-        $sth    =   $this->_linkID->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetchAll(constant('PDO::FETCH_ASSOC'));
+		//modify by wyfeng at 2008.12.29
+        $result = $this->_query($sql);;
         $info   =   array();
         foreach ($result as $key => $val) {
-            $name= isset($val['Field'])?$val['Field']:$val['name'];
-            $info[$name] = array(
-                'name'    =>$name ,
-                'type'    => isset($val['Type'])?  $val['Type'] :   $val['type'],
-                'notnull' => (bool) ($val['Null'] === ''   ||  $val['notnull'] === ''), // not null is empty, null is yes
-                'default' => isset($val['Default'])? $val['Default'] :   $val['dflt_value'],
-                'primary' => (strtolower($val['Key']) == 'pri'  || $val['pk']),
-                'autoInc' => (strtolower($val['Extra']) == 'auto_increment'  ||  $val['pk']),
+		    if(is_object($val)) {
+                $val = get_object_vars($val);
+            }
+            $name= strtolower(isset($val['field'])?$val['field']:$val['name']);
+            $info[strtolower($name)] = array(
+                'name'    => $name ,
+                'type'    => $val['type'],
+                'notnull' => (bool) ($val['null'] === ''   ||  $val['notnull'] === ''), // not null is empty, null is yes
+                'default' => isset($val['default'])? $val['default'] :   $val['dflt_value'],
+                'primary' => (strtolower($val['key']) == 'pri'  || $val['pk']),
+                'autoInc' => (strtolower($val['extra']) == 'auto_increment'  ||  $val['pk']),
             );
         }
         return $info;
@@ -418,7 +425,7 @@ Class DbPdo extends Db{
             switch($this->dbType) {
             case 'ORACLE':
             case 'OCI':
-                $sql   = 'select table_name from user_tables';
+                $sql   = 'SELECT table_name FROM user_tables';
                 break;
             case 'MSSQL':
                 $sql   = "SELECT TABLE_NAME	FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
