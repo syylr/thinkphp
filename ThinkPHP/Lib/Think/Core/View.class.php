@@ -404,7 +404,7 @@ class View extends Base
                 $templateFile=substr($templateFile,strlen(TMPL_PATH));
                 vendor('Smarty.Smarty#class');
                 $tpl = new Smarty();
-                $tpl->caching = true;
+                $tpl->caching = C('TMPL_CACHE_ON');
                 $tpl->template_dir = TMPL_PATH;
                 $tpl->compile_dir = CACHE_PATH ;
                 $tpl->cache_dir = TEMP_PATH ;
@@ -415,7 +415,7 @@ class View extends Base
                 $templateFile=substr($templateFile,strlen(TMPL_PATH));
                 vendor('SmartTemplate.class#smarttemplate');
                 $tpl = new SmartTemplate($templateFile);
-                $tpl->caching = true;
+                $tpl->caching = C('TMPL_CACHE_ON');
                 $tpl->template_dir = TMPL_PATH;
                 $tpl->temp_dir = CACHE_PATH ;
                 $tpl->cache_dir = TEMP_PATH ;
