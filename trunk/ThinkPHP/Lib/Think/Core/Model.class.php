@@ -2743,7 +2743,7 @@ class Model extends Base  implements IteratorAggregate
         if(!empty($this->_auto)) {
             foreach ($this->_auto as $auto){
                 // 填充因子定义格式
-                // array('field','填充内容','填充条件','附加规则')
+                // array('field','填充内容','填充条件','附加规则',[额外参数...])
                 if($this->composite || in_array($auto[0],$this->fields,true)) {
                     if(empty($auto[2])) $auto[2] = 'ADD';// 默认为新增的时候自动填充
                     else $auto[2]   =   strtoupper($auto[2]);
@@ -2751,20 +2751,25 @@ class Model extends Base  implements IteratorAggregate
                     {
                         switch($auto[3]) {
                             case 'function':    //  使用函数进行填充 字段的值作为参数
-                            if(function_exists($auto[1])) {
-                                // 如果定义为函数则调用
-                                $data[$auto[0]] = $auto[1]($data[$auto[0]]);
-                            }
-                            break;
-                            case 'field':    // 用其它字段的值进行填充
-                            $data[$auto[0]] = $data[$auto[1]];
-                            break;
                             case 'callback': // 使用回调方法
-                            $data[$auto[0]]  =   $this->{$auto[1]}($data[$auto[0]]);
-                            break;
+                                if(isset($auto[4])) {
+                                    $args = array_slice($auto,4);
+                                }else{
+                                    $args = array();
+                                }
+                                array_unshift($args,$data[$auto[0]]);
+                                if('function'==$auto[3]) {
+                                    $data[$auto[0]]  = call_user_func_array($auto[1], $args);
+                                }else{
+                                    $data[$auto[0]]  =  call_user_func_array(array(&$this,$auto[1]), $args);
+                                }
+                                break;
+                            case 'field':    // 用其它字段的值进行填充
+                                $data[$auto[0]] = $data[$auto[1]];
+                                break;
                             case 'string':
                             default: // 默认作为字符串填充
-                            $data[$auto[0]] = $auto[1];
+                                $data[$auto[0]] = $auto[1];
                         }
                         if(false === $data[$auto[0]] ) {
                             unset($data[$auto[0]]);
@@ -2892,15 +2897,18 @@ class Model extends Base  implements IteratorAggregate
         // 检查附加规则
         switch($val[4]) {
             case 'function':// 使用函数进行验证
-                if(function_exists($val[1]) && !$val[1]($data[$val[0]])) {
-                    return false;
-                }
-                break;
             case 'callback':// 调用方法进行验证
-                if(!$this->{$val[1]}($data[$val[0]])) {
-                    return false;
+                if(isset($val[6])) {
+                    $args = array_slice($val,6);
+                }else{
+                    $args = array();
                 }
-                break;
+                array_unshift($args,$data[$val[0]]);
+                if('function'==$val[4]) {
+                    return call_user_func_array($val[1], $args);
+                }else{
+                    return call_user_func_array(array(&$this, $val[1]), $args);
+                }
             case 'confirm': // 验证两个字段是否相同
                 if($data[$val[0]] != $data[$val[1]] ) {
                     return false;
