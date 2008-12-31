@@ -2743,7 +2743,7 @@ class Model extends Base  implements IteratorAggregate
         if(!empty($this->_auto)) {
             foreach ($this->_auto as $auto){
                 // 填充因子定义格式
-                // array('field','填充内容','填充条件','附加规则',[额外参数...])
+                // array('field','填充内容','填充条件','附加规则',[额外参数])
                 if($this->composite || in_array($auto[0],$this->fields,true)) {
                     if(empty($auto[2])) $auto[2] = 'ADD';// 默认为新增的时候自动填充
                     else $auto[2]   =   strtoupper($auto[2]);
@@ -2805,11 +2805,12 @@ class Model extends Base  implements IteratorAggregate
             $this->validateError    =   array();
             foreach($this->_validate as $key=>$val) {
                 // 验证因子定义格式
-                // array(field,rule,message,condition,append,when)
+                // array(field,rule,message,condition,append,when,params)
                 // field rule message 必须
                 // condition 验证条件：0 存在字段就验证 1 必须验证 2 值不为空的时候验证 默认为0
                 // append 附加规则 :function confirm regex equal in unique 默认为regex
                 // when 验证时间: all add edit 默认为all
+                // params 额外参数 使用数组方式定义 例如 array('var1','var2')
                 // 判断是否需要执行验证
                 if(empty($val[5]) || $val[5]=='all' || strtolower($val[5])==strtolower($type) ) {
                     if(0==strpos($val[2],'{%') && strpos($val[2],'}')) {
