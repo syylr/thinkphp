@@ -2753,7 +2753,7 @@ class Model extends Base  implements IteratorAggregate
                             case 'function':    //  使用函数进行填充 字段的值作为参数
                             case 'callback': // 使用回调方法
                                 if(isset($auto[4])) {
-                                    $args = array_slice($auto,4);
+                                    $args = $auto[4];
                                 }else{
                                     $args = array();
                                 }
@@ -2899,7 +2899,7 @@ class Model extends Base  implements IteratorAggregate
             case 'function':// 使用函数进行验证
             case 'callback':// 调用方法进行验证
                 if(isset($val[6])) {
-                    $args = array_slice($val,6);
+                    $args = $val[6];
                 }else{
                     $args = array();
                 }
