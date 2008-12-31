@@ -384,7 +384,7 @@ class View extends Base
         $compiler   =   false;
         //根据不同模版引擎进行处理
         switch($this->type) {
-            case 'THINK':                 // 使用内置的ThinkTemplate模板引擎
+            case 'THINK': // 使用内置的ThinkTemplate模板引擎
                 if(!$this->checkCache($templateFile)) {
                     // 缓存无效 重新编译
                     $compiler   =   true;
