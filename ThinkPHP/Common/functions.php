@@ -476,7 +476,7 @@ function include_cache($filename)
 {
     static $_import = array();
     if (!isset($_import[$filename])) {
-        if(file_exists($filename)){
+        if(is_file($filename)){
             include $filename;
             $GLOBALS['include_file']++;
             $_import[$filename] = true;
@@ -517,7 +517,7 @@ function require_cache($filename)
 
 // 区分大小写的文件存在判断
 function file_exists_case($filename) {
-    if(file_exists($filename)) {
+    if(is_file($filename)) {
         if(IS_WIN && C('CHECK_FILE_CASE')) {
             $files =  scandir(dirname($filename));
             if(!in_array(basename($filename),$files)) {
@@ -607,7 +607,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
                return false;
             }
       }else{
-          if($ext == '.class.php' && file_exists($classfile)) {
+          if($ext == '.class.php' && is_file($classfile)) {
                 // 冲突检测
                 $class = basename($classfile,$ext);
                 if(isset($_class[strtolower($class)])) {
@@ -984,7 +984,7 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
         return $_cache[$name];
     }
     // 获取缓存数据
-    if(file_exists($filename) && false !== $content = file_get_contents($filename)) {
+    if(is_file($filename) && false !== $content = file_get_contents($filename)) {
         $expire  =  (int)substr($content,44, 12);
         if($expire != -1 && time() > filemtime($filename) + $expire) {
             //缓存过期删除缓存文件

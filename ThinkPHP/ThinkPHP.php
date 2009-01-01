@@ -27,7 +27,7 @@ if(!defined('APP_NAME')) define('APP_NAME', md5(THINK_PATH));
 if(!defined('APP_PATH')) define('APP_PATH', dirname(THINK_PATH).'/'.APP_NAME);
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Temp/');
 
-if(file_exists(RUNTIME_PATH.'~runtime.php')) {
+if(is_file(RUNTIME_PATH.'~runtime.php')) {
     // 加载框架核心缓存文件
     // 如果有修改核心文件请删除该缓存
     require RUNTIME_PATH.'~runtime.php';
@@ -39,7 +39,7 @@ if(file_exists(RUNTIME_PATH.'~runtime.php')) {
     // 加载编译需要的函数文件
     require THINK_PATH."/Common/runtime.php";
     // 第一次运行检查项目目录结构 如果不存在则自动创建
-    if(!file_exists(RUNTIME_PATH)) {
+    if(!is_dir(RUNTIME_PATH)) {
         // 创建项目目录结构
         buildAppDir();
     }

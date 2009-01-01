@@ -94,7 +94,7 @@ class App extends Base
 
 		// 检查项目是否编译过
 		// 在部署模式下会自动在第一次执行的时候编译项目
-		if(file_exists(RUNTIME_PATH.'~app.php') && (!file_exists(CONFIG_PATH.'config.php') || filemtime(RUNTIME_PATH.'~app.php')>filemtime(CONFIG_PATH.'config.php'))) {
+		if(is_file(RUNTIME_PATH.'~app.php') && (!is_file(CONFIG_PATH.'config.php') || filemtime(RUNTIME_PATH.'~app.php')>filemtime(CONFIG_PATH.'config.php'))) {
 			// 直接读取编译后的项目文件
 			C(include RUNTIME_PATH.'~app.php');
 		}else{
@@ -146,7 +146,7 @@ class App extends Base
         if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
 
 		// 加载模块配置文件 并自动生成配置缓存文件
-		if(file_exists(CONFIG_PATH.MODULE_NAME.'_config.php')) {
+		if(is_file(CONFIG_PATH.MODULE_NAME.'_config.php')) {
 			C(array_change_key_case(include CONFIG_PATH.MODULE_NAME.'_config.php'));
 		}
 
@@ -254,7 +254,7 @@ class App extends Base
 		}
         if(C('APP_AUTO_SETUP')) {
             // 开启项目自动安装支持
-            if(file_exists_case(COMMON_PATH.'setup.php') && !file_exists(APP_PATH.'install.ok')) {
+            if(file_exists_case(COMMON_PATH.'setup.php') && !is_file(APP_PATH.'install.ok')) {
                 include COMMON_PATH.'setup.php';
                 file_put_contents(APP_PATH.'install.ok','install ok');
             }
@@ -378,7 +378,7 @@ class App extends Base
 
 			// 定义当前语言
 			define('LANG_SET',$langSet);
-			if(C('LANG_CACHE_ON') && file_exists(TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php')) {
+			if(C('LANG_CACHE_ON') && is_file(TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php')) {
 				// 加载语言包缓存文件
 				L(include TEMP_PATH.MODULE_NAME.'_'.LANG_SET.'_lang.php');
 			}else{
@@ -508,7 +508,7 @@ class App extends Base
         // 加载插件必须的函数
         include THINK_PATH.'/Common/plugin.php';
         //加载有效插件文件
-		if(file_exists(RUNTIME_PATH.'~plugins.php')) {
+		if(is_file(RUNTIME_PATH.'~plugins.php')) {
 			include RUNTIME_PATH.'~plugins.php';
 		}else{
 			// 检查插件数据

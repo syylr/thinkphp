@@ -129,7 +129,7 @@ class UploadFile extends Base
     private function save($file)
     {
         $filename = $file['savepath'].$file['savename'];
-        if(!$this->uploadReplace && file_exists($filename)) {
+        if(!$this->uploadReplace && is_file($filename)) {
             // 不覆盖同名文件
             $this->error    =   '文件已经存在！'.$filename;
             return false;

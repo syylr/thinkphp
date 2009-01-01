@@ -64,7 +64,7 @@ function buildAppDir() {
             }
         }
         // 写入测试Action
-        if(!file_exists(LIB_PATH.'Action/IndexAction.class.php')) {
+        if(!is_file(LIB_PATH.'Action/IndexAction.class.php')) {
             $content     =
 '<?php
 // 本类由系统自动生成，仅供测试用途

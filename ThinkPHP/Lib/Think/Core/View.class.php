@@ -290,7 +290,7 @@ class View extends Base
     protected function checkCache($tmplTemplateFile)
     {
         $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
-        if(!file_exists($tmplCacheFile)){
+        if(!is_file($tmplCacheFile)){
             return false;
         }
         elseif (!C('TMPL_CACHE_ON')){
@@ -369,7 +369,7 @@ class View extends Base
         }elseif(strpos($templateFile,':')){
             // 引入其它模块的操作模板
             $templateFile   =   TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).C('TEMPLATE_SUFFIX');
-        }elseif(!file_exists($templateFile))    {
+        }elseif(!is_file($templateFile))    {
             // 引入当前模块的其它操作模板
             $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TEMPLATE_SUFFIX');
         }
