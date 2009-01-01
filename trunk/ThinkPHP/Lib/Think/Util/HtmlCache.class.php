@@ -40,7 +40,7 @@ class HtmlCache extends Base
      */
     static function readHTMLCache()
     {
-         if(file_exists(CONFIG_PATH.'htmls.php')) {
+         if(is_file(CONFIG_PATH.'htmls.php')) {
             // 读取静态规则文件
             // 静态规则文件定义格式 actionName=>array(‘静态规则’,’缓存时间’,’附加规则')
             // 'read'=>array('{id},{name}',60,'md5') 必须保证静态规则的唯一性 和 可判断性
@@ -123,7 +123,7 @@ class HtmlCache extends Base
             // 如果开启HTML功能 检查并重写HTML文件
             // 没有模版的操作不生成静态文件
             if(MODULE_NAME != 'Public' && !self::checkHTMLCache(self::$cacheFile,self::$cacheTime)) {
-                if(!file_exists(dirname(HTML_FILE_NAME))) {
+                if(!is_dir(dirname(HTML_FILE_NAME))) {
                     mk_dir(dirname(HTML_FILE_NAME));
                 }
                 if( false === file_put_contents( HTML_FILE_NAME , $content )) {
@@ -149,7 +149,7 @@ class HtmlCache extends Base
      */
     static function checkHTMLCache($cacheFile='',$cacheTime='')
     {
-        if(!file_exists($cacheFile)){
+        if(!is_file($cacheFile)){
             return false;
         }
         elseif (filemtime(C('TMPL_FILE_NAME')) > filemtime($cacheFile)) {

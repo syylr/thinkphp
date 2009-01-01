@@ -80,7 +80,7 @@ class Log extends Base
         foreach (self::$log as $type=>$logs){
             //检测日志文件大小，超过配置大小则备份日志文件重新生成
             $destination    =   $_type[$type];
-            if(file_exists($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
+            if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
                   rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
             }
             error_log(implode('',$logs), FILE_LOG,$destination );
@@ -124,7 +124,7 @@ class Log extends Base
             halt(L('_FILE_NOT_WRITEABLE_').':'.$destination);
         }
         //检测日志文件大小，超过配置大小则备份日志文件重新生成
-        if(file_exists($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
+        if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
               rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
         }
         error_log("$now\r\n$message\r\n", FILE_LOG,$destination );

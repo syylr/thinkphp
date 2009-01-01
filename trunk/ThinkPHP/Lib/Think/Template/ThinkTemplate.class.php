@@ -90,9 +90,9 @@ class  ThinkTemplate extends Base
     {
         if(empty($tmplTemplateFile))    $tmplTemplateFile = C('TMPL_FILE_NAME');
         if(empty($charset)) $charset = C('OUTPUT_CHARSET');
-        if(!file_exists($tmplTemplateFile)){
+        if(!is_file($tmplTemplateFile)){
             $tmplTemplateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$tmplTemplateFile.C('TEMPLATE_SUFFIX');
-            if(!file_exists($tmplTemplateFile)){
+            if(!is_file($tmplTemplateFile)){
                 throw_exception(L('_TEMPLATE_NOT_EXIST_'));
             }
         }
@@ -225,7 +225,7 @@ class  ThinkTemplate extends Base
     protected function checkCache($tmplTemplateFile)
     {
         $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
-        if(!file_exists($tmplCacheFile)){
+        if(!is_file($tmplCacheFile)){
             return false;
         }elseif (!C('TMPL_CACHE_ON')){
             return false;
@@ -253,7 +253,7 @@ class  ThinkTemplate extends Base
      */
     protected function cleanCache($filename)
     {
-        if(file_exists($filename)){
+        if(is_file($filename)){
             unlink($filename);
         }
         return;

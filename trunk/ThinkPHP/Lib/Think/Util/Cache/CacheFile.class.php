@@ -126,7 +126,7 @@ class CacheFile extends Cache
     public function get($name)
     {
         $filename   =   $this->filename($name);
-        if (!$this->isConnected() || !file_exists($filename)) {
+        if (!$this->isConnected() || !is_file($filename)) {
            return false;
         }
 		$this->Q(1);

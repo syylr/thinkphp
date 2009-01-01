@@ -456,7 +456,7 @@ class Image extends Base
     static public function water($source,$water,$savename=null,$alpha=80)
     {
         //检查文件是否存在
-        if(!file_exists($source)||!file_exists($water))
+        if(!is_file($source)||!is_file($water))
             return false;
 
         //图片信息
