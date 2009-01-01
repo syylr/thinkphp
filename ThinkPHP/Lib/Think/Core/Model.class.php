@@ -1502,6 +1502,7 @@ class Model extends Base  implements IteratorAggregate
             $val  = $this->getRelation($val,$name);
             $resultSet[$key]    =   $val;
         }
+        return $resultSet;
     }
 
     /**
