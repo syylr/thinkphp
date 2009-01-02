@@ -40,7 +40,7 @@ class NodeAction extends PublicAction
 	public function delete()
 	{
 		$dao=D("Node");
-		$pkey=$_GET['id'];
+		$pkey=$_REQUEST['id'];
 		$akey=split(",",$pkey);
 		if (count($akey)<=0){
 			$this->error("出错!请选择删除的条目");
