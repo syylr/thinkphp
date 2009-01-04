@@ -407,7 +407,7 @@ Class DbPdo extends Db{
                 'notnull' => (bool)(((isset($val['null'])) && ($val['null'] === '')) || ((isset($val['notnull'])) && ($val['notnull'] === ''))), // not null is empty, null is yes
                 'default' => isset($val['default'])? $val['default'] :(isset($val['dflt_value'])?$val['dflt_value']:""),
                 'primary' => isset($val['key'])?strtolower($val['key']) == 'pri':isset($val['pk'])?$val['pk']:false,
-                'autoInc' => isset($val['extra'])?strtolower($val['extra']) == 'auto_increment':isset($val['pk'])?$val['pk']:false,            
+                'autoInc' => isset($val['extra'])?strtolower($val['extra']) == 'auto_increment':isset($val['pk'])?$val['pk']:false,
             );
         }
         return $info;
@@ -520,11 +520,11 @@ Class DbPdo extends Db{
          switch($this->dbType)
          {
             case 'PGSQL':
-            case 'SQLITE':
             case 'MSSQL':
             case 'IBASE':
             case 'MYSQL':
                 return addslashes($str);
+            case 'SQLITE':
             case 'ORACLE':
             case 'OCI':
                 return str_ireplace("'", "''", $str);
