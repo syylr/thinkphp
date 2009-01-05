@@ -96,7 +96,7 @@ class Db extends Base
     protected $beginTime;
 
     // 当前的数据表名称 用于oracle
-	protected $tableName = NULL;
+	public $tableName = NULL;
 
     /**
      +----------------------------------------------------------
