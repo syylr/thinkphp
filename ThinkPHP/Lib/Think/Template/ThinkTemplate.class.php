@@ -788,15 +788,16 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      */
     public function parseInclude($tmplPublicName){
+        if(substr($tmplPublicName,0,1)=='$'){
+            //支持加载变量文件名
+            $tmplPublicName = $this->get(substr($tmplPublicName,1));
+        }
         if(is_file($tmplPublicName)) {
             // 直接包含文件
             $parseStr = file_get_contents($tmplPublicName);
         }else {
             $tmplPublicName = trim($tmplPublicName);
-            if(substr($tmplPublicName,0,1)=='$'){
-                //支持加载变量文件名
-                $tmplTemplateFile = $this->get(substr($tmplPublicName,1));
-            }elseif(strpos($tmplPublicName,'@')){
+            if(strpos($tmplPublicName,'@')){
                 // 引入其它模块的操作模板
                 $tmplTemplateFile   =   dirname(dirname(dirname($this->templateFile))).'/'.str_replace(array('@',':'),'/',$tmplPublicName);
             }elseif(strpos($tmplPublicName,':')){
