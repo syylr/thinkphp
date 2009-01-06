@@ -110,7 +110,7 @@ class Dispatcher extends Base
                 $_GET = array_merge($_GET,$pathinfo);
                 if(!empty($_POST)) {
                     $_POST = array_merge($_POST,$pathinfo);
-                }else {
+                }elseif(C('URL_AUTO_REDIRECT')) {
                     // 把pathinfo方式转换成query变量
                     $jumpUrl = PHP_FILE.'?'.http_build_query($_GET);
                     //重定向成规范的URL格式
@@ -118,16 +118,18 @@ class Dispatcher extends Base
                 }
             }else {
                 // 正常模式
-                // 过滤重复的query_string
-                $query  = explode('&',trim($_SERVER['QUERY_STRING'],'&'));
-                if(count($query) != count($_GET) && count($_GET)>0) {
-                    $_URL  =  '';
-                    foreach ($_GET as $_VAR => $_VAL) {
-                        $_URL .= $_VAR.'='.rawurlencode($_VAL).'&';
+                if(C('URL_AUTO_REDIRECT')) {
+                    // 过滤重复的query_string
+                    $query  = explode('&',trim($_SERVER['QUERY_STRING'],'&'));
+                    if(count($query) != count($_GET) && count($_GET)>0) {
+                        $_URL  =  '';
+                        foreach ($_GET as $_VAR => $_VAL) {
+                            $_URL .= $_VAR.'='.rawurlencode($_VAL).'&';
+                        }
+                        $jumpUrl = PHP_FILE.'?'.substr($_URL,0,-1);
+                        //重定向成规范的URL格式
+                        redirect($jumpUrl);
                     }
-                    $jumpUrl = PHP_FILE.'?'.substr($_URL,0,-1);
-                    //重定向成规范的URL格式
-                    redirect($jumpUrl);
                 }
                 //  检查路由规则
                 if(isset($_GET[C('VAR_ROUTER')])) {
