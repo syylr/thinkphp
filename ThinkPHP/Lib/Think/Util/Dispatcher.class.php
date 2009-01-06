@@ -66,7 +66,7 @@ class Dispatcher extends Base
                 $_SERVER['PATH_INFO'] = str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['REQUEST_URI']);
             }
 
-            if (!empty($_GET) && !isset($_GET[C('VAR_PATHINFO')]) && !isset($_GET[C('VAR_ROUTER')])) {
+            if (!empty($_GET) && C('URL_AUTO_REDIRECT') && !isset($_GET[C('VAR_PATHINFO')]) && !isset($_GET[C('VAR_ROUTER')])) {
                 $_GET  =  array_merge (self :: getPathInfo(),$_GET);
                 $_varModule =   C('VAR_MODULE');
                 $_varAction =   C('VAR_ACTION');
@@ -91,20 +91,18 @@ class Dispatcher extends Base
                     }
                 }
                 if($_depr==',') $_URL = substr($_URL, 0, -1).'/';
-
                 //重定向成规范的URL格式
                 redirect(PHP_FILE.$_URL);
-
-            }else {
-                if(C('ROUTER_ON')) {
-                    // 检测路由规则
-                    self::routerCheck();
-                }
-                //给_GET赋值 以保证可以按照正常方式取_GET值
-                $_GET = array_merge(self :: getPathInfo(),$_GET);
-                //保证$_REQUEST正常取值
-                $_REQUEST = array_merge($_POST,$_GET);
             }
+            if(C('ROUTER_ON')) {
+                // 检测路由规则
+                self::routerCheck();
+            }
+            //给_GET赋值 以保证可以按照正常方式取_GET值
+            $_GET = array_merge(self :: getPathInfo(),$_GET);
+            //保证$_REQUEST正常取值
+            $_REQUEST = array_merge($_POST,$_GET);
+
         }else {
             // URL_COMMON 模式
             if(!empty($_SERVER['PATH_INFO']) ) {

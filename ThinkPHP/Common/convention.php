@@ -44,6 +44,7 @@ return  array(
 	'COMPONENT_DEPR'			=>	'@',		// 组件模块和操作的URL分割符
 	'COMPONENT_TYPE'			=>	1,	 //组件目录结构  1 Lib\User\Action\ 2 Lib\Action\User\
     'URL_CASE_INSENSITIVE'  =>   false, // URL是否不区分大小写
+    'URL_AUTO_REDIRECT'     =>   false, // URL 是否开启自动重定向 当使用PATHINFO模式的时候传入GET参数可以支持自动重定向
     'CHECK_FILE_CASE'  =>   false, // 是否检查文件的大小写 对Windows平台有效
 
 	/* 日志设置 */
