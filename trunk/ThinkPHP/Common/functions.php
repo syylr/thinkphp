@@ -462,7 +462,7 @@ function unserialize_callback($classname)
     }
 }
 
-$GLOBALS['include_file'] = 0;
+$GLOBALS['import_file'] =  array();
 /**
  +----------------------------------------------------------
  * 优化的include_once
@@ -474,19 +474,17 @@ $GLOBALS['include_file'] = 0;
  */
 function include_cache($filename)
 {
-    static $_import = array();
-    if (!isset($_import[$filename])) {
-        if(is_file($filename)){
+    if (!isset($GLOBALS['import_file'][$filename])) {
+        if(file_exists_case($filename)){
             include $filename;
-            $GLOBALS['include_file']++;
-            $_import[$filename] = true;
+            $GLOBALS['import_file'][$filename] = true;
         }
         else
         {
-            $_import[$filename] = false;
+            $GLOBALS['import_file'][$filename] = false;
         }
     }
-    return $_import[$filename];
+    return $GLOBALS['import_file'][$filename];
 }
 
 /**
@@ -500,27 +498,24 @@ function include_cache($filename)
  */
 function require_cache($filename)
 {
-    static $_import = array();
-    if (!isset($_import[$filename])) {
+    if (!isset($GLOBALS['import_file'][$filename])) {
         if(file_exists_case($filename)){
             require $filename;
-            $GLOBALS['include_file']++;
-            $_import[$filename] = true;
+            $GLOBALS['import_file'][$filename] = true;
         }
         else
         {
-            $_import[$filename] = false;
+            $GLOBALS['import_file'][$filename] = false;
         }
     }
-    return $_import[$filename];
+    return $GLOBALS['import_file'][$filename];
 }
 
 // 区分大小写的文件存在判断
 function file_exists_case($filename) {
     if(is_file($filename)) {
         if(IS_WIN && C('CHECK_FILE_CASE')) {
-            $files =  scandir(dirname($filename));
-            if(!in_array(basename($filename),$files)) {
+            if(basename(realpath($filename)) != basename($filename)) {
                 return false;
             }
         }

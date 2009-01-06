@@ -514,7 +514,7 @@ class View extends Base
             $this->trace('会话ID'   ,   session_id());
             $this->trace('运行数据',    $showTime);
             $this->trace('输出编码',    $charset);
-            $this->trace('加载类库',    $GLOBALS['include_file']);
+            $this->trace('加载类库',    count($GLOBALS['import_file']));
             $this->trace('模板编译',    !empty($compiler)?'重新编译':'读取缓存');
             if(isset(Log::$log[SQL_LOG_DEBUG])) {
                 $log    =   Log::$log[SQL_LOG_DEBUG];
