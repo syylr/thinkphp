@@ -23,8 +23,8 @@
  */
 class DbMssql extends Db{
 
-	// 初始游标位置
-	protected $offset	=	0;
+    // 初始游标位置
+    protected $offset = 0;
 
     /**
      +----------------------------------------------------------
@@ -39,11 +39,11 @@ class DbMssql extends Db{
         if ( !function_exists('mssql_connect') ) {
             throw_exception(L('_NOT_SUPPERT_').':mssql');
         }
-		if(!empty($config)) {
-			$this->config	=	$config;
-		}
-		//读取数据结果集类型
-    $this->resultType=C('DATA_RESULT_TYPE');
+        if(!empty($config)) {
+            $this->config	=	$config;
+        }
+        //读取数据结果集类型
+        $this->resultType=C('DATA_RESULT_TYPE');
     }
 
     /**
@@ -57,7 +57,7 @@ class DbMssql extends Db{
      */
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
-			if(empty($config))	$config	=	$this->config;
+            if(empty($config))	$config  =  $this->config;
             $conn = $this->pconnect ? 'mssql_pconnect':'mssql_connect';
             // 处理不带端口号的socket连接情况
             $host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
@@ -72,8 +72,8 @@ class DbMssql extends Db{
                 throw_exception($this->error());
                 return false;
             }
-			// 标记连接成功
-			$this->connected	=	true;
+            // 标记连接成功
+            $this->connected =  true;
             //注销数据库安全信息
             if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
@@ -107,18 +107,18 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      */
     public function _query($str='') {
-		$this->initConnect(false);
+        $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-			$this->startTrans();
+            $this->startTrans();
         }else {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-		$this->Q(1);
+        $this->Q(1);
         $this->queryID = @mssql_query($this->queryStr, $this->_linkID);
-		$this->debug();
+        $this->debug();
         if ( !$this->queryID ) {
             if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
@@ -145,18 +145,18 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      */
     public function _execute($str='') {
-		$this->initConnect(true);
+        $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-			$this->startTrans();
+            $this->startTrans();
         }else {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-		$this->W(1);
-		$this->debug();
-		$result	=	mssql_query($this->queryStr, $this->_linkID);
+        $this->W(1);
+        $this->debug();
+        $result	=	mssql_query($this->queryStr, $this->_linkID);
         if ( false === $result ) {
             if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
@@ -196,16 +196,16 @@ class DbMssql extends Db{
      * @return void
      +----------------------------------------------------------
      */
-	public function startTrans() {
-		$this->initConnect(true);
+    public function startTrans() {
+        $this->initConnect(true);
         if ( !$this->_linkID ) return false;
-		//数据rollback 支持
-		if ($this->transTimes == 0) {
-			mssql_query('BEGIN TRAN', $this->_linkID);
-		}
-		$this->transTimes++;
-		return ;
-	}
+        //数据rollback 支持
+        if ($this->transTimes == 0) {
+            mssql_query('BEGIN TRAN', $this->_linkID);
+        }
+        $this->transTimes++;
+        return ;
+    }
 
     /**
      +----------------------------------------------------------
@@ -321,7 +321,7 @@ class DbMssql extends Db{
             }
             return $result;
         }else {
-        	return false;
+            return false;
         }
     }
 
@@ -348,12 +348,12 @@ class DbMssql extends Db{
         //返回数据集
         $result = array();
         if($this->numRows >0) {
-			    if($this->offset>0) {
-				  // 设置初始游标位置 针对mssql的分页方案
-				   mssql_data_seek($this->queryID,$this->offset);
-			    }
+                if($this->offset>0) {
+                  // 设置初始游标位置 针对mssql的分页方案
+                   mssql_data_seek($this->queryID,$this->offset);
+                }
           if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-       		  $fun	=	$resultType==DATA_TYPE_OBJ?'mssql_fetch_object':'mssql_fetch_assoc';
+              $fun	=	$resultType==DATA_TYPE_OBJ?'mssql_fetch_object':'mssql_fetch_assoc';
             while($row = $fun($this->queryID)){
                 $result[]   =   $row;
             }
@@ -376,17 +376,17 @@ class DbMssql extends Db{
      */
     function getFields($tableName) {
         $result =   $this->getAll("SELECT   column_name,   data_type,   column_default,   is_nullable
-		FROM    information_schema.tables AS t
-		JOIN    information_schema.columns AS c
-		ON  t.table_catalog = c.table_catalog
-		AND t.table_schema  = c.table_schema
-		AND t.table_name    = c.table_name
-		WHERE   t.table_name = '$tableName'");
+        FROM    information_schema.tables AS t
+        JOIN    information_schema.columns AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = '$tableName'");
         $info   =   array();
         foreach ($result as $key => $val) {
-			if(is_object($val)) {
-				$val	=	get_object_vars($val);
-			}
+            if(is_object($val)) {
+                $val	=	get_object_vars($val);
+            }
             $info[$val['column_name']] = array(
                 'name'    => $val['column_name'],
                 'type'    => $val['data_type'],
@@ -410,9 +410,9 @@ class DbMssql extends Db{
      */
     function getTables($dbName='') {
         $result   =  $this->getAll("SELECT TABLE_NAME
-			FROM INFORMATION_SCHEMA.TABLES
-			WHERE TABLE_TYPE = 'BASE TABLE'
-			");
+            FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_TYPE = 'BASE TABLE'
+            ");
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
@@ -429,17 +429,17 @@ class DbMssql extends Db{
      * @return string
      +----------------------------------------------------------
      */
-	public function limit($limit) {
-		$limit	=	explode(',',$limit);
-		if(count($limit)>1) {
-			$this->offset	=	$limit[0];
-			$limitStr	=	' TOP '.$limit[1].' ';
-		}else{
-			$this->offset	=0;
-			$limitStr = ' TOP '.$limit[0].' ';
-		}
-		return $limitStr;
-	}
+    public function limit($limit) {
+        $limit	=	explode(',',$limit);
+        if(count($limit)>1) {
+            $this->offset	=	$limit[0];
+            $limitStr	=	' TOP '.$limit[1].' ';
+        }else{
+            $this->offset	=0;
+            $limitStr = ' TOP '.$limit[0].' ';
+        }
+        return $limitStr;
+    }
 
 
     /**
@@ -490,7 +490,7 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      */
     public function escape_string($str) {
-		return addslashes($str);
+        return addslashes($str);
     }
 
 }//类定义结束

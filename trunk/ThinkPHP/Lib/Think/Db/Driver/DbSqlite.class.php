@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-Class DbSqlite extends Db
+class DbSqlite extends Db
 {//类定义开始
 
     /**
@@ -37,12 +37,12 @@ Class DbSqlite extends Db
         if ( !extension_loaded('sqlite') ) {
             throw_exception(L('_NOT_SUPPERT_').':sqlite');
         }
-		if(!empty($config)) {
-			if(!isset($config['mode'])) {
-				$config['mode']	=	0666;
-			}
-			$this->config	=	$config;
-		}
+        if(!empty($config)) {
+            if(!isset($config['mode'])) {
+                $config['mode']	=	0666;
+            }
+            $this->config	=	$config;
+        }
     }
 
     /**
@@ -56,7 +56,7 @@ Class DbSqlite extends Db
      */
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
-			if(empty($config))	$config	=	$this->config;
+            if(empty($config))	$config	=	$this->config;
             $conn = $this->pconnect ? 'sqlite_popen':'sqlite_open';
             $this->linkID[$linkNum] = $conn($config['database'],$config['mode']);
             if ( !$this->linkID[$linkNum]) {
@@ -64,8 +64,8 @@ Class DbSqlite extends Db
                 return false;
             }
             $this->dbVersion = sqlite_libversion();
-			// 标记连接成功
-			$this->connected	=	true;
+            // 标记连接成功
+            $this->connected	=	true;
             //注销数据库安全信息
             if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
@@ -99,18 +99,18 @@ Class DbSqlite extends Db
      +----------------------------------------------------------
      */
     public function _query($str='') {
-		$this->initConnect(false);
+        $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-			$this->startTrans();
+            $this->startTrans();
         }else {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-		$this->Q(1);
+        $this->Q(1);
         $this->queryID = sqlite_query($this->_linkID,$this->queryStr);
-		$this->debug();
+        $this->debug();
         if ( !$this->queryID ) {
             if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
@@ -137,19 +137,19 @@ Class DbSqlite extends Db
      +----------------------------------------------------------
      */
     public function _execute($str='') {
-		$this->initConnect(true);
+        $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         if (!$this->autoCommit && $this->isMainIps($this->queryStr)) {
-			$this->startTrans();
+            $this->startTrans();
         }else {
             //释放前次的查询结果
             if ( $this->queryID ) {    $this->free();    }
         }
-		$this->W(1);
-		$this->debug();
-		$result	=	sqlite_exec($this->_linkID,$this->queryStr);
-		$this->debug();
+        $this->W(1);
+        $this->debug();
+        $result	=	sqlite_exec($this->_linkID,$this->queryStr);
+        $this->debug();
         if ( false === $result ) {
             if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
@@ -173,16 +173,16 @@ Class DbSqlite extends Db
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-	public function startTrans() {
-		$this->initConnect(true);
+    public function startTrans() {
+        $this->initConnect(true);
         if ( !$this->_linkID ) return false;
-		//数据rollback 支持
-		if ($this->transTimes == 0) {
-			sqlite_query($this->_linkID,'BEGIN TRANSACTION');
-		}
-		$this->transTimes++;
-		return ;
-	}
+        //数据rollback 支持
+        if ($this->transTimes == 0) {
+            sqlite_query($this->_linkID,'BEGIN TRANSACTION');
+        }
+        $this->transTimes++;
+        return ;
+    }
 
     /**
      +----------------------------------------------------------
@@ -304,7 +304,7 @@ Class DbSqlite extends Db
             }
             return $result;
         }else {
-        	return false;
+            return false;
         }
     }
 
@@ -359,9 +359,9 @@ Class DbSqlite extends Db
         $result =   $this->_query('PRAGMA table_info( '.$tableName.' )');
         $info   =   array();
         foreach ($result as $key => $val) {
-			if(is_object($val)) {
-				$val	=	get_object_vars($val);
-			}
+            if(is_object($val)) {
+                $val	=	get_object_vars($val);
+            }
             $info[$val['Field']] = array(
                 'name'    => $val['Field'],
                 'type'    => $val['Type'],
@@ -452,7 +452,7 @@ Class DbSqlite extends Db
      * @return string
      +----------------------------------------------------------
      */
-	public function limit($limit) {
+    public function limit($limit) {
         $limitStr    = '';
         if(!empty($limit)) {
             $limit  =   explode(',',$limit);
@@ -462,7 +462,7 @@ Class DbSqlite extends Db
                 $limitStr .= ' LIMIT '.$limit[0].' ';
             }
         }
-		return $limitStr;
-	}
+        return $limitStr;
+    }
 }//类定义结束
 ?>

@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-Class DbMysqli extends Db{
+class DbMysqli extends Db{
 
     /**
      +----------------------------------------------------------
@@ -473,7 +473,7 @@ Class DbMysqli extends Db{
         if(!empty($limit)) {
             $limitStr .= ' LIMIT '.$limit.' ';
         }
-		return $limitStr;
-	}
+        return $limitStr;
+    }
 }//类定义结束
 ?>

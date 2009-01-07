@@ -22,7 +22,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-Class DbPgsql extends Db{
+class DbPgsql extends Db{
 
     /**
      +----------------------------------------------------------
@@ -464,7 +464,7 @@ Class DbPgsql extends Db{
      * @return string
      +----------------------------------------------------------
      */
-	public function limit($limit) {
+    public function limit($limit) {
         $limitStr    = '';
         if(!empty($limit)) {
             $limit  =   explode(',',$limit);
@@ -474,8 +474,8 @@ Class DbPgsql extends Db{
                 $limitStr .= ' LIMIT '.$limit[0].' ';
             }
         }
-		return $limitStr;
-	}
+        return $limitStr;
+    }
 
 }//类定义结束
 ?>

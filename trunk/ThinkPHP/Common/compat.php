@@ -120,20 +120,4 @@ if (!function_exists('property_exists')) {
         return array_key_exists($property, get_class_vars($class));
     }
 }
-
-/**
- +----------------------------------------------------------
- * stripslashes扩展 可用于数组
- +----------------------------------------------------------
- * @param mixed $value 变量
- +----------------------------------------------------------
- * @return mixed
- +----------------------------------------------------------
- */
-if(!function_exists('stripslashes_deep')) {
-    function stripslashes_deep($value) {
-       $value = is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value);
-       return $value;
-    }
-}
 ?>
