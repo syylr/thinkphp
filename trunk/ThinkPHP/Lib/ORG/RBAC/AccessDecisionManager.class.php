@@ -42,10 +42,10 @@ class AccessDecisionManager extends Base
     public function __construct()
     {
         import("Think.Db.Db");
-        $this->roleTable = C('DB_PREFIX').'group';
-        $this->roleUserTable  =  C('DB_PREFIX').'groupuser';
-        $this->roleAccessTable=   C('DB_PREFIX').'access';
-        $this->roleNodeTable    =   C('DB_PREFIX').'node';
+        $this->roleTable           = C('RBAC_ROLE_TABLE')?  C('RBAC_ROLE_TABLE') :  C('DB_PREFIX').'group';
+        $this->roleUserTable     = C('RBAC_USER_TABLE')?  C('RBAC_USER_TABLE') :  C('DB_PREFIX').'groupuser';
+        $this->roleAccessTable  = C('RBAC_ACCESS_TABLE')? C('RBAC_ACCESS_TABLE') :   C('DB_PREFIX').'access';
+        $this->roleNodeTable    = C('RBAC_NODE_TABLE')? C('RBAC_NODE_TABLE') :  C('DB_PREFIX').'node';
     }
 
     /**
