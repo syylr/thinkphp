@@ -404,10 +404,17 @@ class View extends Base
                 $templateFile=substr($templateFile,strlen(TMPL_PATH));
                 vendor('Smarty.Smarty#class');
                 $tpl = new Smarty();
-                $tpl->caching = C('TMPL_CACHE_ON');
-                $tpl->template_dir = TMPL_PATH;
-                $tpl->compile_dir = CACHE_PATH ;
-                $tpl->cache_dir = TEMP_PATH ;
+                if(C('TMPL_ENGINE_CONFIG')) {
+                    $config  =  C('TMPL_ENGINE_CONFIG');
+                    foreach ($config as $key=>$val){
+                        $tpl->{$key}   =  $val;
+                    }
+                }else{
+                    $tpl->caching = C('TMPL_CACHE_ON');
+                    $tpl->template_dir = TMPL_PATH;
+                    $tpl->compile_dir = CACHE_PATH ;
+                    $tpl->cache_dir = TEMP_PATH ;
+                }
                 $tpl->assign($this->tVar);
                 $tpl->display($templateFile);
                 break;
@@ -415,10 +422,17 @@ class View extends Base
                 $templateFile=substr($templateFile,strlen(TMPL_PATH));
                 vendor('SmartTemplate.class#smarttemplate');
                 $tpl = new SmartTemplate($templateFile);
-                $tpl->caching = C('TMPL_CACHE_ON');
-                $tpl->template_dir = TMPL_PATH;
-                $tpl->temp_dir = CACHE_PATH ;
-                $tpl->cache_dir = TEMP_PATH ;
+                if(C('TMPL_ENGINE_CONFIG')) {
+                    $config  =  C('TMPL_ENGINE_CONFIG');
+                    foreach ($config as $key=>$val){
+                        $tpl->{$key}   =  $val;
+                    }
+                }else{
+                    $tpl->caching = C('TMPL_CACHE_ON');
+                    $tpl->template_dir = TMPL_PATH;
+                    $tpl->temp_dir = CACHE_PATH ;
+                    $tpl->cache_dir = TEMP_PATH ;
+                }
                 $tpl->assign($this->tVar);
                 $tpl->output();
                 break;
@@ -426,9 +440,16 @@ class View extends Base
                 $templateFile=substr($templateFile,strlen(TMPL_PATH));
                 vendor("TemplateLite.class#template");
                 $tpl = new Template_Lite();
-                $tpl->template_dir = TMPL_PATH;
-                $tpl->compile_dir = CACHE_PATH ;
-                $tpl->cache_dir = TEMP_PATH ;
+                if(C('TMPL_ENGINE_CONFIG')) {
+                    $config  =  C('TMPL_ENGINE_CONFIG');
+                    foreach ($config as $key=>$val){
+                        $tpl->{$key}   =  $val;
+                    }
+                }else{
+                    $tpl->template_dir = TMPL_PATH;
+                    $tpl->compile_dir = CACHE_PATH ;
+                    $tpl->cache_dir = TEMP_PATH ;
+                }
                 $tpl->assign($this->tVar);
                 $tpl->display($templateFile);
                 break;
@@ -437,13 +458,16 @@ class View extends Base
                 $CacheDir = substr(CACHE_PATH,0,-1);
                 $TemplateDir = substr(TMPL_PATH,0,-1);
                 vendor('EaseTemplate.template#ease');
-                $tpl = new EaseTemplate(
-                  array(
+                if(C('TMPL_ENGINE_CONFIG')) {
+                    $config  =  C('TMPL_ENGINE_CONFIG');
+                }else{
+                    $config  =                    array(
                     'CacheDir'=>$CacheDir,
                     'TemplateDir'=>$TemplateDir,
                     'TplType'=>'html'
                      )
-                );
+                }
+                $tpl = new EaseTemplate($config);
                 $tpl->set_var($this->tVar);
                 $tpl->set_file($templateFile);
                 $tpl->p();
