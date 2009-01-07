@@ -465,7 +465,7 @@ class View extends Base
                     'CacheDir'=>$CacheDir,
                     'TemplateDir'=>$TemplateDir,
                     'TplType'=>'html'
-                     )
+                     );
                 }
                 $tpl = new EaseTemplate($config);
                 $tpl->set_var($this->tVar);
