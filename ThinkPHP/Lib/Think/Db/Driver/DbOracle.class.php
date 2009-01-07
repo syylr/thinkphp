@@ -21,7 +21,7 @@
 * @version   $Id: DbOracle.class.php,v 1.1 2008/12/23 10:06:30 wangyufeng Exp $
 +------------------------------------------------------------------------------
 */
-Class DbOracle extends Db{
+class DbOracle extends Db{
 
     private $mode = OCI_COMMIT_ON_SUCCESS;
 

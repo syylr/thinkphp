@@ -21,11 +21,11 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-Class DbPdo extends Db{
+class DbPdo extends Db{
 
     protected $PDOStatement = null;
-	// 初始游标位置
-	protected $offset	=	0;
+    // 初始游标位置
+    protected $offset = 0;
 
     /**
      +----------------------------------------------------------
@@ -167,7 +167,7 @@ Class DbPdo extends Db{
             if ( !empty($this->PDOStatement) ) {    $this->free();    }
         }
         $this->W(1);
-		$this->PDOStatement	=	$this->_linkID->prepare($this->queryStr);
+        $this->PDOStatement	=	$this->_linkID->prepare($this->queryStr);
         if(false === $this->PDOStatement) {
             throw_exception($this->error());
         }
@@ -364,12 +364,12 @@ Class DbPdo extends Db{
             switch($this->dbType) {
                 case 'MSSQL':
                     $sql   = "SELECT   column_name as name,   data_type as type,   column_default as default,   is_nullable as null
-		FROM    information_schema.tables AS t
-		JOIN    information_schema.columns AS c
-		ON  t.table_catalog = c.table_catalog
-		AND t.table_schema  = c.table_schema
-		AND t.table_name    = c.table_name
-		WHERE   t.table_name = '$tableName'";
+        FROM    information_schema.tables AS t
+        JOIN    information_schema.columns AS c
+        ON  t.table_catalog = c.table_catalog
+        AND t.table_schema  = c.table_schema
+        AND t.table_name    = c.table_name
+        WHERE   t.table_name = '$tableName'";
                     break;
                 case 'SQLITE':
                     $sql   = 'PRAGMA table_info ('.$tableName.') ';
@@ -393,11 +393,11 @@ Class DbPdo extends Db{
                     $sql   = 'DESCRIBE '.$tableName;
             }
         }
-		//modify by wyfeng at 2008.12.29
+        //modify by wyfeng at 2008.12.29
         $result = $this->_query($sql);;
         $info   =   array();
         foreach ($result as $key => $val) {
-		    if(is_object($val)) {
+            if(is_object($val)) {
                 $val = get_object_vars($val);
             }
             $name= strtolower(isset($val['field'])?$val['field']:$val['name']);
@@ -540,8 +540,8 @@ Class DbPdo extends Db{
      * @return string
      +----------------------------------------------------------
      */
-	public function limit($limit) {
-		$limitStr    = '';
+    public function limit($limit) {
+        $limitStr    = '';
         if(!empty($limit)) {
             switch($this->dbType){
                 case 'PGSQL':
@@ -577,31 +577,31 @@ Class DbPdo extends Db{
             }
         }
         return $limitStr;
-	}
+    }
 
-	/**
+    /**
      +----------------------------------------------------------
      * 获取最后插入id ,仅适用于采用序列+触发器结合生成ID的方式,
      * ORACLE列程
-	   在config.php中指定
- 		'DB_TRIGGER_PREFIX'	=>	'tr_',
-		'DB_SEQUENCE_PREFIX' =>	'ts_',
-	 * eg:表 tb_user
-	   相对tb_user的序列为：
-	 	-- Create sequence
-		create sequence TS_USER
-		minvalue 1
-		maxvalue 999999999999999999999999999
-		start with 1
-		increment by 1
-		nocache;
-	   相对tb_user,ts_user的触发器为：
-		create or replace trigger TR_USER
-		  before insert on "TB_USER"
-		  for each row
-		begin
-			select "TS_USER".nextval into :NEW.ID from dual;
-		end;
+       在config.php中指定
+        'DB_TRIGGER_PREFIX'	=>	'tr_',
+        'DB_SEQUENCE_PREFIX' =>	'ts_',
+     * eg:表 tb_user
+       相对tb_user的序列为：
+        -- Create sequence
+        create sequence TS_USER
+        minvalue 1
+        maxvalue 999999999999999999999999999
+        start with 1
+        increment by 1
+        nocache;
+       相对tb_user,ts_user的触发器为：
+        create or replace trigger TR_USER
+          before insert on "TB_USER"
+          for each row
+        begin
+            select "TS_USER".nextval into :NEW.ID from dual;
+        end;
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -611,14 +611,14 @@ Class DbPdo extends Db{
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
-	 */
- 	//add by wyfeng at 2008.12.22
-	public function insert_last_id()
-	{
-		if(empty($this->tableName))
-		{
-			return 0;
-		}
+     */
+    //add by wyfeng at 2008.12.22
+    public function insert_last_id()
+    {
+        if(empty($this->tableName))
+        {
+            return 0;
+        }
          switch($this->dbType)
          {
             case 'PGSQL':
@@ -633,7 +633,7 @@ Class DbPdo extends Db{
                 $vo = $this->_query("SELECT {$sequenceName}.currval currval FROM dual");
                 return $vo?$vo[0]["currval"]:0;
         }
-	}
+    }
 
 }//类定义结束
 ?>

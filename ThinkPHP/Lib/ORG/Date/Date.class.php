@@ -326,9 +326,12 @@ class Date extends Base
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function isLeapYear()
+    public function isLeapYear($year='')
     {
-        return ((($this->year % 4) == 0) && (($this->year % 100) != 0) || (($this->year % 400) == 0));
+        if(empty($year)) {
+            $year = $this->year;
+        }
+        return ((($year % 4) == 0) && (($year % 100) != 0) || (($year % 400) == 0));
     }
 
     /**

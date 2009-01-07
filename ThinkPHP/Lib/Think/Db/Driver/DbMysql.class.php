@@ -22,7 +22,7 @@ define('CLIENT_MULTI_RESULTS', 131072);
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-Class DbMysql extends Db{
+class DbMysql extends Db{
 
     /**
      +----------------------------------------------------------
@@ -462,8 +462,8 @@ Class DbMysql extends Db{
         if(!empty($limit)) {
             $limitStr .= ' LIMIT '.$limit.' ';
         }
-		return $limitStr;
-	}
+        return $limitStr;
+    }
 
 }//类定义结束
 ?>
