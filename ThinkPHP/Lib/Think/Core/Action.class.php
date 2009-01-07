@@ -48,8 +48,38 @@ abstract class Action extends Base
         //实例化视图类
         $this->view       = View::getInstance();
         $this->name     =   $this->getActionName();
+        // 用户权限检查
+        if(C('USER_AUTH_ON')) {
+            Think::import('ORG.RBAC.RBAC');
+            if(!RBAC::AccessDecision()) {
+                // 没有权限 抛出错误
+                if(C('RBAC_ERROR_PAGE')) {
+                    // 定义权限错误页面
+                    redirect(C('RBAC_ERROR_PAGE'));
+                }else{
+                    if(C('GUEST_AUTH_ON')){
+                        $this->assign('jumpUrl',PHP_FILE.C('USER_AUTH_GATEWAY'));
+                    }
+                    // 提示错误信息
+                    $this->error(L('_VALID_ACCESS_'));
+                }
+            }
+        }
+
+        if($this->isGet()) {
+            //判断是否有Action缓存
+            if(C('ACTION_CACHE_ON') && in_array(ACTION_NAME,$this->_cacheAction,true)) {
+                $content    =   S(md5(__SELF__));
+                if($content) {
+                    echo $content;
+                    exit;
+                }
+            }
+        }
         //控制器初始化
-        $this->_initialize();
+        if(method_exists($this,'_initialize')) {
+            $this->_initialize();
+        }
     }
 
     /**
@@ -92,32 +122,6 @@ abstract class Action extends Base
             $Input   = Input::getInstance();
             $value   =  $Input->{$type}($name,$filter,$default);
             return $value;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 控制器初始化操作
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-     */
-    protected function _initialize()
-    {
-        if($this->isGet()) {
-            //判断是否有Action缓存
-            if(C('ACTION_CACHE_ON') && in_array(ACTION_NAME,$this->_cacheAction,true)) {
-                $content    =   S(md5(__SELF__));
-                if($content) {
-                    echo $content;
-                    exit;
-                }
-            }
-        }
-        return ;
     }
 
     // 判断是否为AjAX提交
