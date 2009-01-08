@@ -391,7 +391,7 @@ class  ThinkTemplate extends Base
     public function getIncludeTagLib(& $content)
     {
         //搜索是否有TagLib标签
-        $find = preg_match('/'.C('TAGLIB_BEGIN').'taglib\s(.+?)\s\/'.C('TAGLIB_END').'\W/is',$content,$matches);
+        $find = preg_match('/'.C('TAGLIB_BEGIN').'taglib\s(.+?)(\s*?)\/'.C('TAGLIB_END').'\W/is',$content,$matches);
         if($find) {
             //替换TagLib标签
             $content = str_replace($matches[0],'',$content);
