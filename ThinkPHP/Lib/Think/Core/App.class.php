@@ -499,9 +499,9 @@ class App extends Base
             $plugins    = array_merge($common_plugins,$app_plugins);
             // 缓存插件数据
             $content	=	'';
-            foreach($plugins as $key=>$val) {
-                include $val['file'];
-                $content	.=	php_strip_whitespace($val['file']);
+            foreach($plugins as $key=>$file) {
+                include $file;
+                $content	.=	php_strip_whitespace($file);
             }
             file_put_contents(RUNTIME_PATH.'~plugins.php',$content);
         }

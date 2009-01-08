@@ -54,25 +54,6 @@ function get_plugins($path=PLUGIN_PATH,$app=APP_NAME,$ext='.php')
         return array();
     }
     $path = realpath($path);
-
-    // 缓存无效 重新读取插件文件
-    /*
-    $dir = glob ( $path . '/*' );
-    if($dir) {
-       foreach($dir as $val) {
-            if(is_dir($val)){
-                $subdir = glob($val.'/*'.$ext);
-                if($subdir) {
-                    foreach($subdir as $file)
-                        $plugin_files[] = $file;
-                }
-            }else{
-                if (strrchr($val, '.') == $ext)
-                    $plugin_files[] = $val;
-            }
-       }
-       */
-
     $dir = dir($path);
     if($dir) {
         $plugin_files = array();
@@ -100,54 +81,13 @@ function get_plugins($path=PLUGIN_PATH,$app=APP_NAME,$ext='.php')
         }
         $plugins[$app] = array();
         foreach ($plugin_files as $plugin_file) {
-            if ( !is_readable("$path/$plugin_file"))        continue;
-            //取得插件文件的信息
-            $plugin_data = get_plugin_info("$path/$plugin_file");
-            if (empty ($plugin_data['name'])) {
-                continue;
-            }
-            $plugins[$app][] = $plugin_data;
+            if ( !is_readable($path.'/'.$plugin_file))        continue;
+            $plugins[$app][] = $path.'/'.$plugin_file;
         }
        return $plugins[$app];
     }else {
         return array();
     }
-}
-
-/**
- +----------------------------------------------------------
- * 获取插件信息
- +----------------------------------------------------------
- * @param string $plugin_file 插件文件名
- +----------------------------------------------------------
- * @return Array
- +----------------------------------------------------------
- */
-function get_plugin_info($plugin_file) {
-
-    $plugin_data = file_get_contents($plugin_file);
-    preg_match("/Plugin Name:(.*)/i", $plugin_data, $plugin_name);
-    if(empty($plugin_name)) {
-        return false;
-    }
-    preg_match("/Plugin URI:(.*)/i", $plugin_data, $plugin_uri);
-    preg_match("/Description:(.*)/i", $plugin_data, $description);
-    preg_match("/Author:(.*)/i", $plugin_data, $author_name);
-    preg_match("/Author URI:(.*)/i", $plugin_data, $author_uri);
-    if (preg_match("/Version:(.*)/i", $plugin_data, $version))
-        $version = trim($version[1]);
-    else
-        $version = '';
-    if(!empty($author_name)) {
-        if(!empty($author_uri)) {
-            $author_name = '<a href="'.trim($author_uri[1]).'" target="_blank">'.$author_name[1].'</a>';
-        }else {
-            $author_name = $author_name[1];
-        }
-    }else {
-        $author_name = '';
-    }
-    return array ('file'=>$plugin_file,'name' => trim($plugin_name[1]), 'uri' => trim($plugin_uri[1]), 'description' => trim($description[1]), 'author' => trim($author_name), 'version' => $version);
 }
 
 /**
