@@ -751,7 +751,7 @@ class Db extends Base
                 $key    =   $this->addSpecialChar($key);
                 if(is_array($val) && strtolower($val[0]) == 'exp') {
                     $val    =   $val[1];                        // 使用表达式
-                }elseif(!is_null($val) && is_scalar($val)){
+                }elseif(is_null($val) || is_scalar($val)){
                     $val    =   $this->fieldFormat($val);
                 }else{
                     // 过滤控制和复合对象
@@ -825,12 +825,14 @@ class Db extends Base
         }
         if(is_int($value)) {
             $value = intval($value);
-        } else if(is_float($value)) {
+        }elseif(is_float($value)) {
             $value = floatval($value);
         }elseif(!$asString){
             $value = $this->escape_string($value);
-        }else if(is_string($value)) {
+        }elseif(is_string($value)) {
             $value = '\''.$this->escape_string($value).'\'';
+        }elseif(is_null($value)){
+            $value   =  'null';
         }
         return $value;
     }

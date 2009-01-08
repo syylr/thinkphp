@@ -1111,7 +1111,6 @@ class Model extends Base  implements IteratorAggregate
                         }else{
                             $fields[]    =   $k.'.'.$key.' AS '.$field;
                         }
-
                     }
                 }
             }
