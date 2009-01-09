@@ -50,7 +50,7 @@ abstract class Action extends Base
         $this->name     =   $this->getActionName();
         // 用户权限检查
         if(C('USER_AUTH_ON')) {
-            Think::import('ORG.RBAC.RBAC');
+            import('ORG.RBAC.RBAC');
             if(!RBAC::AccessDecision()) {
                 // 没有权限 抛出错误
                 if(C('RBAC_ERROR_PAGE')) {
