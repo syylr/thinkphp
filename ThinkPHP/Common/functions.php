@@ -798,11 +798,14 @@ if(!function_exists('stripslashes_deep')) {
     }
 }
 
-function D($className='',$appName='@')
+function D($className='',$appName='')
 {
     static $_model = array();
     if(empty($className)) {
         return new  Model();
+    }
+    if(empty($appName)) {
+        $appName =  C('DEFAULT_MODEL_APP');
     }
     if(isset($_model[$appName.$className])) {
         return $_model[$appName.$className];
