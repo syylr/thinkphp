@@ -54,7 +54,11 @@ class View extends Base
 
     // 构造函数
     public function __construct($type='') {
-        $this->_template =  Template::getInstance($type);
+        if(!empty($type)) {
+            $this->type = $type;
+        }else{
+            $this->type = strtoupper(C('TMPL_ENGINE_TYPE'));
+        }
     }
 
     /**
