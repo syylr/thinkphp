@@ -54,11 +54,7 @@ class View extends Base
 
     // 构造函数
     public function __construct($type='') {
-        if(!empty($type)) {
-            $this->type =   $type;
-        }else{
-            $this->type =   strtoupper(C('TMPL_ENGINE_TYPE'));
-        }
+        $this->_template =  Template::getInstance($type);
     }
 
     /**
@@ -360,23 +356,25 @@ class View extends Base
             $templateFile = apply_filter('template_file',$templateFile);
         }
 
-        if(''==$templateFile) {
-            // 如果模板文件名为空 按照默认规则定位
-            $templateFile = C('TMPL_FILE_NAME');
-        }elseif(strpos($templateFile,'@')){
-            // 引入其它主题的操作模板 必须带上模块名称 例如 blue@User:add
-            $templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).C('TEMPLATE_SUFFIX');
-        }elseif(strpos($templateFile,':')){
-            // 引入其它模块的操作模板
-            $templateFile   =   TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).C('TEMPLATE_SUFFIX');
-        }elseif(!is_file($templateFile))    {
-            // 引入当前模块的其它操作模板
-            $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TEMPLATE_SUFFIX');
+        if(!file_exists_case($templateFile)){
+            if(''==$templateFile) {
+                // 如果模板文件名为空 按照默认规则定位
+                $templateFile = C('TMPL_FILE_NAME');
+            }elseif(strpos($templateFile,'@')){
+                // 引入其它主题的操作模板 必须带上模块名称 例如 blue@User:add
+                $templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).C('TEMPLATE_SUFFIX');
+            }elseif(strpos($templateFile,':')){
+                // 引入其它模块的操作模板
+                $templateFile   =   TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).C('TEMPLATE_SUFFIX');
+            }elseif(!is_file($templateFile))    {
+                // 引入当前模块的其它操作模板
+                $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TEMPLATE_SUFFIX');
+            }
+            if(!file_exists_case($templateFile)){
+                throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
+            }
         }
 
-        if(!file_exists_case($templateFile)){
-            throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
-        }
         if($pluginOn) {
             // 模版变量过滤
             $this->tVar = apply_filter('template_var',$this->tVar);
