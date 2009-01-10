@@ -55,7 +55,6 @@ class PublicAction extends Action {
             //显示登录用户名称
 			$this->assign('loginUserName',$_SESSION['loginUserName']);
         }
-		parent::_initialize();
 	}
 	public function checkLogin() {
 		$User	=	D('User');
