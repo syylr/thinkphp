@@ -266,6 +266,12 @@ class App extends Base
             $array	=	explode(C('COMPONENT_DEPR'),$module);
             // 实际的模块名称
             $module	=	array_pop($array);
+            // 获取组件名称
+            if(1==count($array)) {
+               define('COMPONENT_NAME',$array[0]);
+            }else{
+                define('COMPONENT_NAME',implode('/',$array));
+            }
         }
         // 检查模块URL伪装
         if(C('MODULE_REDIRECT')) {
@@ -444,14 +450,23 @@ class App extends Base
 
         //当前页面地址
         define('__SELF__',$_SERVER['PHP_SELF']);
+        // 应用URL根目录
+        if(C('APP_DOMAIN_DEPLOY')) {
+            // 独立域名部署需要指定模板从根目录开始
+            $appRoot   =  '/';
+        }else{
+            $appRoot   =  WEB_URL.'/'.APP_NAME.'/';
+        }
         // 默认加载的模板文件名
         if(defined('C_MODULE_NAME')) {
             // 当前模块地址
             define('__URL__',PHP_FILE.'/'.C_MODULE_NAME);
             //当前操作地址
             define('__ACTION__',__URL__.'/'.$action);
-            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('COMPONENT_DEPR'),'/',C_MODULE_NAME).'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
-            define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.str_replace(C('COMPONENT_DEPR'),'/',C_MODULE_NAME));
+            C('TMPL_FILE_NAME',LIB_PATH.COMPONENT_NAME.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
+            //项目模板目录
+            define('APP_TMPL_URL', $appRoot.LIB_DIR.'/'.COMPONENT_NAME.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/');
+            define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.LIB_DIR.'/'.$tmplDir.str_replace(C('COMPONENT_DEPR'),'/',C_MODULE_NAME));
         }else{
             // 当前模块地址
             define('__URL__',PHP_FILE.'/'.$module);
@@ -459,16 +474,11 @@ class App extends Base
             define('__ACTION__',__URL__.'/'.$action);
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
             define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
+            //项目模板目录
+            define('APP_TMPL_URL', $appRoot.$tmplDir);
         }
         //网站公共文件地址
         define('WEB_PUBLIC_URL', WEB_URL.'/Public');
-        //项目模板目录
-        if(C('APP_DOMAIN_DEPLOY')) {
-            // 独立域名部署
-            define('APP_TMPL_URL', '/'.$tmplDir);
-        }else{
-            define('APP_TMPL_URL', WEB_URL.'/'.APP_NAME.'/'.$tmplDir);
-        }
         //项目公共文件目录
         define('APP_PUBLIC_URL', APP_TMPL_URL.'Public');
 
@@ -531,6 +541,8 @@ class App extends Base
         }
         //创建Action控制器实例
         if(defined('C_MODULE_NAME')) {
+            $this->initComponent();
+            // 使用组件模块
             $module  =  A(C_MODULE_NAME);
         }else{
             $module  =  A(MODULE_NAME);
@@ -578,13 +590,32 @@ class App extends Base
 
     /**
      +----------------------------------------------------------
+     * 初始化组件
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    private function initComponent() {
+        // 加载组件配置文件
+        if(is_file(LIB_PATH.COMPONENT_NAME.'/Conf/config.php'))
+            C(array_change_key_case(include LIB_PATH.COMPONENT_NAME.'/Conf/config.php'));
+        // 加载组件公共文件
+        if(is_file(LIB_PATH.COMPONENT_NAME.'/Common/common.php'))
+            include LIB_PATH.COMPONENT_NAME.'/Common/common.php';
+        // 加载组件语言文件
+        if (is_file(LIB_PATH.COMPONENT_NAME.'/Lang/'.LANG_SET.'.php'))
+            L(include LIB_PATH.COMPONENT_NAME.'/Lang/'.LANG_SET.'.php');
+    }
+
+    /**
+     +----------------------------------------------------------
      * 运行应用实例 入口文件使用的快捷方法
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
      * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function run() {
