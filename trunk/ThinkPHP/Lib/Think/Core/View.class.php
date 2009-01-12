@@ -364,6 +364,9 @@ class View extends Base
             if(''==$templateFile) {
                 // 如果模板文件名为空 按照默认规则定位
                 $templateFile = C('TMPL_FILE_NAME');
+            }elseif(strpos($templateFile,'#')){
+                // 引入组件的其他模块的操作模板 例如 User#Info:add
+                $templateFile   =   LIB_PATH.str_replace(array('#',':'),array('/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/','/'),$templateFile).C('TEMPLATE_SUFFIX');
             }elseif(strpos($templateFile,'@')){
                 // 引入其它主题的操作模板 必须带上模块名称 例如 blue@User:add
                 $templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).C('TEMPLATE_SUFFIX');
