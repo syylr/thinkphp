@@ -798,6 +798,16 @@ if(!function_exists('stripslashes_deep')) {
     }
 }
 
+/**
+ +----------------------------------------------------------
+ * D函数用于实例化Model
+ +----------------------------------------------------------
+ * @param string className Model名称
+ * @param string appName Model所在项目
+ +----------------------------------------------------------
+ * @return Model
+ +----------------------------------------------------------
+ */
 function D($className='',$appName='')
 {
     static $_model = array();
@@ -841,6 +851,16 @@ function D($className='',$appName='')
     }
 }
 
+/**
+ +----------------------------------------------------------
+ * A函数用于实例化Action
+ +----------------------------------------------------------
+ * @param string className Action名称
+ * @param string appName Model所在项目
+ +----------------------------------------------------------
+ * @return Action
+ +----------------------------------------------------------
+ */
 function A($className,$appName='@')
 {
     static $_action = array();
