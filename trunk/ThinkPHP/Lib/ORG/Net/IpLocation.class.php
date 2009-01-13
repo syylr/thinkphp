@@ -51,18 +51,20 @@ class IpLocation extends Base
      */
     private $totalip;
 
+    private $charset;
     /**
      * 构造函数，打开 QQWry.Dat 文件并初始化类中的信息
      *
      * @param string $filename
      * @return IpLocation
      */
-    public function __construct($filename = "UTFWry.dat") {
+    public function __construct($filename = "UTFWry.dat",$charset='utf-8') {
         $this->fp = 0;
         if (($this->fp = fopen(dirname(__FILE__).'/'.$filename, 'rb')) !== false) {
             $this->firstip = $this->getlong();
             $this->lastip = $this->getlong();
             $this->totalip = ($this->lastip - $this->firstip) / 7;
+            $this->charset =  $charset;
         }
     }
 
@@ -150,7 +152,7 @@ class IpLocation extends Base
      * @param string $ip
      * @return array
      */
-    public function getlocation($ip='') {
+    public function getlocation($ip='',$charset='utf-8') {
         if (!$this->fp) return null;            // 如果数据文件没有被正确打开，则直接返回空
         if(empty($ip)) $ip = get_client_ip();
         $location['ip'] = gethostbyname($ip);   // 将输入的域名转化为IP地址
@@ -218,6 +220,11 @@ class IpLocation extends Base
                 $location['area'] = $this->getarea();
                 break;
         }
+        if(strtolower($charset) != strtolower($this->charset)) {
+            $location['country']   =  iconv($this->charset,$charset, $location['country']);
+            $location['area']   =  iconv($this->charset,$charset, $location['area']);
+        }
+
         if ($location['country'] == " CZ88.NET") {  // CZ88.NET表示没有有效信息
             $location['country'] = "未知";
         }
