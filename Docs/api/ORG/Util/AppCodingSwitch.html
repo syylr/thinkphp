@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<title>Docs For Class AppCodingSwitch By 塞北的雪</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">类 AppCodingSwitch</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">描述</div>
+	<div class="nav-bar">
+					<span class="disabled">描述</span> |
+															<a href="#sec-method-summary">方法</a> (<a href="#sec-methods">详细</a>)
+								</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">项目批量文件编码转换类库</p>
+<p class="description"><p>对当前项目内的PHP和HTML文件进行批量编码转换</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> yhustc &lt;<a href="mailto:yhustc@gmail.com">yhustc@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> 1.0</li>
+			</ul>
+		<p class="notes">
+			位于<a class="field" href="_ORG---Util---AppCodingSwitch.class.php.html">/ORG/Util/AppCodingSwitch.class.php</a> (第 <span class="field">24 行</span>)
+		</p>
+
+		
+		<pre><a href="../../Think/Core/Base.html">Base</a>
+   |
+   --AppCodingSwitch</pre>
+
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">方法索引</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">描述</a> |
+												<span class="disabled">方法</span> (<a href="#sec-methods">详细</a>)
+		</div>
+		<div class="info-box-body">
+			<div class="method-summary">
+												<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#CodingSwitch" title="details" class="method-name">CodingSwitch</a>
+											([<span class="var-type">string</span>&nbsp;<span class="var-name">$app</span> = <span class="var-default">&quot;./&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$mode</span> = <span class="var-default">&quot;FILES&quot;</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$file_types</span> = <span class="var-default">array(&quot;.html&quot;,&quot;.php&quot;)</span>])
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#DetectAndSwitch" title="details" class="method-name">DetectAndSwitch</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$filename</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$out_charset</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#searchdir" title="details" class="method-name">searchdir</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$path</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$mode</span> = <span class="var-default">&quot;FULL&quot;</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$file_types</span> = <span class="var-default">array(&quot;.html&quot;,&quot;.php&quot;)</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$maxdepth</span> = <span class="var-default">-1</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$d</span> = <span class="var-default">0</span>])
+									</div>
+								
+																												</div>
+		</div>
+	</div>
+
+
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">方法</div>
+		<div class="nav-bar">
+			<a href="#sec-description">描述</a> |
+																<a href="#sec-method-summary">方法</a> (<span class="disabled">详细</span>)
+					</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodCodingSwitch" id="CodingSwitch"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">静态方法CodingSwitch</span> (行 <span class="line-number">224</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">对整个项目目录中的PHP和HTML文件行进编码转换</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    静态
+		<span class="method-result">void</span>
+		<span class="method-name">
+			CodingSwitch
+		</span>
+					([<span class="var-type">string</span>&nbsp;<span class="var-name">$app</span> = <span class="var-default">&quot;./&quot;</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$mode</span> = <span class="var-default">&quot;FILES&quot;</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$file_types</span> = <span class="var-default">array(&quot;.html&quot;,&quot;.php&quot;)</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$app</span><span class="var-description">: 要遍历的项目路径</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$mode</span><span class="var-description">: 遍历模式,一般取FILES,这样只返回带路径的文件名</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$file_types</span><span class="var-description">: 文件后缀过滤数组</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodDetectAndSwitch" id="DetectAndSwitch"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">静态方法DetectAndSwitch</span> (行 <span class="line-number">41</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">编码转换函数,对整个文件进行编码转换</p>
+<p class="description"><p>支持以下转换  GB2312、UTF-8 WITH BOM转换为UTF-8  UTF-8、UTF-8 WITH BOM转换为GB2312</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    静态
+		<span class="method-result">void</span>
+		<span class="method-name">
+			DetectAndSwitch
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$filename</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$out_charset</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$filename</span><span class="var-description">: 文件名</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$out_charset</span><span class="var-description">: 转换后的文件编码,与iconv使用的参数一致</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsearchdir" id="searchdir"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">静态方法searchdir</span> (行 <span class="line-number">169</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">目录遍历函数</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    静态
+		<span class="method-result">void</span>
+		<span class="method-name">
+			searchdir
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$path</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$mode</span> = <span class="var-default">&quot;FULL&quot;</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$file_types</span> = <span class="var-default">array(&quot;.html&quot;,&quot;.php&quot;)</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$maxdepth</span> = <span class="var-default">-1</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$d</span> = <span class="var-default">0</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$path</span><span class="var-description">: 要遍历的目录名</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$mode</span><span class="var-description">: 遍历模式,一般取FILES,这样只返回带路径的文件名</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$file_types</span><span class="var-description">: 文件后缀过滤数组</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$maxdepth</span><span class="var-description">: 遍历深度,-1表示遍历到最底层</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$d</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+							<h4>继承的方法</h4>
+				<a name='inherited_methods'><!-- --></a>
+									<!-- =========== Summary =========== -->
+					<p>继承自 <span class="classname"><a href="../../Think/Core/Base.html">Base</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../Think/Core/Base.html#method__get">Base::__get()</a></span><br>
+													<span class="method-name"><a href="../../Think/Core/Base.html#method__set">Base::__set()</a></span><br>
+											</blockquote>
+									</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		本手册编译于2008-12-17 18:51 By 塞北的雪<br />
+	</p>
+	</div></body>
+</html>

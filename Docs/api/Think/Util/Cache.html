@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<title>Docs For Class Cache By 塞北的雪</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">类 Cache</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">描述</div>
+	<div class="nav-bar">
+					<span class="disabled">描述</span> |
+							<a href="#sec-descendents">子类</a>
+			|											<a href="#sec-var-summary">变量</a> (<a href="#sec-vars">详细</a>)
+						|											<a href="#sec-method-summary">方法</a> (<a href="#sec-methods">详细</a>)
+								</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">缓存管理类</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> liu21st &lt;<a href="mailto:liu21st@gmail.com">liu21st@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Id$</li>
+			</ul>
+		<p class="notes">
+			位于<a class="field" href="_Think---Util---Cache.class.php.html">/Think/Util/Cache.class.php</a> (第 <span class="field">24 行</span>)
+		</p>
+
+		
+		<pre><a href="../../Think/Core/Base.html">Base</a>
+   |
+   --Cache</pre>
+
+			</div>
+</div>
+
+	<a name="sec-descendents"></a>
+	<div class="info-box">
+		<div class="info-box-title">子类</div>
+		<div class="nav-bar">
+			<a href="#sec-description">描述</a> |
+			<span class="disabled">描述</span>
+			|												<a href="#sec-var-summary">变量</a> (<a href="#sec-vars">详细</a>)
+								|															<a href="#sec-method-summary">方法</a> (<a href="#sec-methods">详细</a>)
+												</div>
+		<div class="info-box-body">
+			<table cellpadding="2" cellspacing="0" class="class-table">
+				<tr>
+					<th class="class-table-header">类</th>
+					<th class="class-table-header">描述</th>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/CacheApachenote.html">CacheApachenote</a></td>
+					<td>
+											Apachenote缓存类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/CacheApc.html">CacheApc</a></td>
+					<td>
+											Apc缓存类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/CacheDb.html">CacheDb</a></td>
+					<td>
+											数据库类型缓存类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/CacheEaccelerator.html">CacheEaccelerator</a></td>
+					<td>
+											Eaccelerator缓存类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/CacheFile.html">CacheFile</a></td>
+					<td>
+											文件类型缓存类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/CacheMemcache.html">CacheMemcache</a></td>
+					<td>
+											Memcache缓存类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/CacheShmop.html">CacheShmop</a></td>
+					<td>
+											Shmop缓存类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/CacheSqlite.html">CacheSqlite</a></td>
+					<td>
+											Sqlite缓存类
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../../Think/Util/CacheXcache.html">CacheXcache</a></td>
+					<td>
+											Xcache缓存类
+										</td>
+				</tr>
+							</table>
+		</div>
+	</div>
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">变量索引</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">描述</a> |
+							<a href="#sec-descendents">子类</a> |
+						<span class="disabled">变量</span> (<a href="#sec-vars">详细</a>)
+							|
+									<a href="#sec-method-summary">方法</a> (<a href="#sec-methods">详细</a>)
+												</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$connected" title="details" class="var-name">$connected</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$expire" title="details" class="var-name">$expire</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$handler" title="details" class="var-name">$handler</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$options" title="details" class="var-name">$options</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$prefix" title="details" class="var-name">$prefix</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$type" title="details" class="var-name">$type</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">方法索引</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">描述</a> |
+							<a href="#sec-descendents">子类</a> |
+																		<a href="#sec-var-summary">变量</a> (<a href="#sec-vars">详细</a>)
+								|
+						<span class="disabled">方法</span> (<a href="#sec-methods">详细</a>)
+		</div>
+		<div class="info-box-body">
+			<div class="method-summary">
+																				<div class="method-definition">
+					static 						<span class="method-result">mixed</span>
+										<a href="#getInstance" title="details" class="method-name">getInstance</a>
+										()
+									</div>
+																																																								
+												<div class="method-definition">
+											<span class="method-result">object</span>
+										<a href="#connect" title="details" class="method-name">connect</a>
+											([<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">''</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$options</span> = <span class="var-default">array()</span>])
+									</div>
+																								<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getOptions" title="details" class="method-name">getOptions</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#Q" title="details" class="method-name">Q</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$times</span> = <span class="var-default">''</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setOptions" title="details" class="method-name">setOptions</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#W" title="details" class="method-name">W</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$times</span> = <span class="var-default">''</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__get" title="details" class="method-name">__get</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__set" title="details" class="method-name">__set</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+								</div>
+		</div>
+	</div>
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">变量</div>
+		<div class="nav-bar">
+			<a href="#sec-description">描述</a> |
+							<a href="#sec-descendents">子类</a> |
+										<a href="#sec-var-summary">变量</a> (<span class="disabled">详细</span>)
+			
+										|
+									<a href="#sec-method-summary">方法</a> (<a href="#sec-methods">详细</a>)
+									</div>
+		<div class="info-box-body">
+			<a name="var$connected" id="$connected"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$connected</span>
+						(行 <span class="line-number">35</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">是否连接</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$expire" id="$expire"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$expire</span>
+						(行 <span class="line-number">85</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">缓存过期时间</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$handler" id="$handler"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$handler</span>
+						(行 <span class="line-number">45</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">操作句柄</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$options" id="$options"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$options</span>
+			 = <span class="var-default">array()</span>			(行 <span class="line-number">65</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">缓存连接参数</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$prefix" id="$prefix"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$prefix</span>
+			 = <span class="var-default">'~@'</span>			(行 <span class="line-number">55</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">缓存存储前缀</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$type" id="$type"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$type</span>
+						(行 <span class="line-number">75</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">缓存类型</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+					</div>
+	</div>
+
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">方法</div>
+		<div class="nav-bar">
+			<a href="#sec-description">描述</a> |
+							<a href="#sec-descendents">子类</a> |
+															<a href="#sec-var-summary">变量</a> (<a href="#sec-vars">详细</a>)
+																	<a href="#sec-method-summary">方法</a> (<span class="disabled">详细</span>)
+					</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodgetInstance" id="getInstance"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">静态方法getInstance</span> (行 <span class="line-number">148</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">取得缓存类实例</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    静态
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getInstance
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+
+<a name="methodconnect" id="connect"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">connect</span> (行 <span class="line-number">101</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">连接缓存</p>
+	<ul class="tags">
+				<li><span class="field">throws:</span> ThinkExecption</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">object</span>
+		<span class="method-name">
+			connect
+		</span>
+					([<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">''</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$options</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$type</span><span class="var-description">: 缓存类型</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$options</span><span class="var-description">: 配置数组</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetOptions" id="getOptions"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getOptions</span> (行 <span class="line-number">133</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getOptions
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$name</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodQ" id="Q"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Q</span> (行 <span class="line-number">155</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			Q
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$times</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$times</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetOptions" id="setOptions"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setOptions</span> (行 <span class="line-number">129</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setOptions
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$name</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodW" id="W"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">W</span> (行 <span class="line-number">165</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			W
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$times</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$times</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__get" id="__get"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">__get</span> (行 <span class="line-number">121</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__get
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$name</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">重载:</div>
+		<dl>
+			<dt><a href="../../Think/Core/Base.html#method__get">Base::__get()</a></dt>
+						<dd>自动变量获取</dd>
+					</dl>
+			
+	</div>
+<a name="method__set" id="__set"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">__set</span> (行 <span class="line-number">125</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__set
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$name</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">重载:</div>
+		<dl>
+			<dt><a href="../../Think/Core/Base.html#method__set">Base::__set()</a></dt>
+						<dd>自动变量设置</dd>
+					</dl>
+			
+	</div>
+							<h4>继承的方法</h4>
+				<a name='inherited_methods'><!-- --></a>
+									<!-- =========== Summary =========== -->
+					<p>继承自 <span class="classname"><a href="../../Think/Core/Base.html">Base</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../Think/Core/Base.html#method__get">Base::__get()</a></span><br>
+													<span class="method-name"><a href="../../Think/Core/Base.html#method__set">Base::__set()</a></span><br>
+											</blockquote>
+									</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		本手册编译于2008-12-17 18:51 By 塞北的雪<br />
+	</p>
+	</div></body>
+</html>
