@@ -13,7 +13,6 @@
 /**
  +------------------------------------------------------------------------------
  * Pgsql数据库驱动类 刘格 2007-12-29 完善^_^
- * 首先请导入目录下面的pgsql.sql 文件
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Think
@@ -361,7 +360,18 @@ class DbPgsql extends Db{
      +----------------------------------------------------------
      */
     public function getFields($tableName) {
-        $result   =  $this->_query("select fields_name as \"Field\",fields_type as \"Type\",fields_not_null as \"Null\",fields_key_name as \"Key\",fields_default as \"Default\",fields_default as \"Extra\" from table_msg('{$tableName}');");
+        $result   =  $this->_query("select a.attname as \"Field\",
+            t.typname as \"Type\",
+            a.attnotnull as \"Null\",
+            i.indisprimary as \"Key\",
+            d.adsrc as \"Default\"
+            from pg_class c
+            inner join pg_attribute a on a.attrelid = c.oid
+            inner join pg_type t on a.atttypid = t.oid
+            left join pg_attrdef d on a.attrelid=d.adrelid and d.adnum=a.attnum
+            left join pg_index i on a.attnum=ANY(i.indkey) and c.oid = i.indrelid
+            where (c.relname='{$tablename}' or c.relname = lower('{$tablename}'))   AND a.attnum > 0
+                order by a.attnum asc;");
         $info   =   array();
         foreach ($result as $key => $val) {
             if(is_object($val)) {
@@ -370,9 +380,9 @@ class DbPgsql extends Db{
             $info[$val['Field']] = array(
             'name'    => $val['Field'],
             'type'    => $val['Type'],
-            'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
+            'notnull' => (bool) ($val['Null'] == 't'?1:0), // 't' is 'not null'
             'default' => $val['Default'],
-            'primary' => (strtolower($val['Key']) == $tableName.'_pkey'),
+            'primary' => (strtolower($val['Key']) == 't'),
             'autoInc' => (strtolower($val['Extra']) == "nextval('{$tableName}_id_seq'::regclass)"),
             );
         }
