@@ -60,7 +60,11 @@ class IpLocation extends Base
      */
     public function __construct($filename = "UTFWry.dat",$charset='utf-8') {
         $this->fp = 0;
-        if (($this->fp = fopen(dirname(__FILE__).'/'.$filename, 'rb')) !== false) {
+        $path = dirname(__FILE__).'/'.$filename;
+        if (is_file($filename)) {
+            $path = $filename;
+        }
+        if (($this->fp = fopen($path, 'rb')) !== false) {
             $this->firstip = $this->getlong();
             $this->lastip = $this->getlong();
             $this->totalip = ($this->lastip - $this->firstip) / 7;
