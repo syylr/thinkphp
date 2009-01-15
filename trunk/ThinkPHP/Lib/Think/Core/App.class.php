@@ -462,7 +462,7 @@ class App extends Base
             // 当前模块地址
             define('__URL__',PHP_FILE.'/'.C_MODULE_NAME);
             //当前操作地址
-            define('__ACTION__',__URL__.'/'.$action);
+            define('__ACTION__',__URL__.C('PATH_DEPR').$action);
             C('TMPL_FILE_NAME',LIB_PATH.COMPONENT_NAME.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
             //项目模板目录
             define('APP_TMPL_URL', $appRoot.LIB_DIR.'/'.COMPONENT_NAME.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/');
@@ -471,7 +471,7 @@ class App extends Base
             // 当前模块地址
             define('__URL__',PHP_FILE.'/'.$module);
             //当前操作地址
-            define('__ACTION__',__URL__.'/'.$action);
+            define('__ACTION__',__URL__.C('PATH_DEPR').$action);
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
             define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
             //项目模板目录
