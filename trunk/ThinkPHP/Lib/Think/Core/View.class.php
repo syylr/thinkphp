@@ -185,7 +185,7 @@ class View extends Base
                 $showTime .= ' | DB :'.$db->Q().' queries '.$db->W().' writes ';
             }
             if(C('SHOW_CACHE_TIMES') && class_exists('Cache',false)) {
-                // 显示数据库操作次数
+                // 显示缓存读写次数
                 $cache  =   Cache::getInstance();
                 $showTime .= ' | Cache :'.$cache->Q().' gets '.$cache->W().' writes ';
             }
