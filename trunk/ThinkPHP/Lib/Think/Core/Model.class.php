@@ -308,10 +308,10 @@ class Model extends Base  implements IteratorAggregate
             $this->options  =   array();
         }
         if($fetchSql) {
-            return $this->db->add($data,$this->getTableName(),$multi,$lock,$fetchSql);
+            return $this->db->add($data,$table,$multi,$lock,$fetchSql);
         }
         // 插入数据库
-        if(false === $result = $this->db->add($data,$this->getTableName(),$multi)){
+        if(false === $result = $this->db->add($data,$table,$multi)){
             // 数据库插入操作失败
             $this->error = L('_OPERATION_WRONG_');
             return false;
