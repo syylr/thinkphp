@@ -64,6 +64,7 @@ return Array(
     '_CONFIG_FILE_INVALID_'=>'无法加载配置文件',
     '_CONFIG_TYPE_INVALID_'=>'系统不支持该配置文件类型！',
     '_FILE_NOT_WRITEABLE_'=>'目录（文件）不可写',
+	'_METHOD_NOT_EXIST_'=>'您所请求的方法不存在！',
 
     '_NO_AUTO_CHARSET_'=>'您的系统不支持自动编码转换！',
     '_CLASS_NOT_EXIST_'=>'实例化一个不存在的类！',
