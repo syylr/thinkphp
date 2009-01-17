@@ -117,42 +117,6 @@ class  ThinkTemplate extends Base
 
     /**
      +----------------------------------------------------------
-     * 重新编译项目全部模版
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $tmplContent 模板内容
-     * @param string $charset  模板输出字符集
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function buildAllTemplate($tmplPath=TMPL_PATH)
-    {
-        // 遍历模版目录
-        $themes =  scandir($tmplPath);
-        foreach($themes as $key=>$theme) {
-            $modules  = scandir($tmplPath.$theme);
-            foreach($modules as $key=>$module) {
-                $actions = scandir($tmplPath.$theme.'/'.$module);
-                foreach($actions as $key=>$file) {
-                    //读出原模板内容
-                    $tmplTemplateFile =  ($tmplPath.$theme.'/'.$module.'/'.$file);
-                    $tmplContent = file_get_contents($tmplTemplateFile);
-                    //编译模板内容
-                    $tmplContent = $this->compiler($tmplContent);
-                    //重写Cache文件
-                    $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
-                    if( false === file_put_contents($tmplCacheFile,trim($tmplContent))) {
-                        system_out('模版缓存文件'.$tmplCacheFile.'写入失败！');
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
      * 编译模板文件内容
      * 包括模板解析、同步路径和编码转换
      +----------------------------------------------------------
@@ -164,44 +128,22 @@ class  ThinkTemplate extends Base
      * @return string
      +----------------------------------------------------------
      */
-    protected function compiler ( $tmplContent,$charset='')
+    protected function compiler( $tmplContent,$charset='')
     {
         //模板解析
         $tmplContent = $this->parse($tmplContent);
 
-        // 特殊变量替换
-        if(empty($charset))  $charset = C('OUTPUT_CHARSET');
-
-        //项目公共目录
-        $tmplContent = str_ireplace('../public',APP_PUBLIC_URL,$tmplContent);
-        //网站公共目录
-        $tmplContent = str_replace('__PUBLIC__',WEB_PUBLIC_URL,$tmplContent);
-        // 项目模板目录
-        $tmplContent = str_replace('__TMPL__',APP_TMPL_URL,$tmplContent);
-        //网站根目录
-        $tmplContent = str_replace('__ROOT__',__ROOT__,$tmplContent);
-        //当前项目地址
-        $tmplContent = str_replace('__APP__',__APP__,$tmplContent);
-        //当前模块地址
-        $tmplContent = str_replace('__URL__',__URL__,$tmplContent);
-        //当前项目操作地址
-        $tmplContent = str_replace('__ACTION__',__ACTION__,$tmplContent);
-        //当前页面操作地址
-        $tmplContent = str_replace('__SELF__',__SELF__,$tmplContent);
         if(ini_get('short_open_tag')) {
             // 开启短标签的情况要将<?标签用echo方式输出 否则无法正常输出xml标识
             $tmplContent = preg_replace('/(<\?(?!php|=|$))/i', '<?php echo \'\\1\'; ?>'."\n", $tmplContent );
         }
         //编码替换
+        if(empty($charset))  $charset = C('OUTPUT_CHARSET');
         if(C('TEMPLATE_CHARSET') != $charset) {
             $tmplContent = str_ireplace('charset='.C('TEMPLATE_CHARSET'), 'charset='.$charset, $tmplContent);
         }
         // 令牌验证
         $tmplContent =  preg_replace('/<\/form(\s*)>/is','<?php if(C("TOKEN_ON")):?><input type="hidden" name="<?php echo C("TOKEN_NAME");?>" value="<?php echo Session::get(C("TOKEN_NAME")); ?>"/><?php endif;?></form>',$tmplContent);
-        if(C('THINK_PLUGIN_ON')) {
-            // 模版过滤插件调用
-            $tmplContent =  apply_filter('tmpl_replace',$tmplContent);
-        }
 
         // 还原被替换的Literal标签
         $tmplContent = preg_replace('/<!--###literal(\d)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
