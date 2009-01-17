@@ -202,30 +202,6 @@ class Model extends Base  implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
-     * 字符串命名风格转换
-     * type
-     * =0 将Java风格转换为C的风格
-     * =1 将C风格转换为Java的风格
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param string $name 字符串
-     * @param integer $type 转换类型
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    protected function parseName($name,$type=0) {
-        if($type) {
-            return preg_replace("/_([a-zA-Z])/e", "strtoupper('\\1')", $name);
-        }else{
-            $name = preg_replace("/[A-Z]/", "_\\0", $name);
-            return strtolower(trim($name, "_"));
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
      * 利用__call方法重载 实现一些特殊的Model方法 （魔术方法）
      +----------------------------------------------------------
      * @access public
@@ -3034,7 +3010,7 @@ class Model extends Base  implements IteratorAggregate
                 $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
                 if(!empty($this->tableName)) {
                     $tableName .= $this->tableName;
-                }elseif(C('TABLE_NAME_IDENTIFY')){
+                }elseif(C('AUTO_NAME_IDENTIFY')){
                     // 智能识别表名
                     $tableName .= $this->parseName($this->name);
                 }else{
