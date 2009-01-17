@@ -361,7 +361,7 @@ class Model extends Base  implements IteratorAggregate
             $order    =   isset($this->options['order'])?     $this->options['order']:    $order;
             $lock      =   isset($this->options['lock'])?      $this->options['lock']:     $lock;
             $autoLink=  isset($this->options['link'])?          $this->options['link']:     $autoLink;
-            $table     =   isset($this->options['table'])?     $this->options['table']:    $this->getTableName();
+            $table     =   isset($this->options['table'])?     $this->options['table']:    $table;
             $fetchSql = isset($this->options['fetch'])?       $this->options['fetch']:    $fetchSql;
             $this->options  =   array();
         }
@@ -423,7 +423,7 @@ class Model extends Base  implements IteratorAggregate
         if(!empty($this->options)) {
             // 已经有定义的查询表达式
             $condition  =   isset($this->options['where'])?         $this->options['where']:    $condition;
-            $table       =   isset($this->options['table'])?         $this->options['table']:    $this->getTableName();
+            $table       =   isset($this->options['table'])?         $this->options['table']:    $table;
             $fields       =   isset($this->options['field'])?         $this->options['field']:    $fields;
             $limit        =   isset($this->options['limit'])?         $this->options['limit']:        $limit;
             $order      =   isset($this->options['order'])?         $this->options['order']:    $order;
@@ -504,7 +504,7 @@ class Model extends Base  implements IteratorAggregate
         if(!empty($this->options)) {
             // 已经有定义的查询表达式
             $where      =   isset($this->options['where'])?     $this->options['where']:    $where;
-            $table          =   isset($this->options['table'])?     $this->options['table']:    $this->getTableName();
+            $table          =   isset($this->options['table'])?     $this->options['table']:    $table;
             $limit          =   isset($this->options['limit'])?     $this->options['limit']:        $limit;
             $order      =   isset($this->options['order'])?     $this->options['order']:    $order;
             $lock         =   isset($this->options['lock'])?          $this->options['lock']:     $lock;
