@@ -2653,7 +2653,7 @@ class Model extends Base  implements IteratorAggregate
         if($this->composite) {
             // 复合对象直接赋值
             foreach ($data as $key=>$val){
-                $vo[$key]   =   MAGIC_QUOTES_GPC?    stripslashes($val)  :  $val;
+                $vo[$key]   =   $val;
             }
         }else{
             // 检查字段映射
@@ -2672,7 +2672,7 @@ class Model extends Base  implements IteratorAggregate
                 //保证赋值有效
                 if(!is_null($val) ){
                     // 首先保证表单赋值
-                    $vo[$name] = MAGIC_QUOTES_GPC?   stripslashes($val)  :  $val;
+                    $vo[$name] = $val;
                 }elseif(    (strtolower($type) == "add" && in_array($name,$this->autoCreateTimestamps,true)) ||
                 (strtolower($type) == "edit" && in_array($name,$this->autoUpdateTimestamps,true)) ){
                     // 自动保存时间戳
