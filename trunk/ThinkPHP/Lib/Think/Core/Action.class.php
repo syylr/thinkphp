@@ -417,6 +417,8 @@ abstract class Action extends Base
                     throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
                 }
             }
+        }else{
+            throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
         }
     }
 
