@@ -12,6 +12,8 @@
 
 require_once THINK_PATH . '/Lib/Think/Core/Base.class.php';
 require_once THINK_PATH . '/Lib/Think/Core/Action.class.php';
+require_once THINK_PATH . '/Lib/Think/Core/View.class.php';
+require_once THINK_PATH . '/Lib/Think/Util/Template.class.php';
 
 class MyAction extends Action
 {

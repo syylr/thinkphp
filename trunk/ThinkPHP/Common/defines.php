@@ -33,7 +33,7 @@ if(MEMORY_LIMIT_ON) {
      $GLOBALS['_startUseMems'] = memory_get_usage();
 }
 define('PHP_SAPI_NAME',php_sapi_name());
-define('IS_APACHE',strstr($_SERVER['SERVER_SOFTWARE'], 'Apache') || strstr($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed') );
+define('IS_APACHE',isset($_SERVER['SERVER_SOFTWARE']) ? (strstr($_SERVER['SERVER_SOFTWARE'], 'Apache') || strstr($_SERVER['SERVER_SOFTWARE'], 'LiteSpeed')) : false );
 define('IS_IIS',PHP_SAPI_NAME =='isapi' ? 1 : 0);
 define('IS_CGI',substr(PHP_SAPI_NAME, 0,3)=='cgi' ? 1 : 0 );
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
