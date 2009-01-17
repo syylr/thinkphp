@@ -303,7 +303,7 @@ class Model extends Base  implements IteratorAggregate
             $data      =   isset($this->options['data'])?      $this->options['data']:     $data;
             $lock      =   isset($this->options['lock'])?      $this->options['lock']:     $lock;
             $autoLink=  isset($this->options['link'])?          $this->options['link']:     $autoLink;
-            $table     =   isset($this->options['table'])?     $this->options['table']:    $this->getTableName();
+            $table     =   isset($this->options['table'])?     $this->options['table']:    $table;
             $fetchSql = isset($this->options['fetch'])?       $this->options['fetch']:    $fetchSql;
             $this->options  =   array();
         }
