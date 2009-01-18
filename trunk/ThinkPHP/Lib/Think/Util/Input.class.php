@@ -19,7 +19,11 @@ class Input extends Base {
 
     private $filter =   null;   // 输入过滤
     private static $_input  =   array('get','post','request','env','server','cookie','session','globals','config','lang','call');
-
+    //html标签设置
+    public static $htmlTags = array(
+        'allow' => 'table|td|th|tr|i|b|u|strong|img|p|br|div|strong|em|ul|ol|li|dl|dd|dt|a',
+        'ban' => 'html|head|meta|link|base|basefont|body|bgsound|title|style|script|form|iframe|frame|frameset|applet|id|ilayer|layer|name|script|style|xml',
+    );
     static public function getInstance() {
         return get_instance_of(__CLASS__);
     }
@@ -84,7 +88,6 @@ class Input extends Base {
             return $data;
         }
     }
-
     /**
      +----------------------------------------------------------
      * 设置数据过滤方法
@@ -99,6 +102,353 @@ class Input extends Base {
     public function filter($filter) {
         $this->filter   =   $filter;
         return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 字符MagicQuote转义过滤
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    static public function magicQuote()
+    {
+        if ( get_magic_quotes_gpc() ) {
+           $_POST = stripslashes_deep($_POST);
+           $_GET = stripslashes_deep($_GET);
+           $_COOKIE = stripslashes_deep($_COOKIE);
+           $_REQUEST= stripslashes_deep($_REQUEST);
+        }
+    }
+    /**
+     +----------------------------------------------------------
+     * 处理纯文本数据，以便保存到数据库
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $string 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     * @example 
+     *  保存表单中Input数据到数据库之前使用：txtForSave($title, false);
+     *  保存Textarea数据到数据库之前使用：txtForSave($title);
+     +----------------------------------------------------------
+     */
+    static public function txtForSave($string)
+    {
+    	return self::hsc(trim($string));
+    }
+    /**
+     +----------------------------------------------------------
+     * 处理纯文本数据，以便保持格式显示
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $string 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function txtForShow($string)
+    {
+    	return self::convNl($string, '<br />');
+    }
+    /**
+     +----------------------------------------------------------
+     * 处理html数据，以便保存到数据库
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     * @param mixed $safeHtmlOpen 是否进行安全处理
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function htmlForSave($string, $safeHtmlOpen = true)
+    {
+    	if ($safeHtmlOpen)
+    	{
+    		$string = Input::safeHtml($string);
+    	}
+    	return $string;
+    }
+    /**
+     +----------------------------------------------------------
+     * 处理纯文本数据，以便在textarea标签中显示
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function htmlForTarea($string)
+    {
+        return str_ireplace(array('<textarea>','</textarea>'), array('&lt;textarea>','&lt;/textarea>'), $string);
+    }
+    /**
+     +----------------------------------------------------------
+     * 将数据中的单引号和双引号进行转义
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function noQuotes($string)
+    {
+    	return str_replace(array('"',"'"), array('&quot;','&#039;'), $string);
+    }
+    /**
+     +----------------------------------------------------------
+     * 转换文字中的超链接为可点击连接
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    function makeClickable(&$string)
+    {
+        $validChars = "a-z0-9\/\-_+=.~!%@?#&;:$\|";
+        $patterns = array(
+                        "/(^|[^]_a-z0-9-=\"'\/])([a-z]+?):\/\/([{$validChars}]+)/ei", 
+                        "/(^|[^]_a-z0-9-=\"'\/])www\.([a-z0-9\-]+)\.([{$validChars}]+)/ei", 
+                        "/(^|[^]_a-z0-9-=\"'\/])ftp\.([a-z0-9\-]+)\.([{$validChars}]+)/ei", 
+                        "/(^|[^]_a-z0-9-=\"'\/:\.])([a-z0-9\-_\.]+?)@([{$validChars}]+)/ei");
+        $replacements = array(
+                        "'\\1<a href=\"\\2://\\3\" title=\"\\2://\\3\" rel=\"external\">\\2://'.Input::truncate( '\\3' ).'</a>'", 
+                        "'\\1<a href=\"http://www.\\2.\\3\" title=\"www.\\2.\\3\" rel=\"external\">'.Input::truncate( 'www.\\2.\\3' ).'</a>'", 
+                        "'\\1<a href=\"ftp://ftp.\\2.\\3\" title=\"ftp.\\2.\\3\" rel=\"external\">'.Input::truncate( 'ftp.\\2.\\3' ).'</a>'", 
+                        "'\\1<a href=\"mailto:\\2@\\3\" title=\"\\2@\\3\">'.Input::truncate( '\\2@\\3' ).'</a>'");
+        return preg_replace($patterns, $replacements, $string);
+    }
+    /**
+     +----------------------------------------------------------
+     * 缩略显示字符串
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     * @param int $length 缩略之后的长度
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function truncate($string, $length = '50')
+    {
+        if ( empty($string) || empty($length) || strlen($string) < $length ) return $string;
+        $len = floor( $length / 2 );
+        $ret = substr($string, 0, $len) . " ... ". substr($string, 5 - $len);
+        return $ret;
+    }
+    /**
+     +----------------------------------------------------------
+     * 把换行转换为<br />标签
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function nl2Br($string)
+    {
+        return preg_replace("/(\015\012)|(\015)|(\012)/", "<br />", $string);
+    }
+    /**
+     +----------------------------------------------------------
+     * 如果 magic_quotes_gpc 为关闭状态，这个函数可以转义字符串
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function addSlashes($string)
+    {
+        if (!get_magic_quotes_gpc()) {
+            $string = addslashes($string);
+        }
+        return $string;
+    }
+    static public function getGPC($string)
+    {
+    	return Input::addSlashes($string);
+    }
+    /**
+     +----------------------------------------------------------
+     * 如果 magic_quotes_gpc 为开启状态，这个函数可以反转义字符串
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function stripSlashes($string)
+    {
+        if (get_magic_quotes_gpc()) {
+            $string = stripslashes($string);
+        }
+        return $string;
+    }
+    /**
+     +----------------------------------------------------------
+     * 用于在textbox表单中显示html代码
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static function hsc($string)
+    {
+        return preg_replace(array("/&amp;/i", "/&nbsp;/i"), array('&', '&amp;nbsp;'), htmlspecialchars($string, ENT_QUOTES));
+    }
+    /**
+     +----------------------------------------------------------
+     * 是hsc()方法的逆操作
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static function undoHsc($text)
+    {
+        return preg_replace(array("/&gt;/i", "/&lt;/i", "/&quot;/i", "/&#039;/i", '/&amp;nbsp;/i'), array(">", "<", "\"", "'", "&nbsp;"), $text);
+    }
+    /**
+     +----------------------------------------------------------
+     * 输出安全的html，用于过滤危险代码
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     * @param mixed $tags 允许的标签列表，如 table|td|th|td
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function safeHtml($text, $tags = null)
+    {
+    	$text	=	trim($text);
+    	//完全过滤注释
+    	$text	=	preg_replace('/<!--?.*-->/','',$text);
+    	//完全过滤动态代码
+    	$text	=	preg_replace('/<\?|\?'.'>/','',$text);
+    	//完全过滤js
+    	$text	=	preg_replace('/<script?.*\/script>/','',$text);
+    
+    	$text	=	str_replace('[','&#091;',$text);
+    	$text	=	str_replace(']','&#093;',$text);
+    	$text	=	str_replace('|','&#124;',$text);
+    	//过滤换行符
+    	$text	=	preg_replace('/\r?\n/','',$text);
+    	//br
+    	$text	=	preg_replace('/<br(\s\/)?'.'>/i','[br]',$text);
+    	$text	=	preg_replace('/(\[br\]\s*){10,}/i','[br]',$text);
+    	//过滤危险的属性，如：过滤on事件lang js
+    	while(preg_match('/(<[^><]+)(lang|on|action|background|codebase|dynsrc|lowsrc)[^><]+/i',$text,$mat)){
+    		$text=str_replace($mat[0],$mat[1],$text);
+    	}
+    	while(preg_match('/(<[^><]+)(window\.|javascript:|js:|about:|file:|document\.|vbs:|cookie)([^><]*)/i',$text,$mat)){
+    		$text=str_replace($mat[0],$mat[1].$mat[3],$text);
+    	}
+    	if( empty($allowTags) ) { $allowTags = self::$$htmlTags['allow']; }
+    	//允许的HTML标签
+    	$text	=	preg_replace('/<('.$allowTags.')( [^><\[\]]*)>/i','[\1\2]',$text);
+    	//过滤多余html
+    	if ( empty($banTag) ) { $banTag = self::$$htmlTags['ban']; }
+    	$text	=	preg_replace('/<\/?('.$banTag.')[^><]*>/i','',$text);
+    	//过滤合法的html标签
+    	while(preg_match('/<([a-z]+)[^><\[\]]*>[^><]*<\/\1>/i',$text,$mat)){
+    		$text=str_replace($mat[0],str_replace('>',']',str_replace('<','[',$mat[0])),$text);
+    	}
+    	//转换引号
+    	while(preg_match('/(\[[^\[\]]*=\s*)(\"|\')([^\2=\[\]]+)\2([^\[\]]*\])/i',$text,$mat)){
+    		$text=str_replace($mat[0],$mat[1].'|'.$mat[3].'|'.$mat[4],$text);
+    	}
+    	//空属性转换
+    	$text	=	str_replace('\'\'','||',$text);
+    	$text	=	str_replace('""','||',$text);
+    	//过滤错误的单个引号
+    	while(preg_match('/\[[^\[\]]*(\"|\')[^\[\]]*\]/i',$text,$mat)){
+    		$text=str_replace($mat[0],str_replace($mat[1],'',$mat[0]),$text);
+    	}
+    	//转换其它所有不合法的 < >
+    	$text	=	str_replace('<','&lt;',$text);
+    	$text	=	str_replace('>','&gt;',$text);
+    	$text	=	str_replace('"','&quot;',$text);
+    	//反转换
+    	$text	=	str_replace('[','<',$text);
+    	$text	=	str_replace(']','>',$text);
+    	$text	=	str_replace('|','"',$text);
+    	//过滤多余空格
+    	$text	=	str_replace('  ',' ',$text);
+    	return $text;
+    }
+    /**
+     +----------------------------------------------------------
+     * 删除html标签，得到纯文本。可以处理嵌套的标签
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的html
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function deleteHtmlTags($string, $br = false)
+    {
+    	while(strstr($string, '>'))
+    	{
+    		$currentBeg = strpos($string, '<');
+    		$currentEnd = strpos($string, '>');
+    		$tmpStringBeg = @substr($string, 0, $currentBeg);
+    		$tmpStringEnd = @substr($string, $currentEnd + 1, strlen($string));
+    		$string = $tmpStringBeg.$tmpStringEnd;
+    	}
+    	return $string;
+    }
+    /**
+     +----------------------------------------------------------
+     * 处理文本中的换行
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $string 要处理的字符串
+     * @param mixed $br 对换行的处理，
+     *        false：去除换行；true：保留原样；string：替换成string
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function convNl($string, $br = '<br />')
+    {
+    	if ($br == false) {
+    		$string = preg_replace("/(\015\012)|(\015)|(\012)/", '', $string);
+    	} elseif ($br != true){
+    		$string = preg_replace("/(\015\012)|(\015)|(\012)/", $br, $string);
+    	}
     }
 
 }
