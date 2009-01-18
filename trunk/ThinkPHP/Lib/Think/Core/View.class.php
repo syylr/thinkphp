@@ -288,7 +288,7 @@ class View extends Base
         }
 
         // 输出模板文件
-        return $this->output($content,$display,$charset,$htmlCache);
+        return $this->output($content,$display,$charset);
     }
 
     /**
