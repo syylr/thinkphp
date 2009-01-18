@@ -101,7 +101,7 @@ return  array(
 	'ACTION_SUFFIX'				=>	'', // 操作方法后缀
 	'MODEL_CLASS_PREFIX'		=>	'', // 模型前缀
 	'MODEL_CLASS_SUFFIX'	=>	'Model',  // 模型后缀
-    'TABLE_NAME_IDENTIFY'  =>    True, // 模型对应数据表名称智能识别 UserType => user_type
+    'AUTO_NAME_IDENTIFY'  =>    True, // 模型对应数据表名称智能识别 UserType => user_type
     'DEFAULT_MODEL_APP'     =>   '@',   // 默认模型类所在的项目名称 @ 表示当前项目
 
 	/* 静态缓存设置 */
