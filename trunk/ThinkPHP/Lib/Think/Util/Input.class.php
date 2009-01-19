@@ -10,11 +10,32 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-// 输入数据管理类
-// 使用方法
-//  $Input = Input::getInstance();
-//  $Input->get('name','md5','0');
-//  $Input->session('memberId','','0');
+/** 输入数据管理类
+ * 使用方法
+ *  $Input = Input::getInstance();
+ *  $Input->get('name','md5','0');
+ *  $Input->session('memberId','','0');
+ * 
+ * 下面总结了一些常用的数据处理方法。以下方法无需考虑magic_quotes_gpc的设置。
+ * 
+ * 获取数据：
+ *    如果从$_POST或者$_GET中获取，使用Input::getVar($_POST['field']);，从数据库或者文件就不需要了。
+ *    或者直接使用 Input::magicQuotes来消除所有的magic_quotes_gpc转义。
+ * 
+ * 存储过程：
+ *    经过Input::getVar($_POST['field'])获得的数据，就是干净的数据，可以直接保存。
+ *    如果要过滤危险的html，可以使用 $html = Input::safeHtml($data);
+ * 
+ * 页面显示：
+ *    纯文本显示在网页中，如文章标题<title>$data</title>： $data = Input::forShow($field);
+ *    HTML 在网页中显示，如文章内容：无需处理。
+ *    在网页中以源代码方式显示html：$vo = Input::forShow($html);
+ *    纯文本或者HTML在textarea中进行编辑: $vo = Input::forTarea($value);
+ *    html在标签中使用，如<input value="数据" /> ，使用 $vo = Input::forTag($value); 或者 $vo = Input::hsc($value);
+ * 
+ * 特殊使用情况：
+ *    字符串要在数据库进行搜索： $data = Input::forSearch($field);
+ */
 class Input extends Base {
 
     private $filter =   null;   // 输入过滤
@@ -108,12 +129,12 @@ class Input extends Base {
      +----------------------------------------------------------
      * 字符MagicQuote转义过滤
      +----------------------------------------------------------
-     * @access private
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    static public function magicQuote()
+    static public function noGPC()
     {
         if ( get_magic_quotes_gpc() ) {
            $_POST = stripslashes_deep($_POST);
@@ -124,26 +145,7 @@ class Input extends Base {
     }
     /**
      +----------------------------------------------------------
-     * 处理纯文本数据，以便保存到数据库
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $string 要处理的字符串
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     * @example 
-     *  保存表单中Input数据到数据库之前使用：txtForSave($title, false);
-     *  保存Textarea数据到数据库之前使用：txtForSave($title);
-     +----------------------------------------------------------
-     */
-    static public function txtForSave($string)
-    {
-    	return self::hsc(trim($string));
-    }
-    /**
-     +----------------------------------------------------------
-     * 处理纯文本数据，以便保持格式显示
+     * 处理字符串，以便可以正常进行搜索
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -152,29 +154,22 @@ class Input extends Base {
      * @return string
      +----------------------------------------------------------
      */
-    static public function txtForShow($string)
+    static public function forSearch($string)
     {
-    	return self::convNl($string, '<br />');
+    	return str_replace( array('%','_'), array('\%','\_'), $string );
     }
     /**
      +----------------------------------------------------------
-     * 处理html数据，以便保存到数据库
-     +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $text 要处理的字符串
-     * @param mixed $safeHtmlOpen 是否进行安全处理
+     * @param string $string 要处理的字符串
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    static public function htmlForSave($string, $safeHtmlOpen = true)
+    static public function forShow($string)
     {
-    	if ($safeHtmlOpen)
-    	{
-    		$string = Input::safeHtml($string);
-    	}
-    	return $string;
+    	return self::nl2Br( self::hsc($string) );
     }
     /**
      +----------------------------------------------------------
@@ -187,7 +182,7 @@ class Input extends Base {
      * @return string
      +----------------------------------------------------------
      */
-    static public function htmlForTarea($string)
+    static public function forTarea($string)
     {
         return str_ireplace(array('<textarea>','</textarea>'), array('&lt;textarea>','&lt;/textarea>'), $string);
     }
@@ -197,12 +192,12 @@ class Input extends Base {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $string 要处理的字符串
+     * @param string $text 要处理的字符串
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    static public function noQuotes($string)
+    static public function forTag($string)
     {
     	return str_replace(array('"',"'"), array('&quot;','&#039;'), $string);
     }
@@ -212,12 +207,12 @@ class Input extends Base {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $string 要处理的字符串
+     * @param string $text 要处理的字符串
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    function makeClickable(&$string)
+    function makeLink($string)
     {
         $validChars = "a-z0-9\/\-_+=.~!%@?#&;:$\|";
         $patterns = array(
@@ -238,7 +233,7 @@ class Input extends Base {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $string 要处理的字符串
+     * @param string $text 要处理的字符串
      * @param int $length 缩略之后的长度
      +----------------------------------------------------------
      * @return string
@@ -257,7 +252,7 @@ class Input extends Base {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $string 要处理的字符串
+     * @param string $text 要处理的字符串
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -272,7 +267,7 @@ class Input extends Base {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $string 要处理的字符串
+     * @param string $text 要处理的字符串
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -284,7 +279,18 @@ class Input extends Base {
         }
         return $string;
     }
-    static public function getGPC($string)
+    /**
+     +----------------------------------------------------------
+     * 从$_POST，$_GET，$_COOKIE，$_REQUEST等数组中获得数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function getVar($string)
     {
     	return Input::stripSlashes($string);
     }
@@ -294,7 +300,7 @@ class Input extends Base {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $string 要处理的字符串
+     * @param string $text 要处理的字符串
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -312,7 +318,7 @@ class Input extends Base {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $string 要处理的字符串
+     * @param string $text 要处理的字符串
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
@@ -442,14 +448,14 @@ class Input extends Base {
      * @return string
      +----------------------------------------------------------
      */
-    static public function convNl($string, $br = '<br />')
+    static public function nl2($string, $br = '<br />')
     {
     	if ($br == false) {
     		$string = preg_replace("/(\015\012)|(\015)|(\012)/", '', $string);
     	} elseif ($br != true){
     		$string = preg_replace("/(\015\012)|(\015)|(\012)/", $br, $string);
     	}
+    	return $string;
     }
-
 }
 ?>
