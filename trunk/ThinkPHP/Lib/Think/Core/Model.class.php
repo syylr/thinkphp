@@ -1266,7 +1266,7 @@ class Model extends Base  implements IteratorAggregate
         }
         $pk   =  $this->getPk();
         if(empty($where) && isset($data[$pk]) && !is_array($data[$pk])) {
-            $where  = $pk."=".$data[$pk];
+            $where  = $pk."='".$data[$pk]."'";
             unset($data[$pk]);
         }
         return $this->_update($data,$where,$limit,$order,$autoLink);
@@ -1700,7 +1700,7 @@ class Model extends Base  implements IteratorAggregate
         $pk   =  $this->getPk();
         if(is_array($data) && isset($data[$pk]) && !is_array($data[$pk])) {
             $data   =   $this->_facade($data);
-            $where  = $pk."=".$data[$pk];
+            $where  = $pk."='".$data[$pk]."'";
         }else {
             $where  =   $data;
         }
