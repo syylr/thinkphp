@@ -23,34 +23,54 @@
 /**
  +----------------------------------------------------------
  * URL组装 支持不同模式和路由
+ * appName://routeName@moduleName/actionName
  +----------------------------------------------------------
- * @param string $action 操作名
- * @param string $module 模块名
- * @param string $app 项目名
- * @param string $route 路由名
- * @param array $params 其它URL参数
+ * @param string $url URL标识符
  +----------------------------------------------------------
  * @return string
  +----------------------------------------------------------
  */
-function url($action=ACTION_NAME,$module=MODULE_NAME,$app=APP_NAME,$params=array()) {
+function url($url) {
+    if(0===strpos($url,'/')) {
+        $url   =  substr($url,1);
+    }
+    if(!strpos($url,'://')) {// 没有指定项目名 使用当前项目名
+        $url   =  APP_NAME.'://'.$url;
+    }
+    if(stripos($url,'@?')) { // 给路由传递参数
+        $url   =  str_replace('@?','@think?',$url);
+    }elseif(stripos($url,'@')) { // 没有参数的路由
+        $url   =  $url.MODULE_NAME;
+    }
+    // 分析URL地址
+    $array   =  parse_url($url);
+    $app      =  isset($array['scheme'])?   $array['scheme']  :APP_NAME;
+    $route    =  isset($array['user'])?$array['user']:'';
+    if(isset($array['path'])) {
+        $action  =  substr($array['path'],1);
+        if(!isset($array['host'])) {
+            // 没有指定模块名
+            $module = MODULE_NAME;
+        }else{// 指定模块
+            $module = $array['host'];
+        }
+    }else{ // 只指定操作
+        $module = MODULE_NAME;
+        $action   =  $array['host'];
+    }
+    if(isset($array['query'])) {
+        parse_str($array['query'],$params);
+    }
     if(C('DISPATCH_ON') && C('URL_MODEL')>0) {
-        switch(C('PATH_MODEL')) {
-            case 1:// 普通PATHINFO模式
-                $str    =   '/';
-                foreach ($params as $var=>$val)
-                    $str .= $var.'/'.$val.'/';
-                $str = substr($str,0,-1);
-                $url    =   str_replace(APP_NAME,$app,__APP__).'/'.C('VAR_MODULE').'/'.$module.'/'.C('VAR_ACTION').'/'.$action.$str;
-                break;
-            case 2:// 智能PATHINFO模式
-                $depr   =   C('PATH_DEPR');
-                $str    =   $depr;
-                foreach ($params as $var=>$val)
-                    $str .= $var.$depr.$val.$depr;
-                $str = substr($str,0,-1);
-                $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$module.$depr.$action.$str;
-                break;
+        $depr = C('PATH_MODEL')==2?C('PATH_DEPR'):'/';
+        $str    =   $depr;
+        foreach ($params as $var=>$val)
+            $str .= $var.$depr.$val.$depr;
+        $str = substr($str,0,-1);
+        if(!empty($route)) {
+            $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$route.$str;
+        }else{
+            $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$module.$depr.$action.$str;
         }
         if(C('HTML_URL_SUFFIX')) {
             $url .= C('HTML_URL_SUFFIX');

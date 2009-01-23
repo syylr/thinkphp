@@ -283,7 +283,7 @@ class Model extends Base implements IteratorAggregate
         $data = $this->_facade($data);
         // 如果存在主键数据 则自动作为更新条件
         if(empty($options['where']) && isset($data[$this->pk])) {
-            $options['where']  =  $this->pk.'='.$data[$this->pk];
+            $options['where']  =  $this->pk.'=\''.$data[$this->pk].'\'';
             unset($data[$this->pk]);
         }
         // 分析表达式
@@ -316,9 +316,9 @@ class Model extends Base implements IteratorAggregate
                 return false;
             }
         }
-        if(is_numeric($options)) {
+        if(is_numeric($options)  || is_string($options)) {
             // 根据主键删除记录
-            $where  =  $this->pk.'='.$options;
+            $where  =  $this->pk.'=\''.$options.'\'';
             $options =  array();
             $options['where'] =  $where;
         }
@@ -392,8 +392,8 @@ class Model extends Base implements IteratorAggregate
      +----------------------------------------------------------
      */
      public function find($options=array()) {
-         if(is_numeric($options)) {
-             $where = $this->pk.'='.$options;
+         if(is_numeric($options) || is_string($options)) {
+             $where = $this->pk.'=\''.$options.'\'';
              $options = array();
              $options['where'] = $where;
          }
@@ -406,6 +406,60 @@ class Model extends Base implements IteratorAggregate
         }
      }
 
+    /**
+     +----------------------------------------------------------
+     * 设置记录的某个字段值
+     * 支持使用数据库字段和方法
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string|array $field  字段名
+     * @param string|array $value  字段值
+     * @param mixed $condition  条件
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function setField($field,$value,$condition='') {
+        if(empty($condition) && isset($this->options['where'])) {
+            $condition   =  $this->options['where'];
+        }
+        $options['where'] =  $condition;
+        if(is_array($field)) {
+            foreach ($field as $key=>$val){
+                $data[$val]    = $value[$key];
+            }
+        }else{
+            $data[$field]   =  $value;
+        }
+        return $this->save($data,$options);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取一条记录的某个字段值
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $field  字段名
+     * @param mixed $condition  查询条件
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function getField($field,$condition='') {
+        if(empty($condition) && isset($this->options['where'])) {
+            $condition   =  $this->options['where'];
+        }
+        $options['where'] =  $condition;
+        $options['field']    =  $field;
+        $result   =  $this->find($options);
+        if($result) {
+            return $result[$field];
+        }else{
+            return null;
+        }
+    }
     /**
      +----------------------------------------------------------
      * 创建数据对象 但不保存到数据库
@@ -429,7 +483,7 @@ class Model extends Base implements IteratorAggregate
         }
         $type = 'add';
         if(isset($data[$this->pk])) {
-            if($this->field($this->pk)->find($data[$this->pk])) {
+            if($this->field($this->pk)->where($this->pk.'=\''.$data[$this->pk].'\'')->find()) {
                 // 编辑状态
                 $type = 'edit';
             }
