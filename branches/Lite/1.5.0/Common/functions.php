@@ -23,14 +23,16 @@
 /**
  +----------------------------------------------------------
  * URL组装 支持不同模式和路由
- * appName://routeName@moduleName/actionName
+ * appName://routeName@moduleName/actionName?params
  +----------------------------------------------------------
  * @param string $url URL标识符
+ * @param array $params 其它URL参数
+ * @param boolean $redirect 是否跳转
  +----------------------------------------------------------
  * @return string
  +----------------------------------------------------------
  */
-function url($url) {
+function url($url,$params=array(),$redirect=false) {
     if(0===strpos($url,'/')) {
         $url   =  substr($url,1);
     }
@@ -59,7 +61,8 @@ function url($url) {
         $action   =  $array['host'];
     }
     if(isset($array['query'])) {
-        parse_str($array['query'],$params);
+        parse_str($array['query'],$query);
+        $params = array_merge($query,$params);
     }
     if(C('DISPATCH_ON') && C('URL_MODEL')>0) {
         $depr = C('PATH_MODEL')==2?C('PATH_DEPR'):'/';
@@ -79,7 +82,11 @@ function url($url) {
         $params =   http_build_query($params);
         $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.'&'.$params;
     }
-    return $url;
+    if($redirect) {
+        redirect($url);
+    }else{
+        return $url;
+    }
 }
 
 /**
