@@ -84,11 +84,12 @@ function url($action=ACTION_NAME,$module=MODULE_NAME,$route='',$app=APP_NAME,$pa
  +----------------------------------------------------------
  * @param string $url URL地址
  * @param array $params 其它URL参数
+ * @param boolean $redirect 是否跳转
  +----------------------------------------------------------
  * @return string
  +----------------------------------------------------------
  */
-function U($url,$params=array()) {
+function U($url,$params=array(),$redirect=false) {
     if(0===strpos($url,'/')) {
         $url   =  substr($url,1);
     }
@@ -120,7 +121,12 @@ function U($url,$params=array()) {
         parse_str($array['query'],$query);
         $params = array_merge($query,$params);
     }
-    return url($action,$module,$route,$app,$params);
+    $url   =  url($action,$module,$route,$app,$params);
+    if($redirect) {
+        redirect($url);
+    }else{
+        return $url;
+    }
 }
 
 /**
