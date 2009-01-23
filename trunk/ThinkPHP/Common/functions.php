@@ -38,6 +38,44 @@ function get_client_ip(){
 /**
  +----------------------------------------------------------
  * URL组装 支持不同模式和路由
+ +----------------------------------------------------------
+ * @param string $action 操作名
+ * @param string $module 模块名
+ * @param string $app 项目名
+ * @param string $route 路由名
+ * @param array $params 其它URL参数
+ +----------------------------------------------------------
+ * @return string
+ +----------------------------------------------------------
+ */
+function url($action=ACTION_NAME,$module=MODULE_NAME,$route='',$app=APP_NAME,$params=array()) {
+    if(C('DISPATCH_ON') && C('URL_MODEL')>0) {
+        $depr = C('PATH_MODEL')==2?C('PATH_DEPR'):'/';
+        if(!empty($route)) {
+            $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$route.$depr.implode($depr,$params);
+        }else{
+            $str    =   $depr;
+            foreach ($params as $var=>$val)
+                $str .= $var.$depr.$val.$depr;
+            $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$module.$depr.$action.substr($str,0,-1);
+        }
+        if(C('HTML_URL_SUFFIX')) {
+            $url .= C('HTML_URL_SUFFIX');
+        }
+    }else{
+        $params =   http_build_query($params);
+        if(!empty($route)) {
+            $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_ROUTER').'='.$route.'&'.$params;
+        }else{
+            $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.'&'.$params;
+        }
+    }
+    return $url;
+}
+
+/**
+ +----------------------------------------------------------
+ * URL高级组装
  * url('action?a=1&b=2');// 指定某个操作
  * url('module/action'); // 指定模块的操作
  * url('route@?a=1&b=2'); // 指定某个路由 并传入参数
@@ -45,11 +83,12 @@ function get_client_ip(){
  * url('app://module/action?a=1&b=2'); // 指定项目的模块和操作 并传入参数
  +----------------------------------------------------------
  * @param string $url URL地址
+ * @param array $params 其它URL参数
  +----------------------------------------------------------
  * @return string
  +----------------------------------------------------------
  */
-function url($url) {
+function U($url,$params=array()) {
     if(0===strpos($url,'/')) {
         $url   =  substr($url,1);
     }
@@ -78,30 +117,10 @@ function url($url) {
         $action   =  $array['host'];
     }
     if(isset($array['query'])) {
-        parse_str($array['query'],$params);
+        parse_str($array['query'],$query);
+        $params = array_merge($query,$params);
     }
-    if(C('DISPATCH_ON') && C('URL_MODEL')>0) {
-        $depr = C('PATH_MODEL')==2?C('PATH_DEPR'):'/';
-        if(!empty($route)) {
-            $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$route.$depr.implode($depr,$params);
-        }else{
-            $str    =   $depr;
-            foreach ($params as $var=>$val)
-                $str .= $var.$depr.$val.$depr;
-            $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$module.$depr.$action.substr($str,0,-1);
-        }
-        if(C('HTML_URL_SUFFIX')) {
-            $url .= C('HTML_URL_SUFFIX');
-        }
-    }else{
-        $params =   http_build_query($params);
-        if(!empty($route)) {
-            $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_ROUTER').'='.$route.'&'.$params;
-        }else{
-            $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.'&'.$params;
-        }
-    }
-    return $url;
+    return url($action,$module,$route,$app,$params);
 }
 
 /**

@@ -563,23 +563,26 @@ abstract class Action extends Base
     /**
      +----------------------------------------------------------
      * Action跳转(URL重定向） 支持指定模块和延时跳转
-     * redirect('action?a=1&b=2');// 指定某个操作
-     * redirect('module/action'); // 指定模块的操作
-     * redirect('route@?a=1&b=2'); // 指定某个路由 并传入参数
-     * redirect('app://module/action'); // 指定项目的模块和操作
-     * redirect('app://module/action?a=1&b=2'); // 指定项目的模块和操作 并传入参数
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $url 要跳转的url
+     * @param string $action 要跳转的Action
+     * @param string $module 要跳转的Module 默认为当前模块
+     * @param string $app 要跳转的App 默认为当前项目
+     * @param string $route 路由名
+     * @param array $params 其它URL参数
      * @param integer $delay 延时跳转的时间 单位为秒
      * @param string $msg 跳转提示信息
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function redirect($url,$delay=0,$msg='') {
-        redirect(url($url),$delay,$msg);
+    public function redirect($action,$module='',$route='',$app=APP_NAME,$params=array(),$delay=0,$msg='') {
+        if(empty($module)) {
+            $module = defined('C_MODULE_NAME')?C_MODULE_NAME:MODULE_NAME;
+        }
+        $url    =   url($action,$module,$route,$app,$params);
+        redirect($url,$delay,$msg);
     }
 
     /**
