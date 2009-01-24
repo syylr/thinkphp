@@ -32,7 +32,7 @@
  * @return string
  +----------------------------------------------------------
  */
-function url($url,$params=array(),$redirect=false) {
+function U($url,$params=array(),$redirect=false) {
     if(0===strpos($url,'/')) {
         $url   =  substr($url,1);
     }

@@ -441,6 +441,46 @@ class Model extends Base implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
+     * 字段值增长
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $field  字段名
+     * @param mixed $condition  条件
+     * @param integer $step  增长值
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function setInc($field,$condition='',$step=1) {
+        if(empty($condition) && isset($this->options['where'])) {
+            $condition   =  $this->options['where'];
+        }
+        return $this->setField($field,array('exp',$field.'+'.$step),$condition);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 字段值减少
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $field  字段名
+     * @param mixed $condition  条件
+     * @param integer $step  减少值
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function setDec($field,$condition='',$step=1) {
+        if(empty($condition) && isset($this->options['where'])) {
+            $condition   =  $this->options['where'];
+        }
+        return $this->setField($field,array('exp',$field.'-'.$step),$condition);
+    }
+
+    /**
+     +----------------------------------------------------------
      * 获取一条记录的某个字段值
      +----------------------------------------------------------
      * @access public
