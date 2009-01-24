@@ -165,6 +165,18 @@ class DbMysql extends Db{
         }
     }
 
+    /**
+     +----------------------------------------------------------
+     * 插入记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $data 数据
+     * @param string $table  数据表名
+     +----------------------------------------------------------
+     * @return false | integer
+     +----------------------------------------------------------
+     */
     public function insert($data,$table) {
         foreach ($data as $key=>$val){
             $fields[] =  '`'.$key.'`';
@@ -184,26 +196,43 @@ class DbMysql extends Db{
         return $this->execute($sql);
     }
 
+    /**
+     +----------------------------------------------------------
+     * 更新记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $data 数据
+     * @param array $options 表达式
+     +----------------------------------------------------------
+     * @return false | integer
+     +----------------------------------------------------------
+     */
     public function update($data,$options) {
-        foreach ($data as $key=>$val){
-            if(is_int($val)) {
-                $set[]   =  '`'.$key.'`='.intval($val);
-            }elseif(is_float($val)){
-                $set[]   =  '`'.$key.'`='.floatval($val);
-            }elseif(is_string($val)){
-                $set[]  = '`'.$key.'`=\''.$val.'\'';
-            }elseif(is_null($val)){
-                $set[]   =  '`'.$key.'`=null';
-            }elseif(is_array($val) && strtolower($val[0]) == 'exp') {
-                // 使用表达式
-                $set[]    =   '`'.$key.'`='.$val[1];
+        if(is_array($data)) {
+            foreach ($data as $key=>$val){
+                if(is_int($val)) {
+                    $set[]   =  '`'.$key.'`='.intval($val);
+                }elseif(is_float($val)){
+                    $set[]   =  '`'.$key.'`='.floatval($val);
+                }elseif(is_string($val)){
+                    $set[]  = '`'.$key.'`=\''.$val.'\'';
+                }elseif(is_null($val)){
+                    $set[]   =  '`'.$key.'`=null';
+                }elseif(is_array($val) && strtolower($val[0]) == 'exp') {
+                    // 使用表达式
+                    $set[]    =   '`'.$key.'`='.$val[1];
+                }
             }
+            $setStr  =  implode(',',$set);
+        }elseif(is_string($data)){
+            $setStr  =  $data;
         }
         $table = isset($options['table'])?$options['table']:'';
         $where  =  isset($options['where'])?$options['where']:'';
         $limit =  isset($options['limit'])?$options['limit']:'';
         $order   =  isset($options['order'])?$options['order']:'';
-        $sql   =  'UPDATE `'.$table.'` SET '.implode(',',$set);
+        $sql   =  'UPDATE `'.$table.'` SET '.$setStr;
         if(!empty($where)) {
             $sql   .= ' WHERE '.$where;
         }
@@ -216,6 +245,17 @@ class DbMysql extends Db{
         return $this->execute($sql);
     }
 
+    /**
+     +----------------------------------------------------------
+     * 删除记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $options 表达式
+     +----------------------------------------------------------
+     * @return false | integer
+     +----------------------------------------------------------
+     */
     public function delete($options=array())
     {
         $table = isset($options['table'])?$options['table']:'';
@@ -235,6 +275,17 @@ class DbMysql extends Db{
         return $this->execute($sql);
     }
 
+    /**
+     +----------------------------------------------------------
+     * 查找记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $options 表达式
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
     public function select($options=array()) {
         $table = isset($options['table'])?$options['table']:'';
         $field   =  isset($options['field'])?$options['field']:'*';
