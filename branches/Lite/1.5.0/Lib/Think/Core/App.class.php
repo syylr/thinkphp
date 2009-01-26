@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP
+// | ThinkPHP Lite
 // +----------------------------------------------------------------------
 // | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
@@ -191,10 +191,17 @@ class App extends Base
                 }
             }
         }
+        // 读取路由定义
+        if(file_exists_case(CONFIG_PATH.'routes.php')) {
+            C('_routes_',include CONFIG_PATH.'routes.php');
+        }
         // 读取行为规则
         if(file_exists_case(CONFIG_PATH.'behaviors.php')) {
-            $config['_behaviors_']  = include CONFIG_PATH.'behaviors.php';
-            C($config);
+            C('_behaviors_',include CONFIG_PATH.'behaviors.php');
+        }
+        // 读取静态规则
+        if(file_exists_case(CONFIG_PATH.'htmls.php')) {
+            C('_htmls_',include CONFIG_PATH.'htmls.php');
         }
         // 如果是调试模式加载调试模式配置文件
         if(C('DEBUG_MODE')) {
@@ -325,8 +332,6 @@ class App extends Base
      * @access private
      +----------------------------------------------------------
      * @return void
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     private function checkTemplate()

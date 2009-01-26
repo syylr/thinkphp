@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP
+// | ThinkPHP Lite
 // +----------------------------------------------------------------------
 // | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
@@ -101,7 +101,7 @@ class Model extends Base implements IteratorAggregate
      * @static
      * @access public
      +----------------------------------------------------------
-     * @return mixed 返回数据模型实例
+     * @return Model 返回数据模型实例
      +----------------------------------------------------------
      */
     public static function getInstance()
@@ -715,7 +715,7 @@ class Model extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * @param mixed $sql  SQL指令
      +----------------------------------------------------------
-     * @return array|ResultIterator
+     * @return array
      +----------------------------------------------------------
      */
     public function query($sql)

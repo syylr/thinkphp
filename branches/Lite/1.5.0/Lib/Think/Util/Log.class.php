@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP
+// | ThinkPHP Lite
 // +----------------------------------------------------------------------
 // | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
@@ -44,7 +44,7 @@ class Log extends Base
      * @param string $message 日志信息
      * @param string $type  日志类型
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return void
      +----------------------------------------------------------
      */
     static function record($message,$type=WEB_LOG_ERROR) {
@@ -63,7 +63,7 @@ class Log extends Base
      * @param string $type  日志类型
      * @param string $file  写入文件 默认取定义日志文件
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return void
      +----------------------------------------------------------
      */
     static function save()
@@ -99,7 +99,7 @@ class Log extends Base
      * @param string $type  日志类型
      * @param string $file  写入文件 默认取定义日志文件
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return void
      +----------------------------------------------------------
      */
     static function write($message,$type=WEB_LOG_ERROR,$file='')

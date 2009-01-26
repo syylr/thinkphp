@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP
+// | ThinkPHP Lite
 // +----------------------------------------------------------------------
 // | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
@@ -128,8 +128,8 @@ class Dispatcher extends Base
      */
     private static function routerCheck() {
         // 搜索路由映射 把路由名称解析为对应的模块和操作
-        if(file_exists_case(CONFIG_PATH.'routes.php')) {
-            $routes = include CONFIG_PATH.'routes.php';
+        if(C('?_routes_')) {
+            $routes = C('_routes_');
             if(!is_array($routes)) {
                 $routes =   $_routes;
             }
