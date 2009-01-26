@@ -147,7 +147,7 @@ class App extends Base
 
         // 加载模块配置文件 并自动生成配置缓存文件
         if(is_file(CONFIG_PATH.MODULE_NAME.'_config.php')) {
-            C(array_change_key_case(include CONFIG_PATH.MODULE_NAME.'_config.php'));
+            C(include CONFIG_PATH.MODULE_NAME.'_config.php');
         }
 
         //	启用页面防刷新机制
@@ -199,11 +199,11 @@ class App extends Base
     private function build()
     {
         // 加载惯例配置文件
-        C(array_change_key_case(include THINK_PATH.'/Common/convention.php'));
+        C(include THINK_PATH.'/Common/convention.php');
 
         // 加载项目配置文件
         if(file_exists_case(CONFIG_PATH.'config.php')) {
-            C(array_change_key_case(include CONFIG_PATH.'config.php'));
+            C(include CONFIG_PATH.'config.php');
         }
         // 加载项目公共文件
         if(file_exists_case(COMMON_PATH.'common.php')) {
@@ -222,10 +222,10 @@ class App extends Base
         // 如果是调试模式加载调试模式配置文件
         if(C('DEBUG_MODE')) {
             // 加载系统默认的开发模式配置文件
-            C(array_change_key_case(include THINK_PATH.'/Common/debug.php'));
+            C(include THINK_PATH.'/Common/debug.php');
             if(file_exists_case(CONFIG_PATH.'debug.php')) {
                 // 允许项目增加开发模式配置定义
-                C(array_change_key_case(include CONFIG_PATH.'debug.php'));
+                C(include CONFIG_PATH.'debug.php');
             }
         }else{
             // 部署模式下面生成编译文件
@@ -664,7 +664,7 @@ class App extends Base
     private function initComponent() {
         // 加载组件配置文件
         if(is_file(LIB_PATH.COMPONENT_NAME.'/Conf/config.php'))
-            C(array_change_key_case(include LIB_PATH.COMPONENT_NAME.'/Conf/config.php'));
+            C(include LIB_PATH.COMPONENT_NAME.'/Conf/config.php');
         // 加载组件公共文件
         if(is_file(LIB_PATH.COMPONENT_NAME.'/Common/common.php'))
             include LIB_PATH.COMPONENT_NAME.'/Common/common.php';
