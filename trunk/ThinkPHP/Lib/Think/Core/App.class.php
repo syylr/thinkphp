@@ -578,36 +578,53 @@ class App extends Base
                 $behaviors = include CONFIG_PATH.'behaviors.php';
                 // 检测操作规则
                 if(isset($behaviors[MODULE_NAME.':'.ACTION_NAME])) {
-                    // 定义了某个模块的操作行为
+                    // 某个模块的操作行为
                     //'module:action'=>array('before'=>array(),'after'=>array());
-                    $behavior   =   $behaviors[MODULE_NAME.':'.ACTION_NAME];
-                }elseif(isset($behaviors[ACTION_NAME])){
-                    // 所有操作的行为
+                    $behavior1   =   $behaviors[MODULE_NAME.':'.ACTION_NAME];
+                }
+                if(isset($behaviors[ACTION_NAME])){
+                    // 某个操作的公共行为
                     // 'action'=>array('before'=>array(),'after'=>array());
-                    $behavior   =   $behaviors[ACTION_NAME];
-                }elseif(isset($behaviors['*'])){
+                    $behavior2   =   $behaviors[ACTION_NAME];
+                }
+                if(isset($behaviors['*'])){
                     // 定义了全局的操作行为
                     // '*'=>array('before'=>array(),'after'=>array());
-                    $behavior   =   $behaviors['*'];
+                    $behavior3   =   $behaviors['*'];
                 }
-                if(!empty($behavior)) {
-                    // 是否指定前置行为
-                    if(isset($behavior['before']) {
-                        foreach ($behavior['before'] as $key=>$call){
-                            call_user_func($call);
-                        }
+                // 检查前置行为
+                if(isset($behavior3['before']) {
+                    foreach ($behavior3['before'] as $key=>$call){
+                        call_user_func($call);
                     }
-                    //执行当前操作
-                    $module->{$action}();
-                    // 是否指定后置行为
-                    if(isset($behavior['after']) {
-                        foreach ($behavior['after'] as $key=>$call){
-                            call_user_func($call);
-                        }
+                }
+                if(isset($behavior2['before']) {
+                    foreach ($behavior2['before'] as $key=>$call){
+                        call_user_func($call);
                     }
-                }else{
-                    //执行当前操作
-                    $module->{$action}();
+                }
+                if(isset($behavior1['before']) {
+                    foreach ($behavior1['before'] as $key=>$call){
+                        call_user_func($call);
+                    }
+                }
+                //执行当前操作
+                $module->{$action}();
+                // 检查后置行为
+                if(isset($behavior1['after']) {
+                    foreach ($behavior1['after'] as $key=>$call){
+                        call_user_func($call);
+                    }
+                }
+                if(isset($behavior2['after']) {
+                    foreach ($behavior2['after'] as $key=>$call){
+                        call_user_func($call);
+                    }
+                }
+                if(isset($behavior3['after']) {
+                    foreach ($behavior3['after'] as $key=>$call){
+                        call_user_func($call);
+                    }
                 }
             }else{
                 // 执行默认的规则处理 定义前置和后置操作
