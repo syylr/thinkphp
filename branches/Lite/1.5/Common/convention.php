@@ -30,8 +30,8 @@ if (!defined('THINK_PATH')) exit();
 return  array(
 
     /* Dispatch设置 */
-    'DISPATCH_ON'				=>	true,	// 是否启用Dispatcher
-    // URL模式： 0 普通模式 1 PATHINFO 2 REWRITE 3 兼容模式
+    'DISPATCH_ON'				=>	false,	// 是否启用Dispatcher
+    // URL模式： 0 普通模式 1 PATHINFO 2 REWRITE 3 兼容模式 当DISPATCH_ON开启后有效
     'URL_MODEL'					=>	1,		// 默认为PATHINFO 模式，提供最好的用户体验和SEO支持
     // PATHINFO 模式
     // 普通模式1 参数没有顺序/m/module/a/action/id/1
@@ -39,8 +39,9 @@ return  array(
     // 兼容模式3 通过一个GET变量将PATHINFO传递给dispather，默认为s index.php?s=/module/action/id/1
     'PATH_MODEL'					=>	2,	// 默认采用智能模式
     'PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号
-    'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
     'ROUTER_ON'                  =>   false, // 是否开启URL路由
+
+    'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
     'BEHAVIOR_ON'               =>   false, // 是否开启行为
 
     /* 日志设置 */
@@ -69,6 +70,7 @@ return  array(
     'TMPL_CACHE_ON'			=>	true,		// 默认开启模板编译缓存 false 的话每次都重新编译模板
     'TMPL_CACHE_TIME'		=>	-1,		// 模板缓存有效期 -1 永久 单位为秒
     'TMPL_SWITCH_ON'			=>	true,	// 启用多模版支持
+    'AUTO_DETECT_THEME'   =>   false, // 自动侦测模板主题
     'DEFAULT_TEMPLATE'		=>	'default',	// 默认模板名称
     'TEMPLATE_SUFFIX'			=>	'.html',	 // 默认模板文件后缀
     'CACHFILE_SUFFIX'			=>	'.php',	// 默认模板缓存后缀
@@ -89,6 +91,7 @@ return  array(
     'TIME_ZONE'					=>	'PRC',		 // 默认时区
 	'LANG_SWITCH_ON'			=>	false,	 // 默认关闭多语言包功能
 	'DEFAULT_LANGUAGE'		=>	'zh-cn',	 // 默认语言
+    'AUTO_DETECT_LANG'      =>   false,     // 自动侦测语言
 
     /* 数据库设置 */
     'DB_CHARSET'					=>	'utf8',			// 数据库编码默认采用utf8

@@ -280,26 +280,29 @@ class App extends Base
     {
         if(C('LANG_SWITCH_ON')) {
             // 使用语言包功能
-            $defaultLang = C('DEFAULT_LANGUAGE');
-            //检测浏览器支持语言
-            if(isset($_GET[C('VAR_LANGUAGE')])) {
-                // 有在url 里面设置语言
-                $langSet = $_GET[C('VAR_LANGUAGE')];
-                // 记住用户的选择
-                Cookie::set('think_language',$langSet,time()+3600);
-            }elseif ( Cookie::is_set('think_language') ) {
-                // 获取上次用户的选择
-                $langSet = Cookie::get('think_language');
-            }else {
-                if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-                    // 启用自动侦测浏览器语言
-                    preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
-                    $langSet = $matches[1];
+            if(C('AUTO_DETECT_LANG')) {
+                // 检测浏览器支持语言
+                if(isset($_GET[C('VAR_LANGUAGE')])) {
+                    // 有在url 里面设置语言
+                    $langSet = $_GET[C('VAR_LANGUAGE')];
+                    // 记住用户的选择
                     Cookie::set('think_language',$langSet,time()+3600);
-                }else{
-                    // 采用系统设置的默认语言
-                    $langSet = $defaultLang;
+                }elseif ( Cookie::is_set('think_language') ) {
+                    // 获取上次用户的选择
+                    $langSet = Cookie::get('think_language');
+                }else {
+                    if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+                        // 启用自动侦测浏览器语言
+                        preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
+                        $langSet = $matches[1];
+                        Cookie::set('think_language',$langSet,time()+3600);
+                    }else{
+                        // 采用系统设置的默认语言
+                        $langSet = C('DEFAULT_LANGUAGE');
+                    }
                 }
+            }else{
+                $langSet = C('DEFAULT_LANGUAGE');
             }
 
             // 定义当前语言
@@ -338,20 +341,24 @@ class App extends Base
     {
         if(C('TMPL_SWITCH_ON')) {
             // 启用多模版
-            $t = C('VAR_TEMPLATE');
-            if ( isset($_GET[$t]) ) {
-                $templateSet = $_GET[$t];
-                Cookie::set('think_template',$templateSet,time()+3600);
-            } else {
-                if(Cookie::is_set('think_template')) {
-                    $templateSet = Cookie::get('think_template');
-                }else {
-                    $templateSet =    C('DEFAULT_TEMPLATE');
+            if(C('AUTO_DETECT_THEME')) {// 自动侦测语言
+                $t = C('VAR_TEMPLATE');
+                if ( isset($_GET[$t]) ) {
+                    $templateSet = $_GET[$t];
                     Cookie::set('think_template',$templateSet,time()+3600);
+                } else {
+                    if(Cookie::is_set('think_template')) {
+                        $templateSet = Cookie::get('think_template');
+                    }else {
+                        $templateSet =    C('DEFAULT_TEMPLATE');
+                        Cookie::set('think_template',$templateSet,time()+3600);
+                    }
                 }
-            }
-            if (!is_dir(TMPL_PATH.$templateSet)) {
-                //模版不存在的话，使用默认模版
+                if (!is_dir(TMPL_PATH.$templateSet)) {
+                    //模版不存在的话，使用默认模版
+                    $templateSet =    C('DEFAULT_TEMPLATE');
+                }
+            }else{
                 $templateSet =    C('DEFAULT_TEMPLATE');
             }
             //模版名称
