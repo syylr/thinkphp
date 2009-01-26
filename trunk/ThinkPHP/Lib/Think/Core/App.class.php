@@ -573,15 +573,54 @@ class App extends Base
                 $module->$action();
             }
         }else{
-            //如果存在前置操作，首先执行
-            if (method_exists($module,'_before_'.$action)) {
-                $module->{'_before_'.$action}();
-            }
-            //执行操作
-            $module->{$action}();
-            //如果存在后置操作，继续执行
-            if (method_exists($module,'_after_'.$action)) {
-                $module->{'_after_'.$action}();
+            // 检查是否定义了操作行为
+            if(file_exists_case(CONFIG_PATH.'behaviors.php')) {
+                $behaviors = include CONFIG_PATH.'behaviors.php';
+                // 检测操作规则
+                if(isset($behaviors[MODULE_NAME.':'.ACTION_NAME])) {
+                    // 定义了某个模块的操作行为
+                    //'module:action'=>array('before'=>array(),'after'=>array());
+                    $behavior   =   $behaviors[MODULE_NAME.':'.ACTION_NAME];
+                }elseif(isset($behaviors[ACTION_NAME])){
+                    // 所有操作的行为
+                    // 'action'=>array('before'=>array(),'after'=>array());
+                    $behavior   =   $behaviors[ACTION_NAME];
+                }elseif(isset($behaviors['*'])){
+                    // 定义了全局的操作行为
+                    // '*'=>array('before'=>array(),'after'=>array());
+                    $behavior   =   $behaviors['*'];
+                }
+                if(!empty($behavior)) {
+                    // 是否指定前置行为
+                    if(isset($behavior['before']) {
+                        foreach ($behavior['before'] as $key=>$call){
+                            call_user_func($call);
+                        }
+                    }
+                    //执行当前操作
+                    $module->{$action}();
+                    // 是否指定后置行为
+                    if(isset($behavior['after']) {
+                        foreach ($behavior['after'] as $key=>$call){
+                            call_user_func($call);
+                        }
+                    }
+                }else{
+                    //执行当前操作
+                    $module->{$action}();
+                }
+            }else{
+                // 执行默认的规则处理 定义前置和后置操作
+                // 如果存在前置操作，首先执行
+                if (method_exists($module,'_before_'.$action)) {
+                    $module->{'_before_'.$action}();
+                }
+                //执行操作
+                $module->{$action}();
+                //如果存在后置操作，继续执行
+                if (method_exists($module,'_after_'.$action)) {
+                    $module->{'_after_'.$action}();
+                }
             }
         }
         if(C('THINK_PLUGIN_ON')) {
