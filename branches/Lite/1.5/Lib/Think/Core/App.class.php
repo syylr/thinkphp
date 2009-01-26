@@ -382,7 +382,7 @@ class App extends Base
         }
         // 默认加载的模板文件名
         // 当前模块地址
-        define('__URL__',PHP_FILE.'/'.defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME);
+        define('__URL__',PHP_FILE.'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
         //当前操作地址
         define('__ACTION__',__URL__.C('PATH_DEPR').ACTION_NAME);
         C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));

@@ -42,7 +42,7 @@ class TemplateThink extends Base {
             import('Think.Template.ThinkTemplate');
             $tpl = ThinkTemplate::getInstance();
             // 编译并加载模板文件
-            $tpl->load($templateFile,$charset,$var,$varPrefix);
+            $tpl->load($templateFile,$var,$charset,$varPrefix);
         }else{
             // 缓存有效 直接载入模板缓存
             // 模板阵列变量分解成为独立变量
