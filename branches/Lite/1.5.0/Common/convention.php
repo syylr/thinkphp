@@ -39,7 +39,9 @@ return  array(
     // 兼容模式3 通过一个GET变量将PATHINFO传递给dispather，默认为s index.php?s=/module/action/id/1
     'PATH_MODEL'					=>	2,	// 默认采用智能模式
     'PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号
-    'CHECK_FILE_CASE'  =>   false, // 是否检查文件的大小写 对Windows平台有效
+    'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
+    'ROUTER_ON'                  =>   false; // 是否开启URL路由
+    'BEHAVIOR_ON'               =>   false; // 是否开启行为
 
     /* 日志设置 */
     'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志

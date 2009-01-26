@@ -102,6 +102,9 @@ class App extends Base
             $this->build();
         }
 
+        // 执行项目开始行为
+        B('app_begin');
+
         // 设置系统时区 PHP5支持
         if(function_exists('date_default_timezone_set'))
             date_default_timezone_set(C('TIME_ZONE'));
@@ -131,7 +134,7 @@ class App extends Base
 
         // 加载模块配置文件
         if(is_file(CONFIG_PATH.MODULE_NAME.'_config.php')) {
-            C(array_change_key_case(include CONFIG_PATH.MODULE_NAME.'_config.php'));
+            C(include CONFIG_PATH.MODULE_NAME.'_config.php');
         }
 
         // 系统检查
@@ -141,6 +144,11 @@ class App extends Base
         if(C('HTML_CACHE_ON')) {
             import('Think.Util.HtmlCache');
             HtmlCache::readHTMLCache();
+        }
+
+        // 执行项目初始化行为
+        if(C('BEHAVIOR_ON')) {
+            B('app_init');
         }
 
         // 记录应用初始化时间
@@ -163,11 +171,11 @@ class App extends Base
     private function build()
     {
         // 加载惯例配置文件
-        C(array_change_key_case(include THINK_PATH.'/Common/convention.php'));
+        C(include THINK_PATH.'/Common/convention.php');
 
         // 加载项目配置文件
         if(file_exists_case(CONFIG_PATH.'config.php')) {
-            C(array_change_key_case(include CONFIG_PATH.'config.php'));
+            C(include CONFIG_PATH.'config.php');
         }
         // 加载项目公共文件
         if(file_exists_case(COMMON_PATH.'common.php')) {
@@ -183,13 +191,18 @@ class App extends Base
                 }
             }
         }
+        // 读取行为规则
+        if(file_exists_case(CONFIG_PATH.'behaviors.php')) {
+            $config['_behaviors_']  = include CONFIG_PATH.'behaviors.php';
+            C($config);
+        }
         // 如果是调试模式加载调试模式配置文件
         if(C('DEBUG_MODE')) {
             // 加载系统默认的开发模式配置文件
-            C(array_change_key_case(include THINK_PATH.'/Common/debug.php'));
+            C(include THINK_PATH.'/Common/debug.php');
             if(file_exists_case(CONFIG_PATH.'debug.php')) {
                 // 允许项目增加开发模式配置定义
-                C(array_change_key_case(include CONFIG_PATH.'debug.php'));
+                C(include CONFIG_PATH.'debug.php');
             }
         }else{
             // 部署模式下面生成编译文件
@@ -397,6 +410,12 @@ class App extends Base
                 import($class);
             }
         }
+        $behaviorOn   =  C('BEHAVIOR_ON');
+        // 执行项目运行行为
+        if($behaviorOn) {
+            B('app_run');
+        }
+
         //创建Action控制器实例
         $module  =  A(MODULE_NAME);
         if(!$module) {
@@ -410,15 +429,24 @@ class App extends Base
 
         //获取当前操作名
         $action = ACTION_NAME;
-        //如果存在前置操作，首先执行
-        if (method_exists($module,'_before_'.$action)) {
+        if($behaviorOn && false !== B('action_before')) {
+            // 执行操作前置行为
+        }elseif (method_exists($module,'_before_'.$action)) {
+            // 执行前置操作
             $module->{'_before_'.$action}();
-        }
-        //执行操作
+        };
+        //执行当前操作
         $module->{$action}();
-        //如果存在后置操作，继续执行
-        if (method_exists($module,'_after_'.$action)) {
+        if($behaviorOn && false !== B('action_after')) {
+            // 执行操作后置行为
+        }elseif (method_exists($module,'_after_'.$action)) {
+            //  执行后缀操作
             $module->{'_after_'.$action}();
+        };
+
+        // 执行项目结束行为
+        if($behaviorOn) {
+            B('app_end');
         }
 
         // 写入错误日志
