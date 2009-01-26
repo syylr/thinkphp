@@ -961,8 +961,8 @@ function L($name='',$value=null) {
 // 获取配置值
 function C($name='',$value=null) {
     static $_config = array();
-    if(!is_null($value)) {
-        if(strpos($name,'.')) {
+    if(!is_null($value)) {// 参数赋值
+        if(strpos($name,'.')) {//  支持二维数组赋值
             $array   =  explode('.',strtolower($name));
             $_config[$array[0]][$array[1]] =   $value;
         }else{
@@ -970,18 +970,24 @@ function C($name='',$value=null) {
         }
         return ;
     }
-    if(empty($name)) {
+    if(empty($name)) {// 获取全部配置参数
         return $_config;
     }
-    // 缓存全部配置值
-    if(is_array($name)) {
+    if(is_array($name)) { // 批量赋值
         $_config = array_merge($_config,array_change_key_case($name));
         return $_config;
-    }
-    if(strpos($name,'.')) {
+    }elseif(0===strpos($name,'?')){ // 查看是否赋值
+        $name   = strtolower(substr($name,1));
+        if(strpos($name,'.')) { // 支持获取二维数组
+            $array   =  explode('.',$name);
+            return isset($_config[$array[0]][$array[1]]);
+        }else{
+            return isset($_config[$name]);
+        }
+    }elseif(strpos($name,'.')) { // 支持获取二维数组
         $array   =  explode('.',strtolower($name));
         return $_config[$array[0]][$array[1]];
-    }elseif(isset($_config[strtolower($name)])) {
+    }elseif(isset($_config[strtolower($name)])) { // 获取参数
         return $_config[strtolower($name)];
     }else{
         return NULL;
