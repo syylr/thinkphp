@@ -62,7 +62,7 @@ class Template extends Base {
      * @return void
      +----------------------------------------------------------
      */
-     public function fetch($templateFile,$var,$charset,$varPrefix) {
+     public function fetch($templateFile,$var,$charset,$varPrefix='') {
          $this->_tpl->fetch($templateFile,$var,$charset,$varPrefix);
      }
 }

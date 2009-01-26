@@ -185,7 +185,7 @@ class View extends Base
         }
 
         // 模板引擎解析和输出
-        $this->template->fetch($templateFile,$this->tVar,$varPrefix);
+        $this->template->fetch($templateFile,$this->tVar,$charset,$varPrefix);
         // 获取并清空缓存
         $content = ob_get_clean();
         // 解析特殊路径变量
