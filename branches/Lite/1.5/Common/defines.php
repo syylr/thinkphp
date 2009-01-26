@@ -98,5 +98,5 @@ define('URL_REWRITE',     2);   //REWRITE模式
 define('URL_COMPAT',        3);     // 兼容模式
 
 //  版本信息
-define('THINK_VERSION', '1.5.0Lite');
+define('THINK_VERSION', '1.5Lite');
 ?>
