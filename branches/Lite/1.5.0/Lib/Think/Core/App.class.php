@@ -229,6 +229,12 @@ class App extends Base
             (isset($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:'');
         // 如果 $module 为空，则赋予默认值
         if (empty($module)) $module = C('DEFAULT_MODULE');
+        if(C('URL_CASE_INSENSITIVE')) {
+            // URL地址不区分大小写
+            define('P_MODULE_NAME',strtolower($module));
+            // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
+            $module = ucfirst($this->parseName(strtolower($module),1));
+        }
         unset($_POST[C('VAR_MODULE')],$_GET[C('VAR_MODULE')]);
         return $module;
     }
@@ -360,9 +366,6 @@ class App extends Base
         //当前项目地址
         define('__APP__',PHP_FILE);
 
-        $module	=	MODULE_NAME;
-        $action		=	ACTION_NAME;
-
         //当前页面地址
         define('__SELF__',$_SERVER['PHP_SELF']);
         // 应用URL根目录
@@ -374,9 +377,9 @@ class App extends Base
         }
         // 默认加载的模板文件名
         // 当前模块地址
-        define('__URL__',PHP_FILE.'/'.$module);
+        define('__URL__',PHP_FILE.'/'.defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME);
         //当前操作地址
-        define('__ACTION__',__URL__.C('PATH_DEPR').$action);
+        define('__ACTION__',__URL__.C('PATH_DEPR').ACTION_NAME);
         C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
         define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
         //项目模板目录

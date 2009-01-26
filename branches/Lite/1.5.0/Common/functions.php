@@ -647,7 +647,7 @@ function C($name='',$value=null) {
 
 // 执行行为
 function B($name,$params=array()) {
-    if(isset(C('?_behaviors_.'.$name)) {
+    if(C('?_behaviors_.'.$name)) {
         $behavior   =  C('_behaviors_.'.$name);
         $result   =  array();
         foreach ($behavior   as $key=>$call){
