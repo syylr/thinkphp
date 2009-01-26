@@ -284,9 +284,9 @@ class App extends Base
         }
         if(C('URL_CASE_INSENSITIVE')) {
             // URL地址不区分大小写
+            define('P_MODULE_NAME',strtolower($module));
             if(C('AUTO_NAME_IDENTIFY')) {
                 // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-                define('P_MODULE_NAME',strtolower($module));
                 $module = ucfirst($this->parseName(strtolower($module),1));
             }else{
                 // 普通模式
