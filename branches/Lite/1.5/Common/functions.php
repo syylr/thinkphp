@@ -207,6 +207,9 @@ function redirect($url,$time=0,$msg='')
  */
 function throw_exception($msg,$type='ThinkException',$code=0)
 {
+    if(C('THIN_MODEL')) {
+        exit($msg);
+    }
     if(class_exists($type,false)){
         throw new $type($msg,$code,true);
     }else {
@@ -378,30 +381,6 @@ function __autoload($classname)
 $GLOBALS['import_file'] =  array();
 /**
  +----------------------------------------------------------
- * 优化的include_once
- +----------------------------------------------------------
- * @param string $filename 文件名
- +----------------------------------------------------------
- * @return boolen
- +----------------------------------------------------------
- */
-function include_cache($filename)
-{
-    if (!isset($GLOBALS['import_file'][$filename])) {
-        if(file_exists_case($filename)){
-            include $filename;
-            $GLOBALS['import_file'][$filename] = true;
-        }
-        else
-        {
-            $GLOBALS['import_file'][$filename] = false;
-        }
-    }
-    return $GLOBALS['import_file'][$filename];
-}
-
-/**
- +----------------------------------------------------------
  * 优化的require_once
  +----------------------------------------------------------
  * @param string $filename 文件名
@@ -525,7 +504,6 @@ function to_guid_string($mix)
     return md5($mix);
 }
 
-
 /**
  +----------------------------------------------------------
  * D函数用于实例化Model
@@ -586,6 +564,12 @@ function A($className,$appName='@')
     }else {
         return false;
     }
+}
+
+// 远程调用模块的操作方法
+function R($module,$action,$app='@') {
+    $class = A($module,$app);
+    return $class->$action();
 }
 
 // 获取语言定义

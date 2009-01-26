@@ -36,9 +36,6 @@ class View extends Base
 
     protected $trace       = array();
 
-    // 模板引擎实例
-    protected $template =  null;
-
    /**
      +----------------------------------------------------------
      * 取得模板对象实例
@@ -50,11 +47,6 @@ class View extends Base
      */
     static function getInstance() {
         return get_instance_of(__CLASS__);
-    }
-
-    // 构造函数
-    public function __construct() {
-        $this->template   =  Template::getInstance();
     }
 
     /**
@@ -183,9 +175,9 @@ class View extends Base
             // 自动定位模板文件
             $templateFile   = $this->parseTemplateFile($templateFile);
         }
-
+        $template   =  Template::getInstance();
         // 模板引擎解析和输出
-        $this->template->fetch($templateFile,$this->tVar,$charset,$varPrefix);
+        $template->fetch($templateFile,$this->tVar,$charset,$varPrefix);
         // 获取并清空缓存
         $content = ob_get_clean();
         // 解析特殊路径变量

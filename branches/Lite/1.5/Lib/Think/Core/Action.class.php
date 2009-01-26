@@ -25,10 +25,10 @@ abstract class Action extends Base
 {//类定义开始
 
     // 视图实例对象
-    protected $view;
+    protected $view   =  null;
 
     // 上次错误信息
-    protected $error;
+    protected $error  =  '';
 
    /**
      +----------------------------------------------------------
@@ -39,8 +39,10 @@ abstract class Action extends Base
      */
     public function __construct()
     {
-        //实例化视图类
-        $this->view       = View::getInstance();
+        if(!C('THIN_MODEL')) {
+            //实例化视图类
+            $this->view       = View::getInstance();
+        }
 
         //控制器初始化
         if(method_exists($this,'_initialize')) {

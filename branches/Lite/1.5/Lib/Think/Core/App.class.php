@@ -88,10 +88,6 @@ class App extends Base
      */
     public function init()
     {
-        // 设定错误和异常处理
-        set_error_handler(array(&$this,"appError"));
-        set_exception_handler(array(&$this,"appException"));
-
         // 检查项目是否编译过
         // 在部署模式下会自动在第一次执行的时候编译项目
         if(is_file(RUNTIME_PATH.'~app.php') && (!is_file(CONFIG_PATH.'config.php') || filemtime(RUNTIME_PATH.'~app.php')>filemtime(CONFIG_PATH.'config.php'))) {
@@ -102,53 +98,65 @@ class App extends Base
             $this->build();
         }
 
-        // 执行项目开始行为
-        B('app_begin');
+        if(!C('THIN_MODEL')) {
+            // 设定错误和异常处理
+            set_error_handler(array(&$this,"appError"));
+            set_exception_handler(array(&$this,"appException"));
+            // 执行项目开始行为
+            B('app_begin');
 
-        // 设置系统时区 PHP5支持
-        if(function_exists('date_default_timezone_set'))
-            date_default_timezone_set(C('TIME_ZONE'));
+            // 设置系统时区 PHP5支持
+            if(function_exists('date_default_timezone_set'))
+                date_default_timezone_set(C('TIME_ZONE'));
 
-        // Session初始化
-        session_start();
+            // Session初始化
+            session_start();
 
-        // 应用调度过滤器
-        // 如果没有加载任何URL调度器
-        // 默认只支持 QUERY_STRING 方式
-        // 例如 ?m=user&a=add
-        if(C('DISPATCH_ON')) {
-            import('Think.Util.Dispatcher');
-            Dispatcher::dispatch();
-        }
+            // 应用调度过滤器
+            // 如果没有加载任何URL调度器
+            // 默认只支持 QUERY_STRING 方式
+            // 例如 ?m=user&a=add
+            if(C('DISPATCH_ON')) {
+                import('Think.Util.Dispatcher');
+                Dispatcher::dispatch();
+            }
 
-        if(!defined('PHP_FILE')) {
-            // PHP_FILE 由内置的Dispacher定义
-            // 如果不使用该插件，需要重新定义
-            define('PHP_FILE',_PHP_FILE_);
-        }
+            if(!defined('PHP_FILE')) {
+                // PHP_FILE 由内置的Dispacher定义
+                // 如果不使用该插件，需要重新定义
+                define('PHP_FILE',_PHP_FILE_);
+            }
 
-        // 取得模块和操作名称 如果有伪装 则返回真实的名称
-        // 可以在Dispatcher中定义获取规则
-        if(!defined('MODULE_NAME')) define('MODULE_NAME',   $this->getModule());       // Module名称
-        if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
+            // 取得模块和操作名称
+            // 可以在Dispatcher中定义获取规则
+            if(!defined('MODULE_NAME')) define('MODULE_NAME',   $this->getModule());       // Module名称
+            if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
 
-        // 加载模块配置文件
-        if(is_file(CONFIG_PATH.MODULE_NAME.'_config.php')) {
-            C(include CONFIG_PATH.MODULE_NAME.'_config.php');
-        }
+            // 加载模块配置文件
+            if(is_file(CONFIG_PATH.MODULE_NAME.'_config.php')) {
+                C(include CONFIG_PATH.MODULE_NAME.'_config.php');
+            }
 
-        // 系统检查
-        $this->checkLanguage();     //语言检查
-        $this->checkTemplate();     //模板检查
+            // 系统检查
+            $this->checkLanguage();     //语言检查
+            $this->checkTemplate();     //模板检查
 
-        if(C('HTML_CACHE_ON')) {
-            import('Think.Util.HtmlCache');
-            HtmlCache::readHTMLCache();
-        }
+            if(C('HTML_CACHE_ON')) { // 开启静态缓存
+                import('Think.Util.HtmlCache');
+                HtmlCache::readHTMLCache();
+            }
 
-        // 执行项目初始化行为
-        if(C('BEHAVIOR_ON')) {
-            B('app_init');
+            // 执行项目初始化行为
+            if(C('BEHAVIOR_ON')) {
+                B('app_init');
+            }
+        }else{
+            // 取得模块和操作名称
+            // 可以在Dispatcher中定义获取规则
+            define('MODULE_NAME',   $this->getModule());       // Module名称
+            define('ACTION_NAME',   $this->getAction());        // Action操作
+            // 不使用语言包功能，仅仅加载框架语言文件
+            L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
         }
 
         // 记录应用初始化时间
@@ -177,6 +185,7 @@ class App extends Base
         if(file_exists_case(CONFIG_PATH.'config.php')) {
             C(include CONFIG_PATH.'config.php');
         }
+        $common   = '';
         // 加载项目公共文件
         if(file_exists_case(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
@@ -191,17 +200,19 @@ class App extends Base
                 }
             }
         }
-        // 读取路由定义
-        if(file_exists_case(CONFIG_PATH.'routes.php')) {
-            C('_routes_',include CONFIG_PATH.'routes.php');
-        }
-        // 读取行为规则
-        if(file_exists_case(CONFIG_PATH.'behaviors.php')) {
-            C('_behaviors_',include CONFIG_PATH.'behaviors.php');
-        }
-        // 读取静态规则
-        if(file_exists_case(CONFIG_PATH.'htmls.php')) {
-            C('_htmls_',include CONFIG_PATH.'htmls.php');
+        if(!C('THIN_MODEL')) {
+            // 读取路由定义
+            if(file_exists_case(CONFIG_PATH.'routes.php')) {
+                C('_routes_',include CONFIG_PATH.'routes.php');
+            }
+            // 读取行为规则
+            if(file_exists_case(CONFIG_PATH.'behaviors.php')) {
+                C('_behaviors_',include CONFIG_PATH.'behaviors.php');
+            }
+            // 读取静态规则
+            if(file_exists_case(CONFIG_PATH.'htmls.php')) {
+                C('_htmls_',include CONFIG_PATH.'htmls.php');
+            }
         }
         // 如果是调试模式加载调试模式配置文件
         if(C('DEBUG_MODE')) {
@@ -417,57 +428,61 @@ class App extends Base
      */
     public function exec()
     {
-        // 导入公共类
-        $_autoload	=	C('AUTO_LOAD_CLASS');
-        if(!empty($_autoload)) {
-            $import	=	explode(',',$_autoload);
-            foreach ($import as $key=>$class){
-                import($class);
+        if(!C('THIN_MODEL')) {
+            // 导入公共类
+            $_autoload	=	C('AUTO_LOAD_CLASS');
+            if(!empty($_autoload)) {
+                $import	=	explode(',',$_autoload);
+                foreach ($import as $key=>$class){
+                    import($class);
+                }
             }
-        }
-        $behaviorOn   =  C('BEHAVIOR_ON');
-        // 执行项目运行行为
-        if($behaviorOn) {
-            B('app_run');
-        }
+            $behaviorOn   =  C('BEHAVIOR_ON');
+            // 执行项目运行行为
+            if($behaviorOn) {
+                B('app_run');
+            }
 
-        //创建Action控制器实例
-        $module  =  A(MODULE_NAME);
-        if(!$module) {
-            // 是否定义Empty模块
-            $module	=	A("Empty");
+            //创建Action控制器实例
+            $module  =  A(MODULE_NAME);
             if(!$module) {
-                // 模块不存在 抛出异常
-                throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+                // 是否定义Empty模块
+                $module	=	A("Empty");
+                if(!$module) {
+                    // 模块不存在 抛出异常
+                    throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+                }
             }
+
+            //获取当前操作名
+            $action = ACTION_NAME;
+            if($behaviorOn && false !== B('action_before')) {
+                // 执行操作前置行为
+            }elseif (method_exists($module,'_before_'.$action)) {
+                // 执行前置操作
+                $module->{'_before_'.$action}();
+            };
+            //执行当前操作
+            $module->{$action}();
+            if($behaviorOn && false !== B('action_after')) {
+                // 执行操作后置行为
+            }elseif (method_exists($module,'_after_'.$action)) {
+                //  执行后缀操作
+                $module->{'_after_'.$action}();
+            };
+
+            // 执行项目结束行为
+            if($behaviorOn) {
+                B('app_end');
+            }
+
+            // 写入错误日志
+            if(C('WEB_LOG_RECORD'))
+                Log::save();
+        }else{
+            // 执行模块的操作方法
+            R(MODULE_NAME,ACTION_NAME);
         }
-
-        //获取当前操作名
-        $action = ACTION_NAME;
-        if($behaviorOn && false !== B('action_before')) {
-            // 执行操作前置行为
-        }elseif (method_exists($module,'_before_'.$action)) {
-            // 执行前置操作
-            $module->{'_before_'.$action}();
-        };
-        //执行当前操作
-        $module->{$action}();
-        if($behaviorOn && false !== B('action_after')) {
-            // 执行操作后置行为
-        }elseif (method_exists($module,'_after_'.$action)) {
-            //  执行后缀操作
-            $module->{'_after_'.$action}();
-        };
-
-        // 执行项目结束行为
-        if($behaviorOn) {
-            B('app_end');
-        }
-
-        // 写入错误日志
-        if(C('WEB_LOG_RECORD'))
-            Log::save();
-
         return ;
     }
 

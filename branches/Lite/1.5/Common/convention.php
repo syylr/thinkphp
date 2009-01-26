@@ -43,6 +43,7 @@ return  array(
 
     'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
     'BEHAVIOR_ON'               =>   false, // 是否开启行为
+    'THIN_MODEL'                =>   false, // 是否简洁模式
 
     /* 日志设置 */
     'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
