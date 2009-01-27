@@ -593,17 +593,17 @@ class App extends Base
                     $behavior3   =   $behaviors['*'];
                 }
                 // 检查前置行为
-                if(isset($behavior3['before']) {
+                if(isset($behavior3['before'])) {
                     foreach ($behavior3['before'] as $key=>$call){
                         call_user_func($call);
                     }
                 }
-                if(isset($behavior2['before']) {
+                if(isset($behavior2['before'])) {
                     foreach ($behavior2['before'] as $key=>$call){
                         call_user_func($call);
                     }
                 }
-                if(isset($behavior1['before']) {
+                if(isset($behavior1['before'])) {
                     foreach ($behavior1['before'] as $key=>$call){
                         call_user_func($call);
                     }
@@ -611,17 +611,17 @@ class App extends Base
                 //执行当前操作
                 $module->{$action}();
                 // 检查后置行为
-                if(isset($behavior1['after']) {
+                if(isset($behavior1['after'])) {
                     foreach ($behavior1['after'] as $key=>$call){
                         call_user_func($call);
                     }
                 }
-                if(isset($behavior2['after']) {
+                if(isset($behavior2['after'])) {
                     foreach ($behavior2['after'] as $key=>$call){
                         call_user_func($call);
                     }
                 }
-                if(isset($behavior3['after']) {
+                if(isset($behavior3['after'])) {
                     foreach ($behavior3['after'] as $key=>$call){
                         call_user_func($call);
                     }
