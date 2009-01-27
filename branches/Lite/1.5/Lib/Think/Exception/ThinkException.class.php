@@ -99,11 +99,7 @@ class ThinkException extends Exception
         $error['trace']     = $traceInfo;
 
         //记录系统日志
-        $errorStr   = "\n".L('_ERROR_INFO_')."[ ".APP_NAME.' '.MODULE_NAME.' '.ACTION_NAME.' ]'.$this->message."\n";
-        $errorStr  .= L('_ERROR_URL_').WEB_URL.$_SERVER["PHP_SELF"]."\n";
-        $errorStr  .= L('_ERROR_TYPE_').$this->type."\n";
-        $errorStr  .= L('_ERROR_TRACE_')."\n".$traceInfo;
-        Log::Write($errorStr);
+        Log::Write('('.$this->type.') '.$this->message);
 
         return $error ;
     }

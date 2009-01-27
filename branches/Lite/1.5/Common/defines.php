@@ -31,9 +31,9 @@ define('MEMORY_LIMIT_ON',function_exists('memory_get_usage')?true:false);
 if(MEMORY_LIMIT_ON) {
      $GLOBALS['_startUseMems'] = memory_get_usage();
 }
-define('PHP_SAPI_NAME',php_sapi_name());
-define('IS_CGI',substr(PHP_SAPI_NAME, 0,3)=='cgi' ? 1 : 0 );
+define('IS_CGI',substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
+define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
 
 // 当前文件名
 if(!defined('_PHP_FILE_')) {
@@ -79,17 +79,6 @@ define('LOG_PATH',       APP_PATH.'/'.LOG_DIR.'/'); //
 define('LANG_PATH',     APP_PATH.'/'.LANG_DIR.'/'); //
 define('TEMP_PATH',      APP_PATH.'/'.TEMP_DIR.'/'); //
 define('DATA_PATH', APP_PATH.'/Data/'); //
-
-
-//  调试和Log设置
-define('WEB_LOG_ERROR',0);
-define('WEB_LOG_DEBUG',1);
-define('SQL_LOG_DEBUG',2);
-
-define('SYSTEM_LOG',0);
-define('MAIL_LOG',1);
-define('TCP_LOG',2);
-define('FILE_LOG',3);
 
 //支持的URL模式
 define('URL_COMMON',      0);   //普通模式

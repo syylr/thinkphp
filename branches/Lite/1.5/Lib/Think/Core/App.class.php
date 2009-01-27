@@ -59,8 +59,7 @@ class App extends Base
             // 预编译项目
             $this->build();
         }
-
-        if(C('THIN_MODEL') || C('CLI_MODEL')) { // 简洁模式或者命令模式
+        if(C('THIN_MODEL') || IS_CLI) { // 简洁模式或者命令模式
             // 取得模块和操作名称
             define('MODULE_NAME',   $this->getModule());       // Module名称
             define('ACTION_NAME',   $this->getAction());        // Action操作
@@ -161,7 +160,7 @@ class App extends Base
                 }
             }
         }
-        if(C('THIN_MODEL') || C('CLI_MODEL')) {
+        if(C('THIN_MODEL') || IS_CLI) {
             // 简洁模式或者命令模式
         }else{
             // 读取路由定义
@@ -205,7 +204,7 @@ class App extends Base
      */
     private function getModule()
     {
-        if(C('CLI_MODEL')) {
+        if(IS_CLI) {
             $module = isset($_SERVER['argv'][1])?$_SERVER['argv'][1]:C('DEFAULT_MODULE');
         }else{
             $module = isset($_POST[C('VAR_MODULE')]) ?
@@ -235,7 +234,7 @@ class App extends Base
      */
     private function getAction()
     {
-        if(C('CLI_MODEL')) {
+        if(IS_CLI) {
             $action  =  isset($_SERVER['argv'][2])?$_SERVER['argv'][2]:C('DEFAULT_ACTION');
         }else{
             $action   = isset($_POST[C('VAR_ACTION')]) ?
@@ -504,9 +503,9 @@ class App extends Base
       switch ($errno) {
           case E_ERROR:
           case E_USER_ERROR:
-              $errorStr = "错误：[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
+              $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
               if(C('WEB_LOG_RECORD')){
-                 Log::record($errorStr);
+                 Log::record($errorStr,Log::ERR);
                  Log::save();
               }
               halt($errorStr);
@@ -515,8 +514,8 @@ class App extends Base
           case E_USER_WARNING:
           case E_USER_NOTICE:
           default:
-            $errorStr = "注意：[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
-            Log::record($errorStr);
+            $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
+            Log::record($errorStr,Log::NOTICE);
              break;
       }
     }

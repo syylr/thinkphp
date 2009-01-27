@@ -207,7 +207,7 @@ function redirect($url,$time=0,$msg='')
  */
 function throw_exception($msg,$type='ThinkException',$code=0)
 {
-    if(C('THIN_MODEL') || C('CLI_MODEL')) {
+    if(C('THIN_MODEL') || IS_CLI) {
         exit($msg);
     }
     if(class_exists($type,false)){
@@ -265,7 +265,7 @@ function debug_end($label='')
 function system_out($msg)
 {
     if(!empty($msg))
-        Log::record($msg,WEB_LOG_DEBUG);
+        Log::record($msg,Log::DEBUG);
 }
 
 /**
