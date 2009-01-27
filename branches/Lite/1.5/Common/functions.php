@@ -569,7 +569,11 @@ function A($className,$appName='@')
 // 远程调用模块的操作方法
 function R($module,$action,$app='@') {
     $class = A($module,$app);
-    return $class->$action();
+    if($class) {
+        return $class->$action();
+    }else{
+        return false;
+    }
 }
 
 // 获取语言定义

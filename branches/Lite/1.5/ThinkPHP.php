@@ -27,7 +27,7 @@ if(!defined('APP_NAME')) define('APP_NAME', md5(THINK_PATH));
 if(!defined('APP_PATH')) define('APP_PATH', dirname(THINK_PATH).'/'.APP_NAME);
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Temp/');
 
-if(is_file(RUNTIME_PATH.'~runtime.php') && filemtime(RUNTIME_PATH.'~runtime.php')>filemtime(THINK_PATH.'/ThinkPHP.php')) {
+if(is_file(RUNTIME_PATH.'~runtime.php')) {
     // 加载框架核心缓存文件
     // 如果有修改核心文件请删除该缓存
     require RUNTIME_PATH.'~runtime.php';
@@ -88,4 +88,7 @@ if(is_file(RUNTIME_PATH.'~runtime.php') && filemtime(RUNTIME_PATH.'~runtime.php'
 }
 // 记录加载文件时间
 $GLOBALS['_loadTime'] = microtime(TRUE);
+// 执行应用
+$App =  new App();
+$App->run();
 ?>
