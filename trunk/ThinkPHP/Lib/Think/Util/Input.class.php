@@ -39,7 +39,7 @@
 class Input extends Base {
 
     private $filter =   null;   // 输入过滤
-    private static $_input  =   array('get','post','request','env','argv','server','cookie','session','globals','config','lang','call');
+    private static $_input  =   array('get','post','request','env','server','cookie','session','globals','config','lang','call');
     //html标签设置
     public static $htmlTags = array(
         'allow' => 'table|td|th|tr|i|b|u|strong|img|p|br|div|strong|em|ul|ol|li|dl|dd|dt|a',
@@ -69,7 +69,6 @@ class Input extends Base {
                 case 'post':     $input      =& $_POST;break;
                 case 'request': $input      =& $_REQUEST;break;
                 case 'env':      $input      =& $_ENV;break;
-                case 'argv':     $input      =& $_SERVER['argv'];break;
                 case 'server':   $input      =& $_SERVER;break;
                 case 'cookie':   $input      =& $_COOKIE;break;
                 case 'session':  $input      =& $_SESSION;break;
