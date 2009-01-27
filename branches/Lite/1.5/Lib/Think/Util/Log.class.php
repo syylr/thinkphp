@@ -63,7 +63,7 @@ class Log extends Base
     static function record($message,$level=self::ERR) {
         if(in_array($level,C('LOG_RECORD_LEVEL'))) {
             $now = date(self::$format);
-            self::$log[] =   "{$now} {$type}: {$message}\r\n";
+            self::$log[] =   "{$now} {$level}: {$message}\r\n";
         }
     }
 
@@ -131,7 +131,7 @@ class Log extends Base
                       rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
                 }
             }
-            error_log("{$now} {$type}: {$message}\r\n", $type,$destination,$extra );
+            error_log("{$now} {$level}: {$message}\r\n", $type,$destination,$extra );
         }
         //clearstatcache();
     }

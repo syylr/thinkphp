@@ -33,6 +33,7 @@ return  array(
     /* 数据库设置 */
     'DB_DEPLOY_TYPE'=>0,            // 数据库部署方式 0 集中式（单一服务器） 1 分布式（主从服务器）
     'SQL_DEBUG_LOG'=>true,          // 记录SQL语句到日志文件
+    'LOG_RECORD_LEVEL'       =>   array('EMERG','ALERT','CRIT','ERR','WARN','NOTIC','INFO','DEBUG','SQL'),  // 允许记录的日志级别
 
     /* 数据缓存设置 */
     'DATA_CACHE_TIME'=>-1,          // 数据缓存有效期
