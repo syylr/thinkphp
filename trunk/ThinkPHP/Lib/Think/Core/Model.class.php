@@ -496,7 +496,7 @@ class Model extends Base  implements IteratorAggregate
      * @param boolean $lock 是否加锁
      * @param boolean $fetchSql 是否返回sql
      +----------------------------------------------------------
-     * @return boolean
+     * @return false|integer
      +----------------------------------------------------------
      */
     private function _delete($data,$where='',$limit=0,$order='',$autoLink=false,$lock=false,$fetchSql=false) {
