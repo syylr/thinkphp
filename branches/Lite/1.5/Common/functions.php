@@ -207,7 +207,7 @@ function redirect($url,$time=0,$msg='')
  */
 function throw_exception($msg,$type='ThinkException',$code=0)
 {
-    if(C('THIN_MODEL')) {
+    if(C('THIN_MODEL') || C('CLI_MODEL')) {
         exit($msg);
     }
     if(class_exists($type,false)){
@@ -458,6 +458,7 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
       $class    =   substr_replace($class, '', 0,strlen($class_strut[0])+1);
       $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
     }
+    $baseUrl = realpath($baseUrl);
     if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
     $classfile = $baseUrl . $class . $ext;
     if($ext == '.class.php' && is_file($classfile)) {

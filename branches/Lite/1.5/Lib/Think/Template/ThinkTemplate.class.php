@@ -33,6 +33,7 @@ class  ThinkTemplate extends Base
     // 模板变量
     public $tVar                 = array();
 
+    public $config  =  array();
     /**
      +----------------------------------------------------------
      * 取得模板实例对象
@@ -46,6 +47,28 @@ class  ThinkTemplate extends Base
     static function  getInstance()
     {
         return get_instance_of(__CLASS__);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 架构函数
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $config 模板引擎配置数组
+     +----------------------------------------------------------
+     */
+    function __construct(){
+        $this->config['template_suffix']   =  C('TEMPLATE_SUFFIX');
+        $this->config['cache_suffix']       =  C('CACHFILE_SUFFIX');
+        $this->config['tmpl_cache']        =  C('TMPL_CACHE_ON');
+        $this->config['cache_time']        =  C('TMPL_CACHE_TIME');
+        $this->config['taglib_begin']        =  C('TAGLIB_BEGIN');
+        $this->config['taglib_end']          =  C('TAGLIB_END');
+        $this->config['tmpl_begin']         =  C('TMPL_L_DELIM');
+        $this->config['tmpl_end']           =  C('TMPL_R_DELIM');
+        $this->config['default_tmpl']       =  C('TMPL_FILE_NAME');
+        $this->config['tag_level']            =  C('TAG_NESTED_LEVEL');
     }
 
     // 模板变量获取和设置
@@ -87,9 +110,9 @@ class  ThinkTemplate extends Base
      */
     public function loadTemplate ($tmplTemplateFile='')
     {
-        if(empty($tmplTemplateFile))    $tmplTemplateFile = C('TMPL_FILE_NAME');
+        if(empty($tmplTemplateFile))    $tmplTemplateFile = $this->config['default_tmpl'];
         if(!is_file($tmplTemplateFile)){
-            $tmplTemplateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$tmplTemplateFile.C('TEMPLATE_SUFFIX');
+            $tmplTemplateFile =  dirname($this->config['default_tmpl']).'/'.$tmplTemplateFile.$this->config['template_suffix'];
             if(!is_file($tmplTemplateFile)){
                 throw_exception(L('_TEMPLATE_NOT_EXIST_'));
             }
@@ -97,7 +120,7 @@ class  ThinkTemplate extends Base
         $this->templateFile    =  $tmplTemplateFile;
 
         //根据模版文件名定位缓存文件
-        $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
+        $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).$this->config['cache_suffix'];
         $tmplContent = '';
         // 检查Cache文件是否需要更新
         if (!$this->checkCache($tmplTemplateFile)) {
@@ -153,15 +176,15 @@ class  ThinkTemplate extends Base
      */
     protected function checkCache($tmplTemplateFile)
     {
-        $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
+        $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).$this->config['cache_suffix'];
         if(!is_file($tmplCacheFile)){
             return false;
-        }elseif (!C('TMPL_CACHE_ON')){
+        }elseif (!$this->config['tmpl_cache']){
             return false;
         }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
             // 模板文件如果有更新则缓存需要更新
             return false;
-        }elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) {
+        }elseif ($this->config['cache_time'] != -1 && time() > filemtime($tmplCacheFile)+$this->config['cache_time']) {
             // 缓存是否在有效期
             return false;
         }
@@ -229,7 +252,7 @@ class  ThinkTemplate extends Base
     public function parse($content)
     {
         // 首先替换literal标签内容
-        $content = preg_replace('/'.C('TAGLIB_BEGIN').'literal'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/literal'.C('TAGLIB_END').'/eis',"\$this->parseLiteral('\\1')",$content);
+        $content = preg_replace('/'.$this->config['taglib_begin'].'literal'.$this->config['taglib_end'].'(.*?)'.$this->config['taglib_begin'].'\/literal'.$this->config['taglib_end'].'/eis',"\$this->parseLiteral('\\1')",$content);
 
         // 获取引入的标签库列表
         // 标签库只需要定义一次，允许引入多个一次
@@ -257,7 +280,7 @@ class  ThinkTemplate extends Base
         $this->parseTagLib('cx',$content,true);
 
         //解析普通模板标签 {tagName:}
-        $content = preg_replace('/('.C('TMPL_L_DELIM').')(\S.+?)('.C('TMPL_R_DELIM').')/eis',"\$this->parseTag('\\2')",$content);
+        $content = preg_replace('/('.$this->config['tmpl_begin'].')(\S.+?)('.$this->config['tmpl_end'].')/eis',"\$this->parseTag('\\2')",$content);
 
         return $content;
     }
@@ -320,7 +343,7 @@ class  ThinkTemplate extends Base
     public function getIncludeTagLib(& $content)
     {
         //搜索是否有TagLib标签
-        $find = preg_match('/'.C('TAGLIB_BEGIN').'taglib\s(.+?)(\s*?)\/'.C('TAGLIB_END').'\W/is',$content,$matches);
+        $find = preg_match('/'.$this->config['taglib_begin'].'taglib\s(.+?)(\s*?)\/'.$this->config['taglib_end'].'\W/is',$content,$matches);
         if($find) {
             //替换TagLib标签
             $content = str_replace($matches[0],'',$content);
@@ -369,29 +392,29 @@ class  ThinkTemplate extends Base
                     $startTag = $tag['name'];
                 }
                 // 检查可嵌套标签以及嵌套级别
-                if($tag['nested'] && C('TAG_NESTED_LEVEL')>1) {
-                    $level   =   C('TAG_NESTED_LEVEL');
+                if($tag['nested'] && $this->config['tag_level']>1) {
+                    $level   =   $this->config['tag_level'];
                 }else{
                     $level   =   1;
                 }
                 $endTag = $startTag;
-                if(false !== stripos($content,C('TAGLIB_BEGIN').$startTag)) {
+                if(false !== stripos($content,$this->config['taglib_begin'].$startTag)) {
                     if(empty($tag['attribute'])){
                         // 无属性标签
                         if($tag['content'] !='empty'){
                             for($i=0;$i<$level;$i++) {
-                                $content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)'.C('TAGLIB_END').'(.*?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+                                $content = preg_replace('/'.$this->config['taglib_begin'].$startTag.'(\s*?)'.$this->config['taglib_end'].'(.*?)'.$this->config['taglib_begin'].'\/'.$endTag.'(\s*?)'.$this->config['taglib_end'].'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
                             }
                         }else{
-                            $content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'(\s*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+                            $content = preg_replace('/'.$this->config['taglib_begin'].$startTag.'(\s*?)\/(\s*?)'.$this->config['taglib_end'].'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
                         }
                     }elseif($tag['content'] !='empty') {//闭合标签解析
                         for($i=0;$i<$level;$i++) {
-                            $content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)'.C('TAGLIB_END').'(.+?)'.C('TAGLIB_BEGIN').'\/'.$endTag.'(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+                            $content = preg_replace('/'.$this->config['taglib_begin'].$startTag.'\s(.*?)'.$this->config['taglib_end'].'(.+?)'.$this->config['taglib_begin'].'\/'.$endTag.'(\s*?)'.$this->config['taglib_end'].'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
                         }
                     }else {//开放标签解析
                         // 开始标签必须有一个空格
-                        $content = preg_replace('/'.C('TAGLIB_BEGIN').$startTag.'\s(.*?)\/(\s*?)'.C('TAGLIB_END').'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+                        $content = preg_replace('/'.$this->config['taglib_begin'].$startTag.'\s(.*?)\/(\s*?)'.$this->config['taglib_end'].'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
                     }
                 }
             }
@@ -445,7 +468,7 @@ class  ThinkTemplate extends Base
         //还原非模板标签
         if(preg_match('/^[\s|\d]/is',$tagStr)){
             //过滤空格和数字打头的标签
-            return C('TMPL_L_DELIM') . $tagStr .C('TMPL_R_DELIM');
+            return $this->config['tmpl_begin'] . $tagStr .$this->config['tmpl_end'];
         }
         $flag =  substr($tagStr,0,1);
         $name   = substr($tagStr,1);
@@ -512,7 +535,7 @@ class  ThinkTemplate extends Base
             //…………
             default:
                 //还原非模版标签
-                $parseStr = C('TMPL_L_DELIM') . $tagStr .C('TMPL_R_DELIM');
+                $parseStr = $this->config['tmpl_begin'] . $tagStr .$this->config['tmpl_end'];
                 break;
         }
         return $parseStr;
@@ -735,7 +758,7 @@ class  ThinkTemplate extends Base
                 // 默认导入当前模块下面的模板
                 $tmplTemplateFile = dirname($this->templateFile).'/'.$tmplPublicName;
             }
-            $tmplTemplateFile .=  C('TEMPLATE_SUFFIX');
+            $tmplTemplateFile .=  $this->config['template_suffix'];
             $parseStr = file_get_contents($tmplTemplateFile);
         }
         //再次对包含文件进行模板分析

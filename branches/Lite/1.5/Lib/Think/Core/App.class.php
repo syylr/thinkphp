@@ -60,7 +60,13 @@ class App extends Base
             $this->build();
         }
 
-        if(!C('THIN_MODEL')) {
+        if(C('THIN_MODEL') || C('CLI_MODEL')) { // 简洁模式或者命令模式
+            // 取得模块和操作名称
+            define('MODULE_NAME',   $this->getModule());       // Module名称
+            define('ACTION_NAME',   $this->getAction());        // Action操作
+            // 不使用语言包功能，仅仅加载框架语言文件
+            L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
+        }else{
             // 设定错误和异常处理
             set_error_handler(array(&$this,"appError"));
             set_exception_handler(array(&$this,"appException"));
@@ -112,13 +118,6 @@ class App extends Base
             if(C('BEHAVIOR_ON')) {
                 B('app_init');
             }
-        }else{
-            // 取得模块和操作名称
-            // 可以在Dispatcher中定义获取规则
-            define('MODULE_NAME',   $this->getModule());       // Module名称
-            define('ACTION_NAME',   $this->getAction());        // Action操作
-            // 不使用语言包功能，仅仅加载框架语言文件
-            L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
         }
 
         // 记录应用初始化时间
@@ -162,7 +161,9 @@ class App extends Base
                 }
             }
         }
-        if(!C('THIN_MODEL')) {
+        if(C('THIN_MODEL') || C('CLI_MODEL')) {
+            // 简洁模式或者命令模式
+        }else{
             // 读取路由定义
             if(file_exists_case(CONFIG_PATH.'routes.php')) {
                 C('_routes_',include CONFIG_PATH.'routes.php');
@@ -204,18 +205,22 @@ class App extends Base
      */
     private function getModule()
     {
-        $module = isset($_POST[C('VAR_MODULE')]) ?
-            $_POST[C('VAR_MODULE')] :
-            (isset($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:'');
-        // 如果 $module 为空，则赋予默认值
-        if (empty($module)) $module = C('DEFAULT_MODULE');
-        if(C('URL_CASE_INSENSITIVE')) {
-            // URL地址不区分大小写
-            define('P_MODULE_NAME',strtolower($module));
-            // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-            $module = ucfirst($this->parseName(strtolower($module),1));
+        if(C('CLI_MODEL')) {
+            $module = isset($_SERVER['argv'][1])?$_SERVER['argv'][1]:C('DEFAULT_MODULE');
+        }else{
+            $module = isset($_POST[C('VAR_MODULE')]) ?
+                $_POST[C('VAR_MODULE')] :
+                (isset($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:'');
+            // 如果 $module 为空，则赋予默认值
+            if (empty($module)) $module = C('DEFAULT_MODULE');
+            if(C('URL_CASE_INSENSITIVE')) {
+                // URL地址不区分大小写
+                define('P_MODULE_NAME',strtolower($module));
+                // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
+                $module = ucfirst($this->parseName(strtolower($module),1));
+            }
+            unset($_POST[C('VAR_MODULE')],$_GET[C('VAR_MODULE')]);
         }
-        unset($_POST[C('VAR_MODULE')],$_GET[C('VAR_MODULE')]);
         return $module;
     }
 
@@ -230,12 +235,16 @@ class App extends Base
      */
     private function getAction()
     {
-        $action   = isset($_POST[C('VAR_ACTION')]) ?
-            $_POST[C('VAR_ACTION')] :
-            (isset($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:'');
-        // 如果 $action 为空，则赋予默认值
-        if (empty($action)) $action = C('DEFAULT_ACTION');
-        unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
+        if(C('CLI_MODEL')) {
+            $action  =  isset($_SERVER['argv'][2])?$_SERVER['argv'][2]:C('DEFAULT_ACTION');
+        }else{
+            $action   = isset($_POST[C('VAR_ACTION')]) ?
+                $_POST[C('VAR_ACTION')] :
+                (isset($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:'');
+            // 如果 $action 为空，则赋予默认值
+            if (empty($action)) $action = C('DEFAULT_ACTION');
+            unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
+        }
         return $action;
     }
 
