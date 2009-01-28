@@ -58,40 +58,38 @@ if(!IS_CLI) {
         define('WEB_URL',   (($_root=='/' || $_root=='\\')?'':$_root));
     }
 
-    // 目录设置
-    define('CACHE_DIR',  'Cache');
-    define('HTML_DIR',    'Html');
-    define('CONF_DIR',    'Conf');
-    define('LIB_DIR',        'Lib');
-    define('LOG_DIR',      'Logs');
-    define('LANG_DIR',    'Lang');
-    define('TEMP_DIR',    'Temp');
-    define('TMPL_DIR',     'Tpl');
-    // 路径设置
-    if (!defined('ADMIN_PATH')) define('ADMIN_PATH', APP_PATH.'/../Admin/');
-    define('TMPL_PATH',APP_PATH.'/'.TMPL_DIR.'/');
-    define('HTML_PATH',APP_PATH.'/'.HTML_DIR.'/'); //
-    define('COMMON_PATH',   APP_PATH.'/Common/'); // 项目公共目录
-    define('LIB_PATH',         APP_PATH.'/'.LIB_DIR.'/'); //
-    define('CACHE_PATH',   APP_PATH.'/'.CACHE_DIR.'/'); //
-    define('CONFIG_PATH',  APP_PATH.'/'.CONF_DIR.'/'); //
-    define('LOG_PATH',       APP_PATH.'/'.LOG_DIR.'/'); //
-    define('LANG_PATH',     APP_PATH.'/'.LANG_DIR.'/'); //
-    define('TEMP_PATH',      APP_PATH.'/'.TEMP_DIR.'/'); //
-    define('UPLOAD_PATH', APP_PATH.'/Uploads/'); //
-    define('PLUGIN_PATH', APP_PATH.'/PlugIns/'); //
-    define('DATA_PATH', APP_PATH.'/Data/'); //
-
-    define('DATA_TYPE_OBJ',1);
-    define('DATA_TYPE_ARRAY',0);
-
     //支持的URL模式
     define('URL_COMMON',      0);   //普通模式
     define('URL_PATHINFO',    1);   //PATHINFO模式
     define('URL_REWRITE',     2);   //REWRITE模式
     define('URL_COMPAT',        3);     // 兼容模式
 }
+// 目录设置
+define('CACHE_DIR',  'Cache');
+define('HTML_DIR',    'Html');
+define('CONF_DIR',    'Conf');
+define('LIB_DIR',        'Lib');
+define('LOG_DIR',      'Logs');
+define('LANG_DIR',    'Lang');
+define('TEMP_DIR',    'Temp');
+define('TMPL_DIR',     'Tpl');
+// 路径设置
+if (!defined('ADMIN_PATH')) define('ADMIN_PATH', APP_PATH.'/../Admin/');
+define('TMPL_PATH',APP_PATH.'/'.TMPL_DIR.'/');
+define('HTML_PATH',APP_PATH.'/'.HTML_DIR.'/'); //
+define('COMMON_PATH',   APP_PATH.'/Common/'); // 项目公共目录
+define('LIB_PATH',         APP_PATH.'/'.LIB_DIR.'/'); //
+define('CACHE_PATH',   APP_PATH.'/'.CACHE_DIR.'/'); //
+define('CONFIG_PATH',  APP_PATH.'/'.CONF_DIR.'/'); //
+define('LOG_PATH',       APP_PATH.'/'.LOG_DIR.'/'); //
+define('LANG_PATH',     APP_PATH.'/'.LANG_DIR.'/'); //
+define('TEMP_PATH',      APP_PATH.'/'.TEMP_DIR.'/'); //
+define('UPLOAD_PATH', APP_PATH.'/Uploads/'); //
+define('PLUGIN_PATH', APP_PATH.'/PlugIns/'); //
+define('DATA_PATH', APP_PATH.'/Data/'); //
 
+define('DATA_TYPE_OBJ',1);
+define('DATA_TYPE_ARRAY',0);
 define('VENDOR_PATH',THINK_PATH.'/Vendor/');
 // 为了方便导入第三方类库 设置Vendor目录到include_path
 set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
