@@ -142,6 +142,7 @@ function U($url,$params=array(),$redirect=false) {
  +----------------------------------------------------------
  */
 function halt($error) {
+    if(IS_CLI)   exit($error);
     $e = array();
     if(C('DEBUG_MODE') && strtoupper(C( 'TMPL_ENGINE_TYPE' )) == 'THINK'){
         //调试模式下输出错误信息
@@ -248,6 +249,7 @@ function redirect($url,$time=0,$msg='')
  */
 function throw_exception($msg,$type='ThinkException',$code=0)
 {
+    if(IS_CLI)   exit($msg);
     if(isset($_REQUEST[C('VAR_AJAX_SUBMIT')])) {
         header("Content-Type:text/html; charset=utf-8");
         exit($msg);
@@ -933,6 +935,16 @@ function A($className,$appName='@')
         $_action[$appName.$OriClassName] = $action;
         return $action;
     }else {
+        return false;
+    }
+}
+
+// 远程调用模块的操作方法
+function R($module,$action,$app='@') {
+    $class = A($module,$app);
+    if($class) {
+        return $class->$action();
+    }else{
         return false;
     }
 }

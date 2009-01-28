@@ -102,83 +102,90 @@ class App extends Base
             $this->build();
         }
 
-        // 设置系统时区 PHP5支持
-        if(function_exists('date_default_timezone_set'))
-            date_default_timezone_set(C('TIME_ZONE'));
+        if(IS_CLI) { // 命令模式
+            // 取得模块和操作名称
+            define('MODULE_NAME',   $this->getModule());       // Module名称
+            define('ACTION_NAME',   $this->getAction());        // Action操作
+            // 不使用语言包功能，仅仅加载框架语言文件
+            L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
+        }else{
+            // 设置系统时区 PHP5支持
+            if(function_exists('date_default_timezone_set'))
+                date_default_timezone_set(C('TIME_ZONE'));
 
-        if('FILE' != strtoupper(C('SESSION_TYPE'))) {
-            // 其它方式Session支持 目前支持Db 通过过滤器方式扩展
-            import("Think.Util.Filter");
-            Filter::load(ucwords(C('SESSION_TYPE')).'Session');
-        }
-        // Session初始化
-        session_start();
-
-        // 加载插件 必须在Session开启之后加载插件
-        if($plugInOn =  C('THINK_PLUGIN_ON')) {
-            $this->loadPlugIn();
-        }
-
-        // 应用调度过滤器
-        // 如果没有加载任何URL调度器
-        // 默认只支持 QUERY_STRING 方式
-        // 例如 ?m=user&a=add
-        if(C('DISPATCH_ON')) {
-            if( 'Think'== C('DISPATCH_NAME') ) {
-                // 使用内置的ThinkDispatcher调度器
-                import('Think.Util.Dispatcher');
-                Dispatcher::dispatch();
-            }elseif($plugInOn) {
-                // 加载第三方调度器
-                apply_filter('app_dispatch');
+            if('FILE' != strtoupper(C('SESSION_TYPE'))) {
+                // 其它方式Session支持 目前支持Db 通过过滤器方式扩展
+                import("Think.Util.Filter");
+                Filter::load(ucwords(C('SESSION_TYPE')).'Session');
             }
-        }
+            // Session初始化
+            session_start();
 
-        if(!defined('PHP_FILE')) {
-            // PHP_FILE 由内置的Dispacher定义
-            // 如果不使用该插件，需要重新定义
-            define('PHP_FILE',_PHP_FILE_);
-        }
+            // 加载插件 必须在Session开启之后加载插件
+            if($plugInOn =  C('THINK_PLUGIN_ON')) {
+                $this->loadPlugIn();
+            }
 
-        // 取得模块和操作名称 如果有伪装 则返回真实的名称
-        // 可以在Dispatcher中定义获取规则
-        if(!defined('MODULE_NAME')) define('MODULE_NAME',   $this->getModule());       // Module名称
-        if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
+            // 应用调度过滤器
+            // 如果没有加载任何URL调度器
+            // 默认只支持 QUERY_STRING 方式
+            // 例如 ?m=user&a=add
+            if(C('DISPATCH_ON')) {
+                if( 'Think'== C('DISPATCH_NAME') ) {
+                    // 使用内置的ThinkDispatcher调度器
+                    import('Think.Util.Dispatcher');
+                    Dispatcher::dispatch();
+                }elseif($plugInOn) {
+                    // 加载第三方调度器
+                    apply_filter('app_dispatch');
+                }
+            }
 
-        // 加载模块配置文件 并自动生成配置缓存文件
-        if(is_file(CONFIG_PATH.MODULE_NAME.'_config.php')) {
-            C(include CONFIG_PATH.MODULE_NAME.'_config.php');
-        }
+            if(!defined('PHP_FILE')) {
+                // PHP_FILE 由内置的Dispacher定义
+                // 如果不使用该插件，需要重新定义
+                define('PHP_FILE',_PHP_FILE_);
+            }
 
-        //	启用页面防刷新机制
-        if(C('LIMIT_RESFLESH_ON') && (!isset($_REQUEST[C('VAR_RESFLESH')]) || $_REQUEST[C('VAR_RESFLESH')]!="1")) {
+            // 取得模块和操作名称 如果有伪装 则返回真实的名称
+            // 可以在Dispatcher中定义获取规则
+            if(!defined('MODULE_NAME')) define('MODULE_NAME',   $this->getModule());       // Module名称
+            if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
+
+            // 加载模块配置文件 并自动生成配置缓存文件
+            if(is_file(CONFIG_PATH.MODULE_NAME.'_config.php')) {
+                C(include CONFIG_PATH.MODULE_NAME.'_config.php');
+            }
+
             //	启用页面防刷新机制
-            $guid	=	md5($_SERVER['PHP_SELF']);
-            // 检查页面刷新间隔
-            if(Cookie::is_set('_last_visit_time_'.$guid) && Cookie::get('_last_visit_time_'.$guid)>time()-C('LIMIT_REFLESH_TIMES')) {
-                // 页面刷新读取浏览器缓存
-                header('HTTP/1.1 304 Not Modified');
-                exit;
-            }else{
-                // 缓存当前地址访问时间
-                Cookie::set('_last_visit_time_'.$guid,$_SERVER['REQUEST_TIME'],$_SERVER['REQUEST_TIME']+3600);
-                header('Last-Modified:'.(date('D,d M Y H:i:s',$_SERVER['REQUEST_TIME']-C('LIMIT_REFLESH_TIMES'))).' GMT');
+            if(C('LIMIT_RESFLESH_ON') && (!isset($_REQUEST[C('VAR_RESFLESH')]) || $_REQUEST[C('VAR_RESFLESH')]!="1")) {
+                //	启用页面防刷新机制
+                $guid	=	md5($_SERVER['PHP_SELF']);
+                // 检查页面刷新间隔
+                if(Cookie::is_set('_last_visit_time_'.$guid) && Cookie::get('_last_visit_time_'.$guid)>time()-C('LIMIT_REFLESH_TIMES')) {
+                    // 页面刷新读取浏览器缓存
+                    header('HTTP/1.1 304 Not Modified');
+                    exit;
+                }else{
+                    // 缓存当前地址访问时间
+                    Cookie::set('_last_visit_time_'.$guid,$_SERVER['REQUEST_TIME'],$_SERVER['REQUEST_TIME']+3600);
+                    header('Last-Modified:'.(date('D,d M Y H:i:s',$_SERVER['REQUEST_TIME']-C('LIMIT_REFLESH_TIMES'))).' GMT');
+                }
+            }
+
+            // 系统检查
+            $this->checkLanguage();     //语言检查
+            $this->checkTemplate();     //模板检查
+
+            if(C('HTML_CACHE_ON')) {
+                import('Think.Util.HtmlCache');
+                HtmlCache::readHTMLCache();
+            }
+            if($plugInOn) {
+                // 应用初始化过滤插件
+                apply_filter('app_init');
             }
         }
-
-        // 系统检查
-        $this->checkLanguage();     //语言检查
-        $this->checkTemplate();     //模板检查
-
-        if(C('HTML_CACHE_ON')) {
-            import('Think.Util.HtmlCache');
-            HtmlCache::readHTMLCache();
-        }
-        if($plugInOn) {
-            // 应用初始化过滤插件
-            apply_filter('app_init');
-        }
-
         // 记录应用初始化时间
         if(C('SHOW_RUN_TIME')){
             $GLOBALS['_initTime'] = microtime(TRUE);
@@ -254,45 +261,49 @@ class App extends Base
      */
     private function getModule()
     {
-        $module = isset($_POST[C('VAR_MODULE')]) ?
-            $_POST[C('VAR_MODULE')] :
-            (isset($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:C('DEFAULT_MODULE'));
-        // 检查组件模块
-        if(strpos($module,C('COMPONENT_DEPR'))) {
-            // 记录完整的模块名
-            define('C_MODULE_NAME',$module);
-            $array	=	explode(C('COMPONENT_DEPR'),$module);
-            // 实际的模块名称
-            $module	=	array_pop($array);
-            // 获取组件名称
-            if(1==count($array)) {
-               define('COMPONENT_NAME',$array[0]);
-            }else{
-                define('COMPONENT_NAME',implode('/',$array));
+        if(IS_CLI) {// 命令模式下面获取第一个参数作为模块名
+            $module = isset($_SERVER['argv'][1])?$_SERVER['argv'][1]:C('DEFAULT_MODULE');
+        }else{
+            $module = isset($_POST[C('VAR_MODULE')]) ?
+                $_POST[C('VAR_MODULE')] :
+                (isset($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:C('DEFAULT_MODULE'));
+            // 检查组件模块
+            if(strpos($module,C('COMPONENT_DEPR'))) {
+                // 记录完整的模块名
+                define('C_MODULE_NAME',$module);
+                $array	=	explode(C('COMPONENT_DEPR'),$module);
+                // 实际的模块名称
+                $module	=	array_pop($array);
+                // 获取组件名称
+                if(1==count($array)) {
+                   define('COMPONENT_NAME',$array[0]);
+                }else{
+                    define('COMPONENT_NAME',implode('/',$array));
+                }
             }
-        }
-        // 检查模块URL伪装
-        if(C('MODULE_REDIRECT')) {
-            $res = preg_replace('@(\w+):([^,\/]+)@e', '$modules[\'\\1\']="\\2";', C('MODULE_REDIRECT'));
-            if(array_key_exists($module,$modules)) {
-                // 记录伪装的模块名称
-                define('P_MODULE_NAME',$module);
-                $module	=	$modules[$module];
+            // 检查模块URL伪装
+            if(C('MODULE_REDIRECT')) {
+                $res = preg_replace('@(\w+):([^,\/]+)@e', '$modules[\'\\1\']="\\2";', C('MODULE_REDIRECT'));
+                if(array_key_exists($module,$modules)) {
+                    // 记录伪装的模块名称
+                    define('P_MODULE_NAME',$module);
+                    $module	=	$modules[$module];
+                }
             }
-        }
-        if(C('URL_CASE_INSENSITIVE')) {
-            // URL地址不区分大小写
-            define('P_MODULE_NAME',strtolower($module));
-            if(C('AUTO_NAME_IDENTIFY')) {
-                // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-                $module = ucfirst($this->parseName(strtolower($module),1));
-            }else{
-                // 普通模式
-                $module = ucwords(strtolower($module));
+            if(C('URL_CASE_INSENSITIVE')) {
+                // URL地址不区分大小写
+                define('P_MODULE_NAME',strtolower($module));
+                if(C('AUTO_NAME_IDENTIFY')) {
+                    // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
+                    $module = ucfirst($this->parseName(strtolower($module),1));
+                }else{
+                    // 普通模式
+                    $module = ucwords(strtolower($module));
+                }
             }
-        }
 
-        unset($_POST[C('VAR_MODULE')],$_GET[C('VAR_MODULE')]);
+            unset($_POST[C('VAR_MODULE')],$_GET[C('VAR_MODULE')]);
+        }
         return $module;
     }
 
@@ -307,27 +318,31 @@ class App extends Base
      */
     private function getAction()
     {
-        $action   = isset($_POST[C('VAR_ACTION')]) ?
-            $_POST[C('VAR_ACTION')] :
-            (isset($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:C('DEFAULT_ACTION'));
-        // 检查操作链
-        if(strpos($action,C('COMPONENT_DEPR'))) {
-            // 记录完整的操作名
-            define('C_ACTION_NAME',$action);
-            $array	=	explode(C('COMPONENT_DEPR'),$action);
-            // 实际的模块名称
-            $action	=	array_pop($array);
-        }
-        // 检查操作URL伪装
-        if(C('ACTION_REDIRECT')) {
-            $res = preg_replace('@(\w+):([^,\/]+)@e', '$actions[\'\\1\']="\\2";', C('ACTION_REDIRECT'));
-            if(array_key_exists($action,$actions)) {
-                // 记录伪装的操作名称
-                define('P_ACTION_NAME',$action);
-                $action	=	$actions[$action];
+        if(IS_CLI) { // 命令行模式下面获取第二个参数作为操作名
+            $action  =  isset($_SERVER['argv'][2])?$_SERVER['argv'][2]:C('DEFAULT_ACTION');
+        }else{
+            $action   = isset($_POST[C('VAR_ACTION')]) ?
+                $_POST[C('VAR_ACTION')] :
+                (isset($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:C('DEFAULT_ACTION'));
+            // 检查操作链
+            if(strpos($action,C('COMPONENT_DEPR'))) {
+                // 记录完整的操作名
+                define('C_ACTION_NAME',$action);
+                $array	=	explode(C('COMPONENT_DEPR'),$action);
+                // 实际的模块名称
+                $action	=	array_pop($array);
             }
+            // 检查操作URL伪装
+            if(C('ACTION_REDIRECT')) {
+                $res = preg_replace('@(\w+):([^,\/]+)@e', '$actions[\'\\1\']="\\2";', C('ACTION_REDIRECT'));
+                if(array_key_exists($action,$actions)) {
+                    // 记录伪装的操作名称
+                    define('P_ACTION_NAME',$action);
+                    $action	=	$actions[$action];
+                }
+            }
+            unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
         }
-        unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
         return $action;
     }
 
@@ -542,112 +557,116 @@ class App extends Base
      */
     public function exec()
     {
-        // 导入公共类
-        $_autoload	=	C('AUTO_LOAD_CLASS');
-        if(!empty($_autoload)) {
-            $import	=	explode(',',$_autoload);
-            foreach ($import as $key=>$class){
-                import($class);
-            }
-        }
-        //创建Action控制器实例
-        if(defined('C_MODULE_NAME')) {
-            $this->initComponent();
-            // 使用组件模块
-            $module  =  A(C_MODULE_NAME);
+        if(IS_CLI) {
+            // 命令模式下面直接执行模块的操作方法
+            R(MODULE_NAME,ACTION_NAME);
         }else{
-            $module  =  A(MODULE_NAME);
-        }
-        if(!$module) {
-            // 是否定义Empty模块
-            $module	=	A("Empty");
+            // 导入公共类
+            $_autoload	=	C('AUTO_LOAD_CLASS');
+            if(!empty($_autoload)) {
+                $import	=	explode(',',$_autoload);
+                foreach ($import as $key=>$class){
+                    import($class);
+                }
+            }
+            //创建Action控制器实例
+            if(defined('C_MODULE_NAME')) {
+                $this->initComponent();
+                // 使用组件模块
+                $module  =  A(C_MODULE_NAME);
+            }else{
+                $module  =  A(MODULE_NAME);
+            }
             if(!$module) {
-                // 模块不存在 抛出异常
-                throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+                // 是否定义Empty模块
+                $module	=	A("Empty");
+                if(!$module) {
+                    // 模块不存在 抛出异常
+                    throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+                }
             }
-        }
 
-        //获取当前操作名
-        $action = ACTION_NAME.C('ACTION_SUFFIX');
-        if(defined('C_ACTION_NAME')) {
-            // 执行操作链 最多只能有一个输出
-            $actionList	=	explode(C('COMPONENT_DEPR'),C_ACTION_NAME);
-            foreach ($actionList as $action){
-                $module->$action();
-            }
-        }else{
-            // 检查是否定义了操作行为
-            if(file_exists_case(CONFIG_PATH.'behaviors.php')) {
-                $behaviors = include CONFIG_PATH.'behaviors.php';
-                // 检测操作规则
-                if(isset($behaviors[MODULE_NAME.':'.ACTION_NAME])) {
-                    // 某个模块的操作行为
-                    //'module:action'=>array('before'=>array(),'after'=>array());
-                    $behavior1   =   $behaviors[MODULE_NAME.':'.ACTION_NAME];
-                }
-                if(isset($behaviors[ACTION_NAME])){
-                    // 某个操作的公共行为
-                    // 'action'=>array('before'=>array(),'after'=>array());
-                    $behavior2   =   $behaviors[ACTION_NAME];
-                }
-                if(isset($behaviors['*'])){
-                    // 定义了全局的操作行为
-                    // '*'=>array('before'=>array(),'after'=>array());
-                    $behavior3   =   $behaviors['*'];
-                }
-                // 检查前置行为
-                if(isset($behavior3['before'])) {
-                    foreach ($behavior3['before'] as $key=>$call){
-                        call_user_func($call);
-                    }
-                }
-                if(isset($behavior2['before'])) {
-                    foreach ($behavior2['before'] as $key=>$call){
-                        call_user_func($call);
-                    }
-                }
-                if(isset($behavior1['before'])) {
-                    foreach ($behavior1['before'] as $key=>$call){
-                        call_user_func($call);
-                    }
-                }
-                //执行当前操作
-                $module->{$action}();
-                // 检查后置行为
-                if(isset($behavior1['after'])) {
-                    foreach ($behavior1['after'] as $key=>$call){
-                        call_user_func($call);
-                    }
-                }
-                if(isset($behavior2['after'])) {
-                    foreach ($behavior2['after'] as $key=>$call){
-                        call_user_func($call);
-                    }
-                }
-                if(isset($behavior3['after'])) {
-                    foreach ($behavior3['after'] as $key=>$call){
-                        call_user_func($call);
-                    }
+            //获取当前操作名
+            $action = ACTION_NAME.C('ACTION_SUFFIX');
+            if(defined('C_ACTION_NAME')) {
+                // 执行操作链 最多只能有一个输出
+                $actionList	=	explode(C('COMPONENT_DEPR'),C_ACTION_NAME);
+                foreach ($actionList as $action){
+                    $module->$action();
                 }
             }else{
-                // 执行默认的规则处理 定义前置和后置操作
-                // 如果存在前置操作，首先执行
-                if (method_exists($module,'_before_'.$action)) {
-                    $module->{'_before_'.$action}();
-                }
-                //执行操作
-                $module->{$action}();
-                //如果存在后置操作，继续执行
-                if (method_exists($module,'_after_'.$action)) {
-                    $module->{'_after_'.$action}();
+                // 检查是否定义了操作行为
+                if(file_exists_case(CONFIG_PATH.'behaviors.php')) {
+                    $behaviors = include CONFIG_PATH.'behaviors.php';
+                    // 检测操作规则
+                    if(isset($behaviors[MODULE_NAME.':'.ACTION_NAME])) {
+                        // 某个模块的操作行为
+                        //'module:action'=>array('before'=>array(),'after'=>array());
+                        $behavior1   =   $behaviors[MODULE_NAME.':'.ACTION_NAME];
+                    }
+                    if(isset($behaviors[ACTION_NAME])){
+                        // 某个操作的公共行为
+                        // 'action'=>array('before'=>array(),'after'=>array());
+                        $behavior2   =   $behaviors[ACTION_NAME];
+                    }
+                    if(isset($behaviors['*'])){
+                        // 定义了全局的操作行为
+                        // '*'=>array('before'=>array(),'after'=>array());
+                        $behavior3   =   $behaviors['*'];
+                    }
+                    // 检查前置行为
+                    if(isset($behavior3['before'])) {
+                        foreach ($behavior3['before'] as $key=>$call){
+                            call_user_func($call);
+                        }
+                    }
+                    if(isset($behavior2['before'])) {
+                        foreach ($behavior2['before'] as $key=>$call){
+                            call_user_func($call);
+                        }
+                    }
+                    if(isset($behavior1['before'])) {
+                        foreach ($behavior1['before'] as $key=>$call){
+                            call_user_func($call);
+                        }
+                    }
+                    //执行当前操作
+                    $module->{$action}();
+                    // 检查后置行为
+                    if(isset($behavior1['after'])) {
+                        foreach ($behavior1['after'] as $key=>$call){
+                            call_user_func($call);
+                        }
+                    }
+                    if(isset($behavior2['after'])) {
+                        foreach ($behavior2['after'] as $key=>$call){
+                            call_user_func($call);
+                        }
+                    }
+                    if(isset($behavior3['after'])) {
+                        foreach ($behavior3['after'] as $key=>$call){
+                            call_user_func($call);
+                        }
+                    }
+                }else{
+                    // 执行默认的规则处理 定义前置和后置操作
+                    // 如果存在前置操作，首先执行
+                    if (method_exists($module,'_before_'.$action)) {
+                        $module->{'_before_'.$action}();
+                    }
+                    //执行操作
+                    $module->{$action}();
+                    //如果存在后置操作，继续执行
+                    if (method_exists($module,'_after_'.$action)) {
+                        $module->{'_after_'.$action}();
+                    }
                 }
             }
+            if(C('THINK_PLUGIN_ON')) {
+                // 执行应用结束过滤器
+                apply_filter('app_end');
+            }
         }
-        if(C('THINK_PLUGIN_ON')) {
-            // 执行应用结束过滤器
-            apply_filter('app_end');
-        }
-
         return ;
     }
 

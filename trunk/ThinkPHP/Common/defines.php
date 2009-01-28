@@ -37,62 +37,64 @@ define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_LINUX',strstr(PHP_OS, 'Linux') ? 1 : 0 );
 define('IS_FREEBSD',strstr(PHP_OS, 'FreeBSD') ? 1 : 0 );
 
-// 当前文件名
-if(!defined('_PHP_FILE_')) {
-    if(IS_CGI) {
-        //CGI/FASTCGI模式下
-        $_temp  = explode('.php',$_SERVER["PHP_SELF"]);
-        define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
-    }else {
-        define('_PHP_FILE_',    rtrim($_SERVER["SCRIPT_NAME"],'/'));
+if(!IS_CLI) {
+    // 当前文件名
+    if(!defined('_PHP_FILE_')) {
+        if(IS_CGI) {
+            //CGI/FASTCGI模式下
+            $_temp  = explode('.php',$_SERVER["PHP_SELF"]);
+            define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
+        }else {
+            define('_PHP_FILE_',    rtrim($_SERVER["SCRIPT_NAME"],'/'));
+        }
     }
-}
-if(!defined('WEB_URL')) {
-    // 网站URL根目录
-    if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
-        $_root = dirname(dirname(_PHP_FILE_));
-    }else {
-        $_root = dirname(_PHP_FILE_);
+    if(!defined('WEB_URL')) {
+        // 网站URL根目录
+        if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
+            $_root = dirname(dirname(_PHP_FILE_));
+        }else {
+            $_root = dirname(_PHP_FILE_);
+        }
+        define('WEB_URL',   (($_root=='/' || $_root=='\\')?'':$_root));
     }
-    define('WEB_URL',   (($_root=='/' || $_root=='\\')?'':$_root));
+
+    // 目录设置
+    define('CACHE_DIR',  'Cache');
+    define('HTML_DIR',    'Html');
+    define('CONF_DIR',    'Conf');
+    define('LIB_DIR',        'Lib');
+    define('LOG_DIR',      'Logs');
+    define('LANG_DIR',    'Lang');
+    define('TEMP_DIR',    'Temp');
+    define('TMPL_DIR',     'Tpl');
+    // 路径设置
+    if (!defined('ADMIN_PATH')) define('ADMIN_PATH', APP_PATH.'/../Admin/');
+    define('TMPL_PATH',APP_PATH.'/'.TMPL_DIR.'/');
+    define('HTML_PATH',APP_PATH.'/'.HTML_DIR.'/'); //
+    define('COMMON_PATH',   APP_PATH.'/Common/'); // 项目公共目录
+    define('LIB_PATH',         APP_PATH.'/'.LIB_DIR.'/'); //
+    define('CACHE_PATH',   APP_PATH.'/'.CACHE_DIR.'/'); //
+    define('CONFIG_PATH',  APP_PATH.'/'.CONF_DIR.'/'); //
+    define('LOG_PATH',       APP_PATH.'/'.LOG_DIR.'/'); //
+    define('LANG_PATH',     APP_PATH.'/'.LANG_DIR.'/'); //
+    define('TEMP_PATH',      APP_PATH.'/'.TEMP_DIR.'/'); //
+    define('UPLOAD_PATH', APP_PATH.'/Uploads/'); //
+    define('PLUGIN_PATH', APP_PATH.'/PlugIns/'); //
+    define('DATA_PATH', APP_PATH.'/Data/'); //
+
+    define('DATA_TYPE_OBJ',1);
+    define('DATA_TYPE_ARRAY',0);
+
+    //支持的URL模式
+    define('URL_COMMON',      0);   //普通模式
+    define('URL_PATHINFO',    1);   //PATHINFO模式
+    define('URL_REWRITE',     2);   //REWRITE模式
+    define('URL_COMPAT',        3);     // 兼容模式
 }
 
 define('VENDOR_PATH',THINK_PATH.'/Vendor/');
 // 为了方便导入第三方类库 设置Vendor目录到include_path
 set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
-
-// 目录设置
-define('CACHE_DIR',  'Cache');
-define('HTML_DIR',    'Html');
-define('CONF_DIR',    'Conf');
-define('LIB_DIR',        'Lib');
-define('LOG_DIR',      'Logs');
-define('LANG_DIR',    'Lang');
-define('TEMP_DIR',    'Temp');
-define('TMPL_DIR',     'Tpl');
-// 路径设置
-if (!defined('ADMIN_PATH')) define('ADMIN_PATH', APP_PATH.'/../Admin/');
-define('TMPL_PATH',APP_PATH.'/'.TMPL_DIR.'/');
-define('HTML_PATH',APP_PATH.'/'.HTML_DIR.'/'); //
-define('COMMON_PATH',   APP_PATH.'/Common/'); // 项目公共目录
-define('LIB_PATH',         APP_PATH.'/'.LIB_DIR.'/'); //
-define('CACHE_PATH',   APP_PATH.'/'.CACHE_DIR.'/'); //
-define('CONFIG_PATH',  APP_PATH.'/'.CONF_DIR.'/'); //
-define('LOG_PATH',       APP_PATH.'/'.LOG_DIR.'/'); //
-define('LANG_PATH',     APP_PATH.'/'.LANG_DIR.'/'); //
-define('TEMP_PATH',      APP_PATH.'/'.TEMP_DIR.'/'); //
-define('UPLOAD_PATH', APP_PATH.'/Uploads/'); //
-define('PLUGIN_PATH', APP_PATH.'/PlugIns/'); //
-define('DATA_PATH', APP_PATH.'/Data/'); //
-
-define('DATA_TYPE_OBJ',1);
-define('DATA_TYPE_ARRAY',0);
-
-//支持的URL模式
-define('URL_COMMON',      0);   //普通模式
-define('URL_PATHINFO',    1);   //PATHINFO模式
-define('URL_REWRITE',     2);   //REWRITE模式
-define('URL_COMPAT',        3);     // 兼容模式
 
 //  版本信息
 define('THINK_VERSION', '1.5.1beta');
