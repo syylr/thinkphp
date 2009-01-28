@@ -459,19 +459,8 @@ class View extends Base
             $this->trace('运行数据',    $showTime);
             $this->trace('输出编码',    $charset);
             $this->trace('加载类库',    count($GLOBALS['import_file']));
-
-            if(isset(Log::$log[SQL_LOG_DEBUG])) {
-                $log    =   Log::$log[SQL_LOG_DEBUG];
-                $this->trace('SQL记录',is_array($log)?count($log).'条SQL<br/>'.implode('<br/>',$log):'无SQL记录');
-            }else{
-                $this->trace('SQL记录','无SQL记录');
-            }
-            if(isset(Log::$log[WEB_LOG_ERROR])) {
-                $log    =   Log::$log[WEB_LOG_ERROR];
-                $this->trace('错误记录',is_array($log)?count($log).'条错误<br/>'.implode('<br/>',$log):'无错误记录');
-            }else{
-                $this->trace('错误记录','无错误记录');
-            }
+            $log    =   Log::$log;
+            $this->trace('日志信息',count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录');
             $_trace =   array_merge($_trace,$this->trace);
             $_trace = auto_charset($_trace,'utf-8');
             $_title =   auto_charset('页面Trace信息','utf-8');

@@ -307,7 +307,7 @@ function debug_end($label='')
 function system_out($msg)
 {
     if(!empty($msg))
-        Log::record($msg,WEB_LOG_DEBUG);
+        Log::record($msg,Log::DEBUG);
 }
 
 /**

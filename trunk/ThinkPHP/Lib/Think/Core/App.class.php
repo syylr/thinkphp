@@ -648,10 +648,6 @@ class App extends Base
             apply_filter('app_end');
         }
 
-        // 写入错误日志
-        if(C('WEB_LOG_RECORD'))
-            Log::save();
-
         return ;
     }
 
@@ -724,10 +720,9 @@ class App extends Base
       switch ($errno) {
           case E_ERROR:
           case E_USER_ERROR:
-              $errorStr = "错误：[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
+              $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
               if(C('WEB_LOG_RECORD')){
-                 Log::record($errorStr);
-                 Log::save();
+                 Log::write($errorStr,Log::ERR);
               }
               halt($errorStr);
               break;
@@ -735,11 +730,23 @@ class App extends Base
           case E_USER_WARNING:
           case E_USER_NOTICE:
           default:
-            $errorStr = "注意：[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
-            Log::record($errorStr);
+            $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.\n";
+            Log::record($errorStr,Log::NOTICE);
              break;
       }
     }
 
+   /**
+     +----------------------------------------------------------
+     * 析构方法
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     */
+    public function __destruct()
+    {
+        // 保存日志记录
+        if(C('WEB_LOG_RECORD')) Log::save();
+    }
 };//类定义结束
 ?>

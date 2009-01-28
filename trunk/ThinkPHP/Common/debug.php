@@ -26,6 +26,7 @@ if (!defined('THINK_PATH')) exit();
 return  array(
     /* 日志设置 */
     'WEB_LOG_RECORD'=>true,  // 默认进行日志记录
+    'LOG_RECORD_LEVEL'       =>   array('EMERG','ALERT','CRIT','ERR','WARN','NOTIC','INFO','DEBUG','SQL'),  // 允许记录的日志级别
     'LOG_FILE_SIZE'=>2097152,   // 日志文件大小限制
 
     /* 防刷新设置 */

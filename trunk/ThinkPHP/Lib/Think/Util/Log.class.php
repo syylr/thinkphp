@@ -13,14 +13,6 @@
 /**
  +------------------------------------------------------------------------------
  * 日志处理类
- * 支持下面的日志类型
- * WEB_LOG_DEBUG 调试信息
- * WEB_LOG_ERROR 错误信息
- * SQL_LOG_DEBUG SQL调试
- * 分别对象的默认日志文件为
- * 调试日志文件 systemOut.log
- * 错误日志文件  systemErr.log
- * SQL日志文件  systemSql.log
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Think
@@ -32,24 +24,48 @@
 class Log extends Base
 {//类定义开始
 
+    // 日志级别
+    const EMERG   = 'EMERG';  // Emergency: system is unusable
+    const ALERT    = 'ALERT';  // Alert: action must be taken immediately
+    const CRIT      = 'CRIT';  // Critical: critical conditions
+    const ERR       = 'ERR';  // Error: error conditions
+    const WARN    = 'WARN';  // Warning: warning conditions
+    const NOTICE  = 'NOTIC';  // Notice: normal but significant condition
+    const INFO     = 'INFO';  // Informational: informational messages
+    const DEBUG   = 'DEBUG';  // Debug: debug messages
+    const SQL       = 'SQL';  // SQL：sql messages
+
+    // 日志记录方式
+    const SYSTEM = 0;
+    const MAIL      = 1;
+    const TCP       = 2;
+    const FILE       = 3;
+
+    // 日志信息
     static $log =   array();
+
+    // 日期格式
+    static $format =  '[ c ]';
 
     /**
      +----------------------------------------------------------
-     * 记录日志
+     * 记录日志 并且会过滤未经设置的级别
      +----------------------------------------------------------
      * @static
      * @access public
      +----------------------------------------------------------
      * @param string $message 日志信息
-     * @param string $type  日志类型
+     * @param string $level  日志级别
+     * @param boolean $record  是否强制记录
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return void
      +----------------------------------------------------------
      */
-    static function record($message,$type=WEB_LOG_ERROR) {
-        $now = date('[ y-m-d H:i:s ]');
-        self::$log[$type][] =   "\r\n$now\r\n$message";
+    static function record($message,$level=self::ERR,$record=false) {
+        if($record || in_array($level,C('LOG_RECORD_LEVEL'))) {
+            $now = date(self::$format);
+            self::$log[] =   "{$now} {$level}: {$message}\r\n";
+        }
     }
 
     /**
@@ -59,33 +75,26 @@ class Log extends Base
      * @static
      * @access public
      +----------------------------------------------------------
-     * @param string $message 日志信息
-     * @param string $type  日志类型
-     * @param string $file  写入文件 默认取定义日志文件
+     * @param integer $type 日志记录方式
+     * @param string $destination  写入目标
+     * @param string $extra 额外参数
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return void
      +----------------------------------------------------------
      */
-    static function save()
+    static function save($type=self::FILE,$destination='',$extra='')
     {
-        $day    =   date('y_m_d');
-        $_type  =   array(
-            WEB_LOG_DEBUG   =>  realpath(LOG_PATH).'/'.$day."_systemOut.log",
-            SQL_LOG_DEBUG   =>  realpath(LOG_PATH).'/'.$day."_systemSql.log",
-            WEB_LOG_ERROR   =>  realpath(LOG_PATH).'/'.$day."_systemErr.log",
-            );
-        if(!is_writable(LOG_PATH)){
-            halt(L('_FILE_NOT_WRITEABLE_').':'.LOG_PATH);
+        if(empty($destination)) {
+            $destination = LOG_PATH.date('y_m_d').".log";
         }
-        foreach (self::$log as $type=>$logs){
+        if(self::FILE == $type) { // 文件方式记录日志信息
             //检测日志文件大小，超过配置大小则备份日志文件重新生成
-            $destination    =   $_type[$type];
             if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
                   rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
             }
-            error_log(implode('',$logs), FILE_LOG,$destination );
         }
-        clearstatcache();
+        error_log(implode("",self::$log), $type,$destination ,$extra);
+        //clearstatcache();
     }
 
     /**
@@ -96,41 +105,29 @@ class Log extends Base
      * @access public
      +----------------------------------------------------------
      * @param string $message 日志信息
-     * @param string $type  日志类型
-     * @param string $file  写入文件 默认取定义日志文件
+     * @param string $level  日志级别
+     * @param integer $type 日志记录方式
+     * @param string $destination  写入目标
+     * @param string $extra 额外参数
      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return void
      +----------------------------------------------------------
      */
-    static function write($message,$type=WEB_LOG_ERROR,$file='')
+    static function write($message,$level=self::ERR,$type=self::FILE,$destination='',$extra='')
     {
-        $now = date('[ y-m-d H:i:s ]');
-        switch($type){
-            case WEB_LOG_DEBUG:
-                $logType ='[调试]';
-                $destination = $file == ''? LOG_PATH.date('y_m_d')."_systemOut.log" : $file;
-                break;
-            case SQL_LOG_DEBUG:
-                // 调试SQL记录
-                $logType ='[SQL]';
-                $destination = $file == ''? LOG_PATH.date('y_m_d')."_systemSql.log" : $file;
-                break;
-            case WEB_LOG_ERROR:
-                $logType ='[错误]';
-                $destination = $file == ''? LOG_PATH.date('y_m_d')."_systemErr.log" : $file;
-                break;
+        $now = date(self::$format);
+        if(empty($destination)) {
+            $destination = LOG_PATH.date('y_m_d').".log";
         }
-        if(!is_writable(LOG_PATH)){
-            halt(L('_FILE_NOT_WRITEABLE_').':'.$destination);
+        if(self::FILE == $type) { // 文件方式记录日志
+            //检测日志文件大小，超过配置大小则备份日志文件重新生成
+            if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
+                  rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
+            }
         }
-        //检测日志文件大小，超过配置大小则备份日志文件重新生成
-        if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
-              rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
-        }
-        error_log("$now\r\n$message\r\n", FILE_LOG,$destination );
-        clearstatcache();
+        error_log("{$now} {$level}: {$message}\r\n", $type,$destination,$extra );
+        //clearstatcache();
     }
-
 
 }//类定义结束
 ?>
