@@ -360,6 +360,10 @@ class Model extends Base implements IteratorAggregate
         }
     }
 
+    public function findAll($options=array()) {
+        return $this->select($options);
+    }
+
     /**
      +----------------------------------------------------------
      * 分析表达式
@@ -1025,5 +1029,6 @@ class Model extends Base implements IteratorAggregate
         }
         return $this;
     }
+
 };
 ?>

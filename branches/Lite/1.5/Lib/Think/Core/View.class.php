@@ -355,5 +355,6 @@ class View extends Base
             include THINK_PATH.'/Tpl/PageTrace.tpl.php';
         }
     }
+
 }//
 ?>

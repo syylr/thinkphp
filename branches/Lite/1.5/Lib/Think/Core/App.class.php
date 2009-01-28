@@ -50,6 +50,9 @@ class App extends Base
      */
     public function init()
     {
+        // 设定错误和异常处理
+        set_error_handler(array(&$this,"appError"));
+        set_exception_handler(array(&$this,"appException"));
         // 检查项目是否编译过
         // 在部署模式下会自动在第一次执行的时候编译项目
         if(is_file(RUNTIME_PATH.'~app.php') && (!is_file(CONFIG_PATH.'config.php') || filemtime(RUNTIME_PATH.'~app.php')>filemtime(CONFIG_PATH.'config.php'))) {
@@ -66,9 +69,7 @@ class App extends Base
             // 不使用语言包功能，仅仅加载框架语言文件
             L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
         }else{
-            // 设定错误和异常处理
-            set_error_handler(array(&$this,"appError"));
-            set_exception_handler(array(&$this,"appException"));
+
             // 执行项目开始行为
             B('app_begin');
 
@@ -78,7 +79,6 @@ class App extends Base
 
             // Session初始化
             session_start();
-
             // 应用调度过滤器
             // 如果没有加载任何URL调度器
             // 默认只支持 QUERY_STRING 方式
@@ -123,7 +123,6 @@ class App extends Base
         if(C('SHOW_RUN_TIME')){
             $GLOBALS['_initTime'] = microtime(TRUE);
         }
-
         return ;
     }
 
@@ -140,7 +139,6 @@ class App extends Base
     {
         // 加载惯例配置文件
         C(include THINK_PATH.'/Common/convention.php');
-
         // 加载项目配置文件
         if(file_exists_case(CONFIG_PATH.'config.php')) {
             C(include CONFIG_PATH.'config.php');
@@ -377,7 +375,6 @@ class App extends Base
         define('WEB_PUBLIC_URL', WEB_URL.'/Public');
         //项目公共文件目录
         define('APP_PUBLIC_URL', APP_TMPL_URL.'Public');
-
         return ;
     }
 
@@ -394,7 +391,10 @@ class App extends Base
      */
     public function exec()
     {
-        if(!C('THIN_MODEL')) {
+        if(C('THIN_MODEL') || IS_CLI) {
+            // 简洁模式和CLI模式下面直接执行模块的操作方法
+            R(MODULE_NAME,ACTION_NAME);
+        }else{
             // 导入公共类
             $_autoload	=	C('AUTO_LOAD_CLASS');
             if(!empty($_autoload)) {
@@ -441,13 +441,7 @@ class App extends Base
             if($behaviorOn) {
                 B('app_end');
             }
-        }else{
-            // 执行模块的操作方法
-            R(MODULE_NAME,ACTION_NAME);
         }
-        // 写入错误日志
-        if(C('WEB_LOG_RECORD'))
-            Log::save();
         return ;
     }
 
@@ -501,8 +495,7 @@ class App extends Base
           case E_USER_ERROR:
               $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
               if(C('WEB_LOG_RECORD')){
-                 Log::record($errorStr,Log::ERR);
-                 Log::save();
+                 Log::write($errorStr,Log::ERR);
               }
               halt($errorStr);
               break;
@@ -516,5 +509,17 @@ class App extends Base
       }
     }
 
+   /**
+     +----------------------------------------------------------
+     * 析构方法
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     */
+    public function __destruct()
+    {
+        // 保存日志记录
+        if(C('WEB_LOG_RECORD')) Log::save();
+    }
 };//类定义结束
 ?>

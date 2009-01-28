@@ -49,19 +49,20 @@ class Log extends Base
 
     /**
      +----------------------------------------------------------
-     * 记录日志
+     * 记录日志 并且会过滤未经设置的级别
      +----------------------------------------------------------
      * @static
      * @access public
      +----------------------------------------------------------
      * @param string $message 日志信息
      * @param string $level  日志级别
+     * @param boolean $record  是否强制记录
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    static function record($message,$level=self::ERR) {
-        if(in_array($level,C('LOG_RECORD_LEVEL'))) {
+    static function record($message,$level=self::ERR,$record=false) {
+        if($record || in_array($level,C('LOG_RECORD_LEVEL'))) {
             $now = date(self::$format);
             self::$log[] =   "{$now} {$level}: {$message}\r\n";
         }
@@ -114,19 +115,17 @@ class Log extends Base
      */
     static function write($message,$level=self::ERR,$type=self::FILE,$destination='',$extra='')
     {
-        if(in_array($level,C('LOG_RECORD_LEVEL'))) {
-            $now = date(self::$format);
-            if(empty($destination)) {
-                $destination = LOG_PATH.date('y_m_d').".log";
-            }
-            if(self::FILE == $type) { // 文件方式记录日志
-                //检测日志文件大小，超过配置大小则备份日志文件重新生成
-                if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
-                      rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
-                }
-            }
-            error_log("{$now} {$level}: {$message}\r\n", $type,$destination,$extra );
+        $now = date(self::$format);
+        if(empty($destination)) {
+            $destination = LOG_PATH.date('y_m_d').".log";
         }
+        if(self::FILE == $type) { // 文件方式记录日志
+            //检测日志文件大小，超过配置大小则备份日志文件重新生成
+            if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
+                  rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
+            }
+        }
+        error_log("{$now} {$level}: {$message}\r\n", $type,$destination,$extra );
         //clearstatcache();
     }
 

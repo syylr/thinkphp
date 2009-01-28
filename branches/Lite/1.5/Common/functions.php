@@ -102,6 +102,9 @@ function U($url,$params=array(),$redirect=false) {
  +----------------------------------------------------------
  */
 function halt($error) {
+    if(C('THIN_MODEL') || IS_CLI) {
+        exit ($error);
+    }
     $e = array();
     if(C('DEBUG_MODE')){
         //调试模式下输出错误信息
