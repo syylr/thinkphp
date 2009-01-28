@@ -94,6 +94,7 @@ return  array(
 	'TEMPLATE_CHARSET'		=>	'utf-8',	// 模板模板编码
 	'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
     'DEFAULT_LAYOUT'         =>    'Layout:index', // 默认布局模板文件
+    'AUTO_DETECT_THEME'   =>   false, // 自动侦测模板主题
 
 	/* 模型设置 */
 	'CONTR_CLASS_PREFIX'	=>	'',     // 控制器前缀
@@ -114,6 +115,7 @@ return  array(
 
 	/* 语言时区设置 */
 	'LANG_SWITCH_ON'			=>	false,	 // 默认关闭多语言包功能
+    'AUTO_DETECT_LANG'      =>   false,     // 自动侦测语言
     'LANG_CACHE_ON'           =>    false, // 默认关闭语言包的缓存 大型应用可以开启 按照模块的语言包来缓存
 	'DEFAULT_LANGUAGE'		=>	'zh-cn',	 // 默认语言
 	'TIME_ZONE'					=>	'PRC',		 // 默认时区
