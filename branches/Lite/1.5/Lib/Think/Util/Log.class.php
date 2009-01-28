@@ -86,10 +86,7 @@ class Log extends Base
         if(empty($destination)) {
             $destination = LOG_PATH.date('y_m_d').".log";
         }
-        if(self::FILE == $type) {
-            if(!is_writable(LOG_PATH)){
-                halt(L('_FILE_NOT_WRITEABLE_').':'.LOG_PATH);
-            }
+        if(self::FILE == $type) { // 文件方式记录日志信息
             //检测日志文件大小，超过配置大小则备份日志文件重新生成
             if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
                   rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
@@ -122,10 +119,7 @@ class Log extends Base
             if(empty($destination)) {
                 $destination = LOG_PATH.date('y_m_d').".log";
             }
-            if(self::FILE == $type) {
-                if(!is_writable(LOG_PATH)){
-                    halt(L('_FILE_NOT_WRITEABLE_').':'.$destination);
-                }
+            if(self::FILE == $type) { // 文件方式记录日志
                 //检测日志文件大小，超过配置大小则备份日志文件重新生成
                 if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
                       rename($destination,dirname($destination).'/'.time().'-'.basename($destination));

@@ -204,14 +204,12 @@ class App extends Base
      */
     private function getModule()
     {
-        if(IS_CLI) {
+        if(IS_CLI) {// 命令模式下面获取第一个参数作为模块名
             $module = isset($_SERVER['argv'][1])?$_SERVER['argv'][1]:C('DEFAULT_MODULE');
         }else{
             $module = isset($_POST[C('VAR_MODULE')]) ?
                 $_POST[C('VAR_MODULE')] :
-                (isset($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:'');
-            // 如果 $module 为空，则赋予默认值
-            if (empty($module)) $module = C('DEFAULT_MODULE');
+                (isset($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:C('DEFAULT_MODULE'));
             if(C('URL_CASE_INSENSITIVE')) {
                 // URL地址不区分大小写
                 define('P_MODULE_NAME',strtolower($module));
@@ -234,14 +232,12 @@ class App extends Base
      */
     private function getAction()
     {
-        if(IS_CLI) {
+        if(IS_CLI) { // 命令行模式下面获取第二个参数作为操作名
             $action  =  isset($_SERVER['argv'][2])?$_SERVER['argv'][2]:C('DEFAULT_ACTION');
         }else{
             $action   = isset($_POST[C('VAR_ACTION')]) ?
                 $_POST[C('VAR_ACTION')] :
-                (isset($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:'');
-            // 如果 $action 为空，则赋予默认值
-            if (empty($action)) $action = C('DEFAULT_ACTION');
+                (isset($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:C('DEFAULT_ACTION'));
             unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
         }
         return $action;
@@ -322,7 +318,7 @@ class App extends Base
     {
         if(C('TMPL_SWITCH_ON')) {
             // 启用多模版
-            if(C('AUTO_DETECT_THEME')) {// 自动侦测语言
+            if(C('AUTO_DETECT_THEME')) {// 自动侦测模板主题
                 $t = C('VAR_TEMPLATE');
                 if ( isset($_GET[$t]) ) {
                     $templateSet = $_GET[$t];
