@@ -35,29 +35,33 @@ define('IS_CGI',substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
 
-// 当前文件名
-if(!defined('_PHP_FILE_')) {
-    if(IS_CGI) {
-        //CGI/FASTCGI模式下
-        $_temp  = explode('.php',$_SERVER["PHP_SELF"]);
-        define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
-    }else {
-        define('_PHP_FILE_',    rtrim($_SERVER["SCRIPT_NAME"],'/'));
+if(!IS_CLI) {
+    // 当前文件名
+    if(!defined('_PHP_FILE_')) {
+        if(IS_CGI) {
+            //CGI/FASTCGI模式下
+            $_temp  = explode('.php',$_SERVER["PHP_SELF"]);
+            define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
+        }else {
+            define('_PHP_FILE_',    rtrim($_SERVER["SCRIPT_NAME"],'/'));
+        }
     }
-}
-if(!defined('WEB_URL')) {
-    // 网站URL根目录
-    if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
-        $_root = dirname(dirname(_PHP_FILE_));
-    }else {
-        $_root = dirname(_PHP_FILE_);
+    if(!defined('WEB_URL')) {
+        // 网站URL根目录
+        if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
+            $_root = dirname(dirname(_PHP_FILE_));
+        }else {
+            $_root = dirname(_PHP_FILE_);
+        }
+        define('WEB_URL',   (($_root=='/' || $_root=='\\')?'':$_root));
     }
-    define('WEB_URL',   (($_root=='/' || $_root=='\\')?'':$_root));
-}
 
-define('VENDOR_PATH',THINK_PATH.'/Vendor/');
-// 为了方便导入第三方类库 设置Vendor目录到include_path
-set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
+    //支持的URL模式
+    define('URL_COMMON',      0);   //普通模式
+    define('URL_PATHINFO',    1);   //PATHINFO模式
+    define('URL_REWRITE',     2);   //REWRITE模式
+    define('URL_COMPAT',        3);     // 兼容模式
+}
 
 // 目录设置
 define('CACHE_DIR',  'Cache');
@@ -80,11 +84,9 @@ define('LANG_PATH',     APP_PATH.'/'.LANG_DIR.'/'); //
 define('TEMP_PATH',      APP_PATH.'/'.TEMP_DIR.'/'); //
 define('DATA_PATH', APP_PATH.'/Data/'); //
 
-//支持的URL模式
-define('URL_COMMON',      0);   //普通模式
-define('URL_PATHINFO',    1);   //PATHINFO模式
-define('URL_REWRITE',     2);   //REWRITE模式
-define('URL_COMPAT',        3);     // 兼容模式
+define('VENDOR_PATH',THINK_PATH.'/Vendor/');
+// 为了方便导入第三方类库 设置Vendor目录到include_path
+set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
 
 //  版本信息
 define('THINK_VERSION', '1.5Lite');
