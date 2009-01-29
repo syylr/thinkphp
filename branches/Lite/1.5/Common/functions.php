@@ -20,6 +20,20 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
+
+function compile($filename) {
+    if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
+        $content = file_get_contents($filename);
+    }else{
+        $content = php_strip_whitespace($filename);
+    }
+    $content = substr(trim($content),5);
+    if('?>' == substr($content,-2)) {
+        $content = substr($content,0,-2);
+    }
+    return $content;
+}
+
 /**
  +----------------------------------------------------------
  * URL组装 支持不同模式和路由

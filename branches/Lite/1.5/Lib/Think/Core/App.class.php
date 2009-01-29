@@ -144,17 +144,22 @@ class App extends Base
             C(include CONFIG_PATH.'config.php');
         }
         $common   = '';
+        $debug  =  C('DEBUG_MODE');  //  是否调试模式
         // 加载项目公共文件
         if(file_exists_case(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
-            if(!C('DEBUG_MODE')) {
-                if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
-                    $common	= file_get_contents(COMMON_PATH.'common.php');
-                }else{
-                    $common	= php_strip_whitespace(COMMON_PATH.'common.php');
-                }
-                if('?>' != substr(trim($common),-2)) {
-                    $common .= ' ?>';
+            if(!$debug) { // 编译文件
+                $common   .= compile(COMMON_PATH.'common.php');
+            }
+        }
+        // 加载项目编译文件列表
+        if(is_file(CONFIG_PATH.'app.php')) {
+            $list   =  include CONFIG_PATH.'app.php';
+            foreach ($list as $key=>$file){
+                // 加载并编译文件
+                require $file;
+                if(!$debug) {
+                    $common   .= compile($file);
                 }
             }
         }
@@ -175,7 +180,7 @@ class App extends Base
             }
         }
         // 如果是调试模式加载调试模式配置文件
-        if(C('DEBUG_MODE')) {
+        if($debug) {
             // 加载系统默认的开发模式配置文件
             C(include THINK_PATH.'/Common/debug.php');
             if(file_exists_case(CONFIG_PATH.'debug.php')) {
@@ -185,11 +190,12 @@ class App extends Base
         }else{
             // 部署模式下面生成编译文件
             // 下次直接加载项目编译文件
-            $content  = $common."<?php\nreturn ".var_export(C(),true).";\n?>";
+            $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
             file_put_contents(RUNTIME_PATH.'~app.php',$content);
         }
         return ;
     }
+
 
     /**
      +----------------------------------------------------------
