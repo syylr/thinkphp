@@ -374,21 +374,22 @@ class Db extends Base
      * @access public
      +----------------------------------------------------------
      * @param string $sql  查询语句
-     * @param boolean $cache  是否缓存查询
-     * @param boolean $lazy  是否惰性加载
-     * @param boolean $lock 是否lock
-     * @param boolean $fetchSql 是否返回SQL
+     * @param array $options 参数
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function query($sql='',$fetchSql=false)
+    public function query($sql='',$options=array())
     {
         if(empty($sql)) {
             $sql   = $this->queryStr;
         }
-        if($fetchSql) {
+        if(!empty($options['fetch'])) {
             return $sql;
+        }
+        if(!empty($options['lazy'])) {
+            // 延时读取数据库
+            return $this->lazyQuery($sql);
         }
         // 进行查询
         $data = $this->_query($sql);
@@ -402,24 +403,37 @@ class Db extends Base
      * @access public
      +----------------------------------------------------------
      * @param string $sql  执行语句
-     * @param boolean $lock 是否lock
-     * @param boolean $fetchSql 是否返回SQL
+     * @param array $options 参数
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function execute($sql='',$lock=false,$fetchSql=false)
+    public function execute($sql='',$options=array())
     {
         if(empty($sql)) {
             $sql  = $this->queryStr;
         }
-        if($lock) {
-            $sql .= $this->setLockMode();
-        }
-        if($fetchSql) {
+        if(!empty($options['fetch'])) {
             return $sql;
         }
         return $this->_execute($sql);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 延时查询方法
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $sql  查询语句
+     +----------------------------------------------------------
+     * @return ResultIterator
+     +----------------------------------------------------------
+     */
+    public function lazyQuery($sql='') {
+        // 返回ResultIterator对象 在操作数据的时候再进行读取
+        import("Think.Db.ResultIterator");
+        return new ResultIterator($sql);
     }
 
     /**
@@ -429,12 +443,12 @@ class Db extends Base
      * @access public
      +----------------------------------------------------------
      * @param mixed $data 数据
-     * @param string $table  数据表名
+     * @param array $options 参数表达式
      +----------------------------------------------------------
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function insert($data,$table) {
+    public function insert($data,$options=array()) {
         foreach ($data as $key=>$val){
             if(is_scalar($val)) {// 过滤非标量数据的写入
                 $fields[] =  '`'.$key.'`';
@@ -449,10 +463,11 @@ class Db extends Base
                 }
             }
         }
+        $table = $options['table'];
         $fieldsStr    = implode(',', $fields);
         $valuesStr  = implode(',', $values);
         $sql   =  'INSERT INTO `'.$table.'` ('.$fieldsStr.') VALUES ('.$valuesStr.')';
-        return $this->execute($sql);
+        return empty($options['fetch'])? $this->execute($sql)  :   $sql;
     }
 
     /**
@@ -501,7 +516,7 @@ class Db extends Base
         if(!empty($limit)) {
             $sql   .= ' LIMIT '.$limit;
         }
-        return $this->execute($sql);
+        return empty($options['fetch'])? $this->execute($sql)  :   $sql;
     }
 
     /**
@@ -531,7 +546,7 @@ class Db extends Base
         if(!empty($limit)) {
             $sql   .= ' LIMIT '.$limit;
         }
-        return $this->execute($sql);
+        return empty($options['fetch'])? $this->execute($sql)  :   $sql;
     }
 
     /**
@@ -589,7 +604,7 @@ class Db extends Base
         if(!empty($limit)) {
             $sql   .= ' LIMIT '.$limit;
         }
-        return $this->query($sql);
+        return empty($options['fetch'])? $this->query($sql)  :   $sql;
     }
 
     /**

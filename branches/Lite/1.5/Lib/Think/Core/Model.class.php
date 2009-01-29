@@ -250,7 +250,7 @@ class Model extends Base implements IteratorAggregate
         // 数据处理
         $data = $this->_facade($data);
         // 写入数据到数据库
-        if(false === $result = $this->db->insert($data,$options['table'])){
+        if(false === $result = $this->db->insert($data,$options)){
             // 数据库插入操作失败
             $this->error = L('_OPERATION_WRONG_');
             return false;
@@ -1061,6 +1061,27 @@ class Model extends Base implements IteratorAggregate
             $this->options['join'] =  $join;
         }else{
             $this->options['join'][]  =   $join;
+        }
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否返回执行的SQL
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param boolean $fetch
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function fetchSql($fetch=true) {
+        if(in_array(strtolower($fetch),array('find','findall','save','add','delete'))) {
+            $this->options['fetch'] =   true;
+            return $this->{$fetch}();
+        }else{
+            $this->options['fetch'] =   $fetch;
         }
         return $this;
     }
