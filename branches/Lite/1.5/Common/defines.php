@@ -60,7 +60,7 @@ if(!IS_CLI) {
     define('URL_COMMON',      0);   //普通模式
     define('URL_PATHINFO',    1);   //PATHINFO模式
     define('URL_REWRITE',     2);   //REWRITE模式
-    define('URL_COMPAT',        3);     // 兼容模式
+    define('URL_COMPAT',      3);   // 兼容模式
 }
 
 // 目录设置
