@@ -63,8 +63,6 @@ class DbPdo extends Db{
             if($this->pconnect) {
                 $config['params'][constant('PDO::ATTR_PERSISTENT')] = true;
             }
-            //add by wyfeng at 2008.12.29
-            $config['params'][PDO::ATTR_CASE] = C("DB_CASE_LOWER")?PDO::CASE_LOWER:PDO::CASE_UPPER;
             try{
                 $this->linkID[$linkNum] = new PDO( $config['dsn'], $config['username'], $config['password'],$config['params']);
             }catch (PDOException $e) {
@@ -168,6 +166,7 @@ class DbPdo extends Db{
                 return false;
         } else {
             $this->numRows = $result;
+            $this->lastInsID   = $this->_linkID->lastInsertId();
             return $this->numRows;
         }
     }

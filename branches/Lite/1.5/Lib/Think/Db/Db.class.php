@@ -436,15 +436,17 @@ class Db extends Base
      */
     public function insert($data,$table) {
         foreach ($data as $key=>$val){
-            $fields[] =  '`'.$key.'`';
-            if(is_int($val)) {
-                $values[]   =  intval($val);
-            }elseif(is_float($val)){
-                $values[]   =  floatval($val);
-            }elseif(is_string($val)){
-                $values[]  = '\''.$val.'\'';
-            }elseif(is_null($val)){
-                $values[]   =  'null';
+            if(is_scalar($val)) {// 过滤非标量数据的写入
+                $fields[] =  '`'.$key.'`';
+                if(is_int($val)) {
+                    $values[]   =  intval($val);
+                }elseif(is_float($val)){
+                    $values[]   =  floatval($val);
+                }elseif(is_string($val)){
+                    $values[]  = '\''.$val.'\'';
+                }elseif(is_null($val)){
+                    $values[]   =  'null';
+                }
             }
         }
         $fieldsStr    = implode(',', $fields);
@@ -476,7 +478,7 @@ class Db extends Base
                     $set[]  = '`'.$key.'`=\''.$val.'\'';
                 }elseif(is_null($val)){
                     $set[]   =  '`'.$key.'`=null';
-                }elseif(is_array($val) && strtolower($val[0]) == 'exp') {
+                }elseif(isset($val[0]) && is_string($val[0]) && strtolower($val[0]) == 'exp') {
                     // 使用表达式
                     $set[]    =   '`'.$key.'`='.$val[1];
                 }
@@ -494,7 +496,7 @@ class Db extends Base
             $sql   .= ' WHERE '.$where;
         }
         if(!empty($order)) {
-            $sql   .= ' ORDER '.$order;
+            $sql   .= ' ORDER BY '.$order;
         }
         if(!empty($limit)) {
             $sql   .= ' LIMIT '.$limit;
@@ -524,7 +526,7 @@ class Db extends Base
             $sql   .= ' WHERE '.$where;
         }
         if(!empty($order)) {
-            $sql   .= ' ORDER '.$order;
+            $sql   .= ' ORDER BY '.$order;
         }
         if(!empty($limit)) {
             $sql   .= ' LIMIT '.$limit;
@@ -557,7 +559,7 @@ class Db extends Base
         if($distinct) {
             $sql   .=  ' DISTINCT ';
         }
-        $sql   .= $field.' FROM `'.$table.'`';
+        $sql   .= $this->addSpecialChar($field).' FROM '.$this->addSpecialChar($table);
         if(!empty($join)) {
             if(is_array($join)) {
                 foreach ($join as $key=>$_join){
@@ -582,12 +584,34 @@ class Db extends Base
             $sql   .= ' GROUP '.$group;
         }
         if(!empty($order)) {
-            $sql   .= ' ORDER '.$order;
+            $sql   .= ' ORDER BY '.$order;
         }
         if(!empty($limit)) {
             $sql   .= ' LIMIT '.$limit;
         }
         return $this->query($sql);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 字段和表名添加`
+     * 保证指令中使用关键字不出错 针对mysql
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param mixed $value
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    protected function addSpecialChar($value) {
+        $value   =  trim($value);
+        if( false !== strpos($value,' ') || false !== strpos($value,',') || false !== strpos($value,'*') ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
+            //如果包含* 或者 使用了sql方法 则不作处理
+        }else{
+            $value = '`'.$value.'`';
+        }
+        return $value;
     }
 
     /**

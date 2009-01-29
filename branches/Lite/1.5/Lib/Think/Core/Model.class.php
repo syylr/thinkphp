@@ -204,14 +204,14 @@ class Model extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 对保存到数据库的数据进行处理
      +----------------------------------------------------------
-     * @access private
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $data 要操作的数据
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-     private function _facade($data) {
+     protected function _facade($data) {
         // 检查非数据字段
         if(isset($this->fields)) {
             foreach ($data as $key=>$val){
@@ -230,11 +230,12 @@ class Model extends Base implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      * @param mixed $data 数据
+     * @param array $options 表达式
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function add($data='') {
+    public function add($data='',$options=array()) {
         if(empty($data)) {
             // 没有传递数据，获取当前数据对象的值
             if(!empty($this->data)) {
@@ -244,22 +245,28 @@ class Model extends Base implements IteratorAggregate
                 return false;
             }
         }
-        $table = isset($this->options['table'])?$this->options['table']:$this->getTableName();
-        // 查询过后清空表达式组装 避免影响下次查询
-        $this->options  =   array();
+        // 分析表达式
+        $options =  $this->_parseOptions($options);
         // 数据处理
         $data = $this->_facade($data);
         // 写入数据到数据库
-        if(false === $result = $this->db->insert($data,$table)){
+        if(false === $result = $this->db->insert($data,$options['table'])){
             // 数据库插入操作失败
             $this->error = L('_OPERATION_WRONG_');
             return false;
         }else {
             $insertId   =   $this->getLastInsID();
+            if($insertId) {
+                $data[$this->getPk()]  = $insertId;
+                $this->_after_insert($data,$options);
+                return $insertId;
+            }
             //成功后返回插入ID
-            return $insertId?    $insertId  :   $result;
+            return $result;
         }
     }
+    // 插入成功后的回调方法
+    protected function _after_insert(&$data,$options='') {}
 
     /**
      +----------------------------------------------------------
@@ -286,9 +293,11 @@ class Model extends Base implements IteratorAggregate
         // 数据处理
         $data = $this->_facade($data);
         // 如果存在主键数据 则自动作为更新条件
-        if(empty($options['where']) && isset($data[$this->pk])) {
-            $options['where']  =  $this->pk.'=\''.$data[$this->pk].'\'';
-            unset($data[$this->pk]);
+        if(empty($options['where']) && isset($data[$this->getPk()])) {
+            $pk   =  $this->getPk();
+            $options['where']  =  $pk.'=\''.$data[$pk].'\'';
+            $pkValue = $data[$pk];
+            unset($data[$pk]);
         }
         // 分析表达式
         $options =  $this->_parseOptions($options);
@@ -296,9 +305,15 @@ class Model extends Base implements IteratorAggregate
             $this->error = L('_OPERATION_WRONG_');
             return false;
         }else {
+            if(isset($pkValue)) {
+                $data[$this->getPk()]   =  $pkValue;
+            }
+            $this->_after_update($data,$options);
             return true;
         }
     }
+    // 更新成功后的回调方法
+    protected function _after_update($data,$options) {}
 
     /**
      +----------------------------------------------------------
@@ -314,15 +329,16 @@ class Model extends Base implements IteratorAggregate
     public function delete($options=array()) {
         if(empty($options) && empty($this->options)) {
             // 如果删除条件为空 则删除当前数据对象所对应的记录
-            if(!empty($this->data) && isset($this->data[$this->pk])) {
-                return $this->delete($this->data[$this->pk]);
+            if(!empty($this->data) && isset($this->data[$this->getPk()])) {
+                return $this->delete($this->data[$this->getPk()]);
             }else{
                 return false;
             }
         }
         if(is_numeric($options)  || is_string($options)) {
             // 根据主键删除记录
-            $where  =  $this->pk.'=\''.$options.'\'';
+            $where  =  $this->getPk().'=\''.$options.'\'';
+            $pkValue = $options;
             $options =  array();
             $options['where'] =  $where;
         }
@@ -333,10 +349,17 @@ class Model extends Base implements IteratorAggregate
             $this->error =  L('_OPERATION_WRONG_');
             return false;
         }else {
+            $data = array();
+            if(isset($pkValue)) {
+                $data[$this->getPk()]   =  $pkValue;
+            }
+            $this->_after_delete($data,$options);
             // 返回删除记录个数
             return $result;
         }
     }
+    // 删除成功后的回调方法
+    protected function _after_delete($data,$options) {}
 
     /**
      +----------------------------------------------------------
@@ -354,11 +377,14 @@ class Model extends Base implements IteratorAggregate
         $options =  $this->_parseOptions($options);
         if($result = $this->db->select($options)) {
             $this->dataList = $result;
+            $this->_after_select($result,$options);
             return $result;
         }else{
             return false;
         }
     }
+    // 查询成功后的回调方法
+    protected function _after_select(&$result,$options) {}
 
     public function findAll($options=array()) {
         return $this->select($options);
@@ -385,8 +411,11 @@ class Model extends Base implements IteratorAggregate
             // 自动获取表名
             $options['table'] =$this->getTableName();
         }
+        $this->_options_filter($options);
         return $options;
     }
+    // 表达式过滤回调方法
+    protected function _options_filter(&$options) {}
 
     /**
      +----------------------------------------------------------
@@ -401,18 +430,23 @@ class Model extends Base implements IteratorAggregate
      */
      public function find($options=array()) {
          if(is_numeric($options) || is_string($options)) {
-             $where = $this->pk.'=\''.$options.'\'';
+             $where = $this->getPk().'=\''.$options.'\'';
              $options = array();
              $options['where'] = $where;
          }
         $options['limit'] = 1;
-        if($result = $this->select($options)) {
+        // 分析表达式
+        $options =  $this->_parseOptions($options);
+        if($result = $this->db->select($options)) {
             $this->data = $result[0];
+            $this->_after_find($this->data,$options);
             return $this->data;
         }else{
             return false;
         }
      }
+     // 查询成功的回调方法
+     protected function _after_find(&$result,$options) {}
 
     /**
      +----------------------------------------------------------
@@ -531,8 +565,9 @@ class Model extends Base implements IteratorAggregate
             return false;
         }
         $type = 'add';
-        if(isset($data[$this->pk])) {
-            if($this->field($this->pk)->where($this->pk.'=\''.$data[$this->pk].'\'')->find()) {
+        if(isset($data[$this->getPk()])) {
+            $pk   =  $this->getPk();
+            if($this->field($pk)->where($pk.'=\''.$data[$pk].'\'')->find()) {
                 // 编辑状态
                 $type = 'edit';
             }
@@ -1030,5 +1065,8 @@ class Model extends Base implements IteratorAggregate
         return $this;
     }
 
+    public function getPk() {
+        return $this->pk?$this->pk:'id';
+    }
 };
 ?>
