@@ -178,7 +178,7 @@ class Model extends Base implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('field','table','where','order','limit','having','group','distinct'),true)) {
+        if(in_array(strtolower($method),array('field','table','where','order','limit','having','group','distinct','lazy'),true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
