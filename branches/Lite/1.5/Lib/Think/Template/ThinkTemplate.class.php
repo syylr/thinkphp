@@ -442,6 +442,9 @@ class  ThinkTemplate extends Base
             $attr = stripslashes($attr);
             $content = stripslashes($content);
         //}
+        if(ini_get('magic_quotes_sybase')) {
+            $attr =  str_replace('\"','\'',$attr);
+        }
         $tLib =  get_instance_of('TagLib'.ucwords(strtolower($tagLib)));
         if($tLib->valid()) {
             $parse = '_'.$tag;
