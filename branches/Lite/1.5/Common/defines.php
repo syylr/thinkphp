@@ -67,8 +67,8 @@ if(!IS_CLI) {
 define('CACHE_DIR',  'Cache');
 define('HTML_DIR',    'Html');
 define('CONF_DIR',    'Conf');
-define('LIB_DIR',        'Lib');
-define('LOG_DIR',      'Logs');
+define('LIB_DIR',      'Lib');
+define('LOG_DIR',     'Logs');
 define('LANG_DIR',    'Lang');
 define('TEMP_DIR',    'Temp');
 define('TMPL_DIR',     'Tpl');
