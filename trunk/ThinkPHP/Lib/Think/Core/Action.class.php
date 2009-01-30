@@ -532,7 +532,7 @@ abstract class Action extends Base
      * @return void
      +----------------------------------------------------------
      */
-    public function forward($action='_dispatch_jump',$module='',$app=APP_NAME,$exit=false,$delay=0)
+    public function forward($action='_dispatch_jump',$module='',$app='@',$exit=false,$delay=0)
     {
         if(!empty($delay)) {
             //指定延时跳转 单位为秒
@@ -543,14 +543,11 @@ abstract class Action extends Base
             call_user_func($action);
         }else {
             if(empty($module)) {
-                $module = defined('C_MODULE_NAME')?C_MODULE_NAME:MODULE_NAME;
-            }
-            if( MODULE_NAME!= $module) {
-                $class =     A($module,$app);
-                call_user_func(array(&$class,$action));
-            }else {
                 // 执行当前模块操作
                 $this->{$action}();
+            }else{
+                $class =     A($module,$app);
+                call_user_func(array(&$class,$action));
             }
         }
         if($exit) {
