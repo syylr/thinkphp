@@ -16,7 +16,7 @@
  +------------------------------------------------------------------------------
  */
 if(version_compare(PHP_VERSION,'5.0.0','<') ) {
-    die('ThinkPHP 1.* require PHP > 5.0 !');
+    die('require PHP > 5.0 !');
 }
 //记录开始运行时间
 $GLOBALS['_beginTime'] = microtime(TRUE);

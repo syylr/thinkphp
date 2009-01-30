@@ -123,7 +123,6 @@ class DbPdo extends Db{
             else
                 return false;
         } else {
-            //$this->numCols = $this->PDOStatement->columnCount();
             $this->resultSet = $this->getAll();
             $this->numRows = count( $this->resultSet );
             if ( $this->numRows > 0 ){

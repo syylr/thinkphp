@@ -88,12 +88,41 @@ class ViewModel extends Model {
         }else{
             $options['field'] = $this->checkFields();
         }
-        if(isset($options['group'])) {
+        if(isset($options['group']))
             $options['group']  =  $this->checkGroup($options['group']);
-        }
-        if(isset($options['order'])) {
+        if(isset($options['order']))
             $options['order']  =  $this->checkOrder($options['order']);
-        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 检查条件中的视图字段
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param mixed $data 条件表达式
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    protected function checkCondition($where) {
+        if(is_array($where)) {
+            $view   =   array();
+            // 检查视图字段
+            foreach ($this->viewFields as $key=>$val){
+                $k = isset($val['_as'])?$val['_as']:$key;
+                foreach ($where as $name=>$value){
+                    if(false !== $field = array_search($name,$val)) {
+                        // 存在视图字段
+                        $_key   =   is_numeric($field)?    $k.'.'.$name   :   $k.'.'.$field;
+                        $view[$_key]    =   $value;
+                        unset($where[$name]);
+                    }
+                }
+            }
+            $where    =   array_merge($where,$view);
+         }
+        return $where;
     }
 
     /**
@@ -120,11 +149,7 @@ class ViewModel extends Model {
                     $k = isset($val['_as'])?$val['_as']:$name;
                     if(false !== $_field = array_search($field,$val)) {
                         // 存在视图字段
-                        if(is_numeric($_field)) {
-                            $field     =  $k.'.'.$field;
-                        }else{
-                            $field     =  $k.'.'.$_field;
-                        }
+                        $field     =  is_numeric($_field)?$k.'.'.$field:$k.'.'.$_field;
                         break;
                     }
                 }
@@ -159,11 +184,7 @@ class ViewModel extends Model {
                     $k = isset($val['_as'])?$val['_as']:$name;
                     if(false !== $_field = array_search($field,$val)) {
                         // 存在视图字段
-                        if(is_numeric($_field)) {
-                            $field  =  $k.'.'.$field;
-                        }else{
-                            $field  =  $k.'.'.$_field;
-                        }
+                        $field     =  is_numeric($_field)?$k.'.'.$field:$k.'.'.$_field;
                         break;
                     }
                 }
@@ -173,7 +194,6 @@ class ViewModel extends Model {
          }
         return $group;
     }
-
 
     /**
      +----------------------------------------------------------
