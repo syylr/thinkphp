@@ -21,19 +21,6 @@
  +------------------------------------------------------------------------------
  */
 
-function compile($filename) {
-    if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
-        $content = file_get_contents($filename);
-    }else{
-        $content = php_strip_whitespace($filename);
-    }
-    $content = substr(trim($content),5);
-    if('?>' == substr($content,-2)) {
-        $content = substr($content,0,-2);
-    }
-    return $content;
-}
-
 /**
  +----------------------------------------------------------
  * URL组装 支持不同模式和路由
@@ -272,26 +259,11 @@ function debug_end($label='')
 
 /**
  +----------------------------------------------------------
- * 系统调试输出 Log::record 的一个调用方法
- +----------------------------------------------------------
- * @param string $msg 调试信息
- +----------------------------------------------------------
- * @return void
- +----------------------------------------------------------
- */
-function system_out($msg)
-{
-    if(!empty($msg))
-        Log::record($msg,Log::DEBUG);
-}
-
-/**
- +----------------------------------------------------------
- * 变量输出
+ * 浏览器友好的变量输出
  +----------------------------------------------------------
  * @param string $var 变量名
+ * @param boolean $echo 是否显示
  * @param string $label 显示标签
- * @param string $echo 是否显示
  +----------------------------------------------------------
  * @return string
  +----------------------------------------------------------
@@ -440,14 +412,12 @@ function file_exists_case($filename) {
  +----------------------------------------------------------
  * @param string $class 类库命名空间字符串
  * @param string $baseUrl 起始路径
- * @param string $appName 项目名
  * @param string $ext 导入的文件扩展名
- * @param string $subdir 是否导入子目录 默认false
  +----------------------------------------------------------
  * @return boolen
  +----------------------------------------------------------
  */
-function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
+function import($class,$baseUrl = '',$ext='.class.php')
 {
     //echo('<br>'.$class.$baseUrl);
     static $_file = array();
@@ -491,35 +461,14 @@ function import($class,$baseUrl = '',$ext='.class.php',$subdir=false)
 }
 
 // 快速导入第三方框架类库
-// 所有第三方框架的类库文件统一放到 基类库Vendor目录下面
+// 所有第三方框架的类库文件统一放到 系统的Vendor目录下面
 // 并且默认都是以.php后缀导入
-function vendor($class,$baseUrl = '',$ext='.php',$subdir=false)
+function vendor($class,$baseUrl = '',$ext='.php')
 {
     if(empty($baseUrl)) {
         $baseUrl    =   VENDOR_PATH;
     }
-    return import($class,$baseUrl,$ext,$subdir);
-}
-
-/**
- +----------------------------------------------------------
- * 根据PHP各种类型变量生成唯一标识号
- +----------------------------------------------------------
- * @param mixed $mix 变量
- +----------------------------------------------------------
- * @return string
- +----------------------------------------------------------
- */
-function to_guid_string($mix)
-{
-    if(is_object($mix) && function_exists('spl_object_hash')) {
-        return spl_object_hash($mix);
-    }elseif(is_resource($mix)){
-        $mix = get_resource_type($mix).strval($mix);
-    }else{
-        $mix = serialize($mix);
-    }
-    return md5($mix);
+    return import($class,$baseUrl,$ext);
 }
 
 /**
@@ -734,6 +683,27 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
     return $value;
 }
 
+/**
+ +----------------------------------------------------------
+ * 根据PHP各种类型变量生成唯一标识号
+ +----------------------------------------------------------
+ * @param mixed $mix 变量
+ +----------------------------------------------------------
+ * @return string
+ +----------------------------------------------------------
+ */
+function to_guid_string($mix)
+{
+    if(is_object($mix) && function_exists('spl_object_hash')) {
+        return spl_object_hash($mix);
+    }elseif(is_resource($mix)){
+        $mix = get_resource_type($mix).strval($mix);
+    }else{
+        $mix = serialize($mix);
+    }
+    return md5($mix);
+}
+
 // xml编码
 function xml_encode($data,$encoding='utf-8',$root="think") {
     $xml = '<?xml version="1.0" encoding="'.$encoding.'"?>';
@@ -756,6 +726,20 @@ function data_to_xml($data) {
         $xml.="</$key>";
     }
     return $xml;
+}
+
+// 编译文件
+function compile($filename) {
+    if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
+        $content = file_get_contents($filename);
+    }else{
+        $content = php_strip_whitespace($filename);
+    }
+    $content = substr(trim($content),5);
+    if('?>' == substr($content,-2)) {
+        $content = substr($content,0,-2);
+    }
+    return $content;
 }
 
 function mk_dir($dir, $mode = 0755)

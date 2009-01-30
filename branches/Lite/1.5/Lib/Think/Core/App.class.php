@@ -142,13 +142,13 @@ class App extends Base
         // 加载惯例配置文件
         C(include THINK_PATH.'/Common/convention.php');
         // 加载项目配置文件
-        if(file_exists_case(CONFIG_PATH.'config.php')) {
+        if(is_file(CONFIG_PATH.'config.php')) {
             C(include CONFIG_PATH.'config.php');
         }
         $common   = '';
         $debug  =  C('DEBUG_MODE');  //  是否调试模式
         // 加载项目公共文件
-        if(file_exists_case(COMMON_PATH.'common.php')) {
+        if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
             if(!$debug) { // 编译文件
                 $common   .= compile(COMMON_PATH.'common.php');
@@ -169,15 +169,15 @@ class App extends Base
             // 简洁模式或者命令模式
         }else{
             // 读取路由定义
-            if(file_exists_case(CONFIG_PATH.'routes.php')) {
+            if(is_file(CONFIG_PATH.'routes.php')) {
                 C('_routes_',include CONFIG_PATH.'routes.php');
             }
             // 读取行为规则
-            if(file_exists_case(CONFIG_PATH.'behaviors.php')) {
+            if(is_file(CONFIG_PATH.'behaviors.php')) {
                 C('_behaviors_',include CONFIG_PATH.'behaviors.php');
             }
             // 读取静态规则
-            if(file_exists_case(CONFIG_PATH.'htmls.php')) {
+            if(is_file(CONFIG_PATH.'htmls.php')) {
                 C('_htmls_',include CONFIG_PATH.'htmls.php');
             }
         }
@@ -185,7 +185,7 @@ class App extends Base
         if($debug) {
             // 加载系统默认的开发模式配置文件
             C(include THINK_PATH.'/Common/debug.php');
-            if(file_exists_case(CONFIG_PATH.'debug.php')) {
+            if(is_file(CONFIG_PATH.'debug.php')) {
                 // 允许项目增加开发模式配置定义
                 C(include CONFIG_PATH.'debug.php');
             }
@@ -291,18 +291,18 @@ class App extends Base
             // 定义当前语言
             define('LANG_SET',$langSet);
             // 加载框架语言包
-            if (file_exists_case(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
+            if (is_file(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
                 L(include THINK_PATH.'/Lang/'.LANG_SET.'.php');
             }else{
                 L(include THINK_PATH.'/Lang/'.$defaultLang.'.php');
             }
 
             // 读取项目（公共）语言包
-            if (file_exists_case(LANG_PATH.LANG_SET.'/common.php'))
+            if (is_file(LANG_PATH.LANG_SET.'/common.php'))
                 L(include LANG_PATH.LANG_SET.'/common.php');
 
             // 读取当前模块的语言包
-            if (file_exists_case(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
+            if (is_file(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
                 L(include LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php');
         }else{
             // 不使用语言包功能，仅仅加载框架语言文件
@@ -403,14 +403,6 @@ class App extends Base
             // 简洁模式和CLI模式下面直接执行模块的操作方法
             R(MODULE_NAME,ACTION_NAME);
         }else{
-            // 导入公共类
-            $_autoload	=	C('AUTO_LOAD_CLASS');
-            if(!empty($_autoload)) {
-                $import	=	explode(',',$_autoload);
-                foreach ($import as $key=>$class){
-                    import($class);
-                }
-            }
             $behaviorOn   =  C('BEHAVIOR_ON');
             // 执行项目运行行为
             if($behaviorOn) {

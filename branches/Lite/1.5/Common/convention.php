@@ -100,7 +100,6 @@ return  array(
     'DB_DEPLOY_TYPE'			=>	0,			// 数据库部署方式 0 集中式（单一服务器） 1 分布式（主从服务器）
     'SQL_DEBUG_LOG'			=>	false,			// 记录SQL语句到日志文件
 
-
     /* 数据缓存设置 */
     'DATA_CACHE_TIME'		=>	-1,			// 数据缓存有效期
     'DATA_CACHE_COMPRESS'=>	false,		// 数据缓存是否压缩缓存
@@ -139,7 +138,6 @@ return  array(
 
     /* 其它设置 */
     'AUTO_LOAD_PATH'			=>	'Think.Util.',	//	 __autoLoad 的路径设置 当前项目的Model和Action类会自动加载，无需设置 注意搜索顺序
-    'AUTO_LOAD_CLASS'		=>	'',		// 初始化需要导入的公共类 使用import的导入机制 例如 @.Action.CommonAction
     'ACTION_JUMP_TMPL'=>	'Public:success',    // 页面跳转的模板文件
     'ACTION_404_TMPL'=>	'Public:404',         // 404错误的模板文件
     'APP_DOMAIN_DEPLOY'     =>  false,     // 是否使用独立域名部署项目
