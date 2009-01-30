@@ -266,7 +266,7 @@ class Model extends Base implements IteratorAggregate
         }
     }
     // 插入成功后的回调方法
-    protected function _after_insert(&$data,$options='') {}
+    protected function _after_insert(&$data,$options) {}
 
     /**
      +----------------------------------------------------------
@@ -375,10 +375,14 @@ class Model extends Base implements IteratorAggregate
     public function select($options=array()) {
         // 分析表达式
         $options =  $this->_parseOptions($options);
-        if($result = $this->db->select($options)) {
-            $this->dataList = $result;
-            $this->_after_select($result,$options);
-            return $result;
+        if($resultSet = $this->db->select($options)) {
+            if(is_object($resultSet) && $resultSet instanceof ResultIterator) {
+                // 如果是延时查询返回的是ResultIterator对象
+                return $resultSet;
+            }
+            $this->dataList = $resultSet;
+            $this->_after_select($resultSet,$options);
+            return $resultSet;
         }else{
             return false;
         }
@@ -1067,25 +1071,13 @@ class Model extends Base implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
-     * 是否返回执行的SQL
+     * 获取主键名称
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param boolean $fetch
-     +----------------------------------------------------------
-     * @return Model
+     * @return string
      +----------------------------------------------------------
      */
-    public function fetchSql($fetch=true) {
-        if(in_array(strtolower($fetch),array('find','findall','save','add','delete'))) {
-            $this->options['fetch'] =   true;
-            return $this->{$fetch}();
-        }else{
-            $this->options['fetch'] =   $fetch;
-        }
-        return $this;
-    }
-
     public function getPk() {
         return $this->pk?$this->pk:'id';
     }

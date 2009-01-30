@@ -71,7 +71,9 @@ class App extends Base
         }else{
 
             // 执行项目开始行为
-            B('app_begin');
+            if(C('BEHAVIOR_ON')) {
+                B('app_begin');
+            }
 
             // 设置系统时区 PHP5支持
             if(function_exists('date_default_timezone_set'))
