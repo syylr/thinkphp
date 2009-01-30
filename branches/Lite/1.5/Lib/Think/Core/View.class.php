@@ -333,7 +333,7 @@ class View extends Base
             // 显示页面Trace信息 读取Trace定义文件
             // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
             $traceFile  =   CONFIG_PATH.'trace.php';
-             if(file_exists_case($traceFile)) {
+             if(is_file($traceFile)) {
                 $_trace =   include $traceFile;
              }else{
                 $_trace =   array();

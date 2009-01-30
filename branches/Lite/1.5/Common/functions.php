@@ -537,7 +537,7 @@ function A($className,$appName='@')
 function R($module,$action,$app='@') {
     $class = A($module,$app);
     if($class) {
-        return $class->$action();
+        return call_user_func(array(&$class,$action));
     }else{
         return false;
     }
