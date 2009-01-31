@@ -129,7 +129,7 @@ class RelationModel extends Model {
      * @access public
      +----------------------------------------------------------
      * @param array $resultSet  返回数据
-     * @param string $name  关联名称
+     * @param string|array $name  关联名称
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
@@ -150,7 +150,7 @@ class RelationModel extends Model {
      * @access public
      +----------------------------------------------------------
      * @param mixed $result  返回数据
-     * @param string $name  关联名称
+     * @param string|array $name  关联名称
      * @param boolean $return 是否返回关联数据本身
      +----------------------------------------------------------
      * @return array
@@ -161,7 +161,7 @@ class RelationModel extends Model {
         if(!empty($this->_link)) {
             foreach($this->_link as $key=>$val) {
                     $mappingName =  !empty($val['mapping_name'])?$val['mapping_name']:$key; // 映射名称
-                    if(empty($name) || true === $name || $mappingName == $name) {
+                    if(empty($name) || true === $name || $mappingName == $name || (is_array($name) && in_array($mappingName,$name))) {
                         $mappingType = !empty($val['mapping_type'])?$val['mapping_type']:$val;  //  关联类型
                         $mappingClass  = !empty($val['class_name'])?$val['class_name']:$key;            //  关联类名
                         $mappingFields = !empty($val['mapping_fields'])?$val['mapping_fields']:'*';     // 映射字段
@@ -257,7 +257,7 @@ class RelationModel extends Model {
             foreach($this->_link as $key=>$val) {
                     // 操作制定关联类型
                     $mappingName =  $val['mapping_name']?$val['mapping_name']:$key; // 映射名称
-                    if(empty($name) || true === $name || $mappingName == $name) {
+                    if(empty($name) || true === $name || $mappingName == $name || (is_array($name) && in_array($mappingName,$name)) ) {
                         // 操作制定的关联
                         $mappingType = !empty($val['mapping_type'])?$val['mapping_type']:$val;  //  关联类型
                         $mappingClass  = !empty($val['class_name'])?$val['class_name']:$key;            //  关联类名
@@ -365,7 +365,7 @@ class RelationModel extends Model {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param boolean $name 关联名称
+     * @param mixed $name 关联名称
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
@@ -383,7 +383,7 @@ class RelationModel extends Model {
      +----------------------------------------------------------
      * @param string $name 关联名称
      +----------------------------------------------------------
-     * @return Model
+     * @return array
      +----------------------------------------------------------
      */
     public function relationGet($name) {
