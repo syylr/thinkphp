@@ -1090,31 +1090,33 @@ class Model extends Base  implements IteratorAggregate
                     }
                 }
             }
+            $fields = implode(',',$fields);
         }else{
             if(!is_array($fields)) {
                 $fields =   explode(',',$fields);
             }
             // 解析成视图字段
+            $array   =  array();
             foreach ($this->viewFields as $name=>$val){
                 $k = isset($val['_as'])?$val['_as']:$name;
                 foreach ($fields as $key=>$field){
                     if(false !== $_field = array_search($field,$val)) {
                         // 存在视图字段
                         if(is_numeric($_field)) {
-                            $fields[]    =   $k.'.'.$field.' AS '.$field;
+                            $array[]    =   $k.'.'.$field.' AS '.$field;
                         }else{
                             if( false !== strpos($_field,'*') ||  false !== strpos($_field,'(') || false !== strpos($_field,'.')) {
                                 //如果包含* 或者 使用了sql方法 则不再添加前面的表名
-                                $fields[]    =   $_field.' AS '.$field;
+                                $array[]    =   $_field.' AS '.$field;
                             }else{
-                                $fields[]    =   $k.'.'.$_field.' AS '.$field;
+                                $array[]    =   $k.'.'.$_field.' AS '.$field;
                             }
                         }
                     }
                 }
             }
+            $fields = implode(',',$array);
         }
-        $fields = implode(',',$fields);
         return $fields;
     }
 

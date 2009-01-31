@@ -544,7 +544,7 @@ abstract class Action extends Base
         }else {
             if(empty($module)) {
                 // 执行当前模块操作
-                $this->{$action}();
+                call_user_func(array(&$this,$action));
             }else{
                 $class =     A($module,$app);
                 call_user_func(array(&$class,$action));
