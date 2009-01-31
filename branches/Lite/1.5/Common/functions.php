@@ -330,7 +330,7 @@ function get_instance_of($className,$method='',$args=array())
                 $_instance[$identify] = $o;
         }
         else
-            halt(L('_CLASS_NOT_EXIST_'));
+            halt(L('_CLASS_NOT_EXIST_').':'.$className);
     }
     return $_instance[$identify];
 }
