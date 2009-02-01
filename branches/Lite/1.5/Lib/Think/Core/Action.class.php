@@ -239,7 +239,8 @@ abstract class Action extends Base
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $name 模板显示变量
+     * @param string $method 方法名
+     * @param array $parms 参数
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
@@ -250,11 +251,11 @@ abstract class Action extends Base
             if(method_exists($this,'_empty')) {
                 $this->_empty($method,$parms);
             }else {
-                // 检查是否存在模版 如果有直接输出模版
+                // 检查是否存在默认模版 如果有直接输出模版
                 if(file_exists_case(C('TMPL_FILE_NAME'))) {
                     $this->display();
                 }else{
-                    // 调试模式抛出异常
+                    // 抛出异常
                     throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
                 }
             }
