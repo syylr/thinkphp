@@ -44,11 +44,6 @@ abstract class Action extends Base
             $this->view       = View::getInstance();
         }
 
-        // 执行操作初始化行为
-        if(C('BEHAVIOR_ON')) {
-            B('action_init');
-        }
-
         //控制器初始化
         if(method_exists($this,'_initialize')) {
             $this->_initialize();
