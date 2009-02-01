@@ -41,9 +41,9 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
     }
     $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Base.class.php';  // 核心基类
 
-    if(is_file(APP_PATH.'/Conf/core.php')) {
+    if(is_file(CONFIG_PATH.'core.php')) {
         // 加载项目自定义的核心编译文件列表
-        $list   =  include APP_PATH.'/Conf/core.php';
+        $list   =  include CONFIG_PATH;
     }else{
         // 加载系统默认的核心编译文件列表
         $list   =  include THINK_PATH.'/Common/core.php';
@@ -75,7 +75,7 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
             }
             $content .= $_temp;
         }
-        file_put_contents(RUNTIME_PATH.'~runtime.php','<?php'.$content);
+        //file_put_contents(RUNTIME_PATH.'~runtime.php','<?php'.$content);
         unset($content);
     }
 }
