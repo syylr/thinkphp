@@ -329,7 +329,7 @@ abstract class Action extends Base
      * @return void
      +----------------------------------------------------------
      */
-    public function layout($templateFile,$charset='',$contentType='text/html',$varPrefix='',$display=true)
+    public function layout($templateFile='',$charset='',$contentType='text/html',$varPrefix='',$display=true)
     {
         return $this->view->layout($templateFile,$charset,$contentType,$varPrefix,$display);
     }
