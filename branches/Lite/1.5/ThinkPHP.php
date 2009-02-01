@@ -32,8 +32,8 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
     // 如果有修改核心文件请删除该缓存
     require RUNTIME_PATH.'~runtime.php';
 }else{
+    require THINK_PATH.'/Common/defines.php';
     // 定义核心编译的文件
-    $runtime[]  =  THINK_PATH.'/Common/defines.php'; // 常量定义
     $runtime[]  =  THINK_PATH.'/Common/functions.php'; // 系统函数
     if(version_compare(PHP_VERSION,'5.2.0','<') ) {
         // 加载兼容函数
@@ -41,9 +41,9 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
     }
     $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Base.class.php';  // 核心基类
 
-    if(is_file(APP_PATH.'/Conf/core.php')) {
+    if(is_file(CONFIG_PATH.'core.php')) {
         // 加载项目自定义的核心编译文件列表
-        $list   =  include APP_PATH.'/Conf/core.php';
+        $list   =  include CONFIG_PATH.'core.php';
     }else{
         // 加载系统默认的核心编译文件列表
         $list   =  include THINK_PATH.'/Common/core.php';
@@ -67,15 +67,11 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
 
     // 生成核心编译缓存 去掉文件空白以减少大小
     if(!defined('NO_CACHE_RUNTIME')) {
-        $content	= '';
+        $content	= compile(THINK_PATH.'/Common/defines.php');
         foreach ($runtime as $file){
-            $_temp  = substr(trim(php_strip_whitespace($file)),5);
-            if('?>' == substr($_temp,-2)) {
-                $_temp = substr($_temp,0,-2);
-            }
-            $content .= $_temp;
+            $content .= compile($file);
         }
-        //file_put_contents(RUNTIME_PATH.'~runtime.php','<?php'.$content);
+        file_put_contents(RUNTIME_PATH.'~runtime.php','<?php'.$content);
         unset($content);
     }
 }
