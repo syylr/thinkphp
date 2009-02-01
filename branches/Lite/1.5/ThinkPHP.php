@@ -41,9 +41,9 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
     }
     $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Base.class.php';  // 核心基类
 
-    if(is_file(CONFIG_PATH.'core.php')) {
+    if(is_file(APP_PATH.'/Conf/core.php')) {
         // 加载项目自定义的核心编译文件列表
-        $list   =  include CONFIG_PATH;
+        $list   =  include APP_PATH.'/Conf/core.php';
     }else{
         // 加载系统默认的核心编译文件列表
         $list   =  include THINK_PATH.'/Common/core.php';
