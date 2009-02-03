@@ -12,7 +12,7 @@
 
 /**
  +------------------------------------------------------------------------------
- * ThinkPHP Model模型类 抽象类
+ * ThinkPHP Model模型类
  * 实现了ORM和ActiveRecords模式
  +------------------------------------------------------------------------------
  * @category   Think
@@ -27,8 +27,6 @@ define('EXISTS_TO_VAILIDATE',0);        // 表单存在字段则验证
 define('VALUE_TO_VAILIDATE',2);     // 表单值不为空则验证
 class Model extends Base implements IteratorAggregate
 {
-    // 数据库连接对象列表
-    private $_db = array();
 
     // 当前数据库操作对象
     protected $db = null;
@@ -88,8 +86,6 @@ class Model extends Base implements IteratorAggregate
         }else{
             $this->db = Db::getInstance();
         }
-        // 设置默认的数据库连接
-        $this->_db[0]   =   &$this->db;
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
     }
@@ -249,6 +245,7 @@ class Model extends Base implements IteratorAggregate
         $options =  $this->_parseOptions($options);
         // 数据处理
         $data = $this->_facade($data);
+        $this->_before_insert($data,$options);
         // 写入数据到数据库
         if(false === $result = $this->db->insert($data,$options)){
             // 数据库插入操作失败
@@ -265,6 +262,8 @@ class Model extends Base implements IteratorAggregate
             return $result;
         }
     }
+    // 插入数据前的回调方法
+    protected function _before_insert(&$data,$options) {}
     // 插入成功后的回调方法
     protected function _after_insert(&$data,$options) {}
 
@@ -301,6 +300,7 @@ class Model extends Base implements IteratorAggregate
         }
         // 分析表达式
         $options =  $this->_parseOptions($options);
+        $this->_before_update($data,$options);
         if(false === $this->db->update($data,$options)){
             $this->error = L('_OPERATION_WRONG_');
             return false;
@@ -312,6 +312,8 @@ class Model extends Base implements IteratorAggregate
             return true;
         }
     }
+    // 插入数据前的回调方法
+    protected function _before_update(&$data,$options) {}
     // 更新成功后的回调方法
     protected function _after_update($data,$options) {}
 
@@ -490,13 +492,22 @@ class Model extends Base implements IteratorAggregate
      * @param string $field  字段名
      * @param mixed $condition  条件
      * @param integer $step  增长值
+     * @param integer $lazyTime  延时时间(s)
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setInc($field,$condition='',$step=1) {
+    public function setInc($field,$condition='',$step=1,$lazyTime=0) {
         if(empty($condition) && isset($this->options['where'])) {
             $condition   =  $this->options['where'];
+        }
+        if($lazyTime>0) {// 延迟写入
+            $guid =  md5($this->name.'_'.$field);
+            $step = $this->lazyWrite($guid,$step,$lazyTime);
+            if(false === $step ) {
+                // 等待下次写入
+                return true;
+            }
         }
         return $this->setField($field,array('exp',$field.'+'.$step),$condition);
     }
@@ -510,15 +521,58 @@ class Model extends Base implements IteratorAggregate
      * @param string $field  字段名
      * @param mixed $condition  条件
      * @param integer $step  减少值
+     * @param integer $lazyTime  延时时间(s)
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setDec($field,$condition='',$step=1) {
+    public function setDec($field,$condition='',$step=1,$lazyTime=0) {
         if(empty($condition) && isset($this->options['where'])) {
             $condition   =  $this->options['where'];
         }
+        if($lazyTime>0) {// 延迟写入
+            $guid =  md5($this->name.'_'.$field);
+            $step = $this->lazyWrite($guid,$step,$lazyTime);
+            if(false === $step ) {
+                // 等待下次写入
+                return true;
+            }
+        }
         return $this->setField($field,array('exp',$field.'-'.$step),$condition);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 延时写入检查 返回false表示需要延时
+     * 否则返回实际写入的数值
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $guid  写入标识
+     * @param integer $step  写入步进值
+     * @param integer $lazyTime  延时时间(s)
+     +----------------------------------------------------------
+     * @return false|integer
+     +----------------------------------------------------------
+     */
+    protected function lazyWrite($guid,$step,$lazyTime) {
+        if(false !== ($value = F($guid))) { // 存在缓存写入数据
+            if(time()>F($guid.'_time')+$lazyTime) {
+                // 延时写入时间到了，删除缓存数据 并实际写入数据库
+                F($guid,NULL);
+                F($guid.'_time',NULL);
+                return $value+$step;
+            }else{
+                // 追加数据到缓存
+                F($guid,$value+$step);
+                return false;
+            }
+        }else{ // 没有缓存数据
+            F($guid,$step);
+            // 计时开始
+            F($guid.'_time',time());
+            return false;
+        }
     }
 
     /**
@@ -576,8 +630,8 @@ class Model extends Base implements IteratorAggregate
                 $type = 'edit';
             }
         }
-        // 自动验证数据
-        if(!$this->autoValidation($data,$type)) {
+        // 验证回调接口
+        if(!$this->_before_create($data,$type)) {
             return false;
         }
         // 检查字段映射
@@ -589,166 +643,16 @@ class Model extends Base implements IteratorAggregate
                 }
             }
         }
-        // 自动完成数据
-        $this->autoOperation($data,$type);
+        // 创建完成后回调接口
+        $this->_after_create($data,$type);
         // 赋值当前数据对象
         $this->data =   $data;
         return $data;
      }
-
-    /**
-     +----------------------------------------------------------
-     * 自动表单处理
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $data 创建数据
-     * @param string $type 创建类型
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    private function autoOperation(&$data,$type) {
-        // 自动填充
-        if(!empty($this->_auto)) {
-            foreach ($this->_auto as $auto){
-                // 填充因子定义格式
-                // array('field','填充内容','填充条件','附加规则',[额外参数])
-                if(empty($auto[2])) $auto[2] = 'ADD';// 默认为新增的时候自动填充
-                else $auto[2]   =   strtoupper($auto[2]);
-                if( (strtolower($type) == "add"  && $auto[2] == 'ADD') ||   (strtolower($type) == "edit"  && $auto[2] == 'UPDATE') || $auto[2] == 'ALL')
-                {
-                    switch($auto[3]) {
-                        case 'function':    //  使用函数进行填充 字段的值作为参数
-                        case 'callback': // 使用回调方法
-                            if(isset($auto[4])) {
-                                $args = $auto[4];
-                            }else{
-                                $args = array();
-                            }
-                            array_unshift($args,$data[$auto[0]]);
-                            if('function'==$auto[3]) {
-                                $data[$auto[0]]  = call_user_func_array($auto[1], $args);
-                            }else{
-                                $data[$auto[0]]  =  call_user_func_array(array(&$this,$auto[1]), $args);
-                            }
-                            break;
-                        case 'field':    // 用其它字段的值进行填充
-                            $data[$auto[0]] = $data[$auto[1]];
-                            break;
-                        case 'string':
-                        default: // 默认作为字符串填充
-                            $data[$auto[0]] = $auto[1];
-                    }
-                    if(false === $data[$auto[0]] ) {
-                        unset($data[$auto[0]]);
-                    }
-                }
-            }
-        }
-        return $data;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 自动表单验证
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $data 创建数据
-     * @param string $type 创建类型
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    private function autoValidation($data,$type) {
-        // 属性验证
-        if(!empty($this->_validate)) {
-            // 如果设置了数据自动验证
-            // 则进行数据验证
-            // 重置验证错误信息
-            foreach($this->_validate as $key=>$val) {
-                // 判断是否需要执行验证
-                if(empty($val[5]) || $val[5]=='all' || strtolower($val[5])==strtolower($type) ) {
-                    if(0==strpos($val[2],'{%') && strpos($val[2],'}')) {
-                        // 支持提示信息的多语言 使用 {%语言定义} 方式
-                        $val[2]  =  L(substr($val[2],2,-1));
-                    }
-                    // 判断验证条件
-                    switch($val[3]) {
-                        case MUST_TO_VALIDATE:   // 必须验证 不管表单是否有设置该字段
-                            if(!$this->_validationField($data,$val)){
-                                $this->error    =   $val[2];
-                                return false;
-                            }
-                            break;
-                        case VALUE_TO_VAILIDATE:    // 值不为空的时候才验证
-                            if('' != trim($data[$val[0]])){
-                                if(!$this->_validationField($data,$val)){
-                                    $this->error    =   $val[2];
-                                    return false;
-                                }
-                            }
-                            break;
-                        default:    // 默认表单存在该字段就验证
-                            if(isset($data[$val[0]])){
-                                if(!$this->_validationField($data,$val)){
-                                    $this->error    =   $val[2];
-                                    return false;
-                                }
-                            }
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 根据验证因子验证字段
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $data 创建数据
-     * @param string $val 验证规则
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    private function _validationField($data,$val) {
-        // 检查附加规则
-        if(!$this->validate($data[$val[0]],$val[1],$val[4])) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 验证数据
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $value  要验证的数据
-     * @param string $rule 验证规则
-     * @param string $type   验证方式
-     * 包含 regex function callback 默认为regex
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    protected function validate($value,$rule,$type='regex') {
-        switch(strtolower($type)) {
-            case 'function':
-                return $rule($value);
-            case 'callback':
-                return $this->$rule($value);
-            case 'regex':
-            default:
-                return preg_match($rule,$value)===1;
-        }
-    }
+     // 数据创建成功前的验证方法
+     protected function _before_create($data,$type) {return true;}
+     // 数据创建成功后的回调方法
+     protected function _after_create(&$data,$type) {}
 
     /**
      +----------------------------------------------------------
@@ -798,37 +702,6 @@ class Model extends Base implements IteratorAggregate
         }else {
             return false;
         }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 批处理执行SQL语句
-     * 批处理的指令都认为是execute操作
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $sql  SQL批处理指令
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    public function patchQuery($sql=array()) {
-        if(!is_array($sql)) {
-            return false;
-        }
-        // 自动启动事务支持
-        $this->startTrans();
-        foreach ($sql as $_sql){
-            $result   =  $this->execute($_sql);
-            if(false === $result) {
-                // 发生错误自动回滚事务
-                $this->rollback();
-                return false;
-            }
-        }
-        // 提交事务
-        $this->commit();
-        return true;
     }
 
     /**
@@ -958,95 +831,6 @@ class Model extends Base implements IteratorAggregate
      */
     public function getLastSql() {
         return $this->db->getLastSql();
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 增加数据库连接
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $config 数据库连接信息
-     * 支持批量添加 例如 array(1=>$config1,2=>$config2)
-     * @param mixed $linkNum  创建的连接序号
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    public function addConnect($config,$linkNum=NULL) {
-        if(isset($this->_db[$linkNum])) {
-            return false;
-        }
-        if(NULL === $linkNum && is_array($config)) {
-            // 支持批量增加数据库连接
-            foreach ($config as $key=>$val){
-                $this->_db[$key]            =    Db::getInstance($val);
-            }
-            return true;
-        }
-        // 创建一个新的实例
-        $this->_db[$linkNum]            =    Db::getInstance($config);
-        return true;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 删除数据库连接
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param integer $linkNum  创建的连接序号
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    public function delConnect($linkNum) {
-        if(isset($this->_db[$linkNum])) {
-            $this->_db[$linkNum]->close();
-            unset($this->_db[$linkNum]);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 关闭数据库连接
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param integer $linkNum  创建的连接序号
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    public function closeConnect($linkNum) {
-        if(isset($this->_db[$linkNum])) {
-            $this->_db[$linkNum]->close();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 切换数据库连接
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param integer $linkNum  创建的连接序号
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    public function switchConnect($linkNum) {
-        if(isset($this->_db[$linkNum])) {
-            // 在不同实例直接切换
-            $this->db   =   $this->_db[$linkNum];
-            return true;
-        }else{
-            return false;
-        }
     }
 
     /**
