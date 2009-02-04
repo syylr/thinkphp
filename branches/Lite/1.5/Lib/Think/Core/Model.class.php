@@ -50,7 +50,7 @@ class Model extends Base implements IteratorAggregate
     protected $trueTableName ='';
 
     // 最近错误信息
-    private $error = '';
+    protected $error = '';
 
     // 数据信息
     protected $data =   array();
