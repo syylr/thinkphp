@@ -38,7 +38,7 @@ class AdvModel extends Model {
     public function __construct() {
         parent::__construct();
         // 设置默认的数据库连接
-        $this->_db[0]   =   &$this->db;
+        $this->_db[0]   =   $this->db;
     }
 
     // 查询成功后的回调方法
