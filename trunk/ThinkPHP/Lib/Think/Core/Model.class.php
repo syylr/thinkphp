@@ -1567,8 +1567,13 @@ class Model extends Base  implements IteratorAggregate
                                         $model->startTrans();
                                         $pk   =  $model->getPk();
                                         foreach ($mappingData as $vo){
-                                            $mappingCondition   =  "$pk ={$vo[$pk]}";
-                                            $result   =  $model->save($vo,$mappingCondition,false);
+                                            if(isset($vo[$pk])) {// 更新数据
+                                                $mappingCondition   =  "$pk ={$vo[$pk]}";
+                                                $result   =  $model->save($vo,$mappingCondition,false);
+                                            }else{ // 新增数据
+                                                $vo[$mappingFk] =  $data[$this->getPk()];
+                                                $result   =  $model->add($vo,false);
+                                            }
                                         }
                                         $model->commit();
                                         break;
