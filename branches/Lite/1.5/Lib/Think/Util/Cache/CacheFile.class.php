@@ -58,15 +58,15 @@ class CacheFile extends Cache
     private function init()
     {
         $stat = stat($this->options['temp']);
-		$dir_perms = $stat['mode'] & 0007777; // Get the permission bits.
-		$file_perms = $dir_perms & 0000666; // Remove execute bits for files.
+        $dir_perms = $stat['mode'] & 0007777; // Get the permission bits.
+        $file_perms = $dir_perms & 0000666; // Remove execute bits for files.
 
-		// 创建项目缓存目录
-		if (!file_exists($this->options['temp'])) {
-			if (!  mkdir($this->options['temp']))
-				return false;
-			 chmod($this->options['temp'], $dir_perms);
-		}
+        // 创建项目缓存目录
+        if (!is_dir($this->options['temp'])) {
+            if (!  mkdir($this->options['temp']))
+                return false;
+             chmod($this->options['temp'], $dir_perms);
+        }
     }
 
     /**
@@ -96,17 +96,17 @@ class CacheFile extends Cache
      */
     private function filename($name)
     {
-		$name	=	md5($name);
-		if(C('DATA_CACHE_SUBDIR')) {
-			// 使用子目录
-			$dir	=	$name{0};
-			if(!is_dir($this->options['temp'].$dir)) {
-				mkdir($this->options['temp'].$dir);
-			}
-			$filename	=	$dir.'/'.$this->prefix.$name.'.php';
-		}else{
-			$filename	=	$this->prefix.$name.'.php';
-		}
+        $name	=	md5($name);
+        if(C('DATA_CACHE_SUBDIR')) {
+            // 使用子目录
+            $dir	=	$name{0};
+            if(!is_dir($this->options['temp'].$dir)) {
+                mkdir($this->options['temp'].$dir);
+            }
+            $filename	=	$dir.'/'.$this->prefix.$name.'.php';
+        }else{
+            $filename	=	$this->prefix.$name.'.php';
+        }
         return $this->options['temp'].$filename;
     }
 
@@ -127,7 +127,7 @@ class CacheFile extends Cache
         if (!$this->isConnected() || !is_file($filename)) {
            return false;
         }
-		$this->Q(1);
+        $this->Q(1);
         $content    =   file_get_contents($filename);
         if( false !== $content) {
             $expire  =  (int)substr($content,strlen(C('CACHE_SERIAL_HEADER')), 12);
@@ -172,9 +172,9 @@ class CacheFile extends Cache
      */
     public function set($name,$value,$expire='')
     {
-		$this->W(1);
+        $this->W(1);
         if('' === $expire) {
-        	$expire =  $this->expire;
+            $expire =  $this->expire;
         }
         $filename   =   $this->filename($name);
         $data   =   serialize($value);
@@ -183,9 +183,9 @@ class CacheFile extends Cache
             $data   =   gzcompress($data,3);
         }
         if(C('DATA_CACHE_CHECK')) {//开启数据校验
-        	$check  =  md5($data);
+            $check  =  md5($data);
         }else {
-        	$check  =  '';
+            $check  =  '';
         }
         $data    = C('CACHE_SERIAL_HEADER').sprintf('%012d',$expire).$check.$data.C('CACHE_SERIAL_FOOTER');
         $result  =   file_put_contents($filename,$data);
@@ -193,7 +193,7 @@ class CacheFile extends Cache
             clearstatcache();
             return true;
         }else {
-        	return false;
+            return false;
         }
     }
 
