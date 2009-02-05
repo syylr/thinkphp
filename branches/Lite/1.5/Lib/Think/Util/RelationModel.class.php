@@ -307,8 +307,13 @@ class RelationModel extends Model {
                                         $model->startTrans();
                                         $pk   =  $model->getPk();
                                         foreach ($mappingData as $vo){
-                                            $mappingCondition   =  "$pk ={$vo[$pk]}";
-                                            $result   =  $model->where($mappingCondition)->save($vo);
+                                            if(isset($vo[$pk])) {// 更新数据
+                                                $mappingCondition   =  "$pk ={$vo[$pk]}";
+                                                $result   =  $model->where($mappingCondition)->save($vo);
+                                            }else{ // 新增数据
+                                                $vo[$mappingFk] =  $data[$this->getPk()];
+                                                $result   =  $model->add($vo);
+                                            }
                                         }
                                         $model->commit();
                                         break;
