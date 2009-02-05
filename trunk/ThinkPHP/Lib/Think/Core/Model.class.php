@@ -134,7 +134,7 @@ class Model extends Base  implements IteratorAggregate
             //为获得ORACLE自增LastID而统一考虑的
             $this->db->tableName = $this->parseName($this->name);
             // 设置默认的数据库连接
-            $this->_db[0]   =   &$this->db;
+            $this->_db[0]   =   $this->db;
             // 设置表前后缀
             $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
             $this->tableSuffix = $this->tableSuffix?$this->tableSuffix:C('DB_SUFFIX');
