@@ -250,8 +250,7 @@ class DbPdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function getAll($sql = null) {
-        if (!empty($sql)) $this->_query($sql);
+    public function getAll() {
         if ( empty($this->PDOStatement) ) {
             throw_exception($this->error());
             return false;

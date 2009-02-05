@@ -243,8 +243,7 @@ class DbMysqli extends Db{
      * @return array
      +----------------------------------------------------------
      */
-    public function getAll($sql = null) {
-        if (!empty($sql)) $this->_query($sql);
+    public function getAll() {
         if ( !$this->queryID ) {
             throw_exception($this->error());
             return false;
@@ -259,6 +258,54 @@ class DbMysqli extends Db{
             $this->queryID->data_seek(0);
         }
         return $result;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 取得数据表的字段信息
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getFields($tableName) {
+        $result =   $this->_query('SHOW COLUMNS FROM '.$tableName);
+        $info   =   array();
+        foreach ($result as $key => $val) {
+            $info[$val['Field']] = array(
+                'name'    => $val['Field'],
+                'type'    => $val['Type'],
+                'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
+                'default' => $val['Default'],
+                'primary' => (strtolower($val['Key']) == 'pri'),
+                'autoinc' => (strtolower($val['Extra']) == 'auto_increment'),
+            );
+        }
+        return $info;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 取得数据表的字段信息
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    function getTables($dbName='') {
+        if(!empty($dbName)) {
+           $sql    = 'SHOW TABLES FROM '.$dbName;
+        }else{
+           $sql    = 'SHOW TABLES ';
+        }
+        $result =   $this->_query($sql);
+        $info   =   array();
+        foreach ($result as $key => $val) {
+            $info[$key] = current($val);
+        }
+        return $info;
     }
 
     /**
@@ -289,8 +336,6 @@ class DbMysqli extends Db{
      * @access public
      +----------------------------------------------------------
      * @return string
-     +----------------------------------------------------------
-     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     function error() {
