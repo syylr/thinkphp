@@ -23,6 +23,10 @@
  */
 class AdvModel extends Model {
 
+    // 字段信息
+    protected $fields = array();
+    // 字段类型信息
+    protected $type  =   array();
     // 数据库连接对象列表
     private $_db = array();
     // 自动写入时间戳的字段名称
@@ -36,37 +40,6 @@ class AdvModel extends Model {
         // 设置默认的数据库连接
         $this->_db[0]   =   &$this->db;
     }
-
-    /**
-     +----------------------------------------------------------
-     * 检查序列化数据字段
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param array $data 数据
-     +----------------------------------------------------------
-     * @return array
-     +----------------------------------------------------------
-     */
-     protected function checkSerializeField($data) {
-        // 检查序列化字段
-        if(!empty($this->serializeField)) {
-            // 定义方式  $this->serializeField = array('ser'=>array('name','email'));
-            foreach ($this->serializeField as $key=>$val){
-                if(empty($data[$key])) {
-                    $serialize  =   array();
-                    foreach ($val as $name){
-                        if(isset($data[$name])) {
-                            $serialize[$name]   =   $data[$name];
-                            unset($data[$name]);
-                        }
-                    }
-                    $data[$key] =   serialize($serialize);
-                }
-            }
-        }
-        return $data;
-     }
 
     // 查询成功后的回调方法
     protected function _after_find(&$result,$options='') {
@@ -103,15 +76,71 @@ class AdvModel extends Model {
         }
     }
 
-    // 写入成功后的回调方法
+    // 写入数据前的回调方法
     protected function _before_insert(&$data,$options='') {
         $data = $this->checkSerializeField($data);
     }
 
-    // 更新成功后的回调方法
+    // 更新成功前的回调方法
     protected function _before_update(&$data,$options='') {
+        // 检查只读字段
+        $data = $this->checkReadonlyField($data);
+        // 检查序列化字段
         $data = $this->checkSerializeField($data);
     }
+
+    /**
+     +----------------------------------------------------------
+     * 检查只读字段
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $data 数据
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    protected function checkReadonlyField($data) {
+        if(!empty($this->readonlyField)) {
+            foreach ($this->readonlyField as $key=>$field){
+                if(isset($data[$field])) {
+                    unset($data[$field]);
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 检查序列化数据字段
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $data 数据
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+     protected function checkSerializeField($data) {
+        // 检查序列化字段
+        if(!empty($this->serializeField)) {
+            // 定义方式  $this->serializeField = array('ser'=>array('name','email'));
+            foreach ($this->serializeField as $key=>$val){
+                if(empty($data[$key])) {
+                    $serialize  =   array();
+                    foreach ($val as $name){
+                        if(isset($data[$name])) {
+                            $serialize[$name]   =   $data[$name];
+                            unset($data[$name]);
+                        }
+                    }
+                    $data[$key] =   serialize($serialize);
+                }
+            }
+        }
+        return $data;
+     }
 
     /**
      +----------------------------------------------------------
