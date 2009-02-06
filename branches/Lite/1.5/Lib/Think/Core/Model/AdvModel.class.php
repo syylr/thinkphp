@@ -44,6 +44,76 @@ class AdvModel extends Model {
     // 查询成功后的回调方法
     protected function _after_find(&$result,$options='') {
         // 检查序列化字段
+        $result   =  $this->checkSerializeField($result);
+    }
+
+    // 查询数据集成功后的回调方法
+    protected function _after_select(&$resultSet,$options='') {
+        // 检查序列化字段
+        $resultSet   =  $this->checkListSerializeField($resultSet);
+    }
+
+    // 写入前的回调方法
+    protected function _before_insert(&$data,$options='') {
+        $data = $this->serializeField($data);
+    }
+
+    // 更新前的回调方法
+    protected function _before_update(&$data,$options='') {
+        // 检查只读字段
+        $data = $this->checkReadonlyField($data);
+        // 检查序列化字段
+        $data = $this->serializeField($data);
+    }
+
+    // 创建数据前的回调方法
+    protected function _before_create($data,$type){
+        // 自动验证
+        return $this->autoValidation($data,$type);
+    }
+
+    // 创建数据后的回调方法
+    protected function _after_create(&$data,$type) {
+        // 自动保存时间戳
+        $this->autoSaveTime($data,$type);
+        // 自动完成
+        $this->autoOperation($data,$type);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 检查序列化数据字段
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $data 数据
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+     protected function serializeField($data) {
+        // 检查序列化字段
+        if(!empty($this->serializeField)) {
+            // 定义方式  $this->serializeField = array('ser'=>array('name','email'));
+            foreach ($this->serializeField as $key=>$val){
+                if(empty($data[$key])) {
+                    $serialize  =   array();
+                    foreach ($val as $name){
+                        if(isset($data[$name])) {
+                            $serialize[$name]   =   $data[$name];
+                            unset($data[$name]);
+                        }
+                    }
+                    $data[$key] =   serialize($serialize);
+                }
+            }
+        }
+        return $data;
+     }
+
+    // 检查返回数据的序列化字段
+    protected function checkSerializeField($result) {
+        // 检查序列化字段
         if(!empty($this->serializeField)) {
             foreach ($this->serializeField as $key=>$val){
                 if(isset($result[$key])) {
@@ -55,10 +125,11 @@ class AdvModel extends Model {
                 }
             }
         }
+        return $result;
     }
 
-    // 查询数据集成功后的回调方法
-    protected function _after_select(&$resultSet,$options='') {
+    // 检查数据集的序列化字段
+    protected function checkListSerializeField($resultSet) {
         // 检查序列化字段
         if(!empty($this->serializeField)) {
             foreach ($this->serializeField as $key=>$val){
@@ -74,19 +145,7 @@ class AdvModel extends Model {
                 }
             }
         }
-    }
-
-    // 写入数据前的回调方法
-    protected function _before_insert(&$data,$options='') {
-        $data = $this->checkSerializeField($data);
-    }
-
-    // 更新成功前的回调方法
-    protected function _before_update(&$data,$options='') {
-        // 检查只读字段
-        $data = $this->checkReadonlyField($data);
-        // 检查序列化字段
-        $data = $this->checkSerializeField($data);
+        return $resultSet;
     }
 
     /**
@@ -110,37 +169,6 @@ class AdvModel extends Model {
         }
         return $data;
     }
-
-    /**
-     +----------------------------------------------------------
-     * 检查序列化数据字段
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param array $data 数据
-     +----------------------------------------------------------
-     * @return array
-     +----------------------------------------------------------
-     */
-     protected function checkSerializeField($data) {
-        // 检查序列化字段
-        if(!empty($this->serializeField)) {
-            // 定义方式  $this->serializeField = array('ser'=>array('name','email'));
-            foreach ($this->serializeField as $key=>$val){
-                if(empty($data[$key])) {
-                    $serialize  =   array();
-                    foreach ($val as $name){
-                        if(isset($data[$name])) {
-                            $serialize[$name]   =   $data[$name];
-                            unset($data[$name]);
-                        }
-                    }
-                    $data[$key] =   serialize($serialize);
-                }
-            }
-        }
-        return $data;
-     }
 
     /**
      +----------------------------------------------------------
@@ -260,18 +288,6 @@ class AdvModel extends Model {
         // 提交事务
         $this->commit();
         return true;
-    }
-
-    protected function _before_create($data,$type){
-        // 自动验证
-        return $this->autoValidation($data,$type);
-    }
-
-    protected function _after_create(&$data,$type) {
-        // 自动保存时间戳
-        $this->autoSaveTime($data,$type);
-        // 自动完成
-        $this->autoOperation($data,$type);
     }
 
     // 自动保存时间戳字段
