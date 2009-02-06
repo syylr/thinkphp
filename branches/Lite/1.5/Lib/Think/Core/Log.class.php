@@ -94,6 +94,8 @@ class Log extends Base
             }
         }
         error_log(implode("",self::$log), $type,$destination ,$extra);
+        // 保存后清空日志缓存
+        self::$log = array();
         //clearstatcache();
     }
 
