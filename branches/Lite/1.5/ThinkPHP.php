@@ -51,16 +51,16 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
         // 根据设置的运行模式加载不同的核心编译文件
         switch(strtoupper(THINK_MODE)) {
             case 'THINK':   // 思考模式(自动模式)
-                $list   =  include THINK_PATH.'/Mode/think.php';
+                $list   =  include THINK_PATH.'/Mode/Think/core.php';
                 break;
             case 'COMMON':   // 普通模式
-                $list   =  include THINK_PATH.'/Mode/common.php';
+                $list   =  include THINK_PATH.'/Mode/Common/core.php';
                 break;
             case 'THIN':   // 简洁模式
-                $list   =  include THINK_PATH.'/Mode/thin.php';
+                $list   =  include THINK_PATH.'/Mode/Thin/core.php';
                 break;
             case 'CLI':      // 命令模式
-                $list   =  include THINK_PATH.'/Mode/cli.php';
+                $list   =  include THINK_PATH.'/Mode/Cli/core.php';
                 break;
         }
     }
