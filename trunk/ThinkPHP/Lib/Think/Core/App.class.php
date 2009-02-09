@@ -264,9 +264,9 @@ class App extends Base
         if(IS_CLI) {// 命令模式下面获取第一个参数作为模块名
             $module = isset($_SERVER['argv'][1])?$_SERVER['argv'][1]:C('DEFAULT_MODULE');
         }else{
-            $module = isset($_POST[C('VAR_MODULE')]) ?
+            $module = !empty($_POST[C('VAR_MODULE')]) ?
                 $_POST[C('VAR_MODULE')] :
-                (isset($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:C('DEFAULT_MODULE'));
+                (!empty($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:C('DEFAULT_MODULE'));
             // 检查组件模块
             if(strpos($module,C('COMPONENT_DEPR'))) {
                 // 记录完整的模块名
@@ -321,9 +321,9 @@ class App extends Base
         if(IS_CLI) { // 命令行模式下面获取第二个参数作为操作名
             $action  =  isset($_SERVER['argv'][2])?$_SERVER['argv'][2]:C('DEFAULT_ACTION');
         }else{
-            $action   = isset($_POST[C('VAR_ACTION')]) ?
+            $action   = !empty($_POST[C('VAR_ACTION')]) ?
                 $_POST[C('VAR_ACTION')] :
-                (isset($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:C('DEFAULT_ACTION'));
+                (!empty($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:C('DEFAULT_ACTION'));
             // 检查操作链
             if(strpos($action,C('COMPONENT_DEPR'))) {
                 // 记录完整的操作名
