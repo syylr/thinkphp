@@ -60,6 +60,7 @@ return  array(
     'VAR_PATHINFO'				=>	's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于PATH_MODEL 和 PATH_DEPR
     'VAR_MODULE'					=>	'm',		// 默认模块获取变量
     'VAR_ACTION'					=>	'a',		// 默认操作获取变量
+   	'VAR_PAGE'						=>	'p',		// 默认分页跳转变量
     'VAR_TEMPLATE'				=>	't',		// 默认模板切换变量
 	'VAR_LANGUAGE'				=>	'l',		// 默认语言切换变量
     'VAR_AJAX_SUBMIT'			=>	'ajax', // 默认的AJAX提交变量
@@ -77,6 +78,10 @@ return  array(
     'TEMPLATE_SUFFIX'			=>	'.html',	 // 默认模板文件后缀
     'CACHFILE_SUFFIX'			=>	'.php',	// 默认模板缓存后缀
     'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
+
+	/* 分页设置 */
+	'PAGE_NUMBERS'				=>	5,			// 分页显示页数
+	'LIST_NUMBERS'				=>	20,			// 分页每页显示记录数
 
     /* 模型设置 */
     'AUTO_NAME_IDENTIFY'  =>    True, // 模型对应数据表名称智能识别 UserType => user_type
