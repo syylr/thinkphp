@@ -180,6 +180,10 @@ class App extends Base
             if(is_file(CONFIG_PATH.'htmls.php')) {
                 C('_htmls_',include CONFIG_PATH.'htmls.php');
             }
+            // 读取插件模块
+            if(is_file(CONFIG_PATH.'modules.php')) {
+                C('_modules_',include CONFIG_PATH.'modules.php');
+            }
         }
         // 如果是调试模式加载调试模式配置文件
         if($debug) {
@@ -370,8 +374,7 @@ class App extends Base
         }else{
             $appRoot   =  WEB_URL.'/'.APP_NAME.'/';
         }
-        // 默认加载的模板文件名
-        // 当前模块地址
+
         define('__URL__',PHP_FILE.'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
         //当前操作地址
         define('__ACTION__',__URL__.C('PATH_DEPR').ACTION_NAME);
@@ -413,29 +416,44 @@ class App extends Base
             $module  =  A(MODULE_NAME);
             if(!$module) {
                 // 是否定义Empty模块
-                $module	=	A("Empty");
+                $module = A("Empty");
                 if(!$module) {
-                    // 模块不存在 抛出异常
-                    throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+                    if(C('?_modules_')) {
+                        // 检查插件模块
+                        $modules   =  C('_modules_');
+                        if(isset($modules[MODULE_NAME])) {
+                            define('COMPONENT_NAME',MODULE_NAME);
+                            C('TMPL_FILE_NAME',LIB_PATH.COMPONENT_NAME.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
+                            import('@.Action.'.$module.'Action',LIB_PATH.COMPONENT_NAME);
+                            $module = new $module.'Action';
+                        }
+                    }else{
+                        // 模块不存在 抛出异常
+                        throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+                    }
                 }
             }
 
             //获取当前操作名
             $action = ACTION_NAME;
-            if($behaviorOn && false !== B('action_before')) {
-                // 执行操作前置行为
-            }elseif (method_exists($module,'_before_'.$action)) {
+            if (method_exists($module,'_before_'.$action)) {
                 // 执行前置操作
-                $module->{'_before_'.$action}();
-            };
+                call_user_func(array(&$module,'_before_'.$action));
+            }else{
+                // 执行操作前置行为
+                if($behaviorOn)
+                    B('action_before');
+            }
             //执行当前操作
-            $module->{$action}();
-            if($behaviorOn && false !== B('action_after')) {
-                // 执行操作后置行为
-            }elseif (method_exists($module,'_after_'.$action)) {
+            call_user_func(array(&$module,$action));
+            if (method_exists($module,'_after_'.$action)) {
                 //  执行后缀操作
-                $module->{'_after_'.$action}();
-            };
+                call_user_func(array(&$module,'_after_'.$action));
+            }else{
+                // 执行操作后置行为
+                if($behaviorOn)
+                    B('action_after');
+            }
 
             // 执行项目结束行为
             if($behaviorOn) {

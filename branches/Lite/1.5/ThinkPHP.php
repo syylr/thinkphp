@@ -41,15 +41,30 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
     }
     $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Base.class.php';  // 核心基类
 
+    // 加载核心编译文件列表
     if(is_file(CONFIG_PATH.'core.php')) {
         // 加载项目自定义的核心编译文件列表
         $list   =  include CONFIG_PATH.'core.php';
     }else{
-        // 加载系统默认的核心编译文件列表
-        $list   =  include THINK_PATH.'/Common/core.php';
+        // 未定义模式则默认为自动模式
+        if(!defined('THINK_MODE')) define('THINK_MODE','THINK');
+        // 根据设置的运行模式加载不同的核心编译文件
+        switch(strtoupper(THINK_MODE)) {
+            case 'THINK':   // 思考模式(自动模式)
+                $list   =  include THINK_PATH.'/Mode/think.php';
+                break;
+            case 'COMMON':   // 普通模式
+                $list   =  include THINK_PATH.'/Mode/common.php';
+                break;
+            case 'THIN':   // 简洁模式
+                $list   =  include THINK_PATH.'/Mode/thin.php';
+                break;
+            case 'CLI':      // 命令模式
+                $list   =  include THINK_PATH.'/Mode/cli.php';
+                break;
+        }
     }
     $runtime   =  array_merge($runtime,$list);
-
     // 加载核心编译文件列表
     foreach ($runtime as $key=>$file){
         if(is_file($file)) {

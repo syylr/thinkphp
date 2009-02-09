@@ -22,9 +22,6 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-define('MUST_TO_VALIDATE',1);    // 必须验证
-define('EXISTS_TO_VAILIDATE',0);        // 表单存在字段则验证
-define('VALUE_TO_VAILIDATE',2);     // 表单值不为空则验证
 class Model extends Base implements IteratorAggregate
 {
 
@@ -265,7 +262,7 @@ class Model extends Base implements IteratorAggregate
     // 插入数据前的回调方法
     protected function _before_insert(&$data,$options) {}
     // 插入成功后的回调方法
-    protected function _after_insert(&$data,$options) {}
+    protected function _after_insert($data,$options) {}
 
     /**
      +----------------------------------------------------------
@@ -417,6 +414,7 @@ class Model extends Base implements IteratorAggregate
             // 自动获取表名
             $options['table'] =$this->getTableName();
         }
+        // 表达式过滤
         $this->_options_filter($options);
         return $options;
     }

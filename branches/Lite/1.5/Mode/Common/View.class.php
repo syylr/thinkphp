@@ -135,9 +135,54 @@ class View extends Base
      * @return mixed
      +----------------------------------------------------------
      */
-    public function display($templateFile='',$charset='',$contentType='text/html',$varPrefix='')
+    public function display($templateFile='',$charset='',$contentType='text/html')
     {
-        $this->fetch($templateFile,$charset,$contentType,$varPrefix,true);
+        $this->fetch($templateFile,$charset,$contentType,true);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 输出布局模板
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $charset 输出编码
+     * @param string $contentType 输出类型
+     * @param string $varPrefix 模板变量前缀
+     * @param string $display 是否直接显示
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function layout($content,$charset='',$contentType='text/html')
+    {
+        // 查找布局包含的页面
+        $find = preg_match_all('/<!-- layout::(.+?)::(.+?) -->/is',$content,$matches);
+        if($find) {
+            for ($i=0; $i< $find; $i++) {
+                // 读取相关的页面模板替换布局单元
+                if(0===strpos($matches[1][$i],'$')){
+                    // 动态布局
+                    $matches[1][$i]  =  $this->get(substr($matches[1][$i],1));
+                }
+                if(0 != $matches[2][$i] ) {
+                    // 设置了布局缓存
+                    // 检查布局缓存是否有效
+                    $guid =  md5($matches[1][$i]);
+                    $cache  =  S($guid);
+                    if($cache) {
+                        $layoutContent = $cache;
+                    }else{
+                        $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType);
+                        S($guid,$layoutContent,$matches[2][$i]);
+                    }
+                }else{
+                    $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType);
+                }
+                $content    =   str_replace($matches[0][$i],$layoutContent,$content);
+            }
+        }
+        return $content;
     }
 
     /**
@@ -155,7 +200,7 @@ class View extends Base
      * @return mixed
      +----------------------------------------------------------
      */
-    public function fetch($templateFile='',$charset='',$contentType='text/html',$varPrefix='',$display=false)
+    public function fetch($templateFile='',$charset='',$contentType='text/html',$display=false)
     {
         $this->_init();
         if(null===$templateFile) {
@@ -175,17 +220,23 @@ class View extends Base
             // 自动定位模板文件
             $templateFile   = $this->parseTemplateFile($templateFile);
         }
+        $this->_before_fetch($templateFile,$charset,$contentType);
         $template   =  Template::getInstance();
         // 模板引擎解析和输出
-        $template->fetch($templateFile,$this->tVar,$charset,$varPrefix);
+        $template->fetch($templateFile,$this->tVar,$charset);
         // 获取并清空缓存
         $content = ob_get_clean();
         // 解析特殊路径变量
         $content = $this->parseTemplatePath($content);
-
+        $this->_after_fetch($content,$charset,$contentType);
+        // 布局模板解析
+        $content = $this->layout($content,$charset,$contentType);
         // 输出模板文件
         return $this->output($content,$display);
     }
+    // 前置回调方法
+    protected function _before_fetch(&$templateFile,$charset,$contentType) {}
+    protected function _after_fetch(&$content,$charset,$contentType) {}
 
     /**
      +----------------------------------------------------------

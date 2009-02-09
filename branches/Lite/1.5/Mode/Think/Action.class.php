@@ -50,89 +50,6 @@ abstract class Action extends Base
         }
     }
 
-    // 判断是否为AjAX提交
-    protected function isAjax() {
-        if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) ) {
-            if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])=='xmlhttprequest')
-                return true;
-        }
-        if(!empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) {
-            // 判断Ajax方式提交
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 是否POST请求
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return bool
-     +----------------------------------------------------------
-     */
-    protected function isPost()
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']) == 'post';
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 是否GET请求
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return bool
-     +----------------------------------------------------------
-     */
-    protected function isGet()
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']) == 'get';
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 是否Head请求
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return bool
-     +----------------------------------------------------------
-     */
-    protected function isHead()
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']) == 'head';
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 是否Put请求
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return bool
-     +----------------------------------------------------------
-     */
-    protected function isPut()
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']) == 'put';
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 是否Delete请求
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return bool
-     +----------------------------------------------------------
-     */
-    protected function isDelete()
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']) == 'delete';
-    }
-
     /**
      +----------------------------------------------------------
      * 模板显示
@@ -207,30 +124,6 @@ abstract class Action extends Base
     public function trace($name,$value='')
     {
         $this->view->trace($name,$value);
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 取得模板显示变量的值
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $name 模板显示变量
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    public function get($name)
-    {
-        return $this->view->get($name);
-    }
-
-    public function __set($name,$value) {
-        $this->assign($name,$value);
-    }
-
-    public function __get($name) {
-        return $this->get($name);
     }
 
     /**
@@ -447,16 +340,6 @@ abstract class Action extends Base
         $this->display(C('ACTION_JUMP_TMPL'));
         // 中止执行  避免出错后继续执行
         exit ;
-    }
-
-    // 404 错误定向
-    protected function _404($message='',$jumpUrl='',$waitSecond=3) {
-        $this->assign('msg',$message);
-        if(!empty($jumpUrl)) {
-            $this->assign('jumpUrl',$jumpUrl);
-            $this->assign('waitSecond',$waitSecond);
-        }
-        $this->display(C('ACTION_404_TMPL'));
     }
 
 }//类定义结束
