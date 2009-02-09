@@ -103,7 +103,7 @@ function U($url,$params=array(),$redirect=false) {
  +----------------------------------------------------------
  */
 function halt($error) {
-    if(C('THIN_MODEL') || IS_CLI) {
+    if(IS_CLI) {
         exit ($error);
     }
     $e = array();
@@ -211,7 +211,7 @@ function redirect($url,$time=0,$msg='')
  */
 function throw_exception($msg,$type='ThinkException',$code=0)
 {
-    if(C('THIN_MODEL') || IS_CLI) {
+    if(IS_CLI) {
         exit($msg);
     }
     if(class_exists($type,false)){
@@ -611,6 +611,19 @@ function B($name,$params=array()) {
         return $result;
     }
     return false;
+}
+
+// 渲染输出Widget
+function W($name,$data=array(),$return=false) {
+    import('@.Widget.'.$name.'Widget');
+    $class = $name.'Widget';
+    $widget  =  new $class();
+    $content = $widget->render($data);
+    if($return) {
+        return $content;
+    }else{
+        echo $content;
+    }
 }
 
 // 全局缓存设置和读取
