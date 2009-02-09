@@ -36,17 +36,17 @@ class TemplateThink extends Base {
      * @return void
      +----------------------------------------------------------
      */
-    public function fetch($templateFile,$var,$charset,$varPrefix) {
+    public function fetch($templateFile,$var,$charset) {
         if(!$this->checkCache($templateFile)) {
             // 缓存无效 重新编译
             import('Think.Template.ThinkTemplate');
             $tpl = ThinkTemplate::getInstance();
             // 编译并加载模板文件
-            $tpl->load($templateFile,$var,$charset,$varPrefix);
+            $tpl->load($templateFile,$var,$charset);
         }else{
             // 缓存有效 直接载入模板缓存
             // 模板阵列变量分解成为独立变量
-            extract($var, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
+            extract($var, EXTR_OVERWRITE);
             //载入模版缓存文件
             include CACHE_PATH.md5($templateFile).C('CACHFILE_SUFFIX');
         }

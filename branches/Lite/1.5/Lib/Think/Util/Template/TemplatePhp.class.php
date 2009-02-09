@@ -36,9 +36,9 @@ class TemplatePhp extends Base {
      * @return void
      +----------------------------------------------------------
      */
-    public function fetch($templateFile,$var,$charset,$varPrefix) {
+    public function fetch($templateFile,$var,$charset) {
         // 模板阵列变量分解成为独立变量
-        extract($var, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
+        extract($var, EXTR_OVERWRITE);
         // 默认使用PHP模版
         include $templateFile;
     }
