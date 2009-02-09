@@ -365,7 +365,7 @@ class DbMssql extends Db{
     public function close() {
         if (!empty($this->queryID))
             mssql_free_result($this->queryID);
-        if (!mssql_close($this->_linkID)){
+        if ($this->_linkID && !mssql_close($this->_linkID)){
             throw_exception($this->error());
         }
         $this->_linkID = 0;
@@ -404,5 +404,17 @@ class DbMssql extends Db{
         return addslashes($str);
     }
 
+   /**
+     +----------------------------------------------------------
+     * 析构方法
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     */
+    public function __destruct()
+    {
+        // 关闭连接
+        $this->close();
+    }
 }//类定义结束
 ?>

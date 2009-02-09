@@ -321,7 +321,7 @@ class DbMysqli extends Db{
     function close() {
         if (!empty($this->queryID))
             $this->queryID->free_result();
-        if (!$this->_linkID->close()){
+        if ($this->_linkID && !$this->_linkID->close()){
             throw_exception($this->error());
         }
         $this->_linkID = 0;
@@ -366,5 +366,17 @@ class DbMysqli extends Db{
         }
     }
 
+   /**
+     +----------------------------------------------------------
+     * 析构方法
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     */
+    public function __destruct()
+    {
+        // 关闭连接
+        $this->close();
+    }
 }//类定义结束
 ?>

@@ -62,10 +62,10 @@ class DbMysql extends Db{
                 $this->linkID[$linkNum] = mysql_connect( $host, $config['username'], $config['password'],true,CLIENT_MULTI_RESULTS);
             }
             if ( !$this->linkID[$linkNum]) {
-                throw_exception(mysql_error());
+                throw_exception('d'.mysql_error());
             }
             if (!empty($config['database']) && !mysql_select_db($config['database'], $this->linkID[$linkNum]) ) {
-                throw_exception(mysql_error());
+                throw_exception('d'.mysql_error());
             }
             $dbVersion = mysql_get_server_info($this->linkID[$linkNum]);
             if ($dbVersion >= "4.1") {
@@ -318,7 +318,7 @@ class DbMysql extends Db{
     public function close() {
         if (!empty($this->queryID))
             mysql_free_result($this->queryID);
-        if (!mysql_close($this->_linkID)){
+        if ($this->_linkID && !mysql_close($this->_linkID)){
             throw_exception($this->error());
         }
         $this->_linkID = 0;
@@ -357,5 +357,17 @@ class DbMysql extends Db{
         return mysql_escape_string($str);
     }
 
+   /**
+     +----------------------------------------------------------
+     * 析构方法
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     */
+    public function __destruct()
+    {
+        // 关闭连接
+        $this->close();
+    }
 }//类定义结束
 ?>
