@@ -85,11 +85,11 @@ class  ThinkTemplate extends Base
     }
 
     // 加载模板
-    public function load($templateFile,$templateVar,$charset,$varPrefix) {
+    public function load($templateFile,$templateVar,$charset) {
         $this->tVar = $templateVar;
         $templateCacheFile  =  $this->loadTemplate($templateFile);
         // 模板阵列变量分解成为独立变量
-        extract($templateVar, empty($varPrefix)? EXTR_OVERWRITE : EXTR_PREFIX_ALL,$varPrefix);
+        extract($templateVar, EXTR_OVERWRITE);
         //载入模版缓存文件
         include $templateCacheFile;
     }
