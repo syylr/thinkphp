@@ -13,9 +13,9 @@
 return array(
     THINK_PATH.'/Lib/Think/Exception/ThinkException.class.php',
     THINK_PATH.'/Lib/Think/Core/Log.class.php',
-    THINK_PATH.'/Mode/Think/App.class.php',
-    THINK_PATH.'/Mode/Think/Action.class.php',
-    THINK_PATH.'/Mode/Think/Model.class.php',
-    THINK_PATH.'/Mode/Think/View.class.php',
+    THINK_PATH.'/Lib/Think/Core/App.class.php',
+    THINK_PATH.'/Lib/Think/Core/Action.class.php',
+    THINK_PATH.'/Lib/Think/Core/Model.class.php',
+    THINK_PATH.'/Lib/Think/Core/View.class.php',
 );
 ?>
