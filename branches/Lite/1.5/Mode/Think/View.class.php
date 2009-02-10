@@ -130,7 +130,6 @@ class View extends Base
      * @param string $templateFile 模板文件名 留空为自动获取
      * @param string $charset 模板输出字符集
      * @param string $contentType 输出类型
-     * @param string $varPrefix 模板变量前缀
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
@@ -148,7 +147,6 @@ class View extends Base
      +----------------------------------------------------------
      * @param string $charset 输出编码
      * @param string $contentType 输出类型
-     * @param string $varPrefix 模板变量前缀
      * @param string $display 是否直接显示
      +----------------------------------------------------------
      * @return mixed
@@ -194,7 +192,6 @@ class View extends Base
      * @param string $templateFile 模板文件名 留空为自动获取
      * @param string $charset 模板输出字符集
      * @param string $contentType 输出类型
-     * @param string $varPrefix 模板变量前缀
      * @param string $display 是否直接显示
      +----------------------------------------------------------
      * @return mixed
