@@ -25,16 +25,16 @@ abstract class Action extends Base
 {//类定义开始
 
     // Action控制器名称
-    protected $name;
+    protected $name =  '';
 
     // 视图实例对象
-    protected $view;
+    protected $view   =  null;
 
     // 需要缓存的action
     protected $_cacheAction = array();
 
     // 上次错误信息
-    protected $error;
+    protected $error  =  '';
 
    /**
      +----------------------------------------------------------
