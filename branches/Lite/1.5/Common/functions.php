@@ -428,22 +428,22 @@ function import($class,$baseUrl = '',$ext='.class.php')
     else
         $_file[strtolower($class.$baseUrl)] = true;
     if( 0 === strpos($class,'@'))     $class =  str_replace('@',APP_NAME,$class);
+    $class_strut = explode("/",$class);
     if(empty($baseUrl)) {
         // 默认方式调用应用类库
         $baseUrl   =  dirname(LIB_PATH);
-    }
-    $class_strut = explode("/",$class);
-    if(APP_NAME == $class_strut[0]) {
-      //加载当前项目应用类库
-      $class =  str_replace(APP_NAME.'/',LIB_DIR.'/',$class);
-    }elseif(in_array(strtolower($class_strut[0]),array('think','org','com'))) {
-      //加载ThinkPHP基类库或者公共类库
-      // think 官方基类库 org 第三方公共类库 com 企业公共类库
-      $baseUrl =  THINK_PATH.'/'.LIB_DIR.'/';
-    }else {
-      // 加载其他项目应用类库
-      $class    =   substr_replace($class, '', 0,strlen($class_strut[0])+1);
-      $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
+        if(APP_NAME == $class_strut[0]) {
+          //加载当前项目应用类库
+          $class =  str_replace(APP_NAME.'/',LIB_DIR.'/',$class);
+        }elseif(in_array(strtolower($class_strut[0]),array('think','org','com'))) {
+          //加载ThinkPHP基类库或者公共类库
+          // think 官方基类库 org 第三方公共类库 com 企业公共类库
+          $baseUrl =  THINK_PATH.'/'.LIB_DIR.'/';
+        }else {
+          // 加载其他项目应用类库
+          $class    =   substr_replace($class, '', 0,strlen($class_strut[0])+1);
+          $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
+        }
     }
     $baseUrl = realpath($baseUrl);
     if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
@@ -560,7 +560,7 @@ function L($name='',$value=null) {
     if(isset($_lang[strtolower($name)])) {
         return $_lang[strtolower($name)];
     }else{
-        return false;
+        return $name;
     }
 }
 

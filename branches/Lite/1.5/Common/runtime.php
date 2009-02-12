@@ -11,9 +11,6 @@
 // $Id$
 
 function mkdirs($dirs,$mode=0777) {
-    if(is_string($dirs)) {
-        $dirs  = explode(',',$dirs);
-    }
     foreach ($dirs as $dir){
         if(!is_dir($dir))  mkdir($dir,$mode);
     }
@@ -28,6 +25,7 @@ function buildAppDir() {
     if(is_writeable(APP_PATH)) {
         mkdirs(array(
             LIB_PATH,
+            RUNTIME_PATH,
             CONFIG_PATH,
             COMMON_PATH,
             LANG_PATH,
