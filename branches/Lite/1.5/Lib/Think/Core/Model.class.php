@@ -601,6 +601,51 @@ class Model extends Base implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
+     * 获取数据集的个别字段值
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $field 字段名称
+     * @param mixed $condition  条件
+     * @param string $spea  多字段分割符号
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function getFields($field,$condition='',$sepa=' ')
+    {
+        if(empty($condition) && isset($this->options['where'])) {
+            $condition   =  $this->options['where'];
+        }
+        $options['where'] =  $condition;
+        $options['field']    =  $field;
+        $rs = $this->select($options);
+        if($rs) {
+            $field  =   explode(',',$field);
+            $cols    =   array();
+            $length  = count($field);
+            foreach ($rs as $result){
+                if($length>1) {
+                    $cols[$result[$field[0]]]   =   '';
+                    for($i=1; $i<$length; $i++) {
+                        if($i+1<$length){
+                            $cols[$result[$field[0]]] .= $result[$field[$i]].$sepa;
+                        }else{
+                            $cols[$result[$field[0]]] .= $result[$field[$i]];
+                        }
+                    }
+                }else{
+                    $cols[]  =   $result[$field[0]];
+                }
+            }
+            return $cols;
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
      * 创建数据对象 但不保存到数据库
      +----------------------------------------------------------
      * @access public
