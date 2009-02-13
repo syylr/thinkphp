@@ -227,7 +227,7 @@ class View extends Base
         $content = $this->parseTemplatePath($content);
         $this->_after_fetch($content,$charset,$contentType);
         // 布局模板解析
-        $content = $this->layout($content,$charset,$contentType);
+        //$content = $this->layout($content,$charset,$contentType);
         // 输出模板文件
         return $this->output($content,$display);
     }
@@ -279,8 +279,8 @@ class View extends Base
     private function parseTemplatePath($content) {
         // 特殊变量替换
         //项目公共目录
-        $content = str_ireplace(
-            array('../public',   '__PUBLIC__',  '__TMPL__', '__ROOT__',  '__APP__',  '__URL__',   '__ACTION__', '__SELF__'),
+        $content = str_replace(
+            array('../Public',   '__PUBLIC__',  '__TMPL__', '__ROOT__',  '__APP__',  '__URL__',   '__ACTION__', '__SELF__'),
             array(APP_PUBLIC_URL,WEB_PUBLIC_URL,APP_TMPL_URL,__ROOT__,__APP__,__URL__,__ACTION__,__SELF__),
             $content);
         return $content;
