@@ -52,5 +52,16 @@ return array(
     '_CLASS_CONFLICT_'=>'类名冲突',
     '_TEMPLATE_ERROR_'=>'模板引擎错误',
     '_CACHE_WRITE_ERROR_'=>'缓存文件写入失败！',
+
+	'_WAITING_GOTO_EXIST_'=>	'请等待系统转向...',
+	'_OPERATION_FAIL_'=>'操作失败！',
+	'_OPERATION_SUCCESS_'=>'操作成功！',
+	'_INSERT_SUCCESS_'=>'新增成功',
+	'_INSERT_FAIL_'=>'新增失败',
+	'_SELECT_NOT_EXIST_'=>'要编辑的项目不存在！',
+	'_UPDATE_SUCCESS_'=>'更新成功',
+	'_UPDATE_FAIL_'=>'更新失败',
+	'_DELETE_SUCCESS_'=>'删除成功',
+	'_DELETE_FAIL_'=>'删除失败',
 );
 ?>
