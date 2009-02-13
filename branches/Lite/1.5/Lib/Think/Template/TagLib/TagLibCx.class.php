@@ -571,5 +571,12 @@ class TagLibCx extends TagLib
         return $parseStr;
     }
 
+    public function _layout($attr,$content) {
+        $tag      = $this->parseXmlAttr($attr,'layout');
+        $name   =   $tag['name'];
+        $cache   =   $tag['cache']?$tag['cache']:0;
+        $parseStr=   "<!-- layout::$name::$cache -->";
+        return $parseStr;
+    }
 }//类定义结束
 ?>
