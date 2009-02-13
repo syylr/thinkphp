@@ -24,6 +24,9 @@
 abstract class Action extends Base
 {//类定义开始
 
+    // Action控制器名称
+    protected $name =  '';
+
     // 视图实例对象
     protected $view   =  null;
 
@@ -43,11 +46,24 @@ abstract class Action extends Base
             //实例化视图类
             $this->view       = View::getInstance();
         }
-
+        $this->name     =   substr(get_class($this),0,-6);
         //控制器初始化
         if(method_exists($this,'_initialize')) {
             $this->_initialize();
         }
+    }
+
+    // 判断是否为AjAX提交
+    protected function isAjax() {
+        if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) ) {
+            if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])=='xmlhttprequest')
+                return true;
+        }
+        if(!empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) {
+            // 判断Ajax方式提交
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -107,6 +123,22 @@ abstract class Action extends Base
     public function assign($name,$value='')
     {
         $this->view->assign($name,$value);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 取得模板显示变量的值
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $name 模板显示变量
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function get($name)
+    {
+        return $this->view->get($name);
     }
 
     /**
@@ -286,6 +318,25 @@ abstract class Action extends Base
         }else {
             return ;
         }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * Action跳转(URL重定向） 支持指定模块和延时跳转
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $url 跳转的URL表达式
+     * @param array $params 其它URL参数
+     * @param integer $delay 延时跳转的时间 单位为秒
+     * @param string $msg 跳转提示信息
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function redirect($url,$params=array(),$delay=0,$msg='') {
+        $url    =   url($url,$params);
+        redirect($url,$delay,$msg);
     }
 
     /**
