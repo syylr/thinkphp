@@ -10,6 +10,9 @@
 // +----------------------------------------------------------------------
 // $Id$
 
+define('MUST_TO_VALIDATE',1);    // 必须验证
+define('EXISTS_TO_VAILIDATE',0);        // 表单存在字段则验证
+define('VALUE_TO_VAILIDATE',2);     // 表单值不为空则验证
 /**
  +------------------------------------------------------------------------------
  * ThinkPHP 高级模型类
@@ -22,7 +25,12 @@
  +------------------------------------------------------------------------------
  */
 class AdvModel extends Model {
-
+    const MODEL_INSERT      =   1;      //  插入模型数据
+    const   MODEL_UPDATE    =   2;      //  更新模型数据
+    const   MODEL_BOTH      =   3;      //  包含上面两种方式
+    const MUST_VALIDATE         =   1;// 必须验证
+    const EXISTS_VAILIDATE      =   2;// 表单存在字段则验证
+    const VALUE_VAILIDATE       =   3;// 表单值不为空则验证
     // 字段信息
     protected $fields = array();
     // 字段类型信息
@@ -39,18 +47,68 @@ class AdvModel extends Model {
         parent::__construct();
         // 设置默认的数据库连接
         $this->_db[0]   =   $this->db;
+        // 数据表字段检测
+        $this->_checkTableInfo();
+    }
+
+    protected function _checkTableInfo() {
+        // 如果不是Model类 自动记录数据表信息
+        // 只在第一次执行记录
+        if(empty($this->fields) && strtolower(get_class($this))!='model') {
+            // 如果数据表字段没有定义则自动获取
+            if(C('DB_FIELDS_CACHE')) {
+                $identify   =   $this->name.'_fields';
+                $this->fields = F($identify);
+                if(!$this->fields) {
+                    $this->flush();
+                }
+            }else{
+                // 每次都会读取数据表信息
+                $this->flush();
+            }
+        }
+    }
+
+    public function flush() {
+        // 缓存不存在则查询数据表信息
+        $fields =   $this->db->getFields($this->getTableName());
+        $this->fields   =   array_keys($fields);
+        $this->fields['_autoinc'] = false;
+        foreach ($fields as $key=>$val){
+            // 记录字段类型
+            $this->type[$key]    =   $val['type'];
+            if($val['primary']) {
+                $this->pk    =   $key;
+                if($val['autoinc']) $this->fields['_autoinc']   =   true;
+            }
+        }
+        // 2008-3-7 增加缓存开关控制
+        if(C('DB_FIELDS_CACHE')) {
+            // 永久缓存数据表信息
+            // 2007-10-31 更改为F方法保存，保存在项目的Data目录，并且始终采用文件形式
+            $identify   =   $this->name.'_fields';
+            F($identify,$this->fields);
+        }
+    }
+
+    public function getDbFields(){
+        return $this->fields;
     }
 
     // 查询成功后的回调方法
     protected function _after_find(&$result,$options='') {
         // 检查序列化字段
         $result   =  $this->checkSerializeField($result);
+        // 检查字段过滤
+        $result   =  $this->filterFields($result);
     }
 
     // 查询数据集成功后的回调方法
     protected function _after_select(&$resultSet,$options='') {
         // 检查序列化字段
         $resultSet   =  $this->checkListSerializeField($resultSet);
+        // 检查列表字段过滤
+        //$resultSet   =  $this->filterListFields($resultSet);
     }
 
     // 写入前的回调方法
@@ -91,7 +149,7 @@ class AdvModel extends Model {
      * @return array
      +----------------------------------------------------------
      */
-     protected function serializeField($data) {
+     protected function serializeField(&$data) {
         // 检查序列化字段
         if(!empty($this->serializeField)) {
             // 定义方式  $this->serializeField = array('ser'=>array('name','email'));
@@ -112,7 +170,7 @@ class AdvModel extends Model {
      }
 
     // 检查返回数据的序列化字段
-    protected function checkSerializeField($result) {
+    protected function checkSerializeField(&$result) {
         // 检查序列化字段
         if(!empty($this->serializeField)) {
             foreach ($this->serializeField as $key=>$val){
@@ -129,7 +187,7 @@ class AdvModel extends Model {
     }
 
     // 检查数据集的序列化字段
-    protected function checkListSerializeField($resultSet) {
+    protected function checkListSerializeField(&$resultSet) {
         // 检查序列化字段
         if(!empty($this->serializeField)) {
             foreach ($this->serializeField as $key=>$val){
@@ -150,6 +208,35 @@ class AdvModel extends Model {
 
     /**
      +----------------------------------------------------------
+     * 获取数据的时候过滤数据字段
+     +----------------------------------------------------------
+     * @access pubic
+     +----------------------------------------------------------
+     * @param mixed $result 查询的数据
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function filterFields(&$result) {
+        if(!empty($this->_filter)) {
+            foreach ($this->_filter as $field=>$filter){
+                if(isset($result[$field])) {
+                    $fun  =  $filter[1];
+                    if(isset($filter[2]) && $filter[2]){
+                        // 传递整个数据对象作为参数
+                        $result[$field]  =  call_user_func($fun,$result);
+                    }else{
+                        // 传递字段的值作为参数
+                        $result[$field]  =  call_user_func($fun,$result[$field]);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     +----------------------------------------------------------
      * 检查只读字段
      +----------------------------------------------------------
      * @access protected
@@ -159,7 +246,7 @@ class AdvModel extends Model {
      * @return array
      +----------------------------------------------------------
      */
-    protected function checkReadonlyField($data) {
+    protected function checkReadonlyField(&$data) {
         if(!empty($this->readonlyField)) {
             foreach ($this->readonlyField as $key=>$field){
                 if(isset($data[$field])) {
