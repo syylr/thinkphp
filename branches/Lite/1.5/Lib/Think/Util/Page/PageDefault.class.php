@@ -77,9 +77,11 @@ class PageDefault extends Base {
         $nowCoolPage      = ceil($this->nowPage/$this->rollPage);
         $url  =  $_SERVER['REQUEST_URI'].(strpos($_SERVER['REQUEST_URI'],'?')?'':"?").$this->parameter;
         $parse = parse_url($url);
-        parse_str($parse['query'],$params);
-        unset($params[$p]);
-        $url   =  $parse['path'].'?'.http_build_query($params);
+        if(isset($parse['query'])) {
+            parse_str($parse['query'],$params);
+            unset($params[$p]);
+            $url   =  $parse['path'].'?'.http_build_query($params);
+        }
         //上下翻页字符串
         $upRow   = $this->nowPage-1;
         $downRow = $this->nowPage+1;
