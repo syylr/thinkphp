@@ -180,10 +180,6 @@ class App extends Base
             if(is_file(CONFIG_PATH.'htmls.php')) {
                 C('_htmls_',include CONFIG_PATH.'htmls.php');
             }
-            // 读取插件模块
-            if(is_file(CONFIG_PATH.'modules.php')) {
-                C('_modules_',include CONFIG_PATH.'modules.php');
-            }
         }
         // 如果是调试模式加载调试模式配置文件
         if($debug) {
@@ -418,19 +414,8 @@ class App extends Base
                 // 是否定义Empty模块
                 $module = A("Empty");
                 if(!$module) {
-                    if(C('?_modules_')) {
-                        // 检查插件模块
-                        $modules   =  C('_modules_');
-                        if(isset($modules[MODULE_NAME])) {
-                            define('COMPONENT_NAME',MODULE_NAME);
-                            C('TMPL_FILE_NAME',LIB_PATH.COMPONENT_NAME.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
-                            import('@.Action.'.$module.'Action',LIB_PATH.COMPONENT_NAME);
-                            $module = new $module.'Action';
-                        }
-                    }else{
-                        // 模块不存在 抛出异常
-                        throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
-                    }
+                    // 模块不存在 抛出异常
+                    throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
                 }
             }
 
