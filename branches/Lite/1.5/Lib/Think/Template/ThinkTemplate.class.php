@@ -529,19 +529,17 @@ class  ThinkTemplate extends Base
         $tag = trim(array_shift($varArray));
 
         //解析标签内容
-        $args = explode('|',$varArray[0],2);
-        switch(strtoupper($tag)){
-            case 'INCLUDE':
-                $parseStr = $this->parseInclude(trim($args[0]));
-                break;
-            //这里扩展其它标签
-            //…………
-            default:
-                //还原非模版标签
-                $parseStr = $this->config['tmpl_begin'] . $tagStr .$this->config['tmpl_end'];
-                break;
+        if(isset($varArray[0])) {
+            $args = explode('|',$varArray[0],2);
+            switch(strtoupper($tag)){
+                case 'INCLUDE':
+                    return $this->parseInclude(trim($args[0]));
+                    break;
+                //这里扩展其它标签
+                //…………
+            }
         }
-        return $parseStr;
+        return $this->config['tmpl_begin'] . $tagStr .$this->config['tmpl_end'];
     }
 
     /**
