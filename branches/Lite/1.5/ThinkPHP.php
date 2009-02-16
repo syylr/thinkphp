@@ -66,7 +66,6 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
         // 创建项目目录结构
         buildAppDir();
     }
-
     // 生成核心编译缓存 去掉文件空白以减少大小
     if(!defined('NO_CACHE_RUNTIME')) {
         $content	= compile(THINK_PATH.'/Common/defines.php');
