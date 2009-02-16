@@ -109,18 +109,6 @@ class View extends Base
         }
     }
 
-    public function __set($name,$value) {
-        $this->assign($name,$value);
-    }
-
-    public function __get($name) {
-        return $this->get($name);
-    }
-
-    protected function _init() {
-        $GLOBALS['_viewStartTime'] = microtime(TRUE);
-    }
-
     /**
      +----------------------------------------------------------
      * 加载模板和页面输出 可以返回输出内容
@@ -199,7 +187,7 @@ class View extends Base
      */
     public function fetch($templateFile='',$charset='',$contentType='text/html',$display=false)
     {
-        $this->_init();
+        $GLOBALS['_viewStartTime'] = microtime(TRUE);
         if(null===$templateFile) {
             // 使用null参数作为模版名直接返回不做任何输出
             return ;
@@ -227,7 +215,7 @@ class View extends Base
         $content = $this->parseTemplatePath($content);
         $this->_after_fetch($content,$charset,$contentType);
         // 布局模板解析
-        //$content = $this->layout($content,$charset,$contentType);
+        $content = $this->layout($content,$charset,$contentType);
         // 输出模板文件
         return $this->output($content,$display);
     }
@@ -373,10 +361,9 @@ class View extends Base
      * @access protected
      +----------------------------------------------------------
      * @param string $showTime 运行时间信息
-     * @param boolean $compiler 是否重新编译
      +----------------------------------------------------------
      */
-    protected function showTrace($showTime,$compiler=true){
+    protected function showTrace($showTime){
         if(C('SHOW_PAGE_TRACE')) {
             // 显示页面Trace信息 读取Trace定义文件
             // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
@@ -387,7 +374,7 @@ class View extends Base
                 $_trace =   array();
              }
              // 系统默认显示信息
-            $this->trace('当前页面',    $_SERVER['PHP_SELF']);
+            $this->trace('当前页面',    $_SERVER['REQUEST_URI']);
             $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
             $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
             $this->trace('请求时间',    date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
