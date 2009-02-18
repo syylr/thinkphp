@@ -10,9 +10,6 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-define('MUST_TO_VALIDATE',1);    // 必须验证
-define('EXISTS_TO_VAILIDATE',0);        // 表单存在字段则验证
-define('VALUE_TO_VAILIDATE',2);     // 表单值不为空则验证
 /**
  +------------------------------------------------------------------------------
  * ThinkPHP 高级模型类
@@ -26,8 +23,8 @@ define('VALUE_TO_VAILIDATE',2);     // 表单值不为空则验证
  */
 class AdvModel extends Model {
     const MODEL_INSERT      =   1;      //  插入模型数据
-    const   MODEL_UPDATE    =   2;      //  更新模型数据
-    const   MODEL_BOTH      =   3;      //  包含上面两种方式
+    const MODEL_UPDATE    =   2;      //  更新模型数据
+    const MODEL_BOTH      =   3;      //  包含上面两种方式
     const MUST_VALIDATE         =   1;// 必须验证
     const EXISTS_VAILIDATE      =   2;// 表单存在字段则验证
     const VALUE_VAILIDATE       =   3;// 表单值不为空则验证
@@ -54,7 +51,7 @@ class AdvModel extends Model {
     protected function _checkTableInfo() {
         // 如果不是Model类 自动记录数据表信息
         // 只在第一次执行记录
-        if(empty($this->fields) && strtolower(get_class($this))!='model') {
+        if(empty($this->fields)) {
             // 如果数据表字段没有定义则自动获取
             if(C('DB_FIELDS_CACHE')) {
                 $identify   =   $this->name.'_fields';
@@ -380,10 +377,10 @@ class AdvModel extends Model {
     // 自动保存时间戳字段
     protected function autoSaveTime(&$data,$type) {
         switch($type) {
-            case 'add':
+            case self::INSERT_STATUS:
                 $name   = $this->autoCreateTimestamps;
                 break;
-            case 'edit':
+            case self::UPDATE_STATUS:
                 $name   = $this->autoUpdateTimestamps;
         }
         // 自动保存时间戳
@@ -414,9 +411,9 @@ class AdvModel extends Model {
             foreach ($this->_auto as $auto){
                 // 填充因子定义格式
                 // array('field','填充内容','填充条件','附加规则',[额外参数])
-                if(empty($auto[2])) $auto[2] = 'ADD';// 默认为新增的时候自动填充
+                if(empty($auto[2])) $auto[2] = self::MODEL_INSERT;// 默认为新增的时候自动填充
                 else $auto[2]   =   strtoupper($auto[2]);
-                if( (strtolower($type) == "add"  && $auto[2] == 'ADD') ||   (strtolower($type) == "edit"  && $auto[2] == 'UPDATE') || $auto[2] == 'ALL')
+                if( ($type ==self::INSERT_STATUS  && $auto[2] == self::MODEL_INSERT) ||   ($type == self::UPDATE_STATUS  && $auto[2] == self::MODEL_UPDATE) || $auto[2] == self::MODEL_BOTH)
                 {
                     switch($auto[3]) {
                         case 'function':    //  使用函数进行填充 字段的值作为参数
@@ -469,20 +466,20 @@ class AdvModel extends Model {
             // 重置验证错误信息
             foreach($this->_validate as $key=>$val) {
                 // 判断是否需要执行验证
-                if(empty($val[5]) || $val[5]=='all' || strtolower($val[5])==strtolower($type) ) {
+                if(empty($val[5]) || $val[5]== self::ALL_STATUS || $val[5]== $type ) {
                     if(0==strpos($val[2],'{%') && strpos($val[2],'}')) {
                         // 支持提示信息的多语言 使用 {%语言定义} 方式
                         $val[2]  =  L(substr($val[2],2,-1));
                     }
                     // 判断验证条件
                     switch($val[3]) {
-                        case MUST_TO_VALIDATE:   // 必须验证 不管表单是否有设置该字段
+                        case self::MUST_VALIDATE:   // 必须验证 不管表单是否有设置该字段
                             if(!$this->_validationField($data,$val)){
                                 $this->error    =   $val[2];
                                 return false;
                             }
                             break;
-                        case VALUE_TO_VAILIDATE:    // 值不为空的时候才验证
+                        case self::VALUE_VAILIDATE:    // 值不为空的时候才验证
                             if('' != trim($data[$val[0]])){
                                 if(!$this->_validationField($data,$val)){
                                     $this->error    =   $val[2];
@@ -546,6 +543,21 @@ class AdvModel extends Model {
                 return $this->$rule($value);
             case 'regex':
             default:
+                $validate = array(
+                    'require'=> '/.+/',
+                    'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
+                    'url' => '/^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/',
+                    'currency' => '/^\d+(\.\d+)?$/',
+                    'number' => '/\d+$/',
+                    'zip' => '/^[1-9]\d{5}$/',
+                    'integer' => '/^[-\+]?\d+$/',
+                    'double' => '/^[-\+]?\d+(\.\d+)?$/',
+                    'english' => '/^[A-Za-z]+$/',
+                );
+                // 检查是否有内置的正则表达式
+                if(isset($validate[strtolower($rule)])) {
+                    $rule   =   $validate[strtolower($rule)];
+                }
                 return preg_match($rule,$value)===1;
         }
     }

@@ -25,6 +25,10 @@
 class Model extends Base implements IteratorAggregate
 {
 
+    const INSERT_STATUS    =  1;
+    const UPDATE_STATUS   =  2;
+    const ALL_STATUS          =  3;
+
     // 当前数据库操作对象
     protected $db = null;
 
@@ -665,12 +669,12 @@ class Model extends Base implements IteratorAggregate
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
         }
-        $type = 'add';
+        $type = self::INSERT_STATUS;// 新增数据
         if(isset($data[$this->getPk()])) {
             $pk   =  $this->getPk();
             if($this->field($pk)->where($pk.'=\''.$data[$pk].'\'')->find()) {
                 // 编辑状态
-                $type = 'edit';
+                $type = self::UPDATE_STATUS; // 编辑数据
             }
         }
         // 验证回调接口
