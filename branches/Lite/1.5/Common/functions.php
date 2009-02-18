@@ -367,7 +367,6 @@ function __autoload($classname)
     return ;
 }
 
-$GLOBALS['import_file'] =  array();
 /**
  +----------------------------------------------------------
  * 优化的require_once
@@ -379,17 +378,18 @@ $GLOBALS['import_file'] =  array();
  */
 function require_cache($filename)
 {
-    if (!isset($GLOBALS['import_file'][$filename])) {
+    static $_importFiles = array();
+    if (!isset($_importFiles[$filename])) {
         if(file_exists_case($filename)){
             require $filename;
-            $GLOBALS['import_file'][$filename] = true;
+            $_importFiles[$filename] = true;
         }
         else
         {
-            $GLOBALS['import_file'][$filename] = false;
+            $_importFiles[$filename] = false;
         }
     }
-    return $GLOBALS['import_file'][$filename];
+    return $_importFiles[$filename];
 }
 
 // 区分大小写的文件存在判断

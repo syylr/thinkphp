@@ -33,6 +33,7 @@ return  array(
     /* 数据库设置 */
     'SQL_DEBUG_LOG'=>true,          // 记录SQL语句到日志文件
     'LOG_RECORD_LEVEL'       =>   array('EMERG','ALERT','CRIT','ERR','WARN','NOTIC','INFO','DEBUG','SQL'),  // 允许记录的日志级别
+    'DB_FIELDS_CACHE'=> false,
 
     /* 运行时间设置 */
     'SHOW_RUN_TIME'=>true,          // 运行时间显示
