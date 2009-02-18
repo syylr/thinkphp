@@ -381,7 +381,7 @@ class View extends Base
             $this->trace('用户代理',    $_SERVER['HTTP_USER_AGENT']);
             $this->trace('会话ID'   ,   session_id());
             $this->trace('运行数据',    $showTime);
-            $this->trace('加载类库',    count($GLOBALS['import_file']));
+            $this->trace('加载文件',    count(get_included_files()));
 
             $log    =   Log::$log;
             $this->trace('日志记录',count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录');
