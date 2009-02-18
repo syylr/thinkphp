@@ -128,7 +128,7 @@ class TagLibCx extends TagLib
         $parseStr .= '<?php else: ?>';
         $parseStr .= '<?php foreach($__LIST__ as $key=>$'.$id.'): ?>';
         $parseStr .= '<?php ++$'.$key.';?>';
-        $parseStr .= '<?php $mod = (($'.$key.' % '.$mod.' )==0)?>';
+        $parseStr .= '<?php $mod = ($'.$key.' % '.$mod.' )?>';
         $parseStr .= $this->tpl->parse($content);
         $parseStr .= '<?php endforeach; ?>';
         $parseStr .=  '<?php endif; ?>';
