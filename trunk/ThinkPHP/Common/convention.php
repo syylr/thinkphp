@@ -133,7 +133,7 @@ return  array(
 	'REQUIRE_AUTH_MODULE'=>	'',		// 默认需要认证模块
 	'NOT_AUTH_ACTION'		=>'',		// 默认无需认证操作
 	'REQUIRE_AUTH_ACTION'=>'',		// 默认需要认证操作
-    'GUEST_AUTH_ON'          => true,    // 是否开启游客授权访问
+    'GUEST_AUTH_ON'          => false,    // 是否开启游客授权访问
     'GUEST_AUTH_ID'           =>    0,     // 游客的用户ID
 	'RBAC_ERROR_PAGE'	        =>	'',		// RBAC认证没有权限的错误页面
 
