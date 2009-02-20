@@ -28,6 +28,8 @@ class AdvModel extends Model {
     const MUST_VALIDATE         =   1;// 必须验证
     const EXISTS_VAILIDATE      =   2;// 表单存在字段则验证
     const VALUE_VAILIDATE       =   3;// 表单值不为空则验证
+    const INSERT_STATUS     =  1;
+    const UPDATE_STATUS    =  2;
     // 字段信息
     protected $fields = array();
     // 字段类型信息
