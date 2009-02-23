@@ -680,19 +680,21 @@ class Model extends Base  implements IteratorAggregate
         if(!empty($this->_filter)) {
             foreach ($this->_filter as $field=>$filter){
                 $fun  =  $filter[1];
-                if(isset($filter[2]) && $filter[2]){
-                    // 传递整个数据对象作为参数
-                    if(is_array($result)) {
-                        $result[$field]  =  call_user_func($fun,$result);
+                if(!empty($fun)) {
+                    if(isset($filter[2]) && $filter[2]){
+                        // 传递整个数据对象作为参数
+                        if(is_array($result)) {
+                            $result[$field]  =  call_user_func($fun,$result);
+                        }else{
+                            $result->$field =  call_user_func($fun,$result);
+                        }
                     }else{
-                        $result->$field =  call_user_func($fun,$result);
-                    }
-                }else{
-                    // 传递字段的值作为参数
-                    if(is_array($result) && isset($result[$field])) {
-                        $result[$field]  =  call_user_func($fun,$result[$field]);
-                    }elseif(isset($result->$field)){
-                        $result->$field =  call_user_func($fun,$result->$field);
+                        // 传递字段的值作为参数
+                        if(is_array($result) && isset($result[$field])) {
+                            $result[$field]  =  call_user_func($fun,$result[$field]);
+                        }elseif(isset($result->$field)){
+                            $result->$field =  call_user_func($fun,$result->$field);
+                        }
                     }
                 }
             }
@@ -990,12 +992,14 @@ class Model extends Base  implements IteratorAggregate
             foreach ($this->_filter as $field=>$filter){
                 if(isset($data[$field])) {
                     $fun              =  $filter[0];
-                    if(isset($filter[2]) && $filter[2]) {
-                        // 传递整个数据对象作为参数
-                        $data[$field]   =  call_user_func($fun,$data);
-                    }else{
-                        // 传递字段的值作为参数
-                        $data[$field]   =  call_user_func($fun,$data[$field]);
+                    if(!empty($fun)) {
+                        if(isset($filter[2]) && $filter[2]) {
+                            // 传递整个数据对象作为参数
+                            $data[$field]   =  call_user_func($fun,$data);
+                        }else{
+                            // 传递字段的值作为参数
+                            $data[$field]   =  call_user_func($fun,$data[$field]);
+                        }
                     }
                 }
             }
