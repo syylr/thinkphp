@@ -86,7 +86,7 @@ class App extends Base
             // 默认只支持 QUERY_STRING 方式
             // 例如 ?m=user&a=add
             if(C('DISPATCH_ON')) {
-                import('Think.Util.Dispatcher');
+                alias_import('Dispatcher');
                 Dispatcher::dispatch();
             }
 
@@ -111,7 +111,7 @@ class App extends Base
             $this->checkTemplate();     //模板检查
 
             if(C('HTML_CACHE_ON')) { // 开启静态缓存
-                import('Think.Util.HtmlCache');
+                alias_import('HtmlCache');
                 HtmlCache::readHTMLCache();
             }
 

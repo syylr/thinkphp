@@ -831,7 +831,7 @@ class Db extends Base
      */
     public function lazyQuery($sql='') {
         // 返回ResultIterator对象 在操作数据的时候再进行读取
-        import("Think.Db.ResultIterator");
+        alias_import("ResultIterator");
         return new ResultIterator($sql);
     }
 

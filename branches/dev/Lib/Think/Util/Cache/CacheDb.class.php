@@ -61,7 +61,7 @@ class CacheDb extends Cache
             );
         }
         $this->options = $options;
-		import('Think.Db.Db');
+        import('Think.Db.Db');
         $this->db  = DB::getInstance();
         $this->connected = is_resource($this->db);
         $this->type = strtoupper(substr(__CLASS__,6));
