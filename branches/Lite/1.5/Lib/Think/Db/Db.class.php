@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP Lite
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -485,6 +485,7 @@ class Db extends Base
      */
     protected function parseWhere($where) {
         $whereStr = '';
+        if(is_string($where) && strpos($where,'&')) parse_str($where,$where);
         if(is_string($where)) {
             // 直接使用字符串条件
             $whereStr = $where;
