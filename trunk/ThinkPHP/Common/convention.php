@@ -95,6 +95,7 @@ return  array(
 	'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
     'DEFAULT_LAYOUT'         =>    'Layout:index', // 默认布局模板文件
     'AUTO_DETECT_THEME'   =>   false, // 自动侦测模板主题
+    'TMPL_VAR_IDENTIFY'      =>   '',    // 模板变量识别 留空自动判断 array 数组 obj 对象
 
 	/* 模型设置 */
 	'CONTR_CLASS_PREFIX'	=>	'',     // 控制器前缀
