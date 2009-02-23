@@ -575,9 +575,18 @@ class  ThinkTemplate extends Base
                 $name = $this->parseThinkVar($var);
             }
             elseif( false !== strpos($var,'.')) {
-                //支持 {$var.property} 方式输出对象的属性或者数组，自动判断
+                //支持 {$var.property}
                 $vars = explode('.',$var);
-                $name = 'is_array($'.$vars[0].')?$'.$vars[0].'["'.$vars[1].'"]:$'.$vars[0].'->'.$vars[1];
+                switch(C('TMPL_VAR_IDENTIFY')) {
+                    case 'array': // 识别为数组
+                        $name = '$'.$vars[0].'["'.$vars[1].'"]';
+                        break;
+                    case 'obj':  // 识别为对象
+                        $name = '$'.$vars[0].'->'.$vars[1];
+                        break;
+                    default:  // 自动判断数组或对象
+                        $name = 'is_array($'.$vars[0].')?$'.$vars[0].'["'.$vars[1].'"]:$'.$vars[0].'->'.$vars[1];
+                }
                 $var  = $vars[0];
             }
             elseif(false !==strpos($var,':')){
