@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP Lite
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -353,6 +353,8 @@ function __autoload($classname)
     }elseif(substr($classname,-6)=="Action"){
         import('@.Action.'.$classname);
     }else {
+        // 检查是否存在别名定义
+        if(alias_import($classname)) return ;
         // 根据自动加载路径设置进行尝试搜索
         if(C('AUTO_LOAD_PATH')) {
             $paths  =   explode(',',C('AUTO_LOAD_PATH'));
@@ -471,6 +473,26 @@ function vendor($class,$baseUrl = '',$ext='.php')
     return import($class,$baseUrl,$ext);
 }
 
+// 快速定义和导入别名
+function alias_import($alias,$classfile='') {
+    if('' !== $classfile) {
+        // 定义别名导入
+        C('IMPORT_ALIAS_LIST.'.$alias,realpath($classfile));
+        return ;
+    }
+    if(is_string($alias)) {
+        if($filename = C('IMPORT_ALIAS_LIST.'.$alias)) {
+            return require_cache($filename);
+        }
+    }elseif(is_array($alias)){
+        foreach ($alias as $key=>$val){
+            C('IMPORT_ALIAS_LIST.'.$key,realpath($val));
+        }
+        return ;
+    }
+    return false;
+}
+
 /**
  +----------------------------------------------------------
  * D函数用于实例化Model
@@ -569,8 +591,8 @@ function C($name='',$value=null) {
     static $_config = array();
     if(!is_null($value)) {// 参数赋值
         if(strpos($name,'.')) {//  支持二维数组赋值
-            $array   =  explode('.',strtolower($name));
-            $_config[$array[0]][$array[1]] =   $value;
+            $array   =  explode('.',$name);
+            $_config[strtolower($array[0])][$array[1]] =   $value;
         }else{
             $_config[strtolower($name)] =   $value;
         }
@@ -582,17 +604,9 @@ function C($name='',$value=null) {
     if(is_array($name)) { // 批量赋值
         $_config = array_merge($_config,array_change_key_case($name));
         return $_config;
-    }elseif(0===strpos($name,'?')){ // 查看是否赋值
-        $name   = strtolower(substr($name,1));
-        if(strpos($name,'.')) { // 支持获取二维数组
-            $array   =  explode('.',$name);
-            return isset($_config[$array[0]][$array[1]]);
-        }else{
-            return isset($_config[$name]);
-        }
     }elseif(strpos($name,'.')) { // 支持获取二维数组
-        $array   =  explode('.',strtolower($name));
-        return $_config[$array[0]][$array[1]];
+        $array   =  explode('.',$name);
+        return $_config[strtolower($array[0])][$array[1]];
     }elseif(isset($_config[strtolower($name)])) { // 获取参数
         return $_config[strtolower($name)];
     }else{
@@ -602,8 +616,8 @@ function C($name='',$value=null) {
 
 // 执行行为
 function B($name,$params=array()) {
-    if(C('?_behaviors_.'.$name)) {
-        $behavior   =  C('_behaviors_.'.$name);
+    $behavior   =  C('_behaviors_.'.$name);
+    if($behavior) {
         $result   =  array();
         foreach ($behavior   as $key=>$call){
             $result[] = call_user_func_array($call,$params);

@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP Lite
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -43,7 +43,6 @@ return  array(
 
     'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
     'BEHAVIOR_ON'               =>   false, // 是否开启行为
-    'THIN_MODEL'                =>   false, // 是否简洁模式
 
     /* 日志设置 */
     'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
@@ -84,7 +83,7 @@ return  array(
 	'LIST_NUMBERS'				=>	20,			// 分页每页显示记录数
 
     /* 模型设置 */
-    'AUTO_NAME_IDENTIFY'  =>    True, // 模型对应数据表名称智能识别 UserType => user_type
+    'AUTO_NAME_IDENTIFY'  =>    true, // 模型对应数据表名称智能识别 UserType => user_type
     'DEFAULT_MODEL_APP'     =>   '@',   // 默认模型类所在的项目名称 @ 表示当前项目
 
     /* 静态缓存设置 */
@@ -148,5 +147,12 @@ return  array(
     'ACTION_JUMP_TMPL'=>	'Public:success',    // 页面跳转的模板文件
     'ACTION_404_TMPL'=>	'Public:404',         // 404错误的模板文件
     'APP_DOMAIN_DEPLOY'     =>  false,     // 是否使用独立域名部署项目
+
+    /* 类库别名设置*/
+    'IMPORT_ALIAS_LIST'=>array(
+        'Cache'=>THINK_PATH.'/Lib/Think/Util/Cache.class.php',
+        'Cookie'=>THINK_PATH.'/Lib/Think/Util/Cookie.class.php',
+        'Session'=>THINK_PATH.'/Lib/Think/Util/Session.class.php',
+    ),
 );
 ?>
