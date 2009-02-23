@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -10,6 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
+// 简洁模式核心定义文件列表
 return array(
     THINK_PATH.'/Lib/Think/Exception/ThinkException.class.php',
     THINK_PATH.'/Lib/Think/Core/Log.class.php',
