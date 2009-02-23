@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP Lite
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -62,7 +62,7 @@ class App extends Base
             // 预编译项目
             $this->build();
         }
-        if(C('THIN_MODEL') || IS_CLI) { // 简洁模式或者命令模式
+        if(IS_CLI) { // 命令模式
             // 取得模块和操作名称
             define('MODULE_NAME',   $this->getModule());       // Module名称
             define('ACTION_NAME',   $this->getAction());        // Action操作
@@ -165,9 +165,7 @@ class App extends Base
                 }
             }
         }
-        if(C('THIN_MODEL') || IS_CLI) {
-            // 简洁模式或者命令模式
-        }else{
+        if(!IS_CLI) {
             // 读取路由定义
             if(is_file(CONFIG_PATH.'routes.php')) {
                 C('_routes_',include CONFIG_PATH.'routes.php');
@@ -398,8 +396,8 @@ class App extends Base
      */
     public function exec()
     {
-        if(C('THIN_MODEL') || IS_CLI) {
-            // 简洁模式和CLI模式下面直接执行模块的操作方法
+        if(IS_CLI) {
+            // CLI模式下面直接执行模块的操作方法
             R(MODULE_NAME,ACTION_NAME);
         }else{
             $behaviorOn   =  C('BEHAVIOR_ON');

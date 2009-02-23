@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP Lite
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -42,10 +42,8 @@ abstract class Action extends Base
      */
     public function __construct()
     {
-        if(!C('THIN_MODEL')) {
-            //实例化视图类
-            $this->view       = View::getInstance();
-        }
+        //实例化视图类
+        $this->view       = View::getInstance();
         $this->name     =   substr(get_class($this),0,-6);
         //控制器初始化
         if(method_exists($this,'_initialize')) {
