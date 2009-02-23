@@ -12,10 +12,10 @@
 
 // 简洁模式核心定义文件列表
 return array(
-    THINK_PATH.'/Lib/Think/Exception/ThinkException.class.php',
-    THINK_PATH.'/Lib/Think/Core/Log.class.php',
-    THINK_PATH.'/Mode/Thin/App.class.php',
-    THINK_PATH.'/Mode/Thin/Action.class.php',
-    THINK_PATH.'/Mode/Thin/Model.class.php',
+    THINK_PATH.'/Lib/Think/Exception/ThinkException.class.php',// 异常处理
+    THINK_PATH.'/Lib/Think/Core/Log.class.php',// 日志处理
+    THINK_PATH.'/Mode/Thin/App.class.php', // 应用程序类
+    THINK_PATH.'/Mode/Thin/Action.class.php',// 控制器类
+    THINK_PATH.'/Mode/Thin/Model.class.php',// 模型类
 );
 ?>
