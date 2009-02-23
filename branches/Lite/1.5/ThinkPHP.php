@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP Lite
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -46,10 +46,13 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
         // 加载项目自定义的核心编译文件列表
         $list   =  include CONFIG_PATH.'core.php';
     }else{
-        // 未定义模式则默认为自动模式
-        if(!defined('THINK_MODE')) define('THINK_MODE','THINK');
-        // 根据设置的运行模式加载不同的核心编译文件
-        $list   =  include THINK_PATH.'/Mode/'.strtolower(THINK_MODE).'.php';
+        if(defined('THINK_MODE')) {
+            // 根据设置的运行模式加载不同的核心编译文件
+            $list   =  include THINK_PATH.'/Mode/'.strtolower(THINK_MODE).'.php';
+        }else{
+            // 默认核心
+            $list   =  include THINK_PATH.'/Common/core.php';
+        }
     }
     $runtime   =  array_merge($runtime,$list);
     // 加载核心编译文件列表
