@@ -475,12 +475,18 @@ function vendor($class,$baseUrl = '',$ext='.php')
 
 // 快速定义和导入别名
 function alias_import($alias,$classfile='') {
+    static $_alias   =  array();
     if('' !== $classfile) {
         // 定义别名导入
         C('IMPORT_ALIAS_LIST.'.$alias,realpath($classfile));
         return ;
     }
     if(is_string($alias)) {
+        if(isset($_alias[$alias])) {
+            return true;
+        }else{
+            $_alias[$alias]  = true;
+        }
         if($filename = C('IMPORT_ALIAS_LIST.'.$alias)) {
             return require_cache($filename);
         }
