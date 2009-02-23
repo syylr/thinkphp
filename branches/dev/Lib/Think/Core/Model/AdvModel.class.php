@@ -219,12 +219,14 @@ class AdvModel extends Model {
             foreach ($this->_filter as $field=>$filter){
                 if(isset($result[$field])) {
                     $fun  =  $filter[1];
-                    if(isset($filter[2]) && $filter[2]){
-                        // 传递整个数据对象作为参数
-                        $result[$field]  =  call_user_func($fun,$result);
-                    }else{
-                        // 传递字段的值作为参数
-                        $result[$field]  =  call_user_func($fun,$result[$field]);
+                    if(!empty($fun)) {
+                        if(isset($filter[2]) && $filter[2]){
+                            // 传递整个数据对象作为参数
+                            $result[$field]  =  call_user_func($fun,$result);
+                        }else{
+                            // 传递字段的值作为参数
+                            $result[$field]  =  call_user_func($fun,$result[$field]);
+                        }
                     }
                 }
             }
