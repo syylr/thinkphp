@@ -1,8 +1,8 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP Lite
+// | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -38,11 +38,11 @@ class HtmlCache extends Base
      */
     static function readHTMLCache()
     {
-         if(C('?_htmls_')) {
+         $htmls = C('_htmls_');
+         if(!empty($htmls)) {
             // 读取静态规则文件
             // 静态规则文件定义格式 actionName=>array(‘静态规则’,’缓存时间’,’附加规则')
             // 'read'=>array('{id},{name}',60,'md5') 必须保证静态规则的唯一性 和 可判断性
-            $htmls = C('_htmls_');
             // 检测操作的静态规则
             if(isset($htmls[MODULE_NAME.':'.ACTION_NAME])) {
                 // 定义了某个模块的操作的静态规则
