@@ -50,7 +50,7 @@ abstract class Action extends Base
         $this->name     =   $this->getActionName();
         // 用户权限检查
         if(C('USER_AUTH_ON')) {
-            import('ORG.RBAC.RBAC');
+            import('RBAC');
             if(!RBAC::AccessDecision()) {
                 //检查认证识别号
                 if(!$_SESSION[C('USER_AUTH_KEY')]) {

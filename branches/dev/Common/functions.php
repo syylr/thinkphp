@@ -381,6 +381,7 @@ function __autoload($classname)
 function require_cache($filename)
 {
     static $_importFiles = array();
+    $filename   =  realpath($filename);
     if (!isset($_importFiles[$filename])) {
         if(file_exists_case($filename)){
             require $filename;
@@ -421,42 +422,42 @@ function file_exists_case($filename) {
  */
 function import($class,$baseUrl = '',$ext='.class.php')
 {
-    //echo('<br>'.$class.$baseUrl);
     static $_file = array();
     static $_class = array();
+    if('' === $baseUrl && false === strpos($class,'.')) {
+        // 检查别名导入
+        return alias_import($class);
+    }    //echo('<br>'.$class.$baseUrl);
     $class    =   str_replace(array('.','#'), array('/','.'), $class);
-    if(isset($_file[strtolower($class.$baseUrl)]))
+    if(isset($_file[$class.$baseUrl]))
         return true;
     else
-        $_file[strtolower($class.$baseUrl)] = true;
-    if( 0 === strpos($class,'@'))     $class =  str_replace('@',APP_NAME,$class);
+        $_file[$class.$baseUrl] = true;
     $class_strut = explode("/",$class);
     if(empty($baseUrl)) {
-        // 默认方式调用应用类库
-        $baseUrl   =  dirname(LIB_PATH);
-        if(APP_NAME == $class_strut[0]) {
-          //加载当前项目应用类库
-          $class =  str_replace(APP_NAME.'/',LIB_DIR.'/',$class);
+        if('@'==$class_strut[0] || APP_NAME == $class_strut[0] ) {
+            //加载当前项目应用类库
+            $baseUrl   =  dirname(LIB_PATH);
+            $class =  str_replace(array(APP_NAME.'/','@/'),LIB_DIR.'/',$class);
         }elseif(in_array(strtolower($class_strut[0]),array('think','org','com'))) {
-          //加载ThinkPHP基类库或者公共类库
-          // think 官方基类库 org 第三方公共类库 com 企业公共类库
-          $baseUrl =  THINK_PATH.'/'.LIB_DIR.'/';
+            //加载ThinkPHP基类库或者公共类库
+            // think 官方基类库 org 第三方公共类库 com 企业公共类库
+            $baseUrl =  THINK_PATH.'/Lib/';
         }else {
-          // 加载其他项目应用类库
-          $class    =   substr_replace($class, '', 0,strlen($class_strut[0])+1);
-          $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
+            // 加载其他项目应用类库
+            $class    =   substr_replace($class, '', 0,strlen($class_strut[0])+1);
+            $baseUrl =  APP_PATH.'/../'.$class_strut[0].'/'.LIB_DIR.'/';
         }
     }
-    $baseUrl = realpath($baseUrl);
     if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
     $classfile = $baseUrl . $class . $ext;
     if($ext == '.class.php' && is_file($classfile)) {
         // 冲突检测
         $class = basename($classfile,$ext);
-        if(isset($_class[strtolower($class)])) {
-            throw_exception(L('_CLASS_CONFLICT_').':'.$_class[strtolower($class)].' '.$classfile);
+        if(isset($_class[$class])) {
+            throw_exception(L('_CLASS_CONFLICT_').':'.$_class[$class].' '.$classfile);
         }
-        $_class[strtolower($class)] = $classfile;
+        $_class[$class] = $classfile;
     }
     //导入目录下的指定类库文件
     return require_cache($classfile);
@@ -478,21 +479,16 @@ function alias_import($alias,$classfile='') {
     static $_alias   =  array();
     if('' !== $classfile) {
         // 定义别名导入
-        C('IMPORT_ALIAS_LIST.'.$alias,realpath($classfile));
+        $_alias[$alias]  = realpath($classfile);
         return ;
     }
     if(is_string($alias)) {
         if(isset($_alias[$alias])) {
-            return true;
-        }else{
-            $_alias[$alias]  = true;
-        }
-        if($filename = C('IMPORT_ALIAS_LIST.'.$alias)) {
-            return require_cache($filename);
+            return require_cache($_alias[$alias]);
         }
     }elseif(is_array($alias)){
         foreach ($alias as $key=>$val){
-            C('IMPORT_ALIAS_LIST.'.$key,realpath($val));
+            $_alias[$key]  =  realpath($val);
         }
         return ;
     }
@@ -649,7 +645,7 @@ function W($name,$data=array(),$return=false) {
 // 全局缓存设置和读取
 function S($name,$value='',$expire='',$type='') {
     static $_cache = array();
-    import('Think.Util.Cache');
+    import('Cache');
     //取得缓存对象实例
     $cache  = Cache::getInstance($type);
     if('' !== $value) {

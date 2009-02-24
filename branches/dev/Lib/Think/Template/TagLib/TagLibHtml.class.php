@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-import('Think.Template.TagLib');
+import('TagLib');
 class TagLibHtml extends TagLib
 {//类定义开始
 

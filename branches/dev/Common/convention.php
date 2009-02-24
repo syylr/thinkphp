@@ -148,20 +148,5 @@ return  array(
     'ACTION_JUMP_TMPL'=>	'Public:success',    // 页面跳转的模板文件
     'ACTION_404_TMPL'=>	'Public:404',         // 404错误的模板文件
     'APP_DOMAIN_DEPLOY'     =>  false,     // 是否使用独立域名部署项目
-
-    /* 类库别名设置*/
-    'IMPORT_ALIAS_LIST'=>array(
-        'Dispatcher'=>THINK_PATH.'/Lib/Think/Util/Dispatcher.class.php',
-        'HtmlCache'=>THINK_PATH.'/Lib/Think/Util/HtmlCache.class.php',
-        'Db'=>THINK_PATH.'/Lib/Think/Db/Db.class.php',
-        'ResultIterator'=>THINK_PATH.'/Lib/Think/Db/ResultIterator.class.php',
-        'ThinkTemplate'=>THINK_PATH.'/Lib/Think/Template/ThinkTemplate.class.php',
-        'Template'=>THINK_PATH.'/Lib/Think/Util/Template.class.php',
-        'TagLib'=>THINK_PATH.'/Lib/Think/Template/TagLib.class.php',
-        'Cache'=>THINK_PATH.'/Lib/Think/Util/Cache.class.php',
-        'Cookie'=>THINK_PATH.'/Lib/Think/Util/Cookie.class.php',
-        'Session'=>THINK_PATH.'/Lib/Think/Util/Session.class.php',
-        'Page'=>THINK_PATH.'/Lib/Think/Util/Page.class.php',
-    ),
 );
 ?>

@@ -19,5 +19,6 @@ return array(
     THINK_PATH.'/Mode/Compat/Model.class.php',
     THINK_PATH.'/Mode/Compat/View.class.php',
     THINK_PATH.'/Mode/Compat/compat.php',
+    THINK_PATH.'/Mode/Compat/alias.php',  // 加载别名
 );
 ?>

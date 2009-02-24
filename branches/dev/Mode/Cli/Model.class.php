@@ -64,7 +64,7 @@ class Model extends Base
         // 模型名称获取
         $this->name =   $this->getModelName();
         // 数据库初始化操作
-        alias_import("Db");
+        import("Db");
         // 获取数据库操作对象
         if(!empty($this->connection)) {
             // 当前模型有独立的数据库连接信息

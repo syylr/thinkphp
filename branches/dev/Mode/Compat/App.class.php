@@ -77,7 +77,7 @@ class App extends Base
 
             if('FILE' != strtoupper(C('SESSION_TYPE'))) {
                 // 其它方式Session支持 目前支持Db 通过过滤器方式扩展
-                import("Think.Util.Filter");
+                import("Filter");
                 Filter::load(ucwords(C('SESSION_TYPE')).'Session');
             }
             // Session初始化
@@ -95,7 +95,7 @@ class App extends Base
             if(C('DISPATCH_ON')) {
                 if( 'Think'== C('DISPATCH_NAME') ) {
                     // 使用内置的ThinkDispatcher调度器
-                    import('Mode.Compat.Dispatcher',THINK_PATH);
+                    import('Dispatcher');
                     Dispatcher::dispatch();
                 }elseif($plugInOn) {
                     // 加载第三方调度器
@@ -140,7 +140,7 @@ class App extends Base
             $this->checkTemplate();     //模板检查
 
             if(C('HTML_CACHE_ON')) {
-                import('Think.Util.HtmlCache');
+                import('HtmlCache');
                 HtmlCache::readHTMLCache();
             }
             if($plugInOn) {

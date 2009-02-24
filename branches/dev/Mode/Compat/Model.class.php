@@ -121,7 +121,7 @@ class Model extends Base  implements IteratorAggregate
         $this->name =   $this->getModelName();
         // 如果不是复合对象进行数据库初始化操作
         if(!$this->composite) {
-            import('Mode.Compat.Db',THINK_PATH);
+            import('Db');
             // 获取数据库操作对象
             if(!empty($this->connection)) {
                 // 当前模型有独立的数据库连接信息

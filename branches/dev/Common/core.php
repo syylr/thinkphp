@@ -17,5 +17,6 @@ return array(
     THINK_PATH.'/Lib/Think/Core/Action.class.php', // 控制器类
     THINK_PATH.'/Lib/Think/Core/Model.class.php', // 模型类
     THINK_PATH.'/Lib/Think/Core/View.class.php',  // 视图类
+    THINK_PATH.'/Common/alias.php',  // 加载别名
 );
 ?>

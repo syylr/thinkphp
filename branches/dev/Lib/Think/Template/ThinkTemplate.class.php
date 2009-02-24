@@ -276,7 +276,7 @@ class  ThinkTemplate extends Base
         // <include file='' />
         // <volist id='' name='' ></volist>
         // 的形式
-        import('Think.Template.TagLib.TagLibCx');
+        import('TagLibCx');
         $this->parseTagLib('cx',$content,true);
 
         //解析普通模板标签 {tagName:}
