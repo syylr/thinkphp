@@ -616,23 +616,32 @@ function C($name='',$value=null) {
     }
 }
 
-// 执行行为
-function B($name,$params=array()) {
-    $behavior   =  C('_behaviors_.'.$name);
-    if($behavior) {
-        $result   =  array();
-        foreach ($behavior   as $key=>$call){
-            $result[] = call_user_func_array($call,$params);
+// 处理标签
+function T($name,$params=array()) {
+    $tags   =  C('_tags_.'.$name);
+    if($tags) {
+        foreach ($tags   as $key=>$call){
+            if(is_callable($call)) {
+                $result = call_user_func_array($call,$params);
+            }
         }
         return $result;
     }
     return false;
 }
 
+// 执行行为
+function B($name) {
+    $class = $name.'Behavior';
+    import('@.Behavior.'.$class);
+    $behavior   =  new $class();
+    $behavior->run();
+}
+
 // 渲染输出Widget
 function W($name,$data=array(),$return=false) {
-    import('@.Widget.'.$name.'Widget');
     $class = $name.'Widget';
+    import('@.Widget.'.$class);
     $widget  =  new $class();
     $content = $widget->render($data);
     if($return) {
