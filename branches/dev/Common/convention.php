@@ -42,7 +42,7 @@ return  array(
     'ROUTER_ON'                  =>   false, // 是否开启URL路由
 
     'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
-    'BEHAVIOR_ON'               =>   false, // 是否开启行为
+    'TAG_PLUGIN_ON'               =>   false, // 是否开启插件机制
 
     /* 日志设置 */
     'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
