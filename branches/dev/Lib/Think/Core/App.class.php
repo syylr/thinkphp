@@ -70,9 +70,9 @@ class App extends Base
             L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
         }else{
 
-            // 执行项目开始行为
+            // 项目开始标签
             if(C('BEHAVIOR_ON')) {
-                B('app_begin');
+                T('app_begin');
             }
 
             // 设置系统时区 PHP5支持
@@ -115,9 +115,9 @@ class App extends Base
                 HtmlCache::readHTMLCache();
             }
 
-            // 执行项目初始化行为
+            // 项目初始化标签
             if(C('BEHAVIOR_ON')) {
-                B('app_init');
+                T('app_init');
             }
         }
 
@@ -170,9 +170,9 @@ class App extends Base
             if(is_file(CONFIG_PATH.'routes.php')) {
                 C('_routes_',include CONFIG_PATH.'routes.php');
             }
-            // 读取行为规则
-            if(is_file(CONFIG_PATH.'behaviors.php')) {
-                C('_behaviors_',include CONFIG_PATH.'behaviors.php');
+            // 读取标签规则
+            if(is_file(CONFIG_PATH.'tags.php')) {
+                C('_tags_',include CONFIG_PATH.'tags.php');
             }
             // 读取静态规则
             if(is_file(CONFIG_PATH.'htmls.php')) {
@@ -400,10 +400,10 @@ class App extends Base
             // CLI模式下面直接执行模块的操作方法
             R(MODULE_NAME,ACTION_NAME);
         }else{
-            $behaviorOn   =  C('BEHAVIOR_ON');
-            // 执行项目运行行为
-            if($behaviorOn) {
-                B('app_run');
+            $tagPlugin   =  C('TAG_PLUGIN_ON');
+            // 项目运行标签
+            if($tagPlugin) {
+                T('app_run');
             }
 
             //创建Action控制器实例
@@ -423,9 +423,9 @@ class App extends Base
                 // 执行前置操作
                 call_user_func(array(&$module,'_before_'.$action));
             }else{
-                // 执行操作前置行为
-                if($behaviorOn)
-                    B('action_before');
+                // 操作前置标签
+                if($tagPlugin)
+                    T('action_before');
             }
             //执行当前操作
             call_user_func(array(&$module,$action));
@@ -433,14 +433,14 @@ class App extends Base
                 //  执行后缀操作
                 call_user_func(array(&$module,'_after_'.$action));
             }else{
-                // 执行操作后置行为
-                if($behaviorOn)
-                    B('action_after');
+                // 操作后置标签
+                if($tagPlugin)
+                    T('action_after');
             }
 
-            // 执行项目结束行为
-            if($behaviorOn) {
-                B('app_end');
+            // 项目结束标签
+            if($tagPlugin) {
+                T('app_end');
             }
         }
         return ;
@@ -494,19 +494,19 @@ class App extends Base
       switch ($errno) {
           case E_ERROR:
           case E_USER_ERROR:
-              $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
-              if(C('WEB_LOG_RECORD')){
-                 Log::write($errorStr,Log::ERR);
-              }
-              halt($errorStr);
-              break;
+            $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
+            if(C('WEB_LOG_RECORD')){
+             Log::write($errorStr,Log::ERR);
+            }
+            halt($errorStr);
+            break;
           case E_STRICT:
           case E_USER_WARNING:
           case E_USER_NOTICE:
           default:
             $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
             Log::record($errorStr,Log::NOTICE);
-             break;
+            break;
       }
     }
 
