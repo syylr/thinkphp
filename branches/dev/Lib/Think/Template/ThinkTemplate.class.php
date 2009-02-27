@@ -194,51 +194,6 @@ class  ThinkTemplate extends Base
 
     /**
      +----------------------------------------------------------
-     * 清除缓存或者静态文件
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $filename  缓存文件名
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    protected function cleanCache($filename)
-    {
-        if(is_file($filename)){
-            unlink($filename);
-        }
-        return;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 清除缓存目录下面的文件
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $cacheDir  缓存目录名
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    protected function cleanDir($cacheDir=CACHE_PATH)
-    {
-        if ( $dir = opendir( $cacheDir ) )
-        {
-            while ( $file = readdir( $dir ) )
-            {
-                $check = is_dir( $file );
-                if ( !$check )
-                    unlink( $cacheDir . $file );
-            }
-            closedir( $dir );
-            return true;
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
      * 模板解析入口
      * 支持普通标签和TagLib解析 支持自定义标签库
      +----------------------------------------------------------
@@ -257,16 +212,21 @@ class  ThinkTemplate extends Base
         // 获取引入的标签库列表
         // 标签库只需要定义一次，允许引入多个一次
         // 一般放在文件的最前面
-        // 格式：<taglib name="cx,html" class="Think.Util.TagLib.TagLib_Cx,Think.Util.TagLib.TagLib_Html" />
+        // 格式：<taglib name="cx,html" />
         $this->getIncludeTagLib($content);
         if(!empty($this->tagLib)) {
-            // 如果有引入TagLib库
-            // 则对导入的TagLib进行解析
-            foreach($this->tagLib as $tagLibName=>$tagLibClass) {
-                if(empty($tagLibClass)) {
-                    import('Think.Template.TagLib.TagLib'.ucwords(strtolower($tagLibName)));
-                }else {
-                    import($tagLibClass);
+            // 对导入的TagLib进行解析
+            $_taglibs = C('_taglibs_');
+            foreach($this->tagLib as $tagLibName) {
+                // 内置标签库
+                if(!import('Think.Template.TagLib.TagLib'.ucwords(strtolower($tagLibName)))) {
+                    // 扩展标签库
+                    if($_taglibs && isset($_taglibs[$tagLibName])) {
+                        // 'tagLibName'=>'importPath'
+                        import($_taglibs[$tagLibName]);
+                    }else{
+                        throw_exception($tagLibName.L('_TAGLIB_NOT_EXIST_'));
+                    }
                 }
                 $this->parseTagLib($tagLibName,$content);
             }
@@ -356,10 +316,7 @@ class  ThinkTemplate extends Base
             }
             $xml = (array)($xml->tag->attributes());
             $array = array_change_key_case($xml['@attributes']);
-            $tagLibName =  explode(',',$array['name']);
-            $tagLibClass  =  isset($array['class'])?explode(',',$array['class']):array_fill(0,count($tagLibName),'');
-            $tagLibList  = array_combine($tagLibName,$tagLibClass);
-            $this->tagLib = $tagLibList;
+            $this->tagLib = explode(',',$array['name']);
         }
         return;
     }

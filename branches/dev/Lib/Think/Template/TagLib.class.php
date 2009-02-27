@@ -105,23 +105,17 @@ class TagLib extends Base
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($tagLib='',$filename='')
+    public function __construct()
     {
-        if(empty($tagLib)) {
-            $tagLib =   strtolower(substr(get_class($this),6));
-        }
-        $this->tagLib  = $tagLib;
+        $this->tagLib  = strtolower(substr(get_class($this),6));
         $this->tpl       = ThinkTemplate::getInstance();
-        if(!empty($filename)) {
-            $this->xml = $filename;
-        }else {
-            $this->xml = dirname(__FILE__).'/Tags/'.$tagLib.'.xml';
-        }
-        if(method_exists($this,'_initialize')) {
-            // 检测初始化方法 可以定义标签库名称以及对xml定义文件进行重新定位
-            $this->_initialize();
-        }
+        $this->_initialize();
         $this->load();
+    }
+
+    // 初始化标签库的定义文件
+    public function _initialize() {
+        $this->xml = dirname(__FILE__).'/Tags/'.$this->tagLib.'.xml';
     }
 
     public function load() {
