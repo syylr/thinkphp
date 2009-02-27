@@ -363,16 +363,20 @@ class AdvModel extends Model {
         }
         // 自动启动事务支持
         $this->startTrans();
-        foreach ($sql as $_sql){
-            $result   =  $this->execute($_sql);
-            if(false === $result) {
-                // 发生错误自动回滚事务
-                $this->rollback();
-                return false;
+        try{
+            foreach ($sql as $_sql){
+                $result   =  $this->execute($_sql);
+                if(false === $result) {
+                    // 发生错误自动回滚事务
+                    $this->rollback();
+                    return false;
+                }
             }
+            // 提交事务
+            $this->commit();
+        } catch (Exception $e) {
+            $this->rollback();
         }
-        // 提交事务
-        $this->commit();
         return true;
     }
 
