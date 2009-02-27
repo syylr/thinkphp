@@ -168,6 +168,21 @@ abstract class Action extends Base
      */
     public function __call($method,$parms) {
         if(strtolower($method) == strtolower(ACTION_NAME)) {
+            // 检查扩展操作方法
+            $_action = C('_actions_');
+            if($_action) {
+                // 'module:action'=>'callback'
+                if(isset($_action[MODULE_NAME.':'.ACTION_NAME])) {
+                    $action  =  $_action[MODULE_NAME.':'.ACTION_NAME];
+                }elseif(isset($_action[ACTION_NAME])){
+                    // 'action'=>'callback'
+                    $action  =  $_action[ACTION_NAME];
+                }
+                if(!empty($action)) {
+                    call_user_func($action);
+                    return ;
+                }
+            }
             // 如果定义了_empty操作 则调用
             if(method_exists($this,'_empty')) {
                 $this->_empty($method,$parms);

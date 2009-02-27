@@ -26,21 +26,6 @@ class App extends Base
 
     /**
      +----------------------------------------------------------
-     * 取得应用实例对象
-     * 静态方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return App
-     +----------------------------------------------------------
-     */
-    public static function  getInstance()
-    {
-        return get_instance_of(__CLASS__);
-    }
-
-    /**
-     +----------------------------------------------------------
      * 应用程序初始化
      +----------------------------------------------------------
      * @access public
@@ -62,69 +47,55 @@ class App extends Base
             // 预编译项目
             $this->build();
         }
-        if(IS_CLI) { // 命令模式
-            // 取得模块和操作名称
-            define('MODULE_NAME',   $this->getModule());       // Module名称
-            define('ACTION_NAME',   $this->getAction());        // Action操作
-            // 不使用语言包功能，仅仅加载框架语言文件
-            L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
-        }else{
+        // 项目开始标签
+        if(C('TAG_PLUGIN_ON'))
+            tag('app_begin');
 
-            // 项目开始标签
-            if(C('BEHAVIOR_ON')) {
-                T('app_begin');
-            }
+        // 设置系统时区 PHP5支持
+        if(function_exists('date_default_timezone_set'))
+            date_default_timezone_set(C('TIME_ZONE'));
 
-            // 设置系统时区 PHP5支持
-            if(function_exists('date_default_timezone_set'))
-                date_default_timezone_set(C('TIME_ZONE'));
-
-            // Session初始化
-            session_start();
-            // 应用调度过滤器
-            // 如果没有加载任何URL调度器
-            // 默认只支持 QUERY_STRING 方式
-            // 例如 ?m=user&a=add
-            if(C('DISPATCH_ON')) {
-                import('Dispatcher');
-                Dispatcher::dispatch();
-            }
-
-            if(!defined('PHP_FILE')) {
-                // PHP_FILE 由内置的Dispacher定义
-                // 如果不使用该插件，需要重新定义
-                define('PHP_FILE',_PHP_FILE_);
-            }
-
-            // 取得模块和操作名称
-            // 可以在Dispatcher中定义获取规则
-            if(!defined('MODULE_NAME')) define('MODULE_NAME',   $this->getModule());       // Module名称
-            if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
-
-            // 加载模块配置文件
-            if(is_file(CONFIG_PATH.MODULE_NAME.'_config.php')) {
-                C(include CONFIG_PATH.MODULE_NAME.'_config.php');
-            }
-
-            // 系统检查
-            $this->checkLanguage();     //语言检查
-            $this->checkTemplate();     //模板检查
-
-            if(C('HTML_CACHE_ON')) { // 开启静态缓存
-                import('HtmlCache');
-                HtmlCache::readHTMLCache();
-            }
-
-            // 项目初始化标签
-            if(C('BEHAVIOR_ON')) {
-                T('app_init');
-            }
+        // Session初始化
+        session_start();
+        // 应用调度过滤器
+        // 如果没有加载任何URL调度器
+        // 默认只支持 QUERY_STRING 方式
+        // 例如 ?m=user&a=add
+        if(C('DISPATCH_ON')) {
+            import('Dispatcher');
+            Dispatcher::dispatch();
         }
+
+        if(!defined('PHP_FILE'))
+            // PHP_FILE 由内置的Dispacher定义
+            // 如果不使用该插件，需要重新定义
+            define('PHP_FILE',_PHP_FILE_);
+
+        // 取得模块和操作名称
+        // 可以在Dispatcher中定义获取规则
+        if(!defined('MODULE_NAME')) define('MODULE_NAME',   $this->getModule());       // Module名称
+        if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
+
+        // 加载模块配置文件
+        if(is_file(CONFIG_PATH.strtolower(MODULE_NAME).'_config.php'))
+            C(include CONFIG_PATH.strtolower(MODULE_NAME).'_config.php');
+
+        // 系统检查
+        $this->checkLanguage();     //语言检查
+        $this->checkTemplate();     //模板检查
+
+        if(C('HTML_CACHE_ON')) { // 开启静态缓存
+            import('HtmlCache');
+            HtmlCache::readHTMLCache();
+        }
+
+        // 项目初始化标签
+        if(C('TAG_PLUGIN_ON'))
+            tag('app_init');
 
         // 记录应用初始化时间
-        if(C('SHOW_RUN_TIME')){
+        if(C('SHOW_RUN_TIME'))
             $GLOBALS['_initTime'] = microtime(TRUE);
-        }
         return ;
     }
 
@@ -142,51 +113,39 @@ class App extends Base
         // 加载惯例配置文件
         C(include THINK_PATH.'/Common/convention.php');
         // 加载项目配置文件
-        if(is_file(CONFIG_PATH.'config.php')) {
+        if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
-        }
         $common   = '';
         $debug  =  C('DEBUG_MODE');  //  是否调试模式
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
-            if(!$debug) { // 编译文件
+            if(!$debug) // 编译文件
                 $common   .= compile(COMMON_PATH.'common.php');
-            }
         }
         // 加载项目编译文件列表
         if(is_file(CONFIG_PATH.'app.php')) {
             $list   =  include CONFIG_PATH.'app.php';
-            foreach ($list as $key=>$file){
+            foreach ($list as $file){
                 // 加载并编译文件
                 require $file;
-                if(!$debug) {
+                if(!$debug)
                     $common   .= compile($file);
-                }
             }
         }
-        if(!IS_CLI) {
-            // 读取路由定义
-            if(is_file(CONFIG_PATH.'routes.php')) {
-                C('_routes_',include CONFIG_PATH.'routes.php');
-            }
-            // 读取标签规则
-            if(is_file(CONFIG_PATH.'tags.php')) {
-                C('_tags_',include CONFIG_PATH.'tags.php');
-            }
-            // 读取静态规则
-            if(is_file(CONFIG_PATH.'htmls.php')) {
-                C('_htmls_',include CONFIG_PATH.'htmls.php');
-            }
+        // 读取扩展配置文件
+        $list = C('EXTEND_CONFIG_LIST');
+        foreach ($list as $val){
+            if(is_file(CONFIG_PATH.$val.'.php'))
+                C('_'.$val.'_',include CONFIG_PATH.$val.'.php');
         }
         // 如果是调试模式加载调试模式配置文件
         if($debug) {
             // 加载系统默认的开发模式配置文件
             C(include THINK_PATH.'/Common/debug.php');
-            if(is_file(CONFIG_PATH.'debug.php')) {
+            if(is_file(CONFIG_PATH.'debug.php'))
                 // 允许项目增加开发模式配置定义
                 C(include CONFIG_PATH.'debug.php');
-            }
         }else{
             // 部署模式下面生成编译文件
             // 下次直接加载项目编译文件
@@ -208,20 +167,16 @@ class App extends Base
      */
     private function getModule()
     {
-        if(IS_CLI) {// 命令模式下面获取第一个参数作为模块名
-            $module = isset($_SERVER['argv'][1])?$_SERVER['argv'][1]:C('DEFAULT_MODULE');
-        }else{
-            $module = !empty($_POST[C('VAR_MODULE')]) ?
-                $_POST[C('VAR_MODULE')] :
-                (!empty($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:C('DEFAULT_MODULE'));
-            if(C('URL_CASE_INSENSITIVE')) {
-                // URL地址不区分大小写
-                define('P_MODULE_NAME',strtolower($module));
-                // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-                $module = ucfirst($this->parseName(strtolower($module),1));
-            }
-            unset($_POST[C('VAR_MODULE')],$_GET[C('VAR_MODULE')]);
+        $module = !empty($_POST[C('VAR_MODULE')]) ?
+            $_POST[C('VAR_MODULE')] :
+            (!empty($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:C('DEFAULT_MODULE'));
+        if(C('URL_CASE_INSENSITIVE')) {
+            // URL地址不区分大小写
+            define('P_MODULE_NAME',strtolower($module));
+            // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
+            $module = ucfirst($this->parseName(strtolower($module),1));
         }
+        unset($_POST[C('VAR_MODULE')],$_GET[C('VAR_MODULE')]);
         return $module;
     }
 
@@ -236,14 +191,10 @@ class App extends Base
      */
     private function getAction()
     {
-        if(IS_CLI) { // 命令行模式下面获取第二个参数作为操作名
-            $action  =  isset($_SERVER['argv'][2])?$_SERVER['argv'][2]:C('DEFAULT_ACTION');
-        }else{
-            $action   = !empty($_POST[C('VAR_ACTION')]) ?
-                $_POST[C('VAR_ACTION')] :
-                (!empty($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:C('DEFAULT_ACTION'));
-            unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
-        }
+        $action   = !empty($_POST[C('VAR_ACTION')]) ?
+            $_POST[C('VAR_ACTION')] :
+            (!empty($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:C('DEFAULT_ACTION'));
+        unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
         return $action;
     }
 
@@ -396,53 +347,56 @@ class App extends Base
      */
     public function exec()
     {
-        if(IS_CLI) {
-            // CLI模式下面直接执行模块的操作方法
-            R(MODULE_NAME,ACTION_NAME);
-        }else{
-            $tagPlugin   =  C('TAG_PLUGIN_ON');
-            // 项目运行标签
-            if($tagPlugin) {
-                T('app_run');
-            }
+        // 是否开启标签扩展
+        $tagOn   =  C('TAG_PLUGIN_ON');
+        // 项目运行标签
+        if($tagOn)
+            tag('app_run');
 
-            //创建Action控制器实例
-            $module  =  A(MODULE_NAME);
-            if(!$module) {
+        //创建Action控制器实例
+        $module  =  A(MODULE_NAME);
+        if(!$module) {
+            // 是否存在扩展模块
+            $_module = C('_modules_.'.MODULE_NAME);
+            if($_module) {
+                // 'module'=>array('classImportPath'[,'className'])
+                import($_module[0]);
+                $class = isset($_module[1])?$_module[1]:MODULE_NAME.'Action';
+                $module = new $class;
+            }else{
                 // 是否定义Empty模块
                 $module = A("Empty");
-                if(!$module) {
-                    // 模块不存在 抛出异常
-                    throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
-                }
             }
-
-            //获取当前操作名
-            $action = ACTION_NAME;
-            if (method_exists($module,'_before_'.$action)) {
-                // 执行前置操作
-                call_user_func(array(&$module,'_before_'.$action));
-            }else{
-                // 操作前置标签
-                if($tagPlugin)
-                    T('action_before');
-            }
-            //执行当前操作
-            call_user_func(array(&$module,$action));
-            if (method_exists($module,'_after_'.$action)) {
-                //  执行后缀操作
-                call_user_func(array(&$module,'_after_'.$action));
-            }else{
-                // 操作后置标签
-                if($tagPlugin)
-                    T('action_after');
-            }
-
-            // 项目结束标签
-            if($tagPlugin) {
-                T('app_end');
+            if(!$module) {
+                // 模块不存在 抛出异常
+                throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
             }
         }
+
+        //获取当前操作名
+        $action = ACTION_NAME;
+        if (method_exists($module,'_before_'.$action)) {
+            // 执行前置操作
+            call_user_func(array(&$module,'_before_'.$action));
+        }else{
+            // 操作前置标签
+            if($tagOn)
+                tag('action_before');
+        }
+        //执行当前操作
+        call_user_func(array(&$module,$action));
+        if (method_exists($module,'_after_'.$action)) {
+            //  执行后缀操作
+            call_user_func(array(&$module,'_after_'.$action));
+        }else{
+            // 操作后置标签
+            if($tagOn)
+                tag('action_after');
+        }
+
+        // 项目结束标签
+        if($tagOn)
+            tag('app_end');
         return ;
     }
 
