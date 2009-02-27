@@ -133,6 +133,7 @@ return  array(
     'TAGLIB_BEGIN'				=>	'<',			// 标签库标签开始标记
     'TAGLIB_END'					=>	'>',			// 标签库标签结束标记
     'TAG_NESTED_LEVEL'		=>	3,				// 标签库
+    'TAGLIB_LIST'                 =>   'cx,html',    // 内置标签库名称
 
     /* Cookie设置 */
     'COOKIE_EXPIRE'				=>	3600,		// Coodie有效期
@@ -148,5 +149,9 @@ return  array(
     'ACTION_JUMP_TMPL'=>	'Public:success',    // 页面跳转的模板文件
     'ACTION_404_TMPL'=>	'Public:404',         // 404错误的模板文件
     'APP_DOMAIN_DEPLOY'     =>  false,     // 是否使用独立域名部署项目
+
+    /* 需要加载的外部配置文件 */
+    'EXTEND_CONFIG_LIST'=>array('taglibs','routes','tags','htmls','modules','actions'),
+    // 内置可选配置包括：taglibs 标签库定义 routes 路由定义 tags 标签定义 htmls 静态缓存定义 modules 扩展模块 actions 扩展操作
 );
 ?>

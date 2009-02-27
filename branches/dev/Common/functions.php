@@ -424,11 +424,11 @@ function import($class,$baseUrl = '',$ext='.class.php')
 {
     static $_file = array();
     static $_class = array();
-    if('' === $baseUrl && false === strpos($class,'.')) {
+    $class    =   str_replace(array('.','#'), array('/','.'), $class);
+    if('' === $baseUrl && false === strpos($class,'/')) {
         // 检查别名导入
         return alias_import($class);
     }    //echo('<br>'.$class.$baseUrl);
-    $class    =   str_replace(array('.','#'), array('/','.'), $class);
     if(isset($_file[$class.$baseUrl]))
         return true;
     else
@@ -617,7 +617,7 @@ function C($name='',$value=null) {
 }
 
 // 处理标签
-function T($name,$params=array()) {
+function tag($name,$params=array()) {
     $tags   =  C('_tags_.'.$name);
     if($tags) {
         foreach ($tags   as $key=>$call){
