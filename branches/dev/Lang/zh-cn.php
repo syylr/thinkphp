@@ -52,7 +52,7 @@ return array(
     '_CLASS_CONFLICT_'=>'类名冲突',
     '_TEMPLATE_ERROR_'=>'模板引擎错误',
     '_CACHE_WRITE_ERROR_'=>'缓存文件写入失败！',
-
+    '_TAGLIB_NOT_EXIST_'=>'标签库未定义',
 	'_WAITING_GOTO_EXIST_'=>	'请等待系统转向...',
 	'_OPERATION_FAIL_'=>'操作失败！',
 	'_OPERATION_SUCCESS_'=>'操作成功！',
