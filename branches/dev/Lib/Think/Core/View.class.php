@@ -240,6 +240,10 @@ class View extends Base
             // 写入静态文件
             HtmlCache::writeHTMLCache($content);
         }
+        // 视图输出标签
+        if(C('TAG_PLUGIN_ON'))
+            tag('view_output',array($content));
+
         if($display) {
             $showTime   =   $this->showTime();
             echo $content;
