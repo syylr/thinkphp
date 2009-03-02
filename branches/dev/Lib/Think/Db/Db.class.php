@@ -503,10 +503,12 @@ class Db extends Base
                 $whereStr .= "( ";
                 if(is_array($val)) {
                     if(is_string($val[0])) {
-                        if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE|NULL|NOTNULL)$/i',$val[0])) { // 比较运算
+                        if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)$/i',$val[0])) { // 比较运算
                             $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
                         }elseif('exp'==strtolower($val[0])){ // 使用表达式
                             $whereStr .= $key.' '.$val[1];
+                        }elseif(preg_match('/NULL|NOTNULL/i',$val[0])){
+                            $whereStr .= $key.' '.$this->comparison[strtolower($val[0])];
                         }elseif(preg_match('/IN/i',$val[0])){ // IN 运算
                             $zone   =   is_array($val[1])? implode(',',$val[1]):$val[1];
                             $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
@@ -523,9 +525,13 @@ class Db extends Base
                             $rule = 'AND';
                         }
                         for($i=0;$i<$count;$i++) {
-                            $op = is_array($val[$i])?$this->comparison[strtolower($val[$i][0])]:'=';
                             $data = is_array($val[$i])?$val[$i][1]:$val[$i];
-                            $whereStr .= '('.$key.' '.$op.' '.$this->parseValue($data).') '.$rule.' ';
+                            if('exp'==strtolower($val[$i][0])) {
+                                $whereStr .= '('.$key.' '.$data.') '.$rule.' ';
+                            }else{
+                                $op = is_array($val[$i])?$this->comparison[strtolower($val[$i][0])]:'=';
+                                $whereStr .= '('.$key.' '.$op.' '.$this->parseValue($data).') '.$rule.' ';
+                            }
                         }
                         $whereStr = substr($whereStr,0,-4);
                     }
