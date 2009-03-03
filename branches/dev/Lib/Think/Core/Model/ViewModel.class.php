@@ -233,6 +233,13 @@ class ViewModel extends Model {
             }
             // 解析成视图字段
             $array =  array();
+            foreach ($fields as $key=>$field){
+                if(strpos($field,'(') || strpos(strtolower($field),' as ')){
+                    // 使用了函数或者别名
+                    $array[] =  $field;
+                    unset($fields[$key]);
+                }
+            }
             foreach ($this->viewFields as $name=>$val){
                 $k = isset($val['_as'])?$val['_as']:$name;
                 foreach ($fields as $key=>$field){
