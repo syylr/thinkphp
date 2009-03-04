@@ -29,10 +29,9 @@
  * 页面显示：
  *    纯文本显示在网页中，如文章标题<title>$data</title>： $data = Input::forShow($field);
  *    HTML 在网页中显示，如文章内容：无需处理。
- *    在网页中以源代码方式显示html：$vo = Input::forShow($html);
- *    纯文本或者HTML在textarea中进行编辑: $vo = Input::forTarea($value);
- *    html在标签中使用，如<input value="数据" /> ，使用 $vo = Input::forTag($value); 或者 $vo = Input::hsc($value);
- *
+ *    在网页中以源代码方式显示html或者作为标签的属性值：$vo = Input::forShow($html);
+ *    纯文本或者HTML在textarea中进行编辑: $vo = Input::forEdit($value);
+ * 
  * 特殊使用情况：
  *    字符串要在数据库进行搜索： $data = Input::forSearch($field);
  */
@@ -174,7 +173,25 @@ class Input extends Base {
     {
         return self::nl2Br( self::hsc($string) );
     }
-
+    
+    /**
+     +----------------------------------------------------------
+     * 处理纯文本数据，以便在编辑器中显示，代替forTag和forTeare
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $text 要处理的字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static public function forEdit($string)
+    {
+    	$string = str_ireplace(array('<','>'), array('&lt;','&gt;'), $string);
+    	$string = str_replace(array('"',"'"), array('&quot;','&#039;'), $string);
+    	return $string;
+    }
+    
     /**
      +----------------------------------------------------------
      * 处理纯文本数据，以便在textarea标签中显示
