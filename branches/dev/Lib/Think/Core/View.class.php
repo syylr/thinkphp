@@ -225,6 +225,36 @@ class View extends Base
 
     /**
      +----------------------------------------------------------
+     *  创建静态页面
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @htmlfile 生成的静态文件名称
+     * @param string $templateFile 指定要调用的模板文件
+     * 默认为空 由系统自动定位模板文件
+     * @param string $charset 输出编码
+     * @param string $contentType 输出类型
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function buildHtml($htmlfile='',$templateFile='',$charset='',$contentType='text/html') {
+        $content = $this->fetch($templateFile,$charset,$contentType);
+        if(empty($htmlfile)) {
+            $htmlfile =  HTML_PATH.rtrim($_SERVER['PATH_INFO'],'/').C('HTML_FILE_SUFFIX');
+        }
+        if(!is_dir(dirname($htmlfile))) {
+            // 如果静态目录不存在 则创建
+            mk_dir(dirname($htmlfile));
+        }
+        if(false === file_put_contents($htmlfile,$content)){
+            throw_exception(L('_CACHE_WRITE_ERROR_'));
+        }
+        return $content;//readfile($htmlfile);
+    }
+
+    /**
+     +----------------------------------------------------------
      * 输出模板
      +----------------------------------------------------------
      * @access public

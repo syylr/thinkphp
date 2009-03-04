@@ -89,19 +89,38 @@ abstract class Action extends Base
      *  获取输出页面内容
      * 调用内置的模板引擎fetch方法，
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $templateFile 指定要调用的模板文件
      * 默认为空 由系统自动定位模板文件
      * @param string $charset 输出编码
      * @param string $contentType 输出类型
      +----------------------------------------------------------
-     * @return void
+     * @return string
      +----------------------------------------------------------
      */
-    public function fetch($templateFile='',$charset='',$contentType='text/html')
+    protected function fetch($templateFile='',$charset='',$contentType='text/html')
     {
         return $this->view->fetch($templateFile,$charset,$contentType);
+    }
+
+    /**
+     +----------------------------------------------------------
+     *  创建静态页面
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $templateFile 指定要调用的模板文件
+     * 默认为空 由系统自动定位模板文件
+     * @htmlfile 生成的静态文件名称
+     * @param string $charset 输出编码
+     * @param string $contentType 输出类型
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function buildHtml($htmlfile='',$templateFile='',$charset='',$contentType='text/html') {
+        return $this->view->buildHtml($htmlfile,$templateFile,$charset,$contentType);
     }
 
     /**
