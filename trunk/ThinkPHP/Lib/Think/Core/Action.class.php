@@ -101,7 +101,7 @@ abstract class Action extends Base
                 $this->name =   substr(get_class($this),strlen($prefix));
             }
         }
-        return $this->name;
+        return ucfirst($this->name);
     }
 
     /**
