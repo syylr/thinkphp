@@ -169,14 +169,40 @@ class Page extends Base
         //上下翻页字符串
         $upRow   = $this->nowPage-1;
         $downRow = $this->nowPage+1;
+		$preRow =  $this->nowPage-$this->rollPage;
+		$nextRow = $this->nowPage+$this->rollPage;
+		$theEndRow = $this->totalPages;
+
+		$replaceVAR = false;
+
+		//Dispather如果没有启用重定向会导致翻页链接越来越长
+		//这里用正则匹配一下,如果本来就是一个翻页链接,则直接修改对应的翻页参数,而不是在后面添加新的参数
+		if (preg_match('/&'.C('VAR_PAGE').'=\\d+/', $url)) {
+			$replaceVAR = true;
+
+			$upUrl = preg_replace('/&'.C('VAR_PAGE').'=\\d+/',"&".C('VAR_PAGE')."=".$upRow,$url);
+			$downUrl = preg_replace('/&'.C('VAR_PAGE').'=\\d+/',"&".C('VAR_PAGE')."=".$downRow,$url);
+			$preUrl = preg_replace('/&'.C('VAR_PAGE').'=\\d+/',"&".C('VAR_PAGE')."=".$preRow,$url);
+			$nextUrl = preg_replace('/&'.C('VAR_PAGE').'=\\d+/',"&".C('VAR_PAGE')."=".$nextRow,$url);
+			$theFirstUrl = preg_replace('/&'.C('VAR_PAGE').'=\\d+/',"&".C('VAR_PAGE')."=1",$url);
+			$theEndUrl = preg_replace('/&'.C('VAR_PAGE').'=\\d+/',"&".C('VAR_PAGE')."=".$theEndRow,$url);
+		} else {
+			$upUrl = $url."&".C('VAR_PAGE')."=".$upRow;
+			$downUrl = $url."&".C('VAR_PAGE')."=".$downRow;
+			$preUrl = $url."&".C('VAR_PAGE')."=".$preRow;
+			$nextUrl = $url."&".C('VAR_PAGE')."=".$nextRow;
+			$theFirstUrl = $url."&".C('VAR_PAGE')."=1";
+			$theEndUrl = $url."&".C('VAR_PAGE')."=".$theEndRow;
+		}
+
         if ($upRow>0){
-            $upPage="[<a href='".$url."&".C('VAR_PAGE')."=$upRow'>".$this->config['prev']."</a>]";
+            $upPage="[<a href='".$upUrl."'>".$this->config['prev']."</a>]";
         }else{
             $upPage="";
         }
 
         if ($downRow <= $this->totalPages){
-            $downPage="[<a href='".$url."&".C('VAR_PAGE')."=$downRow'>".$this->config['next']."</a>]";
+            $downPage="[<a href='".$downUrl."'>".$this->config['next']."</a>]";
         }else{
             $downPage="";
         }
@@ -185,18 +211,15 @@ class Page extends Base
             $theFirst = "";
             $prePage = "";
         }else{
-            $preRow =  $this->nowPage-$this->rollPage;
-            $prePage = "[<a href='".$url."&".C('VAR_PAGE')."=$preRow' >上".$this->rollPage."页</a>]";
-            $theFirst = "[<a href='".$url."&".C('VAR_PAGE')."=1' >".$this->config['first']."</a>]";
+            $prePage = "[<a href='".$preUrl."' >上".$this->rollPage."页</a>]";
+            $theFirst = "[<a href='".$theFirstUrl."' >".$this->config['first']."</a>]";
         }
         if($nowCoolPage == $this->coolPages){
             $nextPage = "";
             $theEnd="";
         }else{
-            $nextRow = $this->nowPage+$this->rollPage;
-            $theEndRow = $this->totalPages;
-            $nextPage = "[<a href='".$url."&".C('VAR_PAGE')."=$nextRow' >下".$this->rollPage."页</a>]";
-            $theEnd = "[<a href='".$url."&".C('VAR_PAGE')."=$theEndRow' >".$this->config['last']."</a>]";
+            $nextPage = "[<a href='".$nextUrl."' >下".$this->rollPage."页</a>]";
+            $theEnd = "[<a href='".$theEndUrl."' >".$this->config['last']."</a>]";
         }
         // 1 2 3 4 5
         $linkPage = "";
@@ -204,7 +227,10 @@ class Page extends Base
             $page=($nowCoolPage-1)*$this->rollPage+$i;
             if($page!=$this->nowPage){
                 if($page<=$this->totalPages){
-                    $linkPage .= "&nbsp;<a href='".$url."&".C('VAR_PAGE')."=$page'>&nbsp;".$page."&nbsp;</a>";
+					if($replaceVAR)
+						$linkPage .= "&nbsp;<a href='".preg_replace('/&'.C('VAR_PAGE').'=\\d+/',"&".C('VAR_PAGE')."=".$page,$url)."'>&nbsp;".$page."&nbsp;</a>";
+					else
+						$linkPage .= "&nbsp;<a href='".$url."&".C('VAR_PAGE')."=$page'>&nbsp;".$page."&nbsp;</a>";
                 }else{
                     break;
                 }
