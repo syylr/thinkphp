@@ -852,6 +852,7 @@ if(!function_exists('stripslashes_deep')) {
  */
 function D($className='',$appName='')
 {
+    $className = ucfirst($className);
     static $_model = array();
     if(empty($className)) {
         return new  Model();
