@@ -271,39 +271,31 @@ class App extends Base
      */
     private function checkTemplate()
     {
-        if(C('TMPL_SWITCH_ON')) {
-            // 启用多模版
-            if(C('AUTO_DETECT_THEME')) {// 自动侦测模板主题
-                $t = C('VAR_TEMPLATE');
-                if ( isset($_GET[$t]) ) {
-                    $templateSet = $_GET[$t];
-                    Cookie::set('think_template',$templateSet,time()+3600);
-                } else {
-                    if(Cookie::is_set('think_template')) {
-                        $templateSet = Cookie::get('think_template');
-                    }else {
-                        $templateSet =    C('DEFAULT_TEMPLATE');
-                        Cookie::set('think_template',$templateSet,time()+3600);
-                    }
-                }
-                if (!is_dir(TMPL_PATH.$templateSet)) {
-                    //模版不存在的话，使用默认模版
+        if(C('AUTO_DETECT_THEME')) {// 自动侦测模板主题
+            $t = C('VAR_TEMPLATE');
+            if ( isset($_GET[$t]) ) {
+                $templateSet = $_GET[$t];
+                Cookie::set('think_template',$templateSet,time()+3600);
+            } else {
+                if(Cookie::is_set('think_template')) {
+                    $templateSet = Cookie::get('think_template');
+                }else {
                     $templateSet =    C('DEFAULT_TEMPLATE');
+                    Cookie::set('think_template',$templateSet,time()+3600);
                 }
-            }else{
+            }
+            if (!is_dir(TMPL_PATH.$templateSet)) {
+                //模版不存在的话，使用默认模版
                 $templateSet =    C('DEFAULT_TEMPLATE');
             }
-            //模版名称
-            define('TEMPLATE_NAME',$templateSet);
-            // 当前模版路径
-            define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME);
-            $tmplDir	=	TMPL_DIR.'/'.TEMPLATE_NAME.'/';
         }else{
-            // 把模版目录直接放置项目模版文件
-            // 该模式下面没有TEMPLATE_NAME常量
-            define('TEMPLATE_PATH',TMPL_PATH);
-            $tmplDir	=	TMPL_DIR.'/';
+            $templateSet =    C('DEFAULT_TEMPLATE');
         }
+        //模版名称
+        define('TEMPLATE_NAME',$templateSet);
+        // 当前模版路径
+        define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME);
+        $tmplDir = TMPL_DIR.'/'.TEMPLATE_NAME.'/';
 
         //当前网站地址
         define('__ROOT__',WEB_URL);
