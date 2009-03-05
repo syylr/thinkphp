@@ -245,8 +245,6 @@ class DbPgsql extends Db{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $resultType  数据集类型
-     +----------------------------------------------------------
      * @return resultSet
      +----------------------------------------------------------
      * @throws ThinkExecption
@@ -287,9 +285,6 @@ class DbPgsql extends Db{
                 order by a.attnum asc;");
         $info   =   array();
         foreach ($result as $key => $val) {
-            if(is_object($val)) {
-                $val    =   get_object_vars($val);
-            }
             $info[$val['Field']] = array(
             'name'    => $val['Field'],
             'type'    => $val['Type'],

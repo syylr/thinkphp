@@ -12,7 +12,7 @@
 
 /**
  +------------------------------------------------------------------------------
- * MSsql数据库驱动类
+ * Firebird数据库驱动类 剑雷 2007.12.28
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Think
@@ -21,10 +21,8 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class DbMssql extends Db{
+class DbIbase extends Db{
 
-    // 初始游标位置
-    protected $offset = 0;
     protected $selectSql  =     'SELECT %LIMIT% %DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%';
     /**
      +----------------------------------------------------------
@@ -36,11 +34,11 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      */
     public function __construct($config=''){
-        if ( !function_exists('mssql_connect') ) {
-            throw_exception(L('_NOT_SUPPERT_').':mssql');
+        if ( !extension_loaded('interbase') ) {
+            throw_exception(L('_NOT_SUPPERT_').':Interbase or Firebird');
         }
         if(!empty($config)) {
-            $this->config	=	$config;
+            $this->config   =   $config;
         }
     }
 
@@ -55,24 +53,17 @@ class DbMssql extends Db{
      */
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
-            if(empty($config))	$config  =  $this->config;
-            $conn = $this->pconnect ? 'mssql_pconnect':'mssql_connect';
+            if(empty($config))  $config =   $this->config;
+            $conn = $this->pconnect ? 'ibase_pconnect':'ibase_connect';
             // 处理不带端口号的socket连接情况
-            $host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
-            $this->linkID[$linkNum] = $conn( $host, $config['username'], $config['password']);
-
+            $host = $config['hostname'].($config['hostport']?"/{$config['hostport']}":'');
+            $this->linkID[$linkNum] = $conn($host.':'.$config['database'], $config['username'], $config['password'],C('DB_CHARSET'),0,3);
             if ( !$this->linkID[$linkNum]) {
-                throw_exception($this->error());
-                return false;
-            }
-
-            if ( !mssql_select_db($config['database'], $this->linkID[$linkNum]) ) {
-                throw_exception($this->error());
-                return false;
+                throw_exception(ibase_errmsg());
             }
             // 标记连接成功
-            $this->connected =  true;
-            //注销数据库安全信息
+            $this->connected    =   true;
+            // 注销数据库连接配置信息
             if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
         return $this->linkID[$linkNum];
@@ -86,7 +77,7 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      */
     public function free() {
-        mssql_free_result($this->queryID);
+        @ibase_free_result($this->queryID);
         $this->queryID = 0;
     }
 
@@ -99,19 +90,19 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
-     * @return boolean
+     * @return resultSet
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function _query($str='') {
+    protected function _query($str='') {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
         $this->Q(1);
-        $this->queryID = mssql_query($this->queryStr, $this->_linkID);
+        $this->queryID = ibase_query($this->_linkID, $this->queryStr);
         $this->debug();
         if ( !$this->queryID ) {
             if ( $this->debug)
@@ -119,8 +110,9 @@ class DbMssql extends Db{
             else
                 return false;
         } else {
-            $this->numRows = mssql_num_rows($this->queryID);
+            //$this->numCols = ibase_num_fields($this->queryID);
             $this->resultSet = $this->getAll();
+            $this->numRows  =   count($this->resultSet);
             return $this->resultSet;
         }
     }
@@ -138,60 +130,36 @@ class DbMssql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function _execute($str='') {
+    protected function _execute($str='') {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
         $this->W(1);
+        $result =   ibase_query($this->_linkID, $this->queryStr) ;
         $this->debug();
-        $result	=	mssql_query($this->queryStr, $this->_linkID);
-        if ( false === $result ) {
-            if ( $this->debug)
+        if ( false === $result) {
+            if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
             else
                 return false;
         } else {
-            $this->numRows = mssql_rows_affected($this->_linkID);
-            $this->lastInsID = $this->mssql_insert_id();
+            $this->numRows = ibase_affected_rows($this->_linkID);
+            //剑雷 2007.12.28
+            //$this->lastInsID = mysql_insert_id($this->_linkID);
+            $this->lastInsID =0;
+
             return $this->numRows;
         }
     }
 
-    /**
-     +----------------------------------------------------------
-     * 用于获取最后插入的ID
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return integer
-     +----------------------------------------------------------
-     */
-    public function mssql_insert_id()
-    {
-        $query  =   "SELECT @@IDENTITY as last_insert_id";
-        $result =   mssql_query($query, $this->_linkID);
-        list($last_insert_id)   =   mssql_fetch_row($result);
-        mssql_free_result($result);
-        return $last_insert_id;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 启动事务
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
     public function startTrans() {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         //数据rollback 支持
         if ($this->transTimes == 0) {
-            mssql_query('BEGIN TRAN', $this->_linkID);
+            ibase_trans( IBASE_DEFAULT, $this->_linkID);
         }
         $this->transTimes++;
         return ;
@@ -205,11 +173,13 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
      */
     public function commit()
     {
         if ($this->transTimes > 0) {
-            $result = mssql_query('COMMIT TRAN', $this->_linkID);
+            $result =  ibase_commit($this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -227,11 +197,13 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
      */
     public function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = mssql_query('ROLLBACK TRAN', $this->_linkID);
+            $result =ibase_rollback($this->_linkID);
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
@@ -240,6 +212,41 @@ class DbMssql extends Db{
         }
         return true;
     }
+
+    /**
+     +----------------------------------------------------------
+     * BLOB字段解密函数 Firebird特有
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param $blob 待解密的BLOB
+     +----------------------------------------------------------
+     * @return 二进制数据
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+     public function BlobDecode($blob)
+    {
+        $maxblobsize = 262144;
+        $blob_data = ibase_blob_info($this->_linkID, $blob );
+        $blobid = ibase_blob_open($this->_linkID, $blob );
+
+        if( $blob_data[0] > $maxblobsize ) {
+
+            $realblob = ibase_blob_get($blobid, $maxblobsize);
+
+            while($string = ibase_blob_get($blobid, 8192)){
+                $realblob .= $string;
+            }
+        } else {
+            $realblob = ibase_blob_get($blobid, $blob_data[0]);
+        }
+
+        ibase_blob_close( $blobid );
+        return( $realblob );
+    }
+
 
     /**
      +----------------------------------------------------------
@@ -260,16 +267,31 @@ class DbMssql extends Db{
         }
         //返回数据集
         $result = array();
-        if($this->numRows >0) {
-            while($row = mssql_fetch_assoc($this->queryID)){
-                $result[]   =   $row;
-            }
-            //mssql_data_seek($this->queryID,0);
-            //分页偏移后,再将偏移位置复位 剑雷 2008.12.24
-            mssql_data_seek($this->queryID,$this->offset);
-            $this->offset=0;
+        while ( $row = ibase_fetch_assoc($this->queryID)) {
+            $result[]   =   $row;
         }
-        return $result;
+
+        //剑雷 2007.12.30 自动解密BLOB字段
+        //取BLOB字段清单
+        $bloblist = array();
+        $fieldCount = ibase_num_fields($this->queryID);
+        for ($i = 0; $i < $fieldCount; $i++) {
+         $col_info = ibase_field_info($this->queryID, $i);
+         if ($col_info['type']=='BLOB') {
+           $bloblist[]=trim($col_info['name']);
+         }
+        }
+       //如果有BLOB字段,就进行解密处理
+       if (!empty($bloblist)) {
+         $i=0;
+         foreach ($result as $row) {
+           foreach($bloblist as $field) {
+               if (!empty($row[$field])) $result[$i][$field]=$this->BlobDecode($row[$field]);
+          }
+          $i++;
+        }
+      }
+     return $result;
     }
 
     /**
@@ -278,71 +300,64 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @return array
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getFields($tableName) {
-        $result =   $this->getAll("SELECT   column_name,   data_type,   column_default,   is_nullable
-        FROM    information_schema.tables AS t
-        JOIN    information_schema.columns AS c
-        ON  t.table_catalog = c.table_catalog
-        AND t.table_schema  = c.table_schema
-        AND t.table_name    = c.table_name
-        WHERE   t.table_name = '$tableName'");
+    public function getFields($tableName) {
+        $result   =  $this->_query('SELECT RDB$FIELD_NAME AS FIELD, RDB$DEFAULT_VALUE AS DEFAULT1, RDB$NULL_FLAG AS NULL1 FROM RDB$RELATION_FIELDS WHERE RDB$RELATION_NAME=UPPER(\''.$tableName.'\') ORDER By RDB$FIELD_POSITION');
         $info   =   array();
         foreach ($result as $key => $val) {
-            $info[$val['column_name']] = array(
-                'name'    => $val['column_name'],
-                'type'    => $val['data_type'],
-                'notnull' => (bool) ($val['is_nullable'] === ''), // not null is empty, null is yes
-                'default' => $val['column_default'],
+            $info[trim($val['FIELD'])] = array(
+                'name'    => trim($val['FIELD']),
+                'type'    => '',
+                'notnull' => (bool) ($val['NULL1'] ==1), // 1表示不为Null
+                'default' => $val['DEFAULT1'],
                 'primary' => false,
                 'autoinc' => false,
             );
-        }
-        return $info;
+       }
+      //剑雷 取表字段类型
+     $sql='select first 1 * from '. $tableName;
+     $rs_temp = ibase_query ($this->_linkID, $sql);
+     $fieldCount = ibase_num_fields($rs_temp);
+
+     for ($i = 0; $i < $fieldCount; $i++)
+     {
+       $col_info = ibase_field_info($rs_temp, $i);
+       $info[trim($col_info['name'])]['type']=$col_info['type'];
+     }
+     ibase_free_result ($rs_temp);
+
+     //剑雷 取表的主键
+     $sql='select b.rdb$field_name as FIELD_NAME from rdb$relation_constraints a join rdb$index_segments b
+on a.rdb$index_name=b.rdb$index_name
+where a.rdb$constraint_type=\'PRIMARY KEY\' and a.rdb$relation_name=UPPER(\''.$tableName.'\')';
+     $rs_temp = ibase_query ($this->_linkID, $sql);
+     while ($row=ibase_fetch_object($rs_temp)) {
+      $info[trim($row->FIELD_NAME)]['primary']=True;
+     }
+     ibase_free_result ($rs_temp);
+
+     return $info;
     }
 
     /**
      +----------------------------------------------------------
-     * 取得数据表的字段信息
+     * 取得数据库的表信息
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @return array
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getTables($dbName='') {
-        $result   =  $this->getAll("SELECT TABLE_NAME
-            FROM INFORMATION_SCHEMA.TABLES
-            WHERE TABLE_TYPE = 'BASE TABLE'
-            ");
+    public function getTables($dbName='') {
+        $sql='SELECT DISTINCT RDB$RELATION_NAME FROM RDB$RELATION_FIELDS WHERE RDB$SYSTEM_FLAG=0';
+        $result   =  $this->_query($sql);
         $info   =   array();
         foreach ($result as $key => $val) {
-            $info[$key] = current($val);
+            $info[$key] = trim(current($val));
         }
         return $info;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * limit
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function parseLimit($limit) {
-        $limit	=	explode(',',$limit);
-        if(count($limit)>1) {
-            $this->offset	=	$limit[0];
-            $limitStr	=	' TOP '.$limit[1].' ';
-        }else{
-            $this->offset	=0;
-            $limitStr = ' TOP '.$limit[0].' ';
-        }
-        return $limitStr;
     }
 
     /**
@@ -356,8 +371,8 @@ class DbMssql extends Db{
      */
     public function close() {
         if (!empty($this->queryID))
-            mssql_free_result($this->queryID);
-        if ($this->_linkID && !mssql_close($this->_linkID)){
+            ibase_free_result($this->queryID);
+        if ($this->_linkID && !ibase_close($this->_linkID)){
             throw_exception($this->error());
         }
         $this->_linkID = 0;
@@ -372,9 +387,11 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
      */
     public function error() {
-        $this->error = mssql_get_last_message();
+        $this->error = ibase_errmsg();
         if($this->queryStr!=''){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
@@ -387,14 +404,38 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $str  SQL指令
+     * @param string $str  SQL字符串
      +----------------------------------------------------------
      * @return string
+     +----------------------------------------------------------
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
     public function escape_string($str) {
         return addslashes($str);
     }
+
+    /**
+     +----------------------------------------------------------
+     * limit
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+	public function parseLimit($limit) {
+        $limitStr    = '';
+        if(!empty($limit)) {
+            $limit  =   explode(',',$limit);
+            if(count($limit)>1) {
+                 $limitStr = ' FIRST '.($limit[1]-$limit[0]).' SKIP '.$limit[0].' ';
+            }else{
+              $limitStr = ' FIRST '.$limit[0].' ';
+            }
+        }
+		return $limitStr;
+	}
 
    /**
      +----------------------------------------------------------

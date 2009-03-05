@@ -6,26 +6,25 @@
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
-// | Author: liu21st <liu21st@gmail.com>
+// | Author: ZhangXuehun <zhangxuehun@sohu.com>
 // +----------------------------------------------------------------------
-// $Id$
+// $Id: DbOracle.class.php,v 1.1 2008/12/23 10:06:30 wangyufeng Exp $
 
 /**
- +------------------------------------------------------------------------------
- * MSsql数据库驱动类
- +------------------------------------------------------------------------------
- * @category   Think
- * @package  Think
- * @subpackage  Db
- * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
- +------------------------------------------------------------------------------
- */
-class DbMssql extends Db{
++------------------------------------------------------------------------------
+* Oracle数据库驱动类
++------------------------------------------------------------------------------
+* @category   Think
+* @package  Think
+* @subpackage  Db
+* @author    ZhangXuehun <zhangxuehun@sohu.com>
+* @version   $Id: DbOracle.class.php,v 1.1 2008/12/23 10:06:30 wangyufeng Exp $
++------------------------------------------------------------------------------
+*/
+class DbOracle extends Db{
 
-    // 初始游标位置
-    protected $offset = 0;
-    protected $selectSql  =     'SELECT %LIMIT% %DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%';
+    private $mode = OCI_COMMIT_ON_SUCCESS;
+    protected $selectSql  =     'SELECT * FROM (SELECT rownum AS numrow, thinkphp.* FROM (SELECT  %DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%) thinkphp ) WHERE %LIMIT%';
     /**
      +----------------------------------------------------------
      * 架构函数 读取数据库配置信息
@@ -36,11 +35,12 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      */
     public function __construct($config=''){
-        if ( !function_exists('mssql_connect') ) {
-            throw_exception(L('_NOT_SUPPERT_').':mssql');
+        putenv("NLS_LANG=AMERICAN_AMERICA.UTF8");
+        if ( !extension_loaded('oci8') ) {
+            throw_exception(L('_NOT_SUPPERT_').'oracle');
         }
         if(!empty($config)) {
-            $this->config	=	$config;
+            $this->config        =        $config;
         }
     }
 
@@ -55,23 +55,19 @@ class DbMssql extends Db{
      */
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
-            if(empty($config))	$config  =  $this->config;
-            $conn = $this->pconnect ? 'mssql_pconnect':'mssql_connect';
-            // 处理不带端口号的socket连接情况
-            $host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
-            $this->linkID[$linkNum] = $conn( $host, $config['username'], $config['password']);
+            if(empty($config))  $config = $this->config;
+            $conn = $this->pconnect ? 'oci_pconnect':'oci_new_connect';
+            $this->linkID[$linkNum] = $conn($config['username'], $config['password'],
+            "//{$config['hostname']}:{$config['hostport']}/{$config['database']}");//modify by wyfeng at 2008.12.19
 
-            if ( !$this->linkID[$linkNum]) {
-                throw_exception($this->error());
+            if (!$this->linkID[$linkNum]){
+                $error = $this->error(false);
+                throw_exception($error["message"], '', $error["code"]);
                 return false;
             }
-
-            if ( !mssql_select_db($config['database'], $this->linkID[$linkNum]) ) {
-                throw_exception($this->error());
-                return false;
-            }
+            $this->dbVersion = oci_server_version($this->linkID[$linkNum]);
             // 标记连接成功
-            $this->connected =  true;
+            $this->connected = true;
             //注销数据库安全信息
             if(1 != C('DB_DEPLOY_TYPE')) unset($this->config);
         }
@@ -85,8 +81,8 @@ class DbMssql extends Db{
      * @access public
      +----------------------------------------------------------
      */
-    public function free() {
-        mssql_free_result($this->queryID);
+     public function free() {
+        @oci_free_statement($this->queryID);
         $this->queryID = 0;
     }
 
@@ -99,29 +95,31 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
-     * @return boolean
+     * @return ArrayObject
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function _query($str='') {
+    protected function _query($str='') {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
+        //更改事务模式
+        $this->mode = OCI_COMMIT_ON_SUCCESS;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
         $this->Q(1);
-        $this->queryID = mssql_query($this->queryStr, $this->_linkID);
+        $this->queryID = oci_parse($this->_linkID,$this->queryStr);
         $this->debug();
-        if ( !$this->queryID ) {
-            if ( $this->debug)
+        if (!oci_execute($this->queryID, $this->mode)) {
+		    if ( $this->debug)
                 throw_exception($this->error());
             else
                 return false;
         } else {
-            $this->numRows = mssql_num_rows($this->queryID);
-            $this->resultSet = $this->getAll();
-            return $this->resultSet;
+
+			$this->resultSet = $this->getAll();
+			return $this->resultSet;
         }
     }
 
@@ -138,43 +136,27 @@ class DbMssql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function _execute($str='') {
+     protected function _execute($str='') {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
+        //更改事务模式
+        $this->mode = OCI_COMMIT_ON_SUCCESS;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
         $this->W(1);
+        $stmt = oci_parse($this->_linkID,$this->queryStr);
         $this->debug();
-        $result	=	mssql_query($this->queryStr, $this->_linkID);
-        if ( false === $result ) {
-            if ( $this->debug)
+        if (!oci_execute($stmt)) {
+            if ( $this->debug )
                 throw_exception($this->error());
             else
                 return false;
         } else {
-            $this->numRows = mssql_rows_affected($this->_linkID);
-            $this->lastInsID = $this->mssql_insert_id();
+            $this->numRows = oci_num_rows($stmt);
+            $this->lastInsID = preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $this->queryStr)?$this->insert_last_id():0;//add by wyfeng at 2008.12.22
             return $this->numRows;
         }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 用于获取最后插入的ID
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return integer
-     +----------------------------------------------------------
-     */
-    public function mssql_insert_id()
-    {
-        $query  =   "SELECT @@IDENTITY as last_insert_id";
-        $result =   mssql_query($query, $this->_linkID);
-        list($last_insert_id)   =   mssql_fetch_row($result);
-        mssql_free_result($result);
-        return $last_insert_id;
     }
 
     /**
@@ -185,13 +167,13 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
      */
-    public function startTrans() {
-        $this->initConnect(true);
-        if ( !$this->_linkID ) return false;
+     public function startTrans() {
         //数据rollback 支持
         if ($this->transTimes == 0) {
-            mssql_query('BEGIN TRAN', $this->_linkID);
+                $this->mode = OCI_DEFAULT;
         }
         $this->transTimes++;
         return ;
@@ -205,16 +187,17 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
      */
-    public function commit()
-    {
+    public function commit(){
         if ($this->transTimes > 0) {
-            $result = mssql_query('COMMIT TRAN', $this->_linkID);
-            $this->transTimes = 0;
-            if(!$result){
-                throw_exception($this->error());
-                return false;
-            }
+                $result = oci_commit($this->_linkID);
+                if(!$result){
+                    throw_exception($this->error());
+                    return false;
+                }
+                $this->transTimes = 0;
         }
         return true;
     }
@@ -227,16 +210,17 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
      */
-    public function rollback()
-    {
+     public function rollback(){
         if ($this->transTimes > 0) {
-            $result = mssql_query('ROLLBACK TRAN', $this->_linkID);
-            $this->transTimes = 0;
+            $result = oci_rollback($this->_linkID);
             if(!$result){
                 throw_exception($this->error());
                 return false;
             }
+            $this->transTimes = 0;
         }
         return true;
     }
@@ -248,29 +232,30 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @return array
+     * @return resultSet
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function getAll() {
+     public function getAll() {
         if ( !$this->queryID ) {
             throw_exception($this->error());
             return false;
         }
         //返回数据集
         $result = array();
-        if($this->numRows >0) {
-            while($row = mssql_fetch_assoc($this->queryID)){
-                $result[]   =   $row;
-            }
-            //mssql_data_seek($this->queryID,0);
-            //分页偏移后,再将偏移位置复位 剑雷 2008.12.24
-            mssql_data_seek($this->queryID,$this->offset);
-            $this->offset=0;
-        }
+        $this->numRows = oci_fetch_all($this->queryID, $result, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
+		//add by wyfeng at 2008-12-23 强制将字段名转换为小写，以配合Model类函数如count等
+		if(C("DB_CASE_LOWER"))
+		{
+			foreach($result as $k=>$v)
+			{
+				$result[$k] = array_change_key_case($result[$k], CASE_LOWER);
+			}
+		}
         return $result;
     }
+
 
     /**
      +----------------------------------------------------------
@@ -278,26 +263,24 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @return array
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getFields($tableName) {
-        $result =   $this->getAll("SELECT   column_name,   data_type,   column_default,   is_nullable
-        FROM    information_schema.tables AS t
-        JOIN    information_schema.columns AS c
-        ON  t.table_catalog = c.table_catalog
-        AND t.table_schema  = c.table_schema
-        AND t.table_name    = c.table_name
-        WHERE   t.table_name = '$tableName'");
+     public function getFields($tableName) {
+        $result = $this->_query("select a.column_name,data_type,decode(nullable,'Y',0,1) notnull,data_default,decode(a.column_name,b.column_name,1,0) pk "
+                  ."from user_tab_columns a,(select column_name from user_constraints c,user_cons_columns col "
+          ."where c.constraint_name=col.constraint_name and c.constraint_type='P'and c.table_name='".strtoupper($tableName)
+          ."') b where table_name='".strtoupper($tableName)."' and a.column_name=b.column_name(+)");
+
         $info   =   array();
         foreach ($result as $key => $val) {
-            $info[$val['column_name']] = array(
-                'name'    => $val['column_name'],
-                'type'    => $val['data_type'],
-                'notnull' => (bool) ($val['is_nullable'] === ''), // not null is empty, null is yes
-                'default' => $val['column_default'],
-                'primary' => false,
-                'autoinc' => false,
+            $info[strtolower($val['column_name'])] = array(
+                'name'    => strtolower($val['column_name']),
+                'type'    => strtolower($val['data_type']),
+                'notnull' => $val['notnull'],
+                'default' => $val['data_default'],
+                'primary' => $val['pk'],
+                'autoinc' => $val['pk'],
             );
         }
         return $info;
@@ -305,44 +288,20 @@ class DbMssql extends Db{
 
     /**
      +----------------------------------------------------------
-     * 取得数据表的字段信息
+     * 取得数据库的表信息（暂时实现取得用户表信息）
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @return array
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getTables($dbName='') {
-        $result   =  $this->getAll("SELECT TABLE_NAME
-            FROM INFORMATION_SCHEMA.TABLES
-            WHERE TABLE_TYPE = 'BASE TABLE'
-            ");
+    public function getTables($dbName='') {
+        $result = $this->_query("select table_name from user_tables");
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
         }
         return $info;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * limit
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function parseLimit($limit) {
-        $limit	=	explode(',',$limit);
-        if(count($limit)>1) {
-            $this->offset	=	$limit[0];
-            $limitStr	=	' TOP '.$limit[1].' ';
-        }else{
-            $this->offset	=0;
-            $limitStr = ' TOP '.$limit[0].' ';
-        }
-        return $limitStr;
     }
 
     /**
@@ -356,9 +315,9 @@ class DbMssql extends Db{
      */
     public function close() {
         if (!empty($this->queryID))
-            mssql_free_result($this->queryID);
-        if ($this->_linkID && !mssql_close($this->_linkID)){
-            throw_exception($this->error());
+            oci_free_statement($this->queryID);
+        if(!oci_close($this->_linkID)){
+            throw_exception($this->error(false));
         }
         $this->_linkID = 0;
     }
@@ -372,11 +331,19 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
      */
-    public function error() {
-        $this->error = mssql_get_last_message();
+     public function error($result = true) {
+        if($result){
+           $this->error = oci_error($this->queryID);
+        }elseif(!$this->_linkID){
+            $this->error = oci_error();
+        }else{
+            $this->error = oci_error($this->_linkID);
+        }
         if($this->queryStr!=''){
-            $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
+            $this->error .= "n [ SQL语句 ] : ".$this->queryStr;
         }
         return $this->error;
     }
@@ -387,26 +354,77 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $str  SQL指令
+     * @param mix $str  SQL指令
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    public function escape_string($str) {
+        return str_ireplace("'", "''", $str);//add by wyfeng at 2008.12.22
+    }
+
+	/**
+     +----------------------------------------------------------
+     * 获取最后插入id ,仅适用于采用序列+触发器结合生成ID的方式
+	 * 在config.php中指定
+ 		'DB_TRIGGER_PREFIX'	=>	'tr_',
+		'DB_SEQUENCE_PREFIX' =>	'ts_',
+	 * eg:表 tb_user
+	   相对tb_user的序列为：
+	 	-- Create sequence
+		create sequence TS_USER
+		minvalue 1
+		maxvalue 999999999999999999999999999
+		start with 1
+		increment by 1
+		nocache;
+	   相对tb_user,ts_user的触发器为：
+		create or replace trigger TR_USER
+		  before insert on "TB_USER"
+		  for each row
+		begin
+			select "TS_USER".nextval into :NEW.ID from dual;
+		end;
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $str  序列名称，默认为序列前缀+表名（无前缀）
+     +----------------------------------------------------------
+     * @return integer
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+	 */
+ 	//add by wyfeng at 2008.12.22
+	public function insert_last_id()
+	{
+		if(empty($this->tableName))
+		{
+			return 0;
+		}
+		$sequenceName = C("DB_SEQUENCE_PREFIX") . $this->tableName;
+		$vo = $this->_query("SELECT {$sequenceName}.currval currval FROM dual");
+		return $vo?$vo[0]["currval"]:0;
+	}
+
+    /**
+     +----------------------------------------------------------
+     * limit
+     +----------------------------------------------------------
+     * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function escape_string($str) {
-        return addslashes($str);
-    }
-
-   /**
-     +----------------------------------------------------------
-     * 析构方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     */
-    public function __destruct()
-    {
-        // 关闭连接
-        $this->close();
-    }
+	public function parseLimit($limit) {
+        $limitStr    = '';
+        if(!empty($limit)) {
+            $limit = explode(',',$limit);
+            $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
+        }
+		return $limitStr;
+	}
 }//类定义结束
 ?>

@@ -231,8 +231,6 @@ class DbSqlite extends Db
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $resultType  数据集类型
-     +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      * @throws ThinkExecption
@@ -268,9 +266,6 @@ class DbSqlite extends Db
         $result =   $this->_query('PRAGMA table_info( '.$tableName.' )');
         $info   =   array();
         foreach ($result as $key => $val) {
-            if(is_object($val)) {
-                $val	=	get_object_vars($val);
-            }
             $info[$val['Field']] = array(
                 'name'    => $val['Field'],
                 'type'    => $val['Type'],
