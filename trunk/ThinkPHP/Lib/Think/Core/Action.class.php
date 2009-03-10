@@ -77,11 +77,10 @@ abstract class Action extends Base
             }
         }
         //控制器初始化
-        if(method_exists($this,'_initialize')) {
-            $this->_initialize();
-        }
+        $this->_initialize();
     }
 
+    protected function _initialize() {}
     /**
      +----------------------------------------------------------
      * 得到当前的Action对象名称
