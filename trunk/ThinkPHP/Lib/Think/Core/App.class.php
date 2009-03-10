@@ -78,7 +78,7 @@ class App extends Base
             if('FILE' != strtoupper(C('SESSION_TYPE'))) {
                 // 其它方式Session支持 目前支持Db 通过过滤器方式扩展
                 import("Think.Util.Filter");
-                Filter::load(ucwords(C('SESSION_TYPE')).'Session');
+                Filter::load(ucwords(strtolower(C('SESSION_TYPE'))).'Session');
             }
             // Session初始化
             session_start();
