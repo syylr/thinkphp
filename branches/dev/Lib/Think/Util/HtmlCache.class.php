@@ -75,7 +75,7 @@ class HtmlCache extends Base
                     // 应用附加函数
                     $rule    =   $html[2]($rule);
                 }
-                $time = $html[1]?$html[1]:C('HTML_CACHE_TIME'); // 缓存有效期 -1 为永久缓存
+                $time = isset($html[1])?$html[1]:C('HTML_CACHE_TIME'); // 缓存有效期 -1 为永久缓存
                 self::$cacheTime = $time;
                 $cacheName  =   $rule.C('HTML_FILE_SUFFIX');
                 self::$cacheFile = $cacheName;
