@@ -349,9 +349,9 @@ function __autoload($classname)
 {
     // 自动加载当前项目的Actioon类和Model类
     if(substr($classname,-5)=="Model") {
-        import('@.Model.'.$classname);
+        require_cache(LIB_PATH.'Model/'.$classname.'.class.php');
     }elseif(substr($classname,-6)=="Action"){
-        import('@.Action.'.$classname);
+        require_cache(LIB_PATH.'Action/'.$classname.'.class.php');
     }else {
         // 检查是否存在别名定义
         if(alias_import($classname)) return ;
@@ -519,7 +519,11 @@ function D($className='',$appName='')
     }
     $OriClassName = $className;
     $className =  $className.'Model';
-    import($appName.'.Model.'.$className);
+    if('@'===$appName) {
+        require_cache(LIB_PATH.'Model/'.$className.'.class.php');
+    }else{
+        import($appName.'.Model.'.$className);
+    }
     if(class_exists($className)) {
         $model = new $className();
         $_model[$appName.$OriClassName] =  $model;
@@ -547,7 +551,11 @@ function A($className,$appName='@')
     }
     $OriClassName = $className;
     $className =  $className.'Action';
-    import($appName.'.Action.'.$className);
+    if('@'===$appName) {
+        require_cache(LIB_PATH.'Action/'.$className.'.class.php');
+    }else{
+        import($appName.'.Action.'.$className);
+    }
     if(class_exists($className)) {
         $action = new $className();
         $_action[$appName.$OriClassName] = $action;
@@ -633,7 +641,7 @@ function tag($name,$params=array()) {
 // 执行行为
 function B($name) {
     $class = $name.'Behavior';
-    import('@.Behavior.'.$class);
+    require_cache(LIB_PATH.'Behavior/'.$class.'.class.php');
     $behavior   =  new $class();
     $behavior->run();
 }
@@ -641,7 +649,7 @@ function B($name) {
 // 渲染输出Widget
 function W($name,$data=array(),$return=false) {
     $class = $name.'Widget';
-    import('@.Widget.'.$class);
+    require_cache(LIB_PATH.'Widget/'.$class.'.class.php');
     $widget  =  new $class();
     $content = $widget->render($data);
     if($return) {

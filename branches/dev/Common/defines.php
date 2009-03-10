@@ -89,7 +89,6 @@ define('LANG_PATH',     APP_PATH.'/'.LANG_DIR.'/'); //
 define('TEMP_PATH',      APP_PATH.'/'.TEMP_DIR.'/'); //
 define('DATA_PATH', APP_PATH.'/Data/'); //
 
-
 define('VENDOR_PATH',THINK_PATH.'/Vendor/');
 // 为了方便导入第三方类库 设置Vendor目录到include_path
 set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);

@@ -44,6 +44,7 @@ return  array(
     'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
     'TAG_PLUGIN_ON'               =>   false, // 是否开启插件机制
 
+    'SESSION_AUTO_START'   =>   true,  // 是否自动开启Session
     /* 日志设置 */
     'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
     'LOG_RECORD_LEVEL'       =>   array('EMERG','ALERT','CRIT','ERR'),  // 允许记录的日志级别
