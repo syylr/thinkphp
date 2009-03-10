@@ -65,7 +65,6 @@ class DbOracle extends Db{
                 throw_exception($error["message"], '', $error["code"]);
                 return false;
             }
-            $this->dbVersion = oci_server_version($this->linkID[$linkNum]);
             // 标记连接成功
             $this->connected = true;
             //注销数据库安全信息
@@ -343,7 +342,7 @@ class DbOracle extends Db{
             $this->error = oci_error($this->_linkID);
         }
         if($this->queryStr!=''){
-            $this->error .= "n [ SQL语句 ] : ".$this->queryStr;
+            $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         return $this->error;
     }

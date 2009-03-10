@@ -63,7 +63,6 @@ class DbSqlite extends Db
                 throw_exception(sqlite_error_string());
                 return false;
             }
-            $this->dbVersion = sqlite_libversion();
             // 标记连接成功
             $this->connected	=	true;
             //注销数据库安全信息
