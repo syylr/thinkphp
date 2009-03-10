@@ -140,7 +140,12 @@ class  ThinkTemplate extends Base
         //编码替换
         if(empty($charset))  $charset = C('OUTPUT_CHARSET');
         if(C('TEMPLATE_CHARSET') != $charset) {
-            $tmplContent = str_ireplace('charset='.C('TEMPLATE_CHARSET'), 'charset='.$charset, $tmplContent);
+			if (preg_match('/<meta.*?charset=.*?>/', $tmplContent, $regs)) {
+				//把<meta Content-Type charset= >这一条单独取出来替换,以免正文内容中出现charset=而发生错误的替换
+				$meta = str_ireplace('charset='.C('TEMPLATE_CHARSET'), 'charset='.$charset, $regs[0]);
+				//把整个<meta Content-Type替换,实际上限制了charset的替换只局限于meta内
+				$tmplContent = str_ireplace($regs[0], $meta, $tmplContent);
+			}
         }
         // 令牌验证
         $tmplContent =  preg_replace('/<\/form(\s*)>/is','<?php if(C("TOKEN_ON")):?><input type="hidden" name="<?php echo C("TOKEN_NAME");?>" value="<?php echo Session::get(C("TOKEN_NAME")); ?>"/><?php endif;?></form>',$tmplContent);
