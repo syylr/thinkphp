@@ -48,15 +48,16 @@ class App extends Base
             $this->build();
         }
         // 项目开始标签
-        if(C('TAG_PLUGIN_ON'))
-            tag('app_begin');
+        if(C('TAG_PLUGIN_ON'))   tag('app_begin');
 
         // 设置系统时区 PHP5支持
         if(function_exists('date_default_timezone_set'))
             date_default_timezone_set(C('TIME_ZONE'));
 
-        // Session初始化
-        session_start();
+        if(C('SESSION_AUTO_START'))
+            // Session初始化
+            session_start();
+
         // 应用调度过滤器
         // 如果没有加载任何URL调度器
         // 默认只支持 QUERY_STRING 方式
@@ -90,12 +91,8 @@ class App extends Base
         }
 
         // 项目初始化标签
-        if(C('TAG_PLUGIN_ON'))
-            tag('app_init');
+        if(C('TAG_PLUGIN_ON'))   tag('app_init');
 
-        // 记录应用初始化时间
-        if(C('SHOW_RUN_TIME'))
-            $GLOBALS['_initTime'] = microtime(TRUE);
         return ;
     }
 
@@ -154,7 +151,6 @@ class App extends Base
         }
         return ;
     }
-
 
     /**
      +----------------------------------------------------------
@@ -253,9 +249,6 @@ class App extends Base
             // 读取当前模块的语言包
             if (is_file(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
                 L(include LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php');
-        }else{
-            // 不使用语言包功能，仅仅加载框架语言文件
-            L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
         }
         return ;
     }
@@ -342,8 +335,7 @@ class App extends Base
         // 是否开启标签扩展
         $tagOn   =  C('TAG_PLUGIN_ON');
         // 项目运行标签
-        if($tagOn)
-            tag('app_run');
+        if($tagOn)  tag('app_run');
 
         //创建Action控制器实例
         $module  =  A(MODULE_NAME);
@@ -367,28 +359,32 @@ class App extends Base
 
         //获取当前操作名
         $action = ACTION_NAME;
-        if (method_exists($module,'_before_'.$action)) {
-            // 执行前置操作
-            call_user_func(array(&$module,'_before_'.$action));
+        if(strpos($action,':')) {
+            // 执行操作链 最多只能有一个输出
+            $actionList	=	explode(':',$action);
+            foreach ($actionList as $action){
+                $module->$action();
+            }
         }else{
-            // 操作前置标签
-            if($tagOn)
-                tag('action_before');
+            if (method_exists($module,'_before_'.$action)) {
+                // 执行前置操作
+                call_user_func(array(&$module,'_before_'.$action));
+            }else{
+                // 操作前置标签
+                if($tagOn)  tag('action_before');
+            }
+            //执行当前操作
+            call_user_func(array(&$module,$action));
+            if (method_exists($module,'_after_'.$action)) {
+                //  执行后缀操作
+                call_user_func(array(&$module,'_after_'.$action));
+            }else{
+                // 操作后置标签
+                if($tagOn)  tag('action_after');
+            }
         }
-        //执行当前操作
-        call_user_func(array(&$module,$action));
-        if (method_exists($module,'_after_'.$action)) {
-            //  执行后缀操作
-            call_user_func(array(&$module,'_after_'.$action));
-        }else{
-            // 操作后置标签
-            if($tagOn)
-                tag('action_after');
-        }
-
         // 项目结束标签
-        if($tagOn)
-            tag('app_end');
+        if($tagOn)  tag('app_end');
         return ;
     }
 
@@ -403,7 +399,11 @@ class App extends Base
      */
     public function run() {
         $this->init();
+        // 记录应用初始化时间
+        if(C('SHOW_RUN_TIME'))
+            $GLOBALS['_initTime'] = microtime(TRUE);
         $this->exec();
+        $GLOBALS['_endTime'] = microtime(TRUE);
         return ;
     }
 
@@ -441,9 +441,7 @@ class App extends Base
           case E_ERROR:
           case E_USER_ERROR:
             $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
-            if(C('WEB_LOG_RECORD')){
-             Log::write($errorStr,Log::ERR);
-            }
+            if(C('WEB_LOG_RECORD')) Log::write($errorStr,Log::ERR);
             halt($errorStr);
             break;
           case E_STRICT:

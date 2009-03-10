@@ -206,6 +206,7 @@ class View extends Base
             $templateFile   = $this->parseTemplateFile($templateFile);
         }
         $this->_before_fetch($templateFile,$charset,$contentType);
+        import('Template');
         $template   =  Template::getInstance();
         // 模板引擎解析和输出
         $template->fetch($templateFile,$this->tVar,$charset);
