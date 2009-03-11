@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-import('Think.Template.TagLib');
+import('TagLib');
 
 /**
  +------------------------------------------------------------------------------
@@ -263,7 +263,7 @@ class TagLibCx extends TagLib
     public function _elseif($attr,$content) {
         $tag          = $this->parseXmlAttr($attr,'elseif');
         $condition   = $this->parseCondition($tag['condition']);
-        $parseStr  .= '<?php elseif('.$condition.'): ?>';
+        $parseStr   = '<?php elseif('.$condition.'): ?>';
         return $parseStr;
     }
 
