@@ -52,21 +52,9 @@ class Dispatcher extends Base
             define('PHP_FILE',_PHP_FILE_);
         }
         if($urlMode == URL_PATHINFO || $urlMode == URL_REWRITE || $urlMode == URL_COMPAT) {
-            // 检查PATHINFO
-            if(!empty($_GET[C('VAR_PATHINFO')])) {
-                // 兼容PATHINFO 参数
-                $_SERVER['PATH_INFO']   =   $_GET[C('VAR_PATHINFO')];
-                unset($_GET[C('VAR_PATHINFO')]);
-			}elseif(!isset($_SERVER["PATH_INFO"]))
-			{
-				$_SERVER['PATH_INFO'] = "";
-			}elseif (empty($_SERVER["PATH_INFO"]))
-			{
-                // 在FastCGI模式下面 $_SERVER["PATH_INFO"] 为空
-                $_SERVER['PATH_INFO'] = str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['REQUEST_URI']);
-            }
-
-            if (!empty($_GET) && C('URL_AUTO_REDIRECT') && !isset($_GET[C('VAR_PATHINFO')]) && !isset($_GET[C('VAR_ROUTER')])) {
+			// 获取PATHINFO信息
+            self::parsePathInfo();
+            if (!empty($_GET) && C('URL_AUTO_REDIRECT') && !isset($_GET[C('VAR_ROUTER')])) {
                 $_GET  =  array_merge (self :: getPathInfo(),$_GET);
                 $_varModule =   C('VAR_MODULE');
                 $_varAction =   C('VAR_ACTION');
@@ -176,10 +164,6 @@ class Dispatcher extends Base
             if(!is_array($routes)) {
                 $routes =   $_routes;
             }
-            if(C('HTML_URL_SUFFIX')) {
-                $suffix =   substr(C('HTML_URL_SUFFIX'),1);
-                $_SERVER['PATH_INFO']   =   preg_replace('/\.'.$suffix.'$/','',$_SERVER['PATH_INFO']);
-            }
             if(isset($_GET[C('VAR_ROUTER')])) {
                 // 存在路由变量
                 $routeName  =   $_GET[C('VAR_ROUTER')];
@@ -260,10 +244,6 @@ class Dispatcher extends Base
     {
         $pathInfo = array();
         if(!empty($_SERVER['PATH_INFO'])) {
-            if(C('HTML_URL_SUFFIX')) {
-                $suffix =   substr(C('HTML_URL_SUFFIX'),1);
-                $_SERVER['PATH_INFO']   =   preg_replace('/\.'.$suffix.'$/','',$_SERVER['PATH_INFO']);
-            }
             if(C('PATH_MODEL')==2){
                 $paths = explode(C('PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
                 $pathInfo[C('VAR_MODULE')] = array_shift($paths);
@@ -281,6 +261,77 @@ class Dispatcher extends Base
             }
         }
         return $pathInfo;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获得服务器的PATH_INFO信息
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    private static function parsePathInfo()
+    {
+        if(!empty($_GET[C('VAR_PATHINFO')])) {
+            // 兼容PATHINFO 参数
+            $path = $_GET[C('VAR_PATHINFO')];
+            unset($_GET[C('VAR_PATHINFO')]);
+        }
+        elseif(!empty($_SERVER['PATH_INFO']))
+        {
+            $pathInfo = $_SERVER['PATH_INFO'];
+            if(0 === strpos($pathInfo,$_SERVER['SCRIPT_NAME']))
+            {
+                $path = substr($pathInfo, strlen($_SERVER['SCRIPT_NAME']));
+            }
+            else
+            {
+                $path = $pathInfo;
+            }
+        }
+        else if(!empty($_SERVER['ORIG_PATH_INFO']))
+        {
+            $pathInfo = $_SERVER['ORIG_PATH_INFO'];
+            if(0 === strpos($pathInfo, $_SERVER['SCRIPT_NAME']))
+            {
+                $path = substr($pathInfo, strlen($_SERVER['SCRIPT_NAME']));
+            }
+            else
+            {
+                $path = $pathInfo;
+            }
+        }
+        elseif (!empty($_SERVER['REDIRECT_PATH_INFO'])){
+            $path = $_SERVER['REDIRECT_PATH_INFO'];
+        }else if(!empty($_SERVER["REDIRECT_Url"]))
+        {
+            $path = $_SERVER["REDIRECT_Url"];
+
+            if(empty($_SERVER['QUERY_STRING']) || $_SERVER['QUERY_STRING'] == $_SERVER["REDIRECT_QUERY_STRING"])
+            {
+                $parsedUrl = parse_url($_SERVER["REQUEST_URI"]);
+                if(!empty($parsedUrl['query']))
+                {
+                    $_SERVER['QUERY_STRING'] = $parsedUrl['query'];
+                    parse_str($parsedUrl['query'], $GET);
+                    $_GET = array_merge($_GET, $GET);
+                    reset($_GET);
+                }
+                else
+                {
+                    unset($_SERVER['QUERY_STRING']);
+                }
+
+                reset($_SERVER);
+            }
+        }
+        if(C('HTML_URL_SUFFIX') && !empty($path)) {
+            $suffix =   substr(C('HTML_URL_SUFFIX'),1);
+            $path   =   preg_replace('/\.'.$suffix.'$/','',$path);
+        }
+        $_SERVER['PATH_INFO'] = empty($path) ? '/' : $path;
     }
 
 }//类定义结束
