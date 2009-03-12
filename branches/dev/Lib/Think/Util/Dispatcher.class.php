@@ -148,12 +148,12 @@ class Dispatcher extends Base
     {
         if(!empty($_GET[C('VAR_PATHINFO')])) {
             // 兼容PATHINFO 参数
-            $path	=	$_GET[C('VAR_PATHINFO')];
+            $path = $_GET[C('VAR_PATHINFO')];
             unset($_GET[C('VAR_PATHINFO')]);
         }
-        elseif(!empty($_SERVER['PATH_INFO']) || NULL != getenv('PATH_INFO'))
+        elseif(!empty($_SERVER['PATH_INFO']))
         {
-            $pathInfo = empty($_SERVER['PATH_INFO']) ? getenv('PATH_INFO') : $_SERVER['PATH_INFO'];
+            $pathInfo = $_SERVER['PATH_INFO'];
             if(0 === strpos($pathInfo,$_SERVER['SCRIPT_NAME']))
             {
                 $path = substr($pathInfo, strlen($_SERVER['SCRIPT_NAME']));
@@ -163,10 +163,10 @@ class Dispatcher extends Base
                 $path = $pathInfo;
             }
         }
-        else if(!empty($_SERVER['ORIG_PATH_INFO']) || NULL != getenv('ORIG_PATH_INFO'))
+        else if(!empty($_SERVER['ORIG_PATH_INFO']))
         {
-            $pathInfo = empty($_SERVER['ORIG_PATH_INFO']) ? getenv('ORIG_PATH_INFO') : $_SERVER['ORIG_PATH_INFO'];
-            if(0 === strpos($pathInfo, $_SERVER['SCRIPT_NAME']) && 0 === strpos($pathInfo, $_SERVER['SCRIPT_NAME']))
+            $pathInfo = $_SERVER['ORIG_PATH_INFO'];
+            if(0 === strpos($pathInfo, $_SERVER['SCRIPT_NAME']))
             {
                 $path = substr($pathInfo, strlen($_SERVER['SCRIPT_NAME']));
             }
@@ -175,7 +175,9 @@ class Dispatcher extends Base
                 $path = $pathInfo;
             }
         }
-        else if(!empty($_SERVER["REDIRECT_Url"]))
+        elseif (!empty($_SERVER['REDIRECT_PATH_INFO'])){
+            $path = $_SERVER['REDIRECT_PATH_INFO'];
+        }else if(!empty($_SERVER["REDIRECT_Url"]))
         {
             $path = $_SERVER["REDIRECT_Url"];
 
