@@ -323,7 +323,6 @@ class Dispatcher extends Base
                 {
                     unset($_SERVER['QUERY_STRING']);
                 }
-
                 reset($_SERVER);
             }
         }
