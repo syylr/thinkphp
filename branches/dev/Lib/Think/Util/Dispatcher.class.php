@@ -112,10 +112,6 @@ class Dispatcher extends Base
     {
         $pathInfo = array();
         if(!empty($_SERVER['PATH_INFO'])) {
-            /*if(C('HTML_URL_SUFFIX')) {
-                $suffix =   substr(C('HTML_URL_SUFFIX'),1);
-                $_SERVER['PATH_INFO']   =   preg_replace('/\.'.$suffix.'$/','',$_SERVER['PATH_INFO']);
-            }*/
             if(C('PATH_MODEL')==2){
                 $paths = explode(C('PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
                 $pathInfo[C('VAR_MODULE')] = array_shift($paths);
