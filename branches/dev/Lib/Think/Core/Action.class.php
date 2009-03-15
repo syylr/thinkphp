@@ -365,7 +365,7 @@ abstract class Action extends Base
      +----------------------------------------------------------
      */
     public function redirect($url,$params=array(),$delay=0,$msg='') {
-        $url    =   url($url,$params);
+        $url    =   U($url,$params);
         redirect($url,$delay,$msg);
     }
 
