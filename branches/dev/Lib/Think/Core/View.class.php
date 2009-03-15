@@ -239,7 +239,7 @@ class View extends Base
      * @return string
      +----------------------------------------------------------
      */
-    protected function buildHtml($htmlfile='',$templateFile='',$charset='',$contentType='text/html') {
+    public function buildHtml($htmlfile='',$templateFile='',$charset='',$contentType='text/html') {
         $content = $this->fetch($templateFile,$charset,$contentType);
         if(empty($htmlfile)) {
             $htmlfile =  HTML_PATH.rtrim($_SERVER['PATH_INFO'],'/').C('HTML_FILE_SUFFIX');
