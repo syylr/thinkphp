@@ -493,16 +493,17 @@ class Model extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * @access protected
      +----------------------------------------------------------
-     * @param array $data 数据
+     * @param array $resultSet 数据
      * @param string $type 返回类型 默认为数组
      +----------------------------------------------------------
-     * @return mixed
+     * @return void
      +----------------------------------------------------------
      */
     protected function returnResultSet(&$resultSet,$type='') {
         foreach ($resultSet as $key=>$data){
             $resultSet[$key]  =  $this->returnResult($data,$type);
         }
+        return $resultSet;
     }
 
     /**
