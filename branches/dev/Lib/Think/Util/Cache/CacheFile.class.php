@@ -36,7 +36,7 @@ class CacheFile extends Cache
         if(!empty($options['temp'])){
             $this->options['temp'] = $options['temp'];
         }else {
-            $this->options['temp'] = TEMP_PATH;
+            $this->options['temp'] = C('DATA_CACHE_PATH');
         }
         $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
         if(substr($this->options['temp'], -1) != "/")    $this->options['temp'] .= "/";
@@ -99,11 +99,14 @@ class CacheFile extends Cache
         $name	=	md5($name);
         if(C('DATA_CACHE_SUBDIR')) {
             // 使用子目录
-            $dir	=	$name{0};
-            if(!is_dir($this->options['temp'].$dir)) {
-                mkdir($this->options['temp'].$dir);
+            $dir   ='';
+            for($i=0;$i<C('DATA_PATH_LEVEL');$i++) {
+                $dir	.=	$name{$i}.'/';
             }
-            $filename	=	$dir.'/'.$this->prefix.$name.'.php';
+            if(!is_dir($this->options['temp'].$dir)) {
+                mk_dir($this->options['temp'].$dir);
+            }
+            $filename	=	$dir.$this->prefix.$name.'.php';
         }else{
             $filename	=	$this->prefix.$name.'.php';
         }
