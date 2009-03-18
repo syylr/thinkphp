@@ -24,10 +24,10 @@
  */
 class Model extends Base implements IteratorAggregate
 {
-
-    const INSERT_STATUS    =  1;
-    const UPDATE_STATUS   =  2;
-    const ALL_STATUS          =  3;
+    // 操作状态
+    const INSERT_STATUS    =  1;  // 插入
+    const UPDATE_STATUS   =  2;  // 更新
+    const ALL_STATUS          =  3;  // 全部
 
     // 当前数据库操作对象
     protected $db = null;
@@ -61,6 +61,9 @@ class Model extends Base implements IteratorAggregate
 
     // 数据列表信息
     protected $dataList =   array();
+
+    // 返回数据类型
+    protected $returnType  =  'array';
 
     /**
      +----------------------------------------------------------
@@ -385,7 +388,7 @@ class Model extends Base implements IteratorAggregate
             }
             $this->dataList = $resultSet;
             $this->_after_select($resultSet,$options);
-            return $resultSet;
+            return $this->returnResultSet($resultSet);
         }else{
             return false;
         }
@@ -448,13 +451,82 @@ class Model extends Base implements IteratorAggregate
         if($result = $this->db->select($options)) {
             $this->data = $result[0];
             $this->_after_find($this->data,$options);
-            return $this->data;
+            return $this->returnResult($this->data);
         }else{
             return false;
         }
      }
      // 查询成功的回调方法
      protected function _after_find(&$result,$options) {}
+
+    /**
+     +----------------------------------------------------------
+     * 返回数据
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $data 数据
+     * @param string $type 返回类型 默认为数组
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    protected function returnResult($data,$type='') {
+        if('' === $type) {
+            $type = $this->returnType;
+        }
+        switch($type) {
+            case 'array' :  return $data;
+            case 'object':  return (object)$data;
+            default:// 允许用户自定义返回类型
+                if(class_exists($type)){
+                    return new $type($data);
+                }else{
+                    throw_exception(L('_CLASS_NOT_EXIST_').':'.$type);
+                }
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 返回数据列表
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $data 数据
+     * @param string $type 返回类型 默认为数组
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    protected function returnResultSet(&$resultSet,$type='') {
+        foreach ($resultSet as $key=>$data){
+            $resultSet[$key]  =  $this->returnResult($data,$type);
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 设置返回数据类型
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $type 返回类型
+     * @param string $classpath 类路径
+     * 当type为用户自定义类型的时候使用
+     * 会自动完成类的导入工作
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function returnAs($type,$classpath=NULL) {
+        $this->returnType = $type;
+        if(NULL !== $classpath) {
+            // 如果设置了类路径 则首先导入自定义类
+            import($classpath.$type);
+        }
+        return $this;
+    }
 
     /**
      +----------------------------------------------------------
