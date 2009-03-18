@@ -33,6 +33,11 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
     require RUNTIME_PATH.'~runtime.php';
 }else{
     require THINK_PATH.'/Common/defines.php';
+    if(defined('PATH_DEFINE_FILE')) {
+        require PATH_DEFINE_FILE;
+    }else{
+        require THINK_PATH.'/Common/paths.php';
+    }
     // 定义核心编译的文件
     $runtime[]  =  THINK_PATH.'/Common/functions.php'; // 系统函数
     if(version_compare(PHP_VERSION,'5.2.0','<') ) {
@@ -71,7 +76,8 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
     }
     // 生成核心编译缓存 去掉文件空白以减少大小
     if(!defined('NO_CACHE_RUNTIME')) {
-        $content	= compile(THINK_PATH.'/Common/defines.php');
+        $content  = compile(THINK_PATH.'/Common/defines.php');
+        $content .= compile(defined('PATH_DEFINE_FILE')?   PATH_DEFINE_FILE  :   THINK_PATH.'/Common/paths.php');
         foreach ($runtime as $file){
             $content .= compile($file);
         }

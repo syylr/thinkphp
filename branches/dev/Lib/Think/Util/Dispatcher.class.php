@@ -101,7 +101,7 @@ class Dispatcher extends Base
 
     /**
      +----------------------------------------------------------
-     * 获得PATH_INFO信息
+     * 分析PATH_INFO的参数
      +----------------------------------------------------------
      * @access private
      +----------------------------------------------------------
@@ -191,7 +191,6 @@ class Dispatcher extends Base
                 {
                     unset($_SERVER['QUERY_STRING']);
                 }
-
                 reset($_SERVER);
             }
         }
