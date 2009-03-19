@@ -98,7 +98,7 @@ class AdvModel extends Model {
         // 检查序列化字段
         $result   =  $this->checkSerializeField($result);
         // 检查字段过滤
-        $result   =  $this->filterFields($result);
+        $result   =  $this->getFilterFields($result);
     }
 
     // 查询数据集成功后的回调方法
@@ -106,11 +106,12 @@ class AdvModel extends Model {
         // 检查序列化字段
         $resultSet   =  $this->checkListSerializeField($resultSet);
         // 检查列表字段过滤
-        //$resultSet   =  $this->filterListFields($resultSet);
+        $resultSet   =  $this->getFilterListFields($resultSet);
     }
 
     // 写入前的回调方法
     protected function _before_insert(&$data,$options='') {
+        $data   =  $this->setFilterFields($data);
         $data = $this->serializeField($data);
     }
 
@@ -118,6 +119,7 @@ class AdvModel extends Model {
     protected function _before_update(&$data,$options='') {
         // 检查只读字段
         $data = $this->checkReadonlyField($data);
+        $data   =  $this->setFilterFields($data);
         // 检查序列化字段
         $data = $this->serializeField($data);
     }
@@ -304,10 +306,10 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      * @param mixed $result 查询的数据
      +----------------------------------------------------------
-     * @return void
+     * @return array
      +----------------------------------------------------------
      */
-    public function filterFields(&$result) {
+    public function getFilterFields(&$result) {
         if(!empty($this->_filter)) {
             foreach ($this->_filter as $field=>$filter){
                 if(isset($result[$field])) {
@@ -325,6 +327,46 @@ class AdvModel extends Model {
             }
         }
         return $result;
+    }
+
+    public function getFilterListFields(&$resultSet) {
+        if(!empty($this->_filter)) {
+            foreach ($resultSet as $key=>$result){
+                $resultSet[$key]  =  $this->getFilterFields($result);
+            }
+        }
+        return $resultSet;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 写入数据的时候过滤数据字段
+     +----------------------------------------------------------
+     * @access pubic
+     +----------------------------------------------------------
+     * @param mixed $result 查询的数据
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function setFilterFields($data) {
+        if(!empty($this->_filter)) {
+            foreach ($this->_filter as $field=>$filter){
+                if(isset($data[$field])) {
+                    $fun              =  $filter[0];
+                    if(!empty($fun)) {
+                        if(isset($filter[2]) && $filter[2]) {
+                            // 传递整个数据对象作为参数
+                            $data[$field]   =  call_user_func($fun,$data);
+                        }else{
+                            // 传递字段的值作为参数
+                            $data[$field]   =  call_user_func($fun,$data[$field]);
+                        }
+                    }
+                }
+            }
+        }
+        return $data;
     }
 
     /**

@@ -517,7 +517,7 @@ class Model extends Base implements IteratorAggregate
      * 当type为用户自定义类型的时候使用
      * 会自动完成类的导入工作
      +----------------------------------------------------------
-     * @return void
+     * @return model
      +----------------------------------------------------------
      */
     public function returnAs($type,$classpath=NULL) {
@@ -893,5 +893,6 @@ class Model extends Base implements IteratorAggregate
     public function getPk() {
         return $this->pk?$this->pk:'id';
     }
+
 };
 ?>

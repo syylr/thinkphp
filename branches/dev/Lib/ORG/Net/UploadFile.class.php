@@ -60,6 +60,7 @@ class UploadFile extends Base
     // 子目录创建方式 可以使用hash date
     public $subType   = 'hash';
     public $dateFormat = 'Ymd';
+    public $hashLevel =  1; // hash的目录层次
     // 上传文件保存路径
     public $savePath = '';
     public $autoCheck = true; // 是否自动检查附件
@@ -373,11 +374,14 @@ class UploadFile extends Base
             case 'hash':
             default:
                 $name = md5($file['savename']);
-                $dir	=	$name{0};
+                $dir   =  '';
+                for($i=0;$i<$this->hashLevel;$i++) {
+                    $dir   .=  $name{0}.'/';
+                }
                 break;
         }
         if(!is_dir($file['savepath'].$dir)) {
-            mkdir($file['savepath'].$dir);
+            mk_dir($file['savepath'].$dir);
         }
         return $dir;
     }

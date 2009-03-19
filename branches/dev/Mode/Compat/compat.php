@@ -275,60 +275,6 @@ function system_out($msg)
 
 /**
  +----------------------------------------------------------
- * 自动转换字符集 支持数组转换
- * 需要 iconv 或者 mb_string 模块支持
- * 如果 输出字符集和模板字符集相同则不进行转换
- +----------------------------------------------------------
- * @param string $fContents 需要转换的字符串
- +----------------------------------------------------------
- * @return string
- +----------------------------------------------------------
- */
-function auto_charset($fContents,$from='',$to=''){
-    if(empty($from)) $from = C('TEMPLATE_CHARSET');
-    if(empty($to))  $to =   C('OUTPUT_CHARSET');
-    $from   =  strtoupper($from)=='UTF8'? 'utf-8':$from;
-    $to       =  strtoupper($to)=='UTF8'? 'utf-8':$to;
-    if( strtoupper($from) === strtoupper($to) || empty($fContents) || (is_scalar($fContents) && !is_string($fContents)) ){
-        //如果编码相同或者非字符串标量则不转换
-        return $fContents;
-    }
-    if(is_string($fContents) ) {
-        if(function_exists('mb_convert_encoding')){
-            return mb_convert_encoding ($fContents, $to, $from);
-        }elseif(function_exists('iconv')){
-            return iconv($from,$to,$fContents);
-        }else{
-            halt(L('_NO_AUTO_CHARSET_'));
-            return $fContents;
-        }
-    }
-    elseif(is_array($fContents)){
-        foreach ( $fContents as $key => $val ) {
-            $_key =     auto_charset($key,$from,$to);
-            $fContents[$_key] = auto_charset($val,$from,$to);
-            if($key != $_key ) {
-                unset($fContents[$key]);
-            }
-        }
-        return $fContents;
-    }
-    elseif(is_object($fContents)) {
-        $vars = get_object_vars($fContents);
-        foreach($vars as $key=>$val) {
-            $fContents->$key = auto_charset($val,$from,$to);
-        }
-        return $fContents;
-    }
-    else{
-        //halt('系统不支持对'.gettype($fContents).'类型的编码转换！');
-        return $fContents;
-    }
-}
-
-
-/**
- +----------------------------------------------------------
  * 判断是否为对象实例
  +----------------------------------------------------------
  * @param mixed $object 实例对象
