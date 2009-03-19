@@ -2610,6 +2610,7 @@ class Model extends Base  implements IteratorAggregate
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
         }
+        $this->dataList = array();
         foreach ($dataList as $data){
             $vo =   $this->_createData($data);
             if(false === $vo) {
@@ -3494,11 +3495,11 @@ class Model extends Base  implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
-     * 查询SQL组装lock
+     * 是否使用查询缓存
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param boolean $lock 是否锁定
+     * @param boolean $cache 是否缓存
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
