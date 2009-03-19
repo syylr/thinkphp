@@ -21,18 +21,7 @@
  +------------------------------------------------------------------------------
  */
 
-/**
- +----------------------------------------------------------
- * URL组装 支持不同模式和路由
- * appName://routeName@moduleName/actionName?params
- +----------------------------------------------------------
- * @param string $url URL标识符
- * @param array $params 其它URL参数
- * @param boolean $redirect 是否跳转
- +----------------------------------------------------------
- * @return string
- +----------------------------------------------------------
- */
+// URL组装 支持不同模式和路由
 function U($url,$params=array(),$redirect=false) {
     if(0===strpos($url,'/')) {
         $url   =  substr($url,1);
@@ -90,18 +79,7 @@ function U($url,$params=array(),$redirect=false) {
     }
 }
 
-/**
- +----------------------------------------------------------
- * 错误输出
- * 在调试模式下面会输出详细的错误信息
- * 否则就定向到指定的错误页面
- +----------------------------------------------------------
- * @param mixed $error 错误信息 可以是数组或者字符串
- * 数组格式为异常类专用格式 不接受自定义数组格式
- +----------------------------------------------------------
- * @return void
- +----------------------------------------------------------
- */
+// 错误输出
 function halt($error) {
     if(IS_CLI) {
         exit ($error);
@@ -161,18 +139,7 @@ function halt($error) {
     exit;
 }
 
-/**
- +----------------------------------------------------------
- * URL重定向
- +----------------------------------------------------------
- * @static
- * @access public
- +----------------------------------------------------------
- * @param string $url  要定向的URL地址
- * @param integer $time  定向的延迟时间，单位为秒
- * @param string $msg  提示信息
- +----------------------------------------------------------
- */
+// URL重定向
 function redirect($url,$time=0,$msg='')
 {
     //多行URL地址支持
@@ -198,17 +165,7 @@ function redirect($url,$time=0,$msg='')
     }
 }
 
-/**
- +----------------------------------------------------------
- * 自定义异常处理
- +----------------------------------------------------------
- * @param string $msg 错误信息
- * @param string $type 异常类型 默认为ThinkException
- * 如果指定的异常类不存在，则直接输出错误信息
- +----------------------------------------------------------
- * @return void
- +----------------------------------------------------------
- */
+// 自定义异常处理
 function throw_exception($msg,$type='ThinkException',$code=0)
 {
     if(IS_CLI) {
@@ -222,30 +179,14 @@ function throw_exception($msg,$type='ThinkException',$code=0)
     }
 }
 
-/**
- +----------------------------------------------------------
- *  区间调试开始
- +----------------------------------------------------------
- * @param string $label  标记名称
- +----------------------------------------------------------
- * @return void
- +----------------------------------------------------------
- */
+// 区间调试开始
 function debug_start($label='')
 {
     $GLOBALS[$label]['_beginTime'] = microtime(TRUE);
     if ( MEMORY_LIMIT_ON )  $GLOBALS[$label]['memoryUseStartTime'] = memory_get_usage();
 }
 
-/**
- +----------------------------------------------------------
- *  区间调试结束，显示指定标记到当前位置的调试
- +----------------------------------------------------------
- * @param string $label  标记名称
- +----------------------------------------------------------
- * @return void
- +----------------------------------------------------------
- */
+// 区间调试结束，显示指定标记到当前位置的调试
 function debug_end($label='')
 {
     $GLOBALS[$label]['_endTime'] = microtime(TRUE);
@@ -257,17 +198,7 @@ function debug_end($label='')
     echo '</div>';
 }
 
-/**
- +----------------------------------------------------------
- * 浏览器友好的变量输出
- +----------------------------------------------------------
- * @param string $var 变量名
- * @param boolean $echo 是否显示
- * @param string $label 显示标签
- +----------------------------------------------------------
- * @return string
- +----------------------------------------------------------
- */
+// 浏览器友好的变量输出
 function dump($var, $echo=true,$label=null, $strict=true)
 {
     $label = ($label===null) ? '' : rtrim($label) . ' ';
@@ -298,16 +229,7 @@ function dump($var, $echo=true,$label=null, $strict=true)
     }
 }
 
-/**
- +----------------------------------------------------------
- * 取得对象实例 支持调用类的静态方法
- +----------------------------------------------------------
- * @param string $className 对象类名
- * @param string $method 类的静态方法名
- +----------------------------------------------------------
- * @return object
- +----------------------------------------------------------
- */
+// 取得对象实例 支持调用类的静态方法
 function get_instance_of($className,$method='',$args=array())
 {
     static $_instance = array();
@@ -369,15 +291,7 @@ function __autoload($classname)
     return ;
 }
 
-/**
- +----------------------------------------------------------
- * 优化的require_once
- +----------------------------------------------------------
- * @param string $filename 文件名
- +----------------------------------------------------------
- * @return boolen
- +----------------------------------------------------------
- */
+// 优化的require_once
 function require_cache($filename)
 {
     static $_importFiles = array();
@@ -729,15 +643,7 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
     return $value;
 }
 
-/**
- +----------------------------------------------------------
- * 根据PHP各种类型变量生成唯一标识号
- +----------------------------------------------------------
- * @param mixed $mix 变量
- +----------------------------------------------------------
- * @return string
- +----------------------------------------------------------
- */
+// 根据PHP各种类型变量生成唯一标识号
 function to_guid_string($mix)
 {
     if(is_object($mix) && function_exists('spl_object_hash')) {
@@ -788,10 +694,43 @@ function compile($filename) {
     return $content;
 }
 
+// 循环创建目录
 function mk_dir($dir, $mode = 0755)
 {
   if (is_dir($dir) || @mkdir($dir,$mode)) return true;
   if (!mk_dir(dirname($dir),$mode)) return false;
   return @mkdir($dir,$mode);
+}
+
+// 自动转换字符集 支持数组转换
+function auto_charset($fContents,$from,$to){
+    $from   =  strtoupper($from)=='UTF8'? 'utf-8':$from;
+    $to       =  strtoupper($to)=='UTF8'? 'utf-8':$to;
+    if( strtoupper($from) === strtoupper($to) || empty($fContents) || (is_scalar($fContents) && !is_string($fContents)) ){
+        //如果编码相同或者非字符串标量则不转换
+        return $fContents;
+    }
+    if(is_string($fContents) ) {
+        if(function_exists('mb_convert_encoding')){
+            return mb_convert_encoding ($fContents, $to, $from);
+        }elseif(function_exists('iconv')){
+            return iconv($from,$to,$fContents);
+        }else{
+            return $fContents;
+        }
+    }
+    elseif(is_array($fContents)){
+        foreach ( $fContents as $key => $val ) {
+            $_key =     auto_charset($key,$from,$to);
+            $fContents[$_key] = auto_charset($val,$from,$to);
+            if($key != $_key ) {
+                unset($fContents[$key]);
+            }
+        }
+        return $fContents;
+    }
+    else{
+        return $fContents;
+    }
 }
 ?>

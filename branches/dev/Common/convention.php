@@ -30,7 +30,7 @@ if (!defined('THINK_PATH')) exit();
 return  array(
 
     /* Dispatch设置 */
-    'DISPATCH_ON'				=>	false,	// 是否启用Dispatcher
+    'DISPATCH_ON'				=>	true,	// 是否启用Dispatcher
     // URL模式： 0 普通模式 1 PATHINFO 2 REWRITE 3 兼容模式 当DISPATCH_ON开启后有效
     'URL_MODEL'					=>	1,		// 默认为PATHINFO 模式，提供最好的用户体验和SEO支持
     // PATHINFO 模式
