@@ -534,7 +534,7 @@ class  ThinkTemplate extends Base
             elseif( false !== strpos($var,'.')) {
                 //支持 {$var.property}
                 $vars = explode('.',$var);
-                switch(C('TMPL_VAR_IDENTIFY')) {
+                switch(strtolower(C('TMPL_VAR_IDENTIFY'))) {
                     case 'array': // 识别为数组
                         $name = '$'.$vars[0].'["'.$vars[1].'"]';
                         break;
