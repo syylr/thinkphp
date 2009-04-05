@@ -24,7 +24,7 @@ $GLOBALS['_beginTime'] = microtime(TRUE);
 // ThinkPHP系统目录定义
 if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
 if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
-if(!defined('APP_PATH')) define('APP_PATH', dirname(THINK_PATH).'/'.APP_NAME);
+if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Temp/');
 
 if(is_file(RUNTIME_PATH.'~runtime.php')) {
@@ -87,4 +87,5 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
 }
 // 记录加载文件时间
 $GLOBALS['_loadTime'] = microtime(TRUE);
+
 ?>
