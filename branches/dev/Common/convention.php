@@ -78,7 +78,7 @@ return  array(
     'TEMPLATE_SUFFIX'			=>	'.html',	 // 默认模板文件后缀
     'CACHFILE_SUFFIX'			=>	'.php',	// 默认模板缓存后缀
     'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
-    'TMPL_VAR_IDENTIFY'      =>   '',    // 模板变量识别 留空自动判断 array 数组 obj 对象
+    'TMPL_VAR_IDENTIFY'      =>   'array',    // 模板变量识别 留空自动判断 array 数组 obj 对象
 
 	/* 分页设置 */
 	'PAGE_NUMBERS'				=>	5,			// 分页显示页数
