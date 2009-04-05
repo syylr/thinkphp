@@ -2610,6 +2610,7 @@ class Model extends Base  implements IteratorAggregate
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
         }
+        $this->dataList = array();
         foreach ($dataList as $data){
             $vo =   $this->_createData($data);
             if(false === $vo) {
