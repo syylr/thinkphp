@@ -13,7 +13,7 @@
 abstract class Widget extends Base {
     // 渲染输出
     // data 要渲染的数据
-    abstract public function render($data=array());
+    abstract public function render($data);
     // 渲染模板输出
     protected function renderFile($templateFile='',$var='',$charset='utf-8') {
         $template   = Template::getInstance();
