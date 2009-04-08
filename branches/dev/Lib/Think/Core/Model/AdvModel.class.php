@@ -76,7 +76,7 @@ class AdvModel extends Model {
             // 记录字段类型
             $this->type[$key]    =   $val['type'];
             if($val['primary']) {
-                $this->pk    =   $key;
+                $this->fields['_pk'] = $key;
                 if($val['autoinc']) $this->fields['_autoinc']   =   true;
             }
         }
@@ -87,6 +87,19 @@ class AdvModel extends Model {
             $identify   =   $this->name.'_fields';
             F($identify,$this->fields);
         }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取主键名称
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function getPk() {
+        return $this->fields['_pk']?$this->fields['_pk']:'id';
     }
 
     public function getDbFields(){
