@@ -1030,6 +1030,32 @@ class Db extends Base
         switch($this->dbType)
 		{
 			case 'MSSQL':
+				if($limit)
+				{
+					$this->queryStr = "SELECT T1.* FROM (SELECT ROW_NUMBER() OVER (".
+						$this->parseOrder($order).
+						") AS ROW_NUMBER, thinkphp.* FROM (SELECT "
+						.$this->parseFields($fields)
+						." FROM ".$this->parseTable($tables)
+						.$this->parseJoin($join)
+						.$this->parseWhere($where)
+						.$this->parseGroup($group)
+						.$this->parseHaving($having)
+						.") AS thinkphp) AS T1 WHERE "
+						.$this->parseLimit($limit);
+				}
+				else
+				{
+					$this->queryStr = 'SELECT '
+						.$this->parseFields($fields)
+						.' FROM '.$this->parseTable($tables)
+						.$this->parseJoin($join)
+						.$this->parseWhere($where)
+						.$this->parseGroup($group)
+						.$this->parseHaving($having)
+						.$this->parseOrder($order);
+				}
+				break;
 			case 'IBASE':
             case 'FIREBIRD':
             case 'INTERBASE':

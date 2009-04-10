@@ -493,12 +493,13 @@ class DbOracle extends Db{
      +----------------------------------------------------------
      */
 	public function limit($limit) {
-        $limitStr    = '';
-        if(!empty($limit)) {
-            $limit = explode(',',$limit);
+        $limit	=	explode(',',$limit);
+        if(count($limit)>1)
             $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
-        }
-		return $limitStr;
+        else
+            $limitStr = "(numrow>0 AND numrow<=".$limit[0].")";
+
+        return $limitStr;
 	}
 }//类定义结束
 ?>

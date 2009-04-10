@@ -348,19 +348,11 @@ class DbMssql extends Db{
         //返回数据集
         $result = array();
         if($this->numRows >0) {
-                if($this->offset>0) {
-                  // 设置初始游标位置 针对mssql的分页方案
-                   mssql_data_seek($this->queryID,$this->offset);
-                }
-          if(is_null($resultType)){ $resultType   =  $this->resultType ; }
-              $fun	=	$resultType==DATA_TYPE_OBJ?'mssql_fetch_object':'mssql_fetch_assoc';
-            while($row = $fun($this->queryID)){
-                $result[]   =   $row;
-            }
-            //mssql_data_seek($this->queryID,0);
-            //分页偏移后,再将偏移位置复位 剑雷 2008.12.24
-            mssql_data_seek($this->queryID,$this->offset);
-            $this->offset=0;
+			if(is_null($resultType))
+				$resultType   =  $this->resultType;
+			$fun	=	$resultType==DATA_TYPE_OBJ?'mssql_fetch_object':'mssql_fetch_assoc';
+			while($row = $fun($this->queryID))
+				$result[]   =   $row;
         }
         return $result;
     }
@@ -431,13 +423,11 @@ class DbMssql extends Db{
      */
     public function limit($limit) {
         $limit	=	explode(',',$limit);
-        if(count($limit)>1) {
-            $this->offset	=	$limit[0];
-            $limitStr	=	' TOP '.$limit[1].' ';
-        }else{
-            $this->offset	=0;
-            $limitStr = ' TOP '.$limit[0].' ';
-        }
+        if(count($limit)>1)
+            $limitStr	=	'(T1.ROW_NUMBER BETWEEN '.$limit[0].' + 1 AND '.$limit[0].' + '.$limit[1].')';
+		else
+            $limitStr = '(T1.ROW_NUMBER BETWEEN 1 AND '.$limit[0].")";
+
         return $limitStr;
     }
 
