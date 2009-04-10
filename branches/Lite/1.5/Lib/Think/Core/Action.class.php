@@ -202,6 +202,8 @@ abstract class Action extends Base
         if($ajax || $this->isAjax()) {
             $this->ajaxReturn('',$errorMsg,0);
         }else {
+			//error输出应该不受HTML静态缓存配置的影响
+			C('HTML_CACHE_ON',false);
             $this->assign('error',$errorMsg);
             $this->forward();
         }
@@ -224,6 +226,8 @@ abstract class Action extends Base
         if($ajax || $this->isAjax()) {
             $this->ajaxReturn('',$message,1);
         }else {
+			//success输出应该不受HTML静态缓存配置的影响
+			C('HTML_CACHE_ON',false);
             $this->assign('message',$message);
             $this->forward();
         }
