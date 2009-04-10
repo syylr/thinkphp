@@ -507,8 +507,6 @@ class Db extends Base
                             $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
                         }elseif('exp'==strtolower($val[0])){ // 使用表达式
                             $whereStr .= $key.' '.$val[1];
-                        }elseif(preg_match('/NULL|NOTNULL/i',$val[0])){
-                            $whereStr .= $key.' '.$this->comparison[strtolower($val[0])];
                         }elseif(preg_match('/IN/i',$val[0])){ // IN 运算
                             $zone   =   is_array($val[1])? implode(',',$val[1]):$val[1];
                             $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
