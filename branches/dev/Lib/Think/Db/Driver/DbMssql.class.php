@@ -261,12 +261,13 @@ class DbMssql extends Db{
         //返回数据集
         $result = array();
         if($this->numRows >0) {
+			//移动游标到offset,目前的db架构无法使用子查询,因为要兼顾到find一条记录,order为空的情况
+			mssql_data_seek($this->queryID,$this->offset);
             while($row = mssql_fetch_assoc($this->queryID)){
                 $result[]   =   $row;
             }
             //mssql_data_seek($this->queryID,0);
             //分页偏移后,再将偏移位置复位 剑雷 2008.12.24
-            mssql_data_seek($this->queryID,$this->offset);
             $this->offset=0;
         }
         return $result;
@@ -337,7 +338,7 @@ class DbMssql extends Db{
         $limit	=	explode(',',$limit);
         if(count($limit)>1) {
             $this->offset	=	$limit[0];
-            $limitStr	=	' TOP '.$limit[1].' ';
+            $limitStr	=	' TOP '.($limit[0]+$limit[1]).' ';
         }else{
             $this->offset	=0;
             $limitStr = ' TOP '.$limit[0].' ';

@@ -419,10 +419,13 @@ class DbOracle extends Db{
      */
 	public function parseLimit($limit) {
         $limitStr    = '';
-        if(!empty($limit)) {
-            $limit = explode(',',$limit);
-            $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
-        }
+        if(!empty($limit) {
+			$limit	=	explode(',',$limit);
+			if(count($limit)>1)
+				$limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
+			else
+				$limitStr = "(numrow>0 AND numrow<=".$limit[0].")";
+		}
 		return $limitStr;
 	}
 }//类定义结束
