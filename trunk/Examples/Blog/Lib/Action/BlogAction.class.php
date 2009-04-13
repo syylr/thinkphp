@@ -8,7 +8,7 @@ class BlogAction extends PublicAction {
 		$this->assign("category",$cate);
 		if(ACTION_NAME != 'add') {
 			$Blog	=	D("Blog");
-			$new = $Blog->where("status=1")->field("id,readCount,commentCount,categoryId,cTime,title")->order('cTime desc')->top10();
+			$new = $Blog->where("Blog.status=1")->field("id,readCount,commentCount,categoryId,cTime,title")->order('cTime desc')->top10();
 			$Comment = D("Comment");
 			$comment	=	$Comment->where("module='Blog' and status=1")->order("id desc")->top8();
 			$this->assign("lastArticles",$new);
