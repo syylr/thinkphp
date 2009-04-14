@@ -31,11 +31,6 @@
 class RBAC extends Base
 {
 
-	static function configAccessList($config) {
-        include dirname(__FILE__).'/AccessDecisionManager.class.php';
-        AccessDecisionManager::configAccessList($config);
-	}
-
     //委托身份认证方法
     static function authenticate($map,$model='',$provider='')
     {

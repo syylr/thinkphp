@@ -24,10 +24,10 @@
 class DbAccessDecisionManager extends Base
 {//类定义开始
 
-    const	 RBAC_ROLE_TABLE	=	'';
-    const	 RBAC_USER_TABLE	=	'';
-    const	 RBAC_ACCESS_TABLE	=	'';
-    const	 RBAC_NODE_TABLE	 =	 '';
+    public $roleTable      =  '';
+    public $roleUserTable = ''  ;
+    public $roleAccessTable =  '';
+    public $roleNodeTable   =  '';
 
     /**
      +----------------------------------------------------------
@@ -41,10 +41,10 @@ class DbAccessDecisionManager extends Base
     public function __construct()
     {
         import("Think.Db.Db");
-        self::RBAC_ROLE_TABLE           = C('RBAC_ROLE_TABLE')?  C('RBAC_ROLE_TABLE') :  C('DB_PREFIX').'role';
-        self::RBAC_USER_TABLE     = C('RBAC_USER_TABLE')?  C('RBAC_USER_TABLE') :  C('DB_PREFIX').'role_user';
-        self::RBAC_ACCESS_TABLE  = C('RBAC_ACCESS_TABLE')? C('RBAC_ACCESS_TABLE') :   C('DB_PREFIX').'access';
-        self::RBAC_NODE_TABLE    = C('RBAC_NODE_TABLE')? C('RBAC_NODE_TABLE') :  C('DB_PREFIX').'node';
+        $this->roleTable = C('RBAC_ROLE_TABLE')?  C('RBAC_ROLE_TABLE') :  C('DB_PREFIX').'role';
+        $this->roleUserTable     = C('RBAC_USER_TABLE')?  C('RBAC_USER_TABLE') :  C('DB_PREFIX').'role_user';
+        $this->roleAccessTable  = C('RBAC_ACCESS_TABLE')? C('RBAC_ACCESS_TABLE') :   C('DB_PREFIX').'access';
+        $this->roleNodeTable    = C('RBAC_NODE_TABLE')? C('RBAC_NODE_TABLE') :  C('DB_PREFIX').'node';
     }
 
     /**
@@ -59,12 +59,13 @@ class DbAccessDecisionManager extends Base
     public function getAccessList($authId)
     {
         // Db方式权限数据
+        import('Think.Db.Db');
         $db     =   DB::getInstance();
         $sql    =   "select d.id,d.name from ".
-                    self::RBAC_ROLE_TABLE." as a,".
-                    self::RBAC_USER_TABLE." as b,".
-                    self::RBAC_ACCESS_TABLE." as c ,".
-                    self::RBAC_NODE_TABLE." as d ".
+                    $this->roleTable." as a,".
+                    $this->roleUserTable." as b,".
+                    $this->roleAccessTable." as c ,".
+                    $this->roleNodeTable." as d ".
                     "where b.user_id='{$authId}' and b.role_id=a.id and ( c.role_id=a.id  or (c.role_id=a.pid and a.pid!=0 ) ) and a.status=1 and c.node_id=d.id and d.level=1 and d.status=1";
         $apps =   $db->query($sql);
         $access =  array();
@@ -75,10 +76,10 @@ class DbAccessDecisionManager extends Base
             // 读取项目的模块权限
             $access[strtoupper($appName)]   =  array();
             $sql    =   "select d.id,d.name from ".
-                        self::RBAC_ROLE_TABLE." as a,".
-                        self::RBAC_USER_TABLE." as b,".
-                        self::RBAC_ACCESS_TABLE." as c ,".
-                        self::RBAC_NODE_TABLE." as d ".
+                        $this->roleTable." as a,".
+                        $this->roleUserTable." as b,".
+                        $this->roleAccessTable." as c ,".
+                        $this->roleNodeTable." as d ".
                         "where b.user_id='{$authId}' and b.role_id=a.id and ( c.role_id=a.id  or (c.role_id=a.pid and a.pid!=0 ) ) and a.status=1 and c.node_id=d.id and d.level=2 and d.pid={$appId} and d.status=1";
             $modules =   $db->query($sql);
             // 判断是否存在公共模块的权限
@@ -89,10 +90,10 @@ class DbAccessDecisionManager extends Base
                 $moduleName = $module['name'];
                 if('PUBLIC'== strtoupper($moduleName)) {
                     $sql    =   "select d.id,d.name from ".
-                                self::RBAC_ROLE_TABLE." as a,".
-                                self::RBAC_USER_TABLE." as b,".
-                                self::RBAC_ACCESS_TABLE." as c ,".
-                                self::RBAC_NODE_TABLE." as d ".
+                                $this->roleTable." as a,".
+                                $this->roleUserTable." as b,".
+                                $this->roleAccessTable." as c ,".
+                                $this->roleNodeTable." as d ".
                                 "where b.user_id='{$authId}' and b.role_id=a.id and ( c.role_id=a.id  or (c.role_id=a.pid and a.pid!=0 ) )  and a.status=1 and  c.node_id=d.id and d.pid={$moduleId} and d.level=3 and d.status=1";
                     $rs =   $db->query($sql);
                     foreach ($rs as $a){
@@ -109,10 +110,10 @@ class DbAccessDecisionManager extends Base
                 $moduleId	 =	 $module['id'];
                 $moduleName = $module['name'];
                 $sql    =   "select d.id,d.name from ".
-                            self::RBAC_ROLE_TABLE." as a,".
-                            self::RBAC_USER_TABLE." as b,".
-                            self::RBAC_ACCESS_TABLE." as c ,".
-                            self::RBAC_NODE_TABLE." as d ".
+                            $this->roleTable." as a,".
+                            $this->roleUserTable." as b,".
+                            $this->roleAccessTable." as c ,".
+                            $this->roleNodeTable." as d ".
                             "where b.user_id='{$authId}' and b.role_id=a.id and ( c.role_id=a.id  or (c.role_id=a.pid and a.pid!=0 ) )  and a.status=1 and  c.node_id=d.id and d.pid={$moduleId} and d.level=3 and d.status=1";
                 $rs =   $db->query($sql);
                 $action = array();
@@ -131,11 +132,12 @@ class DbAccessDecisionManager extends Base
 	// 读取模块所属的记录访问权限
 	public function getModuleAccessList($authId,$module) {
         // Db方式
+        import('Think.Db.Db');
         $db     =   DB::getInstance();
         $sql    =   "select c.node_id from ".
-                    self::RBAC_ROLE_TABLE." as a,".
-                    self::RBAC_USER_TABLE." as b,".
-                    self::RBAC_ACCESS_TABLE." as c ".
+                    $this->roleTable." as a,".
+                    $this->roleUserTable." as b,".
+                    $this->roleAccessTable." as c ".
                     "where b.user_id='{$authId}' and b.role_id=a.id and ( c.role_id=a.id  or (c.role_id=a.pid and a.pid!=0 ) ) and a.status=1 and  c.module='{$module}' and c.status=1";
         $rs =   $db->query($sql);
         $access	=	array();
