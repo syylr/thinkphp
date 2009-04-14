@@ -59,7 +59,6 @@ class DbAccessDecisionManager extends Base
     public function getAccessList($authId)
     {
         // Db方式权限数据
-        import('Think.Db.Db');
         $db     =   DB::getInstance();
         $sql    =   "select d.id,d.name from ".
                     $this->roleTable." as a,".
@@ -132,7 +131,6 @@ class DbAccessDecisionManager extends Base
 	// 读取模块所属的记录访问权限
 	public function getModuleAccessList($authId,$module) {
         // Db方式
-        import('Think.Db.Db');
         $db     =   DB::getInstance();
         $sql    =   "select c.node_id from ".
                     $this->roleTable." as a,".
