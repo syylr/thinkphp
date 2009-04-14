@@ -70,7 +70,7 @@ class ProviderManager extends Base
         $providerPath = dirname(__FILE__).'/Provider/';
         $authProvider = empty($authProvider)? C('USER_AUTH_PROVIDER'):$authProvider;
         if (require_cache( $providerPath . $authProvider.'.class.php'))
-                $provider = & new $authProvider();
+                $provider = new $authProvider();
         else
             throw_exception(L('系统暂时不支持委托方式: ') .$authProvider);
         return $provider;
