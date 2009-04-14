@@ -24,17 +24,28 @@
 class DbAccessDecisionManager extends Base
 {//类定义开始
 
-    const	 RBAC_ROLE_TABLE	=	'think_role';
-    const	 RBAC_USER_TABLE	=	'think_role_user';
-    const	 RBAC_ACCESS_TABLE	=	'think_access';
-    const	 RBAC_NODE_TABLE	 =	 'think_node';
+    const	 RBAC_ROLE_TABLE	=	'';
+    const	 RBAC_USER_TABLE	=	'';
+    const	 RBAC_ACCESS_TABLE	=	'';
+    const	 RBAC_NODE_TABLE	 =	 '';
 
-	static public function configAccessList($config) {
-		//self::RBAC_ROLE_TABLE	=	$config['role_table'];
-		//self::RBAC_USER_TABLE	=	$config['user_table'];
-		//self::RBAC_ACCESS_TABLE	=	$config['access_table'];
-		//self::RBAC_NODE_TABLE	=	$config['node_table'];
-	}
+    /**
+     +----------------------------------------------------------
+     * 架构函数
+     *
+     +----------------------------------------------------------
+     * @static
+     * @access public
+     +----------------------------------------------------------
+     */
+    public function __construct()
+    {
+        import("Think.Db.Db");
+        self::RBAC_ROLE_TABLE           = C('RBAC_ROLE_TABLE')?  C('RBAC_ROLE_TABLE') :  C('DB_PREFIX').'role';
+        self::RBAC_USER_TABLE     = C('RBAC_USER_TABLE')?  C('RBAC_USER_TABLE') :  C('DB_PREFIX').'role_user';
+        self::RBAC_ACCESS_TABLE  = C('RBAC_ACCESS_TABLE')? C('RBAC_ACCESS_TABLE') :   C('DB_PREFIX').'access';
+        self::RBAC_NODE_TABLE    = C('RBAC_NODE_TABLE')? C('RBAC_NODE_TABLE') :  C('DB_PREFIX').'node';
+    }
 
     /**
      +----------------------------------------------------------
@@ -48,7 +59,6 @@ class DbAccessDecisionManager extends Base
     public function getAccessList($authId)
     {
         // Db方式权限数据
-        import('Think.Db.Db');
         $db     =   DB::getInstance();
         $sql    =   "select d.id,d.name from ".
                     self::RBAC_ROLE_TABLE." as a,".
@@ -121,7 +131,6 @@ class DbAccessDecisionManager extends Base
 	// 读取模块所属的记录访问权限
 	public function getModuleAccessList($authId,$module) {
         // Db方式
-        import('Think.Db.Db');
         $db     =   DB::getInstance();
         $sql    =   "select c.node_id from ".
                     self::RBAC_ROLE_TABLE." as a,".
