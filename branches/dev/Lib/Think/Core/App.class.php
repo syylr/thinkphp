@@ -249,6 +249,9 @@ class App extends Base
             // 读取当前模块的语言包
             if (is_file(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
                 L(include LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php');
+        }else{
+            // 不使用语言包功能，仅仅加载框架语言文件
+            L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
         }
         return ;
     }
