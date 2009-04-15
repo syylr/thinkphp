@@ -22,10 +22,7 @@
  +------------------------------------------------------------------------------
  */
 class DbMssql extends Db{
-
-    // 初始游标位置
-    protected $offset = 0;
-    protected $selectSql  =     'SELECT %LIMIT% %DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%';
+    protected $selectSql  =     'SELECT T1.* FROM (SELECT ROW_NUMBER() OVER (%ORDER%) AS ROW_NUMBER, thinkphp.* FROM (SELECT %DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%) AS thinkphp) AS T1 WHERE %LIMIT%';
     /**
      +----------------------------------------------------------
      * 架构函数 读取数据库配置信息
@@ -261,14 +258,8 @@ class DbMssql extends Db{
         //返回数据集
         $result = array();
         if($this->numRows >0) {
-			//移动游标到offset,目前的db架构无法使用子查询,因为要兼顾到find一条记录,order为空的情况
-			mssql_data_seek($this->queryID,$this->offset);
-            while($row = mssql_fetch_assoc($this->queryID)){
+            while($row = mssql_fetch_assoc($this->queryID))
                 $result[]   =   $row;
-            }
-            //mssql_data_seek($this->queryID,0);
-            //分页偏移后,再将偏移位置复位 剑雷 2008.12.24
-            $this->offset=0;
         }
         return $result;
     }
@@ -325,6 +316,21 @@ class DbMssql extends Db{
         return $info;
     }
 
+	/**
+     +----------------------------------------------------------
+     * order分析
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param mixed $order
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function parseOrder($order) {
+        return !empty($order)?  ' ORDER BY '.$order:' ORDER BY rand()';
+    }
+
     /**
      +----------------------------------------------------------
      * limit
@@ -335,14 +341,13 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      */
     public function parseLimit($limit) {
+		if(empty($limit)) $limit=1;
         $limit	=	explode(',',$limit);
-        if(count($limit)>1) {
-            $this->offset	=	$limit[0];
-            $limitStr	=	' TOP '.($limit[0]+$limit[1]).' ';
-        }else{
-            $this->offset	=0;
-            $limitStr = ' TOP '.$limit[0].' ';
-        }
+        if(count($limit)>1)
+            $limitStr	=	'(T1.ROW_NUMBER BETWEEN '.$limit[0].' + 1 AND '.$limit[0].' + '.$limit[1].')';
+		else
+            $limitStr = '(T1.ROW_NUMBER BETWEEN 1 AND '.$limit[0].")";
+
         return $limitStr;
     }
 
