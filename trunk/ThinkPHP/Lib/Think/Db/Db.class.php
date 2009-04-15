@@ -464,7 +464,7 @@ class Db extends Base
                                         $op =   $this->comparison[strtolower(substr($val[$i][0],0,-1))];
                                         $str[] = ' ('.$key[$i].' '.$op.' '.$val[$i][1].') ';
                                     }elseif(is_string($val[$i][0]) && preg_match('/IN/i',$val[$i][0])){
-                                        $zone   =   is_array($val[$i][1])? implode(',',$val[$i][1]):$val[$i][1];
+                                        $zone   =   is_array($val[$i][1])? implode(',',$this->fieldFormat($val[$i][1])):$val[$i][1];
                                         $str[] =  ' ('.$key[$i].' '.strtoupper($val[$i][0]).' ('.$zone.') )';
                                     }elseif(is_string($val[$i][0]) && preg_match('/BETWEEN/i',$val[$i][0])){
                                         if(is_string($val[$i][1])) {
