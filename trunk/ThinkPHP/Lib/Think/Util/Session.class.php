@@ -123,6 +123,10 @@ class Session extends Base
      */
     static function detectID()
     {
+        if(session_id()!='')
+        {
+            return session_id();
+        }
         if (Session::useCookies()) {
             if (isset($_COOKIE[Session::name()])) {
                 return $_COOKIE[Session::name()];
