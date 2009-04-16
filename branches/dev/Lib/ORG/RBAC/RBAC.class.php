@@ -172,7 +172,7 @@ class RBAC extends Base
         if(RBAC::checkAccess()) {
             //存在认证识别号，则进行进一步的访问决策
             $accessGuid   =   md5($appName.MODULE_NAME.ACTION_NAME);
-            if(!$_SESSION[C('ADMIN_AUTH_KEY')]) {//管理员无需认证
+            if(empty($_SESSION[C('ADMIN_AUTH_KEY')])) {
                 if(C('USER_AUTH_TYPE')==2) {
                     //加强验证和即时验证模式 更加安全 后台权限修改可以即时生效
                     //通过数据库进行访问检查
@@ -195,6 +195,7 @@ class RBAC extends Base
                     $_SESSION[$accessGuid]	=	true;
                 }
             }else{
+                //管理员无需认证
 				return true;
 			}
         }
