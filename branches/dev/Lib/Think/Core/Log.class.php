@@ -33,7 +33,7 @@ class Log extends Base
     const NOTICE  = 'NOTIC';  // 通知: 程序可以运行但是还不够完美的错误
     const INFO     = 'INFO';  // 信息: 程序输出信息
     const DEBUG   = 'DEBUG';  // 调试: 调试信息
-    const SQL       = 'SQL';  // SQL：SQL语句
+    const SQL       = 'SQL';  // SQL：SQL语句 注意只在调试模式开启时有效
 
     // 日志记录方式
     const SYSTEM = 0;
