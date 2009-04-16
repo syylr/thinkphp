@@ -407,6 +407,9 @@ class App extends Base
             $GLOBALS['_initTime'] = microtime(TRUE);
         $this->exec();
         $GLOBALS['_endTime'] = microtime(TRUE);
+        // 保存日志记录
+        if(C('WEB_LOG_RECORD'))
+            Log::save();
         return ;
     }
 
@@ -457,17 +460,5 @@ class App extends Base
       }
     }
 
-   /**
-     +----------------------------------------------------------
-     * 析构方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     */
-    public function __destruct()
-    {
-        // 保存日志记录
-        if(C('WEB_LOG_RECORD')) Log::save();
-    }
 };//类定义结束
 ?>
