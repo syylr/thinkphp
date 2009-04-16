@@ -32,7 +32,7 @@ class Db extends Base
     protected $autoFree         = false;
 
     // 是否显示调试信息 如果启用会在日志文件记录sql语句
-    protected $debug             = false;
+    public $debug             = false;
 
     // 是否使用永久连接
     protected $pconnect         = false;
@@ -145,7 +145,7 @@ class Db extends Base
             }else{
                 $db->dbType = $this->_getDsnType($db_config['dsn']);
             }
-            if(C('DEBUG_MODE') || C('SQL_DEBUG_LOG')) {
+            if(C('DEBUG_MODE')) {
                 $db->debug    = true;
             }
         }else {
@@ -513,6 +513,8 @@ class Db extends Base
                         }elseif(preg_match('/BETWEEN/i',$val[0])){ // BETWEEN运算
                             $data = is_string($val[1])? explode(',',$val[1]):$val[1];
                             $whereStr .=  ' ('.$key.' BETWEEN '.$data[0].' AND '.$data[1].' )';
+                        }else{
+                            throw_exception(L('_EXPRESS_ERROR_').':'.$val[0]);
                         }
                     }else {
                         $count = count($val);
@@ -783,23 +785,14 @@ class Db extends Base
      * @access public
      +----------------------------------------------------------
      * @param string $sql  查询语句
-     * @param array $options 参数
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function query($sql='',$options=array())
+    public function query($sql)
     {
-        if(empty($sql)) {
-            $sql   = $this->queryStr;
-        }
-        if(!empty($options['lazy'])) {
-            // 延时读取数据库
-            return $this->lazyQuery($sql);
-        }
         // 进行查询
-        $data = $this->_query($sql);
-        return $data;
+        return $this->_query($sql);
     }
 
     /**
@@ -809,34 +802,13 @@ class Db extends Base
      * @access public
      +----------------------------------------------------------
      * @param string $sql  执行语句
-     * @param array $options 参数
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function execute($sql='',$options=array())
+    public function execute($sql)
     {
-        if(empty($sql)) {
-            $sql  = $this->queryStr;
-        }
         return $this->_execute($sql);
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 延时查询方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $sql  查询语句
-     +----------------------------------------------------------
-     * @return ResultIterator
-     +----------------------------------------------------------
-     */
-    public function lazyQuery($sql='') {
-        // 返回ResultIterator对象 在操作数据的时候再进行读取
-        import("ResultIterator");
-        return new ResultIterator($sql);
     }
 
     /**
