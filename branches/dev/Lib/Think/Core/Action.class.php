@@ -284,7 +284,7 @@ abstract class Action extends Base
     public function ajaxReturn($data='',$info='',$status='',$type='')
     {
         // 保证AJAX返回后也能保存日志
-        if(C('WEB_LOG_RECORD') || C('SQL_DEBUG_LOG')) Log::save();
+        if(C('WEB_LOG_RECORD')) Log::save();
 
         $result  =  array();
         if($status === '') {
