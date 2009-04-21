@@ -419,7 +419,7 @@ class DbOracle extends Db{
      */
 	public function parseLimit($limit) {
         $limitStr    = '';
-        if(!empty($limit) {
+        if(!empty($limit)) {
 			$limit	=	explode(',',$limit);
 			if(count($limit)>1)
 				$limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
