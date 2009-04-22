@@ -382,10 +382,6 @@ class Model extends Base implements IteratorAggregate
         // 分析表达式
         $options =  $this->_parseOptions($options);
         if($resultSet = $this->db->select($options)) {
-            if(is_object($resultSet) && $resultSet instanceof ResultIterator) {
-                // 如果是延时查询返回的是ResultIterator对象
-                return $resultSet;
-            }
             $this->dataList = $resultSet;
             $this->_after_select($resultSet,$options);
             return $this->returnResultSet($resultSet);
@@ -404,7 +400,7 @@ class Model extends Base implements IteratorAggregate
      +----------------------------------------------------------
      * 分析表达式
      +----------------------------------------------------------
-     * @access public
+     * @access private
      +----------------------------------------------------------
      * @param array $options 表达式参数
      +----------------------------------------------------------
@@ -445,6 +441,7 @@ class Model extends Base implements IteratorAggregate
              $options = array();
              $options['where'] = $where;
          }
+         // 总是查找一条记录
         $options['limit'] = 1;
         // 分析表达式
         $options =  $this->_parseOptions($options);
@@ -824,7 +821,7 @@ class Model extends Base implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
-     * 返回当前错误信息
+     * 返回模型的错误信息
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -833,6 +830,19 @@ class Model extends Base implements IteratorAggregate
      */
     public function getError(){
         return $this->error;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 返回数据库的错误信息
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function getDbError() {
+        return $this->db->getError();
     }
 
     /**
