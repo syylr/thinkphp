@@ -42,7 +42,7 @@ class TagLibHtml extends TagLib
         $tag        =	$this->parseXmlAttr($attr,'editor');
         $id			=	!empty($tag['id'])?$tag['id']: '_editor';
         $name   	=	$tag['name'];
-        $style   	    =	$tag['style'];
+        $style   	    =	!empty($tag['style'])?$tag['style']:'';
         $width		=	!empty($tag['width'])?$tag['width']: '100%';
         $height     =	!empty($tag['height'])?$tag['height'] :'320px';
         $content    =   $tag['content'];
