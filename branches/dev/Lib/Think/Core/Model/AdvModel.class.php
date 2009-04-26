@@ -620,6 +620,8 @@ class AdvModel extends Model {
             // 则进行数据验证
             // 重置验证错误信息
             foreach($this->_validate as $key=>$val) {
+                // 验证因子定义格式
+                // array(field,rule,message,condition,type,when,params)
                 // 判断是否需要执行验证
                 if(empty($val[5]) || $val[5]== self::ALL_STATUS || $val[5]== $type ) {
                     if(0==strpos($val[2],'{%') && strpos($val[2],'}')) {
@@ -671,52 +673,91 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      */
     private function _validationField($data,$val) {
-        // 检查附加规则
-        if(!$this->validate($data[$val[0]],$val[1],$val[4])) {
-            return false;
+        switch($val[4]) {
+            case 'function':// 使用函数进行验证
+            case 'callback':// 调用方法进行验证
+                if(isset($val[6])) {
+                    $args = $val[6];
+                }else{
+                    $args = array();
+                }
+                array_unshift($args,$data[$val[0]]);
+                if('function'==$val[4]) {
+                    return call_user_func_array($val[1], $args);
+                }else{
+                    return call_user_func_array(array(&$this, $val[1]), $args);
+                }
+            case 'confirm': // 验证两个字段是否相同
+                if($data[$val[0]] != $data[$val[1]] ) {
+                    return false;
+                }
+                break;
+            case 'in': // 验证是否在某个数组范围之内
+                if(!in_array($data[$val[0]] ,$val[1]) ) {
+                    return false;
+                }
+                break;
+            case 'equal': // 验证是否等于某个值
+                if($data[$val[0]] != $val[1]) {
+                    return false;
+                }
+                break;
+            case 'unique': // 验证某个值是否唯一
+                if(is_string($val[0]) && strpos($val[0],',')) {
+                    $val[0]  =  explode(',',$val[0]);
+                }
+                $map = array();
+                if(is_array($val[0])) {
+                    // 支持多个字段验证
+                    foreach ($val[0] as $field){
+                        $map[$field]   =  $data[$field];
+                    }
+                }else{
+                    $map[$val[0]] = $data[$val[0]];
+                }
+                if($this->where($map)->find()) {
+                    return false;
+                }
+                break;
+            case 'regex':
+            default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
+                // 检查附加规则
+                if(!$this->validate($data[$val[0]],$val[1])) {
+                    return false;
+                }
         }
         return true;
     }
 
     /**
      +----------------------------------------------------------
-     * 验证数据
+     * 使用正则验证数据
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
      * @param string $value  要验证的数据
      * @param string $rule 验证规则
-     * @param string $type   验证方式
-     * 包含 regex function callback 默认为regex
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    protected function validate($value,$rule,$type='regex') {
-        switch(strtolower($type)) {
-            case 'function':
-                return $rule($value);
-            case 'callback':
-                return $this->$rule($value);
-            case 'regex':
-            default:
-                $validate = array(
-                    'require'=> '/.+/',
-                    'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
-                    'url' => '/^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/',
-                    'currency' => '/^\d+(\.\d+)?$/',
-                    'number' => '/\d+$/',
-                    'zip' => '/^[1-9]\d{5}$/',
-                    'integer' => '/^[-\+]?\d+$/',
-                    'double' => '/^[-\+]?\d+(\.\d+)?$/',
-                    'english' => '/^[A-Za-z]+$/',
-                );
-                // 检查是否有内置的正则表达式
-                if(isset($validate[strtolower($rule)])) {
-                    $rule   =   $validate[strtolower($rule)];
-                }
-                return preg_match($rule,$value)===1;
+    protected function validate($value,$rule) {
+        $validate = array(
+            'require'=> '/.+/',
+            'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
+            'url' => '/^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/',
+            'currency' => '/^\d+(\.\d+)?$/',
+            'number' => '/\d+$/',
+            'zip' => '/^[1-9]\d{5}$/',
+            'integer' => '/^[-\+]?\d+$/',
+            'double' => '/^[-\+]?\d+(\.\d+)?$/',
+            'english' => '/^[A-Za-z]+$/',
+        );
+        // 检查是否有内置的正则表达式
+        if(isset($validate[strtolower($rule)])) {
+            $rule   =   $validate[strtolower($rule)];
         }
+        return preg_match($rule,$value)===1;
     }
 
     /**
