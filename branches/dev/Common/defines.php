@@ -63,5 +63,5 @@ if(!IS_CLI) {
     define('URL_COMPAT',      3);   // 兼容模式
 }
 //  版本信息
-define('THINK_VERSION', '1.6Dev');
+define('THINK_VERSION', '1.6RC1');
 ?>
