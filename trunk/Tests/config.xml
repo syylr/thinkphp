@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<phpunit>
-  <logging>
-    <log type="coverage-html" target="Docs/Report" charset="UTF-8"/>
-  </logging>
-</phpunit>
