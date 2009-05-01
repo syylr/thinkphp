@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <TITLE>ThinkPHP示例：显示运行时间</TITLE>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Css/common.css'>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+	function showTime(){
+		document.getElementById('run_time').innerHTML = document.getElementById('think_run_time').innerHTML;
+		document.getElementById('think_run_time').innerHTML = '';
+	}
+//-->
+</SCRIPT>
+ </HEAD>
+ <BODY onload="showTime()">
+ <div class="main">
+ <H2>ThinkPHP示例之：运行时间显示</H2>
+可以设置是否显示页面的运行时间，包括详细运行时间，数据库操作次数，内存开销等，显示效果如下：
+<div class="result" id="run_time">数据加载中~</div>
+ <TABLE cellpadding=2 cellspacing=2>
+ <TR>
+ <TD></TD>
+	<TD > 示例源码<BR>控制器IndexAction类<BR><php>highlight_file(LIB_PATH.'Action/IndexAction.class.php');</php></TD>
+ </TR>
+ </TABLE>
+</div>
+ </BODY>
+</HTML>
