@@ -26,8 +26,8 @@ class AdvModel extends Model {
     const MODEL_UPDATE    =   2;      //  更新模型数据
     const MODEL_BOTH      =   3;      //  包含上面两种方式
     const MUST_VALIDATE         =   1;// 必须验证
-    const EXISTS_VAILIDATE      =   2;// 表单存在字段则验证
-    const VALUE_VAILIDATE       =   3;// 表单值不为空则验证
+    const EXISTS_VAILIDATE      =   0;// 表单存在字段则验证
+    const VALUE_VAILIDATE       =   2;// 表单值不为空则验证
 
     // 字段信息
     protected $fields = array();
