@@ -15,7 +15,6 @@ alias_import(array(
     'Dispatcher'         =>   THINK_PATH.'/Lib/Think/Util/Dispatcher.class.php',
     'HtmlCache'        =>    THINK_PATH.'/Lib/Think/Util/HtmlCache.class.php',
     'Db'                   =>   THINK_PATH.'/Lib/Think/Db/Db.class.php',
-    'ResultIterator'     =>   THINK_PATH.'/Lib/Think/Db/ResultIterator.class.php',
     'ThinkTemplate'   =>    THINK_PATH.'/Lib/Think/Template/ThinkTemplate.class.php',
     'Template'          =>    THINK_PATH.'/Lib/Think/Util/Template.class.php',
     'TagLib'              =>   THINK_PATH.'/Lib/Think/Template/TagLib.class.php',
