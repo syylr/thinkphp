@@ -426,7 +426,7 @@ class View extends Base
             $this->trace('日志记录',count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录');
             $_trace =   array_merge($_trace,$this->trace);
             // 调用Trace页面模板
-            include THINK_PATH.'/Tpl/PageTrace.tpl.php';
+            include C('TRACE_TMPL_FILE');
         }
     }
 
