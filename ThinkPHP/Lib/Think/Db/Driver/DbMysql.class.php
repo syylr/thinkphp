@@ -61,11 +61,8 @@ class DbMysql extends Db{
             }else{
                 $this->linkID[$linkNum] = mysql_connect( $host, $config['username'], $config['password'],true,CLIENT_MULTI_RESULTS);
             }
-            if ( !$this->linkID[$linkNum]) {
-                throw_exception('d'.mysql_error());
-            }
-            if (!empty($config['database']) && !mysql_select_db($config['database'], $this->linkID[$linkNum]) ) {
-                throw_exception('d'.mysql_error());
+            if ( !$this->linkID[$linkNum] || (!empty($config['database']) && !mysql_select_db($config['database'], $this->linkID[$linkNum])) ) {
+                throw_exception(mysql_error());
             }
             $dbVersion = mysql_get_server_info($this->linkID[$linkNum]);
             if ($dbVersion >= "4.1") {
