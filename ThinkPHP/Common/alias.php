@@ -21,7 +21,6 @@ alias_import(array(
     'Cache'              =>    THINK_PATH.'/Lib/Think/Util/Cache.class.php',
     'Cookie'              =>    THINK_PATH.'/Lib/Think/Util/Cookie.class.php',
     'Session'             =>   THINK_PATH.'/Lib/Think/Util/Session.class.php',
-    'Page'                =>    THINK_PATH.'/Lib/Think/Util/Page.class.php',
     'TagLibCx'          =>    THINK_PATH.'/Lib/Think/Template/TagLib/TagLibCx.class.php',
     'ViewModel'          =>    THINK_PATH.'/Lib/Think/Core/Model/ViewModel.class.php',
     'AdvModel'          =>    THINK_PATH.'/Lib/Think/Core/Model/AdvModel.class.php',
