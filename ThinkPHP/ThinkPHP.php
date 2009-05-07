@@ -32,7 +32,9 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
     // 如果有修改核心文件请删除该缓存
     require RUNTIME_PATH.'~runtime.php';
 }else{
+    // 加载常量定义文件
     require THINK_PATH.'/Common/defines.php';
+    // 加载路径定义文件
     if(defined('PATH_DEFINE_FILE')) {
         require PATH_DEFINE_FILE;
     }else{
@@ -44,7 +46,8 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
         // 加载兼容函数
         $runtime[]	=	 THINK_PATH.'/Common/compat.php';
     }
-    $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Base.class.php';  // 核心基类
+    // 核心基类必须加载
+    $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Base.class.php';
 
     // 加载核心编译文件列表
     if(is_file(CONFIG_PATH.'core.php')) {
@@ -87,5 +90,4 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
 }
 // 记录加载文件时间
 $GLOBALS['_loadTime'] = microtime(TRUE);
-
 ?>
