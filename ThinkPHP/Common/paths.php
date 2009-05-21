@@ -24,12 +24,12 @@ define('TMPL_PATH',APP_PATH.'/'.TMPL_DIR.'/');
 define('HTML_PATH',APP_PATH.'/'.HTML_DIR.'/'); //
 define('COMMON_PATH',   APP_PATH.'/Common/'); // 项目公共目录
 define('LIB_PATH',         APP_PATH.'/'.LIB_DIR.'/'); //
-define('CACHE_PATH',   APP_PATH.'/'.CACHE_DIR.'/'); //
+define('CACHE_PATH',   RUNTIME_PATH.CACHE_DIR.'/'); //
 define('CONFIG_PATH',  APP_PATH.'/'.CONF_DIR.'/'); //
-define('LOG_PATH',       APP_PATH.'/'.LOG_DIR.'/'); //
+define('LOG_PATH',       RUNTIME_PATH.LOG_DIR.'/'); //
 define('LANG_PATH',     APP_PATH.'/'.LANG_DIR.'/'); //
-define('TEMP_PATH',      APP_PATH.'/'.TEMP_DIR.'/'); //
-define('DATA_PATH', APP_PATH.'/Data/'); //
+define('TEMP_PATH',      RUNTIME_PATH.TEMP_DIR.'/'); //
+define('DATA_PATH', RUNTIME_PATH.'Data/'); //
 
 define('VENDOR_PATH',THINK_PATH.'/Vendor/');
 // 为了方便导入第三方类库 设置Vendor目录到include_path
