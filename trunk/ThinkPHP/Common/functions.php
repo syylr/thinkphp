@@ -22,7 +22,7 @@
  */
 
 // URL组装 支持不同模式和路由
-function U($url,$params=array(),$redirect=false) {
+function U($url,$params=array(),$redirect=false,$suffix=true) {
     if(0===strpos($url,'/')) {
         $url   =  substr($url,1);
     }
@@ -65,7 +65,7 @@ function U($url,$params=array(),$redirect=false) {
         }else{
             $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$module.$depr.$action.$str;
         }
-        if(C('HTML_URL_SUFFIX')) {
+        if($suffix && C('HTML_URL_SUFFIX')) {
             $url .= C('HTML_URL_SUFFIX');
         }
     }else{
