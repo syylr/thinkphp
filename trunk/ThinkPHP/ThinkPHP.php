@@ -25,7 +25,7 @@ $GLOBALS['_beginTime'] = microtime(TRUE);
 if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
 if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
 if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
-if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Temp/');
+if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Runtime/');
 
 if(is_file(RUNTIME_PATH.'~runtime.php')) {
     // 加载框架核心缓存文件
