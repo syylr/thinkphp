@@ -506,7 +506,7 @@ function L($name='',$value=null) {
     if(isset($_lang[strtolower($name)])) {
         return $_lang[strtolower($name)];
     }else{
-        return 'undefined_lang';
+        return 'undefined_lang_';
     }
 }
 
