@@ -234,7 +234,7 @@ class App extends Base
             }
 
             // 定义当前语言
-            define('LANG_SET',$langSet);
+            define('LANG_SET',strtolower($langSet));
             // 加载框架语言包
             if (is_file(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
                 L(include THINK_PATH.'/Lang/'.LANG_SET.'.php');
