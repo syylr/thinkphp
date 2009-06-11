@@ -175,10 +175,7 @@ class ViewModel extends Model {
          if(!empty($group)) {
             $groups = explode(',',$group);
             $_group = array();
-            foreach ($groups as $group){
-                $array = explode(' ',$group);
-                $field   =   $array[0];
-                $sort   =   isset($array[1])?$array[1]:'';
+            foreach ($groups as $field){
                 // 解析成视图字段
                 foreach ($this->viewFields as $name=>$val){
                     $k = isset($val['_as'])?$val['_as']:$name;
@@ -188,9 +185,9 @@ class ViewModel extends Model {
                         break;
                     }
                 }
-                $_group[$field] = $field.' '.$sort;
+                $_group[] = $field;
             }
-            $group  =   $_group;
+            $group  =   implode(',',$_group);
          }
         return $group;
     }
