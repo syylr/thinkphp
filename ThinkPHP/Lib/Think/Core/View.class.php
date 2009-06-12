@@ -36,6 +36,8 @@ class View extends Base
 
     protected $trace       = array();
 
+    protected $templateFile  = '';
+
    /**
      +----------------------------------------------------------
      * 取得模板对象实例
@@ -205,6 +207,7 @@ class View extends Base
             // 自动定位模板文件
             $templateFile   = $this->parseTemplateFile($templateFile);
         }
+        $this->templateFile   =  $templateFile;
         $this->_before_fetch($templateFile,$charset,$contentType);
         import('Template');
         $template   =  Template::getInstance();
@@ -414,6 +417,7 @@ class View extends Base
              }
              // 系统默认显示信息
             $this->trace('当前页面',    $_SERVER['REQUEST_URI']);
+            $this->trace('模板缓存',    CACHE_PATH.md5($this->templateFile).C('CACHFILE_SUFFIX'));
             $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
             $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
             $this->trace('请求时间',    date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
