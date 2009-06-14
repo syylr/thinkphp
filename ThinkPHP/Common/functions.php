@@ -295,7 +295,7 @@ function __autoload($classname)
 function require_cache($filename)
 {
     static $_importFiles = array();
-    $filename   =  realpath($filename);
+    //$filename   =  realpath($filename);
     if (!isset($_importFiles[$filename])) {
         if(file_exists_case($filename)){
             require $filename;
@@ -432,10 +432,13 @@ function D($className='',$appName='')
         return $_model[$appName.$className];
     }
     $OriClassName = $className;
-    $className =  $className.'Model';
-    if('@'===$appName) {
-        require_cache(LIB_PATH.'Model/'.$className.'.class.php');
+    if(strpos($className,C('MODULE_LEVEL_DEPR'))) {
+        $array   =  explode(C('MODULE_LEVEL_DEPR'),$className);
+        $className = array_pop($array);
+        $className =  $className.'Model';
+        import($appName.'.'.implode('.',$array).'.Model.'.$className);
     }else{
+        $className =  $className.'Model';
         import($appName.'.Model.'.$className);
     }
     if(class_exists($className)) {
@@ -464,10 +467,13 @@ function A($className,$appName='@')
         return $_action[$appName.$className];
     }
     $OriClassName = $className;
-    $className =  $className.'Action';
-    if('@'===$appName) {
-        require_cache(LIB_PATH.'Action/'.$className.'.class.php');
+    if(strpos($className,C('MODULE_LEVEL_DEPR'))) {
+        $array   =  explode(C('MODULE_LEVEL_DEPR'),$className);
+        $className = array_pop($array);
+        $className =  $className.'Action';
+        import($appName.'.'.implode('.',$array).'.Action.'.$className);
     }else{
+        $className =  $className.'Action';
         import($appName.'.Action.'.$className);
     }
     if(class_exists($className)) {
