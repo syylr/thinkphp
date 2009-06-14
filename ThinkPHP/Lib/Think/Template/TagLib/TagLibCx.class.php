@@ -446,6 +446,52 @@ class TagLibCx extends TagLib
 
     /**
      +----------------------------------------------------------
+     * range标签解析
+     * 如果某个变量存在于某个范围 则输出内容 type= in 表示在范围内 否则表示在范围外
+     * 格式： <range name="var|function"  value="val" type='in|notin' >content</range>
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     * @param string $type  比较类型
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function _range($attr,$content,$type='in') {
+        $tag      = $this->parseXmlAttr($attr,'range');
+        $name   = $tag['name'];
+        $value   = $tag['value'];
+        $varArray = explode('|',$name);
+        $name   =   array_shift($varArray);
+        $name = $this->autoBuildVar($name);
+        $type    =   $tag['type']?$tag['type']:$type;
+        $fun  =  ($type == 'in')? 'in_array'    :   '!in_array';
+        if(count($varArray)>0)
+            $name = $this->tpl->parseVarFunction($name,$varArray);
+        if('$' == substr($value,0,1)) {
+            $value  =  $this->autoBuildVar(substr($value,1));
+            $parseStr = '<?php if('.$fun.'(('.$name.'), is_array('.$value.')?'.$value.':explode(\',\','.$value.'))): ?>'.$content.'<?php endif; ?>';
+        }else{
+            $value  =   '"'.$value.'"';
+            $parseStr = '<?php if('.$fun.'(('.$name.'), explode(\',\','.$value.'))): ?>'.$content.'<?php endif; ?>';
+        }
+        return $parseStr;
+    }
+
+    // range标签的别名 用于in判断
+    public function _in($attr,$content) {
+        return $this->_range($attr,$content,'in');
+    }
+
+    // range标签的别名 用于notin判断
+    public function _notin($attr,$content) {
+        return $this->_range($attr,$content,'notin');
+    }
+
+    /**
+     +----------------------------------------------------------
      * present标签解析
      * 如果某个变量已经设置 则输出内容
      * 格式： <present name="" >content</present>
