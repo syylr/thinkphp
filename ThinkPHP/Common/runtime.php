@@ -80,4 +80,21 @@ class IndexAction extends Action{
         exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>项目目录不可写，目录无法自动生成！<BR>请使用项目生成器或者手动生成项目目录~</div>');
     }
 }
+
+// 检查缓存目录(Runtime) 如果不存在则自动创建
+function checkRuntime() {
+	if(!is_writeable(RUNTIME_PATH)) {
+		header("Content-Type:text/html; charset=utf-8");
+		exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>目录 [ '.RUNTIME_PATH.' ] 不可写！</div>');
+	}
+	if(!is_dir(CACHE_PATH)) 		// 模板缓存目录
+		mkdir(CACHE_PATH);
+	if(!is_dir(LOG_PATH))		// 日志目录
+		mkdir(LOG_PATH);
+	if(!is_dir(TEMP_PATH))	// 数据缓存目录
+		mkdir(TEMP_PATH);
+	if(!is_dir(DATA_PATH))		// 数据文件目录
+		mkdir(DATA_PATH);
+	return true;
+}
 ?>
