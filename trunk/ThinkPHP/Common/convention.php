@@ -40,7 +40,7 @@ return  array(
     'PATH_MODEL'					=>	2,	// 默认采用智能模式
     'PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号
     'ROUTER_ON'                  =>   false, // 是否开启URL路由
-
+	'MODULE_LEVEL_DEPR'	    =>	'.',		// 多级模块之间的分割符
     'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
     'TAG_PLUGIN_ON'               =>   false, // 是否开启插件机制
 
