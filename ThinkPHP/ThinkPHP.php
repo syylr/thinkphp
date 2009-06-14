@@ -27,7 +27,13 @@ if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FI
 if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Runtime/');
 
-if(defined('RUNTIME_MODEL') || is_file(RUNTIME_PATH.'~runtime.php')) {
+if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
+    // 直接载入allinone缓存
+    $result   =  require RUNTIME_PATH.'~allinone.php';
+    C($result);
+    // 自动设置为运行模式
+    define('RUNTIME_MODEL',true);
+}elseif(is_file(RUNTIME_PATH.'~runtime.php')) {
     // 加载框架核心缓存文件
     // 如果有修改核心文件请删除该缓存
     require RUNTIME_PATH.'~runtime.php';
