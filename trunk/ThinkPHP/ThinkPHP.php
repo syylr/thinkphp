@@ -27,7 +27,7 @@ if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FI
 if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Runtime/');
 
-if(is_file(RUNTIME_PATH.'~runtime.php')) {
+if(defined('RUNTIME_MODEL') || is_file(RUNTIME_PATH.'~runtime.php')) {
     // 加载框架核心缓存文件
     // 如果有修改核心文件请删除该缓存
     require RUNTIME_PATH.'~runtime.php';
@@ -69,13 +69,15 @@ if(is_file(RUNTIME_PATH.'~runtime.php')) {
             require $file;
         }
     }
-
+    // 加载编译需要的函数文件
+    require THINK_PATH."/Common/runtime.php";
     // 检查项目目录结构 如果不存在则自动创建
     if(!is_dir(RUNTIME_PATH)) {
-        // 加载编译需要的函数文件
-        require THINK_PATH."/Common/runtime.php";
         // 创建项目目录结构
         buildAppDir();
+    }else{
+        // 检查缓存目录
+        checkRuntime();
     }
     // 生成核心编译缓存 去掉文件空白以减少大小
     if(!defined('NO_CACHE_RUNTIME')) {
