@@ -685,11 +685,14 @@ function data_to_xml($data) {
     }
     return $xml;
 }
-
+//[RUNTIME]
 // 编译文件
-function compile($filename) {
-    if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
+function compile($filename,$runtime=false) {
+    if(true === $runtime) {
         $content = file_get_contents($filename);
+        // 替换预编译指令
+        $content = preg_replace('/\/\/\[RUNTIME\](.*?)\/\/\[\/RUNTIME\]/s','',$content);
+        $content = strip_whitespace($content);
     }else{
         $content = php_strip_whitespace($filename);
     }
@@ -699,6 +702,60 @@ function compile($filename) {
     }
     return $content;
 }
+
+// 去除代码中的空白和注释
+function strip_whitespace($content) {
+    $stripStr = '';
+    //分析php源码
+    $tokens =   token_get_all ($content);
+    $last_space = false;
+    for ($i = 0, $j = count ($tokens); $i < $j; $i++)
+    {
+        if (is_string ($tokens[$i]))
+        {
+            $last_space = false;
+            $stripStr .= $tokens[$i];
+        }
+        else
+        {
+            switch ($tokens[$i][0])
+            {
+                //过滤各种PHP注释
+                case T_COMMENT:
+                case T_DOC_COMMENT:
+                    break;
+                //过滤空格
+                case T_WHITESPACE:
+                    if (!$last_space)
+                    {
+                        $stripStr .= ' ';
+                        $last_space = true;
+                    }
+                    break;
+                default:
+                    $last_space = false;
+                    $stripStr .= $tokens[$i][1];
+            }
+        }
+    }
+    return $stripStr;
+}
+// 根据数组生成常量定义
+function array_define($array) {
+    $content = '';
+    foreach($array as $key=>$val) {
+        if(is_int($val) || is_float($val)) {
+            $content .= "define('".strtoupper($key)."',".$val.");";
+        }elseif(is_bool($val)) {
+            $val = ($val)?'true':'false';
+            $content .= "define('".strtoupper($key)."',".$val.");";
+        }elseif(is_string($val)) {
+            $content .= "define('".strtoupper($key)."','".addslashes($val)."');";
+        }
+    }
+    return $content;
+}
+//[/RUNTIME]
 
 // 循环创建目录
 function mk_dir($dir, $mode = 0755)

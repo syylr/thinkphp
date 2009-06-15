@@ -20,6 +20,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
+//[RUNTIME]
 if (!defined('THINK_PATH')) exit();
 //   系统信息
 if(version_compare(PHP_VERSION,'6.0.0','<') ) {
@@ -27,10 +28,6 @@ if(version_compare(PHP_VERSION,'6.0.0','<') ) {
     define('MAGIC_QUOTES_GPC',get_magic_quotes_gpc()?True:False);
 }
 define('MEMORY_LIMIT_ON',function_exists('memory_get_usage')?true:false);
-// 记录内存初始使用
-if(MEMORY_LIMIT_ON) {
-     $GLOBALS['_startUseMems'] = memory_get_usage();
-}
 define('IS_CGI',substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
@@ -64,4 +61,9 @@ if(!IS_CLI) {
 }
 //  版本信息
 define('THINK_VERSION', '1.6RC1');
+//[/RUNTIME]
+// 记录内存初始使用
+if(MEMORY_LIMIT_ON) {
+     $GLOBALS['_startUseMems'] = memory_get_usage();
+}
 ?>
