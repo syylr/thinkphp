@@ -38,6 +38,7 @@ class App extends Base
         // 设定错误和异常处理
         set_error_handler(array(&$this,"appError"));
         set_exception_handler(array(&$this,"appException"));
+        //[RUNTIME]
         // 检查项目是否编译过
         // 在部署模式下会自动在第一次执行的时候编译项目
         if(defined('RUNTIME_MODEL')){
@@ -49,6 +50,7 @@ class App extends Base
             // 预编译项目
             $this->build();
         }
+        //[/RUNTIME]
         // 项目开始标签
         if(C('TAG_PLUGIN_ON'))   tag('app_begin');
 
@@ -86,7 +88,6 @@ class App extends Base
         // 系统检查
         $this->checkLanguage();     //语言检查
         $this->checkTemplate();     //模板检查
-
         if(C('HTML_CACHE_ON')) { // 开启静态缓存
             import('HtmlCache');
             HtmlCache::readHTMLCache();
@@ -94,10 +95,10 @@ class App extends Base
 
         // 项目初始化标签
         if(C('TAG_PLUGIN_ON'))   tag('app_init');
-
         return ;
     }
 
+    //[RUNTIME]
     /**
      +----------------------------------------------------------
      * 读取配置信息 编译项目
@@ -114,13 +115,15 @@ class App extends Base
         // 加载项目配置文件
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
+        $runtime = defined('RUNTIME_ALLINONE')?TRUE:FALSE;
         $common   = '';
-        $debug  =  C('DEBUG_MODE');  //  是否调试模式
+         //是否调试模式 ALL_IN_ONE模式下面调试模式无效
+        $debug  =  C('DEBUG_MODE') && !$runtime;
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
             if(!$debug) // 编译文件
-                $common   .= compile(COMMON_PATH.'common.php');
+                $common   .= compile(COMMON_PATH.'common.php',$runtime);
         }
         // 加载项目编译文件列表
         if(is_file(CONFIG_PATH.'app.php')) {
@@ -129,7 +132,7 @@ class App extends Base
                 // 加载并编译文件
                 require $file;
                 if(!$debug)
-                    $common   .= compile($file);
+                    $common   .= compile($file,$runtime);
             }
         }
         // 读取扩展配置文件
@@ -149,10 +152,12 @@ class App extends Base
             // 部署模式下面生成编译文件
             // 下次直接加载项目编译文件
             if(defined('RUNTIME_ALLINONE')) {
-                // 合并核心编译和项目编译文件
-                copy(RUNTIME_PATH.'~runtime.php',RUNTIME_PATH.'~allinone.php');
-                $content  = $common."\nreturn ".var_export(C(),true).";\n?>";
-                file_put_contents(RUNTIME_PATH.'~allinone.php',$content,FILE_APPEND);
+                // 获取用户自定义变量
+                $defs = get_defined_constants(TRUE);
+                $content  = array_define($defs['user']);
+                $content .= substr(file_get_contents(RUNTIME_PATH.'~runtime.php'),5);
+                $content .= $common."\nreturn ".var_export(C(),true).';';
+                file_put_contents(RUNTIME_PATH.'~allinone.php','<?php '.$content);
             }else{
                 $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
                 file_put_contents(RUNTIME_PATH.'~app.php',$content);
@@ -160,7 +165,7 @@ class App extends Base
         }
         return ;
     }
-
+    //[/RUNTIME]
     /**
      +----------------------------------------------------------
      * 获得实际的模块名称

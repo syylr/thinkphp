@@ -9,7 +9,7 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // $Id$
-
+//[RUNTIME]
 // 目录设置
 define('CACHE_DIR',  'Cache');
 define('HTML_DIR',    'Html');
@@ -30,8 +30,8 @@ define('LOG_PATH',       RUNTIME_PATH.LOG_DIR.'/'); //
 define('LANG_PATH',     APP_PATH.'/'.LANG_DIR.'/'); //
 define('TEMP_PATH',      RUNTIME_PATH.TEMP_DIR.'/'); //
 define('DATA_PATH', RUNTIME_PATH.'Data/'); //
-
 define('VENDOR_PATH',THINK_PATH.'/Vendor/');
+//[/RUNTIME]
 // 为了方便导入第三方类库 设置Vendor目录到include_path
 set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
 ?>
