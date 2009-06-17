@@ -325,7 +325,7 @@ class App extends Base
         define('__URL__',PHP_FILE.'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
         //当前操作地址
         define('__ACTION__',__URL__.C('PATH_DEPR').ACTION_NAME);
-        C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
+        C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('MODULE_LEVEL_DEPR'),'/',MODULE_NAME).'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
         define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
         //项目模板目录
         define('APP_TMPL_URL', $appRoot.$tmplDir);
