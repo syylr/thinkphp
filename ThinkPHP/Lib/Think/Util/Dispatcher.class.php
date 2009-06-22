@@ -272,10 +272,17 @@ class Dispatcher extends Base
                 $routeItem = $routes[$routeName.'@'];
                 $regx = str_replace($routeName,'',trim($_SERVER['PATH_INFO'],'/'));
                 foreach ($routeItem as $route){
-                    $rule    =   $route[0];             // 路由正则
+                    $rule    =   $route[0];// 路由正则
+                    // 匹配路由定义
                     if(preg_match($rule,$regx,$matches)) {
-                        // 匹配路由定义
-                        $_GET[C('VAR_MODULE')]  =   $route[1];
+                        // 检测是否存在分组 2009/06/23
+                        $temp = explode(C('GROUP_DEPR'),$route[1]);
+                        if ($temp[1]) {
+                            $_GET[C('VAR_GROUP')]  = $temp[0];
+                            $_GET[C('VAR_MODULE')] = $temp[1];
+                        }else {
+                            $_GET[C('VAR_MODULE')] = $temp[0];
+                        }
                         $_GET[C('VAR_ACTION')]  =   $route[2];
                         //  获取当前路由参数对应的变量
                         if(!isset($_GET[C('VAR_ROUTER')])) {
