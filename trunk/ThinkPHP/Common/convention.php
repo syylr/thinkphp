@@ -40,11 +40,12 @@ return  array(
     'PATH_MODEL'					=>	2,	// 默认采用智能模式
     'PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号
     'ROUTER_ON'                  =>   false, // 是否开启URL路由
-	'MODULE_LEVEL_DEPR'	    =>	'.',		// 多级模块之间的分割符
+	'GROUP_DEPR'	                =>	'.',		// 模块分组之间的分割符
+    'APP_GROUP'                  => '',      // 项目分组 多个组之间用逗号分隔 例如 'Admin,Home'
     'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
     'TAG_PLUGIN_ON'               =>   false, // 是否开启插件机制
-
     'SESSION_AUTO_START'   =>   true,  // 是否自动开启Session
+
     /* 日志设置 */
     'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
     'LOG_RECORD_LEVEL'       =>   array('EMERG','ALERT','CRIT','ERR'),  // 允许记录的日志级别
@@ -58,6 +59,7 @@ return  array(
 
     /* 系统变量设置 */
     'VAR_PATHINFO'				=>	's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于PATH_MODEL 和 PATH_DEPR
+    'VAR_GROUP'     => 'g',     // 默认分组变量
     'VAR_MODULE'					=>	'm',		// 默认模块获取变量
     'VAR_ACTION'					=>	'a',		// 默认操作获取变量
    	'VAR_PAGE'						=>	'p',		// 默认分页跳转变量
@@ -66,6 +68,7 @@ return  array(
     'VAR_AJAX_SUBMIT'			=>	'ajax', // 默认的AJAX提交变量
 
     /* 模块和操作设置 */
+    'DEFAULT_GROUP'           =>    'Home',   // 默认分组
     'DEFAULT_MODULE'			=>	'Index', // 默认模块名称
     'DEFAULT_ACTION'			=>	'index', // 默认操作名称
 

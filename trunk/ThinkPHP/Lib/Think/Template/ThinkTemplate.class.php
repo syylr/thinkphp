@@ -59,6 +59,7 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      */
     function __construct(){
+        $this->config['cache_path']        =  C('CACHE_PATH');
         $this->config['template_suffix']   =  C('TEMPLATE_SUFFIX');
         $this->config['cache_suffix']       =  C('CACHFILE_SUFFIX');
         $this->config['tmpl_cache']        =  C('TMPL_CACHE_ON');
@@ -120,7 +121,7 @@ class  ThinkTemplate extends Base
         $this->templateFile    =  $tmplTemplateFile;
 
         //根据模版文件名定位缓存文件
-        $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).$this->config['cache_suffix'];
+        $tmplCacheFile = $this->config['cache_path'].md5($tmplTemplateFile).$this->config['cache_suffix'];
         $tmplContent = '';
         // 检查Cache文件是否需要更新
         if (!$this->checkCache($tmplTemplateFile)) {
@@ -128,6 +129,10 @@ class  ThinkTemplate extends Base
             $tmplContent = file_get_contents($tmplTemplateFile);
             //编译模板内容
             $tmplContent = $this->compiler($tmplContent);
+            // 检测分组目录
+            if(!is_dir($this->config['cache_path'])) {
+                mk_dir($this->config['cache_path']);
+            }
             //重写Cache文件
             if( false === file_put_contents($tmplCacheFile,trim($tmplContent))) {
                 throw_exception(L('_CACHE_WRITE_ERROR_'));
@@ -176,7 +181,7 @@ class  ThinkTemplate extends Base
      */
     protected function checkCache($tmplTemplateFile)
     {
-        $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).$this->config['cache_suffix'];
+        $tmplCacheFile = $this->config['cache_path'].md5($tmplTemplateFile).$this->config['cache_suffix'];
         if(!is_file($tmplCacheFile)){
             return false;
         }elseif (!$this->config['tmpl_cache']){
