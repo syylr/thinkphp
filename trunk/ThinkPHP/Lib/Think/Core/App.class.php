@@ -88,7 +88,7 @@ class App extends Base
         if(C('APP_GROUP')) {
             // 分组配置文件
             if(is_file(CONFIG_PATH.GROUP_NAME.'/config.php'))
-                C(CONFIG_PATH.GROUP_NAME.'/config.php');
+                C(include CONFIG_PATH.GROUP_NAME.'/config.php');
             // 分组函数文件
             if(is_file(COMMON_PATH.GROUP_NAME.'/function.php')) {
                 include COMMON_PATH.GROUP_NAME.'/function.php';
