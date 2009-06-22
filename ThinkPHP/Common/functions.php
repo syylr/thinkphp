@@ -432,11 +432,11 @@ function D($className='',$appName='')
         return $_model[$appName.$className];
     }
     $OriClassName = $className;
-    if(strpos($className,C('MODULE_LEVEL_DEPR'))) {
-        $array   =  explode(C('MODULE_LEVEL_DEPR'),$className);
+    if(strpos($className,C('GROUP_DEPR'))) {
+        $array   =  explode(C('GROUP_DEPR'),$className);
         $className = array_pop($array);
         $className =  $className.'Model';
-        import($appName.'.'.implode('.',$array).'.Model.'.$className);
+        import($appName.'.Model.'.implode('.',$array).'.'.$className);
     }else{
         $className =  $className.'Model';
         import($appName.'.Model.'.$className);
@@ -467,11 +467,11 @@ function A($className,$appName='@')
         return $_action[$appName.$className];
     }
     $OriClassName = $className;
-    if(strpos($className,C('MODULE_LEVEL_DEPR'))) {
-        $array   =  explode(C('MODULE_LEVEL_DEPR'),$className);
+    if(strpos($className,C('GROUP_DEPR'))) {
+        $array   =  explode(C('GROUP_DEPR'),$className);
         $className = array_pop($array);
         $className =  $className.'Action';
-        import($appName.'.'.implode('.',$array).'.Action.'.$className);
+        import($appName.'.Action.'.implode('.',$array).'.'.$className);
     }else{
         $className =  $className.'Action';
         import($appName.'.Action.'.$className);

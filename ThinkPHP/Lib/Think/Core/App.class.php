@@ -51,6 +51,7 @@ class App extends Base
             $this->build();
         }
         //[/RUNTIME]
+
         // 项目开始标签
         if(C('TAG_PLUGIN_ON'))   tag('app_begin');
 
@@ -78,9 +79,21 @@ class App extends Base
 
         // 取得模块和操作名称
         // 可以在Dispatcher中定义获取规则
+        if(C('APP_GROUP'))
+            // 开启项目分组则获取当前分组名称
+            if(!defined('GROUP_NAME')) define('GROUP_NAME',   $this->getGroup());       // Group名称
         if(!defined('MODULE_NAME')) define('MODULE_NAME',   $this->getModule());       // Module名称
         if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
-
+        // 加载项目分组公共文件
+        if(C('APP_GROUP')) {
+            // 分组配置文件
+            if(is_file(CONFIG_PATH.GROUP_NAME.'/config.php'))
+                C(CONFIG_PATH.GROUP_NAME.'/config.php');
+            // 分组函数文件
+            if(is_file(COMMON_PATH.GROUP_NAME.'/function.php')) {
+                include COMMON_PATH.GROUP_NAME.'/function.php';
+            }
+        }
         // 加载模块配置文件
         if(is_file(CONFIG_PATH.strtolower(MODULE_NAME).'_config.php'))
             C(include CONFIG_PATH.strtolower(MODULE_NAME).'_config.php');
@@ -115,6 +128,7 @@ class App extends Base
         // 加载项目配置文件
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
+
         $runtime = defined('RUNTIME_ALLINONE')?TRUE:FALSE;
         $common   = '';
          //是否调试模式 ALL_IN_ONE模式下面调试模式无效
@@ -206,6 +220,24 @@ class App extends Base
             (!empty($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:C('DEFAULT_ACTION'));
         unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
         return $action;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获得实际的操作名称
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    private function getGroup()
+    {
+        $group   = !empty($_POST[C('VAR_GROUP')]) ?
+            $_POST[C('VAR_GROUP')] :
+            (!empty($_GET[C('VAR_GROUP')])?$_GET[C('VAR_GROUP')]:C('DEFAULT_GROUP'));
+        unset($_POST[C('VAR_GROUP')],$_GET[C('VAR_GROUP')]);
+        return $group;
     }
 
     /**
@@ -322,10 +354,16 @@ class App extends Base
             $appRoot   =  WEB_URL.'/'.APP_NAME.'/';
         }
 
-        define('__URL__',PHP_FILE.'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
+        if(defined('GROUP_NAME')) {
+            define('__URL__',PHP_FILE.'/'.GROUP_NAME.'/'.MODULE_NAME);
+            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
+        }else{
+            define('__URL__',PHP_FILE.'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
+            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('GROUP_DEPR'),'/',MODULE_NAME).'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
+        }
+        C('CACHE_PATH',defined('GROUP_NAME')?CACHE_PATH.GROUP_NAME.'/':CACHE_PATH);
         //当前操作地址
         define('__ACTION__',__URL__.C('PATH_DEPR').ACTION_NAME);
-        C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('MODULE_LEVEL_DEPR'),'/',MODULE_NAME).'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
         define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
         //项目模板目录
         define('APP_TMPL_URL', $appRoot.$tmplDir);
@@ -355,7 +393,8 @@ class App extends Base
         if($tagOn)  tag('app_run');
 
         //创建Action控制器实例
-        $module  =  A(MODULE_NAME);
+        $group =  defined('GROUP_NAME') ? GROUP_NAME.C('GROUP_DEPR') : '';
+        $module  =  A($group.MODULE_NAME);
         if(!$module) {
             // 是否存在扩展模块
             $_module = C('_modules_.'.MODULE_NAME);

@@ -48,7 +48,7 @@ class TemplateThink extends Base {
             // 模板阵列变量分解成为独立变量
             extract($var, EXTR_OVERWRITE);
             //载入模版缓存文件
-            include CACHE_PATH.md5($templateFile).C('CACHFILE_SUFFIX');
+            include C('CACHE_PATH').md5($templateFile).C('CACHFILE_SUFFIX');
         }
     }
 
@@ -66,7 +66,7 @@ class TemplateThink extends Base {
      */
     protected function checkCache($tmplTemplateFile)
     {
-        $tmplCacheFile = CACHE_PATH.md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
+        $tmplCacheFile = C('CACHE_PATH').md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
         if(!is_file($tmplCacheFile)){
             return false;
         }

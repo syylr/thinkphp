@@ -55,18 +55,26 @@ class Dispatcher extends Base
             self::parsePathInfo();
             if (!empty($_GET) && !isset($_GET[C('VAR_ROUTER')])) {
                 $_GET  =  array_merge (self :: getPathInfo(),$_GET);
+                $_varGroup =   C('VAR_GROUP'); // 分组变量
                 $_varModule =   C('VAR_MODULE');
                 $_varAction =   C('VAR_ACTION');
                 $_depr  =   C('PATH_DEPR');
                 $_pathModel =   C('PATH_MODEL');
+                if (C('APP_GROUP')) {
+                    if(empty($_GET[$_varGroup]))
+                        $_GET[$_varGroup] = C('DEFAULT_GROUP');
+                }else {
+                    $_GET[$_varGroup] = '';
+                }
                 // 设置默认模块和操作
                 if(empty($_GET[$_varModule])) $_GET[$_varModule] = C('DEFAULT_MODULE');
                 if(empty($_GET[$_varAction])) $_GET[$_varAction] = C('DEFAULT_ACTION');
                 // 组装新的URL地址
                 $_URL = '/';
                 if($_pathModel==2) {
-                    $_URL .= $_GET[$_varModule].$_depr.$_GET[$_varAction].$_depr;
-                    unset($_GET[$_varModule],$_GET[$_varAction]);
+                    // groupName/modelName/actionName/
+                    $_URL .= $_GET[$_varGroup].($_GET[$_varGroup]?$_depr:'').$_GET[$_varModule].$_depr.$_GET[$_varAction].$_depr;
+                    unset($_GET[$_varGroup],$_GET[$_varModule],$_GET[$_varAction]);
                 }
                 foreach ($_GET as $_VAR => $_VAL) {
                     if('' != trim($_GET[$_VAR])) {
@@ -114,6 +122,11 @@ class Dispatcher extends Base
         if(!empty($_SERVER['PATH_INFO'])) {
             if(C('PATH_MODEL')==2){
                 $paths = explode(C('PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
+                $groupApp = C('APP_GROUP');
+                if ($groupApp) {
+                    $arr = explode(',',$groupApp);
+                    $pathInfo[C('VAR_GROUP')] = in_array($paths[0],$arr)? array_shift($paths) : C('DEFAULT_GROUP');
+                }
                 $pathInfo[C('VAR_MODULE')] = array_shift($paths);
                 $pathInfo[C('VAR_ACTION')] = array_shift($paths);
                 for($i = 0, $cnt = count($paths); $i <$cnt; $i++){
@@ -227,7 +240,13 @@ class Dispatcher extends Base
                 // 读取当前路由名称的路由规则
                 // 路由定义格式 routeName=>array(‘模块名称’,’操作名称’,’参数定义’,’额外参数’)
                 $route = $routes[$routeName];
-                $_GET[C('VAR_MODULE')]  =   $route[0];
+                if(strpos($route[0],C('GROUP_DEPR'))) {
+                    $array   =  explode(C('GROUP_DEPR'),$route[0]);
+                    $_GET[C('VAR_MODULE')]  =   array_pop($array);
+                    $_GET[C('VAR_GROUP')]  =   implode(C('GROUP_DEPR'),$array);
+                }else{
+                    $_GET[C('VAR_MODULE')]  =   $route[0];
+                }
                 $_GET[C('VAR_ACTION')]  =   $route[1];
                 //  获取当前路由参数对应的变量
                 if(!isset($_GET[C('VAR_ROUTER')])) {
