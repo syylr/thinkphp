@@ -575,6 +575,8 @@ class Model extends Base implements IteratorAggregate
         $options['field']    =  $field;
         $result   =  $this->find($options);
         if($result) {
+            // 2009-6-24 解决getField方法和add等方法冲突的问题
+            $this->data=  array();
             return reset($result);
         }else{
             return null;
