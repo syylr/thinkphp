@@ -356,12 +356,13 @@ class App extends Base
 
         if(defined('GROUP_NAME')) {
             define('__URL__',PHP_FILE.'/'.GROUP_NAME.'/'.MODULE_NAME);
-            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
+            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TEMPLATE_SUFFIX'));
+            C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
             define('__URL__',PHP_FILE.'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('GROUP_DEPR'),'/',MODULE_NAME).'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
+            C('CACHE_PATH',CACHE_PATH);
         }
-        C('CACHE_PATH',defined('GROUP_NAME')?CACHE_PATH.GROUP_NAME.'/':CACHE_PATH);
         //当前操作地址
         define('__ACTION__',__URL__.C('PATH_DEPR').ACTION_NAME);
         define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
