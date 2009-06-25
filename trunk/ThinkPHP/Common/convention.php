@@ -40,11 +40,16 @@ return  array(
     'PATH_MODEL'					=>	2,	// 默认采用智能模式
     'PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号
     'ROUTER_ON'                  =>   false, // 是否开启URL路由
-	'GROUP_DEPR'	                =>	'.',		// 模块分组之间的分割符
+	//'URL_CASE_INSENSITIVE' =>   false, // URL地址是否不区分大小写
+    'GROUP_DEPR'	                =>	'.',		// 模块分组之间的分割符
     'APP_GROUP'                  => '',      // 项目分组 多个组之间用逗号分隔 例如 'Admin,Home'
     'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
     'TAG_PLUGIN_ON'               =>   false, // 是否开启插件机制
     'SESSION_AUTO_START'   =>   true,  // 是否自动开启Session
+    // 内置SESSION类可用参数
+    //'SESSION_NAME'=>'',       // Session名称
+    //'SESSION_PATH'=>'',       // Session保存路径
+    //'SESSION_CALLBACK'=>'',   // Session 对象反序列化时候的回调函数
 
     /* 日志设置 */
     'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
@@ -75,14 +80,13 @@ return  array(
     /* 模板设置 */
     'TMPL_CACHE_ON'			=>	true,		// 默认开启模板编译缓存 false 的话每次都重新编译模板
     'TMPL_CACHE_TIME'		=>	-1,		// 模板缓存有效期 -1 永久 单位为秒
-    'TMPL_SWITCH_ON'			=>	true,	// 启用多模版支持
     'AUTO_DETECT_THEME'   =>   false, // 自动侦测模板主题
     'DEFAULT_TEMPLATE'		=>	'default',	// 默认模板名称
     'TEMPLATE_SUFFIX'			=>	'.html',	 // 默认模板文件后缀
     'CACHFILE_SUFFIX'			=>	'.php',	// 默认模板缓存后缀
     'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
     'TMPL_VAR_IDENTIFY'      =>   'array',    // 模板变量识别 留空自动判断 array 数组 obj 对象
-    'TMPL_FILE_DEPR'=>'/', // 模板文件MODULE_NAME与ACTION_NAME的分割符，只对项目分组部署有效
+    'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
 
 	/* 分页设置 */
 	'PAGE_NUMBERS'				=>	5,			// 分页显示页数
