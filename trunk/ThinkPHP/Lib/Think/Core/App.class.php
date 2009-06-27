@@ -355,7 +355,7 @@ class App extends Base
         }
 
         if(defined('GROUP_NAME')) {
-            define('__URL__',PHP_FILE.'/'.GROUP_NAME.'/'.MODULE_NAME);
+            define('__URL__',PHP_FILE.'/'.GROUP_NAME.'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
