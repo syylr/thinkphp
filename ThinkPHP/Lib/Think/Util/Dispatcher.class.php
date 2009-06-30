@@ -124,8 +124,8 @@ class Dispatcher extends Base
                 $paths = explode(C('PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
                 $groupApp = C('APP_GROUP');
                 if ($groupApp) {
-                    $arr = explode(',',$groupApp);
-                    $pathInfo[C('VAR_GROUP')] = in_array($paths[0],$arr)? array_shift($paths) : C('DEFAULT_GROUP');
+                    $arr = array_map('strtolower',explode(',',$groupApp));
+                    $pathInfo[C('VAR_GROUP')] = in_array(strtolower($paths[0]),$arr)? array_shift($paths) : C('DEFAULT_GROUP');
                 }
                 $pathInfo[C('VAR_MODULE')] = array_shift($paths);
                 $pathInfo[C('VAR_ACTION')] = array_shift($paths);
