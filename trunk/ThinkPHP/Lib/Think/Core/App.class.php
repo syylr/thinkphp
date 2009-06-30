@@ -81,7 +81,7 @@ class App extends Base
         // 可以在Dispatcher中定义获取规则
         if(C('APP_GROUP'))
             // 开启项目分组则获取当前分组名称
-            if(!defined('GROUP_NAME')) define('GROUP_NAME',   $this->getGroup());       // Group名称
+            if(!defined('GROUP_NAME')) define('GROUP_NAME', $this->getGroup());       // Group名称
         if(!defined('MODULE_NAME')) define('MODULE_NAME',   $this->getModule());       // Module名称
         if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
         // 加载项目分组公共文件
@@ -237,7 +237,7 @@ class App extends Base
             $_POST[C('VAR_GROUP')] :
             (!empty($_GET[C('VAR_GROUP')])?$_GET[C('VAR_GROUP')]:C('DEFAULT_GROUP'));
         unset($_POST[C('VAR_GROUP')],$_GET[C('VAR_GROUP')]);
-        return $group;
+        return ucfirst(strtolower($group));
     }
 
     /**
@@ -355,7 +355,7 @@ class App extends Base
         }
 
         if(defined('GROUP_NAME')) {
-            define('__URL__',PHP_FILE.'/'.GROUP_NAME.'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
+            define('__URL__',PHP_FILE.'/'.(C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME).'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
