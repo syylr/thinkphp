@@ -185,17 +185,6 @@ class TagLibCx extends TagLib
         return $this->_foreach($attr,$content);
     }
 
-    public function _url($attr) {
-        $tag      = $this->parseXmlAttr($attr,'url');
-        $action   =   !empty($tag['action'])?$tag['action']:ACTION_NAME;
-        $module =   !empty($tag['module'])?$tag['module']:MODULE_NAME;
-        $route     =   !empty($tag['route'])?$tag['route']:'';
-        $app     =   !empty($tag['app'])?$tag['app']:APP_NAME;
-        $params =  !empty($tag['params'])?$tag['params']:'';
-        $parseStr=   '<?php echo url("'.$action.'","'.$module.'","'.$route.'","'.$app.'","'.$params.'");?>';
-        return $parseStr;
-    }
-
     public function _var($attr) {
         $tag          =   $this->parseXmlAttr($attr,'var');
         $name       = $tag['name'];
@@ -624,5 +613,45 @@ class TagLibCx extends TagLib
         $parseStr=   "<!-- layout::$name::$cache -->";
         return $parseStr;
     }
+
+    /**
+     +----------------------------------------------------------
+     * link标签解析
+     * 格式： <html:link file="" type="" />
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     +----------------------------------------------------------
+     * @return string|void
+     +----------------------------------------------------------
+     */
+    public function _link($attr,$content,$type='')
+    {
+        $tag        = $this->parseXmlAttr($attr,'link');
+        $file       = $tag['href'];
+        $type       = $type?$type:(isset($tag['type'])?
+                    strtolower($tag['type']):
+                    strtolower(substr(strrchr($file, '.'),1)));
+        if($type=='js') {
+            $parseStr = "<script type='text/javascript' src='".$file."'></script> ";
+        }elseif($type=='css') {
+            $parseStr = "<link rel='stylesheet' type='text/css' href='".$file."' />";
+        }
+        return $parseStr;
+    }
+
+    // link别名 css导入
+    public function _css($attr,$content)
+    {
+        return $this->_link($attr,$content,'css');
+    }
+
+    // link别名 js导入
+    public function _js($attr,$content)
+    {
+        return $this->_link($attr,$content,'js');
+    }
+
 }//类定义结束
 ?>
