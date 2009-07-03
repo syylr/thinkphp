@@ -297,4 +297,18 @@
 </attribute>
 </tag>
 
+<tag>
+<name>link</name>
+<alias>js,css</alias>
+<bodycontent>empty</bodycontent>
+<attribute>
+<name>href</name>
+<required>true</required>
+</attribute>
+<attribute>
+<name>type</name>
+<required>false</required>
+</attribute>
+</tag>
+
 </taglib>
