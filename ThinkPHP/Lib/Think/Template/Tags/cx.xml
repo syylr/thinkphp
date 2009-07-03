@@ -260,27 +260,6 @@
 </tag>
 
 <tag>
-<name>url</name>
-<bodycontent>empty</bodycontent>
-<attribute>
-<name>module</name>
-<required>false</required>
-</attribute>
-<attribute>
-<name>action</name>
-<required>true</required>
-</attribute>
-<attribute>
-<name>app</name>
-<required>false</required>
-</attribute>
-<attribute>
-<name>params</name>
-<required>false</required>
-</attribute>
-</tag>
-
-<tag>
 <name>var</name>
 <bodycontent>empty</bodycontent>
 <attribute>
