@@ -626,17 +626,32 @@ class TagLibCx extends TagLib
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _link($attr,$content,$type='')
+    public function _load($attr,$content,$type='')
     {
-        $tag        = $this->parseXmlAttr($attr,'link');
+        $tag        = $this->parseXmlAttr($attr,'load');
         $file       = $tag['href'];
         $type       = $type?$type:(isset($tag['type'])?
                     strtolower($tag['type']):
                     strtolower(substr(strrchr($file, '.'),1)));
+        $parseStr = '';
+        $endStr   = '';
+        // 判断是否存在加载条件 允许使用函数判断 默认为isset
+        if ($tag['value'])
+        {
+            $varArray  = explode('|',$tag['value']);
+            $name      = array_shift($varArray);
+            $name      = $this->autoBuildVar($name);
+            if (!empty($varArray))
+                $name  = $this->tpl->parseVarFunction($name,$varArray);
+            else
+                $name  = 'isset('.$name.')';
+            $parseStr .= '<?php if('.$name.'): ?>';
+            $endStr    = '<?php endif; ?>';
+        }
         if($type=='js') {
-            $parseStr = "<script type='text/javascript' src='".$file."'></script> ";
+            $parseStr .= '<script type="text/javascript" src="'.$file.'"></script>'.$endStr;
         }elseif($type=='css') {
-            $parseStr = "<link rel='stylesheet' type='text/css' href='".$file."' />";
+            $parseStr .= '<link rel="stylesheet" type="text/css" href="'.$file.'" />'.$endStr;
         }
         return $parseStr;
     }
@@ -644,13 +659,13 @@ class TagLibCx extends TagLib
     // link别名 css导入
     public function _css($attr,$content)
     {
-        return $this->_link($attr,$content,'css');
+        return $this->_load($attr,$content,'css');
     }
 
     // link别名 js导入
     public function _js($attr,$content)
     {
-        return $this->_link($attr,$content,'js');
+        return $this->_load($attr,$content,'js');
     }
 
 }//类定义结束
