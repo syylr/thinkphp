@@ -619,7 +619,7 @@ class TagLibCx extends TagLib
      * load 标签解析(用于不使用html标签时也可以加载css,js文件)
      * 如果定义了value属性，默认会对value的值进行isset判断，支持使用函数
      * 格式：<load href="" value="var" /> var变量已定义则加载
-     * 或使用别名 <css href=""> | <js href="" value="var|!empty">var变量不为空则加载
+     * 或使用别名 <css href="" /> | <js href="" value="var|!empty" />var变量不为空则加载
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
