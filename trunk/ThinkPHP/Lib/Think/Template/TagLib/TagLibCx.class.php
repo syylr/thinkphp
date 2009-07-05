@@ -616,8 +616,10 @@ class TagLibCx extends TagLib
 
     /**
      +----------------------------------------------------------
-     * link标签解析
-     * 格式： <html:link file="" type="" />
+     * load 标签解析(用于不使用html标签时也可以加载css,js文件)
+     * 如果定义了value属性，默认会对value的值进行isset判断，支持使用函数
+     * 格式：<load href="" value="var" /> var变量已定义则加载
+     * 或使用别名 <css href=""> | <js href="" value="var|!empty">var变量不为空则加载
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -630,12 +632,10 @@ class TagLibCx extends TagLib
     {
         $tag        = $this->parseXmlAttr($attr,'load');
         $file       = $tag['href'];
-        $type       = $type?$type:(isset($tag['type'])?
-                    strtolower($tag['type']):
-                    strtolower(substr(strrchr($file, '.'),1)));
+        $type       = $type?$type:strtolower(substr(strrchr($file, '.'),1));
         $parseStr = '';
         $endStr   = '';
-        // 判断是否存在加载条件 允许使用函数判断 默认为isset
+        // 判断是否存在加载条件 允许使用函数判断(默认为isset)
         if ($tag['value'])
         {
             $varArray  = explode('|',$tag['value']);
@@ -656,13 +656,13 @@ class TagLibCx extends TagLib
         return $parseStr;
     }
 
-    // link别名 css导入
+    // load别名使用 导入css文件
     public function _css($attr,$content)
     {
         return $this->_load($attr,$content,'css');
     }
 
-    // link别名 js导入
+    // load别名使用 导入js文件
     public function _js($attr,$content)
     {
         return $this->_load($attr,$content,'js');

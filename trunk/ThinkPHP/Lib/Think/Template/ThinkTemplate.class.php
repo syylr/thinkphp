@@ -214,11 +214,13 @@ class  ThinkTemplate extends Base
         // 首先替换literal标签内容
         $content = preg_replace('/'.$this->config['taglib_begin'].'literal'.$this->config['taglib_end'].'(.*?)'.$this->config['taglib_begin'].'\/literal'.$this->config['taglib_end'].'/eis',"\$this->parseLiteral('\\1')",$content);
 
-        // 获取引入的标签库列表
+        // 获取需要引入的标签库列表
         // 标签库只需要定义一次，允许引入多个一次
         // 一般放在文件的最前面
-        // 格式：<taglib name="cx,html" />
-        $this->getIncludeTagLib($content);
+        // 格式：<taglib name="html" />
+        // 当TAGLIB_LOAD配置为true时才会进行检测
+        if(C('TAGLIB_LOAD'))
+            $this->getIncludeTagLib($content);
         if(!empty($this->tagLib)) {
             // 对导入的TagLib进行解析
             $_taglibs = C('_taglibs_');
