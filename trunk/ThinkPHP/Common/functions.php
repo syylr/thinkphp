@@ -35,7 +35,7 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
         $url   =  $url.MODULE_NAME;
     }
     // 分析URL地址
-    $array   =  parse_url($url);
+    $array   =  parse_url($url);dump($array);
     $app      =  isset($array['scheme'])?   $array['scheme']  :APP_NAME;
     $route    =  isset($array['user'])?$array['user']:'';
     if(isset($array['path'])) {
@@ -44,7 +44,13 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
             // 没有指定模块名
             $module = MODULE_NAME;
         }else{// 指定模块
-            $module = $array['host'];
+            if(strpos($array['host'],'-')) {
+                $temp   =  explode('-',$array['host']);
+                $group = $temp[0];
+                $module = $temp[1];
+            }else{
+                $module = $array['host'];
+            }
         }
     }else{ // 只指定操作
         $module = MODULE_NAME;
@@ -60,17 +66,22 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
         foreach ($params as $var=>$val)
             $str .= $var.$depr.$val.$depr;
         $str = substr($str,0,-1);
+        $group   = isset($group)?$group.$depr:'';
         if(!empty($route)) {
-            $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$route.$str;
+            $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$group.$route.$str;
         }else{
-            $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$module.$depr.$action.$str;
+            $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$group.$module.$depr.$action.$str;
         }
         if($suffix && C('HTML_URL_SUFFIX')) {
             $url .= C('HTML_URL_SUFFIX');
         }
     }else{
         $params =   http_build_query($params);
-        $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.'&'.$params;
+        if(isset($group)) {
+            $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_GROUP').'='.$group.'&'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.'&'.$params;
+        }else{
+            $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.'&'.$params;
+        }
     }
     if($redirect) {
         redirect($url);
