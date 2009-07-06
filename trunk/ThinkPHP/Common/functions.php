@@ -35,7 +35,7 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
         $url   =  $url.MODULE_NAME;
     }
     // 分析URL地址
-    $array   =  parse_url($url);dump($array);
+    $array   =  parse_url($url);
     $app      =  isset($array['scheme'])?   $array['scheme']  :APP_NAME;
     $route    =  isset($array['user'])?$array['user']:'';
     if(isset($array['path'])) {
