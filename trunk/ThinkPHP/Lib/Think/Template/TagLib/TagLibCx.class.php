@@ -418,7 +418,7 @@ class TagLibCx extends TagLib
     }
 
     public function _egt($attr,$content) {
-        return $this->__compare($attr,$content,'egt');
+        return $this->_compare($attr,$content,'egt');
     }
 
     public function _elt($attr,$content) {
