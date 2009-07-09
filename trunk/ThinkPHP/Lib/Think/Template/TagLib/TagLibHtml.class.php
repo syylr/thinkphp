@@ -110,7 +110,7 @@ class TagLibHtml extends TagLib
     {
         $tag        = $this->parseXmlAttr($attr,'import');
         $file       = $tag['file'];
-        $basepath   = !empty($tag['basepath'])?$tag['basepath']:WEB_PUBLIC_URL;
+        $basepath   = !empty($tag['basepath'])?$tag['basepath']:WEB_PUBLIC_PATH;
         $type       = !empty($tag['type'])?  strtolower($tag['type']):'js';
         if($type=='js') {
             $parseStr = "<script type='text/javascript' src='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$file).'.js'."'></script> ";

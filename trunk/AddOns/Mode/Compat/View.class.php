@@ -339,7 +339,7 @@ class View extends Base
         //项目公共目录
         $content = str_replace(
             array('../Public',   '__PUBLIC__',  '__TMPL__', '__ROOT__',  '__APP__',  '__URL__',   '__ACTION__', '__SELF__'),
-            array(APP_PUBLIC_URL,WEB_PUBLIC_URL,APP_TMPL_URL,__ROOT__,__APP__,__URL__,__ACTION__,__SELF__),
+            array(APP_PUBLIC_PATH,WEB_PUBLIC_PATH,APP_TMPL_PATH,__ROOT__,__APP__,__URL__,__ACTION__,__SELF__),
             $content);
         if(C('THINK_PLUGIN_ON')) {
             // 模版过滤插件调用
