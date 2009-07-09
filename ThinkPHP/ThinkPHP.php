@@ -18,6 +18,7 @@
 
 //记录开始运行时间
 $GLOBALS['_beginTime'] = microtime(TRUE);
+if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Runtime/');
 
 if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
@@ -33,7 +34,6 @@ if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
     // ThinkPHP系统目录定义
     if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
     if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
-    if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
     if(is_file(RUNTIME_PATH.'~runtime.php')) {
         // 加载框架核心缓存文件
         // 如果有修改核心文件请删除该缓存
