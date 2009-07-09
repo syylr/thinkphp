@@ -299,7 +299,7 @@ class Model extends Base implements IteratorAggregate
         $options =  $this->_parseOptions($options);
         if(!isset($options['where']) ) {
             // 如果存在主键数据 则自动作为更新条件
-            if(!empty($data[$this->getPk()])) {
+            if(isset($data[$this->getPk()])) {
                 $pk   =  $this->getPk();
                 $options['where']  =  $pk.'=\''.$data[$pk].'\'';
                 $pkValue = $data[$pk];
