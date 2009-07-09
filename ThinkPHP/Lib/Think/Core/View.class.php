@@ -306,16 +306,17 @@ class View extends Base
     private function parseTemplatePath($content) {
         // 系统默认的特殊变量替换
         $replace =  array(
-            '../Public'=>APP_PUBLIC_URL,
-            '__PUBLIC__'=>WEB_PUBLIC_URL,
-            '__TMPL__'=>APP_TMPL_URL,
-            '__ROOT__'=>__ROOT__,
-            '__APP__'=>__APP__,
-            '__URL__'=>__URL__,
-            '__ACTION__'=>__ACTION__,
-            '__SELF__'=>__SELF__);
+            '../Public'   => APP_PUBLIC_PATH,// 项目公共目录
+            '__PUBLIC__'  => WEB_PUBLIC_PATH,// 站点公共目录
+            '__TMPL__'    => APP_TMPL_PATH,  // 项目模板目录
+            '__ROOT__'    => __ROOT__,       // 当前网站地址
+            '__APP__'     => __APP__,        // 当前项目地址
+            '__URL__'     => __URL__,        // 当前模块地址
+            '__ACTION__'  => __ACTION__,     // 当前操作地址
+            '__SELF__'    => __SELF__,       // 当前页面地址
+        );
         // 允许用户自定义模板的字符串替换
-        if(C('TMPL_PARSE_STRING')) {
+        if(C('TMPL_PARSE_STRING') && is_array(C('TMPL_PARSE_STRING')) ) {
             $replace =  array_merge($replace,C('TMPL_PARSE_STRING'));
         }
         $content = str_replace(array_keys($replace),array_values($replace),$content);
