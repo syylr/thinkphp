@@ -485,7 +485,7 @@ class Db extends Base
      */
     protected function parseWhere($where) {
         $whereStr = '';
-        if(is_string($where) && strpos($where,'&')) parse_str($where,$where);
+        //if(is_string($where) && strpos($where,'&')) parse_str($where,$where);
         if(is_string($where)) {
             // 直接使用字符串条件
             $whereStr = $where;
@@ -499,49 +499,54 @@ class Db extends Base
                 $operate    =   ' AND ';
             }
             foreach ($where as $key=>$val){
-                $key = $this->addSpecialChar($key);
                 $whereStr .= "( ";
-                if(is_array($val)) {
-                    if(is_string($val[0])) {
-                        if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)$/i',$val[0])) { // 比较运算
-                            $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
-                        }elseif('exp'==strtolower($val[0])){ // 使用表达式
-                            $whereStr .= ' ('.$key.' '.$val[1].') ';
-                        }elseif(preg_match('/IN/i',$val[0])){ // IN 运算
-                            $zone   =   is_array($val[1])? implode(',',$this->parseValue($val[1])):$val[1];
-                            $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
-                        }elseif(preg_match('/BETWEEN/i',$val[0])){ // BETWEEN运算
-                            $data = is_string($val[1])? explode(',',$val[1]):$val[1];
-                            $whereStr .=  ' ('.$key.' BETWEEN '.$data[0].' AND '.$data[1].' )';
-                        }else{
-                            throw_exception(L('_EXPRESS_ERROR_').':'.$val[0]);
-                        }
-                    }else {
-                        $count = count($val);
-                        if(in_array(strtoupper(trim($val[$count-1])),array('AND','OR','XOR'))) {
-                            $rule = strtoupper(trim($val[$count-1]));
-                            $count   =  $count -1;
-                        }else{
-                            $rule = 'AND';
-                        }
-                        for($i=0;$i<$count;$i++) {
-                            $data = is_array($val[$i])?$val[$i][1]:$val[$i];
-                            if('exp'==strtolower($val[$i][0])) {
-                                $whereStr .= '('.$key.' '.$data.') '.$rule.' ';
+                if(0===strpos($key,'_')) {
+                    // 解析特殊条件表达式
+                    $whereStr   .= $this->parseThinkWhere($key,$val);
+                }else{
+                    $key = $this->addSpecialChar($key);
+                    if(is_array($val)) {
+                        if(is_string($val[0])) {
+                            if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)$/i',$val[0])) { // 比较运算
+                                $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
+                            }elseif('exp'==strtolower($val[0])){ // 使用表达式
+                                $whereStr .= ' ('.$key.' '.$val[1].') ';
+                            }elseif(preg_match('/IN/i',$val[0])){ // IN 运算
+                                $zone   =   is_array($val[1])? implode(',',$this->parseValue($val[1])):$val[1];
+                                $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
+                            }elseif(preg_match('/BETWEEN/i',$val[0])){ // BETWEEN运算
+                                $data = is_string($val[1])? explode(',',$val[1]):$val[1];
+                                $whereStr .=  ' ('.$key.' BETWEEN '.$data[0].' AND '.$data[1].' )';
                             }else{
-                                $op = is_array($val[$i])?$this->comparison[strtolower($val[$i][0])]:'=';
-                                $whereStr .= '('.$key.' '.$op.' '.$this->parseValue($data).') '.$rule.' ';
+                                throw_exception(L('_EXPRESS_ERROR_').':'.$val[0]);
                             }
+                        }else {
+                            $count = count($val);
+                            if(in_array(strtoupper(trim($val[$count-1])),array('AND','OR','XOR'))) {
+                                $rule = strtoupper(trim($val[$count-1]));
+                                $count   =  $count -1;
+                            }else{
+                                $rule = 'AND';
+                            }
+                            for($i=0;$i<$count;$i++) {
+                                $data = is_array($val[$i])?$val[$i][1]:$val[$i];
+                                if('exp'==strtolower($val[$i][0])) {
+                                    $whereStr .= '('.$key.' '.$data.') '.$rule.' ';
+                                }else{
+                                    $op = is_array($val[$i])?$this->comparison[strtolower($val[$i][0])]:'=';
+                                    $whereStr .= '('.$key.' '.$op.' '.$this->parseValue($data).') '.$rule.' ';
+                                }
+                            }
+                            $whereStr = substr($whereStr,0,-4);
                         }
-                        $whereStr = substr($whereStr,0,-4);
-                    }
-                }else {
-                    //对字符串类型字段采用模糊匹配
-                    if(C('LIKE_MATCH_FIELDS') && preg_match('/('.C('LIKE_MATCH_FIELDS').')/i',$key)) {
-                        $val = '%'.$val.'%';
-                        $whereStr .= $key." LIKE ".$this->parseValue($val);
                     }else {
-                        $whereStr .= $key." = ".$this->parseValue($val);
+                        //对字符串类型字段采用模糊匹配
+                        if(C('LIKE_MATCH_FIELDS') && preg_match('/('.C('LIKE_MATCH_FIELDS').')/i',$key)) {
+                            $val = '%'.$val.'%';
+                            $whereStr .= $key." LIKE ".$this->parseValue($val);
+                        }else {
+                            $whereStr .= $key." = ".$this->parseValue($val);
+                        }
                     }
                 }
                 $whereStr .= ' )'.$operate;
@@ -549,6 +554,32 @@ class Db extends Base
             $whereStr = substr($whereStr,0,-strlen($operate));
         }
         return empty($whereStr)?'':' WHERE '.$whereStr;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 特殊条件分析
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param string $key
+     * @param mixed $val
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function parseThinkWhere($key,$val) {
+        $whereStr   = '';
+        switch($key) {
+        case '_string':
+            // 字符串模式查询条件
+            $whereStr = $val;
+            break;
+        case '_complex':
+            // 复合查询条件
+            $whereStr   = substr($this->parseWhere($val),6);
+        }
+        return $whereStr;
     }
 
     /**
