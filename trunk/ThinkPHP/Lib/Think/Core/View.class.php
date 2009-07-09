@@ -304,16 +304,21 @@ class View extends Base
      +----------------------------------------------------------
      */
     private function parseTemplatePath($content) {
-        // 特殊变量替换
-        $content = str_replace(
-            array('../Public',   '__PUBLIC__',  '__TMPL__', '__ROOT__',  '__APP__',  '__URL__',   '__ACTION__', '__SELF__'),
-            array(APP_PUBLIC_URL,WEB_PUBLIC_URL,APP_TMPL_URL,__ROOT__,__APP__,__URL__,__ACTION__,__SELF__),
-            $content);
+        // 系统默认的特殊变量替换
+        $replace =  array(
+            '../Public'=>APP_PUBLIC_URL,
+            '__PUBLIC__'=>WEB_PUBLIC_URL,
+            '__TMPL__'=>APP_TMPL_URL,
+            '__ROOT__'=>__ROOT__,
+            '__APP__'=>__APP__,
+            '__URL__'=>__URL__,
+            '__ACTION__'=>__ACTION__,
+            '__SELF__'=>__SELF__);
         // 允许用户自定义模板的字符串替换
         if(C('TMPL_PARSE_STRING')) {
-            $replace =  C('TMPL_PARSE_STRING');
-            $content = str_replace(array_keys($replace),array_values($replace),$content);
+            $replace =  array_merge($replace,C('TMPL_PARSE_STRING'));
         }
+        $content = str_replace(array_keys($replace),array_values($replace),$content);
         return $content;
     }
 
