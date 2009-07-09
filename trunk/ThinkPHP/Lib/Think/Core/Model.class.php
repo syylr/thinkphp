@@ -295,15 +295,21 @@ class Model extends Base implements IteratorAggregate
         }
         // 数据处理
         $data = $this->_facade($data);
-        // 如果存在主键数据 则自动作为更新条件
-        if(empty($options['where']) && isset($data[$this->getPk()])) {
-            $pk   =  $this->getPk();
-            $options['where']  =  $pk.'=\''.$data[$pk].'\'';
-            $pkValue = $data[$pk];
-            unset($data[$pk]);
-        }
         // 分析表达式
         $options =  $this->_parseOptions($options);
+        if(!isset($options['where']) ) {
+            // 如果存在主键数据 则自动作为更新条件
+            if(isset($data[$this->getPk()])) {
+                $pk   =  $this->getPk();
+                $options['where']  =  $pk.'=\''.$data[$pk].'\'';
+                $pkValue = $data[$pk];
+                unset($data[$pk]);
+            }else{
+                // 如果任何更新条件则不执行
+                $this->error = L('_OPERATION_WRONG_');
+                return false;
+            }
+        }
         $this->_before_update($data,$options);
         if(false === $this->db->update($data,$options)){
             $this->error = L('_OPERATION_WRONG_');
