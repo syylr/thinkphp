@@ -305,7 +305,7 @@ class Model extends Base implements IteratorAggregate
                 $pkValue = $data[$pk];
                 unset($data[$pk]);
             }else{
-                // 如果任何更新条件则不执行
+                // 如果没有任何更新条件则不执行
                 $this->error = L('_OPERATION_WRONG_');
                 return false;
             }
