@@ -34,6 +34,7 @@ class  ThinkTemplate extends Base
     public $tVar                 = array();
 
     public $config  =  array();
+    private   $literal = array();
     /**
      +----------------------------------------------------------
      * 取得模板实例对象
@@ -162,8 +163,9 @@ class  ThinkTemplate extends Base
         }
         // 还原被替换的Literal标签
         $tmplContent = preg_replace('/<!--###literal(\d)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
-
-        return $tmplContent;
+        // 添加安全代码
+        $tmplContent  =  '<?php if (!defined(\'THINK_PATH\')) exit();?>'.$tmplContent;
+        return trim($tmplContent);
     }
 
 
@@ -268,11 +270,9 @@ class  ThinkTemplate extends Base
             return '';
         }
         $content = stripslashes($content);
-        static $_literal = array();
-        $i  =   count($_literal);
-        $_literal[$i] = $content;
+        $i  =   count($this->literal);
         $parseStr   =   "<!--###literal{$i}###-->";
-        $_SESSION["literal{$i}"]    =   $content;
+        $this->literal[$i]  = $content;
         return $parseStr;
     }
 
@@ -289,9 +289,9 @@ class  ThinkTemplate extends Base
      */
     function restoreLiteral($tag) {
         // 还原literal标签
-        $parseStr   =   $_SESSION['literal'.$tag];
+        $parseStr   =  $this->literal[$tag];
         // 销毁literal记录
-        unset($_SESSION['literal'.$tag]);
+        unset($this->literal[$tag]);
         return $parseStr;
     }
 
