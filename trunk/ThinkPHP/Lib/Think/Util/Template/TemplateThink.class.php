@@ -66,13 +66,13 @@ class TemplateThink extends Base {
      */
     protected function checkCache($tmplTemplateFile)
     {
+        if ( !C('TMPL_CACHE_ON') ) // 优先对配置设定检测
+            return false;
         $tmplCacheFile = C('CACHE_PATH').md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
         if(!is_file($tmplCacheFile)){
             return false;
         }
-        elseif (!C('TMPL_CACHE_ON')){
-            return false;
-        }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
+        elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
             // 模板文件如果有更新则缓存需要更新
             return false;
         } elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) {

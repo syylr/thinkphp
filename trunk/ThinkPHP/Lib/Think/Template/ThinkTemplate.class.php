@@ -183,10 +183,10 @@ class  ThinkTemplate extends Base
      */
     protected function checkCache($tmplTemplateFile)
     {
+        if (!$this->config['tmpl_cache']) // 优先对配置检测
+            return false;
         $tmplCacheFile = $this->config['cache_path'].md5($tmplTemplateFile).$this->config['cache_suffix'];
         if(!is_file($tmplCacheFile)){
-            return false;
-        }elseif (!$this->config['tmpl_cache']){
             return false;
         }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
             // 模板文件如果有更新则缓存需要更新
