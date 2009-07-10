@@ -571,13 +571,29 @@ class Db extends Base
     protected function parseThinkWhere($key,$val) {
         $whereStr   = '';
         switch($key) {
-        case '_string':
-            // 字符串模式查询条件
-            $whereStr = $val;
-            break;
-        case '_complex':
-            // 复合查询条件
-            $whereStr   = substr($this->parseWhere($val),6);
+            case '_string':
+                // 字符串模式查询条件
+                $whereStr = $val;
+                break;
+            case '_complex':
+                // 复合查询条件
+                $whereStr   = substr($this->parseWhere($val),6);
+                break;
+            case '_query':
+                // 字符串模式查询条件
+                parse_str($val,$where);
+                if(array_key_exists('_logic',$where)) {
+                    $op   =  ' '.strtoupper($where['_logic']).' ';
+                    unset($where['_logic']);
+                }else{
+                    $op   =  ' AND ';
+                }
+                $array   =  array();
+                foreach ($where as $field=>$data){
+                    $array[] = $this->addSpecialChar($field).' = '.$this->parseValue($data);
+                }
+                $whereStr   = implode($op,$array);
+                break;
         }
         return $whereStr;
     }
