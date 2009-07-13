@@ -143,7 +143,6 @@ class Image extends Base
                 $height = (int)($srcHeight*$scale);
             }
 
-
             // 载入原图
             $createFun = 'ImageCreateFrom'.($type=='jpg'?'jpeg':$type);
             $srcImg     = $createFun($image);
@@ -297,7 +296,8 @@ class Image extends Base
 
 	// 中文验证码
 	static function GBVerify($length=4,$type='png',$width=180,$height=50,$fontface='simhei.ttf',$verifyName='verify') {
-		$code	=	rand_string($length,4);
+		import('ORG.Util.String');
+        $code = String::rand_string($length,4);
         $width = ($length*45)>$width?$length*45:$width;
 		$_SESSION[$verifyName]= md5($code);
 		$im=imagecreatetruecolor($width,$height);
@@ -382,13 +382,13 @@ class Image extends Base
      * @return string
      +----------------------------------------------------------
      */
-    static function showAdvVerify($type='png',$width=180,$height=40)
+    static function showAdvVerify($type='png',$width=180,$height=40,$verifyName='verifyCode')
     {
 		$rand	=	range('a','z');
 		shuffle($rand);
 		$verifyCode	=	array_slice($rand,0,10);
         $letter = implode(" ",$verifyCode);
-        $_SESSION['verifyCode'] = $verifyCode;
+        $_SESSION[$verifyName] = $verifyCode;
         $im = imagecreate($width,$height);
         $r = array(225,255,255,223);
         $g = array(225,236,237,255);
@@ -481,48 +481,6 @@ class Image extends Base
         /* Output the Header and Content. */
         Image::output($im,$type);
     }
-
-	// 生成手机号码
-	static public function buildPhone() {
-	}
-	// 生成邮箱图片
-	static public function buildEmail($email,$rgb=array(),$filename='',$type='png') {
-		$mail		=	explode('@',$email);
-		$user		=	trim($mail[0]);
-		$mail		=	strtolower(trim($mail[1]));
-		$path		=	dirname(__FILE__).'/Mail/';
-		if(is_file($path.$mail.'.png')) {
-			$im	= imagecreatefrompng($path.$mail.'.png');
-			$user_width = imagettfbbox(9, 0, dirname(__FILE__)."/Mail/tahoma.ttf", $user);
-			$x_value = (200 - ($user_width[2] + 113));
-			if(empty($rgb)) {
-				$color = imagecolorallocate($im, 102, 104, 104);
-			}else{
-				$color = imagecolorallocate($im, $rgb[0], $rgb[1], $rgb[2]);
-			}
-			imagettftext($im, 9, 0, $x_value, 16, $color, dirname(__FILE__)."/Mail/tahoma.ttf", $user);
-		}else{
-			$user_width = imagettfbbox(9, 0, dirname(__FILE__)."/Mail/tahoma.ttf", $email);
-			$width	=	$user_width[2]+15;
-			$height	=	20;
-			$im	=	imagecreate($width,20);
-			$backColor = imagecolorallocate($im, 255,255,255);    //背景色（随机）
-			$borderColor = imagecolorallocate($im, 100, 100, 100);                    //边框色
-			$pointColor = imagecolorallocate($im,mt_rand(0,255),mt_rand(0,255),mt_rand(0,255));                 //点颜色
-			imagefilledrectangle($im, 0, 0, $width - 1, $height - 1, $backColor);
-			imagerectangle($im, 0, 0, $width-1, $height-1, $borderColor);
-			if(empty($rgb)) {
-				$color = imagecolorallocate($im, 102, 104, 104);
-			}else{
-				$color = imagecolorallocate($im, $rgb[0], $rgb[1], $rgb[2]);
-			}
-			imagettftext($im, 9, 0, 5, 16, $color, dirname(__FILE__)."/Mail/tahoma.ttf", $email);
-			for($i=0;$i<25;$i++){
-				imagesetpixel($im,mt_rand(0,$width),mt_rand(0,$height),$pointColor);
-			}
-		}
-		Image::output($im,$type,$filename);
-	}
 
     static function output($im,$type='png',$filename='')
     {
