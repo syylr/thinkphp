@@ -129,7 +129,7 @@ class App extends Base
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
 
-        $runtime = defined('RUNTIME_ALLINONE')?TRUE:FALSE;
+        $runtime = defined('RUNTIME_ALLINONE');
         $common   = '';
          //是否调试模式 ALL_IN_ONE模式下面调试模式无效
         $debug  =  C('DEBUG_MODE') && !$runtime;

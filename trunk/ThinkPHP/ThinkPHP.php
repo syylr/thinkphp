@@ -88,7 +88,7 @@ if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
         }
         // 生成核心编译缓存 去掉文件空白以减少大小
         if(!defined('NO_CACHE_RUNTIME')) {
-            $compile = defined('RUNTIME_ALLINONE')?TRUE:FALSE;
+            $compile = defined('RUNTIME_ALLINONE');
             $content  = compile(THINK_PATH.'/Common/defines.php',$compile);
             $content .= compile(defined('PATH_DEFINE_FILE')?   PATH_DEFINE_FILE  :   THINK_PATH.'/Common/paths.php',$compile);
             foreach ($runtime as $file){
