@@ -506,25 +506,26 @@ function R($module,$action,$app='@') {
     }
 }
 
-// 获取语言定义
-function L($name='',$value=null) {
+// 获取和设置语言定义(不区分大小写)
+function L($name=null,$value=null) {
     static $_lang = array();
-    if(!is_null($value)) {
-        $_lang[strtolower($name)]   =   $value;
+    // 空参数返回所有定义
+    if(is_null($name)) return $_lang;
+
+    // 优先判断语言获取(或设置)
+    // 若不存在,直接返回全大写$name，既不影响直接阅读,也可区分此为语言定义
+    if ( is_string($name) )
+    {
+        $name = strtoupper($name);
+        if (is_null($value))
+            return isset($_lang[$name) ? $_lang[$name] : $name;
+        $_lang[$name] = $value;// 语言定义
         return;
     }
-    if(empty($name)) {
-        return $_lang;
-    }
-    if(is_array($name)) {
-        $_lang = array_merge($_lang,array_change_key_case($name));
-        return;
-    }
-    if(isset($_lang[strtolower($name)])) {
-        return $_lang[strtolower($name)];
-    }else{
-        return "undefined_lang_{$name}";
-    }
+
+    // 批量定义
+    $_lang = array_merge($_lang,array_change_key_case($name,CASE_UPPER));
+    return;
 }
 
 // 获取配置值
