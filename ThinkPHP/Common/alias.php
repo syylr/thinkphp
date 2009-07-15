@@ -12,6 +12,7 @@
 
 // 导入别名定义
 alias_import(array(
+    'Model'         =>   THINK_PATH.'/Lib/Think/Core/Model.class.php',
     'Dispatcher'         =>   THINK_PATH.'/Lib/Think/Util/Dispatcher.class.php',
     'HtmlCache'        =>    THINK_PATH.'/Lib/Think/Util/HtmlCache.class.php',
     'Db'                   =>   THINK_PATH.'/Lib/Think/Db/Db.class.php',
