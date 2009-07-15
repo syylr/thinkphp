@@ -524,7 +524,8 @@ function L($name=null,$value=null) {
     }
 
     // 批量定义
-    $_lang = array_merge($_lang,array_change_key_case($name,CASE_UPPER));
+    if (is_array($name))
+        $_lang = array_merge($_lang,array_change_key_case($name,CASE_UPPER));
     return;
 }
 
