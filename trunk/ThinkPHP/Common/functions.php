@@ -518,7 +518,7 @@ function L($name=null,$value=null) {
     {
         $name = strtoupper($name);
         if (is_null($value))
-            return isset($_lang[$name) ? $_lang[$name] : $name;
+            return isset($_lang[$name]) ? $_lang[$name] : $name;
         $_lang[$name] = $value;// 语言定义
         return;
     }
