@@ -509,9 +509,6 @@ function R($module,$action,$app='@') {
 // 获取和设置语言定义(不区分大小写)
 function L($name=null,$value=null) {
     static $_lang = array();
-    // 空参数返回所有定义
-    if(is_null($name)) return $_lang;
-
     // 优先判断语言获取(或设置)
     // 若不存在,直接返回全大写$name，既不影响直接阅读,也可区分此为语言定义
     if ( is_string($name) )
@@ -526,35 +523,38 @@ function L($name=null,$value=null) {
     // 批量定义
     if (is_array($name))
         $_lang = array_merge($_lang,array_change_key_case($name,CASE_UPPER));
+    // 空参数返回所有定义
+    if(is_null($name)) return $_lang;
     return;
 }
 
 // 获取配置值
-function C($name='',$value=null) {
+function C($name=null,$value=null)
+{
     static $_config = array();
-    if(!is_null($value)) {// 参数赋值
-        if(strpos($name,'.')) {//  支持二维数组赋值
-            $array   =  explode('.',$name);
-            $_config[strtolower($array[0])][$array[1]] =   $value;
-        }else{
-            $_config[strtolower($name)] =   $value;
+    // 优先执行设置获取或赋值
+    if (is_string($name))//&& !empty($name)
+    {
+        $name = strtolower($name);
+        if (!strpos($name,'.')) {
+            if (is_null($value))
+                return isset($_config[$name])? $_config[$name] : null;
+            $_config[$name] = $value;
+            return;
         }
-        return ;
+        // 二维数组设置和获取支持
+        $name = explode('.',$name);
+        if (is_null($value))
+            return isset($_config[$name[0]][$name[1]]) ? $_config[$name[0]][$name[1]] : null;
+        $_config[$name[0]][$name[1]] = $value;
+        return;
     }
-    if(empty($name)) {// 获取全部配置参数
-        return $_config;
-    }
-    if(is_array($name)) { // 批量赋值
-        $_config = array_merge($_config,array_change_key_case($name));
-        return $_config;
-    }elseif(strpos($name,'.')) { // 支持获取二维数组
-        $array   =  explode('.',$name);
-        return $_config[strtolower($array[0])][$array[1]];
-    }elseif(isset($_config[strtolower($name)])) { // 获取参数
-        return $_config[strtolower($name)];
-    }else{
-        return NULL;
-    }
+    // 批量设置
+    if(is_array($name))
+        return $_config = array_merge($_config,array_change_key_case($name));
+    // 无参数时获取所有
+    if(is_null($name)) return $_config;
+    return null;// 避免非法参数
 }
 
 // 处理标签
