@@ -757,6 +757,7 @@ function strip_whitespace($content) {
 function array_define($array) {
     $content = '';
     foreach($array as $key=>$val) {
+        $content .= 'if(!defined(\''.$key.'\')) ';
         if(is_int($val) || is_float($val)) {
             $content .= "define('".strtoupper($key)."',".$val.");";
         }elseif(is_bool($val)) {
