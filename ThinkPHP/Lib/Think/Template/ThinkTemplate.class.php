@@ -269,7 +269,7 @@ class  ThinkTemplate extends Base
         if(trim($content)=='') {
             return '';
         }
-        $content = stripslashes($content);
+        //$content = stripslashes($content);
         $i  =   count($this->literal);
         $parseStr   =   "<!--###literal{$i}###-->";
         $this->literal[$i]  = $content;
@@ -430,8 +430,6 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      */
     public function parseTag($tagStr){
-        //if (MAGIC_QUOTES_GPC)
-            $tagStr = stripslashes($tagStr);
         //还原非模板标签
         if(preg_match('/^[\s|\d]/is',$tagStr)){
             //过滤空格和数字打头的标签
