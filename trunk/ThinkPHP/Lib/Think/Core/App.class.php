@@ -252,55 +252,47 @@ class App extends Base
      */
     private function checkLanguage()
     {
-        $defaultLang = C('DEFAULT_LANGUAGE');
-        if(C('LANG_SWITCH_ON')) {
-            // 使用语言包功能
-            if(C('AUTO_DETECT_LANG')) {
-                // 检测浏览器支持语言
-                if(isset($_GET[C('VAR_LANGUAGE')])) {
-                    // 有在url 里面设置语言
-                    $langSet = $_GET[C('VAR_LANGUAGE')];
-                    // 记住用户的选择
-                    cookie('think_language',$langSet,3600);
-                }elseif ( cookie('think_language') ) {
-                    // 获取上次用户的选择
-                    $langSet = cookie('think_language');
-                }else {
-                    if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-                        // 启用自动侦测浏览器语言
-                        preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
-                        $langSet = $matches[1];
-                        cookie('think_language',$langSet,3600);
-                    }else{
-                        // 采用系统设置的默认语言
-                        $langSet = $defaultLang;
-                    }
-                }
-            }else{
-                $langSet = $defaultLang;
-            }
-
-            // 定义当前语言
-            define('LANG_SET',strtolower($langSet));
-            // 加载框架语言包
-            if (is_file(THINK_PATH.'/Lang/'.LANG_SET.'.php')){
-                L(include THINK_PATH.'/Lang/'.LANG_SET.'.php');
-            }else{
-                L(include THINK_PATH.'/Lang/'.$defaultLang.'.php');
-            }
-
-            // 读取项目（公共）语言包
-            if (is_file(LANG_PATH.LANG_SET.'/common.php'))
-                L(include LANG_PATH.LANG_SET.'/common.php');
-
-            // 读取当前模块的语言包
-            if (is_file(LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php'))
-                L(include LANG_PATH.LANG_SET.'/'.strtolower(MODULE_NAME).'.php');
-        }else{
-            // 不使用语言包功能，仅仅加载框架语言文件
-            L(include THINK_PATH.'/Lang/'.$defaultLang.'.php');
+        $langSet = C('DEFAULT_LANGUAGE');
+        // 不开启语言包功能，仅仅加载框架语言文件直接返回
+        if ( !C('LANG_SWITCH_ON') )
+        {
+            L(include THINK_PATH.'/Lang/'.$langSet.'.php');
+            return;
         }
-        return ;
+        // 启用了语言包功能
+        // 根据是否启用自动侦测设置获取语言选择
+        if ( C('AUTO_DETECT_LANG') )
+        {
+            if(isset($_GET[C('VAR_LANGUAGE')]))// 检测浏览器支持语言
+            {
+                $langSet = $_GET[C('VAR_LANGUAGE')];// url中设置了语言变量
+                cookie('think_language',$langSet,3600);
+            }
+            elseif(cookie('think_language'))// 获取上次用户的选择
+                $langSet = cookie('think_language');
+            elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))// 自动侦测浏览器语言
+            {
+                preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
+                $langSet = $matches[1];
+                cookie('think_language',$langSet,3600);
+            }
+        }
+        // 加载框架语言包
+        L(include THINK_PATH.'/Lang/'.$langSet.'.php');
+        // 读取项目公共语言包
+        if (is_file(LANG_PATH.$langSet.'/common.php'))
+            L(include LANG_PATH.$langSet.'/common.php');
+        $group = '';
+        // 读取当前分组公共语言包
+        if ( C('APP_GROUP') )
+        {
+            $group = GROUP_NAME.C('TMPL_FILE_DEPR');
+            if (is_file(LANG_PATH.$langSet.'/'.$group.'lang.php'))
+                L(include LANG_PATH.$langSet.'/'.$group.'lang.php');
+        }
+        // 读取当前模块语言包
+        if (is_file(LANG_PATH.$langSet.'/'.$group.strtolower(MODULE_NAME).'.php'))
+            L(include LANG_PATH.$langSet.'/'.$group.strtolower(MODULE_NAME).'.php');
     }
 
     /**
