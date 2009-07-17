@@ -313,6 +313,7 @@ class App extends Base
      */
     private function checkLanguage()
     {
+        $defaultLang = C('DEFAULT_LANGUAGE');
         if(C('LANG_SWITCH_ON')) {
             // 使用语言包功能
             if(C('AUTO_DETECT_LANG')) {
@@ -333,11 +334,11 @@ class App extends Base
                         Cookie::set('think_language',$langSet,time()+3600);
                     }else{
                         // 采用系统设置的默认语言
-                        $langSet = C('DEFAULT_LANGUAGE');
+                        $langSet = $defaultLang;
                     }
                 }
             }else{
-                $langSet = C('DEFAULT_LANGUAGE');
+                $langSet = $defaultLang;
             }
 
             // 定义当前语言
@@ -369,7 +370,7 @@ class App extends Base
             }
         }else{
             // 不使用语言包功能，仅仅加载框架语言文件
-            L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
+            L(include THINK_PATH.'/Lang/'.$defaultLang.'.php');
         }
         return ;
     }
