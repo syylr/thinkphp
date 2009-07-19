@@ -36,7 +36,8 @@
  * 特殊使用情况：
  *    字符串要在数据库进行搜索： $data = Input::forSearch($field);
  */
-class Input extends Base {
+class Input extends Think
+{
 
     private $filter =   null;   // 输入过滤
     private static $_input  =   array('get','post','request','env','server','cookie','session','globals','config','lang','call');

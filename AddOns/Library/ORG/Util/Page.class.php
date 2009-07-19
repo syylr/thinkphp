@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Page extends Base
+class Page extends Think
 {//类定义开始
 
     /**

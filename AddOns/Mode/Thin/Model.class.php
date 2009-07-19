@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Model extends Base
+class Model extends Think
 {
     // 当前数据库操作对象
     protected $db = null;

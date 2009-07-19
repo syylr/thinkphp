@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-class Socket extends Base {
+class Socket extends Think {
 	protected $_config = array(
 		'persistent'	=> false,
 		'host'			=> 'localhost',

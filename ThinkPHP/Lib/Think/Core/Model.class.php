@@ -22,7 +22,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Model extends Base implements IteratorAggregate
+class Model extends Think implements IteratorAggregate
 {
     // 操作状态
     const INSERT_STATUS    =  1;  // 插入

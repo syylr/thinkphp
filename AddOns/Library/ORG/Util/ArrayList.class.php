@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class ArrayList extends Base implements IteratorAggregate
+class ArrayList extends Think implements IteratorAggregate
 {//类定义开始
 
     /**

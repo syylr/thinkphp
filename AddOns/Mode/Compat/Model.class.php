@@ -31,7 +31,7 @@ define('VALUE_TO_VAILIDATE',2);     // 表单值不为空则验证
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Model extends Base  implements IteratorAggregate
+class Model extends Think  implements IteratorAggregate
 {
     // 数据库连接对象列表
     protected $_db = array();

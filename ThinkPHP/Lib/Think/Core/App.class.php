@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class App extends Base
+class App extends Think
 {//类定义开始
 
     /**
@@ -58,6 +58,10 @@ class App extends Base
         // 设置系统时区 PHP5支持
         if(function_exists('date_default_timezone_set'))
             date_default_timezone_set(C('TIME_ZONE'));
+
+        if(function_exists('spl_autoload_register')) {
+            spl_autoload_register(array('Think', 'autoload'));
+        }
 
         if(C('SESSION_AUTO_START'))
             // Session初始化

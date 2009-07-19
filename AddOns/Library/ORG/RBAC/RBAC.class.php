@@ -28,7 +28,7 @@
 // REQUIRE_AUTH_MODULE  需要认证模块
 // NOT_AUTH_MODULE 无需认证模块
 // USER_AUTH_GATEWAY 认证网关
-class RBAC extends Base
+class RBAC extends Think
 {
 
     //委托身份认证方法

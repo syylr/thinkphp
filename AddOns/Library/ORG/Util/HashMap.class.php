@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class HashMap extends Base  implements IteratorAggregate
+class HashMap extends Think  implements IteratorAggregate
 {//类定义开始
 
     /**

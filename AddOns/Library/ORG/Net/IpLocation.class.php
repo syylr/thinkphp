@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class IpLocation extends Base
+class IpLocation
 {
     /**
      * QQWry.Dat文件指针

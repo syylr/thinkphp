@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Cookie extends Base
+class Cookie extends Think
 {
     // 判断Cookie是否存在
     static function is_set($name) {

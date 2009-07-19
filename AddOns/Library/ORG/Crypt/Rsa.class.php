@@ -22,7 +22,7 @@ define("BCCOMP_LARGER", 1);
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Rsa extends Base
+class Rsa
 {
 
     /**

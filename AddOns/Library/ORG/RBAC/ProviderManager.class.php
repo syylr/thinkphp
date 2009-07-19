@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class ProviderManager extends Base
+class ProviderManager extends Think
 {//类定义开始
 
     /**
