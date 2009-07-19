@@ -165,6 +165,7 @@ return  array(
     // 内置可选配置包括：taglibs 标签库定义 routes 路由定义 tags 标签定义 htmls 静态缓存定义 modules 扩展模块 actions 扩展操作
     'TRACE_TMPL_FILE'=>THINK_PATH.'/Tpl/PageTrace.tpl.php', // 页面Trace的模板文件
     'EXCEPTION_TMPL_FILE'=>THINK_PATH.'/Tpl/ThinkException.tpl.php', // 异常页面的模板文件
+    'AUTO_LOAD_REG'=>'__autoload',
 
 );
 ?>
