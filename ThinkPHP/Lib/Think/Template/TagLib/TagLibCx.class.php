@@ -115,25 +115,21 @@ class TagLibCx extends TagLib
         $key     =   !empty($tag['key'])?$tag['key']:'i';
         $mod    =   isset($tag['mod'])?$tag['mod']:'2';
         $name   = $this->autoBuildVar($name);
-        $parseStr  =  '<?php if(is_array('.$name.')): ?>';
-        $parseStr   .= '<?php $'.$key.' = 0;?>';
+        $parseStr  =  '<?php if(is_array('.$name.')): $'.$key.' = 0;';
 		if(isset($tag['length']) && '' !=$tag['length'] ) {
-			$parseStr  .= '<?php $__LIST__ = array_slice('.$name.','.$tag['offset'].','.$tag['length'].') ?>';
+			$parseStr  .= ' $__LIST__ = array_slice('.$name.','.$tag['offset'].','.$tag['length'].');';
 		}elseif(isset($tag['offset'])  && '' !=$tag['offset']){
-            $parseStr  .= '<?php $__LIST__ = array_slice('.$name.','.$tag['offset'].') ?>';
+            $parseStr  .= ' $__LIST__ = array_slice('.$name.','.$tag['offset'].');';
         }else{
-            $parseStr .= '<?php $__LIST__ = '.$name.'?>';
+            $parseStr .= ' $__LIST__ = '.$name.';';
         }
-        $parseStr .= '<?php if( count($__LIST__)==0 ) : echo "'.$empty.'" ; ?>';
-        $parseStr .= '<?php else: ?>';
-        $parseStr .= '<?php foreach($__LIST__ as $key=>$'.$id.'): ?>';
-        $parseStr .= '<?php ++$'.$key.';?>';
-        $parseStr .= '<?php $mod = ($'.$key.' % '.$mod.' )?>';
+        $parseStr .= 'if( count($__LIST__)==0 ) : echo "'.$empty.'" ;';
+        $parseStr .= 'else: ';
+        $parseStr .= 'foreach($__LIST__ as $key=>$'.$id.'): ';
+        $parseStr .= '++$'.$key.';';
+        $parseStr .= '$mod = ($'.$key.' % '.$mod.' )?>';
         $parseStr .= $this->tpl->parse($content);
-        $parseStr .= '<?php endforeach; ?>';
-        $parseStr .=  '<?php endif; ?>';
-        $parseStr .= '<?php else: echo "'.$empty.'" ;?>';
-        $parseStr .=  '<?php endif; ?>';
+        $parseStr .= '<?php endforeach; endif; else: echo "'.$empty.'" ;endif; ?>';
         $_iterateParseCache[$cacheIterateId] = $parseStr;
 
         if(!empty($parseStr)) {
@@ -167,11 +163,9 @@ class TagLibCx extends TagLib
         $item  = $tag['item'];
         $key   =   !empty($tag['key'])?$tag['key']:'key';
         $name= $this->autoBuildVar($name);
-        $parseStr  =  '<?php if(isset('.$name.')): ?>';
-        $parseStr .= '<?php foreach('.$name.' as $'.$key.'=>$'.$item.'): ?>';
+        $parseStr  =  '<?php if(isset('.$name.')): foreach('.$name.' as $'.$key.'=>$'.$item.'): ?>';
         $parseStr .= $this->tpl->parse($content);
-        $parseStr .= '<?php endforeach; ?>';
-        $parseStr .=  '<?php endif; ?>';
+        $parseStr .= '<?php endforeach; endif; ?>';
         $_iterateParseCache[$cacheIterateId] = $parseStr;
 
         if(!empty($parseStr)) {
