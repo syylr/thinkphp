@@ -544,7 +544,9 @@ class  ThinkTemplate extends Base
 
     /**
      +----------------------------------------------------------
-     * 调用操作方法 {call:module/action?a=1&b=2}
+     * 加载js或者css文件
+     * {load:__PUBLIC__/Js/Think/ThinkAjax.js} 加载js文件
+     * {load:__PUBLIC__/Css/style.css} 加载css文件
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
