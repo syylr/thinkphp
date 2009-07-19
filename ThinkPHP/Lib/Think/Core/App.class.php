@@ -60,7 +60,7 @@ class App extends Think
             date_default_timezone_set(C('TIME_ZONE'));
 
         if(function_exists('spl_autoload_register')) {
-            spl_autoload_register(array('Think', 'autoload'));
+            spl_autoload_register(C('AUTO_LOAD_REG'));
         }
 
         if(C('SESSION_AUTO_START'))
