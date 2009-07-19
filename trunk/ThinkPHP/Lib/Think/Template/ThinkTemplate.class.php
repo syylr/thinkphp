@@ -269,7 +269,7 @@ class  ThinkTemplate extends Base
         if(trim($content)=='') {
             return '';
         }
-        //$content = stripslashes($content);
+        $content = stripslashes($content);
         $i  =   count($this->literal);
         $parseStr   =   "<!--###literal{$i}###-->";
         $this->literal[$i]  = $content;
@@ -430,6 +430,9 @@ class  ThinkTemplate extends Base
      +----------------------------------------------------------
      */
     public function parseTag($tagStr){
+        //if (MAGIC_QUOTES_GPC) {
+            $tagStr = stripslashes($tagStr);
+        //}
         //还原非模板标签
         if(preg_match('/^[\s|\d]/is',$tagStr)){
             //过滤空格和数字打头的标签
@@ -497,11 +500,68 @@ class  ThinkTemplate extends Base
                 case 'INCLUDE':
                     return $this->parseInclude(trim($args[0]));
                     break;
+                case 'CALL':
+                    return $this->parseCall(trim($args[0]));
+                    break;
+                case 'LOAD':
+                    return $this->parseLoad(trim($args[0]));
+                    break;
                 //这里扩展其它标签
                 //…………
+                default:
+                    if(C('TAG_PARSE_METHOD')) {
+                        $method = C('TAG_PARSE_METHOD');
+                        if(array_key_exists($tag,$method)) {
+                            return $method[$tag](trim($args[0]));
+                        }
+                    }
             }
         }
         return $this->config['tmpl_begin'] . $tagStr .$this->config['tmpl_end'];
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 调用操作方法 {call:module/action?a=1&b=2}
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $params  参数
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function parseCall($params) {
+        $array   =  parse_url($params);
+        $parseStr   =  '';
+        $url = explode('/',$array['path']);
+        $module = $url[0];
+        $action  =  $url[1];
+        $vars = $array['query'];
+        $parseStr   =  '<?php $_module = A(\''.$module.'\');parse_str(\''.$vars.'\',$_vars);if(method_exists($_module,\''.$action.'\')): $_module->'.$action.'($_vars);endif;?>';
+        return $parseStr;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 调用操作方法 {call:module/action?a=1&b=2}
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $params  参数
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function parseLoad($str) {
+        $type       = strtolower(substr(strrchr($str, '.'),1));
+        $parseStr = '';
+        if($type=='js') {
+            $parseStr .= '<script type="text/javascript" src="'.$str.'"></script>';
+        }elseif($type=='css') {
+            $parseStr .= '<link rel="stylesheet" type="text/css" href="'.$str.'" />';
+        }
+        return $parseStr;
     }
 
     /**
