@@ -509,8 +509,8 @@ class  ThinkTemplate extends Base
                 //这里扩展其它标签
                 //…………
                 default:
-                    if(C('TAG_PARSE_METHOD')) {
-                        $method = C('TAG_PARSE_METHOD');
+                    if(C('EXT_TAG_PARSE')) {
+                        $method = C('EXT_TAG_PARSE');
                         if(array_key_exists($tag,$method)) {
                             return $method[$tag](trim($args[0]));
                         }
