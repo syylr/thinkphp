@@ -21,7 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-class Template extends Base {
+class Template extends Think {
     // 模板引擎名称
     protected $name =  '';
     // 模板引擎实例

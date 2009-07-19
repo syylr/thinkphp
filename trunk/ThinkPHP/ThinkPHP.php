@@ -54,7 +54,7 @@ if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
             $runtime[]	=	 THINK_PATH.'/Common/compat.php';
         }
         // 核心基类必须加载
-        $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Base.class.php';
+        $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Think.class.php';
 
         // 加载核心编译文件列表
         if(is_file(CONFIG_PATH.'core.php')) {

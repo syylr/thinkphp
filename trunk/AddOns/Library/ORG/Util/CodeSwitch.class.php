@@ -10,7 +10,8 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-class CodeSwitch extends Base{
+class CodeSwitch extends Think
+{
     // 错误信息
     static private $error = array();
     // 提示信息

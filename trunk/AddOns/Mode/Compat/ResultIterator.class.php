@@ -22,7 +22,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class ResultIterator extends Base implements IteratorAggregate
+class ResultIterator extends Think implements IteratorAggregate
 {
     // 执行查询的SQL
     private $sql      =   null;

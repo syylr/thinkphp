@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class DbAccessDecisionManager extends Base
+class DbAccessDecisionManager extends Think
 {//类定义开始
 
     public $roleTable      =  '';

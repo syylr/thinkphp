@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Image extends Base
+class Image extends Think
 {//类定义开始
 
     /**

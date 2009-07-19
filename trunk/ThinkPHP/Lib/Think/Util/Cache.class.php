@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Cache extends Base
+class Cache extends Think
 {//类定义开始
 
     /**

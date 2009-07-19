@@ -33,7 +33,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class TagLib extends Base
+class TagLib extends Think
 {//类定义开始
 
     /**

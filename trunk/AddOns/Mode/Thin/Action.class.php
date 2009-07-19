@@ -21,7 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-abstract class Action extends Base
+abstract class Action extends Think
 {//类定义开始
 
    /**

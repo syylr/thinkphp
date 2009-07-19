@@ -25,7 +25,7 @@ define("HTTP_SESSION_CONTINUED",    2);
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Session extends Base
+class Session extends Think
 {//类定义开始
 
     /**

@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-abstract class Behavior extends Base {
+abstract class Behavior extends Think {
     // 执行行为的接口方法
     abstract public function run();
 }

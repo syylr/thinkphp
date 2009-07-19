@@ -22,7 +22,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-class HtmlCache extends Base
+class HtmlCache extends Think
 {
     static private $cacheFile = null;
     static private $cacheTime = null;

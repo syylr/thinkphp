@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class AccessDecisionManager extends Base
+class AccessDecisionManager extends Think
 {//类定义开始
 
     const	 RBAC_ROLE_TABLE	=	'think_role';

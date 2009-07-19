@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-abstract class Widget extends Base {
+abstract class Widget extends Think {
     // 渲染输出
     // data 要渲染的数据
     abstract public function render($data);

@@ -22,7 +22,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Dispatcher extends Base
+class Dispatcher extends Think
 {//类定义开始
 
     /**

@@ -23,7 +23,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-class  ThinkTemplate extends Base
+class  ThinkTemplate extends Think
 {//类定义开始
 
     // 模板页面中引入的标签库列表

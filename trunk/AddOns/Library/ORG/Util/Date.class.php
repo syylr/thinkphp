@@ -22,7 +22,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Date extends Base
+class Date extends Think
 {//类定义开始
 
     /**
