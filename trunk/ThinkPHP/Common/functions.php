@@ -53,7 +53,7 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
             }
         }
     }else{ // 只指定操作
-        if (defined('GROUP_NAME') && !strcasecmp(GROUP_NAME,C('DEFAULT_GROUP')))
+        if (defined('GROUP_NAME') && strcasecmp(GROUP_NAME,C('DEFAULT_GROUP')))
             $group=  GROUP_NAME;
         $module = MODULE_NAME;
         $action   =  $array['host'];
