@@ -52,6 +52,27 @@ class TagLibCx extends TagLib
 
     /**
      +----------------------------------------------------------
+     * call标签解析
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+     public function _call($attr,$content) {
+        $tag    = $this->parseXmlAttr($attr,'call');
+        $module   =   $tag['module'];
+        $action      =  $tag['action'];
+        $vars      =  $tag['vars'];
+        $parseStr   =  '<?php $_module = A(\''.$module.'\');parse_str(\''.$vars.'\',$_vars);if(method_exists($_module,\''.$action.'\')): $_module->'.$action.'($_vars);endif;?>';
+        return $parseStr;
+     }
+
+    /**
+     +----------------------------------------------------------
      * comment标签解析
      +----------------------------------------------------------
      * @access public

@@ -281,6 +281,7 @@ class TagLib extends Base
         //XML解析安全过滤
         $attr = str_replace("<","&lt;", $attr);
         $attr = str_replace(">","&gt;", $attr);
+        $attr=str_replace('&','___',$attr);
         $xml =  '<tpl><tag '.$attr.' /></tpl>';
         $xml = simplexml_load_string($xml);
         if(!$xml) {
@@ -292,6 +293,8 @@ class TagLib extends Base
         foreach($attrs as $val) {
             if( !isset($array[strtolower($val['name'])])) {
                 $array[strtolower($val['name'])] = '';
+            }else{
+                $array[strtolower($val['name'])] = str_replace('___','&',$array[strtolower($val['name'])]);
             }
         }
         return $array;

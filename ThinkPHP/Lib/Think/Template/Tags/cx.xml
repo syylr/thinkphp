@@ -32,6 +32,23 @@
 </tag>
 
 <tag>
+<name>call</name>
+<bodycontent>empty</bodycontent>
+<attribute>
+<name>module</name>
+<required>true</required>
+</attribute>
+<attribute>
+<name>action</name>
+<required>true</required>
+</attribute>
+<attribute>
+<name>vars</name>
+<required>false</required>
+</attribute>
+</tag>
+
+<tag>
 <name>var</name>
 <bodycontent>empty</bodycontent>
 <attribute>
