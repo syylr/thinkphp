@@ -59,8 +59,9 @@ class App extends Think
         if(function_exists('date_default_timezone_set'))
             date_default_timezone_set(C('TIME_ZONE'));
 
-        if(function_exists('spl_autoload_register')) {
-            spl_autoload_register(C('AUTO_LOAD_REG'));
+        if(C('AUTOLOAD_REG_ON')){
+            if(function_exists('spl_autoload_register'))
+                spl_autoload_register(array('Think', 'autoload'));
         }
 
         if(C('SESSION_AUTO_START'))

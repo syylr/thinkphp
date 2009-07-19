@@ -155,6 +155,7 @@ return  array(
     'AJAX_RETURN_TYPE'		=>	'JSON', //AJAX 数据返回格式 JSON XML ...
 
     /* 其它设置 */
+    'AUTOLOAD_REG_ON'=>false, // 是否开启SPL_AUTOLOAD_REGISTER
     'AUTO_LOAD_PATH'			=>	'Think.Util.',	//	 __autoLoad 的路径设置 当前项目的Model和Action类会自动加载，无需设置 注意搜索顺序
     'ACTION_JUMP_TMPL'=>	'Public:success',    // 页面跳转的模板文件
     'ACTION_404_TMPL'=>	'Public:404',         // 404错误的模板文件
@@ -165,7 +166,6 @@ return  array(
     // 内置可选配置包括：taglibs 标签库定义 routes 路由定义 tags 标签定义 htmls 静态缓存定义 modules 扩展模块 actions 扩展操作
     'TRACE_TMPL_FILE'=>THINK_PATH.'/Tpl/PageTrace.tpl.php', // 页面Trace的模板文件
     'EXCEPTION_TMPL_FILE'=>THINK_PATH.'/Tpl/ThinkException.tpl.php', // 异常页面的模板文件
-    'AUTO_LOAD_REG'=>'__autoload',
 
 );
 ?>
