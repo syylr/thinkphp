@@ -303,21 +303,6 @@ class View extends Think
      +----------------------------------------------------------
      */
     private function templateContentReplace($content) {
-        if(C('TOKEN_ON')) {
-            // 开启表单验证自动生成表单令牌
-            $tokenName   = C('TOKEN_NAME');
-            $tokenType = C('TOKEN_TYPE');
-            $tokenValue = $tokenType(microtime(TRUE));
-            $_SESSION[$tokenName]  =  $tokenValue;
-            $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenValue.'" />';
-            if(strpos($content,'__TOKEN__')) {
-                // 指定表单令牌隐藏域位置
-                $content = str_replace('__TOKEN__',$token,$content);
-            }elseif(preg_match('/<\/form(\s*)>/is',$content,$match)) {
-                // 智能生成表单令牌隐藏域
-                $content = str_replace($match[0],$token.$match[0],$content);
-            }
-        }
         // 系统默认的特殊变量替换
         $replace =  array(
             '../Public'   => APP_PUBLIC_PATH,// 项目公共目录
@@ -329,6 +314,21 @@ class View extends Think
             '__ACTION__'  => __ACTION__,     // 当前操作地址
             '__SELF__'    => __SELF__,       // 当前页面地址
         );
+        if(C('TOKEN_ON')) {
+            // 开启表单验证自动生成表单令牌
+            $tokenName   = C('TOKEN_NAME');
+            $tokenType = C('TOKEN_TYPE');
+            $tokenValue = $tokenType(microtime(TRUE));
+            $_SESSION[$tokenName]  =  $tokenValue;
+            $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenValue.'" />';
+            if(strpos($content,'__TOKEN__')) {
+                // 指定表单令牌隐藏域位置
+                $replace['__TOKEN__'] =  $token;
+            }elseif(preg_match('/<\/form(\s*)>/is',$content,$match)) {
+                // 智能生成表单令牌隐藏域
+                $replace[$match[0]] = $token.$match[0];
+            }
+        }
         // 允许用户自定义模板的字符串替换
         if(is_array(C('TMPL_PARSE_STRING')) ) {
             $replace =  array_merge($replace,C('TMPL_PARSE_STRING'));
