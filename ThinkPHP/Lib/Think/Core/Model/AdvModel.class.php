@@ -919,8 +919,6 @@ class AdvModel extends Model {
     public function autoCheckToken($data) {
         $name   = C('TOKEN_NAME');
         if($data[$name] == $_SESSION[$name]){
-            $tokenType = C('TOKEN_TYPE');
-            $_SESSION[$name]  =  $tokenType(microtime(TRUE));
             return true;
         }else {
             return false;
