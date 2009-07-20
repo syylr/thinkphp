@@ -311,9 +311,11 @@ class View extends Think
             $_SESSION[$tokenName]  =  $tokenValue;
             $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenValue.'" />';
             if(strpos($content,'__TOKEN__')) {
+                // 指定表单令牌隐藏域位置
                 $content = str_replace('__TOKEN__',$token,$content);
-            }else{
-                $content =  preg_replace('/<\/form(\s*)>/is',$token.'</form>',$content);
+            }elseif(preg_match('/<\/form(\s*)>/is',$content,$match)) {
+                // 智能生成表单令牌隐藏域
+                $content = str_replace($match[0],$token.$match[0],$content);
             }
         }
         // 系统默认的特殊变量替换
