@@ -140,7 +140,7 @@ class AdvModel extends Model {
     // 创建数据前的回调方法
     protected function _before_create($data,$type){
         // 表单令牌验证
-        if(!$this->autoCheckToken($data)) {
+        if(C('TOKEN_ON') && !$this->autoCheckToken($data)) {
             return false;
         }
         // 自动验证
