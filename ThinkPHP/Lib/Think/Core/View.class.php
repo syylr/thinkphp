@@ -304,6 +304,14 @@ class View extends Think
      +----------------------------------------------------------
      */
     private function parseTemplatePath($content) {
+        if(C('TOKEN_ON')) {
+            // 开启表单验证自动生成表单令牌
+            $tokenName   = C('TOKEN_NAME');
+            $tokenType = C('TOKEN_TYPE');
+            $tokenValue = $tokenType(microtime(TRUE));
+            $_SESSION[$tokenName]  =  $tokenValue;
+            $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenValue.'" />';
+        }
         // 系统默认的特殊变量替换
         $replace =  array(
             '../Public'   => APP_PUBLIC_PATH,// 项目公共目录
@@ -314,6 +322,7 @@ class View extends Think
             '__URL__'     => __URL__,        // 当前模块地址
             '__ACTION__'  => __ACTION__,     // 当前操作地址
             '__SELF__'    => __SELF__,       // 当前页面地址
+            '__TOKEN__'  =>isset($token)?$token:'',
         );
         // 允许用户自定义模板的字符串替换
         if(is_array(C('TMPL_PARSE_STRING')) ) {
