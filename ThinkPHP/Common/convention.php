@@ -167,7 +167,7 @@ return  array(
     'TRACE_TMPL_FILE'=>THINK_PATH.'/Tpl/PageTrace.tpl.php', // 页面Trace的模板文件
     'EXCEPTION_TMPL_FILE'=>THINK_PATH.'/Tpl/ThinkException.tpl.php', // 异常页面的模板文件
     'TOKEN_ON'                    =>   true,     // 开启令牌验证
-    'TOKEN_NAME'                =>   'think_html_token',    // 令牌验证的表单隐藏字段名称
+    'TOKEN_NAME'                =>   '__hash__',    // 令牌验证的表单隐藏字段名称
     'TOKEN_TYPE'                 =>    'md5',   // 令牌验证哈希规则
 );
 ?>
