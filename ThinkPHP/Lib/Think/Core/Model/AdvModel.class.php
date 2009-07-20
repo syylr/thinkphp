@@ -141,6 +141,7 @@ class AdvModel extends Model {
     protected function _before_create($data,$type){
         // 表单令牌验证
         if(C('TOKEN_ON') && !$this->autoCheckToken($data)) {
+            $this->error = L('_TOKEN_ERROR_');
             return false;
         }
         // 自动验证

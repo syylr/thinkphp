@@ -64,5 +64,6 @@ return array(
 	'_DELETE_SUCCESS_'=>'删除成功',
 	'_DELETE_FAIL_'=>'删除失败',
     '_EXPRESS_ERROR_'=>'表达式错误',
+    '_TOKEN_ERROR_'=>'表单令牌错误',
 );
 ?>
