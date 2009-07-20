@@ -739,6 +739,41 @@ class Model extends Think implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
+     * 批处理执行SQL语句
+     * 批处理的指令都认为是execute操作
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $sql  SQL批处理指令
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function patchQuery($sql=array()) {
+        if(!is_array($sql)) {
+            return false;
+        }
+        // 自动启动事务支持
+        $this->startTrans();
+        try{
+            foreach ($sql as $_sql){
+                $result   =  $this->execute($_sql);
+                if(false === $result) {
+                    // 发生错误自动回滚事务
+                    $this->rollback();
+                    return false;
+                }
+            }
+            // 提交事务
+            $this->commit();
+        } catch (Exception $e) {
+            $this->rollback();
+        }
+        return true;
+    }
+
+    /**
+     +----------------------------------------------------------
      * 得到当前的数据对象名称
      +----------------------------------------------------------
      * @access public

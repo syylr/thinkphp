@@ -139,6 +139,10 @@ class AdvModel extends Model {
 
     // 创建数据前的回调方法
     protected function _before_create($data,$type){
+        // 表单令牌验证
+        if(!$this->autoCheckToken($data)) {
+            return false;
+        }
         // 自动验证
         return $this->autoValidation($data,$type);
     }
@@ -493,40 +497,6 @@ class AdvModel extends Model {
         }
     }
 
-    /**
-     +----------------------------------------------------------
-     * 批处理执行SQL语句
-     * 批处理的指令都认为是execute操作
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $sql  SQL批处理指令
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    public function patchQuery($sql=array()) {
-        if(!is_array($sql)) {
-            return false;
-        }
-        // 自动启动事务支持
-        $this->startTrans();
-        try{
-            foreach ($sql as $_sql){
-                $result   =  $this->execute($_sql);
-                if(false === $result) {
-                    // 发生错误自动回滚事务
-                    $this->rollback();
-                    return false;
-                }
-            }
-            // 提交事务
-            $this->commit();
-        } catch (Exception $e) {
-            $this->rollback();
-        }
-        return true;
-    }
 
     // 自动保存时间戳字段
     protected function autoSaveTime(&$data,$type) {
@@ -943,5 +913,18 @@ class AdvModel extends Model {
         }
         return $resultSet;
     }
+
+    // 自动表单令牌验证
+    public function autoCheckToken($data) {
+        $name   = C('TOKEN_NAME');
+        if($data[$name] == $_SESSION[$name]){
+            $tokenType = C('TOKEN_TYPE');
+            $_SESSION[$name]  =  $tokenType(microtime(TRUE));
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 }
 ?>
