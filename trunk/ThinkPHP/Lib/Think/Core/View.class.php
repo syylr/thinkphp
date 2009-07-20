@@ -215,9 +215,8 @@ class View extends Think
         $template->fetch($templateFile,$this->tVar,$charset);
         // 获取并清空缓存
         $content = ob_get_clean();
-        // 解析特殊路径变量
-        $content = $this->parseTemplatePath($content);
-        $this->_after_fetch($content,$charset,$contentType);
+        // 模板内容替换
+        $content = $this->templateContentReplace($content);
         // 布局模板解析
         $content = $this->layout($content,$charset,$contentType);
         // 输出模板文件
@@ -294,7 +293,7 @@ class View extends Think
 
     /**
      +----------------------------------------------------------
-     * 解析模板文件里面的特殊路径字符串
+     * 模板内容替换
      +----------------------------------------------------------
      * @access private
      +----------------------------------------------------------
@@ -303,7 +302,7 @@ class View extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function parseTemplatePath($content) {
+    private function templateContentReplace($content) {
         if(C('TOKEN_ON')) {
             // 开启表单验证自动生成表单令牌
             $tokenName   = C('TOKEN_NAME');
@@ -311,6 +310,11 @@ class View extends Think
             $tokenValue = $tokenType(microtime(TRUE));
             $_SESSION[$tokenName]  =  $tokenValue;
             $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenValue.'" />';
+            if(strpos($content,'__TOKEN__')) {
+                $content = str_replace('__TOKEN__',$token,$content);
+            }else{
+                $content =  preg_replace('/<\/form(\s*)>/is',$token.'</form>',$content);
+            }
         }
         // 系统默认的特殊变量替换
         $replace =  array(
@@ -322,7 +326,6 @@ class View extends Think
             '__URL__'     => __URL__,        // 当前模块地址
             '__ACTION__'  => __ACTION__,     // 当前操作地址
             '__SELF__'    => __SELF__,       // 当前页面地址
-            '__TOKEN__'  =>isset($token)?$token:'',
         );
         // 允许用户自定义模板的字符串替换
         if(is_array(C('TMPL_PARSE_STRING')) ) {
