@@ -133,20 +133,20 @@ class CacheFile extends Cache
         $this->Q(1);
         $content    =   file_get_contents($filename);
         if( false !== $content) {
-            $expire  =  (int)substr($content,strlen(C('CACHE_SERIAL_HEADER')), 12);
+            $expire  =  (int)substr($content,8, 12);
             if($expire != -1 && time() > filemtime($filename) + $expire) {
                 //缓存过期删除缓存文件
                 unlink($filename);
                 return false;
             }
             if(C('DATA_CACHE_CHECK')) {//开启数据校验
-                $check  =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+12, 32);
-                $content   =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+12+32, -strlen(C('CACHE_SERIAL_FOOTER')));
+                $check  =  substr($content,20, 32);
+                $content   =  substr($content,52, -3);
                 if($check != md5($content)) {//校验错误
                     return false;
                 }
             }else {
-            	$content   =  substr($content,strlen(C('CACHE_SERIAL_HEADER'))+12, -strlen(C('CACHE_SERIAL_FOOTER')));
+            	$content   =  substr($content,20, -3);
             }
             if(C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
                 //启用数据压缩
@@ -190,7 +190,7 @@ class CacheFile extends Cache
         }else {
             $check  =  '';
         }
-        $data    = C('CACHE_SERIAL_HEADER').sprintf('%012d',$expire).$check.$data.C('CACHE_SERIAL_FOOTER');
+        $data    = "<?php\n//".sprintf('%012d',$expire).$check.$data."\n?>";
         $result  =   file_put_contents($filename,$data);
         if($result) {
             clearstatcache();
