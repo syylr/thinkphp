@@ -196,16 +196,17 @@ class App extends Think
      */
     private function getModule()
     {
-        $module = !empty($_POST[C('VAR_MODULE')]) ?
-            $_POST[C('VAR_MODULE')] :
-            (!empty($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:C('DEFAULT_MODULE'));
+        $var  =  C('VAR_MODULE');
+        $module = !empty($_POST[]) ?
+            $_POST[$var] :
+            (!empty($_GET[$var])? $_GET[$var]:C('DEFAULT_MODULE'));
         if(C('URL_CASE_INSENSITIVE')) {
             // URL地址不区分大小写
             define('P_MODULE_NAME',strtolower($module));
             // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
             $module = ucfirst($this->parseName(strtolower($module),1));
         }
-        unset($_POST[C('VAR_MODULE')],$_GET[C('VAR_MODULE')]);
+        unset($_POST[$var],$_GET[$var]);
         return $module;
     }
 
@@ -220,10 +221,11 @@ class App extends Think
      */
     private function getAction()
     {
-        $action   = !empty($_POST[C('VAR_ACTION')]) ?
-            $_POST[C('VAR_ACTION')] :
-            (!empty($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:C('DEFAULT_ACTION'));
-        unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
+        $var  =  C('VAR_ACTION');
+        $action   = !empty($_POST[$var]) ?
+            $_POST[$var] :
+            (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
+        unset($_POST[$var],$_GET[$var]);
         return $action;
     }
 
@@ -238,10 +240,11 @@ class App extends Think
      */
     private function getGroup()
     {
-        $group   = !empty($_POST[C('VAR_GROUP')]) ?
-            $_POST[C('VAR_GROUP')] :
-            (!empty($_GET[C('VAR_GROUP')])?$_GET[C('VAR_GROUP')]:C('DEFAULT_GROUP'));
-        unset($_POST[C('VAR_GROUP')],$_GET[C('VAR_GROUP')]);
+        $var  =  C('VAR_GROUP');
+        $group   = !empty($_POST[$var]) ?
+            $_POST[$var] :
+            (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_GROUP'));
+        unset($_POST[$var],$_GET[$var]);
         return ucfirst(strtolower($group));
     }
 
