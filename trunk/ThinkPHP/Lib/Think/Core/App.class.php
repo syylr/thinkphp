@@ -179,7 +179,7 @@ class App extends Think
                 file_put_contents(RUNTIME_PATH.'~allinone.php','<?php '.$content);
             }else{
                 $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
-                file_put_contents(RUNTIME_PATH.'~app.php',$content);
+                file_put_contents(RUNTIME_PATH.'~app.php',strip_whitespace($content));
             }
         }
         return ;
@@ -337,8 +337,6 @@ class App extends Think
         define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME);
         $tmplDir = TMPL_DIR.'/'.TEMPLATE_NAME.'/';
 
-        //当前网站地址
-        define('__ROOT__',WEB_URL);
         //当前项目地址
         define('__APP__',PHP_FILE);
 
@@ -349,11 +347,11 @@ class App extends Think
             // 独立域名部署需要指定模板从根目录开始
             $appRoot   =  '/';
         }else{
-            $appRoot   =  WEB_URL.'/'.APP_NAME.'/';
+            $appRoot   =  __ROOT__.'/'.APP_NAME.'/';
         }
-
+        $depr = C('PATH_MODEL')==2?C('PATH_DEPR'):'/';
         if(defined('GROUP_NAME')) {
-            define('__URL__',PHP_FILE.'/'.(C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME).'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
+            define('__URL__',PHP_FILE.'/'.(C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME).$depr.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
@@ -363,11 +361,11 @@ class App extends Think
         }
         //当前操作地址
         define('__ACTION__',__URL__.C('PATH_DEPR').ACTION_NAME);
-        define('__CURRENT__', WEB_URL.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
+        define('__CURRENT__', __ROOT__.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
         //项目模板目录
         define('APP_TMPL_PATH', $appRoot.$tmplDir);
         //网站公共文件目录
-        define('WEB_PUBLIC_PATH', WEB_URL.'/Public');
+        define('WEB_PUBLIC_PATH', __ROOT__.'/Public');
         //项目公共文件目录
         define('APP_PUBLIC_PATH', APP_TMPL_PATH.'Public');
         return ;

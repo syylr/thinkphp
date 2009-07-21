@@ -43,14 +43,14 @@ if(!IS_CLI) {
             define('_PHP_FILE_',    rtrim($_SERVER["SCRIPT_NAME"],'/'));
         }
     }
-    if(!defined('WEB_URL')) {
+    if(!defined('__ROOT__')) {
         // 网站URL根目录
         if( strtoupper(APP_NAME) == strtoupper(basename(dirname(_PHP_FILE_))) ) {
             $_root = dirname(dirname(_PHP_FILE_));
         }else {
             $_root = dirname(_PHP_FILE_);
         }
-        define('WEB_URL',   (($_root=='/' || $_root=='\\')?'':$_root));
+        define('__ROOT__',   (($_root=='/' || $_root=='\\')?'':$_root));
     }
 
     //支持的URL模式
