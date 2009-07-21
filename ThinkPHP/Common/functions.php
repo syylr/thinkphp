@@ -703,13 +703,10 @@ function data_to_xml($data) {
 //[RUNTIME]
 // 编译文件
 function compile($filename,$runtime=false) {
+    $content = file_get_contents($filename);
     if(true === $runtime) {
-        $content = file_get_contents($filename);
         // 替换预编译指令
         $content = preg_replace('/\/\/\[RUNTIME\](.*?)\/\/\[\/RUNTIME\]/s','',$content);
-        $content = strip_whitespace($content);
-    }else{
-        $content = php_strip_whitespace($filename);
     }
     $content = substr(trim($content),5);
     if('?>' == substr($content,-2)) {
