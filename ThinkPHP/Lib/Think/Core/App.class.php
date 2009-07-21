@@ -176,7 +176,7 @@ class App extends Think
                 $content  = array_define($defs['user']);
                 $content .= substr(file_get_contents(RUNTIME_PATH.'~runtime.php'),5);
                 $content .= $common."\nreturn ".var_export(C(),true).';';
-                file_put_contents(RUNTIME_PATH.'~allinone.php','<?php '.$content);
+                file_put_contents(RUNTIME_PATH.'~allinone.php',strip_whitespace('<?php '.$content));
             }else{
                 $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
                 file_put_contents(RUNTIME_PATH.'~app.php',strip_whitespace($content));
