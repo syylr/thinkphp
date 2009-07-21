@@ -123,9 +123,6 @@ return  array(
     'DATA_CACHE_PATH'       =>    TEMP_PATH,  // 缓存路径设置 (仅对File方式缓存有效)
     'DATA_CACHE_SUBDIR'		=>	false,		// 使用子目录缓存 (自动根据缓存标识的哈希创建子目录)
     'DATA_PATH_LEVEL'        =>    1, // 子目录缓存级别
-    'CACHE_SERIAL_HEADER'	=>	"<?php\n//",	// 文件缓存开始标记
-    'CACHE_SERIAL_FOOTER'	=>	"\n?".">",	// 文件缓存结束标记
-
 
     /* 运行时间设置 */
     'SHOW_RUN_TIME'			=>	false,			// 运行时间显示
