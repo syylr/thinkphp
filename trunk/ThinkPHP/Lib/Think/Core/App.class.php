@@ -197,7 +197,7 @@ class App extends Think
     private function getModule()
     {
         $var  =  C('VAR_MODULE');
-        $module = !empty($_POST[]) ?
+        $module = !empty($_POST[$var]) ?
             $_POST[$var] :
             (!empty($_GET[$var])? $_GET[$var]:C('DEFAULT_MODULE'));
         if(C('URL_CASE_INSENSITIVE')) {
