@@ -90,7 +90,7 @@ if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
             foreach ($runtime as $file){
                 $content .= compile($file,$compile);
             }
-            file_put_contents(RUNTIME_PATH.'~runtime.php','<?php'.$content);
+            file_put_contents(RUNTIME_PATH.'~runtime.php',strip_whitespace('<?php'.$content));
             unset($content);
         }
     }
