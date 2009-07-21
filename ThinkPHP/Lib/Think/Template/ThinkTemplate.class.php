@@ -537,9 +537,7 @@ class  ThinkTemplate extends Think
     public function parseCall($params) {
         $array   =  parse_url($params);
         $parseStr   =  '';
-        $url = explode('/',$array['path']);
-        $module = $url[0];
-        $action  =  $url[1];
+        list($module,$action) = explode('/',$array['path']);
         $vars = $array['query'];
         $parseStr   =  '<?php $_module = A(\''.$module.'\');parse_str(\''.$vars.'\',$_vars);if(method_exists($_module,\''.$action.'\')): $_module->'.$action.'($_vars);endif;?>';
         return $parseStr;
