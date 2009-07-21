@@ -45,9 +45,7 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
             $module = MODULE_NAME;
         }else{// 指定模块
             if(strpos($array['host'],'-')) {
-                $temp   =  explode('-',$array['host']);
-                $group = $temp[0];
-                $module = $temp[1];
+                list($group,$module) = explode('-',$array['host']);
             }else{
                 $module = $array['host'];
             }
