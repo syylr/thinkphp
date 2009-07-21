@@ -42,11 +42,7 @@ if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
         // 加载常量定义文件
         require THINK_PATH.'/Common/defines.php';
         // 加载路径定义文件
-        if(defined('PATH_DEFINE_FILE')) {
-            require PATH_DEFINE_FILE;
-        }else{
-            require THINK_PATH.'/Common/paths.php';
-        }
+        require defined('PATH_DEFINE_FILE')?PATH_DEFINE_FILE:THINK_PATH.'/Common/paths.php';
         // 定义核心编译的文件
         $runtime[]  =  THINK_PATH.'/Common/functions.php'; // 系统函数
         if(version_compare(PHP_VERSION,'5.2.0','<') ) {
