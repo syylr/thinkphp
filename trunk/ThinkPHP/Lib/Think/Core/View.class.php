@@ -208,7 +208,7 @@ class View extends Think
             $templateFile   = $this->parseTemplateFile($templateFile);
         }
         $this->templateFile   =  $templateFile;
-        $this->_before_fetch($templateFile,$charset,$contentType);
+        //$this->_before_fetch($templateFile,$charset,$contentType);
         import('Template');
         $template   =  Template::getInstance();
         // 模板引擎解析和输出
@@ -223,8 +223,8 @@ class View extends Think
         return $this->output($content,$display);
     }
     // 前置回调方法
-    protected function _before_fetch(&$templateFile,$charset,$contentType) {}
-    protected function _after_fetch(&$content,$charset,$contentType) {}
+    //protected function _before_fetch(&$templateFile,$charset,$contentType) {}
+    //protected function _after_fetch(&$content,$charset,$contentType) {}
 
     /**
      +----------------------------------------------------------
