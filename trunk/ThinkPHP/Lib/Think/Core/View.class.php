@@ -295,14 +295,14 @@ class View extends Think
      +----------------------------------------------------------
      * 模板内容替换
      +----------------------------------------------------------
-     * @access private
+     * @access protected
      +----------------------------------------------------------
      * @param string $content 模板内容
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    private function templateContentReplace($content) {
+    protected function templateContentReplace($content) {
         // 系统默认的特殊变量替换
         $replace =  array(
             '../Public'   => APP_PUBLIC_PATH,// 项目公共目录
@@ -315,18 +315,12 @@ class View extends Think
             '__SELF__'    => __SELF__,       // 当前页面地址
         );
         if(C('TOKEN_ON')) {
-            // 开启表单验证自动生成表单令牌
-            $tokenName   = C('TOKEN_NAME');
-            $tokenType = C('TOKEN_TYPE');
-            $tokenValue = $tokenType(microtime(TRUE));
-            $_SESSION[$tokenName]  =  $tokenValue;
-            $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenValue.'" />';
             if(strpos($content,'__TOKEN__')) {
                 // 指定表单令牌隐藏域位置
-                $replace['__TOKEN__'] =  $token;
+                $replace['__TOKEN__'] =  $this->buildFormToken();
             }elseif(preg_match('/<\/form(\s*)>/is',$content,$match)) {
                 // 智能生成表单令牌隐藏域
-                $replace[$match[0]] = $token.$match[0];
+                $replace[$match[0]] = $this->buildFormToken().$match[0];
             }
         }
         // 允许用户自定义模板的字符串替换
@@ -335,6 +329,25 @@ class View extends Think
         }
         $content = str_replace(array_keys($replace),array_values($replace),$content);
         return $content;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 创建表单令牌隐藏域
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    private function buildFormToken() {
+        // 开启表单验证自动生成表单令牌
+        $tokenName   = C('TOKEN_NAME');
+        $tokenType = C('TOKEN_TYPE');
+        $tokenValue = $tokenType(microtime(TRUE));
+        $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenValue.'" />';
+        $_SESSION[$tokenName]  =  $tokenValue;
+        return $token;
     }
 
     /**
