@@ -118,13 +118,8 @@ function halt($error) {
         }else {
             $e = $error;
         }
-        if(C('EXCEPTION_TMPL_FILE')) {
-            // 定义了异常页面模板
-            include C('EXCEPTION_TMPL_FILE');
-        }else{
-            // 使用默认的异常模板文件
-            include THINK_PATH.'/Tpl/ThinkException.tpl.php';
-        }
+        // 包含异常页面模板
+        include C('EXCEPTION_TMPL_FILE');
     }
     else
     {
@@ -138,13 +133,8 @@ function halt($error) {
             }else{
                 $e['message'] = C('ERROR_MESSAGE');
             }
-            if(C('EXCEPTION_TMPL_FILE')) {
-                // 定义了异常页面模板
-                include C('EXCEPTION_TMPL_FILE');
-            }else{
-                // 使用默认的异常模板文件
-                include THINK_PATH.'/Tpl/ThinkException.tpl.php';
-            }
+            // 包含异常页面模板
+            include C('EXCEPTION_TMPL_FILE');
         }
     }
     exit;
