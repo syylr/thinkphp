@@ -318,6 +318,9 @@ class View extends Think
             if(strpos($content,'__TOKEN__')) {
                 // 指定表单令牌隐藏域位置
                 $replace['__TOKEN__'] =  $this->buildFormToken();
+            }elseif(strpos($content,'__NOTOKEN__')){
+                // 标记为不需要令牌验证
+                $replace['__NOTOKEN__'] =  '';
             }elseif(preg_match('/<\/form(\s*)>/is',$content,$match)) {
                 // 智能生成表单令牌隐藏域
                 $replace[$match[0]] = $this->buildFormToken().$match[0];
