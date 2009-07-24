@@ -394,7 +394,7 @@ function alias_import($alias,$classfile='') {
     static $_alias   =  array();
     if('' !== $classfile) {
         // 定义别名导入
-        $_alias[$alias]  = realpath($classfile);
+        $_alias[$alias]  = $classfile;
         return ;
     }
     if(is_string($alias)) {
@@ -403,7 +403,7 @@ function alias_import($alias,$classfile='') {
         }
     }elseif(is_array($alias)){
         foreach ($alias as $key=>$val){
-            $_alias[$key]  =  realpath($val);
+            $_alias[$key]  =  $val;
         }
         return ;
     }
@@ -665,29 +665,6 @@ function to_guid_string($mix)
     return md5($mix);
 }
 
-// xml编码
-function xml_encode($data,$encoding='utf-8',$root="think") {
-    $xml = '<?xml version="1.0" encoding="'.$encoding.'"?>';
-    $xml.= '<'.$root.'>';
-    $xml.= data_to_xml($data);
-    $xml.= '</'.$root.'>';
-    return $xml;
-}
-
-function data_to_xml($data) {
-    if(is_object($data)) {
-        $data = get_object_vars($data);
-    }
-    $xml = '';
-    foreach($data as $key=>$val) {
-        is_numeric($key) && $key="item id=\"$key\"";
-        $xml.="<$key>";
-        $xml.=(is_array($val)||is_object($val))?data_to_xml($val):$val;
-        list($key,)=explode(' ',$key);
-        $xml.="</$key>";
-    }
-    return $xml;
-}
 //[RUNTIME]
 // 编译文件
 function compile($filename,$runtime=false) {
