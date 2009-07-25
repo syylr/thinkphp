@@ -72,27 +72,8 @@ if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
                 require $file;
             }
         }
-        // 加载编译需要的函数文件
-        require THINK_PATH."/Common/runtime.php";
-        // 检查项目目录结构 如果不存在则自动创建
-        if(!is_dir(RUNTIME_PATH)) {
-            // 创建项目目录结构
-            buildAppDir();
-        }else{
-            // 检查缓存目录
-            checkRuntime();
-        }
-        // 生成核心编译缓存 去掉文件空白以减少大小
-        if(!defined('NO_CACHE_RUNTIME')) {
-            $compile = defined('RUNTIME_ALLINONE');
-            $content  = compile(THINK_PATH.'/Common/defines.php',$compile);
-            $content .= compile(defined('PATH_DEFINE_FILE')?   PATH_DEFINE_FILE  :   THINK_PATH.'/Common/paths.php',$compile);
-            foreach ($runtime as $file){
-                $content .= compile($file,$compile);
-            }
-            file_put_contents(RUNTIME_PATH.'~runtime.php',strip_whitespace('<?php'.$content));
-            unset($content);
-        }
+        // 生成runtime缓存
+        build_runtime($runtime);
     }
 }
 // 记录加载文件时间
