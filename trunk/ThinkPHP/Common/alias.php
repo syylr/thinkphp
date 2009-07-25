@@ -20,6 +20,7 @@ alias_import(array(
     'Template'          =>    THINK_PATH.'/Lib/Think/Util/Template.class.php',
     'TagLib'              =>   THINK_PATH.'/Lib/Think/Template/TagLib.class.php',
     'Cache'              =>    THINK_PATH.'/Lib/Think/Util/Cache.class.php',
+    'Debug'              =>    THINK_PATH.'/Lib/Think/Util/Debug.class.php',
     //'Cookie'              =>    THINK_PATH.'/Lib/Think/Util/Cookie.class.php',
     'Session'             =>   THINK_PATH.'/Lib/Think/Util/Session.class.php',
     'TagLibCx'          =>    THINK_PATH.'/Lib/Think/Template/TagLib/TagLibCx.class.php',
