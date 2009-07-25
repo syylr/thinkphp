@@ -51,7 +51,7 @@ class App extends Think
         define('MODULE_NAME',   $this->getModule());       // Module名称
         define('ACTION_NAME',   $this->getAction());        // Action操作
         // 不使用语言包功能，仅仅加载框架语言文件
-        L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
+        //L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
 
         // 记录应用初始化时间
         if(C('SHOW_RUN_TIME')){
@@ -110,7 +110,7 @@ class App extends Think
             // 部署模式下面生成编译文件
             // 下次直接加载项目编译文件
             $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
-            file_put_contents(RUNTIME_PATH.'~app.php',$content);
+            file_put_contents(RUNTIME_PATH.'~app.php',strip_whitespace($content));
         }
         return ;
     }
@@ -127,16 +127,17 @@ class App extends Think
      */
     private function getModule()
     {
-        $module = !empty($_POST[C('VAR_MODULE')]) ?
-            $_POST[C('VAR_MODULE')] :
-            (!empty($_GET[C('VAR_MODULE')])? $_GET[C('VAR_MODULE')]:C('DEFAULT_MODULE'));
+        $var  =  C('VAR_MODULE');
+        $module = !empty($_POST[$var]) ?
+            $_POST[$var] :
+            (!empty($_GET[$var])? $_GET[$var]:C('DEFAULT_MODULE'));
         if(C('URL_CASE_INSENSITIVE')) {
             // URL地址不区分大小写
             define('P_MODULE_NAME',strtolower($module));
             // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
             $module = ucfirst($this->parseName(strtolower($module),1));
         }
-        unset($_POST[C('VAR_MODULE')],$_GET[C('VAR_MODULE')]);
+        unset($_POST[$var],$_GET[$var]);
         return $module;
     }
 
@@ -151,10 +152,11 @@ class App extends Think
      */
     private function getAction()
     {
-        $action   = !empty($_POST[C('VAR_ACTION')]) ?
-            $_POST[C('VAR_ACTION')] :
-            (!empty($_GET[C('VAR_ACTION')])?$_GET[C('VAR_ACTION')]:C('DEFAULT_ACTION'));
-        unset($_POST[C('VAR_ACTION')],$_GET[C('VAR_ACTION')]);
+        $var  =  C('VAR_ACTION');
+        $action   = !empty($_POST[$var]) ?
+            $_POST[$var] :
+            (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
+        unset($_POST[$var],$_GET[$var]);
         return $action;
     }
 

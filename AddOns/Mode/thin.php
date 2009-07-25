@@ -16,7 +16,7 @@ return array(
     THINK_PATH.'/Lib/Think/Core/Log.class.php',// 日志处理
     THINK_PATH.'/Mode/Thin/App.class.php', // 应用程序类
     THINK_PATH.'/Mode/Thin/Action.class.php',// 控制器类
-    THINK_PATH.'/Mode/Thin/Model.class.php',// 模型类
+    //THINK_PATH.'/Mode/Thin/Model.class.php',// 模型类
     THINK_PATH.'/Common/alias.php',  // 加载别名
 );
 ?>
