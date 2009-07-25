@@ -16,7 +16,7 @@ return array(
     THINK_PATH.'/Lib/Think/Core/Log.class.php',
     THINK_PATH.'/Mode/Cli/App.class.php',
     THINK_PATH.'/Mode/Cli/Action.class.php',
-    THINK_PATH.'/Mode/Cli/Model.class.php',
+    //THINK_PATH.'/Mode/Cli/Model.class.php',
     THINK_PATH.'/Common/alias.php',  // 加载别名
 );
 ?>

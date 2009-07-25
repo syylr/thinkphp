@@ -40,7 +40,7 @@ class App extends Think
         set_exception_handler(array(&$this,"appException"));
         // 检查项目是否编译过
         // 在部署模式下会自动在第一次执行的时候编译项目
-        if(is_file(RUNTIME_PATH.'~app.php') && (!is_file(CONFIG_PATH.'config.php') || filemtime(RUNTIME_PATH.'~app.php')>filemtime(CONFIG_PATH.'config.php'))) {
+        if(is_file(RUNTIME_PATH.'~app.php')) {
             // 直接读取编译后的项目文件
             C(include RUNTIME_PATH.'~app.php');
         }else{
@@ -110,7 +110,7 @@ class App extends Think
             // 部署模式下面生成编译文件
             // 下次直接加载项目编译文件
             $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
-            file_put_contents(RUNTIME_PATH.'~app.php',$content);
+            file_put_contents(RUNTIME_PATH.'~app.php',strip_whitespace($content));
         }
         return ;
     }
