@@ -22,7 +22,7 @@ if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME'])
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Runtime/');
 
 if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
-    // ALL_IN_ONE 模式直接载入allinone缓存
+    // ALLINONE 模式直接载入allinone缓存
     $result   =  require RUNTIME_PATH.'~allinone.php';
     C($result);
     // 自动设置为运行模式
@@ -51,8 +51,7 @@ if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
         }
         // 核心基类必须加载
         $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Think.class.php';
-
-        // 加载核心编译文件列表
+        // 读取核心编译文件列表
         if(is_file(CONFIG_PATH.'core.php')) {
             // 加载项目自定义的核心编译文件列表
             $list   =  include CONFIG_PATH.'core.php';
