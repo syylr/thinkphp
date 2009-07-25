@@ -144,30 +144,32 @@ class View extends Think
      */
     public function layout($content,$charset='',$contentType='text/html')
     {
-        // 查找布局包含的页面
-        $find = preg_match_all('/<!-- layout::(.+?)::(.+?) -->/is',$content,$matches);
-        if($find) {
-            for ($i=0; $i< $find; $i++) {
-                // 读取相关的页面模板替换布局单元
-                if(0===strpos($matches[1][$i],'$')){
-                    // 动态布局
-                    $matches[1][$i]  =  $this->get(substr($matches[1][$i],1));
-                }
-                if(0 != $matches[2][$i] ) {
-                    // 设置了布局缓存
-                    // 检查布局缓存是否有效
-                    $guid =  md5($matches[1][$i]);
-                    $cache  =  S($guid);
-                    if($cache) {
-                        $layoutContent = $cache;
+        if(strpos($content,'<!-- layout')) {
+            // 查找布局包含的页面
+            $find = preg_match_all('/<!-- layout::(.+?)::(.+?) -->/is',$content,$matches);
+            if($find) {
+                for ($i=0; $i< $find; $i++) {
+                    // 读取相关的页面模板替换布局单元
+                    if(0===strpos($matches[1][$i],'$')){
+                        // 动态布局
+                        $matches[1][$i]  =  $this->get(substr($matches[1][$i],1));
+                    }
+                    if(0 != $matches[2][$i] ) {
+                        // 设置了布局缓存
+                        // 检查布局缓存是否有效
+                        $guid =  md5($matches[1][$i]);
+                        $cache  =  S($guid);
+                        if($cache) {
+                            $layoutContent = $cache;
+                        }else{
+                            $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType);
+                            S($guid,$layoutContent,$matches[2][$i]);
+                        }
                     }else{
                         $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType);
-                        S($guid,$layoutContent,$matches[2][$i]);
                     }
-                }else{
-                    $layoutContent = $this->fetch($matches[1][$i],$charset,$contentType);
+                    $content    =   str_replace($matches[0][$i],$layoutContent,$content);
                 }
-                $content    =   str_replace($matches[0][$i],$layoutContent,$content);
             }
         }
         return $content;
@@ -207,12 +209,22 @@ class View extends Think
             // 自动定位模板文件
             $templateFile   = $this->parseTemplateFile($templateFile);
         }
+        if('php'==strtolower(C('TMPL_ENGINE_TYPE'))) {
+            // 模板阵列变量分解成为独立变量
+            extract($this->tVar, EXTR_OVERWRITE);
+            // 直接载入PHP模板
+            include $templateFile;
+        }elseif('think'==strtolower(C('TMPL_ENGINE_TYPE')) && $this->checkCache($templateFile)) {
+            // 如果是Think模板引擎并且缓存有效 分解变量并载入模板缓存
+            extract($this->tVar, EXTR_OVERWRITE);
+            //载入模版缓存文件
+            include C('CACHE_PATH').md5($templateFile).C('CACHFILE_SUFFIX');
+        }else{
+            // 模板文件需要重新编译 支持第三方模板引擎
+            // 调用模板引擎解析和输出
+            Template::getInstance()->fetch($templateFile,$this->tVar,$charset);
+        }
         $this->templateFile   =  $templateFile;
-        //$this->_before_fetch($templateFile,$charset,$contentType);
-        import('Template');
-        $template   =  Template::getInstance();
-        // 模板引擎解析和输出
-        $template->fetch($templateFile,$this->tVar,$charset);
         // 获取并清空缓存
         $content = ob_get_clean();
         // 模板内容替换
@@ -222,9 +234,37 @@ class View extends Think
         // 输出模板文件
         return $this->output($content,$display);
     }
-    // 前置回调方法
-    //protected function _before_fetch(&$templateFile,$charset,$contentType) {}
-    //protected function _after_fetch(&$content,$charset,$contentType) {}
+
+    /**
+     +----------------------------------------------------------
+     * 检查缓存文件是否有效
+     * 如果无效则需要重新编译
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $tmplTemplateFile  模板文件名
+     +----------------------------------------------------------
+     * @return boolen
+     +----------------------------------------------------------
+     */
+    protected function checkCache($tmplTemplateFile)
+    {
+        if ( !C('TMPL_CACHE_ON') ) // 优先对配置设定检测
+            return false;
+        $tmplCacheFile = C('CACHE_PATH').md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
+        if(!is_file($tmplCacheFile)){
+            return false;
+        }
+        elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
+            // 模板文件如果有更新则缓存需要更新
+            return false;
+        } elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) {
+            // 缓存是否在有效期
+            return false;
+        }
+        //缓存有效
+        return true;
+    }
 
     /**
      +----------------------------------------------------------
@@ -456,7 +496,8 @@ class View extends Think
             $this->trace('用户代理',    $_SERVER['HTTP_USER_AGENT']);
             $this->trace('会话ID'   ,   session_id());
             $this->trace('运行数据',    $showTime);
-            $this->trace('加载文件',    count(get_included_files()));
+            $files =  get_included_files();
+            $this->trace('加载文件',    count($files).dump($files,false));
 
             $log    =   Log::$log;
             $this->trace('日志记录',count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录');
