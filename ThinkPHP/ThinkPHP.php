@@ -15,7 +15,6 @@
  * ThinkPHP公共文件
  +------------------------------------------------------------------------------
  */
-
 //记录开始运行时间
 $GLOBALS['_beginTime'] = microtime(TRUE);
 if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
@@ -35,44 +34,13 @@ if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
     if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
     if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
     if(is_file(RUNTIME_PATH.'~runtime.php')) {
-        // 加载框架核心缓存文件
-        // 如果有修改核心文件请删除该缓存
+        // 加载框架核心编译缓存
         require RUNTIME_PATH.'~runtime.php';
     }else{
-        // 加载常量定义文件
-        require THINK_PATH.'/Common/defines.php';
-        // 加载路径定义文件
-        require defined('PATH_DEFINE_FILE')?PATH_DEFINE_FILE:THINK_PATH.'/Common/paths.php';
-        // 定义核心编译的文件
-        $runtime[]  =  THINK_PATH.'/Common/functions.php'; // 系统函数
-        if(version_compare(PHP_VERSION,'5.2.0','<') ) {
-            // 加载兼容函数
-            $runtime[]	=	 THINK_PATH.'/Common/compat.php';
-        }
-        // 核心基类必须加载
-        $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Think.class.php';
-        // 读取核心编译文件列表
-        if(is_file(CONFIG_PATH.'core.php')) {
-            // 加载项目自定义的核心编译文件列表
-            $list   =  include CONFIG_PATH.'core.php';
-        }else{
-            if(defined('THINK_MODE')) {
-                // 根据设置的运行模式加载不同的核心编译文件
-                $list   =  include THINK_PATH.'/Mode/'.strtolower(THINK_MODE).'.php';
-            }else{
-                // 默认核心
-                $list   =  include THINK_PATH.'/Common/core.php';
-            }
-        }
-        $runtime   =  array_merge($runtime,$list);
-        // 加载核心编译文件列表
-        foreach ($runtime as $key=>$file){
-            if(is_file($file)) {
-                require $file;
-            }
-        }
-        // 生成runtime缓存
-        build_runtime($runtime);
+        // 加载编译函数文件
+        require THINK_PATH."/Common/runtime.php";
+        // 生成核心编译~runtime缓存
+        build_runtime();
     }
 }
 // 记录加载文件时间
