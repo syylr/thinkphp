@@ -503,7 +503,7 @@ class View extends Think
             rsort($files);
             $filesList = count($files).'<br />';
             foreach ($files as $val)
-                $filesList .= $val.'<br />';
+                $filesList .= ($i+1).' --- '.$val.'<br />';
             $this->trace('加载文件',$filesList);
             $_trace =   array_merge($_trace,$this->trace);
             // 调用Trace页面模板
