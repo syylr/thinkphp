@@ -289,7 +289,7 @@ class DbPdo extends Db{
                     break;
                 case 'ORACLE':
                 case 'OCI':
-                    $sql   = "SELECT a.column_name \"Name\",data_type \"Type\",decode(nullable,'Y',0,1) notnull,data_default \"Default\",decode(a.column_name,b.column_name,1,0) \"Key\" "
+                    $sql   = "SELECT a.column_name \"Name\",data_type \"Type\",decode(nullable,'Y',0,1) notnull,data_default \"Default\",decode(a.column_name,b.column_name,1,0) \"pk\" "
                       ."FROM user_tab_columns a,(SELECT column_name FROM user_constraints c,user_cons_columns col "
                       ."WHERE c.constraint_name=col.constraint_name AND c.constraint_type='P' and c.table_name='".strtoupper($tableName)
                       ."') b where table_name='".strtoupper($tableName)."' and a.column_name=b.column_name(+)";
@@ -315,8 +315,8 @@ class DbPdo extends Db{
                 'type'    => $val['Type'],
                 'notnull' => (bool)(((isset($val['Null'])) && ($val['Null'] === '')) || ((isset($val['notnull'])) && ($val['notnull'] === ''))), // not null is empty, null is yes
                 'default' => isset($val['Default'])? $val['Default'] :(isset($val['dflt_value'])?$val['dflt_value']:""),
-                'primary' => !empty($val['Key'])?true:false,
-                'autoinc' => isset($val['Extra'])?strtolower($val['Extra']) == 'auto_increment':isset($val['Key'])?$val['Key']:false,
+                'primary' => isset($val['Key'])?strtolower($val['Key']) == 'pri':(isset($val['pk'])?$val['pk']:false),
+                'autoinc' => isset($val['Extra'])?strtolower($val['Extra']) == 'auto_increment':(isset($val['Key'])?$val['Key']:false),
             );
         }
         return $info;
