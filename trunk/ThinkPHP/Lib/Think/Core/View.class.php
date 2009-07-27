@@ -144,7 +144,7 @@ class View extends Think
      */
     public function layout($content,$charset='',$contentType='text/html')
     {
-        if(strpos($content,'<!-- layout')) {
+        if(false !== strpos($content,'<!-- layout')) {
             // 查找布局包含的页面
             $find = preg_match_all('/<!-- layout::(.+?)::(.+?) -->/is',$content,$matches);
             if($find) {
