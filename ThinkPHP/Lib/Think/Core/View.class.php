@@ -502,8 +502,8 @@ class View extends Think
             $files = str_replace(realpath(APP_PATH).'\\','',$files);
             rsort($files);
             $filesList = count($files).'<br />';
-            foreach ($files as $val)
-                $filesList .= ($i+1).' --- '.$val.'<br />';
+            foreach ($files as $key=>$val)
+                $filesList .= ($key+1).' --- '.$val.'<br />';
             $this->trace('加载文件',$filesList);
             $_trace =   array_merge($_trace,$this->trace);
             // 调用Trace页面模板
