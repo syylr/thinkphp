@@ -276,7 +276,7 @@ class DbPdo extends Db{
         }else{
             switch($this->dbType) {
                 case 'MSSQL':
-                    $sql   = "SELECT   column_name as name,   data_type as type,   column_default as 'default',   is_nullable as 'null'
+                    $sql   = "SELECT   column_name as 'Name',   data_type as 'Type',   column_default as 'Default',   is_nullable as 'Null'
         FROM    information_schema.tables AS t
         JOIN    information_schema.columns AS c
         ON  t.table_catalog = c.table_catalog
@@ -289,7 +289,7 @@ class DbPdo extends Db{
                     break;
                 case 'ORACLE':
                 case 'OCI':
-                    $sql   = "SELECT a.column_name name,data_type Type,decode(nullable,'Y',0,1) notnull,data_default \"Default\",decode(a.column_name,b.column_name,1,0) pk "
+                    $sql   = "SELECT a.column_name \"Name\",data_type \"Type\",decode(nullable,'Y',0,1) notnull,data_default \"Default\",decode(a.column_name,b.column_name,1,0) \"Key\" "
                       ."FROM user_tab_columns a,(SELECT column_name FROM user_constraints c,user_cons_columns col "
                       ."WHERE c.constraint_name=col.constraint_name AND c.constraint_type='P' and c.table_name='".strtoupper($tableName)
                       ."') b where table_name='".strtoupper($tableName)."' and a.column_name=b.column_name(+)";
@@ -306,17 +306,17 @@ class DbPdo extends Db{
                     $sql   = 'DESCRIBE '.$tableName;
             }
         }
-        $result = $this->_query($sql);;
+        $result = $this->_query($sql);
         $info   =   array();
         foreach ($result as $key => $val) {
-            $name= strtolower(isset($val['field'])?$val['field']:$val['name']);
-            $info[strtolower($name)] = array(
+            $name= strtolower(isset($val['Field'])?$val['Field']:$val['Name']);
+            $info[$name] = array(
                 'name'    => $name ,
-                'type'    => $val['type'],
-                'notnull' => (bool)(((isset($val['null'])) && ($val['null'] === '')) || ((isset($val['notnull'])) && ($val['notnull'] === ''))), // not null is empty, null is yes
-                'default' => isset($val['default'])? $val['default'] :(isset($val['dflt_value'])?$val['dflt_value']:""),
-                'primary' => isset($val['key'])?strtolower($val['key']) == 'pri':isset($val['pk'])?$val['pk']:false,
-                'autoInc' => isset($val['extra'])?strtolower($val['extra']) == 'auto_increment':isset($val['pk'])?$val['pk']:false,
+                'type'    => $val['Type'],
+                'notnull' => (bool)(((isset($val['Null'])) && ($val['Null'] === '')) || ((isset($val['notnull'])) && ($val['notnull'] === ''))), // not null is empty, null is yes
+                'default' => isset($val['Default'])? $val['Default'] :(isset($val['dflt_value'])?$val['dflt_value']:""),
+                'primary' => !empty($val['Key'])?true:false,
+                'autoinc' => isset($val['Extra'])?strtolower($val['Extra']) == 'auto_increment':isset($val['Key'])?$val['Key']:false,
             );
         }
         return $info;
