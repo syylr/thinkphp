@@ -498,11 +498,12 @@ class View extends Think
             $this->trace('运行数据',    $showTime);
             $log    =   Log::$log;
             $this->trace('日志记录',count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录');
-            $files =  get_included_files();
+            $files = get_included_files();
+            $files = str_replace(realpath(APP_PATH).'\\','',$files);
+            rsort($files);
             $filesList = count($files).'<br />';
-            $path = realpath(APP_PATH);// 避免循环调用函数
             foreach ($files as $val)
-                $filesList .= ltrim($val,$path).'<br />';
+                $filesList .= $val.'<br />';
             $this->trace('加载文件',$filesList);
             $_trace =   array_merge($_trace,$this->trace);
             // 调用Trace页面模板
