@@ -27,52 +27,36 @@ class Db extends Think
 
     // 数据库类型
     protected $dbType           = null;
-
     // 是否自动释放查询结果
     protected $autoFree         = false;
-
     // 是否显示调试信息 如果启用会在日志文件记录sql语句
     public $debug             = false;
-
     // 是否使用永久连接
     protected $pconnect         = false;
-
     // 当前SQL指令
     protected $queryStr          = '';
-
     // 当前查询的结果数据集
     protected $resultSet         = null;
-
     // 最后插入ID
     protected $lastInsID         = null;
-
     // 返回或者影响记录数
     protected $numRows        = 0;
-
     // 返回字段数
     protected $numCols          = 0;
-
     // 事务指令数
     protected $transTimes      = 0;
-
     // 错误信息
     protected $error              = '';
-
     // 数据库连接ID 支持多个连接
     protected $linkID              = array();
-
     // 当前连接ID
     protected $_linkID            =   null;
-
     // 当前查询ID
     protected $queryID          = null;
-
     // 是否已经连接数据库
     protected $connected       = false;
-
     // 数据库连接参数配置
     protected $config             = '';
-
     // SQL 执行时间记录
     protected $beginTime;
     // 数据库表达式
@@ -382,15 +366,13 @@ class Db extends Think
      +----------------------------------------------------------
      */
     protected function parseSet($data) {
-        $setStr  =  '';
         foreach ($data as $key=>$val){
             $value   =  $this->parseValue($val);
             if(is_scalar($value)) { // 过滤非标量数据
                 $set[]    = $this->addSpecialChar($key).'='.$value;
             }
         }
-        $setStr  =  implode(',',$set);
-        return ' SET '.$setStr;
+        return ' SET '.implode(',',$set);
     }
 
     /**
@@ -463,13 +445,11 @@ class Db extends Think
      +----------------------------------------------------------
      */
     protected function parseTable($tables) {
-        $parseStr   =   '';
         if(is_string($tables)) {
             $tables  =  explode(',',$tables);
         }
         array_walk($tables, array(&$this, 'addSpecialChar'));
-        $parseStr   =  implode(',',$tables);
-        return $parseStr;
+        return implode(',',$tables);
     }
 
     /**
@@ -485,7 +465,6 @@ class Db extends Think
      */
     protected function parseWhere($where) {
         $whereStr = '';
-        //if(is_string($where) && strpos($where,'&')) parse_str($where,$where);
         if(is_string($where)) {
             // 直接使用字符串条件
             $whereStr = $where;
