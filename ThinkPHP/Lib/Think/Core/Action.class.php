@@ -51,7 +51,7 @@ abstract class Action extends Think
     // 判断是否为AjAX提交
     protected function isAjax() {
         if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) ) {
-            if(strtolower($_SERVER['HTTP_X_REQUESTED_WITH'])=='xmlhttprequest')
+            if('xmlhttprequest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH']))
                 return true;
         }
         if(!empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) {
