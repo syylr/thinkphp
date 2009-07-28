@@ -30,9 +30,6 @@ abstract class Action extends Think
     // 视图实例对象
     protected $view   =  null;
 
-    // 上次错误信息
-    protected $error  =  '';
-
    /**
      +----------------------------------------------------------
      * 架构函数 取得模板对象实例
@@ -186,7 +183,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      */
     public function __call($method,$parms) {
-        if(strtolower($method) == strtolower(ACTION_NAME)) {
+        if( 0 === strcasecmp($method,ACTION_NAME)) {
             // 检查扩展操作方法
             $_action = C('_actions_');
             if($_action) {
