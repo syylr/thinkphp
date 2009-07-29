@@ -22,94 +22,30 @@
  +------------------------------------------------------------------------------
  */
 class AdvModel extends Model {
-    const MODEL_INSERT      =   1;      //  插入模型数据
-    const MODEL_UPDATE    =   2;      //  更新模型数据
-    const MODEL_BOTH      =   3;      //  包含上面两种方式
+
     const MUST_VALIDATE         =   1;// 必须验证
     const EXISTS_VAILIDATE      =   0;// 表单存在字段则验证
     const VALUE_VAILIDATE       =   2;// 表单值不为空则验证
 
-    // 字段信息
-    protected $fields = array();
-    // 字段类型信息
-    protected $type  =   array();
     // 数据库连接对象列表
     private $_db = array();
-    // 自动写入时间戳的字段名称
-    protected $autoCreateTimestamps = 'create_time';
-    protected $autoUpdateTimestamps = 'update_time';
-    // 自动写入的时间格式
-    protected $autoTimeFormat = '';
+    // 返回数据类型
+    protected $returnType  =  'array';
+    protected $blobFields     =   array();
+    protected $blobValues    = null;
 
     public function __construct() {
         parent::__construct();
         // 设置默认的数据库连接
         $this->_db[0]   =   $this->db;
-        // 数据表字段检测
-        $this->_checkTableInfo();
-    }
-
-    protected function _checkTableInfo() {
-        // 如果不是Model类 自动记录数据表信息
-        // 只在第一次执行记录
-        if(empty($this->fields)) {
-            // 如果数据表字段没有定义则自动获取
-            if(C('DB_FIELDS_CACHE')) {
-                $identify   =   $this->name.'_fields';
-                $this->fields = F($identify);
-                if(!$this->fields) {
-                    $this->flush();
-                }
-            }else{
-                // 每次都会读取数据表信息
-                $this->flush();
-            }
-        }
-    }
-
-    public function flush() {
-        // 缓存不存在则查询数据表信息
-        $fields =   $this->db->getFields($this->getTableName());
-        $this->fields   =   array_keys($fields);
-        $this->fields['_autoinc'] = false;
-        foreach ($fields as $key=>$val){
-            // 记录字段类型
-            $this->type[$key]    =   $val['type'];
-            if($val['primary']) {
-                $this->fields['_pk'] = $key;
-                if($val['autoinc']) $this->fields['_autoinc']   =   true;
-            }
-        }
-        // 2008-3-7 增加缓存开关控制
-        if(C('DB_FIELDS_CACHE')) {
-            // 永久缓存数据表信息
-            // 2007-10-31 更改为F方法保存，保存在项目的Data目录，并且始终采用文件形式
-            $identify   =   $this->name.'_fields';
-            F($identify,$this->fields);
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 获取主键名称
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function getPk() {
-        return $this->fields['_pk']?$this->fields['_pk']:'id';
-    }
-
-    public function getDbFields(){
-        return $this->fields;
     }
 
     // 查询成功后的回调方法
     protected function _after_find(&$result,$options='') {
         // 检查序列化字段
-        $result   =  $this->checkSerializeField($result);
+        $this->checkSerializeField($result);
+        // 获取文本字段
+        $this->getBlobFields($result);
         // 检查字段过滤
         $result   =  $this->getFilterFields($result);
     }
@@ -118,18 +54,30 @@ class AdvModel extends Model {
     protected function _after_select(&$resultSet,$options='') {
         // 检查序列化字段
         $resultSet   =  $this->checkListSerializeField($resultSet);
+        // 获取文本字段
+        $resultSet   =  $this->getListBlobFields($resultSet);
         // 检查列表字段过滤
         $resultSet   =  $this->getFilterListFields($resultSet);
+
     }
 
     // 写入前的回调方法
     protected function _before_insert(&$data,$options='') {
+        // 检查文本字段
+        $data = $this->checkBlobFields($data);
         $data   =  $this->setFilterFields($data);
         $data = $this->serializeField($data);
     }
 
+    protected function _after_insert($data,$options) {
+        // 保存文本字段
+        $this->saveBlobFields($data);
+    }
+
     // 更新前的回调方法
     protected function _before_update(&$data,$options='') {
+        // 检查文本字段
+        $data = $this->checkBlobFields($data);
         // 检查只读字段
         $data = $this->checkReadonlyField($data);
         $data   =  $this->setFilterFields($data);
@@ -137,23 +85,236 @@ class AdvModel extends Model {
         $data = $this->serializeField($data);
     }
 
+    protected function _after_update($data,$options) {
+        // 保存文本字段
+        $this->saveBlobFields($data);
+    }
+
     // 创建数据前的回调方法
     protected function _before_create($data,$type){
-        // 表单令牌验证
-        if(C('TOKEN_ON') && !$this->autoCheckToken($data)) {
-            $this->error = L('_TOKEN_ERROR_');
-            return false;
-        }
         // 自动验证
         return $this->autoValidation($data,$type);
     }
 
     // 创建数据后的回调方法
     protected function _after_create(&$data,$type) {
-        // 自动保存时间戳
-        $this->autoSaveTime($data,$type);
         // 自动完成
         $this->autoOperation($data,$type);
+    }
+
+    protected function _after_delete($data,$options) {
+        // 删除Blob数据
+        $this->delBlobFields($data);
+    }
+    /**
+     +----------------------------------------------------------
+     * 返回数据
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $data 数据
+     * @param string $type 返回类型 默认为数组
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    protected function returnResult($data,$type='') {
+        if('' === $type) {
+            $type = $this->returnType;
+        }
+        switch($type) {
+            case 'array' :  return $data;
+            case 'object':  return (object)$data;
+            default:// 允许用户自定义返回类型
+                if(class_exists($type)){
+                    return new $type($data);
+                }else{
+                    throw_exception(L('_CLASS_NOT_EXIST_').':'.$type);
+                }
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 返回数据列表
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $resultSet 数据
+     * @param string $type 返回类型 默认为数组
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    protected function returnResultSet(&$resultSet,$type='') {
+        foreach ($resultSet as $key=>$data){
+            $resultSet[$key]  =  $this->returnResult($data,$type);
+        }
+        return $resultSet;
+    }
+
+    public function checkBlobFields(&$data) {
+        // 检查Blob文件保存字段
+        if(!empty($this->blobFields)) {
+            foreach ($this->blobFields as $field){
+                if(isset($data[$field])) {
+                    if(isset($data[$this->getPk()])) {
+                        $this->blobValues[$this->name.'/'.$data[$this->getPk()].'_'.$field] =   $data[$field];
+                    }else{
+                        $this->blobValues[$this->name.'/@?id@_'.$field] =   $data[$field];
+                    }
+                    unset($data[$field]);
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取数据集的文本字段
+     +----------------------------------------------------------
+     * @access pubic
+     +----------------------------------------------------------
+     * @param mixed $resultSet 查询的数据
+     * @param string $field 查询的字段
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function getListBlobFields(&$resultSet,$field='') {
+        if(!empty($this->blobFields)) {
+            foreach ($resultSet as $key=>$result){
+                $result =   $this->getBlobFields($result,$field);
+                $resultSet[$key]    =   $result;
+            }
+        }
+        return $resultSet;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取数据的文本字段
+     +----------------------------------------------------------
+     * @access pubic
+     +----------------------------------------------------------
+     * @param mixed $data 查询的数据
+     * @param string $field 查询的字段
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function getBlobFields(&$data,$field='') {
+        if(!empty($this->blobFields)) {
+            $pk =   $this->getPk();
+            $id =   $data[$pk];
+            if(empty($field)) {
+                foreach ($this->blobFields as $field){
+                    $identify   =   $this->name.'/'.$id.'_'.$field;
+                    $data[$field]   =   F($identify);
+                }
+                return $data;
+            }else{
+                $identify   =   $this->name.'/'.$id.'_'.$field;
+                return F($identify);
+            }
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 保存File方式的字段
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $data 保存的数据
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function saveBlobFields(&$data) {
+        if(!empty($this->blobFields)) {
+            foreach ($this->blobValues as $key=>$val){
+                if(strpos($key,'@?id@')) {
+                    $key    =   str_replace('@?id@',$data[$this->getPk()],$key);
+                }
+                F($key,$val);
+            }
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 删除File方式的字段
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $data 保存的数据
+     * @param string $field 查询的字段
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function delBlobFields(&$data,$field='') {
+        if(!empty($this->blobFields)) {
+            $pk =   $this->getPk();
+            $id =   $data[$pk];
+            if(empty($field)) {
+                foreach ($this->blobFields as $field){
+                    $identify   =   $this->name.'/'.$id.'_'.$field;
+                    F($identify,null);
+                }
+            }else{
+                $identify   =   $this->name.'/'.$id.'_'.$field;
+                F($identify,null);
+            }
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 随机获取数据表的数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $options 查询参数
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function rand($options=array()) {
+        if(empty($options) && !empty($this->options)) {
+            $options    =   $this->options;
+            // 查询过后清空sql表达式组装 避免影响下次查询
+            $this->options  =   array();
+        }
+        $field      =   isset($options['field'])?   $options['field']   :   '*';
+        $where  =   isset($options['condition'])?   $options['condition']   : 1;
+        $limit      =   isset($options['limit'])?   $options['limit']   : 1;
+        $table      =   isset($options['table'])?   $options['table']:$this->getTableName();
+        // 拼装查询SQL
+        $sql    =   'SELECT '.$field.' FROM '.$table.'  WHERE '.
+            $where.' AND
+            id >= (SELECT
+            floor(
+            RAND() * ((SELECT
+            MAX(id)
+            FROM
+            '.$table.')-(SELECT
+            MIN(id)
+            FROM
+            '.$table.')) + (SELECT
+            MIN(id)
+            FROM
+            '.$table.')))
+            ORDER
+            BY
+            id
+            LIMIT
+            '.$limit;
+
+        $rs = $this->query($sql);
+        return $rs;
     }
 
     /**
@@ -499,26 +660,6 @@ class AdvModel extends Model {
     }
 
 
-    // 自动保存时间戳字段
-    protected function autoSaveTime(&$data,$type) {
-        switch($type) {
-            case self::INSERT_STATUS:
-                $name   = $this->autoCreateTimestamps;
-                break;
-            case self::UPDATE_STATUS:
-                $name   = $this->autoUpdateTimestamps;
-        }
-        // 自动保存时间戳
-        if(!empty($this->autoTimeFormat)) {
-            // 用指定日期格式记录时间戳
-            $data[$name] =    date($this->autoTimeFormat);
-        }else{
-            // 默认记录时间戳
-            $data[$name] = time();
-        }
-        return $data;
-    }
-
     /**
      +----------------------------------------------------------
      * 自动表单处理
@@ -539,7 +680,7 @@ class AdvModel extends Model {
                 // array('field','填充内容','填充条件','附加规则',[额外参数])
                 if(empty($auto[2])) $auto[2] = self::MODEL_INSERT;// 默认为新增的时候自动填充
                 else $auto[2]   =   strtoupper($auto[2]);
-                if( ($type ==self::INSERT_STATUS  && $auto[2] == self::MODEL_INSERT) ||   ($type == self::UPDATE_STATUS  && $auto[2] == self::MODEL_UPDATE) || $auto[2] == self::MODEL_BOTH)
+                if( ($type ==self::MODEL_INSERT  && $auto[2] == self::MODEL_INSERT) ||   ($type == self::MODEL_UPDATE  && $auto[2] == self::MODEL_UPDATE) || $auto[2] == self::MODEL_BOTH)
                 {
                     switch($auto[3]) {
                         case 'function':    //  使用函数进行填充 字段的值作为参数
@@ -594,7 +735,7 @@ class AdvModel extends Model {
                 // 验证因子定义格式
                 // array(field,rule,message,condition,type,when,params)
                 // 判断是否需要执行验证
-                if(empty($val[5]) || $val[5]== self::ALL_STATUS || $val[5]== $type ) {
+                if(empty($val[5]) || $val[5]== self::MODEL_BOTH || $val[5]== $type ) {
                     if(0==strpos($val[2],'{%') && strpos($val[2],'}')) {
                         // 支持提示信息的多语言 使用 {%语言定义} 方式
                         $val[2]  =  L(substr($val[2],2,-1));
@@ -693,42 +834,11 @@ class AdvModel extends Model {
             case 'regex':
             default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
                 // 检查附加规则
-                if(!$this->validate($data[$val[0]],$val[1])) {
+                if(!$this->regex($data[$val[0]],$val[1])) {
                     return false;
                 }
         }
         return true;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 使用正则验证数据
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $value  要验证的数据
-     * @param string $rule 验证规则
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    protected function validate($value,$rule) {
-        $validate = array(
-            'require'=> '/.+/',
-            'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
-            'url' => '/^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/',
-            'currency' => '/^\d+(\.\d+)?$/',
-            'number' => '/\d+$/',
-            'zip' => '/^[1-9]\d{5}$/',
-            'integer' => '/^[-\+]?\d+$/',
-            'double' => '/^[-\+]?\d+(\.\d+)?$/',
-            'english' => '/^[A-Za-z]+$/',
-        );
-        // 检查是否有内置的正则表达式
-        if(isset($validate[strtolower($rule)])) {
-            $rule   =   $validate[strtolower($rule)];
-        }
-        return preg_match($rule,$value)===1;
     }
 
     /**
@@ -913,16 +1023,6 @@ class AdvModel extends Model {
             }
         }
         return $resultSet;
-    }
-
-    // 自动表单令牌验证
-    public function autoCheckToken($data) {
-        $name   = C('TOKEN_NAME');
-        if($data[$name] == $_SESSION[$name]){
-            return true;
-        }else {
-            return false;
-        }
     }
 
 }
