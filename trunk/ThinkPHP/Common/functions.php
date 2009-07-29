@@ -420,7 +420,6 @@ function alias_import($alias,$classfile='') {
  */
 function D($className='',$appName='')
 {
-    return M($className);
     static $_model = array();
     if(empty($className)) {
         return new  Model();
