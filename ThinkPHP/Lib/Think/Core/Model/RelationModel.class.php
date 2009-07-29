@@ -10,10 +10,6 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-define('HAS_ONE',1);
-define('BELONGS_TO',2);
-define('HAS_MANY',3);
-define('MANY_TO_MANY',4);
 /**
  +------------------------------------------------------------------------------
  * ThinkPHP 关联模型类
@@ -30,7 +26,7 @@ class RelationModel extends Model {
     protected $autoDelRelations        = false;        // 自动关联删除
     protected $autoAddRelations       = false;        // 自动关联写入
     protected $autoReadRelations      = false;        // 自动关联查询
-
+    public    $_link;
     /**
      +----------------------------------------------------------
      * 动态方法实现

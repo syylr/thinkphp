@@ -23,6 +23,7 @@
  */
 class ViewModel extends Model {
 
+    public $viewFields;
     /**
      +----------------------------------------------------------
      * 得到完整的数据表名
