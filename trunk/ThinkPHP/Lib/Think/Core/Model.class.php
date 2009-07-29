@@ -25,45 +25,42 @@
 class Model extends Think implements IteratorAggregate
 {
     // 操作状态
-    const INSERT_STATUS    =  1;  // 插入
-    const UPDATE_STATUS   =  2;  // 更新
-    const ALL_STATUS          =  3;  // 全部
+    const MODEL_INSERT      =   1;      //  插入模型数据
+    const MODEL_UPDATE    =   2;      //  更新模型数据
+    const MODEL_BOTH      =   3;      //  包含上面两种方式
 
     // 当前数据库操作对象
     protected $db = null;
-
     // 主键名称
     protected $pk  = 'id';
-
     // 数据表前缀
     protected $tablePrefix  =   '';
-
     // 模型名称
     protected $name = '';
-
     // 数据库名称
     protected $dbName  = '';
-
     // 数据表名（不包含表前缀）
     protected $tableName = '';
-
     // 实际数据表名（包含表前缀）
     protected $trueTableName ='';
-
     // 最近错误信息
     protected $error = '';
-
+    // 字段信息
+    protected $fields = array();
+    // 字段类型信息
+    protected $type  =   array();
     // 数据信息
     protected $data =   array();
-
     // 查询表达式参数
     protected $options  =   array();
-
     // 数据列表信息
     protected $dataList =   array();
-
-    // 返回数据类型
-    protected $returnType  =  'array';
+    // 自动写入时间戳的字段名称
+    protected $autoRecordTime   =  true;
+    protected $autoCreateTimestamps = 'create_time';
+    protected $autoUpdateTimestamps = 'update_time';
+    // 自动写入的时间格式
+    protected $autoTimeFormat = '';
 
     /**
      +----------------------------------------------------------
@@ -71,8 +68,6 @@ class Model extends Think implements IteratorAggregate
      * 取得DB类的实例对象 数据表字段检查
      +----------------------------------------------------------
      * @access public
-     +----------------------------------------------------------
-     * @param mixed $data 要创建的数据对象内容
      +----------------------------------------------------------
      */
     public function __construct()
@@ -92,6 +87,63 @@ class Model extends Think implements IteratorAggregate
         }
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
+        // 数据表字段检测
+        $this->_checkTableInfo();
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 自动检测数据表信息
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    protected function _checkTableInfo() {
+        // 如果不是Model类 自动记录数据表信息
+        // 只在第一次执行记录
+        if(empty($this->fields)) {
+            // 如果数据表字段没有定义则自动获取
+            if(C('DB_FIELDS_CACHE')) {
+                $this->fields = F($this->name.'_fields');
+                if(!$this->fields) {
+                    $this->flush();
+                }
+            }else{
+                // 每次都会读取数据表信息
+                $this->flush();
+            }
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取字段信息并缓存
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function flush() {
+        // 缓存不存在则查询数据表信息
+        $fields =   $this->db->getFields($this->getTableName());
+        $this->fields   =   array_keys($fields);
+        $this->fields['_autoinc'] = false;
+        foreach ($fields as $key=>$val){
+            // 记录字段类型
+            $this->type[$key]    =   $val['type'];
+            if($val['primary']) {
+                $this->fields['_pk'] = $key;
+                if($val['autoinc']) $this->fields['_autoinc']   =   true;
+            }
+        }
+        // 2008-3-7 增加缓存开关控制
+        if(C('DB_FIELDS_CACHE')) {
+            // 永久缓存数据表信息
+            F($this->name.'_fields',$this->fields);
+        }
     }
 
     /**
@@ -390,7 +442,7 @@ class Model extends Think implements IteratorAggregate
         if($resultSet = $this->db->select($options)) {
             $this->dataList = $resultSet;
             $this->_after_select($resultSet,$options);
-            return $this->returnResultSet($resultSet);
+            return $resultSet;
         }else{
             return false;
         }
@@ -454,83 +506,13 @@ class Model extends Think implements IteratorAggregate
         if($result = $this->db->select($options)) {
             $this->data = $result[0];
             $this->_after_find($this->data,$options);
-            return $this->returnResult($this->data);
+            return $this->data;
         }else{
             return false;
         }
      }
      // 查询成功的回调方法
      protected function _after_find(&$result,$options) {}
-
-    /**
-     +----------------------------------------------------------
-     * 返回数据
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param array $data 数据
-     * @param string $type 返回类型 默认为数组
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    protected function returnResult($data,$type='') {
-        if('' === $type) {
-            $type = $this->returnType;
-        }
-        switch($type) {
-            case 'array' :  return $data;
-            case 'object':  return (object)$data;
-            default:// 允许用户自定义返回类型
-                if(class_exists($type)){
-                    return new $type($data);
-                }else{
-                    throw_exception(L('_CLASS_NOT_EXIST_').':'.$type);
-                }
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 返回数据列表
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param array $resultSet 数据
-     * @param string $type 返回类型 默认为数组
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    protected function returnResultSet(&$resultSet,$type='') {
-        foreach ($resultSet as $key=>$data){
-            $resultSet[$key]  =  $this->returnResult($data,$type);
-        }
-        return $resultSet;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 设置返回数据类型
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $type 返回类型
-     * @param string $classpath 类路径
-     * 当type为用户自定义类型的时候使用
-     * 会自动完成类的导入工作
-     +----------------------------------------------------------
-     * @return model
-     +----------------------------------------------------------
-     */
-    public function returnAs($type,$classpath=NULL) {
-        $this->returnType = $type;
-        if(NULL !== $classpath) {
-            // 如果设置了类路径 则首先导入自定义类
-            import($classpath.$type);
-        }
-        return $this;
-    }
 
     /**
      +----------------------------------------------------------
@@ -655,13 +637,18 @@ class Model extends Think implements IteratorAggregate
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
         }
-        $type = self::INSERT_STATUS;// 新增数据
+        $type = self::MODEL_INSERT;// 新增数据
         if(isset($data[$this->getPk()])) {
             $pk   =  $this->getPk();
             if($this->field($pk)->where($pk.'=\''.$data[$pk].'\'')->find()) {
                 // 编辑状态
-                $type = self::UPDATE_STATUS; // 编辑数据
+                $type = self::MODEL_UPDATE; // 编辑数据
             }
+        }
+        // 表单令牌验证
+        if(C('TOKEN_ON') && !$this->autoCheckToken($data)) {
+            $this->error = L('_TOKEN_ERROR_');
+            return false;
         }
         // 验证回调接口
         if(!$this->_before_create($data,$type)) {
@@ -676,6 +663,23 @@ class Model extends Think implements IteratorAggregate
                 }
             }
         }
+        if($this->autoRecordTime) {
+            // 自动保存时间戳
+            switch($type) {
+                case self::MODEL_INSERT:
+                    $name   = $this->autoCreateTimestamps;
+                    break;
+                case self::MODEL_UPDATE:
+                    $name   = $this->autoUpdateTimestamps;
+            }
+            if(!empty($this->autoTimeFormat)) {
+                // 用指定日期格式记录时间戳
+                $data[$name] =    date($this->autoTimeFormat);
+            }else{
+                // 默认记录时间戳
+                $data[$name] = time();
+            }
+        }
         // 创建完成后回调接口
         $this->_after_create($data,$type);
         // 赋值当前数据对象
@@ -686,6 +690,12 @@ class Model extends Think implements IteratorAggregate
      protected function _before_create($data,$type) {return true;}
      // 数据创建成功后的回调方法
      protected function _after_create(&$data,$type) {}
+
+    // 自动表单令牌验证
+    public function autoCheckToken($data) {
+        $name   = C('TOKEN_NAME');
+        return $data[$name] == $_SESSION[$name];
+    }
 
     /**
      +----------------------------------------------------------
@@ -936,6 +946,161 @@ class Model extends Think implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
+     * 自动验证数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $rule 验证规则
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function validate($rule='') {
+        foreach($rule as $key=>$val) {
+            // 验证因子定义格式
+            // array(field,rule,message,type)
+            if(0==strpos($val[2],'{%') && strpos($val[2],'}')) {
+                // 支持提示信息的多语言 使用 {%语言定义} 方式
+                $val[2]  =  L(substr($val[2],2,-1));
+            }
+            if(false === $this->_validationField($data,$val)){
+                $this->error    =   $val[2];
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 根据验证因子验证字段
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $data 创建数据
+     * @param string $val 验证规则
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    private function _validationField($data,$val) {
+        $args = array_slice($val,4);
+        switch($val[3]) {
+            case 'function':// 使用函数进行验证
+                return call_user_func_array($val[1], $args);
+            case 'callback':// 调用方法进行验证
+                return call_user_func_array(array(&$this, $val[1]), $args);
+            case 'confirm': // 验证两个字段是否相同
+                if($data[$val[0]] != $data[$val[1]] ) {
+                    return false;
+                }
+                break;
+            case 'in': // 验证是否在某个数组范围之内
+                if(!in_array($data[$val[0]] ,$val[1]) ) {
+                    return false;
+                }
+                break;
+            case 'equal': // 验证是否等于某个值
+                if($data[$val[0]] != $val[1]) {
+                    return false;
+                }
+                break;
+            case 'unique': // 验证某个值是否唯一
+                if(is_string($val[0]) && strpos($val[0],',')) {
+                    $val[0]  =  explode(',',$val[0]);
+                }
+                $map = array();
+                if(is_array($val[0])) {
+                    // 支持多个字段验证
+                    foreach ($val[0] as $field){
+                        $map[$field]   =  $data[$field];
+                    }
+                }else{
+                    $map[$val[0]] = $data[$val[0]];
+                }
+                if($this->where($map)->find()) {
+                    return false;
+                }
+                break;
+            case 'regex':
+            default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
+                if(!$this->regex($data[$val[0]],$val[1])) {
+                    return false;
+                }
+        }
+        return true;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 使用正则验证数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $value  要验证的数据
+     * @param string $rule 验证规则
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function regex($value,$rule) {
+        $validate = array(
+            'require'=> '/.+/',
+            'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
+            'url' => '/^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/',
+            'currency' => '/^\d+(\.\d+)?$/',
+            'number' => '/\d+$/',
+            'zip' => '/^[1-9]\d{5}$/',
+            'integer' => '/^[-\+]?\d+$/',
+            'double' => '/^[-\+]?\d+(\.\d+)?$/',
+            'english' => '/^[A-Za-z]+$/',
+        );
+        // 检查是否有内置的正则表达式
+        if(isset($validate[strtolower($rule)])) {
+            $rule   =   $validate[strtolower($rule)];
+        }
+        return preg_match($rule,$value)===1;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 自动填充数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $rule 验证规则
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function filter($data) {
+        foreach ($data as $key=>$auto){
+            // 填充因子定义格式
+            // array('field','填充内容','填充条件',[额外参数])
+            $args = array_slice($auto,3);
+            switch($auto[2]) {
+                case 'function':    //  使用函数进行填充 字段的值作为参数
+                    $this->data[$auto[0]]  = call_user_func_array($auto[1], $args);
+                    break;
+                case 'callback': // 使用回调方法
+                    $this->data[$auto[0]]  =  call_user_func_array(array(&$this,$auto[1]), $args);
+                    break;
+                case 'field':    // 用其它字段的值进行填充
+                    $this->data[$auto[0]] = $this->data[$auto[1]];
+                    break;
+                case 'string':
+                default: // 默认作为字符串填充
+                    $this->data[$auto[0]] = $auto[1];
+            }
+            if(false === $this->data[$auto[0]] ) {
+                unset($this->data[$auto[0]]);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
      * 获取主键名称
      +----------------------------------------------------------
      * @access public
@@ -944,8 +1109,20 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function getPk() {
-        return $this->pk?$this->pk:'id';
+        return isset($this->fields['_pk'])?$this->fields['_pk']:$this->pk;
     }
 
+    /**
+     +----------------------------------------------------------
+     * 获取数据表字段信息
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function getDbFields(){
+        return $this->fields;
+    }
 };
 ?>
