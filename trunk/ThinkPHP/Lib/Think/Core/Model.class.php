@@ -28,7 +28,8 @@ class Model extends Think implements IteratorAggregate
     const MODEL_INSERT      =   1;      //  插入模型数据
     const MODEL_UPDATE    =   2;      //  更新模型数据
     const MODEL_BOTH      =   3;      //  包含上面两种方式
-
+    // 当前使用的扩展模型类型
+    private $_extModel =  null;
     // 当前数据库操作对象
     protected $db = null;
     // 主键名称
@@ -75,7 +76,8 @@ class Model extends Think implements IteratorAggregate
         // 模型初始化
         $this->_initialize();
         // 模型名称获取
-        $this->name =   $this->getModelName();
+        if(empty($this->name))
+            $this->name =   substr(get_class($this),0,-5);
         // 数据库初始化操作
         import("Db");
         // 获取数据库操作对象
@@ -159,6 +161,47 @@ class Model extends Think implements IteratorAggregate
     public static function getInstance()
     {
         return get_instance_of(__CLASS__);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 动态切换扩展模型类型
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $type 模型类型名称
+     * @param mixed $vars 要传入扩展模型的属性变量
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function switchModel($type,$vars=array()) {
+        $class = ucwords(strtolower($type)).'Model';
+        require_cache(dirname(__FILE__).'/Model/'.$class.'.class.php');
+        if(!class_exists($class))
+            throw_exception($class.L('_MODEL_NOT_EXIST_'));
+        $this->_extModel   = new $class;
+        // 传入当前模型名称给扩展模型
+        $this->_extModel->name  =  $this->name;
+        if(!empty($vars)) {
+            // 传入当前模型的属性到扩展模型
+            foreach ($vars as $var)
+                $this->_extModel->$var  = $this->$var;
+        }
+        return $this->_extModel;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 删除扩展模型
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function delModel() {
+        $this->_extModel =  null;
     }
 
     /**
@@ -780,23 +823,6 @@ class Model extends Think implements IteratorAggregate
             $this->rollback();
         }
         return true;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 得到当前的数据对象名称
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function getModelName()
-    {
-        if(empty($this->name)) {
-            $this->name =   substr(get_class($this),0,-5);
-        }
-        return $this->name;
     }
 
     /**
