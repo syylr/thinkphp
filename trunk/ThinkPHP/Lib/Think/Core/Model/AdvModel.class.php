@@ -30,9 +30,14 @@ class AdvModel extends Model {
     // 数据库连接对象列表
     private $_db = array();
     // 返回数据类型
-    protected $returnType  =  'array';
-    protected $blobFields     =   array();
-    protected $blobValues    = null;
+    public $returnType  =  'array';
+    public $blobFields     =   array();
+    public $blobValues    = null;
+    public $_validate;
+    public $_auto;
+    public $_filter;
+    public $serializeField;
+    public $readonlyField;
 
     public function __construct($name='') {
         parent::__construct($name);
@@ -678,9 +683,9 @@ class AdvModel extends Model {
             foreach ($this->_auto as $auto){
                 // 填充因子定义格式
                 // array('field','填充内容','填充条件','附加规则',[额外参数])
-                if(empty($auto[2])) $auto[2] = self::MODEL_INSERT;// 默认为新增的时候自动填充
+                if(empty($auto[2])) $auto[2] = AdvModel::MODEL_INSERT;// 默认为新增的时候自动填充
                 else $auto[2]   =   strtoupper($auto[2]);
-                if( ($type ==self::MODEL_INSERT  && $auto[2] == self::MODEL_INSERT) ||   ($type == self::MODEL_UPDATE  && $auto[2] == self::MODEL_UPDATE) || $auto[2] == self::MODEL_BOTH)
+                if( ($type ==AdvModel::MODEL_INSERT  && $auto[2] == AdvModel::MODEL_INSERT) ||   ($type == AdvModel::MODEL_UPDATE  && $auto[2] == AdvModel::MODEL_UPDATE) || $auto[2] == AdvModel::MODEL_BOTH)
                 {
                     switch($auto[3]) {
                         case 'function':    //  使用函数进行填充 字段的值作为参数
@@ -735,22 +740,22 @@ class AdvModel extends Model {
                 // 验证因子定义格式
                 // array(field,rule,message,condition,type,when,params)
                 // 判断是否需要执行验证
-                if(empty($val[5]) || $val[5]== self::MODEL_BOTH || $val[5]== $type ) {
+                if(empty($val[5]) || $val[5]== AdvModel::MODEL_BOTH || $val[5]== $type ) {
                     if(0==strpos($val[2],'{%') && strpos($val[2],'}')) {
                         // 支持提示信息的多语言 使用 {%语言定义} 方式
                         $val[2]  =  L(substr($val[2],2,-1));
                     }
-                    $val[3]  =  isset($val[3])?$val[3]:self::EXISTS_VAILIDATE;
+                    $val[3]  =  isset($val[3])?$val[3]:AdvModel::EXISTS_VAILIDATE;
                     $val[4]  =  isset($val[4])?$val[4]:'regex';
                     // 判断验证条件
                     switch($val[3]) {
-                        case self::MUST_VALIDATE:   // 必须验证 不管表单是否有设置该字段
+                        case AdvModel::MUST_VALIDATE:   // 必须验证 不管表单是否有设置该字段
                             if(false === $this->_validationField($data,$val)){
                                 $this->error    =   $val[2];
                                 return false;
                             }
                             break;
-                        case self::VALUE_VAILIDATE:    // 值不为空的时候才验证
+                        case AdvModel::VALUE_VAILIDATE:    // 值不为空的时候才验证
                             if('' != trim($data[$val[0]])){
                                 if(false === $this->_validationField($data,$val)){
                                     $this->error    =   $val[2];
