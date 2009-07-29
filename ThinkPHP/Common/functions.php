@@ -294,7 +294,7 @@ function __autoload($classname)
 function require_cache($filename)
 {
     static $_importFiles = array();
-    //$filename   =  realpath($filename);
+    $filename   =  realpath($filename);
     if (!isset($_importFiles[$filename])) {
         if(file_exists_case($filename)){
             require $filename;
@@ -420,6 +420,7 @@ function alias_import($alias,$classfile='') {
  */
 function D($className='',$appName='')
 {
+    return M($className);
     static $_model = array();
     if(empty($className)) {
         return new  Model();
@@ -447,6 +448,23 @@ function D($className='',$appName='')
     }else {
         throw_exception($className.L('_MODEL_NOT_EXIST_'));
     }
+}
+
+/**
+ +----------------------------------------------------------
+ * M函数用于实例化一个没有模型文件的Model
+ +----------------------------------------------------------
+ * @param string className Model名称
+ +----------------------------------------------------------
+ * @return Model
+ +----------------------------------------------------------
+ */
+function M($className='') {
+    static $_model = array();
+    if(!isset($_model[$className])) {
+        $_model[$className]   = new Model($className);
+    }
+    return $_model[$className];
 }
 
 /**
