@@ -71,13 +71,16 @@ class Model extends Think implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct()
+    public function __construct($name='')
     {
         // 模型初始化
         $this->_initialize();
-        // 模型名称获取
-        if(empty($this->name))
+        if(!empty($name)) {
+            $this->name   =  $name;
+        }elseif(empty($this->name)){
+            // 模型名称自动获取
             $this->name =   substr(get_class($this),0,-5);
+        }
         // 数据库初始化操作
         import("Db");
         // 获取数据库操作对象
@@ -180,10 +183,9 @@ class Model extends Think implements IteratorAggregate
         require_cache(dirname(__FILE__).'/Model/'.$class.'.class.php');
         if(!class_exists($class))
             throw_exception($class.L('_MODEL_NOT_EXIST_'));
-        $this->_extModel   = new $class;
+        $this->_extModel   = new $class($this->name);
         // 传入当前模型名称给扩展模型
-        $this->_extModel->name  =  $this->name;
-        $this->_extModel->trueTableName  = $this->trueTableName;
+        //$this->_extModel->trueTableName  = $this->trueTableName;
         if(!empty($vars)) {
             // 传入当前模型的属性到扩展模型
             foreach ($vars as $var)

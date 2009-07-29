@@ -34,8 +34,8 @@ class AdvModel extends Model {
     protected $blobFields     =   array();
     protected $blobValues    = null;
 
-    public function __construct() {
-        parent::__construct();
+    public function __construct($name='') {
+        parent::__construct($name);
         // 设置默认的数据库连接
         $this->_db[0]   =   $this->db;
     }
