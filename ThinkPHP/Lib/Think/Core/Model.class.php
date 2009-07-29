@@ -28,7 +28,7 @@ class Model extends Think implements IteratorAggregate
     const MODEL_INSERT      =   1;      //  插入模型数据
     const MODEL_UPDATE    =   2;      //  更新模型数据
     const MODEL_BOTH      =   3;      //  包含上面两种方式
-    // 当前使用的扩展模型类型
+    // 当前使用的扩展模型
     private $_extModel =  null;
     // 当前数据库操作对象
     protected $db = null;
