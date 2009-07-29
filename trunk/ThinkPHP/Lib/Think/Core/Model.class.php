@@ -184,8 +184,6 @@ class Model extends Think implements IteratorAggregate
         if(!class_exists($class))
             throw_exception($class.L('_MODEL_NOT_EXIST_'));
         $this->_extModel   = new $class($this->name);
-        // 传入当前模型名称给扩展模型
-        //$this->_extModel->trueTableName  = $this->trueTableName;
         if(!empty($vars)) {
             // 传入当前模型的属性到扩展模型
             foreach ($vars as $var)
