@@ -65,7 +65,6 @@ function build_runtime() {
     }
 }
 
-
 function mkdirs($dirs,$mode=0777) {
     foreach ($dirs as $dir){
         if(!is_dir($dir))  mkdir($dir,$mode);

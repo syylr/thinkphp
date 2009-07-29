@@ -563,8 +563,7 @@ function tag($name,$params=array()) {
 function B($name) {
     $class = $name.'Behavior';
     require_cache(LIB_PATH.'Behavior/'.$class.'.class.php');
-    $behavior   =  new $class();
-    $behavior->run();
+    call_user_func_array(array($class, 'run'));
 }
 
 // 渲染输出Widget
@@ -625,6 +624,8 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
         }else{
             // 缓存数据
             $content   =   "<?php\nif (!defined('THINK_PATH')) exit();\n//".sprintf('%012d',$expire)."\nreturn ".var_export($value,true).";\n?>";
+            $dir   =  dirname($filename);
+            if(!is_dir($dir))  mkdir($dir);
             $result  =   file_put_contents($filename,$content);
             $_cache[$name]   =   $value;
         }
