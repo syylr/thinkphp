@@ -79,7 +79,7 @@ class Model extends Think implements IteratorAggregate
             $this->name   =  $name;
         }elseif(empty($this->name)){
             // 模型名称自动获取
-            $this->name =   substr(get_class($this),0,-5);
+            $this->name =   $this->getModelName();
         }
         // 数据库初始化操作
         import("Db");
@@ -178,7 +178,7 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function switchModel($name) {
-        return new Model($name);
+        return M($name);
     }
 
     /**
@@ -827,6 +827,23 @@ class Model extends Think implements IteratorAggregate
             $this->rollback();
         }
         return true;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 得到当前的数据对象名称
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function getModelName()
+    {
+        if(empty($this->name)) {
+            $this->name =   substr(get_class($this),0,-5);
+        }
+        return $this->name;
     }
 
     /**
