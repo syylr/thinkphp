@@ -168,6 +168,21 @@ class Model extends Think implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
+     * 动态切换到其他模型
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $name 模型名称
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function switchModel($name) {
+        return new Model($name);
+    }
+
+    /**
+     +----------------------------------------------------------
      * 动态切换扩展模型类型
      +----------------------------------------------------------
      * @access public
@@ -178,11 +193,12 @@ class Model extends Think implements IteratorAggregate
      * @return Model
      +----------------------------------------------------------
      */
-    public function switchModel($type,$vars=array()) {
+    public function extendModel($type,$vars=array()) {
         $class = ucwords(strtolower($type)).'Model';
         require_cache(dirname(__FILE__).'/Model/'.$class.'.class.php');
         if(!class_exists($class))
             throw_exception($class.L('_MODEL_NOT_EXIST_'));
+        // 实例化扩展模型
         $this->_extModel   = new $class($this->name);
         if(!empty($vars)) {
             // 传入当前模型的属性到扩展模型
@@ -190,19 +206,6 @@ class Model extends Think implements IteratorAggregate
                 $this->_extModel->$var  = $this->$var;
         }
         return $this->_extModel;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 删除扩展模型
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    public function delModel() {
-        $this->_extModel =  null;
     }
 
     /**
