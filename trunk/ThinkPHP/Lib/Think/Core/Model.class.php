@@ -183,6 +183,7 @@ class Model extends Think implements IteratorAggregate
         $this->_extModel   = new $class;
         // 传入当前模型名称给扩展模型
         $this->_extModel->name  =  $this->name;
+        $this->_extModel->trueTableName  = $this->trueTableName;
         if(!empty($vars)) {
             // 传入当前模型的属性到扩展模型
             foreach ($vars as $var)
