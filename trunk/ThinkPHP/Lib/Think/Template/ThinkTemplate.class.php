@@ -32,9 +32,9 @@ class  ThinkTemplate extends Think
     protected $templateFile  =  '';
     // 模板变量
     public $tVar                 = array();
-
     public $config  =  array();
     private   $literal = array();
+
     /**
      +----------------------------------------------------------
      * 取得模板实例对象
@@ -45,7 +45,7 @@ class  ThinkTemplate extends Think
      * @return ThinkTemplate
      +----------------------------------------------------------
      */
-    static function  getInstance()
+    static public function  getInstance()
     {
         return get_instance_of(__CLASS__);
     }
@@ -59,7 +59,7 @@ class  ThinkTemplate extends Think
      * @param array $config 模板引擎配置数组
      +----------------------------------------------------------
      */
-    function __construct(){
+    public function __construct(){
         $this->config['cache_path']        =  C('CACHE_PATH');
         $this->config['template_suffix']   =  C('TEMPLATE_SUFFIX');
         $this->config['cache_suffix']       =  C('CACHFILE_SUFFIX');
