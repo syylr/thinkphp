@@ -160,7 +160,7 @@ class  ThinkTemplate extends Think
         $tmplContent = preg_replace('/<!--###literal(\d)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
         // 添加安全代码
         $tmplContent  =  '<?php if (!defined(\'THINK_PATH\')) exit();?>'.$tmplContent;
-        if(C('HTML_STRIP_WHITESPACE')) {
+        if(C('HTML_STRIP_SPACE')) {
             /* 去除html空格与换行 */
             $tmplContent = preg_replace("~>\s+<~", "><",$tmplContent);
             $tmplContent = preg_replace( "~>(\s+\n|\r)~", ">" ,$tmplContent);
