@@ -222,7 +222,10 @@ class View extends Think
         }else{
             // 模板文件需要重新编译 支持第三方模板引擎
             // 调用模板引擎解析和输出
-            Template::getInstance()->fetch($templateFile,$this->tVar,$charset);
+            $className   = 'Template'.ucwords(strtolower(C('TMPL_ENGINE_TYPE')));
+            require_cache(THINK_PATH.'/Lib/Think/Core/Template/'.$className.'.class.php');
+            $tpl   =  new $className;
+            $tpl->fetch($templateFile,$this->tVar,$charset);
         }
         $this->templateFile   =  $templateFile;
         // 获取并清空缓存
