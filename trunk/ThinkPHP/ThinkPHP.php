@@ -45,4 +45,6 @@ if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
 }
 // 记录加载文件时间
 $GLOBALS['_loadTime'] = microtime(TRUE);
+// 执行应用
+App::run();
 ?>
