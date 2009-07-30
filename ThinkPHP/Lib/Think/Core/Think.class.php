@@ -37,9 +37,8 @@ class Think
      */
     public function __set($name ,$value)
     {
-        if(property_exists($this,$name)){
+        if(property_exists($this,$name))
             $this->$name = $value;
-        }
     }
 
     /**
@@ -55,11 +54,7 @@ class Think
      */
     public function __get($name)
     {
-        if(isset($this->$name)){
-            return $this->$name;
-        }else {
-            return null;
-        }
+        return isset($this->$name)?$this->$name:null;
     }
 
     /**
@@ -86,10 +81,9 @@ class Think
             if(C('AUTO_LOAD_PATH')) {
                 $paths  =   explode(',',C('AUTO_LOAD_PATH'));
                 foreach ($paths as $path){
-                    if(import($path.$classname)) {
+                    if(import($path.$classname))
                         // 如果加载类成功则返回
                         return ;
-                    }
                 }
             }
         }
@@ -112,9 +106,8 @@ class Think
         if(!isset(self::$_instance[$identify])) {
             if(class_exists($class)){
                 $o = new $class();
-                if(!empty($method) && method_exists($o,$method)){
+                if(!empty($method) && method_exists($o,$method))
                     self::$_instance[$identify] = call_user_func_array(array(&$o, $method));
-                }
                 else
                     self::$_instance[$identify] = $o;
             }

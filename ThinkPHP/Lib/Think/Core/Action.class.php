@@ -43,9 +43,8 @@ abstract class Action extends Think
         $this->view       = View::getInstance();
         $this->name     =   substr(get_class($this),0,-6);
         //控制器初始化
-        if(method_exists($this,'_initialize')) {
+        if(method_exists($this,'_initialize'))
             $this->_initialize();
-        }
     }
 
     // 判断是否为AjAX提交
@@ -54,10 +53,9 @@ abstract class Action extends Think
             if('xmlhttprequest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH']))
                 return true;
         }
-        if(!empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) {
+        if(!empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')]))
             // 判断Ajax方式提交
             return true;
-        }
         return false;
     }
 
@@ -204,12 +202,11 @@ abstract class Action extends Think
                 $this->_empty($method,$parms);
             }else {
                 // 检查是否存在默认模版 如果有直接输出模版
-                if(file_exists_case(C('TMPL_FILE_NAME'))) {
+                if(file_exists_case(C('TMPL_FILE_NAME')))
                     $this->display();
-                }else{
+                else
                     // 抛出异常
                     throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
-                }
             }
         }else{
             throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
@@ -284,9 +281,8 @@ abstract class Action extends Think
         if(C('WEB_LOG_RECORD')) Log::save();
 
         $result  =  array();
-        if($status === '') {
+        if($status === '')
             $status  = $this->get('error')?0:1;
-        }
         if($info=='') {
             if($this->get('error')) {
                 $info =   $this->get('error');
@@ -328,10 +324,9 @@ abstract class Action extends Think
      */
     public function forward($action='_dispatch_jump',$module='',$app='@',$exit=false,$delay=0)
     {
-        if(!empty($delay)) {
+        if(!empty($delay))
             //指定延时跳转 单位为秒
             sleep(intval($delay));
-        }
         if(is_array($action)) {
             //通过类似 array(&$module,$action)的方式调用
             call_user_func($action);
@@ -344,11 +339,10 @@ abstract class Action extends Think
                 call_user_func(array(&$class,$action));
             }
         }
-        if($exit) {
+        if($exit)
             exit();
-        }else {
+        else
             return ;
-        }
     }
 
     /**
@@ -392,11 +386,10 @@ abstract class Action extends Think
                 $this->ajaxReturn();
             }
         }
-        if($this->get('error') ) {
+        if($this->get('error') )
             $msgTitle    =   L('_OPERATION_FAIL_');
-        }else {
+        else
             $msgTitle    =   L('_OPERATION_SUCCESS_');
-        }
         //提示标题
         $this->assign('msgTitle',$msgTitle);
         if($this->get('message')) { //发送成功信息
@@ -416,9 +409,8 @@ abstract class Action extends Think
                 $this->assign('jumpUrl',"javascript:history.back(-1);");
         }
         //如果设置了关闭窗口，则提示完毕后自动关闭窗口
-        if($this->get('closeWin')) {
+        if($this->get('closeWin'))
             $this->assign('jumpUrl','javascript:window.close();');
-        }
 
         $this->display(C('ACTION_JUMP_TMPL'));
         // 中止执行  避免出错后继续执行
