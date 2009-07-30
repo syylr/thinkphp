@@ -235,7 +235,7 @@ class App
                 define('P_MODULE_NAME',strtolower($module));
                 if(C('AUTO_NAME_IDENTIFY')) {
                     // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-                    $module = ucfirst(Think::parseName(strtolower($module),1));
+                    $module = ucfirst(parse_name(strtolower($module),1));
                 }else{
                     // 普通模式
                     $module = ucwords(strtolower($module));

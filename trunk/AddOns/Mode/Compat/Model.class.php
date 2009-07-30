@@ -132,7 +132,7 @@ class Model extends Think  implements IteratorAggregate
             // 设置数据库的返回数据格式
             $this->db->resultType   =   C('DATA_RESULT_TYPE');
             //为获得ORACLE自增LastID而统一考虑的
-            $this->db->tableName = $this->parseName($this->name);
+            $this->db->tableName = parse_name($this->name);
             // 设置默认的数据库连接
             $this->_db[0]   =   $this->db;
             // 设置表前后缀
@@ -215,21 +215,21 @@ class Model extends Think  implements IteratorAggregate
     public function __call($method,$args) {
         if(strtolower(substr($method,0,5))=='getby') {
             // 根据某个字段获取记录
-            $field   =   $this->parseName(substr($method,5));
+            $field   =   parse_name(substr($method,5));
             if(in_array($field,$this->fields,true)) {
                 array_unshift($args,$field);
                 return call_user_func_array(array(&$this, 'getBy'), $args);
             }
         }elseif(strtolower(substr($method,0,6))=='getsby') {
             // 根据某个字段获取记录
-            $field   =   $this->parseName(substr($method,6));
+            $field   =   parse_name(substr($method,6));
             if(in_array($field,$this->fields,true)) {
                 array_unshift($args,$field);
                 return call_user_func_array(array(&$this, 'getByAll'), $args);
             }
         }elseif(strtolower(substr($method,0,3))=='get'){
             // getter 模拟 仅针对数据对象
-            $field   =   $this->parseName(substr($method,3));
+            $field   =   parse_name(substr($method,3));
             return $this->__get($field);
         }elseif(strtolower(substr($method,0,3))=='top'){
             // 获取前N条记录
@@ -238,26 +238,26 @@ class Model extends Think  implements IteratorAggregate
             return call_user_func_array(array(&$this, 'topN'), $args);
         }elseif(strtolower(substr($method,0,5))=='setby'){
             // 保存记录的某个字段
-            $field   =   $this->parseName(substr($method,5));
+            $field   =   parse_name(substr($method,5));
             if(in_array($field,$this->fields,true)) {
                 array_unshift($args,$field);
                 return call_user_func_array(array(&$this, 'setField'), $args);
             }
         }elseif(strtolower(substr($method,0,3))=='set'){
             // setter 模拟 仅针对数据对象
-            $field   =   $this->parseName(substr($method,3));
+            $field   =   parse_name(substr($method,3));
             array_unshift($args,$field);
             return call_user_func_array(array(&$this, '__set'), $args);
         }elseif(strtolower(substr($method,0,5))=='delby'){
             // 根据某个字段删除记录
-            $field   =   $this->parseName(substr($method,5));
+            $field   =   parse_name(substr($method,5));
             if(in_array($field,$this->fields,true)) {
                 array_unshift($args,$field);
                 return call_user_func_array(array(&$this, 'deleteBy'), $args);
             }
         }elseif(strtolower(substr($method,0,3))=='del'){
             // unset 数据对象
-            $field   =   $this->parseName(substr($method,3));
+            $field   =   parse_name(substr($method,3));
             if(in_array($field,$this->fields,true)) {
                 if(isset($this->data[$field])) {
                     unset($this->data[$field]);
@@ -3024,7 +3024,7 @@ class Model extends Think  implements IteratorAggregate
                     $tableName .= $this->tableName;
                 }elseif(C('AUTO_NAME_IDENTIFY')){
                     // 智能识别表名
-                    $tableName .= $this->parseName($this->name);
+                    $tableName .= parse_name($this->name);
                 }else{
                     $tableName .= $this->name;
                 }
