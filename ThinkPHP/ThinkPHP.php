@@ -19,7 +19,6 @@
 $GLOBALS['_beginTime'] = microtime(TRUE);
 if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Runtime/');
-
 if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
     // ALLINONE 模式直接载入allinone缓存
     $result   =  require RUNTIME_PATH.'~allinone.php';

@@ -291,7 +291,7 @@ class Model extends Think implements IteratorAggregate
             return $this->getField($method.'('.$field.') AS tp_'.$method);
         }elseif(strtolower(substr($method,0,5))=='getby') {
             // 根据某个字段获取记录
-            $field   =   $this->parseName(substr($method,5));
+            $field   =   parse_name(substr($method,5));
             $options['where'] =  $field.'=\''.$args[0].'\'';
             return $this->find($options);
         }else{
@@ -868,7 +868,7 @@ class Model extends Think implements IteratorAggregate
                 $tableName .= $this->tableName;
             }elseif(C('AUTO_NAME_IDENTIFY')){
                 // 智能识别表名
-                $tableName .= $this->parseName($this->name);
+                $tableName .= parse_name($this->name);
             }else{
                 $tableName .= $this->name;
             }
