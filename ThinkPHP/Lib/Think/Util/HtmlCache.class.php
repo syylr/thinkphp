@@ -71,10 +71,9 @@ class HtmlCache extends Think
                     $rule);
                 // {|FUN} 单独使用函数
                 $rule  = preg_replace('/{|(\w+)}/e',"\\1()",$rule);
-                if(!empty($html[2])) {
+                if(!empty($html[2]))
                     // 应用附加函数
                     $rule    =   $html[2]($rule);
-                }
                 $time = isset($html[1])?$html[1]:C('HTML_CACHE_TIME'); // 缓存有效期 -1 为永久缓存
                 self::$cacheTime = $time;
                 $cacheName  =   $rule.C('HTML_FILE_SUFFIX');
@@ -115,12 +114,10 @@ class HtmlCache extends Think
             // 如果开启HTML功能 检查并重写HTML文件
             // 没有模版的操作不生成静态文件
             if(MODULE_NAME != 'Public' && !self::checkHTMLCache(self::$cacheFile,self::$cacheTime)) {
-                if(!is_dir(dirname(HTML_FILE_NAME))) {
+                if(!is_dir(dirname(HTML_FILE_NAME)))
                     mk_dir(dirname(HTML_FILE_NAME));
-                }
-                if( false === file_put_contents( HTML_FILE_NAME , $content )) {
+                if( false === file_put_contents( HTML_FILE_NAME , $content ))
                     throw_exception(L('_CACHE_WRITE_ERROR_'));
-                }
             }
         }
         return $content;

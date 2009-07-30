@@ -40,9 +40,8 @@ class Dispatcher extends Think
         if($urlMode == URL_REWRITE ) {
             //当前项目地址
             $url    =   dirname(_PHP_FILE_);
-            if($url == '/' || $url == '\\') {
+            if($url == '/' || $url == '\\')
                 $url    =   '';
-            }
             define('PHP_FILE',$url);
         }elseif($urlMode == URL_COMPAT){
             define('PHP_FILE',_PHP_FILE_.'?'.C('VAR_PATHINFO').'=');
@@ -89,10 +88,9 @@ class Dispatcher extends Think
                 //重定向成规范的URL格式
                 redirect(PHP_FILE.$_URL);
             }else{
-                if(C('ROUTER_ON')) {
+                if(C('ROUTER_ON'))
                     // 检测路由规则
                     self::routerCheck();
-                }
                 //给_GET赋值 以保证可以按照正常方式取_GET值
                 $_GET = array_merge(self :: getPathInfo(),$_GET);
                 //保证$_REQUEST正常取值
@@ -101,9 +99,8 @@ class Dispatcher extends Think
         }else{
             // 普通URL模式
             //  检查路由规则
-            if(isset($_GET[C('VAR_ROUTER')])) {
+            if(isset($_GET[C('VAR_ROUTER')]))
                 self::routerCheck();
-            }
         }
     }
 
@@ -164,25 +161,17 @@ class Dispatcher extends Think
         {
             $pathInfo = $_SERVER['PATH_INFO'];
             if(0 === strpos($pathInfo,$_SERVER['SCRIPT_NAME']))
-            {
                 $path = substr($pathInfo, strlen($_SERVER['SCRIPT_NAME']));
-            }
             else
-            {
                 $path = $pathInfo;
-            }
         }
         else if(!empty($_SERVER['ORIG_PATH_INFO']))
         {
             $pathInfo = $_SERVER['ORIG_PATH_INFO'];
             if(0 === strpos($pathInfo, $_SERVER['SCRIPT_NAME']))
-            {
                 $path = substr($pathInfo, strlen($_SERVER['SCRIPT_NAME']));
-            }
             else
-            {
                 $path = $pathInfo;
-            }
         }
         elseif (!empty($_SERVER['REDIRECT_PATH_INFO'])){
             $path = $_SERVER['REDIRECT_PATH_INFO'];
@@ -251,9 +240,8 @@ class Dispatcher extends Think
                 //  获取当前路由参数对应的变量
                 if(!isset($_GET[C('VAR_ROUTER')])) {
                     $vars    =   explode(',',$route[2]);
-                    for($i=0;$i<count($vars);$i++) {
+                    for($i=0;$i<count($vars);$i++)
                         $_GET[$vars[$i]]     =   array_shift($paths);
-                    }
                     // 解析剩余的URL参数
                     $res = preg_replace('@(\w+)\/([^,\/]+)@e', '$_GET[\'\\1\']="\\2";', implode('/',$paths));
                 }
@@ -287,9 +275,8 @@ class Dispatcher extends Think
                         //  获取当前路由参数对应的变量
                         if(!isset($_GET[C('VAR_ROUTER')])) {
                             $vars    =   explode(',',$route[3]);
-                            for($i=0;$i<count($vars);$i++) {
+                            for($i=0;$i<count($vars);$i++)
                                 $_GET[$vars[$i]]     =   $matches[$i+1];
-                            }
                             // 解析剩余的URL参数
                             $res = preg_replace('@(\w+)\/([^,\/]+)@e', '$_GET[\'\\1\']="\\2";', str_replace($matches[0],'',$regx));
                         }

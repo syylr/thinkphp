@@ -61,13 +61,9 @@ class Debug extends Think
     static public function useTime($start,$end,$decimals = 6)
     {
         if ( ! isset(self::$marker['time'][$start]))
-        {
             return '';
-        }
         if ( ! isset(self::$marker['time'][$end]))
-        {
             self::$marker['time'][$end] = microtime(TRUE);
-        }
         return number_format(self::$marker['time'][$end] - self::$marker['time'][$start], $decimals);
     }
 
@@ -85,17 +81,12 @@ class Debug extends Think
      */
     static public function useMemory($start,$end)
     {
-        if(!MEMORY_LIMIT_ON) {
+        if(!MEMORY_LIMIT_ON)
             return '';
-        }
         if ( ! isset(self::$marker['mem'][$start]))
-        {
             return '';
-        }
         if ( ! isset(self::$marker['mem'][$end]))
-        {
             self::$marker['mem'][$end] = memory_get_usage();
-        }
         return number_format((self::$marker['mem'][$end] - self::$marker['mem'][$start])/1024);
     }
 
@@ -112,17 +103,12 @@ class Debug extends Think
      +----------------------------------------------------------
      */
     static function getMemPeak($start,$end) {
-        if(!MEMORY_LIMIT_ON) {
+        if(!MEMORY_LIMIT_ON)
             return '';
-        }
         if ( ! isset(self::$marker['peak'][$start]))
-        {
             return '';
-        }
         if ( ! isset(self::$marker['peak'][$end]))
-        {
             self::$marker['peak'][$end] = function_exists('memory_get_peak_usage')?memory_get_peak_usage(): memory_get_usage();
-        }
         return number_format(max(self::$marker['peak'][$start],self::$marker['peak'][$end])/1024);
     }
 }//类定义结束

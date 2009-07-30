@@ -100,17 +100,15 @@ class Cache extends Think
      */
     public function connect($type='',$options=array())
     {
-        if(empty($type)){
+        if(empty($type))
             $type = C('DATA_CACHE_TYPE');
-        }
         $cachePath = dirname(__FILE__).'/Cache/';
         $cacheClass = 'Cache'.ucwords(strtolower(trim($type)));
         require_cache($cachePath.$cacheClass.'.class.php');
-        if(class_exists($cacheClass)){
+        if(class_exists($cacheClass))
             $cache = new $cacheClass($options);
-        }else {
+        else
             throw_exception(L('_CACHE_TYPE_INVALID_').':'.$type);
-        }
         return $cache;
     }
 
@@ -148,21 +146,19 @@ class Cache extends Think
     // 读取缓存次数
     public function Q($times='') {
         static $_times = 0;
-        if(empty($times)) {
+        if(empty($times))
             return $_times;
-        }else{
+        else
             $_times++;
-        }
     }
 
     // 写入缓存次数
     public  function W($times='') {
         static $_times = 0;
-        if(empty($times)) {
+        if(empty($times))
             return $_times;
-        }else{
+        else
             $_times++;
-        }
     }
 }//类定义结束
 ?>
