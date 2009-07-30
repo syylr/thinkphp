@@ -70,7 +70,7 @@ class Model extends Think implements IteratorAggregate
     /**
      +----------------------------------------------------------
      * 架构函数
-     * 取得DB类的实例对象 数据表字段检查
+     * 取得DB类的实例对象 字段检查
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -79,24 +79,19 @@ class Model extends Think implements IteratorAggregate
     {
         // 模型初始化
         $this->_initialize();
+        // 获取模型名称
         if(!empty($name)) {
             $this->name   =  $name;
         }elseif(empty($this->name)){
-            // 模型名称自动获取
             $this->name =   $this->getModelName();
         }
         // 数据库初始化操作
-        import("Db");
         // 获取数据库操作对象
-        if(!empty($this->connection)) {
-            // 当前模型有独立的数据库连接信息
-            $this->db = Db::getInstance($this->connection);
-        }else{
-            $this->db = Db::getInstance();
-        }
+        // 当前模型有独立的数据库连接信息
+        $this->db = !empty($this->connection)?Db::getInstance($this->connection):Db::getInstance();
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
-        // 数据表字段检测
+        // 字段检测
         $this->_checkTableInfo();
     }
 

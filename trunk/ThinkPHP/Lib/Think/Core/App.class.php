@@ -73,7 +73,6 @@ class App
         // 默认只支持 QUERY_STRING 方式
         // 例如 ?m=user&a=add
         if(C('DISPATCH_ON')) {
-            import('Dispatcher');
             Dispatcher::dispatch();
         }
 
@@ -107,7 +106,6 @@ class App
         App::checkLanguage();     //语言检查
         App::checkTemplate();     //模板检查
         if(C('HTML_CACHE_ON')) { // 开启静态缓存
-            import('HtmlCache');
             HtmlCache::readHTMLCache();
         }
 
