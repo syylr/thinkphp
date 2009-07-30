@@ -100,29 +100,20 @@ class Think
      +----------------------------------------------------------
      * 取得对象实例 支持调用类的静态方法
      +----------------------------------------------------------
-     * @param string $className 对象类名
+     * @param string $class 对象类名
      * @param string $method 类的静态方法名
-     * @param array $args 调用参数
      +----------------------------------------------------------
      * @return object
      +----------------------------------------------------------
      */
-    static public function instance($className,$method='',$args=array())
+    static public function instance($class,$method='')
     {
-        if(empty($args)) {
-            $identify   =   $className.$method;
-        }else{
-            $identify   =   $className.$method.to_guid_string($args);
-        }
-        if (!isset(self::$_instance[$identify])) {
-            if(class_exists($className)){
-                $o = new $className();
-                if(method_exists($o,$method)){
-                    if(!empty($args)) {
-                        self::$_instance[$identify] = call_user_func_array(array(&$o, $method), $args);;
-                    }else {
-                        self::$_instance[$identify] = $o->$method();
-                    }
+        $identify   =   $class.$method;
+        if(!isset(self::$_instance[$identify])) {
+            if(class_exists($class)){
+                $o = new $class();
+                if(!empty($method) && method_exists($o,$method)){
+                    self::$_instance[$identify] = call_user_func_array(array(&$o, $method));
                 }
                 else
                     self::$_instance[$identify] = $o;
@@ -131,30 +122,6 @@ class Think
                 halt(L('_CLASS_NOT_EXIST_'));
         }
         return self::$_instance[$identify];
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 字符串命名风格转换
-     * type
-     * =0 将Java风格转换为C的风格
-     * =1 将C风格转换为Java的风格
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param string $name 字符串
-     * @param integer $type 转换类型
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    protected function parseName($name,$type=0) {
-        if($type) {
-            return ucfirst(preg_replace("/_([a-zA-Z])/e", "strtoupper('\\1')", $name));
-        }else{
-            $name = preg_replace("/[A-Z]/", "_\\0", $name);
-            return strtolower(trim($name, "_"));
-        }
     }
 
 }//类定义结束

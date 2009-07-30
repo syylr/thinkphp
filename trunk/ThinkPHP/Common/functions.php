@@ -90,6 +90,30 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
     }
 }
 
+/**
+ +----------------------------------------------------------
+ * 字符串命名风格转换
+ * type
+ * =0 将Java风格转换为C的风格
+ * =1 将C风格转换为Java的风格
+ +----------------------------------------------------------
+ * @access protected
+ +----------------------------------------------------------
+ * @param string $name 字符串
+ * @param integer $type 转换类型
+ +----------------------------------------------------------
+ * @return string
+ +----------------------------------------------------------
+ */
+protected function parse_name($name,$type=0) {
+    if($type) {
+        return ucfirst(preg_replace("/_([a-zA-Z])/e", "strtoupper('\\1')", $name));
+    }else{
+        $name = preg_replace("/[A-Z]/", "_\\0", $name);
+        return strtolower(trim($name, "_"));
+    }
+}
+
 // 错误输出
 function halt($error) {
     if(IS_CLI) {
