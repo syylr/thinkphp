@@ -323,9 +323,8 @@ class RelationModel extends Model {
                                     $mappingRelationTable  =  $val['relation_table']?$val['relation_table']:$this->getRelationTableName($model);
                                     if(is_array($mappingData)) {
                                         $ids   = array();
-                                        foreach ($mappingData as $vo){
+                                        foreach ($mappingData as $vo)
                                             $ids[]   =   $vo[$model->getPk()];
-                                        }
                                         $relationId =   implode(',',$ids);
                                     }
                                     switch (strtoupper($opType)){
@@ -338,13 +337,12 @@ class RelationModel extends Model {
                                             // 插入关联表数据
                                             $sql  = 'INSERT INTO '.$mappingRelationTable.' ('.$mappingFk.','.$mappingRelationFk.') SELECT a.'.$this->getPk().',b.'.$model->getPk().' FROM '.$this->getTableName().' AS a ,'.$model->getTableName()." AS b where a.".$this->getPk().' ='. $pk.' AND  b.'.$model->getPk().' IN ('.$relationId.") ";
                                             $result =   $model->execute($sql);
-                                            if($result) {
+                                            if($result)
                                                 // 提交事务
                                                 $this->commit();
-                                            }else {
+                                            else
                                                 // 事务回滚
                                                 $this->rollback();
-                                            }
                                         }
                                         break;
                                         case 'DEL': // 根据外键删除中间表关联数据
@@ -388,9 +386,8 @@ class RelationModel extends Model {
      +----------------------------------------------------------
      */
     public function relationGet($name) {
-        if(empty($this->data)) {
+        if(empty($this->data))
             return false;
-        }
         $relation   = $this->getRelation($this->data,$name,true);
         return $relation;
     }

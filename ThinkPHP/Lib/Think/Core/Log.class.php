@@ -84,14 +84,12 @@ class Log extends Think
      */
     static function save($type=self::FILE,$destination='',$extra='')
     {
-        if(empty($destination)) {
+        if(empty($destination))
             $destination = LOG_PATH.date('y_m_d').".log";
-        }
         if(self::FILE == $type) { // 文件方式记录日志信息
             //检测日志文件大小，超过配置大小则备份日志文件重新生成
-            if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
+            if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) )
                   rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
-            }
         }
         error_log(implode("",self::$log), $type,$destination ,$extra);
         // 保存后清空日志缓存
@@ -118,14 +116,12 @@ class Log extends Think
     static function write($message,$level=self::ERR,$type=self::FILE,$destination='',$extra='')
     {
         $now = date(self::$format);
-        if(empty($destination)) {
+        if(empty($destination))
             $destination = LOG_PATH.date('y_m_d').".log";
-        }
         if(self::FILE == $type) { // 文件方式记录日志
             //检测日志文件大小，超过配置大小则备份日志文件重新生成
-            if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) ){
+            if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) )
                   rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
-            }
         }
         error_log("{$now} {$level}: {$message}\r\n", $type,$destination,$extra );
         //clearstatcache();
