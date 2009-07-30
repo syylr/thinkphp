@@ -76,10 +76,9 @@ if (!function_exists('json_decode')) {
     {
         // 目前不支持二维数组或对象
         $begin  =  substr($json,0,1) ;
-        if(!in_array($begin,array('{','['))) {
+        if(!in_array($begin,array('{','[')))
             // 不是对象或者数组直接返回
             return $json;
-        }
         $parse = substr($json,1,-1);
         $data  = explode(',',$parse);
         if($flag = $begin =='{' ) {
@@ -90,15 +89,13 @@ if (!function_exists('json_decode')) {
                 $key =  substr($item[0],1,-1);
                 $result->$key = json_decode($item[1],$assoc);
             }
-            if($assoc) {
+            if($assoc)
                 $result   = get_object_vars($result);
-            }
         }else {
             // 转换成PHP数组
             $result   = array();
-            foreach($data as $val) {
+            foreach($data as $val)
                 $result[]  =  json_decode($val,$assoc);
-            }
         }
         return $result;
     }

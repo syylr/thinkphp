@@ -24,11 +24,10 @@
 if (!defined('THINK_PATH')) exit();
 return  array(
     /* 日志设置 */
-    'WEB_LOG_RECORD'=>true,  // 默认进行日志记录
+    'WEB_LOG_RECORD'=>true,  // 进行日志记录
 
     /* 模板设置 */
-    'TMPL_CACHE_ON'=>true,      // 默认开启模板缓存
-    'TMPL_CACHE_TIME'=>1,      // 模板缓存有效期 -1 永久 单位为秒
+    'TMPL_CACHE_ON'=>false,      // 关闭模板缓存
 
     /* 数据库设置 */
     'SQL_DEBUG_LOG'=>true,          // 记录SQL语句到日志文件
