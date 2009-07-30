@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class App extends Think
+class App
 {//类定义开始
 
     /**
@@ -33,11 +33,11 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function init()
+    static public function init()
     {
         // 设定错误和异常处理
-        set_error_handler(array(&$this,"appError"));
-        set_exception_handler(array(&$this,"appException"));
+        set_error_handler(array('App',"appError"));
+        set_exception_handler(array('App',"appException"));
         //[RUNTIME]
         // 检查项目是否编译过
         // 在部署模式下会自动在第一次执行的时候编译项目
@@ -48,7 +48,7 @@ class App extends Think
             C(include RUNTIME_PATH.'~app.php');
         }else{
             // 预编译项目
-            $this->build();
+            App::build();
         }
         //[/RUNTIME]
 
@@ -86,9 +86,9 @@ class App extends Think
         // 可以在Dispatcher中定义获取规则
         if(C('APP_GROUP'))
             // 开启项目分组则获取当前分组名称
-            if(!defined('GROUP_NAME')) define('GROUP_NAME', $this->getGroup());       // Group名称
-        if(!defined('MODULE_NAME')) define('MODULE_NAME',   $this->getModule());       // Module名称
-        if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
+            if(!defined('GROUP_NAME')) define('GROUP_NAME', App::getGroup());       // Group名称
+        if(!defined('MODULE_NAME')) define('MODULE_NAME',   App::getModule());       // Module名称
+        if(!defined('ACTION_NAME')) define('ACTION_NAME',   App::getAction());        // Action操作
         // 加载项目分组公共文件
         if(C('APP_GROUP')) {
             // 分组配置文件
@@ -104,8 +104,8 @@ class App extends Think
             C(include CONFIG_PATH.strtolower(MODULE_NAME).'_config.php');
 
         // 系统检查
-        $this->checkLanguage();     //语言检查
-        $this->checkTemplate();     //模板检查
+        App::checkLanguage();     //语言检查
+        App::checkTemplate();     //模板检查
         if(C('HTML_CACHE_ON')) { // 开启静态缓存
             import('HtmlCache');
             HtmlCache::readHTMLCache();
@@ -126,7 +126,7 @@ class App extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function build()
+    static private function build()
     {
         // 加载惯例配置文件
         C(include THINK_PATH.'/Common/convention.php');
@@ -194,7 +194,7 @@ class App extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function getModule()
+    static private function getModule()
     {
         $var  =  C('VAR_MODULE');
         $module = !empty($_POST[$var]) ?
@@ -204,7 +204,7 @@ class App extends Think
             // URL地址不区分大小写
             define('P_MODULE_NAME',strtolower($module));
             // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-            $module = ucfirst($this->parseName(strtolower($module),1));
+            $module = ucfirst(Think::parseName(strtolower($module),1));
         }
         unset($_POST[$var],$_GET[$var]);
         return $module;
@@ -219,7 +219,7 @@ class App extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function getAction()
+    static private function getAction()
     {
         $var  =  C('VAR_ACTION');
         $action   = !empty($_POST[$var]) ?
@@ -238,7 +238,7 @@ class App extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function getGroup()
+    static private function getGroup()
     {
         $var  =  C('VAR_GROUP');
         $group   = !empty($_POST[$var]) ?
@@ -258,7 +258,7 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    private function checkLanguage()
+    static private function checkLanguage()
     {
         $langSet = C('DEFAULT_LANGUAGE');
         // 不开启语言包功能，仅仅加载框架语言文件直接返回
@@ -312,7 +312,7 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    private function checkTemplate()
+    static private function checkTemplate()
     {
         if(C('AUTO_DETECT_THEME')) {// 自动侦测模板主题
             $t = C('VAR_TEMPLATE');
@@ -385,7 +385,7 @@ class App extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function exec()
+    static public function exec()
     {
         // 是否开启标签扩展
         $tagOn   =  C('TAG_PLUGIN_ON');
@@ -453,16 +453,15 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function run() {
-        $this->init();
+    static public function run() {
+        App::init();
         // 记录应用初始化时间
         if(C('SHOW_RUN_TIME'))
             $GLOBALS['_initTime'] = microtime(TRUE);
-        $this->exec();
+        App::exec();
         $GLOBALS['_endTime'] = microtime(TRUE);
         // 保存日志记录
-        if(C('WEB_LOG_RECORD'))
-            Log::save();
+        if(C('WEB_LOG_RECORD')) Log::save();
         return ;
     }
 
@@ -475,7 +474,7 @@ class App extends Think
      * @param mixed $e 异常对象
      +----------------------------------------------------------
      */
-    public function appException($e)
+    static public function appException($e)
     {
         halt($e->__toString());
     }
@@ -494,7 +493,7 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function appError($errno, $errstr, $errfile, $errline)
+    static public function appError($errno, $errstr, $errfile, $errline)
     {
       switch ($errno) {
           case E_ERROR:
