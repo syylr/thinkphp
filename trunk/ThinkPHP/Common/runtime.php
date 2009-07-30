@@ -116,6 +116,10 @@ function buildAppDir() {
                 file_put_contents(LOG_PATH.$filename,$content);
             }
         }
+        // 写入配置文件
+        if(!is_file(CONFIG_PATH.'config.php')) {
+            file_put_contents(CONFIG_PATH.'config.php',"<?php\nreturn array(\n\t//'配置项'=>'配置值'\n);\n?>");
+        }
         // 写入测试Action
         if(!is_file(LIB_PATH.'Action/IndexAction.class.php')) {
             $content     =
