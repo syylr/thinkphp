@@ -184,7 +184,7 @@ function throw_exception($msg,$type='ThinkException',$code=0)
 function debug_start($label='')
 {
     $GLOBALS[$label]['_beginTime'] = microtime(TRUE);
-    if ( MEMORY_LIMIT_ON )  $GLOBALS[$label]['memoryUseStartTime'] = memory_get_usage();
+    if ( MEMORY_LIMIT_ON )  $GLOBALS[$label]['_beginMem'] = memory_get_usage();
 }
 
 // 区间调试结束，显示指定标记到当前位置的调试
@@ -193,8 +193,8 @@ function debug_end($label='')
     $GLOBALS[$label]['_endTime'] = microtime(TRUE);
     echo '<div style="text-align:center;width:100%">Process '.$label.': Times '.number_format($GLOBALS[$label]['_endTime']-$GLOBALS[$label]['_beginTime'],6).'s ';
     if ( MEMORY_LIMIT_ON )  {
-        $GLOBALS[$label]['memoryUseEndTime'] = memory_get_usage();
-        echo ' Memories '.number_format(($GLOBALS[$label]['memoryUseEndTime']-$GLOBALS[$label]['memoryUseStartTime'])/1024).' k';
+        $GLOBALS[$label]['_endMem'] = memory_get_usage();
+        echo ' Memories '.number_format(($GLOBALS[$label]['_endMem']-$GLOBALS[$label]['_beginMem'])/1024).' k';
     }
     echo '</div>';
 }
@@ -229,17 +229,17 @@ function dump($var, $echo=true,$label=null, $strict=true)
 }
 
 // 取得对象实例 支持调用类的静态方法
-function get_instance_of($className,$method='',$args=array())
+function get_instance_of($name,$method='',$args=array())
 {
     static $_instance = array();
     if(empty($args)) {
-        $identify   =   $className.$method;
+        $identify   =   $name.$method;
     }else{
-        $identify   =   $className.$method.to_guid_string($args);
+        $identify   =   $name.$method.to_guid_string($args);
     }
     if (!isset($_instance[$identify])) {
-        if(class_exists($className)){
-            $o = new $className();
+        if(class_exists($name)){
+            $o = new $name();
             if(method_exists($o,$method)){
                 if(!empty($args)) {
                     $_instance[$identify] = call_user_func_array(array(&$o, $method), $args);
@@ -251,7 +251,7 @@ function get_instance_of($className,$method='',$args=array())
                 $_instance[$identify] = $o;
         }
         else
-            halt(L('_CLASS_NOT_EXIST_').':'.$className);
+            halt(L('_CLASS_NOT_EXIST_').':'.$name);
     }
     return $_instance[$identify];
 }
@@ -261,26 +261,26 @@ function get_instance_of($className,$method='',$args=array())
  * 系统自动加载ThinkPHP基类库和当前项目的model和Action对象
  * 并且支持配置自动加载路径
  +----------------------------------------------------------
- * @param string $classname 对象类名
+ * @param string $name 对象类名
  +----------------------------------------------------------
  * @return void
  +----------------------------------------------------------
  */
-function __autoload($classname)
+function __autoload($name)
 {
     // 检查是否存在别名定义
-    if(alias_import($classname)) return ;
+    if(alias_import($name)) return ;
     // 自动加载当前项目的Actioon类和Model类
-    if(substr($classname,-5)=="Model") {
-        require_cache(LIB_PATH.'Model/'.$classname.'.class.php');
-    }elseif(substr($classname,-6)=="Action"){
-        require_cache(LIB_PATH.'Action/'.$classname.'.class.php');
+    if(substr($name,-5)=="Model") {
+        require_cache(LIB_PATH.'Model/'.$name.'.class.php');
+    }elseif(substr($name,-6)=="Action"){
+        require_cache(LIB_PATH.'Action/'.$name.'.class.php');
     }else {
         // 根据自动加载路径设置进行尝试搜索
         if(C('AUTO_LOAD_PATH')) {
             $paths  =   explode(',',C('AUTO_LOAD_PATH'));
             foreach ($paths as $path){
-                if(import($path.$classname)) {
+                if(import($path.$name)) {
                     // 如果加载类成功则返回
                     return ;
                 }
@@ -412,37 +412,37 @@ function alias_import($alias,$classfile='') {
  +----------------------------------------------------------
  * D函数用于实例化Model
  +----------------------------------------------------------
- * @param string className Model名称
- * @param string appName Model所在项目
+ * @param string name Model名称
+ * @param string app Model所在项目
  +----------------------------------------------------------
  * @return Model
  +----------------------------------------------------------
  */
-function D($className='',$appName='')
+function D($name='',$app='')
 {
     static $_model = array();
-    if(empty($className)) {
+    if(empty($name)) {
         return new  Model();
     }
-    if(empty($appName)) {
-        $appName =  C('DEFAULT_MODEL_APP');
+    if(empty($app)) {
+        $app =  C('DEFAULT_MODEL_APP');
     }
-    if(isset($_model[$appName.$className])) {
-        return $_model[$appName.$className];
+    if(isset($_model[$app.$name])) {
+        return $_model[$app.$name];
     }
-    $OriClassName = $className;
-    if(strpos($className,C('GROUP_DEPR'))) {
-        $array   =  explode(C('GROUP_DEPR'),$className);
-        $className = array_pop($array);
-        $className =  $className.'Model';
-        import($appName.'.Model.'.implode('.',$array).'.'.$className);
+    $OriClassName = $name;
+    if(strpos($name,C('GROUP_DEPR'))) {
+        $array   =  explode(C('GROUP_DEPR'),$name);
+        $name = array_pop($array);
+        $className =  $name.'Model';
+        import($app.'.Model.'.implode('.',$array).'.'.$className);
     }else{
-        $className =  $className.'Model';
-        import($appName.'.Model.'.$className);
+        $className =  $name.'Model';
+        import($app.'.Model.'.$className);
     }
     if(class_exists($className)) {
         $model = new $className();
-        $_model[$appName.$OriClassName] =  $model;
+        $_model[$app.$OriClassName] =  $model;
         return $model;
     }else {
         throw_exception($className.L('_MODEL_NOT_EXIST_'));
@@ -453,48 +453,48 @@ function D($className='',$appName='')
  +----------------------------------------------------------
  * M函数用于实例化一个没有模型文件的Model
  +----------------------------------------------------------
- * @param string className Model名称
+ * @param string name Model名称
  +----------------------------------------------------------
  * @return Model
  +----------------------------------------------------------
  */
-function M($className='') {
+function M($name='') {
     static $_model = array();
-    if(!isset($_model[$className])) {
-        $_model[$className]   = new Model($className);
+    if(!isset($_model[$name])) {
+        $_model[$name]   = new Model($name);
     }
-    return $_model[$className];
+    return $_model[$name];
 }
 
 /**
  +----------------------------------------------------------
  * A函数用于实例化Action
  +----------------------------------------------------------
- * @param string className Action名称
- * @param string appName Model所在项目
+ * @param string name Action名称
+ * @param string app Model所在项目
  +----------------------------------------------------------
  * @return Action
  +----------------------------------------------------------
  */
-function A($className,$appName='@')
+function A($name,$app='@')
 {
     static $_action = array();
-    if(isset($_action[$appName.$className])) {
-        return $_action[$appName.$className];
+    if(isset($_action[$app.$name])) {
+        return $_action[$app.$name];
     }
-    $OriClassName = $className;
-    if(strpos($className,C('GROUP_DEPR'))) {
-        $array   =  explode(C('GROUP_DEPR'),$className);
-        $className = array_pop($array);
-        $className =  $className.'Action';
-        import($appName.'.Action.'.implode('.',$array).'.'.$className);
+    $OriClassName = $name;
+    if(strpos($name,C('GROUP_DEPR'))) {
+        $array   =  explode(C('GROUP_DEPR'),$name);
+        $name = array_pop($array);
+        $className =  $name.'Action';
+        import($app.'.Action.'.implode('.',$array).'.'.$className);
     }else{
-        $className =  $className.'Action';
-        import($appName.'.Action.'.$className);
+        $className =  $name.'Action';
+        import($app.'.Action.'.$className);
     }
     if(class_exists($className)) {
         $action = new $className();
-        $_action[$appName.$OriClassName] = $action;
+        $_action[$app.$OriClassName] = $action;
         return $action;
     }else {
         return false;
