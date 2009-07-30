@@ -33,11 +33,11 @@ class AdvModel extends Model {
     public $returnType  =  'array';
     public $blobFields     =   array();
     public $blobValues    = null;
-    public $_validate;
-    public $_auto;
-    public $_filter;
-    public $serializeField;
-    public $readonlyField;
+    public $_validate       = array();  // 自动验证定义
+    public $_auto           = array();  // 自动完成定义
+    public $_filter           = array();
+    public $serializeField   = array();
+    public $readonlyField  = array();
 
     public function __construct($name='') {
         parent::__construct($name);
@@ -683,9 +683,9 @@ class AdvModel extends Model {
             foreach ($this->_auto as $auto){
                 // 填充因子定义格式
                 // array('field','填充内容','填充条件','附加规则',[额外参数])
-                if(empty($auto[2])) $auto[2] = AdvModel::MODEL_INSERT;// 默认为新增的时候自动填充
+                if(empty($auto[2])) $auto[2] = Model::MODEL_INSERT;// 默认为新增的时候自动填充
                 else $auto[2]   =   strtoupper($auto[2]);
-                if( ($type ==AdvModel::MODEL_INSERT  && $auto[2] == AdvModel::MODEL_INSERT) ||   ($type == AdvModel::MODEL_UPDATE  && $auto[2] == AdvModel::MODEL_UPDATE) || $auto[2] == AdvModel::MODEL_BOTH)
+                if( ($type ==Model::MODEL_INSERT  && $auto[2] == Model::MODEL_INSERT) ||   ($type == Model::MODEL_UPDATE  && $auto[2] == Model::MODEL_UPDATE) || $auto[2] == Model::MODEL_BOTH)
                 {
                     switch($auto[3]) {
                         case 'function':    //  使用函数进行填充 字段的值作为参数
@@ -740,7 +740,7 @@ class AdvModel extends Model {
                 // 验证因子定义格式
                 // array(field,rule,message,condition,type,when,params)
                 // 判断是否需要执行验证
-                if(empty($val[5]) || $val[5]== AdvModel::MODEL_BOTH || $val[5]== $type ) {
+                if(empty($val[5]) || $val[5]== Model::MODEL_BOTH || $val[5]== $type ) {
                     if(0==strpos($val[2],'{%') && strpos($val[2],'}')) {
                         // 支持提示信息的多语言 使用 {%语言定义} 方式
                         $val[2]  =  L(substr($val[2],2,-1));
