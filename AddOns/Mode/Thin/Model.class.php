@@ -178,7 +178,7 @@ class Model extends Think
                 $tableName .= $this->tableName;
             }elseif(C('AUTO_NAME_IDENTIFY')){
                 // 智能识别表名
-                $tableName .= $this->parseName($this->name);
+                $tableName .= parse_name($this->name);
             }else{
                 $tableName .= $this->name;
             }
