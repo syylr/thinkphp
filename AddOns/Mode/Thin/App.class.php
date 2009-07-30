@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class App extends Think
+class App
 {//类定义开始
 
     /**
@@ -33,11 +33,11 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function run()
+    static public function run()
     {
         // 设定错误和异常处理
-        set_error_handler(array(&$this,"appError"));
-        set_exception_handler(array(&$this,"appException"));
+        set_error_handler(array('App',"appError"));
+        set_exception_handler(array('App',"appException"));
         // 检查项目是否编译过
         // 在部署模式下会自动在第一次执行的时候编译项目
         if(is_file(RUNTIME_PATH.'~app.php')) {
@@ -45,11 +45,11 @@ class App extends Think
             C(include RUNTIME_PATH.'~app.php');
         }else{
             // 预编译项目
-            $this->build();
+            App::build();
         }
         // 取得模块和操作名称
-        define('MODULE_NAME',   $this->getModule());       // Module名称
-        define('ACTION_NAME',   $this->getAction());        // Action操作
+        define('MODULE_NAME',   App::getModule());       // Module名称
+        define('ACTION_NAME',   App::getAction());        // Action操作
         // 不使用语言包功能，仅仅加载框架语言文件
         //L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
 
@@ -58,6 +58,8 @@ class App extends Think
             $GLOBALS['_initTime'] = microtime(TRUE);
         }
         R(MODULE_NAME,ACTION_NAME);
+        // 保存日志记录
+        if(C('WEB_LOG_RECORD')) Log::save();
         return ;
     }
 
@@ -70,7 +72,7 @@ class App extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function build()
+    static private function build()
     {
         // 加载惯例配置文件
         C(include THINK_PATH.'/Common/convention.php');
@@ -125,7 +127,7 @@ class App extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function getModule()
+    static private function getModule()
     {
         $var  =  C('VAR_MODULE');
         $module = !empty($_POST[$var]) ?
@@ -135,7 +137,7 @@ class App extends Think
             // URL地址不区分大小写
             define('P_MODULE_NAME',strtolower($module));
             // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-            $module = ucfirst($this->parseName(strtolower($module),1));
+            $module = ucfirst(Think::parseName(strtolower($module),1));
         }
         unset($_POST[$var],$_GET[$var]);
         return $module;
@@ -150,7 +152,7 @@ class App extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function getAction()
+    static private function getAction()
     {
         $var  =  C('VAR_ACTION');
         $action   = !empty($_POST[$var]) ?
@@ -169,7 +171,7 @@ class App extends Think
      * @param mixed $e 异常对象
      +----------------------------------------------------------
      */
-    public function appException($e)
+    static public function appException($e)
     {
         halt($e->__toString());
     }
@@ -188,7 +190,7 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function appError($errno, $errstr, $errfile, $errline)
+    static public function appError($errno, $errstr, $errfile, $errline)
     {
       switch ($errno) {
           case E_ERROR:
@@ -209,17 +211,5 @@ class App extends Think
       }
     }
 
-   /**
-     +----------------------------------------------------------
-     * 析构方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     */
-    public function __destruct()
-    {
-        // 保存日志记录
-        if(C('WEB_LOG_RECORD')) Log::save();
-    }
 };//类定义结束
 ?>

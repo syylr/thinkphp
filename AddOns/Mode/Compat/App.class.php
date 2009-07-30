@@ -21,23 +21,8 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class App extends Think
+class App
 {//类定义开始
-
-    /**
-     +----------------------------------------------------------
-     * 取得应用实例对象
-     * 静态方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return App
-     +----------------------------------------------------------
-     */
-    public static function  getInstance()
-    {
-        return get_instance_of(__CLASS__);
-    }
 
     /**
      +----------------------------------------------------------
@@ -48,11 +33,11 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function init()
+    static public function init()
     {
         // 设定错误和异常处理
-        set_error_handler(array(&$this,"appError"));
-        set_exception_handler(array(&$this,"appException"));
+        set_error_handler(array('App',"appError"));
+        set_exception_handler(array('App',"appException"));
 
         // 检查项目是否编译过
         // 在部署模式下会自动在第一次执行的时候编译项目
@@ -61,13 +46,13 @@ class App extends Think
             C(include RUNTIME_PATH.'~app.php');
         }else{
             // 预编译项目
-            $this->build();
+            App::build();
         }
 
         if(IS_CLI) { // 命令模式
             // 取得模块和操作名称
-            define('MODULE_NAME',   $this->getModule());       // Module名称
-            define('ACTION_NAME',   $this->getAction());        // Action操作
+            define('MODULE_NAME',   App::getModule());       // Module名称
+            define('ACTION_NAME',   App::getAction());        // Action操作
             // 不使用语言包功能，仅仅加载框架语言文件
             L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
         }else{
@@ -85,7 +70,7 @@ class App extends Think
 
             // 加载插件 必须在Session开启之后加载插件
             if($plugInOn =  C('THINK_PLUGIN_ON')) {
-                $this->loadPlugIn();
+                App::loadPlugIn();
             }
 
             // 应用调度过滤器
@@ -111,8 +96,8 @@ class App extends Think
 
             // 取得模块和操作名称 如果有伪装 则返回真实的名称
             // 可以在Dispatcher中定义获取规则
-            if(!defined('MODULE_NAME')) define('MODULE_NAME',   $this->getModule());       // Module名称
-            if(!defined('ACTION_NAME')) define('ACTION_NAME',   $this->getAction());        // Action操作
+            if(!defined('MODULE_NAME')) define('MODULE_NAME',   App::getModule());       // Module名称
+            if(!defined('ACTION_NAME')) define('ACTION_NAME',   App::getAction());        // Action操作
 
             // 加载模块配置文件 并自动生成配置缓存文件
             if(is_file(CONFIG_PATH.MODULE_NAME.'_config.php')) {
@@ -136,8 +121,8 @@ class App extends Think
             }
 
             // 系统检查
-            $this->checkLanguage();     //语言检查
-            $this->checkTemplate();     //模板检查
+            App::checkLanguage();     //语言检查
+            App::checkTemplate();     //模板检查
 
             if(C('HTML_CACHE_ON')) {
                 import('HtmlCache');
@@ -165,7 +150,7 @@ class App extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function build()
+    static private function build()
     {
         // 加载惯例配置文件
         C(include THINK_PATH.'/Common/convention.php');
@@ -214,7 +199,7 @@ class App extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function getModule()
+    static private function getModule()
     {
         if(IS_CLI) {// 命令模式下面获取第一个参数作为模块名
             $module = isset($_SERVER['argv'][1])?$_SERVER['argv'][1]:C('DEFAULT_MODULE');
@@ -250,7 +235,7 @@ class App extends Think
                 define('P_MODULE_NAME',strtolower($module));
                 if(C('AUTO_NAME_IDENTIFY')) {
                     // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-                    $module = ucfirst($this->parseName(strtolower($module),1));
+                    $module = ucfirst(Think::parseName(strtolower($module),1));
                 }else{
                     // 普通模式
                     $module = ucwords(strtolower($module));
@@ -271,7 +256,7 @@ class App extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function getAction()
+    static private function getAction()
     {
         if(IS_CLI) { // 命令行模式下面获取第二个参数作为操作名
             $action  =  isset($_SERVER['argv'][2])?$_SERVER['argv'][2]:C('DEFAULT_ACTION');
@@ -311,7 +296,7 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    private function checkLanguage()
+    static private function checkLanguage()
     {
         $defaultLang = C('DEFAULT_LANGUAGE');
         if(C('LANG_SWITCH_ON')) {
@@ -386,7 +371,7 @@ class App extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    private function checkTemplate()
+    static private function checkTemplate()
     {
         if(C('TMPL_SWITCH_ON')) {
             // 启用多模版
@@ -476,7 +461,7 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    private function loadPlugIn()
+    static private function loadPlugIn()
     {
         // 加载插件必须的函数
         include THINK_PATH.'/Mode/Update/plugin.php';
@@ -511,7 +496,7 @@ class App extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function exec()
+    static public function exec()
     {
         if(IS_CLI) {
             // 命令模式下面直接执行模块的操作方法
@@ -527,7 +512,7 @@ class App extends Think
             }
             //创建Action控制器实例
             if(defined('C_MODULE_NAME')) {
-                $this->initComponent();
+                App::initComponent();
                 // 使用组件模块
                 $module  =  A(C_MODULE_NAME);
             }else{
@@ -568,6 +553,8 @@ class App extends Think
                 apply_filter('app_end');
             }
         }
+        // 保存日志记录
+        if(C('WEB_LOG_RECORD')) Log::save();
         return ;
     }
 
@@ -580,7 +567,7 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    private function initComponent() {
+    static private function initComponent() {
         // 加载组件配置文件
         if(is_file(LIB_PATH.COMPONENT_NAME.'/Conf/config.php'))
             C(include LIB_PATH.COMPONENT_NAME.'/Conf/config.php');
@@ -601,9 +588,9 @@ class App extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function run() {
-        $this->init();
-        $this->exec();
+    static public function run() {
+        App::init();
+        App::exec();
         return ;
     }
 
@@ -616,7 +603,7 @@ class App extends Think
      * @param mixed $e 异常对象
      +----------------------------------------------------------
      */
-    public function appException($e)
+    static public function appException($e)
     {
         halt($e->__toString());
     }
@@ -656,17 +643,5 @@ class App extends Think
       }
     }
 
-   /**
-     +----------------------------------------------------------
-     * 析构方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     */
-    public function __destruct()
-    {
-        // 保存日志记录
-        if(C('WEB_LOG_RECORD')) Log::save();
-    }
 };//类定义结束
 ?>
