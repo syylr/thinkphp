@@ -431,14 +431,14 @@ class View extends Think
         // 显示运行时间
         $startTime =  $GLOBALS['_viewStartTime'];
         $endTime = microtime(TRUE);
-        $total_run_time =   number_format(($endTime - $GLOBALS['_beginTime']), 3);
+        $total_run_time =   number_format(($endTime - $GLOBALS['_beginTime']), 5);
         $showTime   =   'Process: '.$total_run_time.'s ';
         if(C('SHOW_ADV_TIME')) {
             // 显示详细运行时间
-            $_load_time =   number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3);
-            $_init_time =   number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3);
-            $_exec_time =   number_format(($startTime  -$GLOBALS['_initTime'] ), 3);
-            $_parse_time    =   number_format(($endTime - $startTime), 3);
+            $_load_time =   number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 5);
+            $_init_time =   number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 5);
+            $_exec_time =   number_format(($startTime  -$GLOBALS['_initTime'] ), 5);
+            $_parse_time    =   number_format(($endTime - $startTime), 5);
             $showTime .= '( Load:'.$_load_time.'s Init:'.$_init_time.'s Exec:'.$_exec_time.'s Template:'.$_parse_time.'s )';
         }
         if(C('SHOW_DB_TIMES') && class_exists('Db',false) ) {
