@@ -292,16 +292,16 @@ class View extends Think
      +----------------------------------------------------------
      */
     protected function output($content,$display) {
-        if(C('HTML_CACHE_ON'))
-            // 写入静态文件
-            HtmlCache::writeHTMLCache($content);
-        // 视图输出标签
-        if(C('TAG_PLUGIN_ON'))
-            tag('view_output',array($content));
-
+        if(C('HTML_CACHE_ON'))  HtmlCache::writeHTMLCache($content);
         if($display) {
-            if(C('SHOW_RUN_TIME'))
-                $content .= '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>';
+            if(C('SHOW_RUN_TIME')){
+                $runtime = '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>';
+                 if(strpos($content,'__RUNTIME__')) {
+                     $content   =  str_replace('__RUNTIME__',$runtime,$content);
+                 }else{
+                     $content   .=  $runtime;
+                 }
+            }
             echo $content;
             if(C('SHOW_PAGE_TRACE'))   $this->showTrace();
             return null;
