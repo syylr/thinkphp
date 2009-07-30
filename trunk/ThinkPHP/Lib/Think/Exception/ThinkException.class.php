@@ -67,10 +67,9 @@ class ThinkException extends Exception
     public function __toString()
     {
         $trace = $this->getTrace();
-        if($this->extra) {
+        if($this->extra)
             // 通过throw_exception抛出的异常要去掉多余的调试信息
             array_shift($trace);
-        }
         $this->class = $trace[0]['class'];
         $this->function = $trace[0]['function'];
         $this->file = $trace[0]['file'];
@@ -105,5 +104,4 @@ class ThinkException extends Exception
     }
 
 }//类定义结束
-
 ?>

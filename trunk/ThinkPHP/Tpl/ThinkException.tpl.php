@@ -6,7 +6,7 @@
 <meta name="Generator" content="EditPlus"/>
 <style>
 body{
-	font-family: Verdana;
+	font-family: 'Microsoft Yahei', Verdana, arial, sans-serif;
 	font-size:14px;
 }
 a{text-decoration:none;color:#174B73;}
@@ -31,19 +31,19 @@ h2{
 .message{
 	background:#FFD;
 	color:#2E2E2E;
-		border:1px solid #E0E0E0; 
+		border:1px solid #E0E0E0;
 }
 #trace{
 	background:#E7F7FF;
-	border:1px solid #E0E0E0; 
+	border:1px solid #E0E0E0;
 	color:#535353;
 }
 .notice{
-    padding:10px;	
-	margin:5px; 
-	color:#666; 
-	background:#FCFCFC; 
-	border:1px solid #E0E0E0; 
+    padding:10px;
+	margin:5px;
+	color:#666;
+	background:#FCFCFC;
+	border:1px solid #E0E0E0;
 }
 .red{
 	color:red;
@@ -64,10 +64,10 @@ h2{
 <p class="title">[ TRACE ]</p>
 <p id="trace">
 <?php echo nl2br($e['trace']);?>
-</p>	
+</p>
 <?php }?>
 </div>
-<div align="center" style="color:#FF3300;margin:5pt;font-weight:bold"> ThinkPHP <sup style='color:gray;font-size:9pt'><?php echo THINK_VERSION;?></sup><span style='color:silver'> { Fast,Compatible & Simple OOP PHP Framework }</span>
+<div align="center" style="color:#FF3300;margin:5pt;font-weight:bold;font-family:Verdana"> ThinkPHP <sup style='color:gray;font-size:9pt'><?php echo THINK_VERSION;?></sup><span style='color:silver'> { Fast & Simple OOP PHP Framework }</span>
 </div>
 </body>
 </html>

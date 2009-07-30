@@ -110,9 +110,8 @@ class Db extends Think
     {
         // 读取数据库配置
         $db_config = $this->parseConfig($db_config);
-        if(empty($db_config['dbms'])) {
+        if(empty($db_config['dbms']))
             throw_exception(L('_NO_DB_CONFIG_'));
-        }
         // 数据库类型
         $this->dbType = ucwords(strtolower($db_config['dbms']));
         // 读取系统数据库驱动目录
@@ -124,14 +123,12 @@ class Db extends Think
         if(class_exists($dbClass)) {
             $db = new $dbClass($db_config);
             // 获取当前的数据库类型
-            if( 'pdo' != strtolower($db_config['dbms']) ) {
+            if( 'pdo' != strtolower($db_config['dbms']) )
                 $db->dbType = strtoupper($this->dbType);
-            }else{
+            else
                 $db->dbType = $this->_getDsnType($db_config['dsn']);
-            }
-            if(C('DEBUG_MODE')) {
+            if(C('DEBUG_MODE'))
                 $db->debug    = true;
-            }
         }else {
             // 类没有定义
             throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
@@ -201,13 +198,11 @@ class Db extends Think
      */
     public function addConnect($config,$linkNum=null) {
         $db_config  =   $this->parseConfig($config);
-        if(empty($linkNum)) {
+        if(empty($linkNum))
             $linkNum     =   count($this->linkID);
-        }
-        if(isset($this->linkID[$linkNum])) {
+        if(isset($this->linkID[$linkNum]))
             // 已经存在连接
             return false;
-        }
         // 创建新的数据库连接
         return $this->connect($db_config,$linkNum);
     }
@@ -245,13 +240,12 @@ class Db extends Think
      +----------------------------------------------------------
      */
     protected function initConnect($master=true) {
-        if(1 == C('DB_DEPLOY_TYPE')) {
+        if(1 == C('DB_DEPLOY_TYPE'))
             // 采用分布式数据库
             $this->_linkID = $this->multiConnect($master);
-        }else{
+        else
             // 默认单数据库
             if ( !$this->connected ) $this->_linkID = $this->connect();
-        }
     }
 
     /**
@@ -276,13 +270,12 @@ class Db extends Think
         // 数据库读写是否分离
         if(C('DB_RW_SEPARATE')){
             // 主从式采用读写分离
-            if($master) {
+            if($master)
                 // 默认主服务器是连接第一个数据库配置
                 $r  =   0;
-            }else{
+            else
                 // 读操作连接从服务器
                 $r = floor(mt_rand(1,count($_config['hostname'])-1));   // 每次随机连接的数据库
-            }
         }else{
             // 读写操作不区分服务器
             $r = floor(mt_rand(0,count($_config['hostname'])-1));   // 每次随机连接的数据库
@@ -368,9 +361,8 @@ class Db extends Think
     protected function parseSet($data) {
         foreach ($data as $key=>$val){
             $value   =  $this->parseValue($val);
-            if(is_scalar($value)) { // 过滤非标量数据
+            if(is_scalar($value)) // 过滤非标量数据
                 $set[]    = $this->addSpecialChar($key).'='.$value;
-            }
         }
         return ' SET '.implode(',',$set);
     }
@@ -418,11 +410,10 @@ class Db extends Think
             // 支持 'field1'=>'field2' 这样的字段别名定义
             $array   =  array();
             foreach ($fields as $key=>$field){
-                if(!is_numeric($key)) {
+                if(!is_numeric($key))
                     $array[] =  $this->addSpecialChar($key).' AS '.$this->addSpecialChar($field);
-                }else{
+                else
                     $array[] =  $this->addSpecialChar($field);
-                }
             }
             $fieldsStr = implode(',', $array);
         }elseif(is_string($fields) && !empty($fields)) {
@@ -445,9 +436,8 @@ class Db extends Think
      +----------------------------------------------------------
      */
     protected function parseTable($tables) {
-        if(is_string($tables)) {
+        if(is_string($tables))
             $tables  =  explode(',',$tables);
-        }
         array_walk($tables, array(&$this, 'addSpecialChar'));
         return implode(',',$tables);
     }
@@ -568,9 +558,8 @@ class Db extends Think
                     $op   =  ' AND ';
                 }
                 $array   =  array();
-                foreach ($where as $field=>$data){
+                foreach ($where as $field=>$data)
                     $array[] = $this->addSpecialChar($field).' = '.$this->parseValue($data);
-                }
                 $whereStr   = implode($op,$array);
                 break;
         }
@@ -608,11 +597,10 @@ class Db extends Think
         if(!empty($join)) {
             if(is_array($join)) {
                 foreach ($join as $key=>$_join){
-                    if(false !== stripos($_join,'JOIN')) {
+                    if(false !== stripos($_join,'JOIN'))
                         $joinStr .= ' '.$_join;
-                    }else{
+                    else
                         $joinStr .= ' LEFT JOIN ' .$_join;
-                    }
                 }
             }else{
                 $joinStr .= ' LEFT JOIN ' .$join;
