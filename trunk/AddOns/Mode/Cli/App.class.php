@@ -38,15 +38,19 @@ class App
         // 设定错误和异常处理
         set_error_handler(array('App',"appError"));
         set_exception_handler(array('App',"appException"));
+        //[RUNTIME]
         // 检查项目是否编译过
         // 在部署模式下会自动在第一次执行的时候编译项目
-        if(is_file(RUNTIME_PATH.'~app.php')) {
+        if(defined('RUNTIME_MODEL')){
+            // 运行模式无需载入项目编译缓存
+        }elseif(is_file(RUNTIME_PATH.'~app.php')) {
             // 直接读取编译后的项目文件
             C(include RUNTIME_PATH.'~app.php');
         }else{
             // 预编译项目
             App::build();
         }
+        //[/RUNTIME]
         // 取得模块和操作名称
         $module = isset($_SERVER['argv'][1])?$_SERVER['argv'][1]:C('DEFAULT_MODULE');
         $action  =  isset($_SERVER['argv'][2])?$_SERVER['argv'][2]:C('DEFAULT_ACTION');
@@ -62,7 +66,7 @@ class App
         if(C('WEB_LOG_RECORD')) Log::save();
         return ;
     }
-
+    //[RUNTIME]
     /**
      +----------------------------------------------------------
      * 读取配置信息 编译项目
@@ -111,12 +115,21 @@ class App
         }else{
             // 部署模式下面生成编译文件
             // 下次直接加载项目编译文件
-            $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
-            file_put_contents(RUNTIME_PATH.'~app.php',strip_whitespace($content));
+            if(defined('RUNTIME_ALLINONE')) {
+                // 获取用户自定义变量
+                $defs = get_defined_constants(TRUE);
+                $content  = array_define($defs['user']);
+                $content .= substr(file_get_contents(RUNTIME_PATH.'~runtime.php'),5);
+                $content .= $common."\nreturn ".var_export(C(),true).';';
+                file_put_contents(RUNTIME_PATH.'~allinone.php',strip_whitespace('<?php '.$content));
+            }else{
+                $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
+                file_put_contents(RUNTIME_PATH.'~app.php',strip_whitespace($content));
+            }
         }
         return ;
     }
-
+    //[/RUNTIME]
     /**
      +----------------------------------------------------------
      * 自定义异常处理
