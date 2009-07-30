@@ -23,12 +23,10 @@
 
 // URL组装 支持不同模式和路由
 function U($url,$params=array(),$redirect=false,$suffix=true) {
-    if(0===strpos($url,'/')) {
+    if(0===strpos($url,'/'))
         $url   =  substr($url,1);
-    }
-    if(!strpos($url,'://')) {// 没有指定项目名 使用当前项目名
+    if(!strpos($url,'://')) // 没有指定项目名 使用当前项目名
         $url   =  APP_NAME.'://'.$url;
-    }
     if(stripos($url,'@?')) { // 给路由传递参数
         $url   =  str_replace('@?','@think?',$url);
     }elseif(stripos($url,'@')) { // 没有参数的路由
@@ -72,9 +70,8 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
         }else{
             $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$group.$module.$depr.$action.$str;
         }
-        if($suffix && C('HTML_URL_SUFFIX')) {
+        if($suffix && C('HTML_URL_SUFFIX'))
             $url .= C('HTML_URL_SUFFIX');
-        }
     }else{
         $params =   http_build_query($params);
         if(isset($group)) {
@@ -83,11 +80,10 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
             $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.'&'.$params;
         }
     }
-    if($redirect) {
+    if($redirect)
         redirect($url);
-    }else{
+    else
         return $url;
-    }
 }
 
 /**
@@ -116,9 +112,7 @@ function parse_name($name,$type=0) {
 
 // 错误输出
 function halt($error) {
-    if(IS_CLI) {
-        exit ($error);
-    }
+    if(IS_CLI)   exit ($error);
     $e = array();
     if(C('DEBUG_MODE')){
         //调试模式下输出错误信息
@@ -152,11 +146,10 @@ function halt($error) {
         if(!empty($error_page)){
             redirect($error_page);
         }else {
-            if(C('SHOW_ERROR_MSG')) {
+            if(C('SHOW_ERROR_MSG'))
                 $e['message'] =  is_array($error)?$error['message']:$error;
-            }else{
+            else
                 $e['message'] = C('ERROR_MESSAGE');
-            }
             // 包含异常页面模板
             include C('EXCEPTION_TMPL_FILE');
         }
@@ -169,9 +162,8 @@ function redirect($url,$time=0,$msg='')
 {
     //多行URL地址支持
     $url = str_replace(array("\n", "\r"), '', $url);
-    if(empty($msg)) {
+    if(empty($msg))
         $msg    =   "系统将在{$time}秒之后自动跳转到{$url}！";
-    }
     if (!headers_sent()) {
         // redirect
         if(0===$time) {
@@ -183,9 +175,8 @@ function redirect($url,$time=0,$msg='')
         exit();
     }else {
         $str    = "<meta http-equiv='Refresh' content='{$time};URL={$url}'>";
-        if($time!=0) {
+        if($time!=0)
             $str   .=   $msg;
-        }
         exit($str);
     }
 }
@@ -193,15 +184,11 @@ function redirect($url,$time=0,$msg='')
 // 自定义异常处理
 function throw_exception($msg,$type='ThinkException',$code=0)
 {
-    if(IS_CLI) {
-        exit($msg);
-    }
-    if(class_exists($type,false)){
+    if(IS_CLI)   exit($msg);
+    if(class_exists($type,false))
         throw new $type($msg,$code,true);
-    }else {
-        // 异常类型不存在则输出错误信息字串
-        halt($msg);
-    }
+    else
+        halt($msg);        // 异常类型不存在则输出错误信息字串
 }
 
 // 区间调试开始
@@ -239,28 +226,20 @@ function dump($var, $echo=true,$label=null, $strict=true)
         var_dump($var);
         $output = ob_get_clean();
         $output = preg_replace("/\]\=\>\n(\s+)/m", "] => ", $output);
-        $output = '<pre>'
-                . $label
-                . htmlspecialchars($output, ENT_QUOTES)
-                . '</pre>';
+        $output = '<pre>'. $label. htmlspecialchars($output, ENT_QUOTES). '</pre>';
     }
     if ($echo) {
         echo($output);
         return null;
-    }else {
+    }else
         return $output;
-    }
 }
 
 // 取得对象实例 支持调用类的静态方法
 function get_instance_of($name,$method='',$args=array())
 {
     static $_instance = array();
-    if(empty($args)) {
-        $identify   =   $name.$method;
-    }else{
-        $identify   =   $name.$method.to_guid_string($args);
-    }
+    $identify   =   empty($args)?$name.$method:$name.$method.to_guid_string($args);
     if (!isset($_instance[$identify])) {
         if(class_exists($name)){
             $o = new $name();
@@ -336,9 +315,8 @@ function require_cache($filename)
 function file_exists_case($filename) {
     if(is_file($filename)) {
         if(IS_WIN && C('CHECK_FILE_CASE')) {
-            if(basename(realpath($filename)) != basename($filename)) {
+            if(basename(realpath($filename)) != basename($filename))
                 return false;
-            }
         }
         return true;
     }
@@ -391,9 +369,8 @@ function import($class,$baseUrl = '',$ext='.class.php')
     if($ext == '.class.php' && is_file($classfile)) {
         // 冲突检测
         $class = basename($classfile,$ext);
-        if(isset($_class[$class])) {
+        if(isset($_class[$class]))
             throw_exception(L('_CLASS_CONFLICT_').':'.$_class[$class].' '.$classfile);
-        }
         $_class[$class] = $classfile;
     }
     //导入目录下的指定类库文件
@@ -405,9 +382,8 @@ function import($class,$baseUrl = '',$ext='.class.php')
 // 并且默认都是以.php后缀导入
 function vendor($class,$baseUrl = '',$ext='.php')
 {
-    if(empty($baseUrl)) {
+    if(empty($baseUrl))
         $baseUrl    =   VENDOR_PATH;
-    }
     return import($class,$baseUrl,$ext);
 }
 
@@ -420,13 +396,11 @@ function alias_import($alias,$classfile='') {
         return ;
     }
     if(is_string($alias)) {
-        if(isset($_alias[$alias])) {
+        if(isset($_alias[$alias]))
             return require_cache($_alias[$alias]);
-        }
     }elseif(is_array($alias)){
-        foreach ($alias as $key=>$val){
+        foreach ($alias as $key=>$val)
             $_alias[$key]  =  $val;
-        }
         return ;
     }
     return false;
@@ -445,15 +419,12 @@ function alias_import($alias,$classfile='') {
 function D($name='',$app='')
 {
     static $_model = array();
-    if(empty($name)) {
+    if(empty($name))
         return new  Model();
-    }
-    if(empty($app)) {
+    if(empty($app))
         $app =  C('DEFAULT_MODEL_APP');
-    }
-    if(isset($_model[$app.$name])) {
+    if(isset($_model[$app.$name]))
         return $_model[$app.$name];
-    }
     $OriClassName = $name;
     if(strpos($name,C('GROUP_DEPR'))) {
         $array   =  explode(C('GROUP_DEPR'),$name);
@@ -484,9 +455,8 @@ function D($name='',$app='')
  */
 function M($name='') {
     static $_model = array();
-    if(!isset($_model[$name])) {
+    if(!isset($_model[$name]))
         $_model[$name]   = new Model($name);
-    }
     return $_model[$name];
 }
 
@@ -503,9 +473,8 @@ function M($name='') {
 function A($name,$app='@')
 {
     static $_action = array();
-    if(isset($_action[$app.$name])) {
+    if(isset($_action[$app.$name]))
         return $_action[$app.$name];
-    }
     $OriClassName = $name;
     if(strpos($name,C('GROUP_DEPR'))) {
         $array   =  explode(C('GROUP_DEPR'),$name);
@@ -528,11 +497,10 @@ function A($name,$app='@')
 // 远程调用模块的操作方法
 function R($module,$action,$app='@') {
     $class = A($module,$app);
-    if($class) {
+    if($class)
         return call_user_func(array(&$class,$action));
-    }else{
+    else
         return false;
-    }
 }
 
 // 获取和设置语言定义(不区分大小写)
@@ -591,9 +559,8 @@ function tag($name,$params=array()) {
     $tags   =  C('_tags_.'.$name);
     if($tags) {
         foreach ($tags   as $key=>$call){
-            if(is_callable($call)) {
+            if(is_callable($call))
                 $result = call_user_func_array($call,$params);
-            }
         }
         return $result;
     }
@@ -613,11 +580,10 @@ function W($name,$data=array(),$return=false) {
     require_cache(LIB_PATH.'Widget/'.$class.'.class.php');
     $widget  =  new $class();
     $content = $widget->render($data);
-    if($return) {
+    if($return)
         return $content;
-    }else{
+    else
         echo $content;
-    }
 }
 
 // 全局缓存设置和读取
@@ -630,9 +596,8 @@ function S($name,$value='',$expire='',$type='') {
         if(is_null($value)) {
             // 删除缓存
             $result =   $cache->rm($name);
-            if($result) {
+            if($result)
                 unset($_cache[$type.'_'.$name]);
-            }
             return $result;
         }else{
             // 缓存数据
@@ -641,9 +606,8 @@ function S($name,$value='',$expire='',$type='') {
         }
         return ;
     }
-    if(isset($_cache[$type.'_'.$name])) {
+    if(isset($_cache[$type.'_'.$name]))
         return $_cache[$type.'_'.$name];
-    }
     // 获取缓存数据
     $value      =  $cache->get($name);
     $_cache[$type.'_'.$name]     =   $value;
@@ -658,9 +622,8 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
         if(is_null($value)) {
             // 删除缓存
             $result =   unlink($filename);
-            if($result) {
+            if($result)
                 unset($_cache[$name]);
-            }
             return $result;
         }else{
             // 缓存数据
@@ -672,9 +635,8 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
         }
         return ;
     }
-    if(isset($_cache[$name])) {
+    if(isset($_cache[$name]))
         return $_cache[$name];
-    }
     // 获取缓存数据
     if(is_file($filename) && false !== $content = file_get_contents($filename)) {
         $expire  =  (int)substr($content,44, 12);
@@ -709,14 +671,12 @@ function to_guid_string($mix)
 // 编译文件
 function compile($filename,$runtime=false) {
     $content = file_get_contents($filename);
-    if(true === $runtime) {
+    if(true === $runtime)
         // 替换预编译指令
         $content = preg_replace('/\/\/\[RUNTIME\](.*?)\/\/\[\/RUNTIME\]/s','',$content);
-    }
     $content = substr(trim($content),5);
-    if('?>' == substr($content,-2)) {
+    if('?>' == substr($content,-2))
         $content = substr($content,0,-2);
-    }
     return $content;
 }
 
@@ -804,9 +764,8 @@ function auto_charset($fContents,$from,$to){
         foreach ( $fContents as $key => $val ) {
             $_key =     auto_charset($key,$from,$to);
             $fContents[$_key] = auto_charset($val,$from,$to);
-            if($key != $_key ) {
+            if($key != $_key )
                 unset($fContents[$key]);
-            }
         }
         return $fContents;
     }
@@ -877,5 +836,4 @@ function cookie($name,$value='',$option=null)
         }
     }
 }
-
 ?>

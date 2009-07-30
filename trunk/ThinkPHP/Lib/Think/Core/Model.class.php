@@ -111,9 +111,7 @@ class Model extends Think implements IteratorAggregate
             // 如果数据表字段没有定义则自动获取
             if(C('DB_FIELDS_CACHE')) {
                 $this->fields = F($this->name.'_fields');
-                if(!$this->fields) {
-                    $this->flush();
-                }
+                if(!$this->fields)   $this->flush();
             }else{
                 // 每次都会读取数据表信息
                 $this->flush();
@@ -144,10 +142,9 @@ class Model extends Think implements IteratorAggregate
             }
         }
         // 2008-3-7 增加缓存开关控制
-        if(C('DB_FIELDS_CACHE')) {
+        if(C('DB_FIELDS_CACHE'))
             // 永久缓存数据表信息
             F($this->name.'_fields',$this->fields);
-        }
     }
 
     /**
@@ -256,11 +253,7 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function __get($name) {
-        if(isset($this->data[$name])) {
-            return $this->data[$name];
-        }else{
-            return null;
-        }
+        return isset($this->data[$name])?$this->data[$name]:null;
     }
 
     /**
@@ -313,9 +306,8 @@ class Model extends Think implements IteratorAggregate
         // 检查非数据字段
         if(isset($this->fields)) {
             foreach ($data as $key=>$val){
-                if(!in_array($key,$this->fields,true)) {
+                if(!in_array($key,$this->fields,true))
                     unset($data[$key]);
-                }
             }
         }
         $this->_before_write($data);
@@ -417,9 +409,8 @@ class Model extends Think implements IteratorAggregate
             $this->error = L('_OPERATION_WRONG_');
             return false;
         }else {
-            if(isset($pkValue)) {
+            if(isset($pkValue))
                 $data[$this->getPk()]   =  $pkValue;
-            }
             $this->_after_update($data,$options);
             return true;
         }
@@ -443,11 +434,10 @@ class Model extends Think implements IteratorAggregate
     public function delete($options=array()) {
         if(empty($options) && empty($this->options)) {
             // 如果删除条件为空 则删除当前数据对象所对应的记录
-            if(!empty($this->data) && isset($this->data[$this->getPk()])) {
+            if(!empty($this->data) && isset($this->data[$this->getPk()]))
                 return $this->delete($this->data[$this->getPk()]);
-            }else{
+            else
                 return false;
-            }
         }
         if(is_numeric($options)  || is_string($options)) {
             // 根据主键删除记录
@@ -464,9 +454,8 @@ class Model extends Think implements IteratorAggregate
             return false;
         }else {
             $data = array();
-            if(isset($pkValue)) {
+            if(isset($pkValue))
                 $data[$this->getPk()]   =  $pkValue;
-            }
             $this->_after_delete($data,$options);
             // 返回删除记录个数
             return $result;
@@ -516,15 +505,13 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     private function _parseOptions($options) {
-        if(is_array($options)) {
+        if(is_array($options))
             $options =  array_merge($this->options,$options);
-        }
         // 查询过后清空sql表达式组装 避免影响下次查询
         $this->options  =   array();
-        if(!isset($options['table'])) {
+        if(!isset($options['table']))
             // 自动获取表名
             $options['table'] =$this->getTableName();
-        }
         // 表达式过滤
         $this->_options_filter($options);
         return $options;
@@ -579,14 +566,12 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function setField($field,$value,$condition='') {
-        if(empty($condition) && isset($this->options['where'])) {
+        if(empty($condition) && isset($this->options['where']))
             $condition   =  $this->options['where'];
-        }
         $options['where'] =  $condition;
         if(is_array($field)) {
-            foreach ($field as $key=>$val){
+            foreach ($field as $key=>$val)
                 $data[$val]    = $value[$key];
-            }
         }else{
             $data[$field]   =  $value;
         }
@@ -606,9 +591,8 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function getField($field,$condition='') {
-        if(empty($condition) && isset($this->options['where'])) {
+        if(empty($condition) && isset($this->options['where']))
             $condition   =  $this->options['where'];
-        }
         $options['where'] =  $condition;
         $options['field']    =  $field;
         $result   =  $this->find($options);
@@ -636,9 +620,8 @@ class Model extends Think implements IteratorAggregate
      */
     public function getFields($field,$condition='',$sepa=' ')
     {
-        if(empty($condition) && isset($this->options['where'])) {
+        if(empty($condition) && isset($this->options['where']))
             $condition   =  $this->options['where'];
-        }
         $options['where'] =  $condition;
         $options['field']    =  $field;
         $rs = $this->select($options);
@@ -690,10 +673,9 @@ class Model extends Think implements IteratorAggregate
         $type = self::MODEL_INSERT;// 新增数据
         if(isset($data[$this->getPk()])) {
             $pk   =  $this->getPk();
-            if($this->field($pk)->where($pk.'=\''.$data[$pk].'\'')->find()) {
+            if($this->field($pk)->where($pk.'=\''.$data[$pk].'\'')->find())
                 // 编辑状态
                 $type = self::MODEL_UPDATE; // 编辑数据
-            }
         }
         // 表单令牌验证
         if(C('TOKEN_ON') && !$this->autoCheckToken($data)) {
@@ -701,9 +683,8 @@ class Model extends Think implements IteratorAggregate
             return false;
         }
         // 验证回调接口
-        if(!$this->_before_create($data,$type)) {
+        if(!$this->_before_create($data,$type))
             return false;
-        }
         // 检查字段映射
         if(isset($this->_map)) {
             foreach ($this->_map as $key=>$val){
@@ -761,9 +742,8 @@ class Model extends Think implements IteratorAggregate
     public function query($sql)
     {
         if(!empty($sql)) {
-            if(strpos($sql,'__TABLE__')) {
+            if(strpos($sql,'__TABLE__'))
                 $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
-            }
             return $this->db->query($sql);
         }else{
             return false;
@@ -784,9 +764,8 @@ class Model extends Think implements IteratorAggregate
     public function execute($sql='')
     {
         if(!empty($sql)) {
-            if(strpos($sql,'__TABLE__')) {
+            if(strpos($sql,'__TABLE__'))
                 $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
-            }
             $result =   $this->db->execute($sql);
             return $result;
         }else {
@@ -807,9 +786,7 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function patchQuery($sql=array()) {
-        if(!is_array($sql)) {
-            return false;
-        }
+        if(!is_array($sql)) return false;
         // 自动启动事务支持
         $this->startTrans();
         try{
@@ -840,9 +817,8 @@ class Model extends Think implements IteratorAggregate
      */
     public function getModelName()
     {
-        if(empty($this->name)) {
+        if(empty($this->name))
             $this->name =   substr(get_class($this),0,-5);
-        }
         return $this->name;
     }
 
@@ -867,9 +843,8 @@ class Model extends Think implements IteratorAggregate
             }else{
                 $tableName .= $this->name;
             }
-            if(!empty($this->dbName)) {
+            if(!empty($this->dbName))
                 $tableName    =  $this->dbName.'.'.$tableName;
-            }
             $this->trueTableName    =   strtolower($tableName);
         }
         return $this->trueTableName;
@@ -1009,11 +984,10 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function join($join) {
-        if(is_array($join)) {
+        if(is_array($join))
             $this->options['join'] =  $join;
-        }else{
+        else
             $this->options['join'][]  =   $join;
-        }
         return $this;
     }
 
@@ -1032,10 +1006,9 @@ class Model extends Think implements IteratorAggregate
         foreach($rule as $key=>$val) {
             // 验证因子定义格式
             // array(field,rule,message,type)
-            if(0==strpos($val[2],'{%') && strpos($val[2],'}')) {
+            if(0==strpos($val[2],'{%') && strpos($val[2],'}'))
                 // 支持提示信息的多语言 使用 {%语言定义} 方式
                 $val[2]  =  L(substr($val[2],2,-1));
-            }
             if(false === $this->_validationField($data,$val)){
                 $this->error    =   $val[2];
                 return false;
@@ -1064,42 +1037,35 @@ class Model extends Think implements IteratorAggregate
             case 'callback':// 调用方法进行验证
                 return call_user_func_array(array(&$this, $val[1]), $args);
             case 'confirm': // 验证两个字段是否相同
-                if($data[$val[0]] != $data[$val[1]] ) {
+                if($data[$val[0]] != $data[$val[1]] )
                     return false;
-                }
                 break;
             case 'in': // 验证是否在某个数组范围之内
-                if(!in_array($data[$val[0]] ,$val[1]) ) {
+                if(!in_array($data[$val[0]] ,$val[1]) )
                     return false;
-                }
                 break;
             case 'equal': // 验证是否等于某个值
-                if($data[$val[0]] != $val[1]) {
+                if($data[$val[0]] != $val[1])
                     return false;
-                }
                 break;
             case 'unique': // 验证某个值是否唯一
-                if(is_string($val[0]) && strpos($val[0],',')) {
+                if(is_string($val[0]) && strpos($val[0],','))
                     $val[0]  =  explode(',',$val[0]);
-                }
                 $map = array();
                 if(is_array($val[0])) {
                     // 支持多个字段验证
-                    foreach ($val[0] as $field){
+                    foreach ($val[0] as $field)
                         $map[$field]   =  $data[$field];
-                    }
                 }else{
                     $map[$val[0]] = $data[$val[0]];
                 }
-                if($this->where($map)->find()) {
+                if($this->where($map)->find())
                     return false;
-                }
                 break;
             case 'regex':
             default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
-                if(!$this->regex($data[$val[0]],$val[1])) {
+                if(!$this->regex($data[$val[0]],$val[1]))
                     return false;
-                }
         }
         return true;
     }
@@ -1129,9 +1095,8 @@ class Model extends Think implements IteratorAggregate
             'english' => '/^[A-Za-z]+$/',
         );
         // 检查是否有内置的正则表达式
-        if(isset($validate[strtolower($rule)])) {
+        if(isset($validate[strtolower($rule)]))
             $rule   =   $validate[strtolower($rule)];
-        }
         return preg_match($rule,$value)===1;
     }
 
@@ -1165,9 +1130,8 @@ class Model extends Think implements IteratorAggregate
                 default: // 默认作为字符串填充
                     $this->data[$auto[0]] = $auto[1];
             }
-            if(false === $this->data[$auto[0]] ) {
+            if(false === $this->data[$auto[0]] )
                 unset($this->data[$auto[0]]);
-            }
         }
         return $this;
     }
