@@ -24,19 +24,9 @@
  */
 class View extends Think
 {
-    /**
-     +----------------------------------------------------------
-     * 模板页面显示变量，未经定义的变量不会显示在页面中
-     +----------------------------------------------------------
-     * @var array
-     * @access protected
-     +----------------------------------------------------------
-     */
-    protected $tVar        =  array();
-
-    protected $trace       = array();
-
-    protected $templateFile  = '';
+    protected $tVar        =  array(); // 模板输出变量
+    protected $trace       = array();  // 页面trace变量
+    protected $templateFile  = '';      // 模板文件名
 
    /**
      +----------------------------------------------------------
@@ -209,12 +199,13 @@ class View extends Think
             // 自动定位模板文件
             $templateFile   = $this->parseTemplateFile($templateFile);
         }
-        if('php'==strtolower(C('TMPL_ENGINE_TYPE'))) {
+        $engine  = strtolower(C('TMPL_ENGINE_TYPE'));
+        if('php'==$engine) {
             // 模板阵列变量分解成为独立变量
             extract($this->tVar, EXTR_OVERWRITE);
             // 直接载入PHP模板
             include $templateFile;
-        }elseif('think'==strtolower(C('TMPL_ENGINE_TYPE')) && $this->checkCache($templateFile)) {
+        }elseif('think'==$engine && $this->checkCache($templateFile)) {
             // 如果是Think模板引擎并且缓存有效 分解变量并载入模板缓存
             extract($this->tVar, EXTR_OVERWRITE);
             //载入模版缓存文件
@@ -222,7 +213,7 @@ class View extends Think
         }else{
             // 模板文件需要重新编译 支持第三方模板引擎
             // 调用模板引擎解析和输出
-            $className   = 'Template'.ucwords(strtolower(C('TMPL_ENGINE_TYPE')));
+            $className   = 'Template'.ucwords($engine);
             require_cache(THINK_PATH.'/Lib/Think/Core/Template/'.$className.'.class.php');
             $tpl   =  new $className;
             $tpl->fetch($templateFile,$this->tVar,$charset);
