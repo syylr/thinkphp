@@ -160,12 +160,13 @@ class  ThinkTemplate extends Think
         $tmplContent = preg_replace('/<!--###literal(\d)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
         // 添加安全代码
         $tmplContent  =  '<?php if (!defined(\'THINK_PATH\')) exit();?>'.$tmplContent;
-        /* 去除空格与换行 */
-        $tmplContent = preg_replace("~>\s+<~", "><",$tmplContent);
-        $tmplContent = preg_replace( "~>(\s+\n|\r)~", ">" ,$tmplContent);
+        if(C('HTML_STRIP_WHITESPACE')) {
+            /* 去除html空格与换行 */
+            $tmplContent = preg_replace("~>\s+<~", "><",$tmplContent);
+            $tmplContent = preg_replace( "~>(\s+\n|\r)~", ">" ,$tmplContent);
+        }
         return trim($tmplContent);
     }
-
 
     /**
      +----------------------------------------------------------
@@ -219,8 +220,7 @@ class  ThinkTemplate extends Think
         // 一般放在文件的最前面
         // 格式：<taglib name="html" />
         // 当TAGLIB_LOAD配置为true时才会进行检测
-        if(C('TAGLIB_LOAD'))
-            $this->getIncludeTagLib($content);
+        if(C('TAGLIB_LOAD'))   $this->getIncludeTagLib($content);
         if(!empty($this->tagLib)) {
             // 对导入的TagLib进行解析
             $_taglibs = C('_taglibs_');
@@ -238,16 +238,10 @@ class  ThinkTemplate extends Think
             }
         }
         // 内置了CX标签库支持 无需使用taglib标签导入就可以使用
-        // 并且无需添加cx前缀 ，可以直接写成
-        // <include file='' />
-        // <volist id='' name='' ></volist>
-        // 的形式
         import('TagLibCx');
         $this->parseTagLib('cx',$content,true);
-
         //解析普通模板标签 {tagName:}
         $content = preg_replace('/('.$this->config['tmpl_begin'].')(\S.+?)('.$this->config['tmpl_end'].')/eis',"\$this->parseTag('\\2')",$content);
-
         return $content;
     }
 
