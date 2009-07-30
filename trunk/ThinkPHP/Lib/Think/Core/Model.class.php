@@ -10,6 +10,10 @@
 // +----------------------------------------------------------------------
 // $Id$
 
+define('HAS_ONE',1);
+define('BELONGS_TO',2);
+define('HAS_MANY',3);
+define('MANY_TO_MANY',4);
 /**
  +------------------------------------------------------------------------------
  * ThinkPHP Model模型类
@@ -22,10 +26,6 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-define('HAS_ONE',1);
-define('BELONGS_TO',2);
-define('HAS_MANY',3);
-define('MANY_TO_MANY',4);
 class Model extends Think implements IteratorAggregate
 {
     // 操作状态
@@ -323,8 +323,12 @@ class Model extends Think implements IteratorAggregate
                 }
             }
         }
+        $this->_before_write($data);
         return $data;
      }
+
+    // 写入数据前的回调方法 包括新增和更新
+    protected function _before_write(&$data) {}
 
     /**
      +----------------------------------------------------------
@@ -425,7 +429,7 @@ class Model extends Think implements IteratorAggregate
             return true;
         }
     }
-    // 插入数据前的回调方法
+    // 更新数据前的回调方法
     protected function _before_update(&$data,$options) {}
     // 更新成功后的回调方法
     protected function _after_update($data,$options) {}
@@ -761,9 +765,6 @@ class Model extends Think implements IteratorAggregate
      */
     public function query($sql)
     {
-        if(is_array($sql)) {
-            return $this->patchQuery($sql);
-        }
         if(!empty($sql)) {
             if(strpos($sql,'__TABLE__')) {
                 $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
@@ -827,7 +828,7 @@ class Model extends Think implements IteratorAggregate
             }
             // 提交事务
             $this->commit();
-        } catch (Exception $e) {
+        } catch (ThinkException $e) {
             $this->rollback();
         }
         return true;
@@ -973,6 +974,32 @@ class Model extends Think implements IteratorAggregate
      */
     public function getLastSql() {
         return $this->db->getLastSql();
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取主键名称
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function getPk() {
+        return isset($this->fields['_pk'])?$this->fields['_pk']:$this->pk;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取数据表字段信息
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function getDbFields(){
+        return $this->fields;
     }
 
     /**
@@ -1148,32 +1175,6 @@ class Model extends Think implements IteratorAggregate
             }
         }
         return $this;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 获取主键名称
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function getPk() {
-        return isset($this->fields['_pk'])?$this->fields['_pk']:$this->pk;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 获取数据表字段信息
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return array
-     +----------------------------------------------------------
-     */
-    public function getDbFields(){
-        return $this->fields;
     }
 };
 ?>
