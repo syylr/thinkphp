@@ -18,10 +18,9 @@ function build_runtime() {
     require defined('PATH_DEFINE_FILE')?PATH_DEFINE_FILE:THINK_PATH.'/Common/paths.php';
     // 定义核心编译的文件
     $runtime[]  =  THINK_PATH.'/Common/functions.php'; // 系统函数
-    if(version_compare(PHP_VERSION,'5.2.0','<') ) {
+    if(version_compare(PHP_VERSION,'5.2.0','<') )
         // 加载兼容函数
         $runtime[]	=	 THINK_PATH.'/Common/compat.php';
-    }
     // 核心基类必须加载
     $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Think.class.php';
     // 读取核心编译文件列表
@@ -40,9 +39,7 @@ function build_runtime() {
     $runtime   =  array_merge($runtime,$list);
     // 加载核心编译文件列表
     foreach ($runtime as $key=>$file){
-        if(is_file($file)) {
-            require $file;
-        }
+        if(is_file($file))  require $file;
     }
     // 检查项目目录结构 如果不存在则自动创建
     if(!is_dir(RUNTIME_PATH)) {
@@ -74,11 +71,9 @@ function mkdirs($dirs,$mode=0777) {
 // 创建项目目录结构
 function buildAppDir() {
     // 没有创建项目目录的话自动创建
-    if(!is_dir(APP_PATH)){
-        mk_dir(APP_PATH,0777);
-    }
+    if(!is_dir(APP_PATH)) mk_dir(APP_PATH,0777);
     if(is_writeable(APP_PATH)) {
-        mkdirs(array(
+        $dirs  = array(
             LIB_PATH,
             RUNTIME_PATH,
             CONFIG_PATH,
@@ -92,7 +87,8 @@ function buildAppDir() {
             DATA_PATH,
             LIB_PATH.'Model/',
             LIB_PATH.'Action/',
-            ));
+            );
+        mkdirs($dirs);
         // 目录安全写入
         if(!defined('BUILD_DIR_SECURE')) define('BUILD_DIR_SECURE',false);
         if(BUILD_DIR_SECURE) {
@@ -102,24 +98,13 @@ function buildAppDir() {
             $content        =   DIR_SECURE_CONTENT;
             $a = explode(',', DIR_SECURE_FILENAME);
             foreach ($a as $filename){
-                file_put_contents(LIB_PATH.$filename,$content);
-                file_put_contents(LIB_PATH.'Action/'.$filename,$content);
-                file_put_contents(LIB_PATH.'Model/'.$filename,$content);
-                file_put_contents(CACHE_PATH.$filename,$content);
-                file_put_contents(LANG_PATH.$filename,$content);
-                file_put_contents(TEMP_PATH.$filename,$content);
-                file_put_contents(TMPL_PATH.$filename,$content);
-                file_put_contents(TMPL_PATH.'default/'.$filename,$content);
-                file_put_contents(DATA_PATH.$filename,$content);
-                file_put_contents(COMMON_PATH.$filename,$content);
-                file_put_contents(CONFIG_PATH.$filename,$content);
-                file_put_contents(LOG_PATH.$filename,$content);
+                foreach ($dirs as $dir)
+                    file_put_contents($dir.$filename,$content);
             }
         }
         // 写入配置文件
-        if(!is_file(CONFIG_PATH.'config.php')) {
+        if(!is_file(CONFIG_PATH.'config.php'))
             file_put_contents(CONFIG_PATH.'config.php',"<?php\nreturn array(\n\t//'配置项'=>'配置值'\n);\n?>");
-        }
         // 写入测试Action
         if(!is_file(LIB_PATH.'Action/IndexAction.class.php')) {
             $content     =
