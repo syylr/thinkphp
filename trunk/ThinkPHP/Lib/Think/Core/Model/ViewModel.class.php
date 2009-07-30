@@ -48,21 +48,18 @@ class ViewModel extends Model {
                     $viewTable .= $key;
                     $tableName .= strtolower($viewTable);
                 }
-                if(isset($view['_as'])) {
+                if(isset($view['_as']))
                     $tableName .= ' '.$view['_as'];
-                }else{
+                else
                     $tableName .= ' '.$key;
-                }
-                if(isset($view['_on'])) {
+                if(isset($view['_on']))
                     // 支持ON 条件定义
                     $tableName .= ' ON '.$view['_on'];
-                }
-                if(!empty($view['_type'])) {
+                if(!empty($view['_type']))
                     // 指定JOIN类型 例如 RIGHT INNER LEFT 下一个表有效
                     $type = $view['_type'];
-                }else{
+                else
                     $type = '';
-                }
                 $tableName   .= ' '.strtoupper($type).' JOIN ';
                 $len  =  strlen($type.'_JOIN ');
             }
@@ -84,11 +81,10 @@ class ViewModel extends Model {
      +----------------------------------------------------------
      */
     protected function _options_filter(&$options) {
-        if(isset($options['field'])) {
+        if(isset($options['field']))
             $options['field'] = $this->checkFields($options['field']);
-        }else{
+        else
             $options['field'] = $this->checkFields();
-        }
         if(isset($options['group']))
             $options['group']  =  $this->checkGroup($options['group']);
         if(isset($options['order']))
@@ -226,9 +222,8 @@ class ViewModel extends Model {
             }
             $fields = implode(',',$fields);
         }else{
-            if(!is_array($fields)) {
+            if(!is_array($fields))
                 $fields =   explode(',',$fields);
-            }
             // 解析成视图字段
             $array =  array();
             foreach ($fields as $key=>$field){
@@ -246,12 +241,11 @@ class ViewModel extends Model {
                         if(is_numeric($_field)) {
                             $array[]    =   $k.'.'.$field.' AS '.$field;
                         }else{
-                            if( false !== strpos($_field,'*') ||  false !== strpos($_field,'(') || false !== strpos($_field,'.')) {
+                            if( false !== strpos($_field,'*') ||  false !== strpos($_field,'(') || false !== strpos($_field,'.'))
                                 //如果包含* 或者 使用了sql方法 则不再添加前面的表名
                                 $array[]    =   $_field.' AS '.$field;
-                            }else{
+                            else
                                 $array[]    =   $k.'.'.$_field.' AS '.$field;
-                            }
                         }
                     }
                 }

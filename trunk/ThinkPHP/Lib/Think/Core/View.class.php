@@ -56,9 +56,7 @@ class View extends Think
             $this->tVar   =  array_merge($this->tVar,$name);
         }elseif(is_object($name)){
             foreach($name as $key =>$val)
-            {
                 $this->tVar[$key] = $val;
-            }
         }else {
             $this->tVar[$name] = $value;
         }
@@ -75,11 +73,10 @@ class View extends Think
      +----------------------------------------------------------
      */
     public function trace($title,$value='') {
-        if(is_array($title)) {
+        if(is_array($title))
             $this->trace   =  array_merge($this->trace,$title);
-        }else {
+        else
             $this->trace[$title] = $value;
-        }
     }
 
     /**
@@ -94,11 +91,10 @@ class View extends Think
      +----------------------------------------------------------
      */
     public function get($name){
-        if(isset($this->tVar[$name])) {
+        if(isset($this->tVar[$name]))
             return $this->tVar[$name];
-        }else {
+        else
             return false;
-        }
     }
 
     /**
@@ -140,10 +136,9 @@ class View extends Think
             if($find) {
                 for ($i=0; $i< $find; $i++) {
                     // 读取相关的页面模板替换布局单元
-                    if(0===strpos($matches[1][$i],'$')){
+                    if(0===strpos($matches[1][$i],'$'))
                         // 动态布局
                         $matches[1][$i]  =  $this->get(substr($matches[1][$i],1));
-                    }
                     if(0 != $matches[2][$i] ) {
                         // 设置了布局缓存
                         // 检查布局缓存是否有效
@@ -182,23 +177,20 @@ class View extends Think
     public function fetch($templateFile='',$charset='',$contentType='text/html',$display=false)
     {
         $GLOBALS['_viewStartTime'] = microtime(TRUE);
-        if(null===$templateFile) {
+        if(null===$templateFile)
             // 使用null参数作为模版名直接返回不做任何输出
             return ;
-        }
-        if(empty($charset)) {
+        if(empty($charset))
             $charset = C('OUTPUT_CHARSET');
-        }
         // 网页字符编码
         header("Content-Type:".$contentType."; charset=".$charset);
         header("Cache-control: private");  //支持页面回跳
         //页面缓存
         ob_start();
         ob_implicit_flush(0);
-        if(!file_exists_case($templateFile)){
+        if(!file_exists_case($templateFile))
             // 自动定位模板文件
             $templateFile   = $this->parseTemplateFile($templateFile);
-        }
         $engine  = strtolower(C('TMPL_ENGINE_TYPE'));
         if('php'==$engine) {
             // 模板阵列变量分解成为独立变量
@@ -277,16 +269,13 @@ class View extends Think
      */
     public function buildHtml($htmlfile='',$templateFile='',$charset='',$contentType='text/html') {
         $content = $this->fetch($templateFile,$charset,$contentType);
-        if(empty($htmlfile)) {
+        if(empty($htmlfile))
             $htmlfile =  HTML_PATH.rtrim($_SERVER['PATH_INFO'],'/').C('HTML_FILE_SUFFIX');
-        }
-        if(!is_dir(dirname($htmlfile))) {
+        if(!is_dir(dirname($htmlfile)))
             // 如果静态目录不存在 则创建
             mk_dir(dirname($htmlfile));
-        }
-        if(false === file_put_contents($htmlfile,$content)){
+        if(false === file_put_contents($htmlfile,$content))
             throw_exception(L('_CACHE_WRITE_ERROR_'));
-        }
         return $content;//readfile($htmlfile);
     }
 
@@ -303,18 +292,16 @@ class View extends Think
      +----------------------------------------------------------
      */
     protected function output($content,$display) {
-        if(C('HTML_CACHE_ON')) {
+        if(C('HTML_CACHE_ON'))
             // 写入静态文件
             HtmlCache::writeHTMLCache($content);
-        }
         // 视图输出标签
         if(C('TAG_PLUGIN_ON'))
             tag('view_output',array($content));
 
         if($display) {
-            if(C('SHOW_RUN_TIME')) {
+            if(C('SHOW_RUN_TIME'))
                 $content .= '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>';
-            }
             echo $content;
             if(C('SHOW_PAGE_TRACE'))   $this->showTrace();
             return null;
@@ -359,9 +346,8 @@ class View extends Think
             }
         }
         // 允许用户自定义模板的字符串替换
-        if(is_array(C('TMPL_PARSE_STRING')) ) {
+        if(is_array(C('TMPL_PARSE_STRING')) )
             $replace =  array_merge($replace,C('TMPL_PARSE_STRING'));
-        }
         $content = str_replace(array_keys($replace),array_values($replace),$content);
         return $content;
     }
@@ -412,9 +398,8 @@ class View extends Think
             // 引入当前模块的其它操作模板
             $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TEMPLATE_SUFFIX');
         }
-        if(!file_exists_case($templateFile)){
+        if(!file_exists_case($templateFile))
             throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
-        }
         return $templateFile;
     }
 

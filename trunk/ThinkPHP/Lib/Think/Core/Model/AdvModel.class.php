@@ -124,18 +124,16 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      */
     protected function returnResult($data,$type='') {
-        if('' === $type) {
+        if('' === $type)
             $type = $this->returnType;
-        }
         switch($type) {
             case 'array' :  return $data;
             case 'object':  return (object)$data;
             default:// 允许用户自定义返回类型
-                if(class_exists($type)){
+                if(class_exists($type))
                     return new $type($data);
-                }else{
+                else
                     throw_exception(L('_CLASS_NOT_EXIST_').':'.$type);
-                }
         }
     }
 
@@ -152,9 +150,8 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      */
     protected function returnResultSet(&$resultSet,$type='') {
-        foreach ($resultSet as $key=>$data){
+        foreach ($resultSet as $key=>$data)
             $resultSet[$key]  =  $this->returnResult($data,$type);
-        }
         return $resultSet;
     }
 
@@ -163,11 +160,10 @@ class AdvModel extends Model {
         if(!empty($this->blobFields)) {
             foreach ($this->blobFields as $field){
                 if(isset($data[$field])) {
-                    if(isset($data[$this->getPk()])) {
+                    if(isset($data[$this->getPk()]))
                         $this->blobValues[$this->name.'/'.$data[$this->getPk()].'_'.$field] =   $data[$field];
-                    }else{
+                    else
                         $this->blobValues[$this->name.'/@?id@_'.$field] =   $data[$field];
-                    }
                     unset($data[$field]);
                 }
             }
@@ -240,9 +236,8 @@ class AdvModel extends Model {
     public function saveBlobFields(&$data) {
         if(!empty($this->blobFields)) {
             foreach ($this->blobValues as $key=>$val){
-                if(strpos($key,'@?id@')) {
+                if(strpos($key,'@?id@'))
                     $key    =   str_replace('@?id@',$data[$this->getPk()],$key);
-                }
                 F($key,$val);
             }
         }
@@ -298,26 +293,7 @@ class AdvModel extends Model {
         $limit      =   isset($options['limit'])?   $options['limit']   : 1;
         $table      =   isset($options['table'])?   $options['table']:$this->getTableName();
         // 拼装查询SQL
-        $sql    =   'SELECT '.$field.' FROM '.$table.'  WHERE '.
-            $where.' AND
-            id >= (SELECT
-            floor(
-            RAND() * ((SELECT
-            MAX(id)
-            FROM
-            '.$table.')-(SELECT
-            MIN(id)
-            FROM
-            '.$table.')) + (SELECT
-            MIN(id)
-            FROM
-            '.$table.')))
-            ORDER
-            BY
-            id
-            LIMIT
-            '.$limit;
-
+        $sql    =   'SELECT '.$field.' FROM '.$table.'  WHERE '.$where.' AND  id >= (SELECT   floor(  RAND() * ((SELECT  MAX(id) FROM '.$table.')-(SELECT  MIN(id) FROM '.$table.')) + (SELECT MIN(id) FROM  '.$table.'))) ORDER BY id LIMIT'.$limit;
         $rs = $this->query($sql);
         return $rs;
     }
@@ -337,16 +313,14 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      */
     public function setInc($field,$condition='',$step=1,$lazyTime=0) {
-        if(empty($condition) && isset($this->options['where'])) {
+        if(empty($condition) && isset($this->options['where']))
             $condition   =  $this->options['where'];
-        }
         if($lazyTime>0) {// 延迟写入
             $guid =  md5($this->name.'_'.$field);
             $step = $this->lazyWrite($guid,$step,$lazyTime);
-            if(false === $step ) {
+            if(false === $step )
                 // 等待下次写入
                 return true;
-            }
         }
         return $this->setField($field,array('exp',$field.'+'.$step),$condition);
     }
@@ -366,16 +340,14 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      */
     public function setDec($field,$condition='',$step=1,$lazyTime=0) {
-        if(empty($condition) && isset($this->options['where'])) {
+        if(empty($condition) && isset($this->options['where']))
             $condition   =  $this->options['where'];
-        }
         if($lazyTime>0) {// 延迟写入
             $guid =  md5($this->name.'_'.$field);
             $step = $this->lazyWrite($guid,$step,$lazyTime);
-            if(false === $step ) {
+            if(false === $step )
                 // 等待下次写入
                 return true;
-            }
         }
         return $this->setField($field,array('exp',$field.'-'.$step),$condition);
     }
@@ -452,9 +424,8 @@ class AdvModel extends Model {
             foreach ($this->serializeField as $key=>$val){
                 if(isset($result[$key])) {
                     $serialize   =   unserialize($result[$key]);
-                    foreach ($serialize as $name=>$value){
+                    foreach ($serialize as $name=>$value)
                         $result[$name]  =   $value;
-                    }
                     unset($serialize,$result[$key]);
                 }
             }
@@ -470,9 +441,8 @@ class AdvModel extends Model {
                 foreach ($resultSet as $k=>$result){
                     if(isset($result[$key])) {
                         $serialize   =   unserialize($result[$key]);
-                        foreach ($serialize as $name=>$value){
+                        foreach ($serialize as $name=>$value)
                             $result[$name]  =   $value;
-                        }
                         unset($serialize,$result[$key]);
                         $resultSet[$k] =   $result;
                     }
@@ -515,9 +485,8 @@ class AdvModel extends Model {
 
     public function getFilterListFields(&$resultSet) {
         if(!empty($this->_filter)) {
-            foreach ($resultSet as $key=>$result){
+            foreach ($resultSet as $key=>$result)
                 $resultSet[$key]  =  $this->getFilterFields($result);
-            }
         }
         return $resultSet;
     }
@@ -567,9 +536,8 @@ class AdvModel extends Model {
     protected function checkReadonlyField(&$data) {
         if(!empty($this->readonlyField)) {
             foreach ($this->readonlyField as $key=>$field){
-                if(isset($data[$field])) {
+                if(isset($data[$field]))
                     unset($data[$field]);
-                }
             }
         }
         return $data;
@@ -589,14 +557,12 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      */
     public function addConnect($config,$linkNum=NULL) {
-        if(isset($this->_db[$linkNum])) {
+        if(isset($this->_db[$linkNum]))
             return false;
-        }
         if(NULL === $linkNum && is_array($config)) {
             // 支持批量增加数据库连接
-            foreach ($config as $key=>$val){
+            foreach ($config as $key=>$val)
                 $this->_db[$key]            =    Db::getInstance($val);
-            }
             return true;
         }
         // 创建一个新的实例
@@ -897,9 +863,8 @@ class AdvModel extends Model {
             // 当设置的分表字段不在查询条件或者数据中
             // 进行联合查询，必须设定 partition['num']
             $tableName  =   array();
-            for($i=0;$i<$this->partition['num'];$i++) {
+            for($i=0;$i<$this->partition['num'];$i++)
                 $tableName[] = 'SELECT * FROM '.$this->getTableName().'_'.$i;
-            }
             $tableName = '( '.implode(" UNION ",$tableName).') AS '.$this->name;
             return $tableName;
         }
@@ -920,10 +885,9 @@ class AdvModel extends Model {
      */
     public function toTree($list=null, $pk='id',$pid = 'pid',$child = '_child',$root=0)
     {
-        if(null === $list) {
+        if(null === $list)
             // 默认直接取查询返回的结果集合
             $list   =   &$this->dataList;
-        }
         // 创建Tree
         $tree = array();
         if(is_array($list)) {
@@ -963,14 +927,12 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      */
     public function sortBy($field, $sortby='asc', $list='' ) {
-       if(empty($list) && !empty($this->dataList)) {
+       if(empty($list) && !empty($this->dataList))
            $list     =   $this->dataList;
-       }
        if(is_array($list)){
            $refer = $resultSet = array();
-           foreach ($list as $i => $data) {
+           foreach ($list as $i => $data)
                $refer[$i] = &$data[$field];
-           }
            switch ($sortby) {
                case 'asc': // 正向排序
                     asort($refer);
@@ -982,9 +944,8 @@ class AdvModel extends Model {
                     natcasesort($refer);
                     break;
            }
-           foreach ( $refer as $key=> $val) {
+           foreach ( $refer as $key=> $val)
                $resultSet[] = &$list[$key];
-           }
            return $resultSet;
        }
        return false;
@@ -1004,10 +965,9 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      */
     public function search($condition,$list=null) {
-        if(null === $list) {
+        if(null === $list)
             // 默认直接在查询返回的结果集中搜索
             $list   =   &$this->dataList;
-        }
         if(is_string($condition))
             parse_str($condition,$condition);
         // 返回的结果集合
@@ -1023,9 +983,8 @@ class AdvModel extends Model {
                     }
                 }
             }
-            if($find) {
+            if($find)
                 $resultSet[]     =   &$list[$key];
-            }
         }
         return $resultSet;
     }
