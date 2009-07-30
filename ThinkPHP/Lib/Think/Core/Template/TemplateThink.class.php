@@ -40,7 +40,6 @@ class TemplateThink
     public function fetch($templateFile,$var,$charset) {
         if(!$this->checkCache($templateFile)) {
             // 缓存无效 重新编译
-            import('ThinkTemplate');
             $tpl = ThinkTemplate::getInstance();
             // 编译并加载模板文件
             $tpl->load($templateFile,$var,$charset);
