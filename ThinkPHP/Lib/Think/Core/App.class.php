@@ -36,8 +36,8 @@ class App
     static public function init()
     {
         // 设定错误和异常处理
-        set_error_handler(array('App',"appError"));
-        set_exception_handler(array('App',"appException"));
+        set_error_handler(array('App','appError'));
+        set_exception_handler(array('App','appException'));
         //[RUNTIME]
         // 检查项目是否编译过
         // 在部署模式下会自动在第一次执行的时候编译项目
@@ -59,22 +59,16 @@ class App
         if(function_exists('date_default_timezone_set'))
             date_default_timezone_set(C('TIME_ZONE'));
 
-        if(C('AUTOLOAD_REG_ON')){
-            if(function_exists('spl_autoload_register'))
+        // 允许注册AUTOLOAD方法
+        if(C('AUTOLOAD_REG_ON') && function_exists('spl_autoload_register'))
                 spl_autoload_register(array('Think', 'autoload'));
-        }
 
-        if(C('SESSION_AUTO_START'))
-            // Session初始化
-            session_start();
+        if(C('SESSION_AUTO_START'))  session_start(); // Session初始化
 
         // 应用调度过滤器
         // 如果没有加载任何URL调度器
         // 默认只支持 QUERY_STRING 方式
-        // 例如 ?m=user&a=add
-        if(C('DISPATCH_ON')) {
-            Dispatcher::dispatch();
-        }
+        if(C('DISPATCH_ON'))   Dispatcher::dispatch();
 
         if(!defined('PHP_FILE'))
             // PHP_FILE 由内置的Dispacher定义
@@ -83,20 +77,17 @@ class App
 
         // 取得模块和操作名称
         // 可以在Dispatcher中定义获取规则
-        if(C('APP_GROUP'))
-            // 开启项目分组则获取当前分组名称
-            if(!defined('GROUP_NAME')) define('GROUP_NAME', App::getGroup());       // Group名称
         if(!defined('MODULE_NAME')) define('MODULE_NAME',   App::getModule());       // Module名称
         if(!defined('ACTION_NAME')) define('ACTION_NAME',   App::getAction());        // Action操作
         // 加载项目分组公共文件
         if(C('APP_GROUP')) {
+            if(!defined('GROUP_NAME')) define('GROUP_NAME', App::getGroup());       // Group名称
             // 分组配置文件
             if(is_file(CONFIG_PATH.GROUP_NAME.'/config.php'))
                 C(include CONFIG_PATH.GROUP_NAME.'/config.php');
             // 分组函数文件
-            if(is_file(COMMON_PATH.GROUP_NAME.'/function.php')) {
+            if(is_file(COMMON_PATH.GROUP_NAME.'/function.php'))
                 include COMMON_PATH.GROUP_NAME.'/function.php';
-            }
         }
         // 加载模块配置文件
         if(is_file(CONFIG_PATH.strtolower(MODULE_NAME).'_config.php'))
@@ -105,15 +96,13 @@ class App
         // 系统检查
         App::checkLanguage();     //语言检查
         App::checkTemplate();     //模板检查
-        if(C('HTML_CACHE_ON')) { // 开启静态缓存
+        if(C('HTML_CACHE_ON')) // 开启静态缓存
             HtmlCache::readHTMLCache();
-        }
 
         // 项目初始化标签
         if(C('TAG_PLUGIN_ON'))   tag('app_init');
         return ;
     }
-
     //[RUNTIME]
     /**
      +----------------------------------------------------------
@@ -148,8 +137,7 @@ class App
             foreach ($list as $file){
                 // 加载并编译文件
                 require $file;
-                if(!$debug)
-                    $common   .= compile($file,$runtime);
+                if(!$debug) $common   .= compile($file,$runtime);
             }
         }
         // 读取扩展配置文件
@@ -342,7 +330,6 @@ class App
 
         //当前项目地址
         define('__APP__',PHP_FILE);
-
         //当前页面地址
         define('__SELF__',$_SERVER['PHP_SELF']);
         // 应用URL根目录
@@ -456,10 +443,9 @@ class App
     static public function run() {
         App::init();
         // 记录应用初始化时间
-        if(C('SHOW_RUN_TIME'))
-            $GLOBALS['_initTime'] = microtime(TRUE);
+        if(C('SHOW_RUN_TIME'))  $GLOBALS['_initTime'] = microtime(TRUE);
         App::exec();
-        $GLOBALS['_endTime'] = microtime(TRUE);
+        if(C('SHOW_RUN_TIME'))  $GLOBALS['_endTime'] = microtime(TRUE);
         // 保存日志记录
         if(C('WEB_LOG_RECORD')) Log::save();
         return ;
