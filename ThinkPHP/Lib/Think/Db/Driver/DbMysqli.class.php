@@ -310,6 +310,30 @@ class DbMysqli extends Db{
 
     /**
      +----------------------------------------------------------
+     * 替换记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $data 数据
+     * @param array $options 参数表达式
+     +----------------------------------------------------------
+     * @return false | integer
+     +----------------------------------------------------------
+     */
+    public function replace($data,$options=array()) {
+        foreach ($data as $key=>$val){
+            $value   =  $this->parseValue($val);
+            if(is_scalar($value)) { // 过滤非标量数据
+                $values[]   =  $value;
+                $fields[]     =  $this->addSpecialChar($key);
+            }
+        }
+        $sql   =  'REPLACE INTO '.$this->parseTable($options['table']).' ('.implode(',', $fields).') VALUES ('.implode(',', $values).')';
+        return $this->execute($sql);
+    }
+
+    /**
+     +----------------------------------------------------------
      * 关闭数据库
      +----------------------------------------------------------
      * @static
