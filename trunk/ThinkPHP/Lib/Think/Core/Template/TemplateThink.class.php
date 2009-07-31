@@ -66,7 +66,7 @@ class TemplateThink
      */
     protected function checkCache($tmplTemplateFile)
     {
-        if ( !C('TMPL_CACHE_ON') ) // 优先对配置设定检测
+        if (!C('TMPL_CACHE_ON')) // 优先对配置设定检测
             return false;
         $tmplCacheFile = C('CACHE_PATH').md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
         if(!is_file($tmplCacheFile))
