@@ -46,7 +46,6 @@ class CacheShmop extends Cache
         $this->options = $options;
         $this->handler = $this->_ftok($this->options['project']);
         $this->type = strtoupper(substr(__CLASS__,6));
-
     }
 
     /**
@@ -84,7 +83,6 @@ class CacheShmop extends Cache
         }else {
             return false;
         }
-
     }
 
     /**
@@ -104,9 +102,7 @@ class CacheShmop extends Cache
 		$this->W(1);
         $lh = $this->_lock();
         $val = $this->get();
-        if (!is_array($val)) {
-            $val = array();
-        }
+        if (!is_array($val)) $val = array();
         if( C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
             //数据压缩
             $value   =   gzcompress($value,3);
@@ -130,17 +126,12 @@ class CacheShmop extends Cache
     public function rm($name)
     {
         $lh = $this->_lock();
-
         $val = $this->get();
-        if (!is_array($val)) {
-            $val = array();
-        }
+        if (!is_array($val)) $val = array();
         unset($val[$name]);
         $val = serialize($val);
-
         return $this->_write($val, $lh);
     }
-
 
     /**
      +----------------------------------------------------------
@@ -155,9 +146,7 @@ class CacheShmop extends Cache
      */
     private function _ftok($project)
     {
-        if (function_exists('ftok')) {
-            return ftok(__FILE__, $project);
-        }
+        if (function_exists('ftok'))   return ftok(__FILE__, $project);
         if(strtoupper(PHP_OS) == 'WINNT'){
             $s = stat(__FILE__);
             return sprintf("%u", (($s['ino'] & 0xffff) | (($s['dev'] & 0xff) << 16) |
@@ -167,9 +156,7 @@ class CacheShmop extends Cache
             for($key = array(); sizeof($key) < strlen($filename); $key[] = ord(substr($filename, sizeof($key), 1)));
             return dechex(array_sum($key));
         }
-
     }
-
 
     /**
      +----------------------------------------------------------
@@ -191,11 +178,9 @@ class CacheShmop extends Cache
            $this->_unlock($lh);
            return $ret;
         }
-
         $this->_unlock($lh);
         return false;
     }
-
 
     /**
      +----------------------------------------------------------
@@ -208,7 +193,7 @@ class CacheShmop extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    private function &_lock()
+    private function _lock()
     {
         if (function_exists('sem_get')) {
             $fp = sem_get($this->handler, 1, 0600, 1);
@@ -217,10 +202,8 @@ class CacheShmop extends Cache
             $fp = fopen($this->options['tmp'].$this->prefix.md5($this->handler), 'w');
             flock($fp, LOCK_EX);
         }
-
         return $fp;
     }
-
 
     /**
      +----------------------------------------------------------
