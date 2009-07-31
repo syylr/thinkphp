@@ -180,17 +180,18 @@ class View extends Think
         if(null===$templateFile)
             // 使用null参数作为模版名直接返回不做任何输出
             return ;
-        if(empty($charset))
-            $charset = C('OUTPUT_CHARSET');
+        if(empty($charset))  $charset = C('OUTPUT_CHARSET');
         // 网页字符编码
         header("Content-Type:".$contentType."; charset=".$charset);
         header("Cache-control: private");  //支持页面回跳
         //页面缓存
         ob_start();
         ob_implicit_flush(0);
+
         if(!file_exists_case($templateFile))
             // 自动定位模板文件
             $templateFile   = $this->parseTemplateFile($templateFile);
+
         $engine  = strtolower(C('TMPL_ENGINE_TYPE'));
         if('php'==$engine) {
             // 模板阵列变量分解成为独立变量
@@ -235,16 +236,15 @@ class View extends Think
      */
     protected function checkCache($tmplTemplateFile)
     {
-        if ( !C('TMPL_CACHE_ON') ) // 优先对配置设定检测
+        if (!C('TMPL_CACHE_ON')) // 优先对配置设定检测
             return false;
         $tmplCacheFile = C('CACHE_PATH').md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
         if(!is_file($tmplCacheFile)){
             return false;
-        }
-        elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
+        }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
             // 模板文件如果有更新则缓存需要更新
             return false;
-        } elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) {
+        }elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) {
             // 缓存是否在有效期
             return false;
         }
@@ -276,7 +276,7 @@ class View extends Think
             mk_dir(dirname($htmlfile));
         if(false === file_put_contents($htmlfile,$content))
             throw_exception(L('_CACHE_WRITE_ERROR_'));
-        return $content;//readfile($htmlfile);
+        return $content;
     }
 
     /**
@@ -296,11 +296,10 @@ class View extends Think
         if($display) {
             if(C('SHOW_RUN_TIME')){
                 $runtime = '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>';
-                 if(strpos($content,'__RUNTIME__')) {
+                 if(strpos($content,'__RUNTIME__'))
                      $content   =  str_replace('__RUNTIME__',$runtime,$content);
-                 }else{
+                 else
                      $content   .=  $runtime;
-                 }
             }
             echo $content;
             if(C('SHOW_PAGE_TRACE'))   $this->showTrace();
@@ -416,14 +415,14 @@ class View extends Think
         // 显示运行时间
         $startTime =  $GLOBALS['_viewStartTime'];
         $endTime = microtime(TRUE);
-        $total_run_time =   number_format(($endTime - $GLOBALS['_beginTime']), 5);
+        $total_run_time =   number_format(($endTime - $GLOBALS['_beginTime']), 3);
         $showTime   =   'Process: '.$total_run_time.'s ';
         if(C('SHOW_ADV_TIME')) {
             // 显示详细运行时间
-            $_load_time =   number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 5);
-            $_init_time =   number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 5);
-            $_exec_time =   number_format(($startTime  -$GLOBALS['_initTime'] ), 5);
-            $_parse_time    =   number_format(($endTime - $startTime), 5);
+            $_load_time =   number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3);
+            $_init_time =   number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3);
+            $_exec_time =   number_format(($startTime  -$GLOBALS['_initTime'] ), 3);
+            $_parse_time    =   number_format(($endTime - $startTime), 3);
             $showTime .= '( Load:'.$_load_time.'s Init:'.$_init_time.'s Exec:'.$_exec_time.'s Template:'.$_parse_time.'s )';
         }
         if(C('SHOW_DB_TIMES') && class_exists('Db',false) ) {
