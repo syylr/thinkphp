@@ -12,7 +12,7 @@
 
 /**
  +------------------------------------------------------------------------------
- * Think扩展函数库 需要手动加载后调用
+ * Think扩展函数库 需要手动加载后调用或者放入项目函数库
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Common
@@ -352,25 +352,26 @@ function ubb($Text) {
   return $Text;
 }
 
+// 随机生成一组字符串
 function build_count_rand ($number,$length=4,$mode=1) {
-        if($mode==1 && $length<strlen($number) ) {
-            //不足以生成一定数量的不重复数字
-            return false;
-        }
-        $rand   =  array();
-        for($i=0; $i<$number; $i++) {
-            $rand[] =   rand_string($length,$mode);
-        }
-        $unqiue = array_unique($rand);
-        if(count($unqiue)==count($rand)) {
-            return $rand;
-        }
-        $count   = count($rand)-count($unqiue);
-        for($i=0; $i<$count*3; $i++) {
-            $rand[] =   rand_string($length,$mode);
-        }
-        $rand = array_slice(array_unique ($rand),0,$number);
+    if($mode==1 && $length<strlen($number) ) {
+        //不足以生成一定数量的不重复数字
+        return false;
+    }
+    $rand   =  array();
+    for($i=0; $i<$number; $i++) {
+        $rand[] =   rand_string($length,$mode);
+    }
+    $unqiue = array_unique($rand);
+    if(count($unqiue)==count($rand)) {
         return $rand;
+    }
+    $count   = count($rand)-count($unqiue);
+    for($i=0; $i<$count*3; $i++) {
+        $rand[] =   rand_string($length,$mode);
+    }
+    $rand = array_slice(array_unique ($rand),0,$number);
+    return $rand;
 }
 
 function RemoveXSS($val) {
