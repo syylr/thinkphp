@@ -34,7 +34,6 @@ CREATE TABLE IF NOT EXISTS `think_access` (
   `role_id` smallint(6) unsigned NOT NULL,
   `node_id` smallint(6) unsigned NOT NULL,
   `level` tinyint(1) NOT NULL,
-  `pid` smallint(6) NOT NULL,
   `module` varchar(50) DEFAULT NULL,
   KEY `groupId` (`role_id`),
   KEY `nodeId` (`node_id`)
@@ -44,15 +43,11 @@ CREATE TABLE IF NOT EXISTS `think_node` (
   `id` smallint(6) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20) NOT NULL,
   `title` varchar(50) DEFAULT NULL,
-  `module` varchar(25) NOT NULL,
   `status` tinyint(1) DEFAULT '0',
   `remark` varchar(255) DEFAULT NULL,
   `sort` smallint(6) unsigned DEFAULT NULL,
   `pid` smallint(6) unsigned NOT NULL,
   `level` tinyint(1) unsigned NOT NULL,
-  `type` tinyint(1) NOT NULL DEFAULT '0',
-  `group_id` tinyint(3) unsigned DEFAULT '0',
-  `is_show` tinyint(1) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `level` (`level`),
   KEY `pid` (`pid`),
@@ -66,12 +61,8 @@ CREATE TABLE IF NOT EXISTS `think_role` (
   `pid` smallint(6) DEFAULT NULL,
   `status` tinyint(1) unsigned DEFAULT NULL,
   `remark` varchar(255) DEFAULT NULL,
-  `ename` varchar(5) DEFAULT NULL,
-  `create_time` int(11) unsigned NOT NULL,
-  `update_time` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `parentId` (`pid`),
-  KEY `ename` (`ename`),
+  KEY `pid` (`pid`),
   KEY `status` (`status`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
 
@@ -194,7 +185,7 @@ class RBAC extends Think
                     $accessList = $_SESSION['_ACCESS_LIST'];
                 }
                 //判断是否为组件化模式，如果是，验证其全模块名
-                $module = defined('C_MODULE_NAME')?  C_MODULE_NAME   :   MODULE_NAME;
+                $module = defined('P_MODULE_NAME')?  P_MODULE_NAME   :   MODULE_NAME;
                 if(!isset($accessList[strtoupper($appName)][strtoupper($module)][strtoupper(ACTION_NAME)])) {
                     $_SESSION[$accessGuid]  =   false;
                     return false;
