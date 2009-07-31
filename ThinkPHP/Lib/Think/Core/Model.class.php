@@ -88,7 +88,7 @@ class Model extends Think implements IteratorAggregate
         // 数据库初始化操作
         // 获取数据库操作对象
         // 当前模型有独立的数据库连接信息
-        $this->db = !empty($this->connection)?Db::getInstance($this->connection):Db::getInstance();
+        $this->db = Db::getInstance(empty($this->connection)?'':$this->connection);
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
         // 字段检测
@@ -110,7 +110,7 @@ class Model extends Think implements IteratorAggregate
         if(empty($this->fields)) {
             // 如果数据表字段没有定义则自动获取
             if(C('DB_FIELDS_CACHE')) {
-                $this->fields = F($this->name.'_fields');
+                $this->fields = F('_fields/'.$this->name);
                 if(!$this->fields)   $this->flush();
             }else{
                 // 每次都会读取数据表信息
@@ -144,7 +144,7 @@ class Model extends Think implements IteratorAggregate
         // 2008-3-7 增加缓存开关控制
         if(C('DB_FIELDS_CACHE'))
             // 永久缓存数据表信息
-            F($this->name.'_fields',$this->fields);
+            F('_fields/'.$this->name,$this->fields);
     }
 
     /**
