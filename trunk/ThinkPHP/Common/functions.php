@@ -325,6 +325,34 @@ function file_exists_case($filename) {
 
 /**
  +----------------------------------------------------------
+ * 基于命名空间方式导入函数库
+ * load('@.Util.Array') load(
+ +----------------------------------------------------------
+ * @param string $name 函数库命名空间字符串
+ * @param string $baseUrl 起始路径
+ * @param string $ext 导入的文件扩展名
+ +----------------------------------------------------------
+ * @return void
+ +----------------------------------------------------------
+ */
+function load($name,$baseUrl='',$ext='.php') {
+    $name    =   str_replace(array('.','#'), array('/','.'), $name);
+    if(empty($baseUrl)) {
+        if(0 === strpos($name,'@/')) {
+            //加载当前项目函数库
+            $baseUrl   =  APP_PATH.'/Functions/';
+            $name =  substr($name,2);
+        }else{
+            //加载ThinkPHP 系统函数库
+            $baseUrl =  THINK_PATH.'/Functions/';
+        }
+    }
+    if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
+    include $baseUrl . $name . $ext;
+}
+
+/**
+ +----------------------------------------------------------
  * 导入所需的类库 同java的Import
  * 本函数有缓存功能
  +----------------------------------------------------------
@@ -382,8 +410,7 @@ function import($class,$baseUrl = '',$ext='.class.php')
 // 并且默认都是以.php后缀导入
 function vendor($class,$baseUrl = '',$ext='.php')
 {
-    if(empty($baseUrl))
-        $baseUrl    =   VENDOR_PATH;
+    if(empty($baseUrl))  $baseUrl    =   VENDOR_PATH;
     return import($class,$baseUrl,$ext);
 }
 
@@ -419,10 +446,8 @@ function alias_import($alias,$classfile='') {
 function D($name='',$app='')
 {
     static $_model = array();
-    if(empty($name))
-        return new  Model();
-    if(empty($app))
-        $app =  C('DEFAULT_MODEL_APP');
+    if(empty($name)) return new Model;
+    if(empty($app))   $app =  C('DEFAULT_MODEL_APP');
     if(isset($_model[$app.$name]))
         return $_model[$app.$name];
     $OriClassName = $name;
@@ -516,7 +541,6 @@ function L($name=null,$value=null) {
         $_lang[$name] = $value;// 语言定义
         return;
     }
-
     // 批量定义
     if (is_array($name))
         $_lang = array_merge($_lang,array_change_key_case($name,CASE_UPPER));
@@ -530,7 +554,7 @@ function C($name=null,$value=null)
 {
     static $_config = array();
     // 优先执行设置获取或赋值
-    if (is_string($name))//&& !empty($name)
+    if (is_string($name))
     {
         $name = strtolower($name);
         if (!strpos($name,'.')) {
@@ -596,8 +620,7 @@ function S($name,$value='',$expire='',$type='') {
         if(is_null($value)) {
             // 删除缓存
             $result =   $cache->rm($name);
-            if($result)
-                unset($_cache[$type.'_'.$name]);
+            if($result)   unset($_cache[$type.'_'.$name]);
             return $result;
         }else{
             // 缓存数据
@@ -622,18 +645,16 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
         if(is_null($value)) {
             // 删除缓存
             $result =   unlink($filename);
-            if($result)
-                unset($_cache[$name]);
+            if($result)   unset($_cache[$name]);
             return $result;
         }else{
             // 缓存数据
             $content   =   "<?php\nif (!defined('THINK_PATH')) exit();\n//".sprintf('%012d',$expire)."\nreturn ".var_export($value,true).";\n?>";
+            $_cache[$name]   =   $value;
             $dir   =  dirname($filename);
             if(!is_dir($dir))  mkdir($dir);
-            $result  =   file_put_contents($filename,$content);
-            $_cache[$name]   =   $value;
+            return file_put_contents($filename,$content);
         }
-        return ;
     }
     if(isset($_cache[$name])) return $_cache[$name];
     // 获取缓存数据
@@ -644,8 +665,7 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
             unlink($filename);
             return false;
         }
-        $str       = substr($content,57,-2);
-        $value    = eval($str);
+        $value    = eval(substr($content,57,-2));
         $_cache[$name]   =   $value;
     }else{
         $value  =   false;
