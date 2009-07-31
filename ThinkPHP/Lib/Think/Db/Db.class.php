@@ -750,6 +750,13 @@ class Db extends Think
      +----------------------------------------------------------
      */
     public function select($options=array()) {
+        if(isset($options['page'])) {
+            // 根据页数计算limit
+            list($page,$listRows) =  explode(',',$options['page']);
+            $listRows = $listRows?$listRows:($options['limit']?$options['limit']:20);
+            $offset  =  $listRows*((int)$page-1);
+            $options['limit'] =  $offset.','.$listRows;
+        }
         $sql   = str_replace(
             array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%'),
             array(
@@ -762,8 +769,7 @@ class Db extends Think
                 $this->parseHaving(isset($options['having'])?$options['having']:''),
                 $this->parseOrder(isset($options['order'])?$options['order']:''),
                 $this->parseLimit(isset($options['limit'])?$options['limit']:'')
-            ),
-            $this->selectSql);
+            ),$this->selectSql);
         return $this->query($sql);
     }
 
