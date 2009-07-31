@@ -283,6 +283,8 @@ class App
                 cookie('think_language',$langSet,3600);
             }
         }
+        // 定义当前语言
+        define('LANG_SET',strtolower($langSet));
         // 加载框架语言包
         L(include THINK_PATH.'/Lang/'.$langSet.'.php');
         // 读取项目公共语言包

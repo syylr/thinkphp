@@ -184,7 +184,7 @@ class TagLibCx extends TagLib
         $item  = $tag['item'];
         $key   =   !empty($tag['key'])?$tag['key']:'key';
         $name= $this->autoBuildVar($name);
-        $parseStr  =  '<?php if(isset('.$name.')): foreach('.$name.' as $'.$key.'=>$'.$item.'): ?>';
+        $parseStr  =  '<?php if(is_array('.$name.')): foreach('.$name.' as $'.$key.'=>$'.$item.'): ?>';
         $parseStr .= $this->tpl->parse($content);
         $parseStr .= '<?php endforeach; endif; ?>';
         $_iterateParseCache[$cacheIterateId] = $parseStr;
