@@ -550,7 +550,7 @@ function L($name=null,$value=null) {
 }
 
 // 获取配置值
-function C($name=null,$value=null)
+function C($name='',$value='')
 {
     static $_config = array();
     // 无参数时获取所有
