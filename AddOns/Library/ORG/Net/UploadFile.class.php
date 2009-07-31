@@ -138,6 +138,11 @@ class UploadFile extends Think
             $this->error	=	'文件已经存在！'.$filename;
             return false;
         }
+        // 如果是图像文件 检测文件格式
+        if( in_array(strtolower($file['extension']),array('gif','jpg','jpeg','bmp','png','swf')) && false === getimagesize($filename)) {
+            $this->error = '非法图像文件';
+            return false;
+        }
         if(!move_uploaded_file($file['tmp_name'], auto_charset($filename,'utf-8','gbk'))) {
             $this->error = '文件上传保存错误！';
             return false;
@@ -187,9 +192,8 @@ class UploadFile extends Think
     public function upload($savePath ='')
     {
         //如果不指定保存文件名，则由系统默认
-        if(empty($savePath)) {
+        if(empty($savePath))
             $savePath = $this->savePath;
-        }
         // 检查上传目录
         if(!is_dir($savePath)) {
             // 检查目录是否编码后的
@@ -230,9 +234,7 @@ class UploadFile extends Think
                 }
 
                 //保存上传文件
-                if(!$this->save($file)) {
-                    return false;
-                }
+                if(!$this->save($file)) return false;
                 if(function_exists($this->hashType)) {
                     $fun =  $this->hashType;
                     $file['hash']   =  $fun(auto_charset($file['savepath'].$file['savename'],'utf-8','gbk'));
@@ -270,9 +272,8 @@ class UploadFile extends Think
                $keys = array_keys($file);
                $count	 =	 count($file['name']);
                for ($i=0; $i<$count; $i++) {
-                   foreach ($keys as $key) {
+                   foreach ($keys as $key)
                        $fileArray[$i][$key] = $file[$key][$i];
-                   }
                }
            }else{
                $fileArray	=	$files;
@@ -443,9 +444,8 @@ class UploadFile extends Think
      */
     private function checkType($type)
     {
-        if(!empty($this->allowTypes)) {
+        if(!empty($this->allowTypes))
             return in_array(strtolower($type),$this->allowTypes);
-        }
         return true;
     }
 
@@ -463,9 +463,8 @@ class UploadFile extends Think
      */
     private function checkExt($ext)
     {
-        if(!empty($this->allowExts)) {
+        if(!empty($this->allowExts))
             return in_array(strtolower($ext),$this->allowExts,true);
-        }
         return true;
     }
 
