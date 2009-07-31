@@ -553,6 +553,8 @@ function L($name=null,$value=null) {
 function C($name=null,$value=null)
 {
     static $_config = array();
+    // 无参数时获取所有
+    if(empty($name)) return $_config;
     // 优先执行设置获取或赋值
     if (is_string($name))
     {
@@ -573,8 +575,6 @@ function C($name=null,$value=null)
     // 批量设置
     if(is_array($name))
         return $_config = array_merge($_config,array_change_key_case($name));
-    // 无参数时获取所有
-    if(is_null($name)) return $_config;
     return null;// 避免非法参数
 }
 
