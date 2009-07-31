@@ -75,11 +75,6 @@ CREATE TABLE IF NOT EXISTS `think_role_user` (
 */
 class RBAC extends Think
 {
-    const RBAC_ROLE_TABLE  = 'think_role';
-    const RBAC_USER_TABLE  = 'think_user';
-    const RBAC_ACCESS_TABLE  =  'think_access';
-    const RBAC_NODE_TABLE =  'think_node';
-
     // 认证方法
     static public function authenticate($map,$model='')
     {
