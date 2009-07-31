@@ -635,8 +635,7 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
         }
         return ;
     }
-    if(isset($_cache[$name]))
-        return $_cache[$name];
+    if(isset($_cache[$name])) return $_cache[$name];
     // 获取缓存数据
     if(is_file($filename) && false !== $content = file_get_contents($filename)) {
         $expire  =  (int)substr($content,44, 12);
@@ -647,6 +646,36 @@ function F($name,$value='',$expire=-1,$path=DATA_PATH) {
         }
         $str       = substr($content,57,-2);
         $value    = eval($str);
+        $_cache[$name]   =   $value;
+    }else{
+        $value  =   false;
+    }
+    return $value;
+}
+
+// 简单数据保存
+function simple_file_save($name,$value='',$path=DATA_PATH) {
+    $filename   =   $path.$name.'.php';
+    if(is_null($value)) {
+        // 删除缓存
+        return unlink($filename);
+    }else{
+        // 缓存数据
+        $dir   =  dirname($filename);
+        // 目录不存在则创建
+        if(!is_dir($dir))  mkdir($dir);
+        return file_put_contents($filename,"<?php\nreturn ".var_export($value,true).";\n?>");
+    }
+}
+
+// 简单数据读取
+function simple_file_read($name,$path=DATA_PATH) {
+    static $_cache = array();
+    $filename   =   $path.$name.'.php';
+    if(isset($_cache[$name])) return $_cache[$name];
+    // 获取缓存数据
+    if(is_file($filename)) {
+        $value   =  include $filename;
         $_cache[$name]   =   $value;
     }else{
         $value  =   false;
