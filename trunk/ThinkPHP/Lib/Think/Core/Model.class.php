@@ -367,6 +367,33 @@ class Model extends Think implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
+     * 通过Select方式添加记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $fields 要插入的数据表字段名
+     * @param string $table 要插入的数据表名
+     * @param array $options 表达式
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function selectAdd($fields='',$table='',$options=array()) {
+        // 分析表达式
+        $options =  $this->_parseOptions($options);
+        // 写入数据到数据库
+        if(false === $result = $this->db->selectInsert($fields?$fields:$options['field'],$table?$table:$this->getTableName(),$options)){
+            // 数据库插入操作失败
+            $this->error = L('_OPERATION_WRONG_');
+            return false;
+        }else {
+            // 插入成功
+            return $result;
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
      * 保存数据
      +----------------------------------------------------------
      * @access public
@@ -978,7 +1005,7 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param array $join
+     * @param mixed $join
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------

@@ -697,6 +697,39 @@ class Db extends Think
 
     /**
      +----------------------------------------------------------
+     * 通过Select方式插入记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $fields 要插入的数据表字段名
+     * @param string $table 要插入的数据表名
+     * @param array $option  查询数据参数
+     +----------------------------------------------------------
+     * @return false | integer
+     +----------------------------------------------------------
+     */
+    public function selectInsert($fields,$table,$options=array()) {
+        if(is_string($fields))   $fields    = explode(',',$fields);
+        array_walk($fields, array($this, 'addSpecialChar'));
+        $sql   =    'INSERT INTO '.$this->parseTable($table).' ('.implode(',', $fields).') ';
+        $sql  .= str_replace(
+            array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%'),
+            array(
+                $this->parseTable($options['table']),
+                $this->parseDistinct(isset($options['distinct'])?$options['distinct']:false),
+                $this->parseField(isset($options['field'])?$options['field']:'*'),
+                $this->parseJoin(isset($options['join'])?$options['join']:''),
+                $this->parseWhere(isset($options['where'])?$options['where']:''),
+                $this->parseGroup(isset($options['group'])?$options['group']:''),
+                $this->parseHaving(isset($options['having'])?$options['having']:''),
+                $this->parseOrder(isset($options['order'])?$options['order']:''),
+                $this->parseLimit(isset($options['limit'])?$options['limit']:'')
+            ),$this->selectSql);
+        return $this->execute($sql);
+    }
+
+    /**
+     +----------------------------------------------------------
      * 更新记录
      +----------------------------------------------------------
      * @access public
