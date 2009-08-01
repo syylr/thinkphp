@@ -296,8 +296,8 @@ class View extends Think
         if($display) {
             if(C('SHOW_RUN_TIME')){
                 $runtime = '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>';
-                 if(strpos($content,'__RUNTIME__'))
-                     $content   =  str_replace('__RUNTIME__',$runtime,$content);
+                 if(strpos($content,'{__RUNTIME__}'))
+                     $content   =  str_replace('{__RUNTIME__}',$runtime,$content);
                  else
                      $content   .=  $runtime;
             }
@@ -333,12 +333,12 @@ class View extends Think
             '__SELF__'    => __SELF__,       // 当前页面地址
         );
         if(C('TOKEN_ON')) {
-            if(strpos($content,'__TOKEN__')) {
+            if(strpos($content,'{__TOKEN__}')) {
                 // 指定表单令牌隐藏域位置
-                $replace['__TOKEN__'] =  $this->buildFormToken();
-            }elseif(strpos($content,'__NOTOKEN__')){
+                $replace['{__TOKEN__}'] =  $this->buildFormToken();
+            }elseif(strpos($content,'{__NOTOKEN__}')){
                 // 标记为不需要令牌验证
-                $replace['__NOTOKEN__'] =  '';
+                $replace['{__NOTOKEN__}'] =  '';
             }elseif(preg_match('/<\/form(\s*)>/is',$content,$match)) {
                 // 智能生成表单令牌隐藏域
                 $replace[$match[0]] = $this->buildFormToken().$match[0];
