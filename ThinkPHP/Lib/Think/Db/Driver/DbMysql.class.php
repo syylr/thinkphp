@@ -329,6 +329,37 @@ class DbMysql extends Db{
 
     /**
      +----------------------------------------------------------
+     * 插入记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $datas 数据
+     * @param array $options 参数表达式
+     +----------------------------------------------------------
+     * @return false | integer
+     +----------------------------------------------------------
+     */
+    public function insertAll($datas,$options=array()) {
+        if(!is_array($datas[0])) return false;
+        $fields = array_keys($datas[0]);
+        array_walk($fields, array($this, 'addSpecialChar'));
+        $values  =  array();
+        foreach ($datas as $data){
+            $value   =  array();
+            foreach ($data as $key=>$val){
+                $val   =  $this->parseValue($val);
+                if(is_scalar($val)) { // 过滤非标量数据
+                    $value[]   =  $val;
+                }
+            }
+            $values[]    = '('.implode(',', $value).')';
+        }
+        $sql   =  'INSERT INTO '.$this->parseTable($options['table']).' ('.implode(',', $fields).') VALUES '.implode(',',$values);
+        return $this->execute($sql);
+    }
+
+    /**
+     +----------------------------------------------------------
      * 关闭数据库
      +----------------------------------------------------------
      * @access public
