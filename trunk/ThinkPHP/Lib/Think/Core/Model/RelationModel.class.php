@@ -67,41 +67,36 @@ class RelationModel extends Model {
     // 查询成功后的回调方法
     protected function _after_find(&$result,$options='') {
         // 获取关联数据 并附加到结果中
-        if(!empty($options['link'])){
+        if(!empty($options['link']))
             $this->getRelation($result,$options['link']);
-        }
     }
 
     // 查询数据集成功后的回调方法
     protected function _after_select(&$result,$options='') {
         // 获取关联数据 并附加到结果中
-        if(!empty($options['link'])){
+        if(!empty($options['link']))
             $this->getRelations($result,$options['link']);
-        }
     }
 
     // 写入成功后的回调方法
     protected function _after_insert(&$data,$options='') {
         // 关联写入
-        if(!empty($options['link'])){
+        if(!empty($options['link']))
             $this->opRelation('ADD',$data,$options['link']);
-        }
     }
 
     // 更新成功后的回调方法
     protected function _after_update($data,$options='') {
         // 关联更新
-        if(!empty($options['link'])){
+        if(!empty($options['link']))
             $this->opRelation('SAVE',$data,$options['link']);
-        }
     }
 
     // 删除成功后的回调方法
     protected function _after_delete($data,$options) {
         // 关联删除
-        if(!empty($options['link'])){
+        if(!empty($options['link']))
             $this->opRelation('DEL',$data,$options['link']);
-        }
     }
 
     /**
@@ -183,7 +178,7 @@ class RelationModel extends Model {
                                     // 自引用关联 获取父键名
                                     $mappingFk   =   !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
                                 }else{
-                                    $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:strtolower($model->name).'_id';     //  关联外键
+                                    $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:strtolower($model->getModelName()).'_id';     //  关联外键
                                 }
                                 $fk   =  $result[$mappingFk];
                                 $mappingCondition .= " AND {$model->getPk()}='{$fk}'";
@@ -202,7 +197,7 @@ class RelationModel extends Model {
                                 $mappingCondition = " {$mappingFk}='{$pk}'";
                                 $mappingOrder =  $val['mapping_order'];
                                 $mappingLimit =  $val['mapping_limit'];
-                                $mappingRelationFk = $val['relation_foreign_key']?$val['relation_foreign_key']:$model->name.'_id';
+                                $mappingRelationFk = $val['relation_foreign_key']?$val['relation_foreign_key']:$model->getModelName().'_id';
                                 $mappingRelationTable  =  $val['relation_table']?$val['relation_table']:$this->getRelationTableName($model);
                                 $sql = "SELECT b.{$mappingFields} FROM {$mappingRelationTable} AS a, ".$model->getTableName()." AS b WHERE a.{$mappingRelationFk} = b.{$model->getPk()} AND a.{$mappingCondition}";
                                 if(!empty($val['condition'])) {
@@ -321,7 +316,7 @@ class RelationModel extends Model {
                                     }
                                     break;
                                 case MANY_TO_MANY:
-                                    $mappingRelationFk = $val['relation_foreign_key']?$val['relation_foreign_key']:$model->name.'_id';// 关联
+                                    $mappingRelationFk = $val['relation_foreign_key']?$val['relation_foreign_key']:$model->getModelName().'_id';// 关联
                                     $mappingRelationTable  =  $val['relation_table']?$val['relation_table']:$this->getRelationTableName($model);
                                     if(is_array($mappingData)) {
                                         $ids   = array();
