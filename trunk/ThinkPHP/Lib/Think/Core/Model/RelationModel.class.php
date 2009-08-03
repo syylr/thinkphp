@@ -22,10 +22,6 @@
  +------------------------------------------------------------------------------
  */
 class RelationModel extends Model {
-    protected $autoSaveRelations      = false;        // 自动关联保存
-    protected $autoDelRelations        = false;        // 自动关联删除
-    protected $autoAddRelations       = false;        // 自动关联写入
-    protected $autoReadRelations      = false;        // 自动关联查询
     public    $_link;
     /**
      +----------------------------------------------------------
@@ -71,9 +67,7 @@ class RelationModel extends Model {
     // 查询成功后的回调方法
     protected function _after_find(&$result,$options='') {
         // 获取关联数据 并附加到结果中
-        if($this->autoReadRelations) {
-            $this->getRelation($result);
-        }elseif(!empty($options['link'])){
+        if(!empty($options['link'])){
             $this->getRelation($result,$options['link']);
         }
     }
@@ -81,9 +75,7 @@ class RelationModel extends Model {
     // 查询数据集成功后的回调方法
     protected function _after_select(&$result,$options='') {
         // 获取关联数据 并附加到结果中
-        if($this->autoReadRelations) {
-            $this->getRelations($result);
-        }elseif(!empty($options['link'])){
+        if(!empty($options['link'])){
             $this->getRelations($result,$options['link']);
         }
     }
@@ -91,9 +83,7 @@ class RelationModel extends Model {
     // 写入成功后的回调方法
     protected function _after_insert(&$data,$options='') {
         // 关联写入
-        if($this->autoAddRelations) {
-            $this->opRelation('ADD',$data);
-        }elseif(!empty($options['link'])){
+        if(!empty($options['link'])){
             $this->opRelation('ADD',$data,$options['link']);
         }
     }
@@ -101,9 +91,7 @@ class RelationModel extends Model {
     // 更新成功后的回调方法
     protected function _after_update($data,$options='') {
         // 关联更新
-        if($this->autoSaveRelations) {
-            $this->opRelation('SAVE',$data);
-        }elseif(!empty($options['link'])){
+        if(!empty($options['link'])){
             $this->opRelation('SAVE',$data,$options['link']);
         }
     }
@@ -111,12 +99,26 @@ class RelationModel extends Model {
     // 删除成功后的回调方法
     protected function _after_delete($data,$options) {
         // 关联删除
-        if($this->autoDelRelations) {
-            $this->opRelation('DEL',$data);
-        }elseif(!empty($options['link'])){
+        if(!empty($options['link'])){
             $this->opRelation('DEL',$data,$options['link']);
         }
     }
+
+    /**
+     +----------------------------------------------------------
+     * 对保存到数据库的数据进行处理
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param mixed $data 要操作的数据
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+     protected function _facade($data) {
+        $this->_before_write($data);
+        return $data;
+     }
 
     /**
      +----------------------------------------------------------
@@ -169,7 +171,7 @@ class RelationModel extends Model {
                             $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:strtolower($this->name).'_id';     //  关联外键
                         }
                         // 获取关联模型对象
-                        $model = D($mappingClass);
+                        $model = M($mappingClass);
                         switch($mappingType) {
                             case HAS_ONE:
                                 $pk   =  $result[$this->getPk()];
@@ -269,7 +271,7 @@ class RelationModel extends Model {
                             $mappingCondition = "{$mappingFk}='{$pk}'";
                         }
                         // 获取关联model对象
-                        $model = D($mappingClass);
+                        $model = M($mappingClass);
                         $mappingData    =   isset($data[$mappingName])?$data[$mappingName]:false;
                         if(!empty($mappingData) || $opType == 'DEL') {
                             switch($mappingType) {
