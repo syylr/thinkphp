@@ -139,7 +139,7 @@ class UploadFile extends Think
             return false;
         }
         // 如果是图像文件 检测文件格式
-        if( in_array(strtolower($file['extension']),array('gif','jpg','jpeg','bmp','png','swf')) && false === getimagesize($filename)) {
+        if( in_array(strtolower($file['extension']),array('gif','jpg','jpeg','bmp','png','swf')) && false === getimagesize($file['tmp_name'])) {
             $this->error = '非法图像文件';
             return false;
         }
