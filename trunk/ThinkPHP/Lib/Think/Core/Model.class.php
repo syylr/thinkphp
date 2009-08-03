@@ -367,6 +367,31 @@ class Model extends Think implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
+     * 新增数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $dataList 数据
+     * @param array $options 表达式
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function addAll($dataList='',$options=array()) {
+        // 分析表达式
+        $options =  $this->_parseOptions($options);
+        // 写入数据到数据库
+        if(false === $result = $this->db->insertAll($dataList,$options)){
+            // 数据库插入操作失败
+            $this->error = L('_OPERATION_WRONG_');
+            return false;
+        }else {
+            return $result;
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
      * 通过Select方式添加记录
      +----------------------------------------------------------
      * @access public
@@ -752,7 +777,7 @@ class Model extends Think implements IteratorAggregate
     // 自动表单令牌验证
     public function autoCheckToken($data) {
         $name   = C('TOKEN_NAME');
-        return $data[$name] == $_SESSION[$name];
+        return substr($data[$name],32) == $_SESSION[substr($data[$name],0,32).$name];
     }
 
     /**
@@ -1020,7 +1045,7 @@ class Model extends Think implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
-     * 自动验证数据
+     * 验证数据由Create方法或者手动创建的数据
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -1030,13 +1055,17 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function validate($rule='') {
+        if(empty($this->data)) {
+            $this->error = L('_DATA_TYPE_INVALID_');
+            return false;
+        }
         foreach($rule as $key=>$val) {
             // 验证因子定义格式
             // array(field,rule,message,type)
             if(0==strpos($val[2],'{%') && strpos($val[2],'}'))
                 // 支持提示信息的多语言 使用 {%语言定义} 方式
                 $val[2]  =  L(substr($val[2],2,-1));
-            if(false === $this->_validationField($data,$val)){
+            if(false === $this->_validationField($this->data,$val)){
                 $this->error    =   $val[2];
                 return false;
             }
@@ -1139,6 +1168,7 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function filter($data) {
+        if(empty($this->data)) return false;
         foreach ($data as $key=>$auto){
             // 填充因子定义格式
             // array('field','填充内容','填充条件',[额外参数])
