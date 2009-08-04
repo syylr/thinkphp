@@ -88,19 +88,15 @@ class Dispatcher extends Think
                 //重定向成规范的URL格式
                 redirect(PHP_FILE.$_URL);
             }else{
-                if(C('ROUTER_ON'))
-                    // 检测路由规则
-                    self::routerCheck();
+                if(C('ROUTER_ON')) self::routerCheck();   // 检测路由规则
                 //给_GET赋值 以保证可以按照正常方式取_GET值
                 $_GET = array_merge(self :: getPathInfo(),$_GET);
                 //保证$_REQUEST正常取值
                 $_REQUEST = array_merge($_POST,$_GET);
             }
         }else{
-            // 普通URL模式
-            //  检查路由规则
-            if(isset($_GET[C('VAR_ROUTER')]))
-                self::routerCheck();
+            // 普通URL模式 检查路由规则
+            if(isset($_GET[C('VAR_ROUTER')])) self::routerCheck();
         }
     }
 
