@@ -52,26 +52,26 @@ class Model extends Think
      * 架构函数
      * 取得DB类的实例对象 数据表字段检查
      +----------------------------------------------------------
+     * @param string $name 模型名称
+     +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param mixed $data 要创建的数据对象内容
-     +----------------------------------------------------------
      */
-    public function __construct()
+    public function __construct($name='')
     {
         // 模型初始化
         $this->_initialize();
         // 模型名称获取
-        $this->name =   $this->getModelName();
+        // 获取模型名称
+        if(!empty($name)) {
+            $this->name   =  $name;
+        }elseif(empty($this->name)){
+            $this->name =   $this->getModelName();
+        }
         // 数据库初始化操作
         import("Db");
         // 获取数据库操作对象
-        if(!empty($this->connection)) {
-            // 当前模型有独立的数据库连接信息
-            $this->db = Db::getInstance($this->connection);
-        }else{
-            $this->db = Db::getInstance();
-        }
+        $this->db = Db::getInstance(empty($this->connection)?'':$this->connection);
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
     }
