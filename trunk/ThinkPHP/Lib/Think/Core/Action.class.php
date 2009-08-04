@@ -219,21 +219,20 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $errorMsg 错误信息
+     * @param string $message 错误信息
      * @param Boolean $ajax 是否为Ajax方式
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function error($errorMsg,$ajax=false)
+    public function error($message,$ajax=false)
     {
         if($ajax || $this->isAjax()) {
-            $this->ajaxReturn('',$errorMsg,0);
+            $this->ajaxReturn('',$message,0);
         }else {
 			//error输出应该不受HTML静态缓存配置的影响
 			C('HTML_CACHE_ON',false);
-            $this->assign('error',$errorMsg);
-            $this->forward();
+            $this->_dispatch_jump($message,0);
         }
     }
 
@@ -256,8 +255,7 @@ abstract class Action extends Think
         }else {
 			//success输出应该不受HTML静态缓存配置的影响
 			C('HTML_CACHE_ON',false);
-            $this->assign('message',$message);
-            $this->forward();
+            $this->_dispatch_jump($message,1);
         }
     }
 
@@ -269,27 +267,17 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * @param mixed $data 要返回的数据
      * @param String $info 提示信息
-     * @param String $status 返回状态
+     * @param boolean $status 返回状态
      * @param String $status ajax返回类型 JSON XML
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function ajaxReturn($data='',$info='',$status='',$type='')
+    public function ajaxReturn($data,$info='',$status=1,$type='')
     {
         // 保证AJAX返回后也能保存日志
         if(C('WEB_LOG_RECORD')) Log::save();
-
         $result  =  array();
-        if($status === '')
-            $status  = $this->get('error')?0:1;
-        if($info=='') {
-            if($this->get('error')) {
-                $info =   $this->get('error');
-            }elseif($this->get('message')) {
-                $info =   $this->get('message');
-            }
-        }
         $result['status']  =  $status;
         $result['info'] =  $info;
         $result['data'] = $data;
@@ -313,7 +301,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param mixed $action 要跳转的Action 默认为_dispatch_jump
+     * @param mixed $action 要跳转的Action
      * @param string $module 要跳转的Module 默认为当前模块
      * @param string $app 要跳转的App 默认为当前项目
      * @param boolean $exit  是否继续执行
@@ -322,13 +310,10 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function forward($action='_dispatch_jump',$module='',$app='@',$exit=false,$delay=0)
+    public function forward($action,$module='',$app='@',$exit=false,$delay=0)
     {
-        if(!empty($delay))
-            //指定延时跳转 单位为秒
-            sleep(intval($delay));
+        if(!empty($delay)) sleep(intval($delay));// 指定延时
         if(is_array($action)) {
-            //通过类似 array(&$module,$action)的方式调用
             call_user_func($action);
         }else {
             if(empty($module)) {
@@ -339,10 +324,8 @@ abstract class Action extends Think
                 call_user_func(array(&$class,$action));
             }
         }
-        if($exit)
-            exit();
-        else
-            return ;
+        if($exit)  exit();
+        return ;
     }
 
     /**
@@ -370,49 +353,37 @@ abstract class Action extends Think
      * 调用模板显示 默认为public目录下面的success页面
      * 提示页面为可配置 支持模板标签
      +----------------------------------------------------------
+     * @param string $message 提示信息
+     * @param Boolean $status 状态
+     +----------------------------------------------------------
      * @access private
      +----------------------------------------------------------
-     * @return string
+     * @return void
      +----------------------------------------------------------
      */
-    private function _dispatch_jump()
+    private function _dispatch_jump($message,$status=1)
     {
-        if($this->isAjax() ) {
-            // 用于Ajax附件上传 显示信息
-            if($this->get('_ajax_upload_')) {
-                header("Content-Type:text/html; charset=utf-8");
-                exit($this->get('_ajax_upload_'));
-            }else {
-                $this->ajaxReturn();
-            }
-        }
-        if($this->get('error') )
-            $msgTitle    =   L('_OPERATION_FAIL_');
-        else
-            $msgTitle    =   L('_OPERATION_SUCCESS_');
-        //提示标题
-        $this->assign('msgTitle',$msgTitle);
-        if($this->get('message')) { //发送成功信息
-            //成功操作后停留1秒
-            if(!$this->get('waitSecond'))
-                $this->assign('waitSecond',"1");
-            //默认操作成功自动返回操作前页面
-            if(!$this->get('jumpUrl'))
-                $this->assign("jumpUrl",$_SERVER["HTTP_REFERER"]);
-        }
-        if($this->get('error')) { //发送错误信息
-            //发生错误时候停留3秒
-            if(!$this->get('waitSecond'))
-                $this->assign('waitSecond',"3");
-            //默认发生错误的话自动返回上页
-            if(!$this->get('jumpUrl'))
-                $this->assign('jumpUrl',"javascript:history.back(-1);");
-        }
+        // 判断是否为AJAX返回
+        //if($this->isAjax()) $this->ajaxReturn('',$message,$status);
+        // 提示标题
+        $this->assign('msgTitle',$status? L('_OPERATION_SUCCESS_') : L('_OPERATION_FAIL_'));
         //如果设置了关闭窗口，则提示完毕后自动关闭窗口
-        if($this->get('closeWin'))
-            $this->assign('jumpUrl','javascript:window.close();');
-
-        $this->display(C('ACTION_JUMP_TMPL'));
+        if($this->get('closeWin'))    $this->assign('jumpUrl','javascript:window.close();');
+        $this->assign('status',$status);   // 状态
+        $this->assign('message',$message);// 提示信息
+        if($status) { //发送成功信息
+            // 成功操作后默认停留1秒
+            if(!$this->get('waitSecond'))    $this->assign('waitSecond',"1");
+            // 默认操作成功自动返回操作前页面
+            if(!$this->get('jumpUrl')) $this->assign("jumpUrl",$_SERVER["HTTP_REFERER"]);
+            $this->display(C('ACTION_SUCCESS_TMPL'));
+        }else{
+            //发生错误时候默认停留3秒
+            if(!$this->get('waitSecond'))    $this->assign('waitSecond',"3");
+            // 默认发生错误的话自动返回上页
+            if(!$this->get('jumpUrl')) $this->assign('jumpUrl',"javascript:history.back(-1);");
+            $this->display(C('ACTION_ERROR_TMPL'));
+        }
         // 中止执行  避免出错后继续执行
         exit ;
     }
