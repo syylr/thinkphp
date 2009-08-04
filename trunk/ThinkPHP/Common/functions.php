@@ -325,34 +325,6 @@ function file_exists_case($filename) {
 
 /**
  +----------------------------------------------------------
- * 基于命名空间方式导入函数库
- * load('@.Util.Array') load(
- +----------------------------------------------------------
- * @param string $name 函数库命名空间字符串
- * @param string $baseUrl 起始路径
- * @param string $ext 导入的文件扩展名
- +----------------------------------------------------------
- * @return void
- +----------------------------------------------------------
- */
-function load($name,$baseUrl='',$ext='.php') {
-    $name    =   str_replace(array('.','#'), array('/','.'), $name);
-    if(empty($baseUrl)) {
-        if(0 === strpos($name,'@/')) {
-            //加载当前项目函数库
-            $baseUrl   =  APP_PATH.'/Functions/';
-            $name =  substr($name,2);
-        }else{
-            //加载ThinkPHP 系统函数库
-            $baseUrl =  THINK_PATH.'/Functions/';
-        }
-    }
-    if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
-    include $baseUrl . $name . $ext;
-}
-
-/**
- +----------------------------------------------------------
  * 导入所需的类库 同java的Import
  * 本函数有缓存功能
  +----------------------------------------------------------
@@ -403,6 +375,34 @@ function import($class,$baseUrl = '',$ext='.class.php')
     }
     //导入目录下的指定类库文件
     return require_cache($classfile);
+}
+
+/**
+ +----------------------------------------------------------
+ * 基于命名空间方式导入函数库
+ * load('@.Util.Array')
+ +----------------------------------------------------------
+ * @param string $name 函数库命名空间字符串
+ * @param string $baseUrl 起始路径
+ * @param string $ext 导入的文件扩展名
+ +----------------------------------------------------------
+ * @return void
+ +----------------------------------------------------------
+ */
+function load($name,$baseUrl='',$ext='.php') {
+    $name    =   str_replace(array('.','#'), array('/','.'), $name);
+    if(empty($baseUrl)) {
+        if(0 === strpos($name,'@/')) {
+            //加载当前项目函数库
+            $baseUrl   =  APP_PATH.'/Functions/';
+            $name =  substr($name,2);
+        }else{
+            //加载ThinkPHP 系统函数库
+            $baseUrl =  THINK_PATH.'/Functions/';
+        }
+    }
+    if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
+    include $baseUrl . $name . $ext;
 }
 
 // 快速导入第三方框架类库
@@ -770,14 +770,16 @@ function strip_whitespace($content) {
 function array_define($array) {
     $content = '';
     foreach($array as $key=>$val) {
-        $content .= 'if(!defined(\''.$key.'\')) ';
+        $key =  strtoupper($key);
+        if(in_array($key,array('THINK_PATH','APP_NAME','APP_PATH','RUNTIME_PATH','RUNTIME_ALLINONE')))
+            $content .= 'if(!defined(\''.$key.'\')) ';
         if(is_int($val) || is_float($val)) {
-            $content .= "define('".strtoupper($key)."',".$val.");";
+            $content .= "define('".$key."',".$val.");";
         }elseif(is_bool($val)) {
             $val = ($val)?'true':'false';
-            $content .= "define('".strtoupper($key)."',".$val.");";
+            $content .= "define('".$key."',".$val.");";
         }elseif(is_string($val)) {
-            $content .= "define('".strtoupper($key)."','".addslashes($val)."');";
+            $content .= "define('".$key."','".addslashes($val)."');";
         }
     }
     return $content;
