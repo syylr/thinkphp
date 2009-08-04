@@ -162,7 +162,8 @@ return  array(
     /* 其它设置 */
     'AUTOLOAD_REG_ON'=>false, // 是否开启SPL_AUTOLOAD_REGISTER
     'AUTO_LOAD_PATH'			=>	'Think.Util.',	//	 __autoLoad 的路径设置 当前项目的Model和Action类会自动加载，无需设置 注意搜索顺序
-    'ACTION_JUMP_TMPL'=>	'Public:success',    // 页面跳转的模板文件
+    'ACTION_ERROR_TMPL'=>'Public:success',   // 错误跳转模板文件
+    'ACTION_SUCCESS_TMPL'=>'Public:success', // 成功跳转模板文件
     'ACTION_404_TMPL'=>	'Public:404',         // 404错误的模板文件
     'APP_DOMAIN_DEPLOY'     =>  false,     // 是否使用独立域名部署项目
 
