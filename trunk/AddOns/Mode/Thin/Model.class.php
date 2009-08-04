@@ -26,9 +26,6 @@ class Model extends Think
     // 当前数据库操作对象
     protected $db = null;
 
-    // 主键名称
-    protected $pk  = 'id';
-
     // 数据表前缀
     protected $tablePrefix  =   '';
 
@@ -50,7 +47,7 @@ class Model extends Think
     /**
      +----------------------------------------------------------
      * 架构函数
-     * 取得DB类的实例对象 数据表字段检查
+     * 取得DB类的实例对象
      +----------------------------------------------------------
      * @param string $name 模型名称
      +----------------------------------------------------------
@@ -61,7 +58,6 @@ class Model extends Think
     {
         // 模型初始化
         $this->_initialize();
-        // 模型名称获取
         // 获取模型名称
         if(!empty($name)) {
             $this->name   =  $name;
