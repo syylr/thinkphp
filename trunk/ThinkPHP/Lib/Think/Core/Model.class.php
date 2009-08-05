@@ -347,7 +347,7 @@ class Model extends Think implements IteratorAggregate
         $data = $this->_facade($data);
         $this->_before_insert($data,$options);
         // 写入数据到数据库
-        if(false === $result = $this->db->insert($data,$options)){
+        if(false === ($result = $this->db->insert($data,$options))){
             // 数据库插入操作失败
             $this->error = L('_OPERATION_WRONG_');
             return false;
@@ -459,14 +459,13 @@ class Model extends Think implements IteratorAggregate
             }
         }
         $this->_before_update($data,$options);
-        if(false === $this->db->update($data,$options)){
+        if(false === ($result = $this->db->update($data,$options))){
             $this->error = L('_OPERATION_WRONG_');
             return false;
         }else {
-            if(isset($pkValue))
-                $data[$this->getPk()]   =  $pkValue;
+            if(isset($pkValue)) $data[$this->getPk()]   =  $pkValue;
             $this->_after_update($data,$options);
-            return true;
+            return $result;
         }
     }
     // 更新数据前的回调方法
