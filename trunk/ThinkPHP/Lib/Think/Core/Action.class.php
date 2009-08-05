@@ -230,8 +230,6 @@ abstract class Action extends Think
         if($ajax || $this->isAjax()) {
             $this->ajaxReturn('',$message,0);
         }else {
-			//error输出应该不受HTML静态缓存配置的影响
-			C('HTML_CACHE_ON',false);
             $this->_dispatch_jump($message,0);
         }
     }
@@ -253,8 +251,6 @@ abstract class Action extends Think
         if($ajax || $this->isAjax()) {
             $this->ajaxReturn('',$message,1);
         }else {
-			//success输出应该不受HTML静态缓存配置的影响
-			C('HTML_CACHE_ON',false);
             $this->_dispatch_jump($message,1);
         }
     }
@@ -371,6 +367,8 @@ abstract class Action extends Think
         if($this->get('closeWin'))    $this->assign('jumpUrl','javascript:window.close();');
         $this->assign('status',$status);   // 状态
         $this->assign('message',$message);// 提示信息
+        //保证输出不受静态缓存影响
+        C('HTML_CACHE_ON',false);
         if($status) { //发送成功信息
             // 成功操作后默认停留1秒
             if(!$this->get('waitSecond'))    $this->assign('waitSecond',"1");
