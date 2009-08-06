@@ -45,6 +45,29 @@ class AdvModel extends Model {
         $this->_db[0]   =   $this->db;
     }
 
+    /**
+     +----------------------------------------------------------
+     * 利用__call方法重载 实现一些特殊的Model方法 （魔术方法）
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $method 方法名称
+     * @param mixed $args 调用参数
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function __call($method,$args) {
+        if(strtolower(substr($method,0,3))=='top'){
+            // 获取前N条记录
+            $count = substr($method,3);
+            array_unshift($args,$count);
+            return call_user_func_array(array(&$this, 'topN'), $args);
+        }else{
+            return parent::__call($method,$args);
+        }
+    }
+
     // 查询成功后的回调方法
     protected function _after_find(&$result,$options='') {
         // 检查序列化字段
@@ -63,7 +86,6 @@ class AdvModel extends Model {
         $resultSet   =  $this->getListBlobFields($resultSet);
         // 检查列表字段过滤
         $resultSet   =  $this->getFilterListFields($resultSet);
-
     }
 
     // 写入前的回调方法
@@ -111,6 +133,78 @@ class AdvModel extends Model {
         // 删除Blob数据
         $this->delBlobFields($data);
     }
+
+    /**
+     +----------------------------------------------------------
+     * 查找前N个记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param integer $count 记录个数
+     * @param array $options 查询表达式
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function topN($count,$options=array()) {
+        $options['limit'] =  $count;
+        return $this->select($options);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 查询符合条件的第N条记录
+     * 0 表示第一条记录 -1 表示最后一条记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param integer $position 记录位置
+     * @param array $options 查询表达式
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function getN($position=0,$options=array()) {
+        if($position>=0) { // 正向查找
+            $options['limit'] = $position.',1';
+            $list   =  $this->select($options);
+            return $list?$list[0]:false;
+        }else{ // 逆序查找
+            $list   =  $this->select($options);
+            return $list?$list[count($list)-abs($position)]:false;
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取满足条件的第一条记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $options 查询表达式
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function first($options=array()) {
+        return $this->getN(0,$options);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取满足条件的最后一条记录
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $options 查询表达式
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function last($options=array()) {
+        return $this->getN(-1,$options);
+    }
+
     /**
      +----------------------------------------------------------
      * 返回数据
