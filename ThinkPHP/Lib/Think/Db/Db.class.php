@@ -106,7 +106,7 @@ class Db extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function &factory($db_config='')
+    public function factory($db_config='')
     {
         // 读取数据库配置
         $db_config = $this->parseConfig($db_config);
