@@ -40,7 +40,7 @@ abstract class Action extends Think
     public function __construct()
     {
         //实例化视图类
-        $this->view       = View::getInstance();
+        $this->view       = Think::instance('View');
         $this->name     =   substr(get_class($this),0,-6);
         //控制器初始化
         if(method_exists($this,'_initialize'))
@@ -227,11 +227,7 @@ abstract class Action extends Think
      */
     public function error($message,$ajax=false)
     {
-        if($ajax || $this->isAjax()) {
-            $this->ajaxReturn('',$message,0);
-        }else {
-            $this->_dispatch_jump($message,0);
-        }
+        $this->_dispatch_jump($message,0,$ajax);
     }
 
     /**
@@ -248,11 +244,7 @@ abstract class Action extends Think
      */
     public function success($message,$ajax=false)
     {
-        if($ajax || $this->isAjax()) {
-            $this->ajaxReturn('',$message,1);
-        }else {
-            $this->_dispatch_jump($message,1);
-        }
+        $this->_dispatch_jump($message,1,$ajax);
     }
 
     /**
@@ -351,16 +343,17 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * @param string $message 提示信息
      * @param Boolean $status 状态
+     * @param Boolean $ajax 是否为Ajax方式
      +----------------------------------------------------------
      * @access private
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    private function _dispatch_jump($message,$status=1)
+    private function _dispatch_jump($message,$status=1,$ajax=false)
     {
         // 判断是否为AJAX返回
-        //if($this->isAjax()) $this->ajaxReturn('',$message,$status);
+        if($ajax || $this->isAjax()) $this->ajaxReturn('',$message,$status);
         // 提示标题
         $this->assign('msgTitle',$status? L('_OPERATION_SUCCESS_') : L('_OPERATION_FAIL_'));
         //如果设置了关闭窗口，则提示完毕后自动关闭窗口
