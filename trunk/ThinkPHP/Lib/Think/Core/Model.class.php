@@ -178,7 +178,7 @@ class Model extends Think implements IteratorAggregate
      */
     public function extendModel($type,$vars=array()) {
         $class = ucwords(strtolower($type)).'Model';
-        require_cache(dirname(__FILE__).'/Model/'.$class.'.class.php');
+        require_cache(THINK_PATH.'/Lib/Think/Core/Model/'.$class.'.class.php');
         if(!class_exists($class))
             throw_exception($class.L('_MODEL_NOT_EXIST_'));
         // 实例化扩展模型
