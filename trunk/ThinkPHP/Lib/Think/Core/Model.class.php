@@ -256,7 +256,7 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('field','table','where','order','limit','page','data','having','group','distinct','lazy'),true)) {
+        if(in_array(strtolower($method),array('field','table','where','order','limit','page','having','group','distinct','lazy'),true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
