@@ -151,21 +151,6 @@ class Model extends Think implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
-     * 取得模型实例对象
-     +----------------------------------------------------------
-     * @static
-     * @access public
-     +----------------------------------------------------------
-     * @return Model 返回数据模型实例
-     +----------------------------------------------------------
-     */
-    public static function getInstance()
-    {
-        return get_instance_of(__CLASS__);
-    }
-
-    /**
-     +----------------------------------------------------------
      * 动态切换到其他模型
      +----------------------------------------------------------
      * @access public
@@ -271,7 +256,7 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('field','table','where','order','limit','page','having','group','distinct','lazy'),true)) {
+        if(in_array(strtolower($method),array('field','table','where','order','limit','page','data','having','group','distinct','lazy'),true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
@@ -1023,6 +1008,27 @@ class Model extends Think implements IteratorAggregate
      */
     public function getDbFields(){
         return $this->fields;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 设置数据对象值
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $data 数据
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function data($data){
+        if(is_object($data)){
+            $data   =   get_object_vars($data);
+        }elseif(!is_array($data)){
+            throw_exception(L('_DATA_TYPE_INVALID_'));
+        }
+        $this->data = $data;
+        return $this;
     }
 
     /**
