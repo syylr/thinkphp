@@ -108,7 +108,7 @@ class TagLib extends Think
     public function __construct()
     {
         $this->tagLib  = strtolower(substr(get_class($this),6));
-        $this->tpl       = ThinkTemplate::getInstance();
+        $this->tpl       = Think::instance('ThinkTemplate');//ThinkTemplate::getInstance();
         $this->_initialize();
         $this->load();
     }
