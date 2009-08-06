@@ -72,21 +72,6 @@ class Model extends Think
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
     }
 
-    /**
-     +----------------------------------------------------------
-     * 取得模型实例对象
-     +----------------------------------------------------------
-     * @static
-     * @access public
-     +----------------------------------------------------------
-     * @return Model 返回数据模型实例
-     +----------------------------------------------------------
-     */
-    public static function getInstance()
-    {
-        return get_instance_of(__CLASS__);
-    }
-
     // 回调方法 初始化模型
     protected function _initialize() {}
 
