@@ -63,6 +63,7 @@ class RelationModel extends Model {
         $relationTable  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
         $relationTable .= $this->tableName?$this->tableName:$this->name;
         $relationTable .= '_'.$relation->getModelName();
+        $relationTable .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
         return strtolower($relationTable);
     }
 

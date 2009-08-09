@@ -53,15 +53,8 @@ class DbMysqli extends Db{
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
-            $this->linkID[$linkNum] = new mysqli(
-                                $config['hostname'],
-                                $config['username'],
-                                $config['password'],
-                                $config['database'],
-                                $config['hostport']);
-            if (mysqli_connect_errno()) {
-                throw_exception(mysqli_connect_error());
-            }
+            $this->linkID[$linkNum] = new mysqli($config['hostname'],$config['username'],$config['password'],$config['database'],$config['hostport']);
+            if (mysqli_connect_errno()) throw_exception(mysqli_connect_error());
             $dbVersion = $this->linkID[$linkNum]->server_version;
             if ($dbVersion >= "4.1") {
                 // 设置数据库编码 需要mysql 4.1.0以上支持
