@@ -58,6 +58,7 @@ class ViewModel extends Model {
                     // 直接把key作为表名来对待
                     $viewTable  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
                     $viewTable .= $key;
+                    $viewTable .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
                     $tableName .= strtolower($viewTable);
                 }
                 if(isset($view['_as']))

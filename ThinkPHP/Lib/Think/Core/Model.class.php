@@ -40,6 +40,8 @@ class Model extends Think implements IteratorAggregate
     protected $pk  = 'id';
     // 数据表前缀
     protected $tablePrefix  =   '';
+    // 数据表后缀
+    protected $tableSuffix   =  '';
     // 模型名称
     protected $name = '';
     // 数据库名称
@@ -93,6 +95,7 @@ class Model extends Think implements IteratorAggregate
         $this->db = Db::getInstance(empty($this->connection)?'':$this->connection);
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
+        $this->tableSuffix = $this->tableSuffix?$this->tableSuffix:C('DB_SUFFIX');
         // 字段检测
         if(!empty($this->name))    $this->_checkTableInfo();
     }
@@ -256,7 +259,7 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('field','table','where','order','limit','page','having','group','distinct','lazy'),true)) {
+        if(in_array(strtolower($method),array('field','table','where','order','limit','page','having','group','distinct'),true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
@@ -274,7 +277,6 @@ class Model extends Think implements IteratorAggregate
             return;
         }
     }
-
     // 回调方法 初始化模型
     protected function _initialize() {}
 
@@ -448,7 +450,7 @@ class Model extends Think implements IteratorAggregate
             $this->error = L('_OPERATION_WRONG_');
             return false;
         }else {
-            if(isset($pkValue)) $data[$this->getPk()]   =  $pkValue;
+            if(isset($pkValue)) $data[$pk]   =  $pkValue;
             $this->_after_update($data,$options);
             return $result;
         }
@@ -479,7 +481,8 @@ class Model extends Think implements IteratorAggregate
         }
         if(is_numeric($options)  || is_string($options)) {
             // 根据主键删除记录
-            $where  =  $this->getPk().'=\''.$options.'\'';
+            $pk   =  $this->getPk();
+            $where  =  $pk.'=\''.$options.'\'';
             $pkValue = $options;
             $options =  array();
             $options['where'] =  $where;
@@ -492,8 +495,7 @@ class Model extends Think implements IteratorAggregate
             return false;
         }else {
             $data = array();
-            if(isset($pkValue))
-                $data[$this->getPk()]   =  $pkValue;
+            if(isset($pkValue)) $data[$pk]   =  $pkValue;
             $this->_after_delete($data,$options);
             // 返回删除记录个数
             return $result;
@@ -694,11 +696,12 @@ class Model extends Think implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      * @param mixed $data 创建数据
+     * @param string $type 状态
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-     public function create($data='') {
+     public function create($data='',$type='') {
         // 如果没有传值默认取POST数据
         if(empty($data)) {
             $data    =   $_POST;
@@ -708,21 +711,17 @@ class Model extends Think implements IteratorAggregate
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
         }
-        $type = self::MODEL_INSERT;// 新增数据
-        if(isset($data[$this->getPk()])) {
-            $pk   =  $this->getPk();
-            if($this->field($pk)->where($pk.'=\''.$data[$pk].'\'')->find())
-                // 编辑状态
-                $type = self::MODEL_UPDATE; // 编辑数据
-        }
+        // 状态
+        $type = $type?$type:(isset($data[$this->getPk()])?self::MODEL_UPDATE:self::MODEL_INSERT);
+
         // 表单令牌验证
         if(C('TOKEN_ON') && !$this->autoCheckToken($data)) {
             $this->error = L('_TOKEN_ERROR_');
             return false;
         }
         // 验证回调接口
-        if(!$this->_before_create($data,$type))
-            return false;
+        if(!$this->_before_create($data,$type)) return false;
+
         // 检查字段映射
         if(isset($this->_map)) {
             foreach ($this->_map as $key=>$val){
@@ -732,6 +731,7 @@ class Model extends Think implements IteratorAggregate
                 }
             }
         }
+
         if($this->autoRecordTime) {
             // 自动保存时间戳
             switch($type) {
@@ -749,6 +749,7 @@ class Model extends Think implements IteratorAggregate
                 $data[$name] = time();
             }
         }
+
         // 创建完成后回调接口
         $this->_after_create($data,$type);
         // 赋值当前数据对象
@@ -881,6 +882,7 @@ class Model extends Think implements IteratorAggregate
             }else{
                 $tableName .= $this->name;
             }
+            $tableName .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
             if(!empty($this->dbName))
                 $tableName    =  $this->dbName.'.'.$tableName;
             $this->trueTableName    =   strtolower($tableName);

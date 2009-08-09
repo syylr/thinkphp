@@ -121,6 +121,7 @@ return  array(
 	'DB_PWD'                =>  '',             // 密码
 	'DB_PORT'               =>  3306,           // 端口
 	'DB_PREFIX'             =>  'think_',       // 数据库表前缀
+	'DB_SUFFIX'             =>  '',       // 数据库表后缀
 
     /* 数据缓存设置 */
     'DATA_CACHE_TIME'		=>	-1,			// 数据缓存有效期
