@@ -94,7 +94,7 @@ class Model extends Think implements IteratorAggregate
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
         // 字段检测
-        $this->_checkTableInfo();
+        if(!empty($this->name))    $this->_checkTableInfo();
     }
 
     /**
