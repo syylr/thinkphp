@@ -341,7 +341,11 @@ class App
         }
         $depr = C('PATH_MODEL')==2?C('PATH_DEPR'):'/';
         if(defined('GROUP_NAME')) {
-            define('__URL__',PHP_FILE.'/'.(C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME).$depr.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
+            if(GROUP_NAME != C('DEFAULT_GROUP')) {
+                define('__URL__',PHP_FILE.'/'.(C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME).$depr.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
+            }else{
+                define('__URL__',PHP_FILE.'/'.(defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME));
+            }
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
