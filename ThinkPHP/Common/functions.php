@@ -562,7 +562,7 @@ function C($name=null,$value=null)
         if (!strpos($name,'.')) {
             if (is_null($value))
                 return isset($_config[$name])? $_config[$name] : null;
-            $_config[$name] = is_array($value)?array_change_key_case($value):$value;
+            $_config[$name] = $value;
             return;
         }
         // 二维数组设置和获取支持
