@@ -349,6 +349,23 @@ class Db extends Think
 
     /**
      +----------------------------------------------------------
+     * 设置锁机制
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function parseLock($lock=false) {
+        if(!$lock) return '';
+        if('ORACLE' == $this->dbType) {
+            return ' FOR UPDATE NOWAIT ';
+        }
+        return ' FOR UPDATE ';
+    }
+
+    /**
+     +----------------------------------------------------------
      * set分析
      +----------------------------------------------------------
      * @access protected
@@ -692,6 +709,7 @@ class Db extends Think
             }
         }
         $sql   =  'INSERT INTO '.$this->parseTable($options['table']).' ('.implode(',', $fields).') VALUES ('.implode(',', $values).')';
+        $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
         return $this->execute($sql);
     }
 
@@ -725,6 +743,7 @@ class Db extends Think
                 $this->parseOrder(isset($options['order'])?$options['order']:''),
                 $this->parseLimit(isset($options['limit'])?$options['limit']:'')
             ),$this->selectSql);
+        $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
         return $this->execute($sql);
     }
 
@@ -746,7 +765,8 @@ class Db extends Think
             .$this->parseSet($data)
             .$this->parseWhere(isset($options['where'])?$options['where']:'')
             .$this->parseOrder(isset($options['order'])?$options['order']:'')
-            .$this->parseLimit(isset($options['limit'])?$options['limit']:'');
+            .$this->parseLimit(isset($options['limit'])?$options['limit']:'')
+            .$this->parseLock(isset($options['lock'])?$options['lock']:false);
         return $this->execute($sql);
     }
 
@@ -767,7 +787,8 @@ class Db extends Think
             .$this->parseTable($options['table'])
             .$this->parseWhere(isset($options['where'])?$options['where']:'')
             .$this->parseOrder(isset($options['order'])?$options['order']:'')
-            .$this->parseLimit(isset($options['limit'])?$options['limit']:'');
+            .$this->parseLimit(isset($options['limit'])?$options['limit']:'')
+            .$this->parseLock(isset($options['lock'])?$options['lock']:false);
         return $this->execute($sql);
     }
 
@@ -803,7 +824,8 @@ class Db extends Think
                 $this->parseOrder(isset($options['order'])?$options['order']:''),
                 $this->parseLimit(isset($options['limit'])?$options['limit']:'')
             ),$this->selectSql);
-        return $this->query($sql);
+        $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
+        return $this->query($sql,isset($options['cache'])?$options['cache']:false);
     }
 
     /**
@@ -832,8 +854,7 @@ class Db extends Think
 
     /**
      +----------------------------------------------------------
-     * 查询数据方法，支持动态缓存
-     * 动态缓存方式为可配置，默认为文件方式
+     * 查询数据方法
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -842,10 +863,22 @@ class Db extends Think
      * @return mixed
      +----------------------------------------------------------
      */
-    public function query($sql)
+    public function query($sql,$cache=false)
     {
-        // 进行查询
-        return $this->_query($sql);
+        if($cache) {// 启动查询缓存
+            $guid =  md5($sql);
+            //获取缓存数据
+            $data = simple_file_read($guid);
+            if(!empty($data)){
+                return $data;
+            }
+            $data = $this->_query($sql);
+            simple_file_save($guid,$data);
+            return $data;
+        }else{
+            // 进行查询
+            return $this->_query($sql);
+        }
     }
 
     /**
