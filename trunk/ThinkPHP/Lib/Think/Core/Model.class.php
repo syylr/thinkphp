@@ -731,29 +731,31 @@ class Model extends Think implements IteratorAggregate
                 }
             }
         }
-
-        if($this->autoRecordTime) {
-            // 自动保存时间戳
-            switch($type) {
-                case self::MODEL_INSERT:
-                    $name   = $this->autoCreateTimestamps;
-                    break;
-                case self::MODEL_UPDATE:
-                    $name   = $this->autoUpdateTimestamps;
-            }
-            if(!empty($this->autoTimeFormat)) {
-                // 用指定日期格式记录时间戳
-                $data[$name] =    date($this->autoTimeFormat);
-            }else{
-                // 默认记录时间戳
-                $data[$name] = time();
+        // 验证完成生成数据对象
+        $vo   =  array();
+        foreach ($this->fields as $key=>$name){
+            if(substr($key,0,1)=='_') continue;
+            $val = isset($data[$name])?$data[$name]:null;
+            //保证赋值有效
+            if(!is_null($val) ){
+                $vo[$name] = (MAGIC_QUOTES_GPC && is_string($val))?   stripslashes($val)  :  $val;
+            }elseif( (self::MODEL_INSERT == $type && $name == $this->autoCreateTimestamps ) ||
+                (self::MODEL_UPDATE == $type && $name == $this->autoUpdateTimestamps ) ){
+                // 自动保存时间戳
+                if(!empty($this->autoTimeFormat)) {
+                    // 用指定日期格式记录时间戳
+                    $vo[$name] =    date($this->autoTimeFormat);
+                }else{
+                    // 默认记录时间戳
+                    $vo[$name] = time();
+                }
             }
         }
 
         // 创建完成后回调接口
-        $this->_after_create($data,$type);
+        $this->_after_create($vo,$type);
         // 赋值当前数据对象
-        $this->data =   $data;
+        $this->data =   $vo;
         return $data;
      }
      // 数据创建成功前的验证方法
