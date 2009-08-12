@@ -54,8 +54,6 @@ class Model extends Think implements IteratorAggregate
     protected $error = '';
     // 字段信息
     protected $fields = array();
-    // 字段类型信息
-    protected $type  =   array();
     // 数据信息
     protected $data =   array();
     // 查询表达式参数
@@ -140,12 +138,15 @@ class Model extends Think implements IteratorAggregate
         $this->fields['_autoinc'] = false;
         foreach ($fields as $key=>$val){
             // 记录字段类型
-            $this->type[$key]    =   $val['type'];
+            $type[$key]    =   $val['type'];
             if($val['primary']) {
                 $this->fields['_pk'] = $key;
                 if($val['autoinc']) $this->fields['_autoinc']   =   true;
             }
         }
+        // 记录字段类型信息
+        if(C('FIELD_TYPE_CHECK'))   $this->fields['_type'] =  $type;
+
         // 2008-3-7 增加缓存开关控制
         if(C('DB_FIELDS_CACHE'))
             // 永久缓存数据表信息
@@ -154,22 +155,7 @@ class Model extends Think implements IteratorAggregate
 
     /**
      +----------------------------------------------------------
-     * 动态切换到其他模型
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $name 模型名称
-     +----------------------------------------------------------
-     * @return Model
-     +----------------------------------------------------------
-     */
-    public function switchModel($name) {
-        return M($name);
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 动态切换扩展模型类型
+     * 动态切换扩展模型
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -179,9 +165,8 @@ class Model extends Think implements IteratorAggregate
      * @return Model
      +----------------------------------------------------------
      */
-    public function extendModel($type,$vars=array()) {
+    public function switchModel($type,$vars=array()) {
         $class = ucwords(strtolower($type)).'Model';
-        require_cache(THINK_PATH.'/Lib/Think/Core/Model/'.$class.'.class.php');
         if(!class_exists($class))
             throw_exception($class.L('_MODEL_NOT_EXIST_'));
         // 实例化扩展模型
@@ -737,26 +722,38 @@ class Model extends Think implements IteratorAggregate
             if(substr($key,0,1)=='_') continue;
             $val = isset($data[$name])?$data[$name]:null;
             //保证赋值有效
-            if(!is_null($val) ){
+            if(!is_null($val)){
                 $vo[$name] = (MAGIC_QUOTES_GPC && is_string($val))?   stripslashes($val)  :  $val;
-            }elseif( (self::MODEL_INSERT == $type && $name == $this->autoCreateTimestamps ) ||
-                (self::MODEL_UPDATE == $type && $name == $this->autoUpdateTimestamps ) ){
-                // 自动保存时间戳
-                if(!empty($this->autoTimeFormat)) {
-                    // 用指定日期格式记录时间戳
-                    $vo[$name] =    date($this->autoTimeFormat);
-                }else{
-                    // 默认记录时间戳
-                    $vo[$name] = time();
+                if(C('FIELD_TYPE_CHECK')) {
+                    // 字段类型检查
+                    $fieldType = strtolower($this->fields['_type'][$name]);
+                    if(false !== strpos($fieldType,'int')) {
+                        $vo[$name]   =  intval($vo[$name]);
+                    }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
+                        $vo[$name]   =  floatval($vo[$name]);
+                    }
                 }
             }
         }
-
+        if($this->autoRecordTime){
+            // 自动保存时间戳
+            switch($type) {
+            case self::MODEL_INSERT:
+                $name = $this->autoCreateTimestamps;
+                break;
+            case self::MODEL_UPDATE:
+                $name = $this->autoUpdateTimestamps;
+                break;
+            }
+            // 用指定日期格式记录时间戳
+            $vo[$name] = !empty($this->autoTimeFormat)?date($this->autoTimeFormat):time();
+        }
         // 创建完成后回调接口
         $this->_after_create($vo,$type);
         // 赋值当前数据对象
         $this->data =   $vo;
-        return $data;
+        // 返回创建的数据以供其他调用
+        return $vo;
      }
      // 数据创建成功前的验证方法
      protected function _before_create($data,$type) {return true;}
