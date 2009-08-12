@@ -10,27 +10,74 @@
 // +----------------------------------------------------------------------
 // $Id$
 
+/**
+ +------------------------------------------------------------------------------
+ * ThinkPHP Widget类 抽象类
+ +------------------------------------------------------------------------------
+ * @category   Think
+ * @package  Think
+ * @subpackage  Util
+ * @author liu21st <liu21st@gmail.com>
+ * @version  $Id$
+ +------------------------------------------------------------------------------
+ */
 abstract class Widget extends Think {
-    // 渲染输出
-    // data 要渲染的数据
+
+    // 使用的模板引擎 每个Widget可以单独配置不受系统影响
+    protected $template =  '';
+
+    /**
+     +----------------------------------------------------------
+     * 渲染输出 render方法是Widget唯一的接口
+     * 使用字符串返回 不能有任何输出
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $data  要渲染的数据
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
     abstract public function render($data);
-    // 渲染模板输出
+
+    /**
+     +----------------------------------------------------------
+     * 渲染模板输出 供render方法内部调用
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $templateFile  模板文件
+     * @param mixed $var  模板变量
+     * @param string $charset  模板编码
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
     protected function renderFile($templateFile='',$var='',$charset='utf-8') {
-        $template   = Template::getInstance();
         ob_start();
         ob_implicit_flush(0);
         if(!file_exists_case($templateFile)){
             // 自动定位模板文件
-            $filename   =  empty($templateFile)?substr(get_class($this),0,-6):$templateFile;
-            $templateFile = LIB_PATH.'Widget/'.$filename.C('TEMPLATE_SUFFIX');
-            if(!file_exists_case($templateFile)){
+            $name   = substr(get_class($this),0,-6);
+            $filename   =  empty($templateFile)?$name:$templateFile;
+            $templateFile = LIB_PATH.'Widget/'.$name.'/'.$filename.C('TEMPLATE_SUFFIX');
+            if(!file_exists_case($templateFile))
                 throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
-            }
         }
-        $template->fetch($templateFile,$var,$charset);
+        $template   =  $this->template?$this->template:strtolower(C('TMPL_ENGINE_TYPE')?C('TMPL_ENGINE_TYPE'):'php');
+        if('php' == $template) {
+            // 使用PHP模板
+            if(!empty($var)) extract($var, EXTR_OVERWRITE);
+            // 直接载入PHP模板
+            include $templateFile;
+        }else{
+            $className   = 'Template'.ucwords($this->name);
+            require_cache(THINK_PATH.'/Lib/Think/Template/'.$className.'.class.php');
+            $tpl   =  new $className;
+            $tpl->fetch($templateFile,$var,$charset);
+        }
         $content = ob_get_clean();
         return $content;
     }
-
 }
 ?>
