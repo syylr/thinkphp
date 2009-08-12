@@ -601,8 +601,8 @@ function B($name) {
 // 渲染输出Widget
 function W($name,$data=array(),$return=false) {
     $class = $name.'Widget';
-    require_cache(LIB_PATH.'Widget/'.$class.'.class.php');
-    $widget  =  new $class();
+    require_cache(LIB_PATH.'Widget/'.$name.'/'.$class.'.class.php');
+    $widget  =  Think::instance($class);
     $content = $widget->render($data);
     if($return)
         return $content;
