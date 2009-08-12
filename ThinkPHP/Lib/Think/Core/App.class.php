@@ -190,7 +190,7 @@ class App
             // URL地址不区分大小写
             define('P_MODULE_NAME',strtolower($module));
             // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-            $module = ucfirst(parse_name(strtolower($module),1));
+            $module = ucfirst(parse_name(P_MODULE_NAME,1));
         }
         unset($_POST[$var],$_GET[$var]);
         return $module;
@@ -248,24 +248,19 @@ class App
     {
         $langSet = C('DEFAULT_LANGUAGE');
         // 不开启语言包功能，仅仅加载框架语言文件直接返回
-        if ( !C('LANG_SWITCH_ON') )
-        {
+        if (!C('LANG_SWITCH_ON')){
             L(include THINK_PATH.'/Lang/'.$langSet.'.php');
             return;
         }
         // 启用了语言包功能
         // 根据是否启用自动侦测设置获取语言选择
-        if ( C('AUTO_DETECT_LANG') )
-        {
-            if(isset($_GET[C('VAR_LANGUAGE')]))// 检测浏览器支持语言
-            {
+        if (C('AUTO_DETECT_LANG')){
+            if(isset($_GET[C('VAR_LANGUAGE')])){// 检测浏览器支持语言
                 $langSet = $_GET[C('VAR_LANGUAGE')];// url中设置了语言变量
                 cookie('think_language',$langSet,3600);
-            }
-            elseif(cookie('think_language'))// 获取上次用户的选择
+            }elseif(cookie('think_language'))// 获取上次用户的选择
                 $langSet = cookie('think_language');
-            elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE']))// 自动侦测浏览器语言
-            {
+            elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){// 自动侦测浏览器语言
                 preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
                 $langSet = $matches[1];
                 cookie('think_language',$langSet,3600);
@@ -280,8 +275,7 @@ class App
             L(include LANG_PATH.$langSet.'/common.php');
         $group = '';
         // 读取当前分组公共语言包
-        if ( C('APP_GROUP') )
-        {
+        if (defined('GROUP_NAME')){
             $group = GROUP_NAME.C('TMPL_FILE_DEPR');
             if (is_file(LANG_PATH.$langSet.'/'.$group.'lang.php'))
                 L(include LANG_PATH.$langSet.'/'.$group.'lang.php');
@@ -304,21 +298,20 @@ class App
     {
         if(C('AUTO_DETECT_THEME')) {// 自动侦测模板主题
             $t = C('VAR_TEMPLATE');
-            if ( isset($_GET[$t]) ) {
+            if (isset($_GET[$t])){
                 $templateSet = $_GET[$t];
                 cookie('think_template',$templateSet,3600);
-            } else {
-                if(cookie('think_template')) {
+            }else{
+                if(cookie('think_template')){
                     $templateSet = cookie('think_template');
-                }else {
+                }else{
                     $templateSet =    C('DEFAULT_TEMPLATE');
                     cookie('think_template',$templateSet,3600);
                 }
             }
-            if (!is_dir(TMPL_PATH.$templateSet)) {
+            if(!is_dir(TMPL_PATH.$templateSet))
                 //模版不存在的话，使用默认模版
                 $templateSet =    C('DEFAULT_TEMPLATE');
-            }
         }else{
             $templateSet =    C('DEFAULT_TEMPLATE');
         }
@@ -396,10 +389,9 @@ class App
                 // 是否定义Empty模块
                 $module = A("Empty");
             }
-            if(!$module) {
+            if(!$module)
                 // 模块不存在 抛出异常
                 throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
-            }
         }
 
         //获取当前操作名

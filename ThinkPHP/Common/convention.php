@@ -95,6 +95,7 @@ return  array(
     /* 模型设置 */
     'AUTO_NAME_IDENTIFY'  =>    true, // 模型对应数据表名称智能识别 UserType => user_type
     'DEFAULT_MODEL_APP'     =>   '@',   // 默认模型类所在的项目名称 @ 表示当前项目
+    'FIELD_TYPE_CHECK'        =>   false, // 是否进行字段类型检查
 
     /* 静态缓存设置 */
     'HTML_FILE_SUFFIX'			=>	'.shtml',	 // 默认静态文件后缀
