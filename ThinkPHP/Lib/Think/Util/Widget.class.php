@@ -71,8 +71,8 @@ abstract class Widget extends Think {
             // 直接载入PHP模板
             include $templateFile;
         }else{
-            $className   = 'Template'.ucwords($this->name);
-            require_cache(THINK_PATH.'/Lib/Think/Template/'.$className.'.class.php');
+            $className   = 'Template'.ucwords($template);
+            require_cache(THINK_PATH.'/Lib/Think/Util/Template/'.$className.'.class.php');
             $tpl   =  new $className;
             $tpl->fetch($templateFile,$var,$charset);
         }
