@@ -396,11 +396,7 @@ class Db extends Think
      +----------------------------------------------------------
      */
     protected function parseValue($value) {
-        if(is_int($value)) {
-            $value = intval($value);
-        }elseif(is_float($value)) {
-            $value = floatval($value);
-        }elseif(is_string($value)) {
+        if(is_string($value)) {
             $value = '\''.$this->escape_string($value).'\'';
         }elseif(isset($value[0]) && is_string($value[0]) && strtolower($value[0]) == 'exp'){
             $value   =  $this->escape_string($value[1]);
