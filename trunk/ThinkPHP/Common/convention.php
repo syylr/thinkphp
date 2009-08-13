@@ -143,6 +143,7 @@ return  array(
 
     /* 模板引擎设置 */
     'TMPL_ENGINE_TYPE'		=>	'Think',		// 默认模板引擎 以下设置仅对使用Think模板引擎有效
+    'BUILD_IN_TAGLIB'          =>   'cx',           //  内置标签库名称 可以更改成自己的
     'TMPL_DENY_FUNC_LIST'	=>	'echo,exit',	// 模板引擎禁用函数
     'TMPL_PARSE_STRING'=>  '', // 模板引擎要自动替换的字符串，必须是数组形式。例如array('__MYPATH__'=>Lib_PATH,...)
     'TMPL_L_DELIM'				=>	'{',			// 模板引擎普通标签开始标记
