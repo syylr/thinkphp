@@ -220,27 +220,31 @@ class  ThinkTemplate extends Think
         // 一般放在文件的最前面
         // 格式：<taglib name="html" />
         // 当TAGLIB_LOAD配置为true时才会进行检测
-        if(C('TAGLIB_LOAD'))   $this->getIncludeTagLib($content);
-        if(!empty($this->tagLib)) {
-            // 对导入的TagLib进行解析
-            $_taglibs = C('_taglibs_');
-            foreach($this->tagLib as $tagLibName) {
-                // 内置标签库
-                if(!import('Think.Template.TagLib.TagLib'.ucwords(strtolower($tagLibName)))) {
-                    // 扩展标签库
-                    if($_taglibs && isset($_taglibs[$tagLibName]))
-                        // 'tagLibName'=>'importPath'
-                        import($_taglibs[$tagLibName]);
-                    else
-                        throw_exception($tagLibName.L('_TAGLIB_NOT_EXIST_'));
+        if(C('TAGLIB_LOAD')) {
+            $this->getIncludeTagLib($content);
+            if(!empty($this->tagLib)) {
+                // 对导入的TagLib进行解析
+                $_taglibs = C('_taglibs_');
+                foreach($this->tagLib as $tagLibName) {
+                    // 内置标签库
+                    if(!import('Think.Template.TagLib.TagLib'.ucwords(strtolower($tagLibName)))) {
+                        // 扩展标签库
+                        if($_taglibs && isset($_taglibs[$tagLibName]))
+                            // 'tagLibName'=>'importPath'
+                            import($_taglibs[$tagLibName]);
+                        else
+                            throw_exception($tagLibName.L('_TAGLIB_NOT_EXIST_'));
+                    }
+                    $this->parseTagLib($tagLibName,$content);
                 }
-                $this->parseTagLib($tagLibName,$content);
             }
         }
-        $tag  =  C('BUILD_IN_TAGLIB');
-        // 内置了CX标签库支持 无需使用taglib标签导入就可以使用
-        import('TagLib'.ucwords($tag));
-        $this->parseTagLib($tag,$content,true);
+        // 内置标签库 无需使用taglib标签导入就可以使用
+        $tagLibs =  explode(',',C('BUILD_IN_TAGLIB'));
+        foreach ($tagLibs as $tag){
+            import('TagLib'.ucwords($tag));
+            $this->parseTagLib($tag,$content,true);
+        }
         //解析普通模板标签 {tagName:}
         $content = preg_replace('/('.$this->config['tmpl_begin'].')(\S.+?)('.$this->config['tmpl_end'].')/eis',"\$this->parseTag('\\2')",$content);
         return $content;
@@ -333,7 +337,7 @@ class  ThinkTemplate extends Think
      */
     public function parseTagLib($tagLib,&$content,$hide=false)
     {
-        $tLib =  get_instance_of('TagLib'.ucwords(strtolower($tagLib)));
+        $tLib =  Think::instance('TagLib'.ucwords(strtolower($tagLib)));
         if($tLib->valid()) {
             //如果标签库有效则取出支持标签列表
             $tagList =  $tLib->getTagList();
