@@ -57,7 +57,11 @@ function build_runtime() {
         foreach ($runtime as $file){
             $content .= compile($file,$compile);
         }
-        file_put_contents(RUNTIME_PATH.'~runtime.php',strip_whitespace('<?php'.$content));
+        if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
+            file_put_contents(RUNTIME_PATH.'~runtime.php','<?php'.$content);
+        }else{
+            file_put_contents(RUNTIME_PATH.'~runtime.php',strip_whitespace('<?php'.$content));
+        }
         unset($content);
     }
 }

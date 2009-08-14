@@ -151,7 +151,7 @@ return  array(
     'TAGLIB_BEGIN'				=>	'<',			// 标签库标签开始标记
     'TAGLIB_END'					=>	'>',			// 标签库标签结束标记
     'TAG_NESTED_LEVEL'		=>	3,				// 标签库
-    'TAGLIB_LOAD'           =>  true,//是否使用内置cx标签库之外的其它标签库，默认进行自动检测
+    'TAGLIB_LOAD'           =>  true         ,//是否使用内置标签库之外的其它标签库，默认进行自动检测
 
     /* Cookie设置 */
     'COOKIE_EXPIRE'				=>	3600,		// Coodie有效期
