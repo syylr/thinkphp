@@ -22,22 +22,19 @@
  +------------------------------------------------------------------------------
  */
 class AdvModel extends Model {
-
     const MUST_VALIDATE         =   1;// 必须验证
     const EXISTS_VAILIDATE      =   0;// 表单存在字段则验证
     const VALUE_VAILIDATE       =   2;// 表单值不为空则验证
-
     // 数据库连接对象列表
     private $_db = array();
     // 返回数据类型
     public $returnType  =  'array';
     public $blobFields     =   array();
     public $blobValues    = null;
-    public $_validate       = array();  // 自动验证定义
-    public $_auto           = array();  // 自动完成定义
-    public $_filter           = array();
     public $serializeField   = array();
     public $readonlyField  = array();
+    public $_validate       = array();  // 自动验证定义
+    public $_auto           = array();  // 自动完成定义
 
     public function __construct($name='') {
         parent::__construct($name);
@@ -74,8 +71,6 @@ class AdvModel extends Model {
         $this->checkSerializeField($result);
         // 获取文本字段
         $this->getBlobFields($result);
-        // 检查字段过滤
-        $result   =  $this->getFilterFields($result);
     }
 
     // 查询数据集成功后的回调方法
@@ -84,15 +79,12 @@ class AdvModel extends Model {
         $resultSet   =  $this->checkListSerializeField($resultSet);
         // 获取文本字段
         $resultSet   =  $this->getListBlobFields($resultSet);
-        // 检查列表字段过滤
-        $resultSet   =  $this->getFilterListFields($resultSet);
     }
 
     // 写入前的回调方法
     protected function _before_insert(&$data,$options='') {
         // 检查文本字段
         $data = $this->checkBlobFields($data);
-        $data   =  $this->setFilterFields($data);
         $data = $this->serializeField($data);
     }
 
@@ -107,7 +99,6 @@ class AdvModel extends Model {
         $data = $this->checkBlobFields($data);
         // 检查只读字段
         $data = $this->checkReadonlyField($data);
-        $data   =  $this->setFilterFields($data);
         // 检查序列化字段
         $data = $this->serializeField($data);
     }
@@ -115,6 +106,11 @@ class AdvModel extends Model {
     protected function _after_update($data,$options) {
         // 保存文本字段
         $this->saveBlobFields($data);
+    }
+
+    protected function _after_delete($data,$options) {
+        // 删除Blob数据
+        $this->delBlobFields($data);
     }
 
     // 创建数据前的回调方法
@@ -127,11 +123,6 @@ class AdvModel extends Model {
     protected function _after_create(&$data,$type) {
         // 自动完成
         $this->autoOperation($data,$type);
-    }
-
-    protected function _after_delete($data,$options) {
-        // 删除Blob数据
-        $this->delBlobFields($data);
     }
 
     /**
@@ -367,33 +358,6 @@ class AdvModel extends Model {
 
     /**
      +----------------------------------------------------------
-     * 随机获取数据表的数据
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $options 查询参数
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    public function rand($options=array()) {
-        if(empty($options) && !empty($this->options)) {
-            $options    =   $this->options;
-            // 查询过后清空sql表达式组装 避免影响下次查询
-            $this->options  =   array();
-        }
-        $field      =   isset($options['field'])?   $options['field']   :   '*';
-        $where  =   isset($options['condition'])?   $options['condition']   : 1;
-        $limit      =   isset($options['limit'])?   $options['limit']   : 1;
-        $table      =   isset($options['table'])?   $options['table']:$this->getTableName();
-        // 拼装查询SQL
-        $sql    =   'SELECT '.$field.' FROM '.$table.'  WHERE '.$where.' AND  id >= (SELECT   floor(  RAND() * ((SELECT  MAX(id) FROM '.$table.')-(SELECT  MIN(id) FROM '.$table.')) + (SELECT MIN(id) FROM  '.$table.'))) ORDER BY id LIMIT'.$limit;
-        $rs = $this->query($sql);
-        return $rs;
-    }
-
-    /**
-     +----------------------------------------------------------
      * 字段值增长
      +----------------------------------------------------------
      * @access public
@@ -548,76 +512,6 @@ class AdvModel extends Model {
 
     /**
      +----------------------------------------------------------
-     * 获取数据的时候过滤数据字段
-     +----------------------------------------------------------
-     * @access pubic
-     +----------------------------------------------------------
-     * @param mixed $result 查询的数据
-     +----------------------------------------------------------
-     * @return array
-     +----------------------------------------------------------
-     */
-    public function getFilterFields(&$result) {
-        if(!empty($this->_filter)) {
-            foreach ($this->_filter as $field=>$filter){
-                if(isset($result[$field])) {
-                    $fun  =  $filter[1];
-                    if(!empty($fun)) {
-                        if(isset($filter[2]) && $filter[2]){
-                            // 传递整个数据对象作为参数
-                            $result[$field]  =  call_user_func($fun,$result);
-                        }else{
-                            // 传递字段的值作为参数
-                            $result[$field]  =  call_user_func($fun,$result[$field]);
-                        }
-                    }
-                }
-            }
-        }
-        return $result;
-    }
-
-    public function getFilterListFields(&$resultSet) {
-        if(!empty($this->_filter)) {
-            foreach ($resultSet as $key=>$result)
-                $resultSet[$key]  =  $this->getFilterFields($result);
-        }
-        return $resultSet;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 写入数据的时候过滤数据字段
-     +----------------------------------------------------------
-     * @access pubic
-     +----------------------------------------------------------
-     * @param mixed $result 查询的数据
-     +----------------------------------------------------------
-     * @return array
-     +----------------------------------------------------------
-     */
-    public function setFilterFields($data) {
-        if(!empty($this->_filter)) {
-            foreach ($this->_filter as $field=>$filter){
-                if(isset($data[$field])) {
-                    $fun              =  $filter[0];
-                    if(!empty($fun)) {
-                        if(isset($filter[2]) && $filter[2]) {
-                            // 传递整个数据对象作为参数
-                            $data[$field]   =  call_user_func($fun,$data);
-                        }else{
-                            // 传递字段的值作为参数
-                            $data[$field]   =  call_user_func($fun,$data[$field]);
-                        }
-                    }
-                }
-            }
-        }
-        return $data;
-    }
-
-    /**
-     +----------------------------------------------------------
      * 检查只读字段
      +----------------------------------------------------------
      * @access protected
@@ -722,6 +616,124 @@ class AdvModel extends Model {
         }else{
             return false;
         }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 把返回的数据集转换成Tree
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $list 要转换的数据集
+     * @param string $pid parent标记字段
+     * @param string $level level标记字段
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function toTree($list=null, $pk='id',$pid = 'pid',$child = '_child',$root=0)
+    {
+        if(null === $list)
+            // 默认直接取查询返回的结果集合
+            $list   =   &$this->dataList;
+        // 创建Tree
+        $tree = array();
+        if(is_array($list)) {
+            // 创建基于主键的数组引用
+            $refer = array();
+            foreach ($list as $key => $data) {
+                $refer[$data[$pk]] =& $list[$key];
+            }
+            foreach ($list as $key => $data) {
+                // 判断是否存在parent
+                $parentId = $data[$pid];
+                if ($root == $parentId) {
+                    $tree[] =& $list[$key];
+                }else{
+                    if (isset($refer[$parentId])) {
+                        $parent =& $refer[$parentId];
+                        $parent[$child][] =& $list[$key];
+                    }
+                }
+            }
+        }
+        return $tree;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 对查询结果集进行排序
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $field 排序的字段名
+     * @param array $sortby 排序类型 asc arsort natcaseror
+     * @param array $list 查询结果
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function sortBy($field, $sortby='asc', $list='' ) {
+       if(empty($list) && !empty($this->dataList))
+           $list     =   $this->dataList;
+       if(is_array($list)){
+           $refer = $resultSet = array();
+           foreach ($list as $i => $data)
+               $refer[$i] = &$data[$field];
+           switch ($sortby) {
+               case 'asc': // 正向排序
+                    asort($refer);
+                    break;
+               case 'desc':// 逆向排序
+                    arsort($refer);
+                    break;
+               case 'nat': // 自然排序
+                    natcasesort($refer);
+                    break;
+           }
+           foreach ( $refer as $key=> $val)
+               $resultSet[] = &$list[$key];
+           return $resultSet;
+       }
+       return false;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 在数据列表中搜索
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $condition 查询条件
+     * 支持 array('name'=>$value) 或者 name=$value
+     * @param array $list 数据列表
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function search($condition,$list=null) {
+        if(null === $list)
+            // 默认直接在查询返回的结果集中搜索
+            $list   =   &$this->dataList;
+        if(is_string($condition))
+            parse_str($condition,$condition);
+        // 返回的结果集合
+        $resultSet = array();
+        foreach ($list as $key=>$data){
+            $find   =   false;
+            foreach ($condition as $field=>$value){
+                if(isset($data[$field])) {
+                    if(0 === strpos($value,'/')) {
+                        $find   =   preg_match($value,$data[$field]);
+                    }elseif($data[$field]==$value){
+                        $find = true;
+                    }
+                }
+            }
+            if($find)
+                $resultSet[]     =   &$list[$key];
+        }
+        return $resultSet;
     }
 
     /**
@@ -907,179 +919,32 @@ class AdvModel extends Model {
 
     /**
      +----------------------------------------------------------
-     * 得到分表的的数据表名
+     * 使用正则验证数据
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param array $data 操作的数据
+     * @param string $value  要验证的数据
+     * @param string $rule 验证规则
      +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function getPartitionTableName($data=array()) {
-        // 对数据表进行分区
-        if(isset($data[$this->partition['field']])) {
-            $field   =   $data[$this->partition['field']];
-            switch($this->partition['type']) {
-                case 'id':
-                    // 按照id范围分表
-                    $step    =   $this->partition['expr'];
-                    $seq    =   floor($field / $step)+1;
-                    break;
-                case 'year':
-                    // 按照年份分表
-                    if(!is_numeric($field)) {
-                        $field   =   strtotime($field);
-                    }
-                    $seq    =   date('Y',$field)-$this->partition['expr']+1;
-                    break;
-                case 'mod':
-                    // 按照id的模数分表
-                    $seq    =   ($field % $this->partition['num'])+1;
-                    break;
-                case 'md5':
-                    // 按照md5的序列分表
-                    $seq    =   (ord(substr(md5($field),0,1)) % $this->partition['num'])+1;
-                    break;
-                default :
-                    if(function_exists($this->partition['type'])) {
-                        // 支持指定函数哈希
-                        $fun    =   $this->partition['type'];
-                        $seq    =   (ord(substr($fun($field),0,1)) % $this->partition['num'])+1;
-                    }else{
-                        // 按照字段的首字母的值分表
-                        $seq    =   (ord($field{0}) % $this->partition['num'])+1;
-                    }
-            }
-            return $this->getTableName().'_'.$seq;
-        }else{
-            // 当设置的分表字段不在查询条件或者数据中
-            // 进行联合查询，必须设定 partition['num']
-            $tableName  =   array();
-            for($i=0;$i<$this->partition['num'];$i++)
-                $tableName[] = 'SELECT * FROM '.$this->getTableName().'_'.$i;
-            $tableName = '( '.implode(" UNION ",$tableName).') AS '.$this->name;
-            return $tableName;
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 把返回的数据集转换成Tree
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $list 要转换的数据集
-     * @param string $pid parent标记字段
-     * @param string $level level标记字段
-     +----------------------------------------------------------
-     * @return array
+     * @return boolean
      +----------------------------------------------------------
      */
-    public function toTree($list=null, $pk='id',$pid = 'pid',$child = '_child',$root=0)
-    {
-        if(null === $list)
-            // 默认直接取查询返回的结果集合
-            $list   =   &$this->dataList;
-        // 创建Tree
-        $tree = array();
-        if(is_array($list)) {
-            // 创建基于主键的数组引用
-            $refer = array();
-            foreach ($list as $key => $data) {
-                $refer[$data[$pk]] =& $list[$key];
-            }
-            foreach ($list as $key => $data) {
-                // 判断是否存在parent
-                $parentId = $data[$pid];
-                if ($root == $parentId) {
-                    $tree[] =& $list[$key];
-                }else{
-                    if (isset($refer[$parentId])) {
-                        $parent =& $refer[$parentId];
-                        $parent[$child][] =& $list[$key];
-                    }
-                }
-            }
-        }
-        return $tree;
+    public function regex($value,$rule) {
+        $validate = array(
+            'require'=> '/.+/',
+            'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
+            'url' => '/^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/',
+            'currency' => '/^\d+(\.\d+)?$/',
+            'number' => '/\d+$/',
+            'zip' => '/^[1-9]\d{5}$/',
+            'integer' => '/^[-\+]?\d+$/',
+            'double' => '/^[-\+]?\d+(\.\d+)?$/',
+            'english' => '/^[A-Za-z]+$/',
+        );
+        // 检查是否有内置的正则表达式
+        if(isset($validate[strtolower($rule)]))
+            $rule   =   $validate[strtolower($rule)];
+        return preg_match($rule,$value)===1;
     }
-
-    /**
-     +----------------------------------------------------------
-     * 对查询结果集进行排序
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $field 排序的字段名
-     * @param array $sortby 排序类型 asc arsort natcaseror
-     * @param array $list 查询结果
-     +----------------------------------------------------------
-     * @return array
-     +----------------------------------------------------------
-     */
-    public function sortBy($field, $sortby='asc', $list='' ) {
-       if(empty($list) && !empty($this->dataList))
-           $list     =   $this->dataList;
-       if(is_array($list)){
-           $refer = $resultSet = array();
-           foreach ($list as $i => $data)
-               $refer[$i] = &$data[$field];
-           switch ($sortby) {
-               case 'asc': // 正向排序
-                    asort($refer);
-                    break;
-               case 'desc':// 逆向排序
-                    arsort($refer);
-                    break;
-               case 'nat': // 自然排序
-                    natcasesort($refer);
-                    break;
-           }
-           foreach ( $refer as $key=> $val)
-               $resultSet[] = &$list[$key];
-           return $resultSet;
-       }
-       return false;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 在数据列表中搜索
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $condition 查询条件
-     * 支持 array('name'=>$value) 或者 name=$value
-     * @param array $list 数据列表
-     +----------------------------------------------------------
-     * @return array
-     +----------------------------------------------------------
-     */
-    public function search($condition,$list=null) {
-        if(null === $list)
-            // 默认直接在查询返回的结果集中搜索
-            $list   =   &$this->dataList;
-        if(is_string($condition))
-            parse_str($condition,$condition);
-        // 返回的结果集合
-        $resultSet = array();
-        foreach ($list as $key=>$data){
-            $find   =   false;
-            foreach ($condition as $field=>$value){
-                if(isset($data[$field])) {
-                    if(0 === strpos($value,'/')) {
-                        $find   =   preg_match($value,$data[$field]);
-                    }elseif($data[$field]==$value){
-                        $find = true;
-                    }
-                }
-            }
-            if($find)
-                $resultSet[]     =   &$list[$key];
-        }
-        return $resultSet;
-    }
-
 }
 ?>
