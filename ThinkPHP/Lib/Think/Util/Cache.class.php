@@ -100,8 +100,7 @@ class Cache extends Think
      */
     public function connect($type='',$options=array())
     {
-        if(empty($type))
-            $type = C('DATA_CACHE_TYPE');
+        if(empty($type))  $type = C('DATA_CACHE_TYPE');
         $cachePath = dirname(__FILE__).'/Cache/';
         $cacheClass = 'Cache'.ucwords(strtolower(trim($type)));
         require_cache($cachePath.$cacheClass.'.class.php');
