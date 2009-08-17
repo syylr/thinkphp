@@ -195,7 +195,7 @@ class Dispatcher extends Think
      * @return void
      +----------------------------------------------------------
      */
-    static public function check() {
+    static public function routerCheck() {
         // 搜索路由映射 把路由名称解析为对应的模块和操作
         $routes = C('_routes_');
         if(!empty($routes)) {
