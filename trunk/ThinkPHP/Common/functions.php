@@ -640,60 +640,21 @@ function S($name,$value='',$expire='',$type='') {
 }
 
 // 快速文件数据读取和保存 针对简单类型数据 字符串、数组
-function F($name,$value='',$expire=-1,$path=DATA_PATH) {
+function F($name,$value='',$path=DATA_PATH) {
     static $_cache = array();
     $filename   =   $path.$name.'.php';
     if('' !== $value) {
         if(is_null($value)) {
             // 删除缓存
-            $result =   unlink($filename);
-            if($result)   unset($_cache[$name]);
-            return $result;
+            return unlink($filename);
         }else{
             // 缓存数据
-            $content   =   "<?php\nif (!defined('THINK_PATH')) exit();\n//".sprintf('%012d',$expire)."\nreturn ".var_export($value,true).";\n?>";
-            $_cache[$name]   =   $value;
             $dir   =  dirname($filename);
+            // 目录不存在则创建
             if(!is_dir($dir))  mkdir($dir);
-            return file_put_contents($filename,$content);
+            return file_put_contents($filename,"<?php\nreturn ".var_export($value,true).";\n?>");
         }
     }
-    if(isset($_cache[$name])) return $_cache[$name];
-    // 获取缓存数据
-    if(is_file($filename) && false !== $content = file_get_contents($filename)) {
-        $expire  =  (int)substr($content,44, 12);
-        if($expire != -1 && time() > filemtime($filename) + $expire) {
-            //缓存过期删除缓存文件
-            unlink($filename);
-            return false;
-        }
-        $value    = eval(substr($content,57,-2));
-        $_cache[$name]   =   $value;
-    }else{
-        $value  =   false;
-    }
-    return $value;
-}
-
-// 简单数据保存
-function simple_file_save($name,$value='',$path=DATA_PATH) {
-    $filename   =   $path.$name.'.php';
-    if(is_null($value)) {
-        // 删除缓存
-        return unlink($filename);
-    }else{
-        // 缓存数据
-        $dir   =  dirname($filename);
-        // 目录不存在则创建
-        if(!is_dir($dir))  mkdir($dir);
-        return file_put_contents($filename,"<?php\nreturn ".var_export($value,true).";\n?>");
-    }
-}
-
-// 简单数据读取
-function simple_file_read($name,$path=DATA_PATH) {
-    static $_cache = array();
-    $filename   =   $path.$name.'.php';
     if(isset($_cache[$name])) return $_cache[$name];
     // 获取缓存数据
     if(is_file($filename)) {

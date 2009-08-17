@@ -864,12 +864,12 @@ class Db extends Think
         if($cache) {// 启动查询缓存
             $guid =  md5($sql);
             //获取缓存数据
-            $data = simple_file_read($guid);
+            $data = F($guid,'',TEMP_PATH);
             if(!empty($data)){
                 return $data;
             }
             $data = $this->_query($sql);
-            simple_file_save($guid,$data);
+            F($guid,$data,TEMP_PATH);
             return $data;
         }else{
             // 进行查询

@@ -113,7 +113,7 @@ class Model extends Think implements IteratorAggregate
         if(empty($this->fields)) {
             // 如果数据表字段没有定义则自动获取
             if(C('DB_FIELDS_CACHE')) {
-                $this->fields = simple_file_read('_fields/'.$this->name);
+                $this->fields = F('_fields/'.$this->name);
                 if(!$this->fields)   $this->flush();
             }else{
                 // 每次都会读取数据表信息
@@ -150,7 +150,7 @@ class Model extends Think implements IteratorAggregate
         // 2008-3-7 增加缓存开关控制
         if(C('DB_FIELDS_CACHE'))
             // 永久缓存数据表信息
-            simple_file_save('_fields/'.$this->name,$this->fields);
+            F('_fields/'.$this->name,$this->fields);
     }
 
     /**
