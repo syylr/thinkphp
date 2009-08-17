@@ -394,12 +394,12 @@ class View extends Think
      +----------------------------------------------------------
      * 显示运行时间、数据库操作、缓存次数、内存使用信息
      +----------------------------------------------------------
-     * @access public
+     * @access private
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function showTime() {
+    private function showTime() {
         // 显示运行时间
         $startTime =  $GLOBALS['_viewStartTime'];
         $endTime = microtime(TRUE);
@@ -436,10 +436,10 @@ class View extends Think
      +----------------------------------------------------------
      * 显示页面Trace信息
      +----------------------------------------------------------
-     * @access protected
+     * @access private
      +----------------------------------------------------------
      */
-    protected function showTrace(){
+    private function showTrace(){
         // 显示页面Trace信息 读取Trace定义文件
         // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
         $traceFile  =   CONFIG_PATH.'trace.php';

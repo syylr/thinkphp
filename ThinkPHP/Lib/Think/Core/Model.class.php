@@ -32,6 +32,9 @@ class Model extends Think implements IteratorAggregate
     const MODEL_INSERT      =   1;      //  插入模型数据
     const MODEL_UPDATE    =   2;      //  更新模型数据
     const MODEL_BOTH      =   3;      //  包含上面两种方式
+    const MUST_VALIDATE         =   1;// 必须验证
+    const EXISTS_VAILIDATE      =   0;// 表单存在字段则验证
+    const VALUE_VAILIDATE       =   2;// 表单值不为空则验证
     // 当前使用的扩展模型
     private $_extModel =  null;
     // 当前数据库操作对象
@@ -60,12 +63,16 @@ class Model extends Think implements IteratorAggregate
     protected $options  =   array();
     // 数据列表信息
     protected $dataList =   array();
+    protected $_validate       = array();  // 自动验证定义
+    protected $_auto           = array();  // 自动完成定义
     // 自动写入时间戳的字段名称
     protected $autoRecordTime   =  true;
     protected $autoCreateTimestamps = 'create_time';
     protected $autoUpdateTimestamps = 'update_time';
     // 自动写入的时间格式
     protected $autoTimeFormat = '';
+    // 是否自动检测数据表字段信息
+    protected $autoCheckFields   =   true;
 
     /**
      +----------------------------------------------------------
@@ -95,7 +102,7 @@ class Model extends Think implements IteratorAggregate
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
         $this->tableSuffix = $this->tableSuffix?$this->tableSuffix:C('DB_SUFFIX');
         // 字段检测
-        if(!empty($this->name))    $this->_checkTableInfo();
+        if(!empty($this->name) && $this->autoCheckFields)    $this->_checkTableInfo();
     }
 
     /**
@@ -635,8 +642,8 @@ class Model extends Think implements IteratorAggregate
             $this->error = L('_TOKEN_ERROR_');
             return false;
         }
-        // 验证回调接口
-        if(!$this->_before_create($data,$type)) return false;
+        // 数据自动验证
+        if(!$this->autoValidation($data,$type)) return false;
 
         // 检查字段映射
         if(isset($this->_map)) {
@@ -679,8 +686,8 @@ class Model extends Think implements IteratorAggregate
             // 用指定日期格式记录时间戳
             $vo[$name] = !empty($this->autoTimeFormat)?date($this->autoTimeFormat):time();
         }
-        // 创建完成后回调接口
-        $this->_after_create($vo,$type);
+        // 创建完成对数据进行自动处理
+        $this->autoOperation($vo,$type);
         // 赋值当前数据对象
         $this->data =   $vo;
         // 返回创建的数据以供其他调用
@@ -979,6 +986,218 @@ class Model extends Think implements IteratorAggregate
             $this->options['join'] =  $join;
         else
             $this->options['join'][]  =   $join;
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 使用正则验证数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $value  要验证的数据
+     * @param string $rule 验证规则
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function regex($value,$rule) {
+        $validate = array(
+            'require'=> '/.+/',
+            'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
+            'url' => '/^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/',
+            'currency' => '/^\d+(\.\d+)?$/',
+            'number' => '/\d+$/',
+            'zip' => '/^[1-9]\d{5}$/',
+            'integer' => '/^[-\+]?\d+$/',
+            'double' => '/^[-\+]?\d+(\.\d+)?$/',
+            'english' => '/^[A-Za-z]+$/',
+        );
+        // 检查是否有内置的正则表达式
+        if(isset($validate[strtolower($rule)]))
+            $rule   =   $validate[strtolower($rule)];
+        return preg_match($rule,$value)===1;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 自动表单处理
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $data 创建数据
+     * @param string $type 创建类型
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    private function autoOperation(&$data,$type) {
+        // 自动填充
+        if(!empty($this->_auto)) {
+            foreach ($this->_auto as $auto){
+                // 填充因子定义格式
+                // array('field','填充内容','填充条件','附加规则',[额外参数])
+                if(empty($auto[2])) $auto[2] = self::MODEL_INSERT; // 默认为新增的时候自动填充
+                if( $type == $auto[2] || $auto[2] == self::MODEL_BOTH) {
+                    switch($auto[3]) {
+                        case 'function':    //  使用函数进行填充 字段的值作为参数
+                        case 'callback': // 使用回调方法
+                            $args = isset($auto[4])?$auto[4]:array();
+                            array_unshift($args,$data[$auto[0]]);
+                            if('function'==$auto[3]) {
+                                $data[$auto[0]]  = call_user_func_array($auto[1], $args);
+                            }else{
+                                $data[$auto[0]]  =  call_user_func_array(array(&$this,$auto[1]), $args);
+                            }
+                            break;
+                        case 'field':    // 用其它字段的值进行填充
+                            $data[$auto[0]] = $data[$auto[1]];
+                            break;
+                        case 'string':
+                        default: // 默认作为字符串填充
+                            $data[$auto[0]] = $auto[1];
+                    }
+                    if(false === $data[$auto[0]] )   unset($data[$auto[0]]);
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 自动表单验证
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $data 创建数据
+     * @param string $type 创建类型
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    private function autoValidation($data,$type) {
+        // 属性验证
+        if(!empty($this->_validate)) {
+            // 如果设置了数据自动验证
+            // 则进行数据验证
+            // 重置验证错误信息
+            foreach($this->_validate as $key=>$val) {
+                // 验证因子定义格式
+                // array(field,rule,message,condition,type,when,params)
+                // 判断是否需要执行验证
+                if(empty($val[5]) || $val[5]== self::MODEL_BOTH || $val[5]== $type ) {
+                    if(0==strpos($val[2],'{%') && strpos($val[2],'}'))
+                        // 支持提示信息的多语言 使用 {%语言定义} 方式
+                        $val[2]  =  L(substr($val[2],2,-1));
+                    $val[3]  =  isset($val[3])?$val[3]:self::EXISTS_VAILIDATE;
+                    $val[4]  =  isset($val[4])?$val[4]:'regex';
+                    // 判断验证条件
+                    switch($val[3]) {
+                        case self::MUST_VALIDATE:   // 必须验证 不管表单是否有设置该字段
+                            if(false === $this->_validationField($data,$val)){
+                                $this->error    =   $val[2];
+                                return false;
+                            }
+                            break;
+                        case self::VALUE_VAILIDATE:    // 值不为空的时候才验证
+                            if('' != trim($data[$val[0]])){
+                                if(false === $this->_validationField($data,$val)){
+                                    $this->error    =   $val[2];
+                                    return false;
+                                }
+                            }
+                            break;
+                        default:    // 默认表单存在该字段就验证
+                            if(isset($data[$val[0]])){
+                                if(false === $this->_validationField($data,$val)){
+                                    $this->error    =   $val[2];
+                                    return false;
+                                }
+                            }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 根据验证因子验证字段
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $data 创建数据
+     * @param string $val 验证规则
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    private function _validationField($data,$val) {
+        switch($val[4]) {
+            case 'function':// 使用函数进行验证
+            case 'callback':// 调用方法进行验证
+                $args = isset($val[6])?$val[6]:array();
+                array_unshift($args,$data[$val[0]]);
+                if('function'==$val[4]) {
+                    return call_user_func_array($val[1], $args);
+                }else{
+                    return call_user_func_array(array(&$this, $val[1]), $args);
+                }
+            case 'confirm': // 验证两个字段是否相同
+                if($data[$val[0]] != $data[$val[1]] )
+                    return false;
+                break;
+            case 'in': // 验证是否在某个数组范围之内
+                if(!in_array($data[$val[0]] ,$val[1]) )
+                    return false;
+                break;
+            case 'equal': // 验证是否等于某个值
+                if($data[$val[0]] != $val[1])
+                    return false;
+                break;
+            case 'unique': // 验证某个值是否唯一
+                if(is_string($val[0]) && strpos($val[0],','))
+                    $val[0]  =  explode(',',$val[0]);
+                $map = array();
+                if(is_array($val[0])) {
+                    // 支持多个字段验证
+                    foreach ($val[0] as $field)
+                        $map[$field]   =  $data[$field];
+                }else{
+                    $map[$val[0]] = $data[$val[0]];
+                }
+                if($this->where($map)->find())
+                    return false;
+                break;
+            case 'regex':
+            default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
+                // 检查附加规则
+                if(!$this->regex($data[$val[0]],$val[1]))
+                    return false;
+        }
+        return true;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 动态设置验证规则和填充规则
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $rule 规则定义
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function rule($rule) {
+        if(isset($rule['validate'])) {
+            $this->_validate   =  array_merge($this->_validate,$rule['validate']);
+        }
+        if(isset($rule['auto'])) {
+            $this->_auto   =  array_merge($this->_auto,$rule['auto']);
+        }
         return $this;
     }
 };
