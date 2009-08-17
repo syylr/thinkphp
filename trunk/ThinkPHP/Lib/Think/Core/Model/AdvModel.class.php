@@ -30,13 +30,15 @@ class AdvModel extends Model {
     public $blobValues    = null;
     public $serializeField   = array();
     public $readonlyField  = array();
-
+    protected $_fields = '';
     public function __construct($name='') {
         if('' === $name && 'AdvModel' == get_class() )
             $this->autoCheckFields = false;
         parent::__construct($name);
         // 设置默认的数据库连接
         $this->_db[0]   =   $this->db;
+        // 备份当前的数据表字段信息
+        $this->_fields    =    $this->fields;
     }
 
     /**
@@ -570,6 +572,8 @@ class AdvModel extends Model {
         if(isset($this->_db[$linkNum])) {
             $this->_db[$linkNum]->close();
             unset($this->_db[$linkNum]);
+            // 恢复之前的数据表字段信息
+            $this->fields    =    $this->_fields;
             return true;
         }
         return false;
@@ -589,6 +593,8 @@ class AdvModel extends Model {
     public function closeConnect($linkNum) {
         if(isset($this->_db[$linkNum])) {
             $this->_db[$linkNum]->close();
+            // 恢复之前的数据表字段信息
+            $this->fields    =    $this->_fields;
             return true;
         }
         return false;
@@ -609,6 +615,8 @@ class AdvModel extends Model {
         if(isset($this->_db[$linkNum])) {
             // 在不同实例直接切换
             $this->db   =   $this->_db[$linkNum];
+            // 更新数据表字段缓存信息
+            $this->flush();
             return true;
         }else{
             return false;
