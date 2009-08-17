@@ -32,7 +32,7 @@ class AdvModel extends Model {
     public $readonlyField  = array();
 
     public function __construct($name='') {
-        if('' === $name)
+        if(!is_subclass_of($this, 'AdvModel') )
             $this->autoCheckFields = false;
         parent::__construct($name);
         // 设置默认的数据库连接
