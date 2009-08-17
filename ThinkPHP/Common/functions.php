@@ -478,11 +478,11 @@ function D($name='',$app='')
  * @return Model
  +----------------------------------------------------------
  */
-function M($name='') {
+function M($name='',$class='Model') {
     static $_model = array();
-    if(!isset($_model[$name]))
-        $_model[$name]   = new Model($name);
-    return $_model[$name];
+    if(!isset($_model[$name.'_'.$class]))
+        $_model[$name.'_'.$class]   = new $class($name);
+    return $_model[$name.'_'.$class];
 }
 
 /**
