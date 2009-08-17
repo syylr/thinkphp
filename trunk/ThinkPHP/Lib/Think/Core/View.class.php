@@ -254,10 +254,10 @@ class View extends Think
      * @return string
      +----------------------------------------------------------
      */
-    public function buildHtml($htmlfile='',$templateFile='',$charset='',$contentType='text/html') {
+    public function buildHtml($htmlfile,$templateFile='',$charset='',$contentType='text/html') {
         $content = $this->fetch($templateFile,$charset,$contentType);
-        if(empty($htmlfile))
-            $htmlfile =  HTML_PATH.rtrim($_SERVER['PATH_INFO'],'/').C('HTML_FILE_SUFFIX');
+        if(!is_file($htmlfile)) // 默认在静态目录下面创建
+            $htmlfile =  HTML_PATH.$htmlfile.C('HTML_FILE_SUFFIX');
         if(!is_dir(dirname($htmlfile)))
             // 如果静态目录不存在 则创建
             mk_dir(dirname($htmlfile));
