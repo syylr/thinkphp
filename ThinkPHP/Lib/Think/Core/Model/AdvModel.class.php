@@ -22,7 +22,6 @@
  +------------------------------------------------------------------------------
  */
 class AdvModel extends Model {
-    protected $autoCheckFields = false;
     // 数据库连接对象列表
     private $_db = array();
     // 返回数据类型
@@ -33,6 +32,8 @@ class AdvModel extends Model {
     public $readonlyField  = array();
 
     public function __construct($name='') {
+        if('' === $name)
+            $this->autoCheckFields = false;
         parent::__construct($name);
         // 设置默认的数据库连接
         $this->_db[0]   =   $this->db;
