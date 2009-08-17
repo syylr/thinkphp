@@ -1193,10 +1193,10 @@ class Model extends Think implements IteratorAggregate
      */
     public function rule($rule) {
         if(isset($rule['validate'])) {
-            $this->_validate   =  array_merge($this->_validate,$rule['validate']);
+            $this->_validate   =  $rule['validate'];
         }
         if(isset($rule['auto'])) {
-            $this->_auto   =  array_merge($this->_auto,$rule['auto']);
+            $this->_auto   =  $rule['auto'];
         }
         return $this;
     }

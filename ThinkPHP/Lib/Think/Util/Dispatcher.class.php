@@ -233,7 +233,7 @@ class Dispatcher extends Think
                     parse_str($route[3],$params);
                     $_GET   =   array_merge($_GET,$params);
                 }
-                unset($_SERVER['PATH_INFO']);
+                //unset($_SERVER['PATH_INFO']);
             }elseif(isset($routes[$routeName.'@'])){
                 // 存在泛路由
                 // 路由定义格式 routeName@=>array(
