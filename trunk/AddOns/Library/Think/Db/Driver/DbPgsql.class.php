@@ -83,7 +83,7 @@ class DbPgsql extends Db{
      +----------------------------------------------------------
      */
     public function free() {
-        @pg_free_result($this->queryID);
+        pg_free_result($this->queryID);
         $this->queryID = 0;
     }
 
@@ -146,11 +146,6 @@ class DbPgsql extends Db{
         $this->writeTimes ++;
         $this->W(1);
         $this->debug();
-        $tableName  =   '';
-        if(substr($this->queryStr,0,6)=="INSERT"){
-            $tableName=explode(" ",$this->queryStr);
-            $tableName=";select last_value from {$tableName[2]}_id_seq;";
-        }
         $result =   pg_query($this->_linkID,$this->queryStr.$tableName);
         $this->debug();
         if ( false === $result ) {
@@ -160,12 +155,27 @@ class DbPgsql extends Db{
                 return false;
         } else {
             $this->numRows = pg_affected_rows($result);
-            if($tableName!=""){
-                $result=pg_fetch_array($result);
-                $this->lastInsID =$result[0];
-            }
+            $this->lastInsID =   $this->last_insert_id();
             return $this->numRows;
         }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 用于获取最后插入的ID
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return integer
+     +----------------------------------------------------------
+     */
+    public function last_insert_id()
+    {
+        $query  =   "SELECT LASTVAL() AS insert_id";
+        $result =   pg_query($this->_linkID,$query);
+        list($last_insert_id)   =   pg_fetch_array($result,null,PGSQL_ASSOC);
+        pg_free_result($result);
+        return $last_insert_id;
     }
 
     /**
