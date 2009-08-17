@@ -24,11 +24,10 @@
 abstract class Action extends Think
 {//类定义开始
 
-    // Action控制器名称
-    protected $name =  '';
-
     // 视图实例对象
-    protected $view   =  null;
+    private $view   =  null;
+    // 当前Action名称
+    private $name =  '';
 
    /**
      +----------------------------------------------------------
@@ -41,13 +40,35 @@ abstract class Action extends Think
     {
         //实例化视图类
         $this->view       = Think::instance('View');
-        $this->name     =   substr(get_class($this),0,-6);
         //控制器初始化
         if(method_exists($this,'_initialize'))
             $this->_initialize();
     }
 
-    // 判断是否为AjAX提交
+   /**
+     +----------------------------------------------------------
+     * 获取当前Action名称
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     */
+    protected function getActionName() {
+        if(empty($this->name)) {
+            // 获取Action名称
+            $this->name     =   substr(get_class($this),0,-6);
+        }
+        return $this->name;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否AJAX请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
     protected function isAjax() {
         if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) ) {
             if('xmlhttprequest' == strtolower($_SERVER['HTTP_X_REQUESTED_WITH']))
@@ -57,6 +78,76 @@ abstract class Action extends Think
             // 判断Ajax方式提交
             return true;
         return false;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否POST请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
+    protected function isPost()
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']) == 'post';
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否GET请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
+    protected function isGet()
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']) == 'get';
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否Head请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
+    protected function isHead()
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']) == 'head';
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否Put请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
+    protected function isPut()
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']) == 'put';
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 是否Delete请求
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return bool
+     +----------------------------------------------------------
+     */
+    protected function isDelete()
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']) == 'delete';
     }
 
     /**
@@ -132,6 +223,10 @@ abstract class Action extends Think
      */
     public function assign($name,$value='')
     {
+        $this->view->assign($name,$value);
+    }
+
+    public function __set($name,$value) {
         $this->view->assign($name,$value);
     }
 
