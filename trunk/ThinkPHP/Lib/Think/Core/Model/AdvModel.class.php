@@ -605,16 +605,18 @@ class AdvModel extends Model {
      * @access public
      +----------------------------------------------------------
      * @param integer $linkNum  创建的连接序号
+     * @param string $name  要操作的模型名称
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function switchConnect($linkNum) {
+    public function switchConnect($linkNum,$name='') {
         if(isset($this->_db[$linkNum])) {
             // 在不同实例直接切换
             $this->db   =   $this->_db[$linkNum];
             // 重置当前表名 可以在切换之前重新设置前缀
             $this->trueTableName  =  '';
+            if(!empty($name))   $this->name   =  $name;
             // 更新数据表字段缓存信息
             $this->flush();
             return true;
