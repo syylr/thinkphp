@@ -449,8 +449,12 @@ class Model extends Think implements IteratorAggregate
         if(is_numeric($options)  || is_string($options)) {
             // 根据主键删除记录
             $pk   =  $this->getPk();
-            $where  =  $pk.'=\''.$options.'\'';
-            $pkValue = $options;
+            if(strpos($options,',')) {
+                $where  =  $pk.' IN ('.$options.')';
+            }else{
+                $where  =  $pk.'=\''.$options.'\'';
+                $pkValue = $options;
+            }
             $options =  array();
             $options['where'] =  $where;
         }
@@ -483,6 +487,11 @@ class Model extends Think implements IteratorAggregate
      +----------------------------------------------------------
      */
     public function select($options=array()) {
+        if(is_string($options)) {
+            // 根据主键查询
+            $options =  array();
+            $options['where'] =  $this->getPk().' IN ('.$options.')';
+        }
         // 分析表达式
         $options =  $this->_parseOptions($options);
         if($resultSet = $this->db->select($options)) {
@@ -539,9 +548,8 @@ class Model extends Think implements IteratorAggregate
      */
      public function find($options=array()) {
          if(is_numeric($options) || is_string($options)) {
-             $where = $this->getPk().'=\''.$options.'\'';
              $options = array();
-             $options['where'] = $where;
+             $options['where'] = $this->getPk().'=\''.$options.'\'';
          }
          // 总是查找一条记录
         $options['limit'] = 1;
