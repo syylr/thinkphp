@@ -67,6 +67,63 @@ class Model extends Think
         $this->db = Db::getInstance(empty($this->connection)?'':$this->connection);
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
+        // 字段检测
+        if(!empty($this->name))    $this->_checkTableInfo();
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 自动检测数据表信息
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    protected function _checkTableInfo() {
+        // 如果不是Model类 自动记录数据表信息
+        // 只在第一次执行记录
+        if(empty($this->fields)) {
+            // 如果数据表字段没有定义则自动获取
+            if(C('DB_FIELDS_CACHE')) {
+                $this->fields = F('_fields/'.$this->name);
+                if(!$this->fields)   $this->flush();
+            }else{
+                // 每次都会读取数据表信息
+                $this->flush();
+            }
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取字段信息并缓存
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function flush() {
+        // 缓存不存在则查询数据表信息
+        $fields =   $this->db->getFields($this->getTableName());
+        $this->fields   =   array_keys($fields);
+        $this->fields['_autoinc'] = false;
+        foreach ($fields as $key=>$val){
+            // 记录字段类型
+            $type[$key]    =   $val['type'];
+            if($val['primary']) {
+                $this->fields['_pk'] = $key;
+                if($val['autoinc']) $this->fields['_autoinc']   =   true;
+            }
+        }
+        // 记录字段类型信息
+        if(C('FIELD_TYPE_CHECK'))   $this->fields['_type'] =  $type;
+
+        // 2008-3-7 增加缓存开关控制
+        if(C('DB_FIELDS_CACHE'))
+            // 永久缓存数据表信息
+            F('_fields/'.$this->name,$this->fields);
     }
 
     // 回调方法 初始化模型
@@ -329,59 +386,6 @@ class Model extends Think
             // 自动获取表名
             $options['table'] =$this->getTableName();
         return $options;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 设置记录的某个字段值
-     * 支持使用数据库字段和方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string|array $field  字段名
-     * @param string|array $value  字段值
-     * @param mixed $condition  条件
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    public function setField($field,$value,$condition='') {
-        if(empty($condition) && isset($this->options['where']))
-            $condition   =  $this->options['where'];
-        $options['where'] =  $condition;
-        if(is_array($field)) {
-            foreach ($field as $key=>$val)
-                $data[$val]    = $value[$key];
-        }else{
-            $data[$field]   =  $value;
-        }
-        return $this->save($data,$options);
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 获取一条记录的某个字段值
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $field  字段名
-     * @param mixed $condition  查询条件
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    public function getField($field,$condition='') {
-        if(empty($condition) && isset($this->options['where']))
-            $condition   =  $this->options['where'];
-        $options['where'] =  $condition;
-        $options['field']    =  $field;
-        $result   =  $this->find($options);
-        if($result) {
-            $this->data=  array();
-            return reset($result);
-        }else{
-            return null;
-        }
     }
 
     /**
