@@ -52,9 +52,8 @@ class App
         //L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
 
         // 记录应用初始化时间
-        if(C('SHOW_RUN_TIME')){
-            $GLOBALS['_initTime'] = microtime(TRUE);
-        }
+        if(C('SHOW_RUN_TIME'))  $GLOBALS['_initTime'] = microtime(TRUE);
+        // 执行操作
         R(MODULE_NAME,ACTION_NAME);
         // 保存日志记录
         if(C('WEB_LOG_RECORD')) Log::save();
