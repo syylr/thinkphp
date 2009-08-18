@@ -32,8 +32,12 @@ class AdvModel extends Model {
     public $readonlyField  = array();
     protected $_fields = null;
     public function __construct($name='') {
-        if('' === $name && !is_subclass_of($this,'AdvModel') )
+        if('' !== $name || is_subclass_of($this,'AdvModel') ){
+            // 如果是AdvModel子类或者有传入模型名称则获取字段缓存
+        }else{
+            // 空的模型 关闭字段缓存
             $this->autoCheckFields = false;
+        }
         parent::__construct($name);
         // 设置默认的数据库连接
         $this->_db[0]   =   $this->db;
