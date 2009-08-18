@@ -613,6 +613,8 @@ class AdvModel extends Model {
         if(isset($this->_db[$linkNum])) {
             // 在不同实例直接切换
             $this->db   =   $this->_db[$linkNum];
+            // 重置当前表名 可以在切换之前重新设置前缀
+            $this->trueTableName  =  '';
             // 更新数据表字段缓存信息
             $this->flush();
             return true;
