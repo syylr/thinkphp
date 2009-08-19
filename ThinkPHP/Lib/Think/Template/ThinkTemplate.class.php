@@ -218,7 +218,7 @@ class  ThinkTemplate extends Think
         // 获取需要引入的标签库列表
         // 标签库只需要定义一次，允许引入多个一次
         // 一般放在文件的最前面
-        // 格式：<taglib name="html" />
+        // 格式：<taglib name="html,mytag..." />
         // 当TAGLIB_LOAD配置为true时才会进行检测
         if(C('TAGLIB_LOAD')) {
             $this->getIncludeTagLib($content);
@@ -239,10 +239,16 @@ class  ThinkTemplate extends Think
                 }
             }
         }
+        // 预先加载的标签库 无需在每个模板中使用taglib标签加载
+        if(C('TAGLIB_PRE_LOAD')) {
+            $tagLibs =  explode(',',C('TAGLIB_PRE_LOAD'));
+            foreach ($taglibs as $tag){
+                $this->parseTagLib($tag,$content);
+            }
+        }
         // 内置标签库 无需使用taglib标签导入就可以使用
-        $tagLibs =  explode(',',C('BUILD_IN_TAGLIB'));
+        $tagLibs =  explode(',',C('TAGLIB_BUILD_IN'));
         foreach ($tagLibs as $tag){
-            import('TagLib'.ucwords($tag));
             $this->parseTagLib($tag,$content,true);
         }
         //解析普通模板标签 {tagName:}
