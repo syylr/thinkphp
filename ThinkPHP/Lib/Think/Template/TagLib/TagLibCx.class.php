@@ -631,6 +631,37 @@ class TagLibCx extends TagLib
 
     /**
      +----------------------------------------------------------
+     * import标签解析 支持命名空间方式导入
+     * 格式： <import file="" type="" />
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string|void
+     +----------------------------------------------------------
+     */
+    public function _import($attr,$content)
+    {
+        $tag        = $this->parseXmlAttr($attr,'import');
+        $file       = $tag['file'];
+        $basepath   = !empty($tag['basepath'])?$tag['basepath']:WEB_PUBLIC_PATH;
+        $type       = !empty($tag['type'])?  strtolower($tag['type']):'js';
+        $files =  explode(',',$file);
+        $parseStr = '';
+        foreach ($files as $file){
+            if($type=='js') {
+                $parseStr .= "<script type='text/javascript' src='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$file).'.js'."'></script> ";
+            }elseif($type=='css') {
+                $parseStr .= "<link rel='stylesheet' type='text/css' href='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$file).'.css'."' />";
+            }
+        }
+        return $parseStr;
+    }
+
+    /**
+     +----------------------------------------------------------
      * load 标签解析(用于不使用html标签时也可以加载css,js文件)
      * 如果定义了value属性，默认会对value的值进行isset判断，支持使用函数
      * 格式：<load href="" value="var" /> var变量已定义则加载
@@ -639,6 +670,8 @@ class TagLibCx extends TagLib
      * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
+     * @param string $content  标签内容
+     * @param string $type  类型
      +----------------------------------------------------------
      * @return string|void
      +----------------------------------------------------------
@@ -663,10 +696,16 @@ class TagLibCx extends TagLib
             $parseStr .= '<?php if('.$name.'): ?>';
             $endStr    = '<?php endif; ?>';
         }
-        if($type=='js') {
-            $parseStr .= '<script type="text/javascript" src="'.$file.'"></script>'.$endStr;
-        }elseif($type=='css') {
-            $parseStr .= '<link rel="stylesheet" type="text/css" href="'.$file.'" />'.$endStr;
+        $files =  explode(',',$file);
+        foreach ($files as $file){
+            switch($type) {
+            case 'js':
+                $parseStr .= '<script type="text/javascript" src="'.$file.'"></script>'.$endStr;
+                break;
+            case 'css':
+                $parseStr .= '<link rel="stylesheet" type="text/css" href="'.$file.'" />'.$endStr;
+                break;
+            }
         }
         return $parseStr;
     }
