@@ -53,14 +53,14 @@ class App
         //[/RUNTIME]
 
         // 项目开始标签
-        if(C('TAG_PLUGIN_ON'))   tag('app_begin');
+        if(C('PLUGIN_ON'))   tag('app_begin');
 
         // 设置系统时区 PHP5支持
         if(function_exists('date_default_timezone_set'))
             date_default_timezone_set(C('TIME_ZONE'));
 
         // 允许注册AUTOLOAD方法
-        if(C('AUTOLOAD_REG_ON') && function_exists('spl_autoload_register'))
+        if(C('AUTOLOAD_REG') && function_exists('spl_autoload_register'))
                 spl_autoload_register(array('Think', 'autoload'));
 
         if(C('SESSION_AUTO_START'))  session_start(); // Session初始化
@@ -100,7 +100,7 @@ class App
             HtmlCache::readHTMLCache();
 
         // 项目初始化标签
-        if(C('TAG_PLUGIN_ON'))   tag('app_init');
+        if(C('PLUGIN_ON'))   tag('app_init');
         return ;
     }
     //[RUNTIME]
@@ -246,7 +246,7 @@ class App
      */
     static private function checkLanguage()
     {
-        $langSet = C('DEFAULT_LANGUAGE');
+        $langSet = C('LANG_DEFAULT');
         // 不开启语言包功能，仅仅加载框架语言文件直接返回
         if (!C('LANG_SWITCH_ON')){
             L(include THINK_PATH.'/Lang/'.$langSet.'.php');
@@ -296,7 +296,7 @@ class App
      */
     static private function checkTemplate()
     {
-        if(C('AUTO_DETECT_THEME')) {// 自动侦测模板主题
+        if(C('TMPL_DETECT_THEME')) {// 自动侦测模板主题
             $t = C('VAR_TEMPLATE');
             if (isset($_GET[$t])){
                 $templateSet = $_GET[$t];
@@ -305,15 +305,15 @@ class App
                 if(cookie('think_template')){
                     $templateSet = cookie('think_template');
                 }else{
-                    $templateSet =    C('DEFAULT_TEMPLATE');
+                    $templateSet =    C('TMPL_DEFAULT_THEME');
                     cookie('think_template',$templateSet,3600);
                 }
             }
             if(!is_dir(TMPL_PATH.$templateSet))
                 //模版不存在的话，使用默认模版
-                $templateSet =    C('DEFAULT_TEMPLATE');
+                $templateSet =    C('TMPL_DEFAULT_THEME');
         }else{
-            $templateSet =    C('DEFAULT_TEMPLATE');
+            $templateSet =    C('TMPL_DEFAULT_THEME');
         }
         //模版名称
         define('TEMPLATE_NAME',$templateSet);
@@ -332,20 +332,20 @@ class App
         }else{
             $appRoot   =  __ROOT__.'/'.APP_NAME.'/';
         }
-        $depr = C('PATH_MODEL')==2?C('PATH_DEPR'):'/';
+        $depr = C('URL_PATH_MODEL')==2?C('URL_PATH_DEPR'):'/';
         $module = defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
         if(defined('GROUP_NAME')) {
             $group   = C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME;
             define('__URL__',PHP_FILE.'/'.((GROUP_NAME != C('DEFAULT_GROUP'))?$group.$depr:'').$module);
-            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TEMPLATE_SUFFIX'));
+            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
             define('__URL__',PHP_FILE.'/'.$module);
-            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('GROUP_DEPR'),'/',MODULE_NAME).'/'.ACTION_NAME.C('TEMPLATE_SUFFIX'));
+            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('GROUP_DEPR'),'/',MODULE_NAME).'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH);
         }
         //当前操作地址
-        define('__ACTION__',__URL__.C('PATH_DEPR').ACTION_NAME);
+        define('__ACTION__',__URL__.C('URL_PATH_DEPR').ACTION_NAME);
         define('__CURRENT__', __ROOT__.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
         //项目模板目录
         define('APP_TMPL_PATH', $appRoot.$tmplDir);
@@ -370,7 +370,7 @@ class App
     static public function exec()
     {
         // 是否开启标签扩展
-        $tagOn   =  C('TAG_PLUGIN_ON');
+        $tagOn   =  C('PLUGIN_ON');
         // 项目运行标签
         if($tagOn)  tag('app_run');
 
@@ -441,7 +441,7 @@ class App
         App::exec();
         if(C('SHOW_RUN_TIME'))  $GLOBALS['_endTime'] = microtime(TRUE);
         // 保存日志记录
-        if(C('WEB_LOG_RECORD')) Log::save();
+        if(C('LOG_RECORD')) Log::save();
         return ;
     }
 
@@ -479,7 +479,7 @@ class App
           case E_ERROR:
           case E_USER_ERROR:
             $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
-            if(C('WEB_LOG_RECORD')) Log::write($errorStr,Log::ERR);
+            if(C('LOG_RECORD')) Log::write($errorStr,Log::ERR);
             halt($errorStr);
             break;
           case E_STRICT:

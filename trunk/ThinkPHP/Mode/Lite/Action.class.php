@@ -134,13 +134,13 @@ abstract class Action extends Think
         // Lite模式没有模板主题的概念
         if(''==$templateFile) {
             // 如果模板文件名为空 按照默认规则定位
-            $templateFile = TMPL_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TEMPLATE_SUFFIX');
+            $templateFile = TMPL_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX');
         }elseif(strpos($templateFile,':')){
             // 引入其它模块的操作模板
-            $templateFile   =   TMPL_PATH.'/'.str_replace(':','/',$templateFile).C('TEMPLATE_SUFFIX');
+            $templateFile   =   TMPL_PATH.'/'.str_replace(':','/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
         }elseif(!is_file($templateFile))    {
             // 引入当前模块的其它操作模板
-            $templateFile =  TMPL_PATH.'/'.MODULE_NAME.'/'.$templateFile.C('TEMPLATE_SUFFIX');
+            $templateFile =  TMPL_PATH.'/'.MODULE_NAME.'/'.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
         }
         if(!file_exists_case($templateFile))
             throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');

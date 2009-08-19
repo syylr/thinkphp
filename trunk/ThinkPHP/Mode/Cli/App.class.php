@@ -52,7 +52,7 @@ class App
         // 执行操作
         R(MODULE_NAME,ACTION_NAME);
         // 保存日志记录
-        if(C('WEB_LOG_RECORD')) Log::save();
+        if(C('LOG_RECORD')) Log::save();
         return ;
     }
     //[RUNTIME]
@@ -153,7 +153,7 @@ class App
           case E_ERROR:
           case E_USER_ERROR:
               $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
-              if(C('WEB_LOG_RECORD')){
+              if(C('LOG_RECORD')){
                  Log::write($errorStr,Log::ERR);
               }
               exit($errorStr);

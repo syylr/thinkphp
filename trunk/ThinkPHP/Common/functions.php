@@ -59,7 +59,7 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
         $params = array_merge($query,$params);
     }
     if(C('DISPATCH_ON') && C('URL_MODEL')>0) {
-        $depr = C('PATH_MODEL')==2?C('PATH_DEPR'):'/';
+        $depr = C('URL_PATH_MODEL')==2?C('URL_PATH_DEPR'):'/';
         $str    =   $depr;
         foreach ($params as $var=>$val)
             $str .= $var.$depr.$val.$depr;
@@ -137,7 +137,7 @@ function halt($error) {
             $e = $error;
         }
         // 包含异常页面模板
-        include C('EXCEPTION_TMPL_FILE');
+        include C('TMPL_EXCEPTION_FILE');
     }
     else
     {
@@ -151,7 +151,7 @@ function halt($error) {
             else
                 $e['message'] = C('ERROR_MESSAGE');
             // 包含异常页面模板
-            include C('EXCEPTION_TMPL_FILE');
+            include C('TMPL_EXCEPTION_FILE');
         }
     }
     exit;
@@ -282,8 +282,8 @@ function __autoload($name)
         require_cache(LIB_PATH.'Action/'.$name.'.class.php');
     }else {
         // 根据自动加载路径设置进行尝试搜索
-        if(C('AUTO_LOAD_PATH')) {
-            $paths  =   explode(',',C('AUTO_LOAD_PATH'));
+        if(C('AUTOLOAD_PATH')) {
+            $paths  =   explode(',',C('AUTOLOAD_PATH'));
             foreach ($paths as $path){
                 if(import($path.$name)) {
                     // 如果加载类成功则返回

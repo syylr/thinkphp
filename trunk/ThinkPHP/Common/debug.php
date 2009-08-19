@@ -24,7 +24,7 @@
 if (!defined('THINK_PATH')) exit();
 return  array(
     /* 日志设置 */
-    'WEB_LOG_RECORD'=>true,  // 进行日志记录
+    'LOG_RECORD'=>true,  // 进行日志记录
 
     /* 模板设置 */
     'TMPL_CACHE_ON'=>false,      // 关闭模板缓存

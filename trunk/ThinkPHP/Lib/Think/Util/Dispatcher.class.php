@@ -57,8 +57,8 @@ class Dispatcher extends Think
                 $_varGroup =   C('VAR_GROUP'); // 分组变量
                 $_varModule =   C('VAR_MODULE');
                 $_varAction =   C('VAR_ACTION');
-                $_depr  =   C('PATH_DEPR');
-                $_pathModel =   C('PATH_MODEL');
+                $_depr  =   C('URL_PATH_DEPR');
+                $_pathModel =   C('URL_PATH_MODEL');
                 if (C('APP_GROUP')) {
                     if(empty($_GET[$_varGroup]))
                         $_GET[$_varGroup] = C('DEFAULT_GROUP');
@@ -88,7 +88,7 @@ class Dispatcher extends Think
                 //重定向成规范的URL格式
                 redirect(PHP_FILE.$_URL);
             }else{
-                if(C('ROUTER_ON')) self::routerCheck();   // 检测路由规则
+                if(C('URL_ROUTER_ON')) self::routerCheck();   // 检测路由规则
                 //给_GET赋值 以保证可以按照正常方式取_GET值
                 $_GET = array_merge(self :: parsePathInfo(),$_GET);
                 //保证$_REQUEST正常取值
@@ -112,8 +112,8 @@ class Dispatcher extends Think
     private static function parsePathInfo()
     {
         $pathInfo = array();
-        if(C('PATH_MODEL')==2){
-            $paths = explode(C('PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
+        if(C('URL_PATH_MODEL')==2){
+            $paths = explode(C('URL_PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
             $groupApp = C('APP_GROUP');
             if ($groupApp) {
                 $arr = array_map('strtolower',explode(',',$groupApp));
@@ -129,7 +129,7 @@ class Dispatcher extends Think
                 }
             }
         }else {
-            $res = preg_replace('@(\w+)'.C('PATH_DEPR').'([^,\/]+)@e', '$pathInfo[\'\\1\']="\\2";', $_SERVER['PATH_INFO']);
+            $res = preg_replace('@(\w+)'.C('URL_PATH_DEPR').'([^,\/]+)@e', '$pathInfo[\'\\1\']="\\2";', $_SERVER['PATH_INFO']);
         }
         return $pathInfo;
     }
@@ -204,7 +204,7 @@ class Dispatcher extends Think
                 $routeName  =   $_GET[C('VAR_ROUTER')];
                 unset($_GET[C('VAR_ROUTER')]);
             }else{
-                $paths = explode(C('PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
+                $paths = explode(C('URL_PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
                 // 获取路由名称
                 $routeName  =   array_shift($paths);
             }

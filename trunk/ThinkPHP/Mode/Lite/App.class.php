@@ -49,14 +49,14 @@ class App
         define('MODULE_NAME',   App::getModule());       // Module名称
         define('ACTION_NAME',   App::getAction());        // Action操作
         // 不使用语言包功能，仅仅加载框架语言文件
-        //L(include THINK_PATH.'/Lang/'.C('DEFAULT_LANGUAGE').'.php');
+        //L(include THINK_PATH.'/Lang/'.C('LANG_DEFAULT').'.php');
 
         // 记录应用初始化时间
         if(C('SHOW_RUN_TIME'))  $GLOBALS['_initTime'] = microtime(TRUE);
         // 执行操作
         R(MODULE_NAME,ACTION_NAME);
         // 保存日志记录
-        if(C('WEB_LOG_RECORD')) Log::save();
+        if(C('LOG_RECORD')) Log::save();
         return ;
     }
     //[RUNTIME]
@@ -201,7 +201,7 @@ class App
           case E_ERROR:
           case E_USER_ERROR:
               $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
-              if(C('WEB_LOG_RECORD')){
+              if(C('LOG_RECORD')){
                  Log::write($errorStr,Log::ERR);
               }
               halt($errorStr);

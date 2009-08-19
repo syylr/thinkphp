@@ -37,14 +37,15 @@ return  array(
     // 普通模式1 参数没有顺序/m/module/a/action/id/1
     // 智能模式2 自动识别模块和操作/module/action/id/1/ 或者 /module,action,id,1/...
     // 兼容模式3 通过一个GET变量将PATHINFO传递给dispather，默认为s index.php?s=/module/action/id/1
-    'PATH_MODEL'					=>	2,	// 默认采用智能模式
-    'PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号
-    'ROUTER_ON'                  =>   false, // 是否开启URL路由
-	//'URL_CASE_INSENSITIVE' =>   false, // URL地址是否不区分大小写
+    'URL_PATH_MODEL'					=>	2,	// 默认采用智能模式
+    'URL_PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号
+    'URL_ROUTER_ON'                  =>   false, // 是否开启URL路由
+	'URL_CASE_INSENSITIVE' =>   false, // URL地址是否不区分大小写
     'GROUP_DEPR'	                =>	'.',		// 模块分组之间的分割符
     'APP_GROUP'                  => '',      // 项目分组 多个组之间用逗号分隔 例如 'Admin,Home'
-    'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
-    'TAG_PLUGIN_ON'               =>   false, // 是否开启插件机制
+    'APP_DOMAIN_DEPLOY'     =>  false,     // 是否使用独立域名部署项目
+
+    'PLUGIN_ON'               =>   false, // 是否开启插件机制
     'SESSION_AUTO_START'   =>   true,  // 是否自动开启Session
     // 内置SESSION类可用参数
     //'SESSION_NAME'=>'',       // Session名称
@@ -52,7 +53,7 @@ return  array(
     //'SESSION_CALLBACK'=>'',   // Session 对象反序列化时候的回调函数
 
     /* 日志设置 */
-    'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
+    'LOG_RECORD'			=>	false,	 // 默认不记录日志
     'LOG_RECORD_LEVEL'       =>   array('EMERG','ALERT','CRIT','ERR'),  // 允许记录的日志级别
     'LOG_FILE_SIZE'				=>	2097152,	// 日志文件大小限制
 
@@ -60,10 +61,9 @@ return  array(
     'DEBUG_MODE'				=>	false,	 // 调试模式默认关闭
     'ERROR_MESSAGE'			=>	'您浏览的页面暂时发生了错误！请稍后再试～',	// 错误显示信息 非调试模式有效
     'ERROR_PAGE'					=>	'',	// 错误定向页面
-    'SHOW_ERROR_MSG'        =>   true,
 
     /* 系统变量设置 */
-    'VAR_PATHINFO'				=>	's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于PATH_MODEL 和 PATH_DEPR
+    'VAR_PATHINFO'				=>	's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于URL_PATH_MODEL 和 URL_PATH_DEPR
     'VAR_GROUP'     => 'g',     // 默认分组变量
     'VAR_MODULE'					=>	'm',		// 默认模块获取变量
     'VAR_ACTION'					=>	'a',		// 默认操作获取变量
@@ -77,18 +77,6 @@ return  array(
     'DEFAULT_MODULE'			=>	'Index', // 默认模块名称
     'DEFAULT_ACTION'			=>	'index', // 默认操作名称
 
-    /* 模板设置 */
-    'TMPL_CACHE_ON'			=>	true,		// 默认开启模板编译缓存 false 的话每次都重新编译模板
-    'TMPL_CACHE_TIME'		=>	-1,		// 模板缓存有效期 -1 永久 单位为秒
-    'AUTO_DETECT_THEME'   =>   false, // 自动侦测模板主题
-    'DEFAULT_TEMPLATE'		=>	'default',	// 默认模板名称
-    'TEMPLATE_SUFFIX'			=>	'.html',	 // 默认模板文件后缀
-    'CACHFILE_SUFFIX'			=>	'.php',	// 默认模板缓存后缀
-    'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
-    'TMPL_VAR_IDENTIFY'      =>   'array',    // 模板变量识别 留空自动判断 array 数组 obj 对象
-    'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
-    'HTML_STRIP_SPACE'        =>   false, // 是否去除模板文件里面的html空格与换行
-
 	/* 分页设置 */
 	'PAGE_NUMBERS'				=>	5,			// 分页显示页数
 	'LIST_NUMBERS'				=>	20,			// 分页每页显示记录数
@@ -96,7 +84,6 @@ return  array(
     /* 模型设置 */
     'AUTO_NAME_IDENTIFY'  =>    true, // 模型对应数据表名称智能识别 UserType => user_type
     'DEFAULT_MODEL_APP'     =>   '@',   // 默认模型类所在的项目名称 @ 表示当前项目
-    'FIELD_TYPE_CHECK'        =>   false, // 是否进行字段类型检查
 
     /* 静态缓存设置 */
     'HTML_FILE_SUFFIX'			=>	'.shtml',	 // 默认静态文件后缀
@@ -108,8 +95,8 @@ return  array(
     /* 语言时区设置 */
     'TIME_ZONE'					=>	'PRC',		 // 默认时区
 	'LANG_SWITCH_ON'			=>	false,	 // 默认关闭多语言包功能
-	'DEFAULT_LANGUAGE'		=>	'zh-cn',	 // 默认语言
-    'AUTO_DETECT_LANG'      =>   false,     // 自动侦测语言
+	'LANG_DEFAULT'		=>	'zh-cn',	 // 默认语言
+    'LANG_AUTO_DETECT'      =>   false,     // 自动侦测语言
 
     /* 数据库设置 */
     'DB_CHARSET'					=>	'utf8',			// 数据库编码默认采用utf8
@@ -124,6 +111,7 @@ return  array(
 	'DB_PORT'               =>  3306,           // 端口
 	'DB_PREFIX'             =>  'think_',       // 数据库表前缀
 	'DB_SUFFIX'             =>  '',       // 数据库表后缀
+    'DB_FIELDTYPE_CHECK'        =>   false, // 是否进行字段类型检查
 
     /* 数据缓存设置 */
     'DATA_CACHE_TIME'		=>	-1,			// 数据缓存有效期
@@ -141,19 +129,34 @@ return  array(
     'SHOW_CACHE_TIMES'		=>	false,		// 显示缓存操作次数
     'SHOW_USE_MEM'			=>	false,			// 显示内存开销
     'SHOW_PAGE_TRACE'		=>	false,		// 显示页面Trace信息 由Trace文件定义和Action操作赋值
+    'SHOW_ERROR_MSG'        =>   true,
 
     /* 模板引擎设置 */
     'TMPL_ENGINE_TYPE'		=>	'Think',		// 默认模板引擎 以下设置仅对使用Think模板引擎有效
+    'TMPL_DEFAULT_THEME'		=>	'default',	// 默认模板主题名称
+    'TMPL_DETECT_THEME'   =>   false, // 自动侦测模板主题
+    'TMPL_TEMPLATE_SUFFIX'			=>	'.html',	 // 默认模板文件后缀
+    'TMPL_CACHFILE_SUFFIX'			=>	'.php',	// 默认模板缓存后缀
     'TMPL_DENY_FUNC_LIST'	=>	'echo,exit',	// 模板引擎禁用函数
     'TMPL_PARSE_STRING'=>  '', // 模板引擎要自动替换的字符串，必须是数组形式。例如array('__MYPATH__'=>Lib_PATH,...)
     'TMPL_L_DELIM'				=>	'{',			// 模板引擎普通标签开始标记
     'TMPL_R_DELIM'				=>	'}',			// 模板引擎普通标签结束标记
+    'TMPL_VAR_IDENTIFY'      =>   'array',    // 模板变量识别 留空自动判断 array 数组 obj 对象
+    'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
+    'TMPL_STRIP_SPACE'        =>   false, // 是否去除模板文件里面的html空格与换行
+    'TMPL_CACHE_ON'			=>	true,		// 默认开启模板编译缓存 false 的话每次都重新编译模板
+    'TMPL_CACHE_TIME'		=>	-1,		// 模板缓存有效期 -1 永久 单位为秒
+    'TMPL_ACTION_ERROR'    =>'Public:success',   // 错误跳转模板文件
+    'TMPL_ACTION_SUCCESS' =>'Public:success', // 成功跳转模板文件
+    'TMPL_TRACE_FILE'         =>THINK_PATH.'/Tpl/PageTrace.tpl.php', // 页面Trace的模板文件
+    'TMPL_EXCEPTION_FILE'  =>THINK_PATH.'/Tpl/ThinkException.tpl.php', // 异常页面的模板文件
     'TAGLIB_BEGIN'				=>	'<',			// 标签库标签开始标记
     'TAGLIB_END'					=>	'>',			// 标签库标签结束标记
-    'TAG_NESTED_LEVEL'		=>	3,				// 标签嵌套级别
     'TAGLIB_LOAD'           =>  true         ,//是否使用内置标签库之外的其它标签库，默认进行自动检测
     'TAGLIB_BUILD_IN'          =>   'cx',           //  内置标签库名称 可以更改成自己的 多个逗号分隔
     'TAGLIB_PRE_LOAD'         =>   '',   //  预先加载的标签库 无需在每个模板使用taglib标签加载 多个逗号分隔
+    'TAG_NESTED_LEVEL'		=>	3,				// 标签嵌套级别
+    'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
 
     /* Cookie设置 */
     'COOKIE_EXPIRE'				=>	3600,		// Coodie有效期
@@ -165,18 +168,15 @@ return  array(
     'AJAX_RETURN_TYPE'		=>	'JSON', //AJAX 数据返回格式 JSON XML ...
 
     /* 其它设置 */
-    'AUTOLOAD_REG_ON'=>false, // 是否开启SPL_AUTOLOAD_REGISTER
-    'AUTO_LOAD_PATH'			=>	'Think.Util.',	//	 __autoLoad 的路径设置 当前项目的Model和Action类会自动加载，无需设置 注意搜索顺序
-    'ACTION_ERROR_TMPL'=>'Public:success',   // 错误跳转模板文件
-    'ACTION_SUCCESS_TMPL'=>'Public:success', // 成功跳转模板文件
-    'ACTION_404_TMPL'=>	'Public:404',         // 404错误的模板文件
-    'APP_DOMAIN_DEPLOY'     =>  false,     // 是否使用独立域名部署项目
+    'AUTOLOAD_REG'=>false, // 是否开启SPL_AUTOLOAD_REGISTER
+    'AUTOLOAD_PATH'			=>	'Think.Util.',	//	 __autoLoad 的路径设置 当前项目的Model和Action类会自动加载，无需设置 注意搜索顺序
+    'CHECK_FILE_CASE'          =>   false, // 是否检查文件的大小写 对Windows平台有效
 
     /* 需要加载的外部配置文件 */
     'EXTEND_CONFIG_LIST'=>array('taglibs','routes','tags','htmls','modules','actions'),
     // 内置可选配置包括：taglibs 标签库定义 routes 路由定义 tags 标签定义 htmls 静态缓存定义 modules 扩展模块 actions 扩展操作
-    'TRACE_TMPL_FILE'=>THINK_PATH.'/Tpl/PageTrace.tpl.php', // 页面Trace的模板文件
-    'EXCEPTION_TMPL_FILE'=>THINK_PATH.'/Tpl/ThinkException.tpl.php', // 异常页面的模板文件
+
+    // 表单令牌验证
     'TOKEN_ON'                    =>   true,     // 开启令牌验证
     'TOKEN_NAME'                =>   '__hash__',    // 令牌验证的表单隐藏字段名称
     'TOKEN_TYPE'                 =>    'md5',   // 令牌验证哈希规则
