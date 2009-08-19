@@ -102,7 +102,7 @@ class DbMysql extends Db{
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
-     * @return resultSet
+     * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -123,8 +123,7 @@ class DbMysql extends Db{
                 return false;
         } else {
             $this->numRows = mysql_num_rows($this->queryID);
-            $this->resultSet = $this->getAll();
-            return $this->resultSet;
+            return $this->getAll();
         }
     }
 

@@ -35,8 +35,6 @@ class Db extends Think
     protected $pconnect         = false;
     // 当前SQL指令
     protected $queryStr          = '';
-    // 当前查询的结果数据集
-    protected $resultSet         = null;
     // 最后插入ID
     protected $lastInsID         = null;
     // 返回或者影响记录数

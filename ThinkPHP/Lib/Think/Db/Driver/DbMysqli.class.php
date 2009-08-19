@@ -93,7 +93,7 @@ class DbMysqli extends Db{
      +----------------------------------------------------------
      * @param string $sqlStr  sql指令
      +----------------------------------------------------------
-     * @return ArrayObject
+     * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -115,8 +115,7 @@ class DbMysqli extends Db{
         } else {
             $this->numRows  = $this->queryID->num_rows;
             $this->numCols    = $this->queryID->field_count;
-            $this->resultSet    = $this->getAll();
-            return $this->resultSet;
+            return $this->getAll();
         }
     }
 
@@ -227,7 +226,6 @@ class DbMysqli extends Db{
     /**
      +----------------------------------------------------------
      * 获得所有的查询数据
-     * 查询结果放到 resultSet 数组中
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
