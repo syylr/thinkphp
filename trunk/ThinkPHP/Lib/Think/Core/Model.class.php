@@ -230,7 +230,7 @@ class Model extends Think
         }elseif(in_array(strtolower($method),array('count','sum','min','max','avg'),true)){
             // 统计查询的实现
             $field =  isset($args[0])?$args[0]:'*';
-            return $this->getField($method.'('.$field.') AS tp_'.$method);
+            return $this->getField(strtoupper($method).'('.$field.') AS tp_'.$method);
         }elseif(strtolower(substr($method,0,5))=='getby') {
             // 根据某个字段获取记录
             $field   =   parse_name(substr($method,5));
