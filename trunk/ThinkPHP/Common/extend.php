@@ -517,9 +517,6 @@ function list_sort_by($list,$field, $sortby='asc') {
  +----------------------------------------------------------
  */
 function search_list($list,$condition) {
-    if(null === $list)
-        // 默认直接在查询返回的结果集中搜索
-        $list   =   &$this->dataList;
     if(is_string($condition))
         parse_str($condition,$condition);
     // 返回的结果集合
