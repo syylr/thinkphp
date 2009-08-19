@@ -87,6 +87,7 @@ return  array(
     'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
     'TMPL_VAR_IDENTIFY'      =>   'array',    // 模板变量识别 留空自动判断 array 数组 obj 对象
     'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
+    'HTML_STRIP_SPACE'        =>   false, // 是否去除模板文件里面的html空格与换行
 
 	/* 分页设置 */
 	'PAGE_NUMBERS'				=>	5,			// 分页显示页数
@@ -143,15 +144,16 @@ return  array(
 
     /* 模板引擎设置 */
     'TMPL_ENGINE_TYPE'		=>	'Think',		// 默认模板引擎 以下设置仅对使用Think模板引擎有效
-    'BUILD_IN_TAGLIB'          =>   'cx',           //  内置标签库名称 可以更改成自己的
     'TMPL_DENY_FUNC_LIST'	=>	'echo,exit',	// 模板引擎禁用函数
     'TMPL_PARSE_STRING'=>  '', // 模板引擎要自动替换的字符串，必须是数组形式。例如array('__MYPATH__'=>Lib_PATH,...)
     'TMPL_L_DELIM'				=>	'{',			// 模板引擎普通标签开始标记
     'TMPL_R_DELIM'				=>	'}',			// 模板引擎普通标签结束标记
     'TAGLIB_BEGIN'				=>	'<',			// 标签库标签开始标记
     'TAGLIB_END'					=>	'>',			// 标签库标签结束标记
-    'TAG_NESTED_LEVEL'		=>	3,				// 标签库
+    'TAG_NESTED_LEVEL'		=>	3,				// 标签嵌套级别
     'TAGLIB_LOAD'           =>  true         ,//是否使用内置标签库之外的其它标签库，默认进行自动检测
+    'TAGLIB_BUILD_IN'          =>   'cx',           //  内置标签库名称 可以更改成自己的 多个逗号分隔
+    'TAGLIB_PRE_LOAD'         =>   '',   //  预先加载的标签库 无需在每个模板使用taglib标签加载 多个逗号分隔
 
     /* Cookie设置 */
     'COOKIE_EXPIRE'				=>	3600,		// Coodie有效期
