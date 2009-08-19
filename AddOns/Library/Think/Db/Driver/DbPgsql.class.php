@@ -96,7 +96,7 @@ class DbPgsql extends Db{
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
-     * @return ArrayObject
+     * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -118,8 +118,7 @@ class DbPgsql extends Db{
                 return false;
         } else {
             $this->numRows = pg_num_rows($this->queryID);
-            $this->resultSet = $this->getAll();
-            return $this->resultSet;
+            return $this->getAll();
         }
     }
 
@@ -251,11 +250,10 @@ class DbPgsql extends Db{
     /**
      +----------------------------------------------------------
      * 获得所有的查询数据
-     * 查询结果放到 resultSet 数组中
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @return resultSet
+     * @return array
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------

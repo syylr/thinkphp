@@ -99,7 +99,7 @@ class DbPdo extends Db{
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
-     * @return ArrayObject
+     * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -123,12 +123,7 @@ class DbPdo extends Db{
             else
                 return false;
         } else {
-            $this->resultSet = $this->getAll();
-            $this->numRows = count( $this->resultSet );
-            if ( $this->numRows > 0 ){
-                return $this->resultSet;
-            }
-            return false;
+            return $this->getAll();
         }
     }
 
@@ -256,6 +251,7 @@ class DbPdo extends Db{
         }
         //返回数据集
         $result =   $this->PDOStatement->fetchAll(constant('PDO::FETCH_ASSOC'));
+        $this->numRows = count( $result );
         return $result;
     }
 

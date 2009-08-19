@@ -92,7 +92,7 @@ class DbSqlite extends Db
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
-     * @return boolean
+     * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -113,8 +113,7 @@ class DbSqlite extends Db
                 return false;
         } else {
             $this->numRows = sqlite_num_rows($this->queryID);
-            $this->resultSet = $this->getAll();
-            return $this->resultSet;
+            return $this->getAll();
         }
     }
 
@@ -226,7 +225,6 @@ class DbSqlite extends Db
     /**
      +----------------------------------------------------------
      * 获得所有的查询数据
-     * 查询结果放到 resultSet 数组中
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
