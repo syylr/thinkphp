@@ -306,4 +306,21 @@
 </attribute>
 </tag>
 
+<tag>
+<name>import</name>
+<bodycontent>empty</bodycontent>
+<attribute>
+<name>file</name>
+<required>true</required>
+</attribute>
+<attribute>
+<name>basepath</name>
+<required>false</required>
+</attribute>
+<attribute>
+<name>type</name>
+<required>false</required>
+</attribute>
+</tag>
+
 </taglib>

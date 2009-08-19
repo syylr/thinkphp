@@ -69,59 +69,6 @@ class TagLibHtml extends TagLib
 
     /**
      +----------------------------------------------------------
-     * link标签解析
-     * 格式： <html:link file="" type="" />
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $attr 标签属性
-     +----------------------------------------------------------
-     * @return string|void
-     +----------------------------------------------------------
-     */
-    public function _link($attr)
-    {
-        $tag        = $this->parseXmlAttr($attr,'link');
-        $file       = $tag['href'];
-        $type       = isset($tag['type'])?
-                    strtolower($tag['type']):
-                    strtolower(substr(strrchr($file, '.'),1));
-        if($type=='js') {
-            $parseStr = "<script type='text/javascript' src='".$file."'></script> ";
-        }elseif($type=='css') {
-            $parseStr = "<link rel='stylesheet' type='text/css' href='".$file."' />";
-        }
-        return $parseStr;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * link标签解析
-     * 格式： <html:link file="" type="" />
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $attr 标签属性
-     +----------------------------------------------------------
-     * @return string|void
-     +----------------------------------------------------------
-     */
-    public function _import($attr)
-    {
-        $tag        = $this->parseXmlAttr($attr,'import');
-        $file       = $tag['file'];
-        $basepath   = !empty($tag['basepath'])?$tag['basepath']:WEB_PUBLIC_PATH;
-        $type       = !empty($tag['type'])?  strtolower($tag['type']):'js';
-        if($type=='js') {
-            $parseStr = "<script type='text/javascript' src='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$file).'.js'."'></script> ";
-        }elseif($type=='css') {
-            $parseStr = "<link rel='stylesheet' type='text/css' href='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$file).'.css'."' />";
-        }
-        return $parseStr;
-    }
-
-    /**
-     +----------------------------------------------------------
      * imageBtn标签解析
      * 格式： <html:imageBtn type="" value="" />
      +----------------------------------------------------------
