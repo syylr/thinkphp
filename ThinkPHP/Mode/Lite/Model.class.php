@@ -36,8 +36,6 @@ class Model extends Think
     protected $data =   array();
     // 查询表达式参数
     protected $options  =   array();
-    // 数据列表信息
-    protected $dataList =   array();
     // 最近错误信息
     protected $error = '';
 
@@ -330,7 +328,6 @@ class Model extends Think
         // 分析表达式
         $options =  $this->_parseOptions($options);
         if($resultSet = $this->db->select($options)) {
-            $this->dataList = $resultSet;
             return $resultSet;
         }else{
             return false;
