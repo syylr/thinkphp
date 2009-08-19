@@ -68,7 +68,7 @@ class App
         // 应用调度过滤器
         // 如果没有加载任何URL调度器
         // 默认只支持 QUERY_STRING 方式
-        if(C('DISPATCH_ON'))   Dispatcher::dispatch();
+        if(C('URL_DISPATCH_ON'))   Dispatcher::dispatch();
 
         if(!defined('PHP_FILE'))
             // PHP_FILE 由内置的Dispacher定义
