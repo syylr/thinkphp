@@ -26,7 +26,7 @@ define('MANY_TO_MANY',4);
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Model extends Think implements IteratorAggregate
+class Model extends Think
 {
     // 操作状态
     const MODEL_INSERT      =   1;      //  插入模型数据
@@ -61,16 +61,8 @@ class Model extends Think implements IteratorAggregate
     protected $data =   array();
     // 查询表达式参数
     protected $options  =   array();
-    // 数据列表信息
-    protected $dataList =   array();
     protected $_validate       = array();  // 自动验证定义
     protected $_auto           = array();  // 自动完成定义
-    // 自动写入时间戳的字段名称
-    protected $autoRecordTime   =  true;
-    protected $autoCreateTimestamps = 'create_time';
-    protected $autoUpdateTimestamps = 'update_time';
-    // 自动写入的时间格式
-    protected $autoTimeFormat = '';
     // 是否自动检测数据表字段信息
     protected $autoCheckFields   =   true;
 
@@ -184,26 +176,6 @@ class Model extends Think implements IteratorAggregate
                 $this->_extModel->$var  = $this->$var;
         }
         return $this->_extModel;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 获取Iterator因子
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return Iterate
-     +----------------------------------------------------------
-     */
-    public function getIterator()
-    {
-        if(!empty($this->dataList)) {
-            // 存在数据集则返回数据集
-            return new ArrayObject($this->dataList);
-        }elseif(!empty($this->data)){
-            // 存在数据对象则返回对象的Iterator
-            return new ArrayObject($this->data);
-        }
     }
 
     /**
@@ -496,7 +468,6 @@ class Model extends Think implements IteratorAggregate
         // 分析表达式
         $options =  $this->_parseOptions($options);
         if($resultSet = $this->db->select($options)) {
-            $this->dataList = $resultSet;
             $this->_after_select($resultSet,$options);
             return $resultSet;
         }else{
@@ -683,19 +654,6 @@ class Model extends Think implements IteratorAggregate
                 }
             }
         }
-        if($this->autoRecordTime){
-            // 自动保存时间戳
-            switch($type) {
-            case self::MODEL_INSERT:
-                $name = $this->autoCreateTimestamps;
-                break;
-            case self::MODEL_UPDATE:
-                $name = $this->autoUpdateTimestamps;
-                break;
-            }
-            // 用指定日期格式记录时间戳
-            $vo[$name] = !empty($this->autoTimeFormat)?date($this->autoTimeFormat):time();
-        }
         // 创建完成对数据进行自动处理
         $this->autoOperation($vo,$type);
         // 赋值当前数据对象
@@ -757,39 +715,6 @@ class Model extends Think implements IteratorAggregate
         }else {
             return false;
         }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 批处理执行SQL语句
-     * 批处理的指令都认为是execute操作
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $sql  SQL批处理指令
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    public function patchQuery($sql=array()) {
-        if(!is_array($sql)) return false;
-        // 自动启动事务支持
-        $this->startTrans();
-        try{
-            foreach ($sql as $_sql){
-                $result   =  $this->execute($_sql);
-                if(false === $result) {
-                    // 发生错误自动回滚事务
-                    $this->rollback();
-                    return false;
-                }
-            }
-            // 提交事务
-            $this->commit();
-        } catch (ThinkException $e) {
-            $this->rollback();
-        }
-        return true;
     }
 
     /**
@@ -1156,17 +1081,11 @@ class Model extends Think implements IteratorAggregate
                     return call_user_func_array(array(&$this, $val[1]), $args);
                 }
             case 'confirm': // 验证两个字段是否相同
-                if($data[$val[0]] != $data[$val[1]] )
-                    return false;
-                break;
+                return $data[$val[0]] == $data[$val[1]];
             case 'in': // 验证是否在某个数组范围之内
-                if(!in_array($data[$val[0]] ,$val[1]) )
-                    return false;
-                break;
+                return in_array($data[$val[0]] ,$val[1]);
             case 'equal': // 验证是否等于某个值
-                if($data[$val[0]] != $val[1])
-                    return false;
-                break;
+                return $data[$val[0]] == $val[1];
             case 'unique': // 验证某个值是否唯一
                 if(is_string($val[0]) && strpos($val[0],','))
                     $val[0]  =  explode(',',$val[0]);
@@ -1184,8 +1103,7 @@ class Model extends Think implements IteratorAggregate
             case 'regex':
             default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
                 // 检查附加规则
-                if(!$this->regex($data[$val[0]],$val[1]))
-                    return false;
+                return $this->regex($data[$val[0]],$val[1]);
         }
         return true;
     }
