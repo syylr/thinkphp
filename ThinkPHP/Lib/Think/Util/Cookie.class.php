@@ -31,6 +31,7 @@ class Cookie extends Think
     // 获取某个Cookie值
     static function get($name) {
         $value   = $_COOKIE[C('COOKIE_PREFIX').$name];
+        $value   =  unserialize(base64_decode($value));
         return $value;
     }
 
@@ -46,6 +47,7 @@ class Cookie extends Think
             $domain =   C('COOKIE_DOMAIN');
         }
         $expire =   !empty($expire)?    time()+$expire   :  0;
+        $value   =  base64_encode(serialize($value));
         setcookie(C('COOKIE_PREFIX').$name, $value,$expire,$path,$domain);
         $_COOKIE[C('COOKIE_PREFIX').$name]  =   $value;
     }

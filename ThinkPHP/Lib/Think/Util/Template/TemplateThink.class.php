@@ -48,7 +48,7 @@ class TemplateThink
             // 模板阵列变量分解成为独立变量
             extract($var, EXTR_OVERWRITE);
             //载入模版缓存文件
-            include C('CACHE_PATH').md5($templateFile).C('CACHFILE_SUFFIX');
+            include C('CACHE_PATH').md5($templateFile).C('TMPL_CACHFILE_SUFFIX');
         }
     }
 
@@ -68,7 +68,7 @@ class TemplateThink
     {
         if (!C('TMPL_CACHE_ON')) // 优先对配置设定检测
             return false;
-        $tmplCacheFile = C('CACHE_PATH').md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
+        $tmplCacheFile = C('CACHE_PATH').md5($tmplTemplateFile).C('TMPL_CACHFILE_SUFFIX');
         if(!is_file($tmplCacheFile))
             return false;
         elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {

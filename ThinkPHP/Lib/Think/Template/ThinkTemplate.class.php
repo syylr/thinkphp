@@ -61,8 +61,8 @@ class  ThinkTemplate extends Think
      */
     public function __construct(){
         $this->config['cache_path']        =  C('CACHE_PATH');
-        $this->config['template_suffix']   =  C('TEMPLATE_SUFFIX');
-        $this->config['cache_suffix']       =  C('CACHFILE_SUFFIX');
+        $this->config['template_suffix']   =  C('TMPL_TEMPLATE_SUFFIX');
+        $this->config['cache_suffix']       =  C('TMPL_CACHFILE_SUFFIX');
         $this->config['tmpl_cache']        =  C('TMPL_CACHE_ON');
         $this->config['cache_time']        =  C('TMPL_CACHE_TIME');
         $this->config['taglib_begin']        =  C('TAGLIB_BEGIN');
@@ -160,7 +160,7 @@ class  ThinkTemplate extends Think
         $tmplContent = preg_replace('/<!--###literal(\d)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
         // 添加安全代码
         $tmplContent  =  '<?php if (!defined(\'THINK_PATH\')) exit();?>'.$tmplContent;
-        if(C('HTML_STRIP_SPACE')) {
+        if(C('TMPL_STRIP_SPACE')) {
             /* 去除html空格与换行 */
             $tmplContent = preg_replace("~>\s+<~", "><",$tmplContent);
             $tmplContent = preg_replace( "~>(\s+\n|\r)~", ">" ,$tmplContent);

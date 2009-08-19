@@ -189,7 +189,7 @@ class View extends Think
             // 如果是Think模板引擎并且缓存有效 分解变量并载入模板缓存
             extract($this->tVar, EXTR_OVERWRITE);
             //载入模版缓存文件
-            include C('CACHE_PATH').md5($templateFile).C('CACHFILE_SUFFIX');
+            include C('CACHE_PATH').md5($templateFile).C('TMPL_CACHFILE_SUFFIX');
         }else{
             // 模板文件需要重新编译 支持第三方模板引擎
             // 调用模板引擎解析和输出
@@ -225,7 +225,7 @@ class View extends Think
     {
         if (!C('TMPL_CACHE_ON')) // 优先对配置设定检测
             return false;
-        $tmplCacheFile = C('CACHE_PATH').md5($tmplTemplateFile).C('CACHFILE_SUFFIX');
+        $tmplCacheFile = C('CACHE_PATH').md5($tmplTemplateFile).C('TMPL_CACHFILE_SUFFIX');
         if(!is_file($tmplCacheFile)){
             return false;
         }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
@@ -377,13 +377,13 @@ class View extends Think
             $templateFile = C('TMPL_FILE_NAME');
         }elseif(strpos($templateFile,'@')){
             // 引入其它主题的操作模板 必须带上模块名称 例如 blue@User:add
-            $templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).C('TEMPLATE_SUFFIX');
+            $templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
         }elseif(strpos($templateFile,':')){
             // 引入其它模块的操作模板
-            $templateFile   =   TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).C('TEMPLATE_SUFFIX');
+            $templateFile   =   TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
         }elseif(!is_file($templateFile))    {
             // 引入当前模块的其它操作模板
-            $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TEMPLATE_SUFFIX');
+            $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
         }
         if(!file_exists_case($templateFile))
             throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
@@ -446,7 +446,7 @@ class View extends Think
         $_trace =   is_file($traceFile)? include $traceFile : array();
          // 系统默认显示信息
         $this->trace('当前页面',    $_SERVER['REQUEST_URI']);
-        $this->trace('模板缓存',    C('CACHE_PATH').md5($this->templateFile).C('CACHFILE_SUFFIX'));
+        $this->trace('模板缓存',    C('CACHE_PATH').md5($this->templateFile).C('TMPL_CACHFILE_SUFFIX'));
         $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
         $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
         $this->trace('请求时间',    date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
@@ -458,7 +458,7 @@ class View extends Think
         $this->trace('加载文件',    count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2)));
         $_trace =   array_merge($_trace,$this->trace);
         // 调用Trace页面模板
-        include C('TRACE_TMPL_FILE');
+        include C('TMPL_TRACE_FILE');
     }
 
 }//

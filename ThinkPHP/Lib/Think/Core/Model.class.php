@@ -144,7 +144,7 @@ class Model extends Think
             }
         }
         // 记录字段类型信息
-        if(C('FIELD_TYPE_CHECK'))   $this->fields['_type'] =  $type;
+        if(C('DB_FIELDTYPE_CHECK'))   $this->fields['_type'] =  $type;
 
         // 2008-3-7 增加缓存开关控制
         if(C('DB_FIELDS_CACHE'))
@@ -643,7 +643,7 @@ class Model extends Think
             //保证赋值有效
             if(!is_null($val)){
                 $vo[$name] = (MAGIC_QUOTES_GPC && is_string($val))?   stripslashes($val)  :  $val;
-                if(C('FIELD_TYPE_CHECK')) {
+                if(C('DB_FIELDTYPE_CHECK')) {
                     // 字段类型检查
                     $fieldType = strtolower($this->fields['_type'][$name]);
                     if(false !== strpos($fieldType,'int')) {

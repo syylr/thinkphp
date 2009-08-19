@@ -359,7 +359,7 @@ abstract class Action extends Think
     public function ajaxReturn($data,$info='',$status=1,$type='')
     {
         // 保证AJAX返回后也能保存日志
-        if(C('WEB_LOG_RECORD')) Log::save();
+        if(C('LOG_RECORD')) Log::save();
         $result  =  array();
         $result['status']  =  $status;
         $result['info'] =  $info;
@@ -462,13 +462,13 @@ abstract class Action extends Think
             if(!$this->get('waitSecond'))    $this->assign('waitSecond',"1");
             // 默认操作成功自动返回操作前页面
             if(!$this->get('jumpUrl')) $this->assign("jumpUrl",$_SERVER["HTTP_REFERER"]);
-            $this->display(C('ACTION_SUCCESS_TMPL'));
+            $this->display(C('TMPL_ACTION_SUCCESS'));
         }else{
             //发生错误时候默认停留3秒
             if(!$this->get('waitSecond'))    $this->assign('waitSecond',"3");
             // 默认发生错误的话自动返回上页
             if(!$this->get('jumpUrl')) $this->assign('jumpUrl',"javascript:history.back(-1);");
-            $this->display(C('ACTION_ERROR_TMPL'));
+            $this->display(C('TMPL_ACTION_ERROR'));
         }
         // 中止执行  避免出错后继续执行
         exit ;
