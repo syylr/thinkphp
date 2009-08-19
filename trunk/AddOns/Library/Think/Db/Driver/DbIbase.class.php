@@ -90,7 +90,7 @@ class DbIbase extends Db{
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
-     * @return resultSet
+     * @return mixed
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
@@ -111,9 +111,7 @@ class DbIbase extends Db{
                 return false;
         } else {
             //$this->numCols = ibase_num_fields($this->queryID);
-            $this->resultSet = $this->getAll();
-            $this->numRows  =   count($this->resultSet);
-            return $this->resultSet;
+            return $this->getAll();
         }
     }
 
@@ -251,7 +249,6 @@ class DbIbase extends Db{
     /**
      +----------------------------------------------------------
      * 获得所有的查询数据
-     * 查询结果放到 resultSet 数组中
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
