@@ -384,7 +384,7 @@ class TagLibCx extends TagLib
      * @param string $attr 标签属性
      * @param string $content  标签内容
      +----------------------------------------------------------
-     * @return string|void
+     * @return string
      +----------------------------------------------------------
      */
     public function _compare($attr,$content,$type='eq')
@@ -505,7 +505,7 @@ class TagLibCx extends TagLib
      * @param string $attr 标签属性
      * @param string $content  标签内容
      +----------------------------------------------------------
-     * @return string|void
+     * @return string
      +----------------------------------------------------------
      */
     public function _present($attr,$content)
@@ -528,7 +528,7 @@ class TagLibCx extends TagLib
      * @param string $attr 标签属性
      * @param string $content  标签内容
      +----------------------------------------------------------
-     * @return string|void
+     * @return string
      +----------------------------------------------------------
      */
     public function _notpresent($attr,$content)
@@ -551,7 +551,7 @@ class TagLibCx extends TagLib
      * @param string $attr 标签属性
      * @param string $content  标签内容
      +----------------------------------------------------------
-     * @return string|void
+     * @return string
      +----------------------------------------------------------
      */
     public function _session($attr,$content)
@@ -591,7 +591,7 @@ class TagLibCx extends TagLib
      * @param string $attr 标签属性
      * @param string $content  标签内容
      +----------------------------------------------------------
-     * @return string|void
+     * @return string
      +----------------------------------------------------------
      */
     public function _nosession($attr,$content)
@@ -639,7 +639,7 @@ class TagLibCx extends TagLib
      * @param string $attr 标签属性
      * @param string $content  标签内容
      +----------------------------------------------------------
-     * @return string|void
+     * @return string
      +----------------------------------------------------------
      */
     public function _import($attr,$content)
@@ -673,7 +673,7 @@ class TagLibCx extends TagLib
      * @param string $content  标签内容
      * @param string $type  类型
      +----------------------------------------------------------
-     * @return string|void
+     * @return string
      +----------------------------------------------------------
      */
     public function _load($attr,$content,$type='')
