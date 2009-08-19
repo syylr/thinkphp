@@ -29,9 +29,9 @@ if (!defined('THINK_PATH')) exit();
 // 所有配置参数都可以在生效前动态改变
 return  array(
 
-    /* Dispatch设置 */
-    'DISPATCH_ON'				=>	true,	// 是否启用Dispatcher
-    // URL模式： 0 普通模式 1 PATHINFO 2 REWRITE 3 兼容模式 当DISPATCH_ON开启后有效
+    /* URL设置 */
+    'URL_DISPATCH_ON'				=>	true,	// 是否启用Dispatcher
+    // URL模式： 0 普通模式 1 PATHINFO 2 REWRITE 3 兼容模式 当URL_DISPATCH_ON开启后有效
     'URL_MODEL'					=>	1,		// 默认为PATHINFO 模式，提供最好的用户体验和SEO支持
     // PATHINFO 模式
     // 普通模式1 参数没有顺序/m/module/a/action/id/1
@@ -41,11 +41,8 @@ return  array(
     'URL_PATH_DEPR'					=>	'/',	// PATHINFO参数之间分割号
     'URL_ROUTER_ON'                  =>   false, // 是否开启URL路由
 	'URL_CASE_INSENSITIVE' =>   false, // URL地址是否不区分大小写
-    'GROUP_DEPR'	                =>	'.',		// 模块分组之间的分割符
-    'APP_GROUP'                  => '',      // 项目分组 多个组之间用逗号分隔 例如 'Admin,Home'
-    'APP_DOMAIN_DEPLOY'     =>  false,     // 是否使用独立域名部署项目
 
-    'PLUGIN_ON'               =>   false, // 是否开启插件机制
+    /* SESSION设置 */
     'SESSION_AUTO_START'   =>   true,  // 是否自动开启Session
     // 内置SESSION类可用参数
     //'SESSION_NAME'=>'',       // Session名称
@@ -72,7 +69,11 @@ return  array(
 	'VAR_LANGUAGE'				=>	'l',		// 默认语言切换变量
     'VAR_AJAX_SUBMIT'			=>	'ajax', // 默认的AJAX提交变量
 
-    /* 模块和操作设置 */
+    /* 项目、模块和操作设置 */
+    'PLUGIN_ON'               =>   false, // 是否开启插件机制
+    'GROUP_DEPR'	                =>	'.',		// 模块分组之间的分割符
+    'APP_GROUP'                  => '',      // 项目分组 多个组之间用逗号分隔 例如 'Admin,Home'
+    'APP_DOMAIN_DEPLOY'     =>  false,     // 是否使用独立域名部署项目
     'DEFAULT_GROUP'           =>    'Home',   // 默认分组
     'DEFAULT_MODULE'			=>	'Index', // 默认模块名称
     'DEFAULT_ACTION'			=>	'index', // 默认操作名称
