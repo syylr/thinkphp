@@ -301,6 +301,10 @@
 <required>true</required>
 </attribute>
 <attribute>
+<name>href</name>
+<required>false</required>
+</attribute>
+<attribute>
 <name>basepath</name>
 <required>false</required>
 </attribute>

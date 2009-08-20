@@ -633,7 +633,7 @@ class TagLibCx extends TagLib
     public function _import($attr,$content,$isFile=false,$type='')
     {
         $tag  = $this->parseXmlAttr($attr,'import');
-        $file   = $tag['file'];
+        $file   = $tag['file']?$tag['file']:$tag['href'];
         $parseStr = '';
         $endStr   = '';
         // 判断是否存在加载条件 允许使用函数判断(默认为isset)
@@ -651,7 +651,7 @@ class TagLibCx extends TagLib
         }
         if($isFile) {
             // 根据文件名后缀自动识别
-            $type       = $type?$type:(!empty($tag['type'])?strtolower($tag['type']):strtolower(substr(strrchr($href, '.'),1)));
+            $type       = $type?$type:(!empty($tag['type'])?strtolower($tag['type']):strtolower(substr(strrchr($file, '.'),1)));
             // 文件方式导入
             $array =  explode(',',$file);
             foreach ($array as $val){
