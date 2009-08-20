@@ -618,26 +618,22 @@ class TagLibCx extends TagLib
 
     /**
      +----------------------------------------------------------
-     * load 标签解析(用于不使用html标签时也可以加载css,js文件)
-     * 如果定义了value属性，默认会对value的值进行isset判断，支持使用函数
-     * 格式：<load href="" file="" value="var" /> var变量已定义则加载
-     * 或使用别名 <css href="" /> | <js href="" value="var|!empty" />var变量不为空则加载
+     * import 标签解析 <import file="Js.Base" /> <import file="Css.Base" type="css" />
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
      * @param string $attr 标签属性
      * @param string $content  标签内容
+     * @param boolean $isFile  是否文件方式
      * @param string $type  类型
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function _load($attr,$content,$type='')
+    public function _import($attr,$content,$isFile=false,$type='')
     {
-        $tag        = $this->parseXmlAttr($attr,'load');
-        $href       = !empty($tag['href'])?$tag['href']:'';
-        $file         =   !empty($tag['file'])?$tag['file']:'';
-        $basepath   = !empty($tag['basepath'])?$tag['basepath']:WEB_PUBLIC_PATH;
+        $tag  = $this->parseXmlAttr($attr,'import');
+        $file   = $tag['file'];
         $parseStr = '';
         $endStr   = '';
         // 判断是否存在加载条件 允许使用函数判断(默认为isset)
@@ -653,16 +649,11 @@ class TagLibCx extends TagLib
             $parseStr .= '<?php if('.$name.'): ?>';
             $endStr    = '<?php endif; ?>';
         }
-        if(!empty($href)) {
+        if($isFile) {
             // 根据文件名后缀自动识别
             $type       = $type?$type:(!empty($tag['type'])?strtolower($tag['type']):strtolower(substr(strrchr($href, '.'),1)));
-        }else{
-            // 命名空间导入模式 默认是js
-            $type       = $type?$type:(!empty($tag['type'])?strtolower($tag['type']):'js');
-        }
-        if(!empty($href)) {
             // 文件方式导入
-            $array =  explode(',',$href);
+            $array =  explode(',',$file);
             foreach ($array as $val){
                 switch($type) {
                 case 'js':
@@ -673,8 +664,10 @@ class TagLibCx extends TagLib
                     break;
                 }
             }
-        }
-        if(!empty($file)) {
+        }else{
+            // 命名空间导入模式 默认是js
+            $type       = $type?$type:(!empty($tag['type'])?strtolower($tag['type']):'js');
+            $basepath   = !empty($tag['basepath'])?$tag['basepath']:WEB_PUBLIC_PATH;
             // 命名空间方式导入外部文件
             $array =  explode(',',$file);
             foreach ($array as $val){
@@ -690,16 +683,22 @@ class TagLibCx extends TagLib
         return $parseStr.$endStr;
     }
 
-    // load别名使用 导入css文件
-    public function _css($attr,$content)
+    // import别名 采用文件方式加载 例如 <load file="__PUBLIC__/Js/Base.js" />
+    public function _load($attr,$content)
     {
-        return $this->_load($attr,$content,'css');
+        return $this->_import($attr,$content,true);
     }
 
-    // load别名使用 导入js文件
+    // import别名使用 导入css文件 <css file="__PUBLIC__/Css/Base.css" />
+    public function _css($attr,$content)
+    {
+        return $this->_import($attr,$content,true,'css');
+    }
+
+    // import别名使用 导入js文件 <js file="__PUBLIC__/Js/Base.js" />
     public function _js($attr,$content)
     {
-        return $this->_load($attr,$content,'js');
+        return $this->_import($attr,$content,true,'js');
     }
 
 }//类定义结束
