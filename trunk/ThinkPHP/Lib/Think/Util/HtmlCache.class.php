@@ -44,6 +44,12 @@ class HtmlCache extends Think
             // 静态规则文件定义格式 actionName=>array(‘静态规则’,’缓存时间’,’附加规则')
             // 'read'=>array('{id},{name}',60,'md5') 必须保证静态规则的唯一性 和 可判断性
             // 检测操作的静态规则
+			foreach ($htmls as $value=>$key){
+				if (strpos($value,':')){
+					$htmls[ucfirst($value)]=$htmls[$value];
+					unset($htmls[$value]);
+				}
+			}
             if(isset($htmls[MODULE_NAME.':'.ACTION_NAME])) {
                 // 定义了某个模块的操作的静态规则
                 $html   =   $htmls[MODULE_NAME.':'.ACTION_NAME];
@@ -53,7 +59,11 @@ class HtmlCache extends Think
             }elseif(isset($htmls['*'])){
                 // 定义了全局的静态规则
                 $html   =   $htmls['*'];
-            }
+            }elseif(HtmlCache::isEmptyModule(MODULE_NAME)){
+				$html   =    $htmls['Empty:index'];
+			}elseif(HtmlCache::isEmptyAction(MODULE_NAME,ACTION_NAME)){
+				$html   =    $htmls[MODULE_NAME.':_empty'];
+			}
             if(!empty($html)) {
                 self::$requireCache = true;
                 // 解读静态规则
@@ -93,7 +103,21 @@ class HtmlCache extends Think
         }
         return ;
     }
-
+	//检测模块是否为空模块
+	function isEmptyModule($module){
+		$className =  $module.'Action';
+		if (class_exists($className)){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	//检测是否是空操作
+	function isEmptyAction($module,$action){
+		$className =  $module.'Action';
+		$class=new $className;
+		return !method_exists($class,$action);
+	}
     /**
      +----------------------------------------------------------
      * 写入静态缓存
@@ -113,7 +137,7 @@ class HtmlCache extends Think
             //静态文件写入
             // 如果开启HTML功能 检查并重写HTML文件
             // 没有模版的操作不生成静态文件
-            if(MODULE_NAME != 'Public' && !self::checkHTMLCache(self::$cacheFile,self::$cacheTime)) {
+            if(!self::checkHTMLCache(self::$cacheFile,self::$cacheTime)) {
                 if(!is_dir(dirname(HTML_FILE_NAME)))
                     mk_dir(dirname(HTML_FILE_NAME));
                 if( false === file_put_contents( HTML_FILE_NAME , $content ))
