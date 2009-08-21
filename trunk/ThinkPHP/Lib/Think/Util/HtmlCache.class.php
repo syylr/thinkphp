@@ -137,7 +137,7 @@ class HtmlCache extends Think
             //静态文件写入
             // 如果开启HTML功能 检查并重写HTML文件
             // 没有模版的操作不生成静态文件
-            if(!self::checkHTMLCache(self::$cacheFile,self::$cacheTime)) {
+            if(MODULE_NAME != 'Public' && !self::checkHTMLCache(self::$cacheFile,self::$cacheTime)) {
                 if(!is_dir(dirname(HTML_FILE_NAME)))
                     mk_dir(dirname(HTML_FILE_NAME));
                 if( false === file_put_contents( HTML_FILE_NAME , $content ))
