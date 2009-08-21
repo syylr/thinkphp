@@ -13,18 +13,6 @@
 /**
  +------------------------------------------------------------------------------
  * ThinkPHP标签库TagLib解析基类
- *
- * 要在模板页面中引入标签库，使用taglib标签，例如:
- * <taglib name='cs' />
- * 如果要引入多个标签库，可以使用
- * <taglib name='cs,mx,html' />
- *
- * 如果要指定标签库解析类，可以使用
- * <taglib name='cx'  class='Think.Template.TagLib.TagLib_cx' />
- * 系统内置引入了cx标签库，所以，如果需要使用cx标签库，无需使用taglib标签引入
- * 但是无需写cs前缀
- * 例如 <cx:vo name='user' value='id' />
- * 应该写成 <vo name='user' value='id' />
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Think

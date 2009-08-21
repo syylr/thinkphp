@@ -662,6 +662,9 @@ class TagLibCx extends TagLib
                 case 'css':
                     $parseStr .= '<link rel="stylesheet" type="text/css" href="'.$val.'" />';
                     break;
+                case 'php':
+                    $parseStr .= '<?php require_cache("'.$val.'"); ?>';
+                    break;
                 }
             }
         }else{
@@ -677,6 +680,10 @@ class TagLibCx extends TagLib
                     break;
                 case 'css':
                     $parseStr .= "<link rel='stylesheet' type='text/css' href='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$val).'.css'."' />";
+                    break;
+                case 'php':
+                    $parseStr .= '<?php import("'.$val.'"); ?>';
+                    break;
                 }
             }
         }
