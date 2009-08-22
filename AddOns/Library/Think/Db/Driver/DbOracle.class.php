@@ -63,7 +63,6 @@ class DbOracle extends Db{
             if (!$this->linkID[$linkNum]){
                 $error = $this->error(false);
                 throw_exception($error["message"], '', $error["code"]);
-                return false;
             }
             // 标记连接成功
             $this->connected = true;
@@ -81,7 +80,7 @@ class DbOracle extends Db{
      +----------------------------------------------------------
      */
      public function free() {
-        @oci_free_statement($this->queryID);
+        oci_free_statement($this->queryID);
         $this->queryID = 0;
     }
 
@@ -109,11 +108,8 @@ class DbOracle extends Db{
         $this->Q(1);
         $this->queryID = oci_parse($this->_linkID,$this->queryStr);
         $this->debug();
-        if (!oci_execute($this->queryID, $this->mode)) {
-		    if ( $this->debug)
-                throw_exception($this->error());
-            else
-                return false;
+        if (false === oci_execute($this->queryID, $this->mode)) {
+            throw_exception($this->error());
         } else {
 			return $this->getAll();
         }
@@ -143,11 +139,8 @@ class DbOracle extends Db{
         $this->W(1);
         $stmt = oci_parse($this->_linkID,$this->queryStr);
         $this->debug();
-        if (!oci_execute($stmt)) {
-            if ( $this->debug )
-                throw_exception($this->error());
-            else
-                return false;
+        if (false === oci_execute($stmt)) {
+            throw_exception($this->error());
         } else {
             $this->numRows = oci_num_rows($stmt);
             $this->lastInsID = preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $this->queryStr)?$this->insert_last_id():0;//add by wyfeng at 2008.12.22
@@ -171,7 +164,7 @@ class DbOracle extends Db{
         if ( !$this->_linkID ) return false;
         //数据rollback 支持
         if ($this->transTimes == 0) {
-                $this->mode = OCI_DEFAULT;
+            $this->mode = OCI_DEFAULT;
         }
         $this->transTimes++;
         return ;
@@ -193,7 +186,6 @@ class DbOracle extends Db{
                 $result = oci_commit($this->_linkID);
                 if(!$result){
                     throw_exception($this->error());
-                    return false;
                 }
                 $this->transTimes = 0;
         }
@@ -216,7 +208,6 @@ class DbOracle extends Db{
             $result = oci_rollback($this->_linkID);
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
             $this->transTimes = 0;
         }
@@ -237,7 +228,6 @@ class DbOracle extends Db{
      public function getAll() {
         if ( !$this->queryID ) {
             throw_exception($this->error());
-            return false;
         }
         //返回数据集
         $result = array();
@@ -339,7 +329,7 @@ class DbOracle extends Db{
         }else{
             $this->error = oci_error($this->_linkID);
         }
-        if($this->queryStr!=''){
+        if($this->debug && '' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         return $this->error;

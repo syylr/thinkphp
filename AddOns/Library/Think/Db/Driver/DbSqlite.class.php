@@ -61,7 +61,6 @@ class DbSqlite extends Db
             $this->linkID[$linkNum] = $conn($config['database'],$config['mode']);
             if ( !$this->linkID[$linkNum]) {
                 throw_exception(sqlite_error_string());
-                return false;
             }
             // 标记连接成功
             $this->connected	=	true;
@@ -79,7 +78,6 @@ class DbSqlite extends Db
      +----------------------------------------------------------
      */
     public function free() {
-        unset($this->resultSet);
         $this->queryID = 0;
     }
 
@@ -106,10 +104,7 @@ class DbSqlite extends Db
         $this->queryID = sqlite_query($this->_linkID,$this->queryStr);
         $this->debug();
         if ( !$this->queryID ) {
-            if ( $this->debug )
-                throw_exception($this->error());
-            else
-                return false;
+            throw_exception($this->error());
         } else {
             $this->numRows = sqlite_num_rows($this->queryID);
             return $this->getAll();
@@ -136,14 +131,10 @@ class DbSqlite extends Db
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
         $this->W(1);
-        $this->debug();
         $result	=	sqlite_exec($this->_linkID,$this->queryStr);
         $this->debug();
         if ( false === $result ) {
-            if ( $this->debug )
-                throw_exception($this->error());
-            else
-                return false;
+            throw_exception($this->error());
         } else {
             $this->numRows = sqlite_changes($this->_linkID);
             $this->lastInsID = sqlite_last_insert_rowid($this->_linkID);
@@ -190,7 +181,6 @@ class DbSqlite extends Db
             $result = sqlite_query($this->_linkID,'COMMIT TRANSACTION');
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
             $this->transTimes = 0;
         }
@@ -214,7 +204,6 @@ class DbSqlite extends Db
             $result = sqlite_query($this->_linkID,'ROLLBACK TRANSACTION');
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
             $this->transTimes = 0;
         }
@@ -235,7 +224,6 @@ class DbSqlite extends Db
     public function getAll() {
         if ( !$this->queryID ) {
             throw_exception($this->error());
-            return false;
         }
         //返回数据集
         $result = array();
@@ -322,7 +310,7 @@ class DbSqlite extends Db
      */
     public function error() {
         $this->error = sqlite_error_string(sqlite_last_error($this->_linkID));
-        if($this->queryStr!=''){
+        if($this->debug && '' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         return $this->error;

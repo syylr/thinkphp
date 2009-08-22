@@ -111,16 +111,12 @@ class DbPdo extends Db{
         if ( !empty($this->PDOStatement) ) {    $this->free();    }
         $this->Q(1);
         $this->PDOStatement = $this->_linkID->prepare($this->queryStr);
-        if(false === $this->PDOStatement) {
+        if(false === $this->PDOStatement)
             throw_exception($this->error());
-        }
         $result =   $this->PDOStatement->execute();
         $this->debug();
-        if ( !$result ) {
-            if ( $this->debug )
-                throw_exception($this->error());
-            else
-                return false;
+        if ( false === $result ) {
+            throw_exception($this->error());
         } else {
             return $this->getAll();
         }
@@ -153,10 +149,7 @@ class DbPdo extends Db{
         $result	=	$this->PDOStatement->execute();
         $this->debug();
         if ( false === $result) {
-            if ( $this->debug )
-                throw_exception($this->error());
-            else
-                return false;
+            throw_exception($this->error());
         } else {
             $this->numRows = $result;
             if(preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $this->queryStr)) {
@@ -202,7 +195,6 @@ class DbPdo extends Db{
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
         }
         return true;
@@ -226,7 +218,6 @@ class DbPdo extends Db{
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
         }
         return true;
@@ -246,7 +237,6 @@ class DbPdo extends Db{
     public function getAll() {
         if ( empty($this->PDOStatement) ) {
             throw_exception($this->error());
-            return false;
         }
         //返回数据集
         $result =   $this->PDOStatement->fetchAll(constant('PDO::FETCH_ASSOC'));
@@ -446,7 +436,7 @@ class DbPdo extends Db{
         }else{
             $this->error = '';
         }
-        if($this->queryStr!=''){
+        if($this->debug && '' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         return $this->error;
