@@ -106,11 +106,8 @@ class DbMysqli extends Db{
         $this->Q(1);
         $this->queryID = $this->_linkID->query($this->queryStr);
         $this->debug();
-        if ( !$this->queryID ) {
-            if ( $this->debug )
-                throw_exception($this->error());
-            else
-                return false;
+        if ( false === $this->queryID ) {
+            throw_exception($this->error());
         } else {
             $this->numRows  = $this->queryID->num_rows;
             $this->numCols    = $this->queryID->field_count;
@@ -141,10 +138,7 @@ class DbMysqli extends Db{
         $result =   $this->_linkID->query($this->queryStr);
         $this->debug();
         if ( false === $result ) {
-            if ( $this->debug )
-                throw_exception($this->error());
-            else
-                return false;
+            throw_exception($this->error());
         } else {
             $this->numRows = $this->_linkID->affected_rows;
             $this->lastInsID = $this->_linkID->insert_id;
@@ -192,7 +186,6 @@ class DbMysqli extends Db{
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
         }
         return true;
@@ -216,7 +209,6 @@ class DbMysqli extends Db{
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
         }
         return true;
@@ -236,7 +228,6 @@ class DbMysqli extends Db{
     public function getAll() {
         if ( !$this->queryID ) {
             throw_exception($this->error());
-            return false;
         }
         //返回数据集
         $result = array();
@@ -385,7 +376,7 @@ class DbMysqli extends Db{
      */
     function error() {
         $this->error = $this->_linkID->error;
-        if($this->queryStr!=''){
+        if($this->debug && '' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         return $this->error;

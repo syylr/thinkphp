@@ -215,18 +215,13 @@ class Model extends Think
         // 分析表达式
         $options =  $this->_parseOptions($options);
         // 写入数据到数据库
-        if(false === ($result = $this->db->insert($data,$options))){
-            // 数据库插入操作失败
-            $this->error = L('_OPERATION_WRONG_');
-            return false;
-        }else {
-            $insertId   =   $this->getLastInsID();
-            if($insertId) {
-                return $insertId;
-            }
-            //成功后返回插入ID
-            return $result;
+        $result = $this->db->insert($data,$options);
+        $insertId   =   $this->getLastInsID();
+        if($insertId) {
+            return $insertId;
         }
+        //成功后返回插入ID
+        return $result;
     }
 
     /**
@@ -266,12 +261,7 @@ class Model extends Think
                 return false;
             }
         }
-        if(false === ($result = $this->db->update($data,$options))){
-            $this->error = L('_OPERATION_WRONG_');
-            return false;
-        }else {
-            return $result;
-        }
+        return $this->db->update($data,$options);
     }
 
     /**
@@ -303,14 +293,7 @@ class Model extends Think
         }
         // 分析表达式
         $options =  $this->_parseOptions($options);
-        $result=    $this->db->delete($options);
-        if(false === $result ){
-            $this->error =  L('_OPERATION_WRONG_');
-            return false;
-        }else {
-            // 返回删除记录个数
-            return $result;
-        }
+        return $this->db->delete($options);
     }
 
     /**
@@ -327,11 +310,11 @@ class Model extends Think
     public function select($options=array()) {
         // 分析表达式
         $options =  $this->_parseOptions($options);
-        if($resultSet = $this->db->select($options)) {
-            return $resultSet;
-        }else{
+        $resultSet = $this->db->select($options);
+        if(empty($resultSet)) { // 查询结果为空
             return false;
         }
+        return $resultSet;
     }
 
     /**
@@ -355,12 +338,12 @@ class Model extends Think
         $options['limit'] = 1;
         // 分析表达式
         $options =  $this->_parseOptions($options);
-        if($result = $this->db->select($options)) {
-            $this->data = $result[0];
-            return $this->data;
-        }else{
+        $resultSet = $this->db->select($options);
+        if(empty($resultSet)) {// 查询结果为空
             return false;
         }
+        $this->data = $resultSet[0];
+        return $this->data;
      }
 
     /**
@@ -438,20 +421,16 @@ class Model extends Think
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param mixed $sql  SQL指令
+     * @param string $sql  SQL指令
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      */
     public function query($sql)
     {
-        if(is_array($sql)) {
-            return $this->patchQuery($sql);
-        }
         if(!empty($sql)) {
-            if(strpos($sql,'__TABLE__')) {
+            if(strpos($sql,'__TABLE__'))
                 $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
-            }
             return $this->db->query($sql);
         }else{
             return false;
@@ -472,11 +451,9 @@ class Model extends Think
     public function execute($sql='')
     {
         if(!empty($sql)) {
-            if(strpos($sql,'__TABLE__')) {
+            if(strpos($sql,'__TABLE__'))
                 $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
-            }
-            $result =   $this->db->execute($sql);
-            return $result;
+            return $this->db->execute($sql);
         }else {
             return false;
         }
@@ -578,7 +555,7 @@ class Model extends Think
      +----------------------------------------------------------
      */
     public function getPk() {
-        return isset($this->pk)?$this->pk:'id';
+        return isset($this->fields['_pk'])?$this->fields['_pk']:$this->pk;
     }
 
     /**
