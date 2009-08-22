@@ -25,7 +25,7 @@ abstract class Action extends Think
 {//类定义开始
 
     // 视图实例对象
-    private $view   =  null;
+    protected $view   =  null;
     // 当前Action名称
     private $name =  '';
 
@@ -78,76 +78,6 @@ abstract class Action extends Think
             // 判断Ajax方式提交
             return true;
         return false;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 是否POST请求
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return bool
-     +----------------------------------------------------------
-     */
-    protected function isPost()
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']) == 'post';
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 是否GET请求
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return bool
-     +----------------------------------------------------------
-     */
-    protected function isGet()
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']) == 'get';
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 是否Head请求
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return bool
-     +----------------------------------------------------------
-     */
-    protected function isHead()
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']) == 'head';
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 是否Put请求
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return bool
-     +----------------------------------------------------------
-     */
-    protected function isPut()
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']) == 'put';
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 是否Delete请求
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @return bool
-     +----------------------------------------------------------
-     */
-    protected function isDelete()
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']) == 'delete';
     }
 
     /**
@@ -303,6 +233,8 @@ abstract class Action extends Think
                     // 抛出异常
                     throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
             }
+        }elseif(in_array(strtolower($method),array('ispost','isget','ishead','isdelete','isput'))){
+            return strtolower($_SERVER['REQUEST_METHOD']) == strtolower(substr($method,2));
         }else{
             throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
         }
