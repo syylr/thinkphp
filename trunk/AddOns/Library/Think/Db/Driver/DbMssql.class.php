@@ -60,12 +60,9 @@ class DbMssql extends Db{
 
             if ( !$this->linkID[$linkNum]) {
                 throw_exception($this->error());
-                return false;
             }
-
             if ( !mssql_select_db($config['database'], $this->linkID[$linkNum]) ) {
                 throw_exception($this->error());
-                return false;
             }
             // 标记连接成功
             $this->connected =  true;
@@ -109,11 +106,8 @@ class DbMssql extends Db{
         $this->Q(1);
         $this->queryID = mssql_query($this->queryStr, $this->_linkID);
         $this->debug();
-        if ( !$this->queryID ) {
-            if ( $this->debug)
-                throw_exception($this->error());
-            else
-                return false;
+        if ( false === $this->queryID ) {
+            throw_exception($this->error());
         } else {
             $this->numRows = mssql_num_rows($this->queryID);
             return $this->getAll();
@@ -140,13 +134,10 @@ class DbMssql extends Db{
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
         $this->W(1);
-        $this->debug();
         $result	=	mssql_query($this->queryStr, $this->_linkID);
+        $this->debug();
         if ( false === $result ) {
-            if ( $this->debug)
-                throw_exception($this->error());
-            else
-                return false;
+            throw_exception($this->error());
         } else {
             $this->numRows = mssql_rows_affected($this->_linkID);
             $this->lastInsID = $this->mssql_insert_id();
@@ -208,7 +199,6 @@ class DbMssql extends Db{
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
         }
         return true;
@@ -230,7 +220,6 @@ class DbMssql extends Db{
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
         }
         return true;
@@ -250,7 +239,6 @@ class DbMssql extends Db{
     public function getAll() {
         if ( !$this->queryID ) {
             throw_exception($this->error());
-            return false;
         }
         //返回数据集
         $result = array();
@@ -378,7 +366,7 @@ class DbMssql extends Db{
      */
     public function error() {
         $this->error = mssql_get_last_message();
-        if($this->queryStr!=''){
+        if($this->debug && '' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         return $this->error;

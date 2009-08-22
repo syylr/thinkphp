@@ -77,7 +77,7 @@ class DbIbase extends Db{
      +----------------------------------------------------------
      */
     public function free() {
-        @ibase_free_result($this->queryID);
+        ibase_free_result($this->queryID);
         $this->queryID = 0;
     }
 
@@ -103,11 +103,8 @@ class DbIbase extends Db{
         $this->Q(1);
         $this->queryID = ibase_query($this->_linkID, $this->queryStr);
         $this->debug();
-        if ( !$this->queryID ) {
-            if ( $this->debug)
-                throw_exception($this->error());
-            else
-                return false;
+        if ( false === $this->queryID ) {
+            throw_exception($this->error());
         } else {
             //$this->numCols = ibase_num_fields($this->queryID);
             return $this->getAll();
@@ -137,16 +134,12 @@ class DbIbase extends Db{
         $result =   ibase_query($this->_linkID, $this->queryStr) ;
         $this->debug();
         if ( false === $result) {
-            if ( $this->debug || C('DEBUG_MODE'))
-                throw_exception($this->error());
-            else
-                return false;
+            throw_exception($this->error());
         } else {
             $this->numRows = ibase_affected_rows($this->_linkID);
             //剑雷 2007.12.28
             //$this->lastInsID = mysql_insert_id($this->_linkID);
             $this->lastInsID =0;
-
             return $this->numRows;
         }
     }
@@ -180,7 +173,6 @@ class DbIbase extends Db{
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
         }
         return true;
@@ -204,7 +196,6 @@ class DbIbase extends Db{
             $this->transTimes = 0;
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
         }
         return true;
@@ -255,7 +246,6 @@ class DbIbase extends Db{
     public function getAll() {
         if ( !$this->queryID ) {
             throw_exception($this->error());
-            return false;
         }
         //返回数据集
         $result = array();
@@ -383,7 +373,7 @@ where a.rdb$constraint_type=\'PRIMARY KEY\' and a.rdb$relation_name=UPPER(\''.$t
      */
     public function error() {
         $this->error = ibase_errmsg();
-        if($this->queryStr!=''){
+        if($this->debug && '' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         return $this->error;

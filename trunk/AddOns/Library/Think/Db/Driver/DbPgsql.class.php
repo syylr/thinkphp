@@ -106,15 +106,11 @@ class DbPgsql extends Db{
         if ( $str != '' ) $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
-        $this->queryTimes ++;
         $this->Q(1);
         $this->queryID = pg_query($this->_linkID,$this->queryStr );
         $this->debug();
-        if ( !$this->queryID ) {
-            if ( $this->debug)
-                throw_exception($this->error());
-            else
-                return false;
+        if ( false === $this->queryID ) {
+            throw_exception($this->error());
         } else {
             $this->numRows = pg_num_rows($this->queryID);
             return $this->getAll();
@@ -140,17 +136,11 @@ class DbPgsql extends Db{
         if ( $str != '' ) $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
-
-        $this->writeTimes ++;
         $this->W(1);
-        $this->debug();
         $result =   pg_query($this->_linkID,$this->queryStr.$tableName);
         $this->debug();
         if ( false === $result ) {
-            if ( $this->debug)
-                throw_exception($this->error());
-            else
-                return false;
+            throw_exception($this->error());
         } else {
             $this->numRows = pg_affected_rows($result);
             $this->lastInsID =   $this->last_insert_id();
@@ -215,7 +205,6 @@ class DbPgsql extends Db{
             $result = pg_exec($this->_linkID,'end;');
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
             $this->transTimes = 0;
         }
@@ -239,7 +228,6 @@ class DbPgsql extends Db{
             $result = pg_exec($this->_linkID,'abort;');
             if(!$result){
                 throw_exception($this->error());
-                return false;
             }
             $this->transTimes = 0;
         }
@@ -260,7 +248,6 @@ class DbPgsql extends Db{
     public function getAll() {
         if ( !$this->queryID ) {
             throw_exception($this->error());
-            return false;
         }
         //返回数据集
         $result   =  pg_fetch_all($this->queryID);
@@ -352,12 +339,8 @@ class DbPgsql extends Db{
      +----------------------------------------------------------
      */
     public function error($result = true) {
-        if($result){
-            $this->error = pg_result_error($this->queryID);
-        }else{
-            $this->error = pg_last_error($this->_linkID);
-        }
-        if($this->queryStr!=''){
+        $this->error = $result?pg_result_error($this->queryID): pg_last_error($this->_linkID);
+        if($this->debug && '' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
         return $this->error;
