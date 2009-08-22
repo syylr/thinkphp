@@ -61,7 +61,7 @@ return  array(
 
     /* 系统变量设置 */
     'VAR_PATHINFO'				=>	's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于URL_PATH_MODEL 和 URL_PATH_DEPR
-    'VAR_GROUP'     => 'g',     // 默认分组变量
+    'VAR_GROUP'                  => 'g',     // 默认分组变量
     'VAR_MODULE'					=>	'm',		// 默认模块获取变量
     'VAR_ACTION'					=>	'a',		// 默认操作获取变量
    	'VAR_PAGE'						=>	'p',		// 默认分页跳转变量
@@ -83,8 +83,7 @@ return  array(
 	'LIST_NUMBERS'				=>	20,			// 分页每页显示记录数
 
     /* 模型设置 */
-    'AUTO_NAME_IDENTIFY'  =>    true, // 模型对应数据表名称智能识别 UserType => user_type
-    'DEFAULT_MODEL_APP'     =>   '@',   // 默认模型类所在的项目名称 @ 表示当前项目
+    'MODEL_DEFAULT_APP'     =>   '@',   // 默认模型类所在的项目名称 @ 表示当前项目
 
     /* 静态缓存设置 */
     'HTML_FILE_SUFFIX'			=>	'.shtml',	 // 默认静态文件后缀
