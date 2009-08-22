@@ -106,12 +106,12 @@ class TagLibCx extends TagLib
 
     /**
      +----------------------------------------------------------
-     * iterator标签解析 循环输出iterator变量的值
+     * volist标签解析 循环输出数据集
      * 格式：
-     * <iterate name="userList" id="user" empty="" >
+     * <volist name="userList" id="user" empty="" >
      * {user.username}
      * {user.email}
-     * </iterate>
+     * </volist>
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -121,14 +121,13 @@ class TagLibCx extends TagLib
      * @return string|void
      +----------------------------------------------------------
      */
-    public function _iterate($attr,$content)
+    public function _volist($attr,$content)
     {
         static $_iterateParseCache = array();
         //如果已经解析过，则直接返回变量值
         $cacheIterateId = md5($attr.$content);
         if(isset($_iterateParseCache[$cacheIterateId]))
             return $_iterateParseCache[$cacheIterateId];
-
         $tag      = $this->parseXmlAttr($attr,'iterate');
         $name   = $tag['name'];
         $id        = $tag['id'];
@@ -159,8 +158,8 @@ class TagLibCx extends TagLib
         return ;
     }
 
-    public function _volist($attr,$content) {
-        return $this->_iterate($attr,$content);
+    public function _iterate($attr,$content) {
+        return $this->_volist($attr,$content);
     }
 
     public function _foreach($attr,$content)
@@ -170,7 +169,6 @@ class TagLibCx extends TagLib
         $cacheIterateId = md5($attr.$content);
         if(isset($_iterateParseCache[$cacheIterateId]))
             return $_iterateParseCache[$cacheIterateId];
-
         $tag   = $this->parseXmlAttr($attr,'foreach');
         $name= $tag['name'];
         $item  = $tag['item'];
@@ -180,7 +178,6 @@ class TagLibCx extends TagLib
         $parseStr .= $this->tpl->parse($content);
         $parseStr .= '<?php endforeach; endif; ?>';
         $_iterateParseCache[$cacheIterateId] = $parseStr;
-
         if(!empty($parseStr)) {
             return $parseStr;
         }
@@ -201,15 +198,6 @@ class TagLibCx extends TagLib
             $name   = '('.$name.')?('.$name.'):\''.$default.'\'';
         }
         $parseStr   =   '<?php echo ('.$name.');?>';
-        return $parseStr;
-    }
-
-    public function _defined($attr,$content)
-    {
-        $tag        = $this->parseXmlAttr($attr,'defined');
-        $name     = $tag['name'];
-        $parseStr = '<?php if(defined("'.$name.'")): ?>';
-        $parseStr .= $content.'<?php endif; ?>';
         return $parseStr;
     }
 
@@ -529,9 +517,9 @@ class TagLibCx extends TagLib
 
     /**
      +----------------------------------------------------------
-     * session标签解析
-     * 如果某个session变量已经设置 则输出内容
-     * 格式： <session name="" >content</session>
+     * empty标签解析
+     * 如果某个变量为empty 则输出内容
+     * 格式： <empty name="" >content</empty>
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -541,37 +529,27 @@ class TagLibCx extends TagLib
      * @return string
      +----------------------------------------------------------
      */
-    public function _session($attr,$content)
+    public function _empty($attr,$content)
     {
-        $tag  = $this->parseXmlAttr($attr,'session');
-        $name  = $tag['name'];
-        if(strpos($name,'|')) {
-            $array  =   explode('|',$name);
-            $parseStr  = '<?php if( ';
-            for($i=0; $i<count($array); $i++) {
-                $parseStr  .= 'isset($_SESSION["'.$array[$i].'"]) || ';
-            }
-            $parseStr   =   substr($parseStr,0,-3);
-            $parseStr  .='): ?>'.$content.'<?php endif; ?>';
-        }elseif(strpos($name,',')) {
-            $array  =   explode(',',$name);
-            $parseStr  = '<?php if( ';
-            for($i=0; $i<count($array); $i++) {
-                $parseStr  .= 'isset($_SESSION["'.$array[$i].'"]) && ';
-            }
-            $parseStr   =   substr($parseStr,0,-3);
-            $parseStr  .='): ?>'.$content.'<?php endif; ?>';
-        }else {
-            $parseStr  = '<?php if(isset($_SESSION["'.$name.'"])): ?>'.$content.'<?php endif; ?>';
-        }
+        $tag      = $this->parseXmlAttr($attr,'empty');
+        $name   = $tag['name'];
+        $name   = $this->autoBuildVar($name);
+        $parseStr  = '<?php if(empty('.$name.')): ?>'.$content.'<?php endif; ?>';
+        return $parseStr;
+    }
+
+    public function _defined($attr,$content)
+    {
+        $tag        = $this->parseXmlAttr($attr,'defined');
+        $name     = $tag['name'];
+        $parseStr = '<?php if(defined("'.$name.'")): ?>'.$content.'<?php endif; ?>';
         return $parseStr;
     }
 
     /**
      +----------------------------------------------------------
-     * notsession标签解析
-     * 如果某个session变量没有设置 则输出内容
-     * 格式： <notsession name="" >content</notsession>
+     * 布局标签解析
+     * 格式： <layout name=""  cache="30" />
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -581,33 +559,6 @@ class TagLibCx extends TagLib
      * @return string
      +----------------------------------------------------------
      */
-    public function _nosession($attr,$content)
-    {
-        $tag  = $this->parseXmlAttr($attr,'nosession');
-        $name  = $tag['name'];
-        if(strpos($name,'|')) {
-            $array  =   explode('|',$name);
-            $parseStr  = '<?php if( ';
-            for($i=0; $i<count($array); $i++) {
-                $parseStr  .= '!isset($_SESSION["'.$array[$i].'"]) || ';
-            }
-            $parseStr   =   substr($parseStr,0,-3);
-            $parseStr  .='): ?>'.$content.'<?php endif; ?>';
-        }elseif(strpos($name,',')) {
-            $array  =   explode(',',$name);
-            $parseStr  = '<?php if( ';
-            for($i=0; $i<count($array); $i++) {
-                $parseStr  .= '!isset($_SESSION["'.$array[$i].'"]) && ';
-            }
-            $parseStr   =   substr($parseStr,0,-3);
-            $parseStr  .='): ?>'.$content.'<?php endif; ?>';
-        }else {
-            $parseStr  = '<?php if( !isset($_SESSION["'.$name.'"])): ?>'.$content.'<?php endif; ?>';
-        }
-
-        return $parseStr;
-    }
-
     public function _layout($attr,$content) {
         $tag      = $this->parseXmlAttr($attr,'layout');
         $name   =   $tag['name'];
