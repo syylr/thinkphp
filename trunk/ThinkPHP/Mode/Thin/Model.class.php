@@ -150,11 +150,8 @@ class Model extends Think
             $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
             if(!empty($this->tableName)) {
                 $tableName .= $this->tableName;
-            }elseif(C('AUTO_NAME_IDENTIFY')){
-                // 智能识别表名
-                $tableName .= parse_name($this->name);
             }else{
-                $tableName .= $this->name;
+                $tableName .= parse_name($this->name);
             }
             if(!empty($this->dbName)) {
                 $tableName    =  $this->dbName.'.'.$tableName;

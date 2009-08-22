@@ -116,7 +116,7 @@ class Model extends Think
             }
         }
         // 记录字段类型信息
-        if(C('FIELD_TYPE_CHECK'))   $this->fields['_type'] =  $type;
+        if(C('DB_FIELDTYPE_CHECK'))   $this->fields['_type'] =  $type;
 
         // 2008-3-7 增加缓存开关控制
         if(C('DB_FIELDS_CACHE'))
@@ -146,7 +146,7 @@ class Model extends Think
         }elseif(in_array(strtolower($method),array('count','sum','min','max','avg'),true)){
             // 统计查询的实现
             $field =  isset($args[0])?$args[0]:'*';
-            return $this->getField($method.'('.$field.') AS tp_'.$method);
+            return $this->getField(strtoupper($method).'('.$field.') AS tp_'.$method);
         }elseif(strtolower(substr($method,0,5))=='getby') {
             // 根据某个字段获取记录
             $field   =   parse_name(substr($method,5));
@@ -387,6 +387,53 @@ class Model extends Think
 
     /**
      +----------------------------------------------------------
+     * 创建数据对象 但不保存到数据库
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $data 创建数据
+     * @param string $type 状态
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+     public function create($data='',$type='') {
+        // 如果没有传值默认取POST数据
+        if(empty($data)) {
+            $data    =   $_POST;
+        }elseif(is_object($data)){
+            $data   =   get_object_vars($data);
+        }elseif(!is_array($data)){
+            $this->error = L('_DATA_TYPE_INVALID_');
+            return false;
+        }
+        // 生成数据对象
+        $vo   =  array();
+        foreach ($this->fields as $key=>$name){
+            if(substr($key,0,1)=='_') continue;
+            $val = isset($data[$name])?$data[$name]:null;
+            //保证赋值有效
+            if(!is_null($val)){
+                $vo[$name] = (MAGIC_QUOTES_GPC && is_string($val))?   stripslashes($val)  :  $val;
+                if(C('DB_FIELDTYPE_CHECK')) {
+                    // 字段类型检查
+                    $fieldType = strtolower($this->fields['_type'][$name]);
+                    if(false !== strpos($fieldType,'int')) {
+                        $vo[$name]   =  intval($vo[$name]);
+                    }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
+                        $vo[$name]   =  floatval($vo[$name]);
+                    }
+                }
+            }
+        }
+        // 赋值当前数据对象
+        $this->data =   $vo;
+        // 返回创建的数据以供其他调用
+        return $vo;
+     }
+
+    /**
+     +----------------------------------------------------------
      * SQL查询
      +----------------------------------------------------------
      * @access public
@@ -467,11 +514,8 @@ class Model extends Think
             $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
             if(!empty($this->tableName)) {
                 $tableName .= $this->tableName;
-            }elseif(C('AUTO_NAME_IDENTIFY')){
-                // 智能识别表名
-                $tableName .= parse_name($this->name);
             }else{
-                $tableName .= $this->name;
+                $tableName .= parse_name($this->name);
             }
             if(!empty($this->dbName)) {
                 $tableName    =  $this->dbName.'.'.$tableName;

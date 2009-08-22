@@ -819,7 +819,7 @@ class Db extends Think
                 $this->parseLimit(isset($options['limit'])?$options['limit']:'')
             ),$this->selectSql);
         $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
-        return $this->query($sql,isset($options['cache'])?$options['cache']:false);
+        return $this->query($sql);
     }
 
     /**
@@ -844,51 +844,6 @@ class Db extends Think
             }
         }
         return $value;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 查询数据方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $sql  查询语句
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    public function query($sql,$cache=false)
-    {
-        if($cache) {// 启动查询缓存
-            $guid =  md5($sql);
-            //获取缓存数据
-            $data = F($guid,'',TEMP_PATH);
-            if(!empty($data)){
-                return $data;
-            }
-            $data = $this->_query($sql);
-            F($guid,$data,TEMP_PATH);
-            return $data;
-        }else{
-            // 进行查询
-            return $this->_query($sql);
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 数据库操作方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $sql  执行语句
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    public function execute($sql)
-    {
-        return $this->_execute($sql);
     }
 
     /**

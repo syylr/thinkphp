@@ -449,7 +449,7 @@ function D($name='',$app='')
 {
     static $_model = array();
     if(empty($name)) return new Model;
-    if(empty($app))   $app =  C('DEFAULT_MODEL_APP');
+    if(empty($app))   $app =  C('MODEL_DEFAULT_APP');
     if(isset($_model[$app.$name]))
         return $_model[$app.$name];
     $OriClassName = $name;

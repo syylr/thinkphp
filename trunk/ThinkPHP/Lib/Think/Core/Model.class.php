@@ -223,7 +223,7 @@ class Model extends Think
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('field','table','where','order','limit','page','having','group','lock','cache','distinct'),true)) {
+        if(in_array(strtolower($method),array('field','table','where','order','limit','page','having','group','lock','distinct'),true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
@@ -661,10 +661,6 @@ class Model extends Think
         // 返回创建的数据以供其他调用
         return $vo;
      }
-     // 数据创建成功前的验证方法
-     protected function _before_create($data,$type) {return true;}
-     // 数据创建成功后的回调方法
-     protected function _after_create(&$data,$type) {}
 
     // 自动表单令牌验证
     public function autoCheckToken($data) {
@@ -748,11 +744,8 @@ class Model extends Think
             $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
             if(!empty($this->tableName)) {
                 $tableName .= $this->tableName;
-            }elseif(C('AUTO_NAME_IDENTIFY')){
-                // 智能识别表名
-                $tableName .= parse_name($this->name);
             }else{
-                $tableName .= $this->name;
+                $tableName .= parse_name($this->name);
             }
             $tableName .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
             if(!empty($this->dbName))
