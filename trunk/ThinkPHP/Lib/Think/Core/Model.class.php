@@ -298,20 +298,15 @@ class Model extends Think
         $data = $this->_facade($data);
         $this->_before_insert($data,$options);
         // 写入数据到数据库
-        if(false === ($result = $this->db->insert($data,$options))){
-            // 数据库插入操作失败
-            $this->error = L('_OPERATION_WRONG_');
-            return false;
-        }else {
-            $insertId   =   $this->getLastInsID();
-            if($insertId) {
-                $data[$this->getPk()]  = $insertId;
-                $this->_after_insert($data,$options);
-                return $insertId;
-            }
-            //成功后返回插入ID
-            return $result;
+        $result = $this->db->insert($data,$options);
+        $insertId   =   $this->getLastInsID();
+        if($insertId) {
+            $data[$this->getPk()]  = $insertId;
+            $this->_after_insert($data,$options);
+            return $insertId;
         }
+        //成功后返回插入ID
+        return $result;
     }
     // 插入数据前的回调方法
     protected function _before_insert(&$data,$options) {}
@@ -385,14 +380,10 @@ class Model extends Think
             }
         }
         $this->_before_update($data,$options);
-        if(false === ($result = $this->db->update($data,$options))){
-            $this->error = L('_OPERATION_WRONG_');
-            return false;
-        }else {
-            if(isset($pkValue)) $data[$pk]   =  $pkValue;
-            $this->_after_update($data,$options);
-            return $result;
-        }
+        $result = $this->db->update($data,$options);
+        if(isset($pkValue)) $data[$pk]   =  $pkValue;
+        $this->_after_update($data,$options);
+        return $result;
     }
     // 更新数据前的回调方法
     protected function _before_update(&$data,$options) {}
@@ -433,16 +424,11 @@ class Model extends Think
         // 分析表达式
         $options =  $this->_parseOptions($options);
         $result=    $this->db->delete($options);
-        if(false === $result ){
-            $this->error =  L('_OPERATION_WRONG_');
-            return false;
-        }else {
-            $data = array();
-            if(isset($pkValue)) $data[$pk]   =  $pkValue;
-            $this->_after_delete($data,$options);
-            // 返回删除记录个数
-            return $result;
-        }
+        $data = array();
+        if(isset($pkValue)) $data[$pk]   =  $pkValue;
+        $this->_after_delete($data,$options);
+        // 返回删除记录个数
+        return $result;
     }
     // 删除成功后的回调方法
     protected function _after_delete($data,$options) {}
@@ -467,15 +453,15 @@ class Model extends Think
         }
         // 分析表达式
         $options =  $this->_parseOptions($options);
-        if($resultSet = $this->db->select($options)) {
-            $this->_after_select($resultSet,$options);
-            return $resultSet;
-        }else{
+        $resultSet = $this->db->select($options);
+        if(empty($resultSet)) { // 查询结果为空
             return false;
         }
+        $this->_after_select($resultSet,$options);
+        return $resultSet;
     }
     // 查询成功后的回调方法
-    protected function _after_select(&$result,$options) {}
+    protected function _after_select(&$resultSet,$options) {}
 
     public function findAll($options=array()) {
         return $this->select($options);
@@ -528,13 +514,13 @@ class Model extends Think
         $options['limit'] = 1;
         // 分析表达式
         $options =  $this->_parseOptions($options);
-        if($result = $this->db->select($options)) {
-            $this->data = $result[0];
-            $this->_after_find($this->data,$options);
-            return $this->data;
-        }else{
+        $resultSet = $this->db->select($options);
+        if(empty($resultSet)) {// 查询结果为空
             return false;
         }
+        $this->data = $resultSet[0];
+        $this->_after_find($this->data,$options);
+        return $this->data;
      }
      // 查询成功的回调方法
      protected function _after_find(&$result,$options) {}
@@ -676,7 +662,7 @@ class Model extends Think
      +----------------------------------------------------------
      * @param mixed $sql  SQL指令
      +----------------------------------------------------------
-     * @return array
+     * @return mixed
      +----------------------------------------------------------
      */
     public function query($sql)
@@ -706,8 +692,7 @@ class Model extends Think
         if(!empty($sql)) {
             if(strpos($sql,'__TABLE__'))
                 $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
-            $result =   $this->db->execute($sql);
-            return $result;
+            return $this->db->execute($sql);
         }else {
             return false;
         }
