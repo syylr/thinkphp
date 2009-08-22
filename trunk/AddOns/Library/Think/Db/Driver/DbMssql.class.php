@@ -89,10 +89,9 @@ class DbMssql extends Db{
 
     /**
      +----------------------------------------------------------
-     * 执行查询 主要针对 SELECT, SHOW 等指令
-     * 返回数据集
+     * 执行查询  返回数据集
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -101,7 +100,7 @@ class DbMssql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function _query($str='') {
+    public function query($str='') {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -123,9 +122,9 @@ class DbMssql extends Db{
 
     /**
      +----------------------------------------------------------
-     * 执行语句 针对 INSERT, UPDATE 以及DELETE
+     * 执行语句
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -134,7 +133,7 @@ class DbMssql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function _execute($str='') {
+    public function execute($str='') {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -272,7 +271,7 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      */
     function getFields($tableName) {
-        $result =   $this->getAll("SELECT   column_name,   data_type,   column_default,   is_nullable
+        $result =   $this->query("SELECT   column_name,   data_type,   column_default,   is_nullable
         FROM    information_schema.tables AS t
         JOIN    information_schema.columns AS c
         ON  t.table_catalog = c.table_catalog
@@ -303,7 +302,7 @@ class DbMssql extends Db{
      +----------------------------------------------------------
      */
     function getTables($dbName='') {
-        $result   =  $this->getAll("SELECT TABLE_NAME
+        $result   =  $this->query("SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
             WHERE TABLE_TYPE = 'BASE TABLE'
             ");

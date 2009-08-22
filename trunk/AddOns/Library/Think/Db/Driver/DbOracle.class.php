@@ -87,10 +87,9 @@ class DbOracle extends Db{
 
     /**
      +----------------------------------------------------------
-     * 执行查询 主要针对 SELECT, SHOW 等指令
-     * 返回数据集
+     * 执行查询 返回数据集
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -99,7 +98,7 @@ class DbOracle extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function _query($str='') {
+    public function query($str='') {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -122,9 +121,9 @@ class DbOracle extends Db{
 
     /**
      +----------------------------------------------------------
-     * 执行语句 针对 INSERT, UPDATE 以及DELETE
+     * 执行语句
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -133,7 +132,7 @@ class DbOracle extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-     protected function _execute($str='') {
+     public function execute($str='') {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -168,6 +167,8 @@ class DbOracle extends Db{
      +----------------------------------------------------------
      */
      public function startTrans() {
+        $this->initConnect(true);
+        if ( !$this->_linkID ) return false;
         //数据rollback 支持
         if ($this->transTimes == 0) {
                 $this->mode = OCI_DEFAULT;

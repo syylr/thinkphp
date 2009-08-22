@@ -85,8 +85,7 @@ class DbSqlite extends Db
 
     /**
      +----------------------------------------------------------
-     * 执行查询 主要针对 SELECT, SHOW 等指令
-     * 返回数据集
+     * 执行查询 返回数据集
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -97,7 +96,7 @@ class DbSqlite extends Db
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function _query($str='') {
+    public function query($str='') {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -119,7 +118,7 @@ class DbSqlite extends Db
 
     /**
      +----------------------------------------------------------
-     * 执行语句 针对 INSERT, UPDATE 以及DELETE
+     * 执行语句
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -130,7 +129,7 @@ class DbSqlite extends Db
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function _execute($str='') {
+    public function execute($str='') {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -260,7 +259,7 @@ class DbSqlite extends Db
      +----------------------------------------------------------
      */
     public function getFields($tableName) {
-        $result =   $this->_query('PRAGMA table_info( '.$tableName.' )');
+        $result =   $this->query('PRAGMA table_info( '.$tableName.' )');
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$val['Field']] = array(
@@ -285,7 +284,7 @@ class DbSqlite extends Db
      +----------------------------------------------------------
      */
     public function getTables($dbName='') {
-        $result =   $this->_query("SELECT name FROM sqlite_master WHERE type='table' "
+        $result =   $this->query("SELECT name FROM sqlite_master WHERE type='table' "
              . "UNION ALL SELECT name FROM sqlite_temp_master "
              . "WHERE type='table' ORDER BY name");
         $info   =   array();

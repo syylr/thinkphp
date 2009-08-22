@@ -83,10 +83,9 @@ class DbIbase extends Db{
 
     /**
      +----------------------------------------------------------
-     * 执行查询 主要针对 SELECT, SHOW 等指令
-     * 返回数据集
+     * 执行查询 返回数据集
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -95,7 +94,7 @@ class DbIbase extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function _query($str='') {
+    public function query($str='') {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -117,9 +116,9 @@ class DbIbase extends Db{
 
     /**
      +----------------------------------------------------------
-     * 执行语句 针对 INSERT, UPDATE 以及DELETE
+     * 执行语句
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -128,7 +127,7 @@ class DbIbase extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function _execute($str='') {
+    public function execute($str='') {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -229,18 +228,14 @@ class DbIbase extends Db{
         $maxblobsize = 262144;
         $blob_data = ibase_blob_info($this->_linkID, $blob );
         $blobid = ibase_blob_open($this->_linkID, $blob );
-
         if( $blob_data[0] > $maxblobsize ) {
-
             $realblob = ibase_blob_get($blobid, $maxblobsize);
-
             while($string = ibase_blob_get($blobid, 8192)){
                 $realblob .= $string;
             }
         } else {
             $realblob = ibase_blob_get($blobid, $blob_data[0]);
         }
-
         ibase_blob_close( $blobid );
         return( $realblob );
     }
@@ -267,7 +262,6 @@ class DbIbase extends Db{
         while ( $row = ibase_fetch_assoc($this->queryID)) {
             $result[]   =   $row;
         }
-
         //剑雷 2007.12.30 自动解密BLOB字段
         //取BLOB字段清单
         $bloblist = array();
@@ -301,7 +295,7 @@ class DbIbase extends Db{
      +----------------------------------------------------------
      */
     public function getFields($tableName) {
-        $result   =  $this->_query('SELECT RDB$FIELD_NAME AS FIELD, RDB$DEFAULT_VALUE AS DEFAULT1, RDB$NULL_FLAG AS NULL1 FROM RDB$RELATION_FIELDS WHERE RDB$RELATION_NAME=UPPER(\''.$tableName.'\') ORDER By RDB$FIELD_POSITION');
+        $result   =  $this->query('SELECT RDB$FIELD_NAME AS FIELD, RDB$DEFAULT_VALUE AS DEFAULT1, RDB$NULL_FLAG AS NULL1 FROM RDB$RELATION_FIELDS WHERE RDB$RELATION_NAME=UPPER(\''.$tableName.'\') ORDER By RDB$FIELD_POSITION');
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[trim($val['FIELD'])] = array(
@@ -349,7 +343,7 @@ where a.rdb$constraint_type=\'PRIMARY KEY\' and a.rdb$relation_name=UPPER(\''.$t
      */
     public function getTables($dbName='') {
         $sql='SELECT DISTINCT RDB$RELATION_NAME FROM RDB$RELATION_FIELDS WHERE RDB$SYSTEM_FLAG=0';
-        $result   =  $this->_query($sql);
+        $result   =  $this->query($sql);
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = trim(current($val));
