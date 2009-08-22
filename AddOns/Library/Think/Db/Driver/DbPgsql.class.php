@@ -89,10 +89,9 @@ class DbPgsql extends Db{
 
     /**
      +----------------------------------------------------------
-     * 执行查询 主要针对 SELECT, SHOW 等指令
-     * 返回数据集
+     * 执行查询 返回数据集
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -101,7 +100,7 @@ class DbPgsql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function _query($str='') {
+    public function query($str='') {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -124,9 +123,9 @@ class DbPgsql extends Db{
 
     /**
      +----------------------------------------------------------
-     * 执行语句 针对 INSERT, UPDATE 以及DELETE
+     * 执行语句
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -135,7 +134,7 @@ class DbPgsql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function _execute($str='') {
+    public function execute($str='') {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -279,7 +278,7 @@ class DbPgsql extends Db{
      +----------------------------------------------------------
      */
     public function getFields($tableName) {
-        $result   =  $this->_query("select a.attname as \"Field\",
+        $result   =  $this->query("select a.attname as \"Field\",
             t.typname as \"Type\",
             a.attnotnull as \"Null\",
             i.indisprimary as \"Key\",
@@ -315,7 +314,7 @@ class DbPgsql extends Db{
      +----------------------------------------------------------
      */
     public function getTables($dbName='') {
-        $result = $this->_query("select tablename as Tables_in_test from pg_tables where  schemaname ='public'");
+        $result = $this->query("select tablename as Tables_in_test from pg_tables where  schemaname ='public'");
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = current($val);

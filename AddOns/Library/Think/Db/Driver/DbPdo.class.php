@@ -92,10 +92,9 @@ class DbPdo extends Db{
 
     /**
      +----------------------------------------------------------
-     * 执行查询 主要针对 SELECT, SHOW 等指令
-     * 返回数据集
+     * 执行查询 返回数据集
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -104,7 +103,7 @@ class DbPdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function _query($str='') {
+    public function query($str='') {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -129,9 +128,9 @@ class DbPdo extends Db{
 
     /**
      +----------------------------------------------------------
-     * 执行语句 针对 INSERT, UPDATE 以及DELETE
+     * 执行语句
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -140,7 +139,7 @@ class DbPdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function _execute($str='') {
+    public function execute($str='') {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -302,7 +301,7 @@ class DbPdo extends Db{
                     $sql   = 'DESCRIBE '.$tableName;
             }
         }
-        $result = $this->_query($sql);
+        $result = $this->query($sql);
         $info   =   array();
         foreach ($result as $key => $val) {
             $name= strtolower(isset($val['Field'])?$val['Field']:$val['Name']);
@@ -361,7 +360,7 @@ class DbPdo extends Db{
                 }
             }
         }
-        $result = $this->_query($sql);
+        $result = $this->query($sql);
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
@@ -527,7 +526,7 @@ class DbPdo extends Db{
             case 'ORACLE':
             case 'OCI':
                 $sequenceName = C("DB_SEQUENCE_PREFIX") . $this->tableName;
-                $vo = $this->_query("SELECT {$sequenceName}.currval currval FROM dual");
+                $vo = $this->query("SELECT {$sequenceName}.currval currval FROM dual");
                 return $vo?$vo[0]["currval"]:0;
         }
     }
