@@ -23,7 +23,7 @@
  */
 class RelationModel extends Model {
     // 关联定义
-    public    $_link;
+    protected    $_link;
 
     /**
      +----------------------------------------------------------

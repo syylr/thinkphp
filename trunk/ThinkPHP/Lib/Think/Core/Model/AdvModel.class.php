@@ -24,14 +24,14 @@
 class AdvModel extends Model {
     // 数据库连接对象列表
     private $_db = array();
-    // 返回数据类型
-    public $returnType  =  'array';
-    public $blobFields     =   array();
-    public $blobValues    = null;
-    public $serializeField   = array();
-    public $readonlyField  = array();
-    public $_filter           = array();
-    protected $_fields = null;
+    private $_fields = null;
+    protected $returnType  =  'array';
+    protected $blobFields     =   array();
+    protected $blobValues    = null;
+    protected $serializeField   = array();
+    protected $readonlyField  = array();
+    protected $_filter           = array();
+
     public function __construct($name='') {
         if('' !== $name || is_subclass_of($this,'AdvModel') ){
             // 如果是AdvModel子类或者有传入模型名称则获取字段缓存

@@ -23,7 +23,7 @@
  */
 class ViewModel extends Model {
 
-    public $viewFields;
+    protected $viewFields;
 
     /**
      +----------------------------------------------------------
