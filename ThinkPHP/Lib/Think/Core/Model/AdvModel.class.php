@@ -30,6 +30,7 @@ class AdvModel extends Model {
     public $blobValues    = null;
     public $serializeField   = array();
     public $readonlyField  = array();
+    public $_filter           = array();
     protected $_fields = null;
     public function __construct($name='') {
         if('' !== $name || is_subclass_of($this,'AdvModel') ){
@@ -74,6 +75,8 @@ class AdvModel extends Model {
         $this->checkSerializeField($result);
         // 获取文本字段
         $this->getBlobFields($result);
+        // 检查字段过滤
+        $result   =  $this->getFilterFields($result);
     }
 
     // 查询数据集成功后的回调方法
@@ -82,12 +85,15 @@ class AdvModel extends Model {
         $resultSet   =  $this->checkListSerializeField($resultSet);
         // 获取文本字段
         $resultSet   =  $this->getListBlobFields($resultSet);
+        // 检查列表字段过滤
+        $resultSet   =  $this->getFilterListFields($resultSet);
     }
 
     // 写入前的回调方法
     protected function _before_insert(&$data,$options='') {
         // 检查文本字段
         $data = $this->checkBlobFields($data);
+        $data   =  $this->setFilterFields($data);
         $data = $this->serializeField($data);
     }
 
@@ -102,6 +108,8 @@ class AdvModel extends Model {
         $data = $this->checkBlobFields($data);
         // 检查只读字段
         $data = $this->checkReadonlyField($data);
+        // 检查字段过滤
+        $data   =  $this->setFilterFields($data);
         // 检查序列化字段
         $data = $this->serializeField($data);
     }
@@ -114,18 +122,6 @@ class AdvModel extends Model {
     protected function _after_delete($data,$options) {
         // 删除Blob数据
         $this->delBlobFields($data);
-    }
-
-    // 创建数据前的回调方法
-    protected function _before_create($data,$type){
-        // 自动验证
-        return $this->autoValidation($data,$type);
-    }
-
-    // 创建数据后的回调方法
-    protected function _after_create(&$data,$type) {
-        // 自动完成
-        $this->autoOperation($data,$type);
     }
 
     /**
@@ -223,6 +219,76 @@ class AdvModel extends Model {
                 else
                     throw_exception(L('_CLASS_NOT_EXIST_').':'.$type);
         }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取数据的时候过滤数据字段
+     +----------------------------------------------------------
+     * @access pubic
+     +----------------------------------------------------------
+     * @param mixed $result 查询的数据
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function getFilterFields(&$result) {
+        if(!empty($this->_filter)) {
+            foreach ($this->_filter as $field=>$filter){
+                if(isset($result[$field])) {
+                    $fun  =  $filter[1];
+                    if(!empty($fun)) {
+                        if(isset($filter[2]) && $filter[2]){
+                            // 传递整个数据对象作为参数
+                            $result[$field]  =  call_user_func($fun,$result);
+                        }else{
+                            // 传递字段的值作为参数
+                            $result[$field]  =  call_user_func($fun,$result[$field]);
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    public function getFilterListFields(&$resultSet) {
+        if(!empty($this->_filter)) {
+            foreach ($resultSet as $key=>$result)
+                $resultSet[$key]  =  $this->getFilterFields($result);
+        }
+        return $resultSet;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 写入数据的时候过滤数据字段
+     +----------------------------------------------------------
+     * @access pubic
+     +----------------------------------------------------------
+     * @param mixed $result 查询的数据
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    public function setFilterFields($data) {
+        if(!empty($this->_filter)) {
+            foreach ($this->_filter as $field=>$filter){
+                if(isset($data[$field])) {
+                    $fun              =  $filter[0];
+                    if(!empty($fun)) {
+                        if(isset($filter[2]) && $filter[2]) {
+                            // 传递整个数据对象作为参数
+                            $data[$field]   =  call_user_func($fun,$data);
+                        }else{
+                            // 传递字段的值作为参数
+                            $data[$field]   =  call_user_func($fun,$data[$field]);
+                        }
+                    }
+                }
+            }
+        }
+        return $data;
     }
 
     /**
@@ -376,12 +442,13 @@ class AdvModel extends Model {
     public function setInc($field,$condition='',$step=1,$lazyTime=0) {
         if(empty($condition) && isset($this->options['where']))
             $condition   =  $this->options['where'];
+        if(empty($condition)) { // 没有条件不做任何更新
+            return false;
+        }
         if($lazyTime>0) {// 延迟写入
-            $guid =  md5($this->name.'_'.$field);
+            $guid =  md5($this->name.'_'.$field.'_'.serialize($conditon));
             $step = $this->lazyWrite($guid,$step,$lazyTime);
-            if(false === $step )
-                // 等待下次写入
-                return true;
+            if(false === $step ) return true; // 等待下次写入
         }
         return $this->setField($field,array('exp',$field.'+'.$step),$condition);
     }
@@ -403,19 +470,20 @@ class AdvModel extends Model {
     public function setDec($field,$condition='',$step=1,$lazyTime=0) {
         if(empty($condition) && isset($this->options['where']))
             $condition   =  $this->options['where'];
+        if(empty($condition)) { // 没有条件不做任何更新
+            return false;
+        }
         if($lazyTime>0) {// 延迟写入
-            $guid =  md5($this->name.'_'.$field);
+            $guid =  md5($this->name.'_'.$field.'_'.serialize($conditon));
             $step = $this->lazyWrite($guid,$step,$lazyTime);
-            if(false === $step )
-                // 等待下次写入
-                return true;
+            if(false === $step ) return true; // 等待下次写入
         }
         return $this->setField($field,array('exp',$field.'-'.$step),$condition);
     }
 
     /**
      +----------------------------------------------------------
-     * 延时写入检查 返回false表示需要延时
+     * 延时更新检查 返回false表示需要延时
      * 否则返回实际写入的数值
      +----------------------------------------------------------
      * @access public
@@ -430,7 +498,7 @@ class AdvModel extends Model {
     protected function lazyWrite($guid,$step,$lazyTime) {
         if(false !== ($value = F($guid))) { // 存在缓存写入数据
             if(time()>F($guid.'_time')+$lazyTime) {
-                // 延时写入时间到了，删除缓存数据 并实际写入数据库
+                // 延时更新时间到了，删除缓存数据 并实际写入数据库
                 F($guid,NULL);
                 F($guid.'_time',NULL);
                 return $value+$step;
@@ -660,6 +728,64 @@ class AdvModel extends Model {
             $this->rollback();
         }
         return true;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 得到分表的的数据表名
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $data 操作的数据
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function getPartitionTableName($data=array()) {
+        // 对数据表进行分区
+        if(isset($data[$this->partition['field']])) {
+            $field   =   $data[$this->partition['field']];
+            switch($this->partition['type']) {
+                case 'id':
+                    // 按照id范围分表
+                    $step    =   $this->partition['expr'];
+                    $seq    =   floor($field / $step)+1;
+                    break;
+                case 'year':
+                    // 按照年份分表
+                    if(!is_numeric($field)) {
+                        $field   =   strtotime($field);
+                    }
+                    $seq    =   date('Y',$field)-$this->partition['expr']+1;
+                    break;
+                case 'mod':
+                    // 按照id的模数分表
+                    $seq    =   ($field % $this->partition['num'])+1;
+                    break;
+                case 'md5':
+                    // 按照md5的序列分表
+                    $seq    =   (ord(substr(md5($field),0,1)) % $this->partition['num'])+1;
+                    break;
+                default :
+                    if(function_exists($this->partition['type'])) {
+                        // 支持指定函数哈希
+                        $fun    =   $this->partition['type'];
+                        $seq    =   (ord(substr($fun($field),0,1)) % $this->partition['num'])+1;
+                    }else{
+                        // 按照字段的首字母的值分表
+                        $seq    =   (ord($field{0}) % $this->partition['num'])+1;
+                    }
+            }
+            return $this->getTableName().'_'.$seq;
+        }else{
+            // 当设置的分表字段不在查询条件或者数据中
+            // 进行联合查询，必须设定 partition['num']
+            $tableName  =   array();
+            for($i=0;$i<$this->partition['num'];$i++)
+                $tableName[] = 'SELECT * FROM '.$this->getTableName().'_'.$i;
+            $tableName = '( '.implode(" UNION ",$tableName).') AS '.$this->name;
+            return $tableName;
+        }
     }
 }
 ?>
