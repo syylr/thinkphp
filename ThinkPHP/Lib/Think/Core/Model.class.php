@@ -173,7 +173,7 @@ class Model extends Think
         if(!empty($vars)) {
             // 传入当前模型的属性到扩展模型
             foreach ($vars as $var)
-                $this->_extModel->$var  = $this->$var;
+                $this->_extModel->setProperty($var,$this->$var);
         }
         return $this->_extModel;
     }
@@ -1135,6 +1135,23 @@ class Model extends Think
             $this->_auto   =  $rule['auto'];
         }
         return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 设置模型的属性值
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $name 名称
+     * @param mixed $value 值
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function setProperty($name,$value) {
+        if(property_exists($this,$name))
+            $this->$name = $value;
     }
 };
 ?>
