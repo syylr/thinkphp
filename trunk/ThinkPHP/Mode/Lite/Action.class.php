@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP
+// | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
 // | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
@@ -65,13 +65,13 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * 模板变量赋值
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $name
      * @param mixed $value
      +----------------------------------------------------------
      */
-    public function assign($name,$value=''){
+    protected function assign($name,$value=''){
         if(is_array($name)) {
             $this->tVar   =  array_merge($this->tVar,$name);
         }elseif(is_object($name)){
@@ -87,7 +87,7 @@ abstract class Action extends Think
      * 模板显示
      * 只支持PHP模板
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $templateFile 指定要调用的模板文件
      * 默认为空 由系统自动定位模板文件
@@ -97,7 +97,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function display($templateFile='',$charset='',$contentType='text/html')
+    protected function display($templateFile='',$charset='',$contentType='text/html')
     {
         if(empty($charset))  $charset = C('OUTPUT_CHARSET');
         // 网页字符编码
