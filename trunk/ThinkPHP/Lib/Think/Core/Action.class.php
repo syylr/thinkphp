@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP
+// | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
 // | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
@@ -49,7 +49,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * 获取当前Action名称
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      */
     protected function getActionName() {
@@ -85,7 +85,7 @@ abstract class Action extends Think
      * 模板显示
      * 调用内置的模板引擎显示方法，
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $templateFile 指定要调用的模板文件
      * 默认为空 由系统自动定位模板文件
@@ -95,7 +95,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function display($templateFile='',$charset='',$contentType='text/html')
+    protected function display($templateFile='',$charset='',$contentType='text/html')
     {
         $this->view->display($templateFile,$charset,$contentType);
     }
@@ -124,7 +124,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      *  创建静态页面
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $templateFile 指定要调用的模板文件
      * 默认为空 由系统自动定位模板文件
@@ -143,7 +143,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * 模板变量赋值
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $name 要显示的模板变量
      * @param mixed $value 变量的值
@@ -151,7 +151,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function assign($name,$value='')
+    protected function assign($name,$value='')
     {
         $this->view->assign($name,$value);
     }
@@ -164,14 +164,14 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * 取得模板显示变量的值
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $name 模板显示变量
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function get($name)
+    protected function get($name)
     {
         return $this->view->get($name);
     }
@@ -180,7 +180,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * Trace变量赋值
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $name 要显示的模板变量
      * @param mixed $value 变量的值
@@ -188,7 +188,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function trace($name,$value='')
+    protected function trace($name,$value='')
     {
         $this->view->trace($name,$value);
     }
@@ -244,7 +244,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * 操作错误跳转的快捷方法
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $message 错误信息
      * @param Boolean $ajax 是否为Ajax方式
@@ -252,7 +252,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function error($message,$ajax=false)
+    protected function error($message,$ajax=false)
     {
         $this->_dispatch_jump($message,0,$ajax);
     }
@@ -261,7 +261,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * 操作成功跳转的快捷方法
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $message 提示信息
      * @param Boolean $ajax 是否为Ajax方式
@@ -269,7 +269,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function success($message,$ajax=false)
+    protected function success($message,$ajax=false)
     {
         $this->_dispatch_jump($message,1,$ajax);
     }
@@ -278,7 +278,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * Ajax方式返回数据到客户端
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $data 要返回的数据
      * @param String $info 提示信息
@@ -288,7 +288,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function ajaxReturn($data,$info='',$status=1,$type='')
+    protected function ajaxReturn($data,$info='',$status=1,$type='')
     {
         // 保证AJAX返回后也能保存日志
         if(C('LOG_RECORD')) Log::save();
@@ -314,7 +314,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * 执行某个Action操作（隐含跳转） 支持指定模块和延时执行
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $action 要跳转的Action
      * @param string $module 要跳转的Module 默认为当前模块
@@ -325,7 +325,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function forward($action,$module='',$app='@',$exit=false,$delay=0)
+    protected function forward($action,$module='',$app='@',$exit=false,$delay=0)
     {
         if(!empty($delay)) sleep(intval($delay));// 指定延时
         if(is_array($action)) {
@@ -347,7 +347,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * Action跳转(URL重定向） 支持指定模块和延时跳转
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $url 跳转的URL表达式
      * @param array $params 其它URL参数
@@ -357,7 +357,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    public function redirect($url,$params=array(),$delay=0,$msg='') {
+    protected function redirect($url,$params=array(),$delay=0,$msg='') {
         $url    =   U($url,$params);
         redirect($url,$delay,$msg);
     }
