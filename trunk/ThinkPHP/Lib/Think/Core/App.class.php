@@ -269,7 +269,8 @@ class App
         // 定义当前语言
         define('LANG_SET',strtolower($langSet));
         // 加载框架语言包
-        L(include THINK_PATH.'/Lang/'.$langSet.'.php');
+        if(is_file(THINK_PATH.'/Lang/'.$langSet.'.php'))
+            L(include THINK_PATH.'/Lang/'.$langSet.'.php');
         // 读取项目公共语言包
         if (is_file(LANG_PATH.$langSet.'/common.php'))
             L(include LANG_PATH.$langSet.'/common.php');
