@@ -58,6 +58,7 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
         parse_str($array['query'],$query);
         $params = array_merge($query,$params);
     }
+
     if(C('URL_DISPATCH_ON') && C('URL_MODEL')>0) {
         $depr = C('URL_PATH_MODEL')==2?C('URL_PATH_DEPR'):'/';
         $str    =   $depr;
@@ -788,6 +789,30 @@ function auto_charset($fContents,$from,$to){
     else{
         return $fContents;
     }
+}
+
+// xml编码
+function xml_encode($data,$encoding='utf-8',$root="think") {
+    $xml = '<?xml version="1.0" encoding="'.$encoding.'"?>';
+    $xml.= '<'.$root.'>';
+    $xml.= data_to_xml($data);
+    $xml.= '</'.$root.'>';
+    return $xml;
+}
+
+function data_to_xml($data) {
+    if(is_object($data)) {
+        $data = get_object_vars($data);
+    }
+    $xml = '';
+    foreach($data as $key=>$val) {
+        is_numeric($key) && $key="item id=\"$key\"";
+        $xml.="<$key>";
+        $xml.=(is_array($val)||is_object($val))?data_to_xml($val):$val;
+        list($key,)=explode(' ',$key);
+        $xml.="</$key>";
+    }
+    return $xml;
 }
 
 /**
