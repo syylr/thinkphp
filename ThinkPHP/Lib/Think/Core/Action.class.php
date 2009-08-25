@@ -301,6 +301,10 @@ abstract class Action extends Think
             // 返回JSON数据格式到客户端 包含状态信息
             header("Content-Type:text/html; charset=utf-8");
             exit(json_encode($result));
+        }elseif(strtoupper($type)=='XML'){
+            // 返回xml格式数据
+            header("Content-Type:text/xml; charset=utf-8");
+            exit(xml_encode($result));
         }elseif(strtoupper($type)=='EVAL'){
             // 返回可执行的js脚本
             header("Content-Type:text/html; charset=utf-8");
@@ -308,39 +312,6 @@ abstract class Action extends Think
         }else{
             // TODO 增加其它格式
         }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 执行某个Action操作（隐含跳转） 支持指定模块和延时执行
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param mixed $action 要跳转的Action
-     * @param string $module 要跳转的Module 默认为当前模块
-     * @param string $app 要跳转的App 默认为当前项目
-     * @param boolean $exit  是否继续执行
-     * @param integer $delay 延时跳转的时间 单位为秒
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    protected function forward($action,$module='',$app='@',$exit=false,$delay=0)
-    {
-        if(!empty($delay)) sleep(intval($delay));// 指定延时
-        if(is_array($action)) {
-            call_user_func($action);
-        }else {
-            if(empty($module)) {
-                // 执行当前模块操作
-                call_user_func(array(&$this,$action));
-            }else{
-                $class =     A($module,$app);
-                call_user_func(array(&$class,$action));
-            }
-        }
-        if($exit)  exit();
-        return ;
     }
 
     /**
