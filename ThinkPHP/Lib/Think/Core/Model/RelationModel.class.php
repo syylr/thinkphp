@@ -216,7 +216,22 @@ class RelationModel extends Model {
                                 break;
                         }
                         if(!$return){
-                            $result[$mappingName] = $relationData;
+                            if(isset($val['as_fields']) && in_array($mappingType,array(HAS_ONE,BELONGS_TO)) ) {
+                                // 支持直接把关联的字段值映射成数据对象中的某个字段
+                                // 仅仅支持HAS_ONE BELONGS_TO
+                                $fields =   explode(',',$val['as_fields']);
+                                foreach ($fields as $field){
+                                    if(strpos($field,':')) {
+                                        list($name,$nick) = explode(':',$field);
+                                        $result[$nick]  =  $relationData[$name];
+                                    }else{
+                                        $result[$field]  =  $relationData[$field];
+                                    }
+                                }
+                            }else{
+                                $result[$mappingName] = $relationData;
+                            }
+                            unset($relationData);
                         }else{
                             return $relationData;
                         }
