@@ -246,6 +246,7 @@ class View extends Think
      * @access public
      +----------------------------------------------------------
      * @htmlfile 生成的静态文件名称
+     * @htmlpath 生成的静态文件路径
      * @param string $templateFile 指定要调用的模板文件
      * 默认为空 由系统自动定位模板文件
      * @param string $charset 输出编码
@@ -254,10 +255,10 @@ class View extends Think
      * @return string
      +----------------------------------------------------------
      */
-    public function buildHtml($htmlfile,$templateFile='',$charset='',$contentType='text/html') {
+    public function buildHtml($htmlfile,$htmlpath='',$templateFile='',$charset='',$contentType='text/html') {
         $content = $this->fetch($templateFile,$charset,$contentType);
-        if(!is_file($htmlfile)) // 默认在静态目录下面创建
-            $htmlfile =  HTML_PATH.$htmlfile.C('HTML_FILE_SUFFIX');
+        $htmlpath   = !empty($htmlpath)?$htmlpath:HTML_PATH;
+        $htmlfile =  $htmlpath.$htmlfile.C('HTML_FILE_SUFFIX');
         if(!is_dir(dirname($htmlfile)))
             // 如果静态目录不存在 则创建
             mk_dir(dirname($htmlfile));
