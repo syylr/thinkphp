@@ -54,19 +54,14 @@ class DbPgsql extends Db{
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
             $conn = $this->pconnect ? 'pg_pconnect':'pg_connect';
-            $this->linkID[$linkNum] =  $conn(
-            'host='         . $config['hostname'] .
-            ' port='            . $config['hostport'] .
-            ' dbname='  . $config['database'] .
-            ' user='            . $config['username'] .
-            ' password='    . $config['password']
-            );
-
-            if (pg_connection_status($this->linkID[$linkNum]) !== 0){
+            $this->linkID[$linkNum] =  $conn('host='.$config['hostname'].'port='.$config['hostport'].'dbname='.$config['database'].'user='.$config['username'].' password='.$config['password']);
+            if (0 !== pg_connection_status($this->linkID[$linkNum])){
                 throw_exception($this->error(false));
             }
-            $pgInfo = pg_version($this->linkID[$linkNum]);
-            $this->dbVersion = $pgInfo['server'];
+            //设置编码
+            pg_set_client_encoding($this->linkID[$linkNum], C('DB_CHARSET'));
+            //$pgInfo = pg_version($this->linkID[$linkNum]);
+            //$dbVersion = $pgInfo['server'];
             // 标记连接成功
             $this->connected    =   true;
             //注销数据库安全信息
