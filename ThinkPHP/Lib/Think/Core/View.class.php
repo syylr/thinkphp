@@ -353,9 +353,8 @@ class View extends Think
         $tokenName   = C('TOKEN_NAME');
         $tokenType = C('TOKEN_TYPE');
         $tokenValue = $tokenType(microtime(TRUE));
-        $tokenPos  =  md5(MODULE_NAME.'@'.ACTION_NAME);
-        $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenPos.$tokenValue.'" />';
-        $_SESSION[$tokenPos.$tokenName]  =  $tokenValue;
+        $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenValue.'" />';
+        $_SESSION[$tokenName]  =  $tokenValue;
         return $token;
     }
 
