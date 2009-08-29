@@ -62,6 +62,7 @@ return  array(
     /* 系统变量设置 */
     'VAR_PATHINFO'				=>	's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于URL_PATH_MODEL 和 URL_PATH_DEPR
     'VAR_GROUP'                  => 'g',     // 默认分组变量
+    'VAR_ROUTER'                =>    'r',    // 默认路由获取变量
     'VAR_MODULE'					=>	'm',		// 默认模块获取变量
     'VAR_ACTION'					=>	'a',		// 默认操作获取变量
    	'VAR_PAGE'						=>	'p',		// 默认分页跳转变量
