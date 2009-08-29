@@ -592,17 +592,21 @@ class  ThinkTemplate extends Think
             elseif( false !== strpos($var,'.')) {
                 //支持 {$var.property}
                 $vars = explode('.',$var);
+                $var  =  array_shift($vars);
                 switch(strtolower(C('TMPL_VAR_IDENTIFY'))) {
                     case 'array': // 识别为数组
-                        $name = '$'.$vars[0].'["'.$vars[1].'"]';
+                        $name = '$'.$var;
+                        foreach ($vars as $key=>$val)
+                            $name .= '["'.$val.'"]';
                         break;
                     case 'obj':  // 识别为对象
-                        $name = '$'.$vars[0].'->'.$vars[1];
+                        $name = '$'.$var;
+                        foreach ($vars as $key=>$val)
+                            $name .= '->'.$val;
                         break;
-                    default:  // 自动判断数组或对象
-                        $name = 'is_array($'.$vars[0].')?$'.$vars[0].'["'.$vars[1].'"]:$'.$vars[0].'->'.$vars[1];
+                    default:  // 自动判断数组或对象 只支持二维
+                        $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
                 }
-                $var  = $vars[0];
             }
             elseif(false !==strpos($var,':')){
                 //支持 {$var:property} 方式输出对象的属性
