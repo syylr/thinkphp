@@ -65,12 +65,17 @@ class  ThinkTemplate extends Think
         $this->config['cache_suffix']       =  C('TMPL_CACHFILE_SUFFIX');
         $this->config['tmpl_cache']        =  C('TMPL_CACHE_ON');
         $this->config['cache_time']        =  C('TMPL_CACHE_TIME');
-        $this->config['taglib_begin']        =  C('TAGLIB_BEGIN');
-        $this->config['taglib_end']          =  C('TAGLIB_END');
-        $this->config['tmpl_begin']         =  C('TMPL_L_DELIM');
-        $this->config['tmpl_end']           =  C('TMPL_R_DELIM');
+        $this->config['taglib_begin']        =  $this->stripPreg(C('TAGLIB_BEGIN'));
+        $this->config['taglib_end']          =  $this->stripPreg(C('TAGLIB_END'));
+        $this->config['tmpl_begin']         =  $this->stripPreg(C('TMPL_L_DELIM'));
+        $this->config['tmpl_end']           =  $this->stripPreg(C('TMPL_R_DELIM'));
         $this->config['default_tmpl']       =  C('TMPL_FILE_NAME');
         $this->config['tag_level']            =  C('TAG_NESTED_LEVEL');
+    }
+
+    private function stripPreg($str) {
+        $str = str_replace(array('{','}','(',')','|','[',']'),array('\{','\}','\(','\)','\|','\[','\]'),$str);
+        return $str;
     }
 
     // 模板变量获取和设置
@@ -213,8 +218,10 @@ class  ThinkTemplate extends Think
      */
     public function parse($content)
     {
+        $begin = $this->config['taglib_begin'];
+        $end   = $this->config['taglib_end'];
         // 首先替换literal标签内容
-        $content = preg_replace('/'.$this->config['taglib_begin'].'literal'.$this->config['taglib_end'].'(.*?)'.$this->config['taglib_begin'].'\/literal'.$this->config['taglib_end'].'/eis',"\$this->parseLiteral('\\1')",$content);
+        $content = preg_replace('/'.$begin.'literal'.$end.'(.*?)'.$begin.'\/literal'.$end.'/eis',"\$this->parseLiteral('\\1')",$content);
 
         // 获取需要引入的标签库列表
         // 标签库只需要定义一次，允许引入多个一次
@@ -344,6 +351,8 @@ class  ThinkTemplate extends Think
      */
     public function parseTagLib($tagLib,&$content,$hide=false)
     {
+        $begin = $this->config['taglib_begin'];
+        $end   = $this->config['taglib_end'];
         $tLib =  Think::instance('TagLib'.ucwords(strtolower($tagLib)));
         if($tLib->valid()) {
             //如果标签库有效则取出支持标签列表
@@ -361,21 +370,21 @@ class  ThinkTemplate extends Think
                 else
                     $level   =   1;
                 $endTag = $startTag;
-                if(false !== stripos($content,$this->config['taglib_begin'].$startTag)) {
+                if(false !== stripos($content,C('TAGLIB_BEGIN').$startTag)) {
                     if(empty($tag['attribute'])){
                         // 无属性标签
                         if($tag['content'] !='empty'){
                             for($i=0;$i<$level;$i++)
-                                $content = preg_replace('/'.$this->config['taglib_begin'].$startTag.'(\s*?)'.$this->config['taglib_end'].'(.*?)'.$this->config['taglib_begin'].'\/'.$endTag.'(\s*?)'.$this->config['taglib_end'].'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+                                $content = preg_replace('/'.$begin.$startTag.'(\s*?)'.$end.'(.*?)'.$begin.'\/'.$endTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
                         }else{
-                            $content = preg_replace('/'.$this->config['taglib_begin'].$startTag.'(\s*?)\/(\s*?)'.$this->config['taglib_end'].'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+                            $content = preg_replace('/'.$begin.$startTag.'(\s*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
                         }
                     }elseif($tag['content'] !='empty') {//闭合标签解析
                         for($i=0;$i<$level;$i++)
-                            $content = preg_replace('/'.$this->config['taglib_begin'].$startTag.'\s(.*?)'.$this->config['taglib_end'].'(.+?)'.$this->config['taglib_begin'].'\/'.$endTag.'(\s*?)'.$this->config['taglib_end'].'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
+                            $content = preg_replace('/'.$begin.$startTag.'\s(.*?)'.$end.'(.+?)'.$begin.'\/'.$endTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
                     }else {//开放标签解析
                         // 开始标签必须有一个空格
-                        $content = preg_replace('/'.$this->config['taglib_begin'].$startTag.'\s(.*?)\/(\s*?)'.$this->config['taglib_end'].'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+                        $content = preg_replace('/'.$begin.$startTag.'\s(.*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
                     }
                 }
             }
@@ -432,7 +441,7 @@ class  ThinkTemplate extends Think
         //还原非模板标签
         if(preg_match('/^[\s|\d]/is',$tagStr))
             //过滤空格和数字打头的标签
-            return $this->config['tmpl_begin'] . $tagStr .$this->config['tmpl_end'];
+            return C('TMPL_L_DELIM') . $tagStr .C('TMPL_R_DELIM');
         $flag =  substr($tagStr,0,1);
         $name   = substr($tagStr,1);
         if('$' == $flag){
@@ -484,34 +493,34 @@ class  ThinkTemplate extends Think
 
         //解析其它标签
         //统一标签格式 {TagName:args [|content]}
-        $varArray = explode(':',$tagStr);
-        //取得标签名称
-        $tag = trim(array_shift($varArray));
+        $pos =  strpos($tagStr,':');
+        $tag  =  substr($tagStr,0,$pos);
+        $args = trim(substr($tagStr,$pos+1));
 
         //解析标签内容
-        if(isset($varArray[0])) {
-            $args = explode('|',$varArray[0],2);
-            switch(strtoupper($tag)){
-                case 'INCLUDE':
-                    return $this->parseInclude(trim($args[0]));
+        if(!empty($args)) {
+            $tag  =  strtolower($tag);
+            switch($tag){
+                case 'include':
+                    return $this->parseInclude($args);
                     break;
-                case 'CALL':
-                    return $this->parseCall(trim($args[0]));
+                case 'call':
+                    return $this->parseCall($args);
                     break;
-                case 'LOAD':
-                    return $this->parseLoad(trim($args[0]));
+                case 'load':
+                    return $this->parseLoad($args);
                     break;
                 //这里扩展其它标签
                 //…………
                 default:
-                    if(C('EXT_TAG_PARSE')) {
-                        $method = C('EXT_TAG_PARSE');
+                    if(C('TAG_EXTEND_PARSE')) {
+                        $method = C('TAG_EXTEND_PARSE');
                         if(array_key_exists($tag,$method))
-                            return $method[$tag](trim($args[0]));
+                            return $method[$tag]($args);
                     }
             }
         }
-        return $this->config['tmpl_begin'] . $tagStr .$this->config['tmpl_end'];
+        return C('TMPL_L_DELIM') . $tagStr .C('TMPL_R_DELIM');
     }
 
     /**
