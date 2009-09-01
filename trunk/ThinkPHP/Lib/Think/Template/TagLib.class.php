@@ -166,7 +166,7 @@ class TagLib extends Think
                 $list[] =  array(
                     'name'=>$tags->name,
                     'content'=>$tags->bodycontent,
-                    'nested'=>isset($tags->nested)?$tags->nested:0,
+                    'nested'=>(!empty($tags->nested) && $tags->nested !='false') ?$tags->nested:0,
                     'attribute'=>isset($tags->attribute)?$tags->attribute:'',
                     );
                 if(isset($tags->alias)) {
@@ -175,7 +175,7 @@ class TagLib extends Think
                         $list[] =  array(
                             'name'=>$tag,
                             'content'=>$tags->bodycontent,
-                            'nested'=>isset($tags->nested)?$tags->nested:0,
+                            'nested'=>(!empty($tags->nested) && $tags->nested != 'false') ?$tags->nested:0,
                             'attribute'=>isset($tags->attribute)?$tags->attribute:'',
                             );
                     }
@@ -186,7 +186,7 @@ class TagLib extends Think
                     $list[] =  array(
                         'name'=>$tag['name'],
                         'content'=>$tag['bodycontent'],
-                        'nested'=>isset($tag['nested'])?$tag['nested']:0,
+                        'nested'=>(!empty($tag['nested']) && $tag['nested'] != 'false' )?$tag['nested']:0,
                         'attribute'=>isset($tag['attribute'])?$tag['attribute']:'',
                         );
                     if(isset($tag['alias'])) {
@@ -195,7 +195,7 @@ class TagLib extends Think
                             $list[] =  array(
                                 'name'=>$tag1,
                                 'content'=>$tag['bodycontent'],
-                                'nested'=>isset($tag['nested'])?$tag['nested']:0,
+                                'nested'=>(!empty($tag['nested']) && $tag['nested'] != 'false')?$tag['nested']:0,
                                 'attribute'=>isset($tag['attribute'])?$tag['attribute']:'',
                                 );
                         }
@@ -267,9 +267,7 @@ class TagLib extends Think
     public function parseXmlAttr($attr,$tag)
     {
         //XML解析安全过滤
-        $attr = str_replace("<","&lt;", $attr);
-        $attr = str_replace(">","&gt;", $attr);
-        $attr=str_replace('&','___',$attr);
+        $attr = str_replace('&','___', $attr);
         $xml =  '<tpl><tag '.$attr.' /></tpl>';
         $xml = simplexml_load_string($xml);
         if(!$xml) {
@@ -279,10 +277,11 @@ class TagLib extends Think
         $array = array_change_key_case($xml['@attributes']);
         $attrs  = $this->getTagAttrList($tag);
         foreach($attrs as $val) {
-            if( !isset($array[strtolower($val['name'])])) {
-                $array[strtolower($val['name'])] = '';
+            $name   = strtolower($val['name']);
+            if( !isset($array[$name])) {
+                $array[$name] = '';
             }else{
-                $array[strtolower($val['name'])] = str_replace('___','&',$array[strtolower($val['name'])]);
+                $array[$name] = str_replace('___','&',$array[$name]);
             }
         }
         return $array;
@@ -302,7 +301,16 @@ class TagLib extends Think
     public function parseCondition($condition) {
         $condition = str_ireplace(array_keys($this->comparison),array_values($this->comparison),$condition);
         $condition = preg_replace('/\$(\w+):(\w+)\s/is','$\\1->\\2 ',$condition);
-        $condition = preg_replace('/\$(\w+)\.(\w+)\s/is','(is_array($\\1)?$\\1["\\2"]:$\\1->\\2) ',$condition);
+        switch(strtolower(C('TMPL_VAR_IDENTIFY'))) {
+            case 'array': // 识别为数组
+                $condition = preg_replace('/\$(\w+)\.(\w+)\s/is','$\\1["\\2"] ',$condition);
+                break;
+            case 'obj':  // 识别为对象
+                $condition = preg_replace('/\$(\w+)\.(\w+)\s/is','$\\1->\\2 ',$condition);
+                break;
+            default:  // 自动判断数组或对象 只支持二维
+                $condition = preg_replace('/\$(\w+)\.(\w+)\s/is','(is_array($\\1)?$\\1["\\2"]:$\\1->\\2) ',$condition);
+        }
         return $condition;
     }
 
@@ -322,9 +330,22 @@ class TagLib extends Think
             // 特殊变量
             return $this->parseThinkVar($name);
         }elseif(strpos($name,'.')) {
-            // 数组和对象自动判断支持
             $vars = explode('.',$name);
-            $name = 'is_array($'.$vars[0].')?$'.$vars[0].'["'.$vars[1].'"]:$'.$vars[0].'->'.$vars[1];
+            $var  =  array_shift($vars);
+            switch(strtolower(C('TMPL_VAR_IDENTIFY'))) {
+                case 'array': // 识别为数组
+                    $name = '$'.$var;
+                    foreach ($vars as $key=>$val)
+                        $name .= '["'.$val.'"]';
+                    break;
+                case 'obj':  // 识别为对象
+                    $name = '$'.$var;
+                    foreach ($vars as $key=>$val)
+                        $name .= '->'.$val;
+                    break;
+                default:  // 自动判断数组或对象 只支持二维
+                    $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
+            }
         }elseif(strpos($name,':')){
             // 额外的对象方式支持
             $name   =   '$'.str_replace(':','->',$name);
@@ -350,8 +371,7 @@ class TagLib extends Think
         $vars = explode('.',$varStr);
         $vars[1] = strtoupper(trim($vars[1]));
         $parseStr = '';
-
-        if(count($vars)==3){
+        if(count($vars)>=3){
             $vars[2] = trim($vars[2]);
             switch($vars[1]){
                 case 'SERVER':    $parseStr = '$_SERVER[\''.$vars[2].'\']';break;
@@ -364,7 +384,6 @@ class TagLib extends Think
                 case 'CONST':     $parseStr = strtoupper($vars[2]);break;
                 case 'LANG':       $parseStr = 'L("'.$vars[2].'")';break;
                 case 'CONFIG':    $parseStr = 'C("'.$vars[2].'")';break;
-                default:break;
             }
         }else if(count($vars)==2){
             switch($vars[1]){
@@ -373,8 +392,8 @@ class TagLib extends Think
                 case 'TEMPLATE':$parseStr = 'C("TMPL_FILE_NAME")';break;
                 case 'LDELIM':    $parseStr = 'C("TMPL_L_DELIM")';break;
                 case 'RDELIM':    $parseStr = 'C("TMPL_R_DELIM")';break;
+                default:  if(defined($vars[1])) $parseStr = $vars[1];
             }
-            if(defined($vars[1])){ $parseStr = strtoupper($vars[1]);}
         }
         return $parseStr;
     }
