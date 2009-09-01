@@ -331,11 +331,11 @@ class Model extends Think
         $result = $this->db->insert($data,$options);
         $insertId   =   $this->getLastInsID();
         if($insertId) {
+            // 自增主键返回插入ID
             $data[$this->getPk()]  = $insertId;
             $this->_after_insert($data,$options);
             return $insertId;
         }
-        //成功后返回插入ID
         return $result;
     }
     // 插入数据前的回调方法
@@ -516,6 +516,22 @@ class Model extends Think
         if(!isset($options['table']))
             // 自动获取表名
             $options['table'] =$this->getTableName();
+        // 字段类型验证
+        if(C('DB_FIELDTYPE_CHECK')) {
+            if(is_array($options['where'])) {
+                // 对数组查询条件进行字段类型检查
+                foreach ($options['where'] as $key=>$val){
+                    if(in_array($key,$this->fields,true) && is_scalar($val)){
+                        $fieldType = strtolower($this->fields['_type'][$key]);
+                        if(false !== strpos($fieldType,'int')) {
+                            $options['where'][$key]   =  intval($val);
+                        }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
+                            $options['where'][$key]   =  floatval($val);
+                        }
+                    }
+                }
+            }
+        }
         // 表达式过滤
         $this->_options_filter($options);
         return $options;
