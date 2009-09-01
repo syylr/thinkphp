@@ -157,6 +157,7 @@ return  array(
     'TAGLIB_BUILD_IN'          =>   'cx',           //  内置标签库名称 可以更改成自己的 多个逗号分隔
     'TAGLIB_PRE_LOAD'         =>   '',   //  预先加载的标签库 无需在每个模板使用taglib标签加载 多个逗号分隔
     'TAG_NESTED_LEVEL'		=>	3,				// 标签嵌套级别
+    'TAG_EXTEND_PARSE'      =>    '',     //  普通标签扩展解析方法
     'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
 
     /* Cookie设置 */
