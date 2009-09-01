@@ -38,16 +38,11 @@ class TagLibCx extends TagLib
      * @return string
      +----------------------------------------------------------
      */
-    public function _include($attr)
+    public function _include($attr,$content)
     {
         $tag    = $this->parseXmlAttr($attr,'include');
         $file   =   $tag['file'];
-        if(is_file($file)) {
-            $parseStr = file_get_contents($file);
-            return $this->tpl->parse($parseStr);
-        }else {
-            return $this->tpl->parseInclude($file);
-        }
+        return $this->tpl->parseInclude($file);
     }
 
     /**
@@ -306,13 +301,13 @@ class TagLibCx extends TagLib
      */
     public function _case($attr,$content) {
         $tag = $this->parseXmlAttr($attr,'case');
-		$value = $tag['value'];
+        $value = $tag['value'];
         if('$' == substr($value,0,1)) {
             $varArray = explode('|',$value);
             $value	=	array_shift($varArray);
-			$value  =  $this->autoBuildVar(substr($value,1));
-			if(count($varArray)>0)
-				$value = $this->tpl->parseVarFunction($value,$varArray);
+            $value  =  $this->autoBuildVar(substr($value,1));
+            if(count($varArray)>0)
+                $value = $this->tpl->parseVarFunction($value,$varArray);
             $value   =  'case '.$value.': ';
         }elseif(strpos($value,'|')){
             $values  =  explode('|',$value);
@@ -321,12 +316,12 @@ class TagLibCx extends TagLib
                 $value   .=  'case "'.addslashes($val).'": ';
             }
         }else{
-			$value	=	'case "'.$value.'": ';
-		}
+            $value	=	'case "'.$value.'": ';
+        }
         $parseStr = '<?php '.$value.' ?>'.$content;
-		if('' ==$tag['break'] || $tag['break']) {
-			$parseStr .= '<?php break;?>';
-		}
+        if('' ==$tag['break'] || $tag['break']) {
+            $parseStr .= '<?php break;?>';
+        }
         return $parseStr;
     }
 
@@ -508,7 +503,7 @@ class TagLibCx extends TagLib
      */
     public function _notpresent($attr,$content)
     {
-        $tag      = $this->parseXmlAttr($attr,'notpresent');
+        $tag      = $this->parseXmlAttr($attr,'present');
         $name   = $tag['name'];
         $name   = $this->autoBuildVar($name);
         $parseStr  = '<?php if(!isset('.$name.')): ?>'.$content.'<?php endif; ?>';
@@ -538,11 +533,28 @@ class TagLibCx extends TagLib
         return $parseStr;
     }
 
+    public function _notempty($attr,$content)
+    {
+        $tag      = $this->parseXmlAttr($attr,'empty');
+        $name   = $tag['name'];
+        $name   = $this->autoBuildVar($name);
+        $parseStr  = '<?php if(!empty('.$name.')): ?>'.$content.'<?php endif; ?>';
+        return $parseStr;
+    }
+
     public function _defined($attr,$content)
     {
         $tag        = $this->parseXmlAttr($attr,'defined');
         $name     = $tag['name'];
         $parseStr = '<?php if(defined("'.$name.'")): ?>'.$content.'<?php endif; ?>';
+        return $parseStr;
+    }
+
+    public function _notdefined($attr,$content)
+    {
+        $tag        = $this->parseXmlAttr($attr,'defined');
+        $name     = $tag['name'];
+        $parseStr = '<?php if(!defined("'.$name.'")): ?>'.$content.'<?php endif; ?>';
         return $parseStr;
     }
 
