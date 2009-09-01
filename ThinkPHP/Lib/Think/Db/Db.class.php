@@ -449,8 +449,15 @@ class Db extends Think
     protected function parseTable($tables) {
         if(is_string($tables))
             $tables  =  explode(',',$tables);
-        array_walk($tables, array(&$this, 'addSpecialChar'));
-        return implode(',',$tables);
+        $array   =  array();
+        foreach ($tables as $key=>$table){
+            if(is_numeric($key)) {
+                $array[] =  $this->addSpecialChar($table);
+            }else{
+                $array[] =  $this->addSpecialChar($key).' '.$this->addSpecialChar($table);
+            }
+        }
+        return implode(',',$array);
     }
 
     /**
@@ -632,6 +639,17 @@ class Db extends Think
      +----------------------------------------------------------
      */
     protected function parseOrder($order) {
+        if(is_array($order)) {
+            $array   =  array();
+            foreach ($order as $key=>$val){
+                if(is_numeric($key)) {
+                    $array[] =  $this->addSpecialChar($val);
+                }else{
+                    $array[] =  $this->addSpecialChar($key).' '.$val;
+                }
+            }
+            $order   =  implode(',',$array);
+        }
         return !empty($order)?  ' ORDER BY '.$order:'';
     }
 
