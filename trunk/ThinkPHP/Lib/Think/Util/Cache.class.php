@@ -119,6 +119,9 @@ class Cache extends Think
         return $this->set($name,$value);
     }
 
+    public function __unset($name) {
+        $this->rm($name);
+    }
     public function setOptions($name,$value) {
         $this->options[$name]   =   $value;
     }
