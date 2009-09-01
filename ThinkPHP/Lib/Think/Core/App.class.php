@@ -407,18 +407,12 @@ class App
             if (method_exists($module,'_before_'.$action)) {
                 // 执行前置操作
                 call_user_func(array(&$module,'_before_'.$action));
-            }else{
-                // 操作前置标签
-                if($tagOn)  tag('action_before');
             }
             //执行当前操作
             call_user_func(array(&$module,$action));
             if (method_exists($module,'_after_'.$action)) {
                 //  执行后缀操作
                 call_user_func(array(&$module,'_after_'.$action));
-            }else{
-                // 操作后置标签
-                if($tagOn)  tag('action_after');
             }
         }
         // 项目结束标签
