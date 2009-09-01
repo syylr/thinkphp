@@ -17,7 +17,6 @@
 
 <tag>
 <name>php</name>
-<nested>true</nested>
 <bodycontent>true</bodycontent>
 </tag>
 
@@ -93,6 +92,7 @@
 
 <tag>
 <name>switch</name>
+<nested>true</nested>
 <bodycontent>true</bodycontent>
 <attribute>
 <name>name</name>
@@ -102,6 +102,7 @@
 
 <tag>
 <name>case</name>
+<nested>true</nested>
 <bodycontent>true</bodycontent>
 <attribute>
 <name>value</name>
@@ -115,6 +116,7 @@
 
 <tag>
 <name>default</name>
+<nested>true</nested>
 <bodycontent>empty</bodycontent>
 </tag>
 
@@ -204,6 +206,7 @@
 <tag>
 <name>empty</name>
 <nested>true</nested>
+<alias>notempty</alias>
 <bodycontent>true</bodycontent>
 <attribute>
 <name>name</name>
@@ -214,6 +217,7 @@
 <tag>
 <name>present</name>
 <nested>true</nested>
+<alias>notpresent</alias>
 <bodycontent>true</bodycontent>
 <attribute>
 <name>name</name>
@@ -221,18 +225,11 @@
 </attribute>
 </tag>
 
-<tag>
-<name>notpresent</name>
-<nested>true</nested>
-<bodycontent>true</bodycontent>
-<attribute>
-<name>name</name>
-<required>true</required>
-</attribute>
-</tag>
 
 <tag>
 <name>defined</name>
+<nested>true</nested>
+<alias>notdefined</alias>
 <bodycontent>true</bodycontent>
 <attribute>
 <name>name</name>
