@@ -289,8 +289,17 @@ class Model extends Think
         // 检查非数据字段
         if(isset($this->fields)) {
             foreach ($data as $key=>$val){
-                if(!in_array($key,$this->fields,true))
+                if(!in_array($key,$this->fields,true)){
                     unset($data[$key]);
+                }elseif(C('DB_FIELDTYPE_CHECK')) {
+                    // 字段类型检查
+                    $fieldType = strtolower($this->fields['_type'][$key]);
+                    if(false !== strpos($fieldType,'int')) {
+                        $data[$key]   =  intval($val);
+                    }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
+                        $data[$key]   =  floatval($val);
+                    }
+                }
             }
         }
         $this->_before_write($data);
@@ -606,23 +615,42 @@ class Model extends Think
      +----------------------------------------------------------
      * @param string $field  字段名
      * @param mixed $condition  查询条件
+     * @param string $spea  字段数据间隔符号
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function getField($field,$condition='') {
+    public function getField($field,$condition='',$sepa=' ') {
         if(empty($condition) && isset($this->options['where']))
             $condition   =  $this->options['where'];
         $options['where'] =  $condition;
         $options['field']    =  $field;
-        $result   =  $this->find($options);
-        if($result) {
-            // 2009-6-24 解决getField方法和add等方法冲突的问题
-            $this->data=  array();
-            return reset($result);
+        if(strpos($field,',')) {
+            $resultSet = $this->select($options);
+            if($resultSet) {
+                $field  =   explode(',',$field);
+                $cols   =   array();
+                foreach ($resultSet as $result){
+                    if(strpos($field[1],':')) {
+                        $array = explode(':',$field[1]);
+                        $cols[$result[$field[0]]] =  '';
+                        foreach ($array as $val)
+                            $cols[$result[$field[0]]] .=  $result[$val].$sepa;
+                    }else{
+                        $cols[$result[$field[0]]] =  $result[$field[1]];
+                    }
+                }
+                return $cols;
+            }
         }else{
-            return null;
+            $result   =  $this->find($options);
+            if($result) {
+                // 2009-6-24 解决getField方法和add等方法冲突的问题
+                $this->data=  array();
+                return reset($result);
+            }
         }
+        return null;
     }
 
     /**
@@ -675,15 +703,6 @@ class Model extends Think
             //保证赋值有效
             if(!is_null($val)){
                 $vo[$name] = (MAGIC_QUOTES_GPC && is_string($val))?   stripslashes($val)  :  $val;
-                if(C('DB_FIELDTYPE_CHECK')) {
-                    // 字段类型检查
-                    $fieldType = strtolower($this->fields['_type'][$name]);
-                    if(false !== strpos($fieldType,'int')) {
-                        $vo[$name]   =  intval($vo[$name]);
-                    }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
-                        $vo[$name]   =  floatval($vo[$name]);
-                    }
-                }
             }
         }
         // 创建完成对数据进行自动处理
