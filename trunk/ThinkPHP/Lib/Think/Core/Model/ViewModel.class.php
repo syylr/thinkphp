@@ -50,8 +50,9 @@ class ViewModel extends Model {
         if(empty($this->trueTableName)) {
             $tableName = '';
             foreach ($this->viewFields as $key=>$view){
-                $Model  =   D($key);
-                if($Model) {
+                $class  =   $key.'Model';
+                if(class_exists($class)) {
+                    $Model  =  new $class();
                     // 存在模型 获取模型定义的数据表名称
                     $tableName .= $Model->getTableName();
                 }else{
