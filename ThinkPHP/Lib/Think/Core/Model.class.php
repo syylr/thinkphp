@@ -287,7 +287,7 @@ class Model extends Think
      */
      protected function _facade($data) {
         // 检查非数据字段
-        if(isset($this->fields)) {
+        if(!empty($this->fields)) {
             foreach ($data as $key=>$val){
                 if(!in_array($key,$this->fields,true)){
                     unset($data[$key]);
