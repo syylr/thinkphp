@@ -50,30 +50,16 @@ class ViewModel extends Model {
         if(empty($this->trueTableName)) {
             $tableName = '';
             foreach ($this->viewFields as $key=>$view){
+                // 获取数据表名称
                 $class  =   $key.'Model';
-                if(class_exists($class)) {
-                    $Model  =  new $class();
-                    // 存在模型 获取模型定义的数据表名称
-                    $tableName .= $Model->getTableName();
-                }else{
-                    // 直接把key作为表名来对待
-                    $viewTable  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
-                    $viewTable .= $key;
-                    $viewTable .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
-                    $tableName .= strtolower($viewTable);
-                }
-                if(isset($view['_as']))
-                    $tableName .= ' '.$view['_as'];
-                else
-                    $tableName .= ' '.$key;
-                if(isset($view['_on']))
-                    // 支持ON 条件定义
-                    $tableName .= ' ON '.$view['_on'];
-                if(!empty($view['_type']))
-                    // 指定JOIN类型 例如 RIGHT INNER LEFT 下一个表有效
-                    $type = $view['_type'];
-                else
-                    $type = '';
+                $Model  =  class_exists($class)?new $class():M($key);
+                $tableName .= $Model->getTableName();
+                // 表别名定义
+                $tableName .= !empty($view['_as'])?' '.$view['_as']:' '.$key;
+                // 支持ON 条件定义
+                $tableName .= !empty($view['_on'])?' ON '.$view['_on']:'';
+                // 指定JOIN类型 例如 RIGHT INNER LEFT 下一个表有效
+                $type = !empty($view['_type'])?$view['_type']:'';
                 $tableName   .= ' '.strtoupper($type).' JOIN ';
                 $len  =  strlen($type.'_JOIN ');
             }
