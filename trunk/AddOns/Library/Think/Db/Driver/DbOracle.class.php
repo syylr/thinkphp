@@ -97,16 +97,16 @@ class DbOracle extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function query($str='') {
+    public function query($str) {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
-        if ( $str != '' ) $this->queryStr = $str;
+        $this->queryStr = $str;
         //更改事务模式
         $this->mode = OCI_COMMIT_ON_SUCCESS;
         //释放前次的查询结果
-        if ( $this->queryID ) {    $this->free();    }
+        if ( $this->queryID ) $this->free();
         $this->Q(1);
-        $this->queryID = oci_parse($this->_linkID,$this->queryStr);
+        $this->queryID = oci_parse($this->_linkID,$str);
         $this->debug();
         if (false === oci_execute($this->queryID, $this->mode)) {
             throw_exception($this->error());
@@ -128,22 +128,22 @@ class DbOracle extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-     public function execute($str='') {
+     public function execute($str) {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
-        if ( $str != '' ) $this->queryStr = $str;
+        $this->queryStr = $str;
         //更改事务模式
         $this->mode = OCI_COMMIT_ON_SUCCESS;
         //释放前次的查询结果
-        if ( $this->queryID ) {    $this->free();    }
+        if ( $this->queryID ) $this->free();
         $this->W(1);
-        $stmt = oci_parse($this->_linkID,$this->queryStr);
+        $stmt = oci_parse($this->_linkID,$str);
         $this->debug();
         if (false === oci_execute($stmt)) {
             throw_exception($this->error());
         } else {
             $this->numRows = oci_num_rows($stmt);
-            $this->lastInsID = preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $this->queryStr)?$this->insert_last_id():0;//add by wyfeng at 2008.12.22
+            $this->lastInsID = preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $str)?$this->insert_last_id():0;//add by wyfeng at 2008.12.22
             return $this->numRows;
         }
     }

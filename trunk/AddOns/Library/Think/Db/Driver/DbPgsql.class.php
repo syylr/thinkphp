@@ -95,14 +95,14 @@ class DbPgsql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function query($str='') {
+    public function query($str) {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
-        if ( $str != '' ) $this->queryStr = $str;
+        $this->queryStr = $str;
         //释放前次的查询结果
-        if ( $this->queryID ) {    $this->free();    }
+        if ( $this->queryID ) $this->free();
         $this->Q(1);
-        $this->queryID = pg_query($this->_linkID,$this->queryStr );
+        $this->queryID = pg_query($this->_linkID,$str);
         $this->debug();
         if ( false === $this->queryID ) {
             throw_exception($this->error());
@@ -125,14 +125,14 @@ class DbPgsql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function execute($str='') {
+    public function execute($str) {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
-        if ( $str != '' ) $this->queryStr = $str;
+        $this->queryStr = $str;
         //释放前次的查询结果
-        if ( $this->queryID ) {    $this->free();    }
+        if ( $this->queryID ) $this->free();
         $this->W(1);
-        $result =   pg_query($this->_linkID,$this->queryStr.$tableName);
+        $result =   pg_query($this->_linkID,$str);
         $this->debug();
         if ( false === $result ) {
             throw_exception($this->error());

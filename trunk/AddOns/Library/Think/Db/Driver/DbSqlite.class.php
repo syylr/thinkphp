@@ -94,14 +94,14 @@ class DbSqlite extends Db
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function query($str='') {
+    public function query($str) {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
-        if ( $str != '' ) $this->queryStr = $str;
+        $this->queryStr = $str;
         //释放前次的查询结果
-        if ( $this->queryID ) {    $this->free();    }
+        if ( $this->queryID ) $this->free();
         $this->Q(1);
-        $this->queryID = sqlite_query($this->_linkID,$this->queryStr);
+        $this->queryID = sqlite_query($this->_linkID,$str);
         $this->debug();
         if ( !$this->queryID ) {
             throw_exception($this->error());
@@ -124,14 +124,14 @@ class DbSqlite extends Db
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function execute($str='') {
+    public function execute($str) {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
-        if ( $str != '' ) $this->queryStr = $str;
+        $this->queryStr = $str;
         //释放前次的查询结果
-        if ( $this->queryID ) {    $this->free();    }
+        if ( $this->queryID ) $this->free();
         $this->W(1);
-        $result	=	sqlite_exec($this->_linkID,$this->queryStr);
+        $result	=	sqlite_exec($this->_linkID,$str);
         $this->debug();
         if ( false === $result ) {
             throw_exception($this->error());
