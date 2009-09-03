@@ -103,14 +103,14 @@ class DbPdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function query($str='') {
+    public function query($str) {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
-        if ( $str != '' ) $this->queryStr = $str;
+        $this->queryStr = $str;
         //释放前次的查询结果
-        if ( !empty($this->PDOStatement) ) {    $this->free();    }
+        if ( !empty($this->PDOStatement) ) $this->free();
         $this->Q(1);
-        $this->PDOStatement = $this->_linkID->prepare($this->queryStr);
+        $this->PDOStatement = $this->_linkID->prepare($str);
         if(false === $this->PDOStatement)
             throw_exception($this->error());
         $result =   $this->PDOStatement->execute();
@@ -135,14 +135,14 @@ class DbPdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function execute($str='') {
+    public function execute($str) {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
-        if ( $str != '' ) $this->queryStr = $str;
+        $this->queryStr = $str;
         //释放前次的查询结果
-        if ( !empty($this->PDOStatement) ) {    $this->free();    }
+        if ( !empty($this->PDOStatement) ) $this->free();
         $this->W(1);
-        $this->PDOStatement	=	$this->_linkID->prepare($this->queryStr);
+        $this->PDOStatement	=	$this->_linkID->prepare($str);
         if(false === $this->PDOStatement) {
             throw_exception($this->error());
         }
@@ -152,7 +152,7 @@ class DbPdo extends Db{
             throw_exception($this->error());
         } else {
             $this->numRows = $result;
-            if(preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $this->queryStr)) {
+            if(preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $str)) {
                 $this->lastInsID = $this->getLastInsertId();
             }
             return $this->numRows;
