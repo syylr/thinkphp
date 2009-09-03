@@ -106,14 +106,14 @@ class DbMysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function query($str='') {
+    public function query($str) {
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
-        if ( $str != '' ) $this->queryStr = $str;
+        $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
         $this->Q(1);
-        $this->queryID = mysql_query($this->queryStr, $this->_linkID);
+        $this->queryID = mysql_query($str, $this->_linkID);
         $this->debug();
         if ( false === $this->queryID ) {
             throw_exception($this->error());
@@ -136,14 +136,14 @@ class DbMysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function execute($str='') {
+    public function execute($str) {
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
-        if ( $str != '' ) $this->queryStr = $str;
+        $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
         $this->W(1);
-        $result =   mysql_query($this->queryStr, $this->_linkID) ;
+        $result =   mysql_query($str, $this->_linkID) ;
         $this->debug();
         if ( false === $result) {
             throw_exception($this->error());
