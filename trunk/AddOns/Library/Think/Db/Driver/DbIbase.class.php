@@ -104,9 +104,9 @@ class DbIbase extends Db{
         $this->queryID = ibase_query($this->_linkID, $str);
         $this->debug();
         if ( false === $this->queryID ) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
-            //$this->numCols = ibase_num_fields($this->queryID);
             return $this->getAll();
         }
     }
@@ -134,7 +134,8 @@ class DbIbase extends Db{
         $result =   ibase_query($this->_linkID, $str) ;
         $this->debug();
         if ( false === $result) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             $this->numRows = ibase_affected_rows($this->_linkID);
             $this->lastInsID =0;
