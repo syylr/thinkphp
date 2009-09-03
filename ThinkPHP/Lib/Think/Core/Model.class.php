@@ -291,7 +291,7 @@ class Model extends Think
             foreach ($data as $key=>$val){
                 if(!in_array($key,$this->fields,true)){
                     unset($data[$key]);
-                }elseif(C('DB_FIELDTYPE_CHECK')) {
+                }elseif(C('DB_FIELDTYPE_CHECK') && is_scalar($val)) {
                     // 字段类型检查
                     $fieldType = strtolower($this->fields['_type'][$key]);
                     if(false !== strpos($fieldType,'int')) {
