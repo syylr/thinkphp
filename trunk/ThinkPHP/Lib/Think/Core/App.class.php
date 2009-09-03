@@ -434,7 +434,6 @@ class App
         // 记录应用初始化时间
         if(C('SHOW_RUN_TIME'))  $GLOBALS['_initTime'] = microtime(TRUE);
         App::exec();
-        if(C('SHOW_RUN_TIME'))  $GLOBALS['_endTime'] = microtime(TRUE);
         // 保存日志记录
         if(C('LOG_RECORD')) Log::save();
         return ;
