@@ -235,17 +235,14 @@ class DbPgsql extends Db{
      +----------------------------------------------------------
      * 获得所有的查询数据
      +----------------------------------------------------------
-     * @access public
+     * @access private
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function getAll() {
-        if ( !$this->queryID ) {
-            throw_exception($this->error());
-        }
+    private function getAll() {
         //返回数据集
         $result   =  pg_fetch_all($this->queryID);
         pg_result_seek($this->queryID,0);
