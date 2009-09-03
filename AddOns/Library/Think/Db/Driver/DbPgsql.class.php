@@ -105,7 +105,8 @@ class DbPgsql extends Db{
         $this->queryID = pg_query($this->_linkID,$str);
         $this->debug();
         if ( false === $this->queryID ) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             $this->numRows = pg_num_rows($this->queryID);
             return $this->getAll();
@@ -135,7 +136,8 @@ class DbPgsql extends Db{
         $result =   pg_query($this->_linkID,$str);
         $this->debug();
         if ( false === $result ) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             $this->numRows = pg_affected_rows($result);
             $this->lastInsID =   $this->last_insert_id();

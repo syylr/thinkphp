@@ -103,8 +103,9 @@ class DbSqlite extends Db
         $this->Q(1);
         $this->queryID = sqlite_query($this->_linkID,$str);
         $this->debug();
-        if ( !$this->queryID ) {
-            throw_exception($this->error());
+        if ( false === $this->queryID ) {
+            $this->error();
+            return false;
         } else {
             $this->numRows = sqlite_num_rows($this->queryID);
             return $this->getAll();
@@ -134,7 +135,8 @@ class DbSqlite extends Db
         $result	=	sqlite_exec($this->_linkID,$str);
         $this->debug();
         if ( false === $result ) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             $this->numRows = sqlite_changes($this->_linkID);
             $this->lastInsID = sqlite_last_insert_rowid($this->_linkID);

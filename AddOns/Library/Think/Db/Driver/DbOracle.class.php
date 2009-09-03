@@ -109,7 +109,8 @@ class DbOracle extends Db{
         $this->queryID = oci_parse($this->_linkID,$str);
         $this->debug();
         if (false === oci_execute($this->queryID, $this->mode)) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
 			return $this->getAll();
         }
@@ -140,7 +141,8 @@ class DbOracle extends Db{
         $stmt = oci_parse($this->_linkID,$str);
         $this->debug();
         if (false === oci_execute($stmt)) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             $this->numRows = oci_num_rows($stmt);
             $this->lastInsID = preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $str)?$this->insert_last_id():0;//add by wyfeng at 2008.12.22

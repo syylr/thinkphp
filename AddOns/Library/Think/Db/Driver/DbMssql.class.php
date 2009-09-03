@@ -58,10 +58,7 @@ class DbMssql extends Db{
             $host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
             $this->linkID[$linkNum] = $conn( $host, $config['username'], $config['password']);
 
-            if ( !$this->linkID[$linkNum]) {
-                throw_exception($this->error());
-            }
-            if ( !mssql_select_db($config['database'], $this->linkID[$linkNum]) ) {
+            if ( !$this->linkID[$linkNum] || (!empty($config['database'])  && !mssql_select_db($config['database'], $this->linkID[$linkNum])) ) {
                 throw_exception($this->error());
             }
             // 标记连接成功
@@ -107,7 +104,8 @@ class DbMssql extends Db{
         $this->queryID = mssql_query($str, $this->_linkID);
         $this->debug();
         if ( false === $this->queryID ) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             $this->numRows = mssql_num_rows($this->queryID);
             return $this->getAll();
@@ -137,7 +135,8 @@ class DbMssql extends Db{
         $result	=	mssql_query($str, $this->_linkID);
         $this->debug();
         if ( false === $result ) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             $this->numRows = mssql_rows_affected($this->_linkID);
             $this->lastInsID = $this->mssql_insert_id();

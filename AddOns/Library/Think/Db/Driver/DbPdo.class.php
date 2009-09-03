@@ -116,7 +116,8 @@ class DbPdo extends Db{
         $result =   $this->PDOStatement->execute();
         $this->debug();
         if ( false === $result ) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             return $this->getAll();
         }
@@ -149,7 +150,8 @@ class DbPdo extends Db{
         $result	=	$this->PDOStatement->execute();
         $this->debug();
         if ( false === $result) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             $this->numRows = $result;
             if(preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $str)) {
