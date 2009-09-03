@@ -116,7 +116,8 @@ class DbMysql extends Db{
         $this->queryID = mysql_query($str, $this->_linkID);
         $this->debug();
         if ( false === $this->queryID ) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             $this->numRows = mysql_num_rows($this->queryID);
             return $this->getAll();
@@ -146,7 +147,8 @@ class DbMysql extends Db{
         $result =   mysql_query($str, $this->_linkID) ;
         $this->debug();
         if ( false === $result) {
-            throw_exception($this->error());
+            $this->error();
+            return false;
         } else {
             $this->numRows = mysql_affected_rows($this->_linkID);
             $this->lastInsID = mysql_insert_id($this->_linkID);

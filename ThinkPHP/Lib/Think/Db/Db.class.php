@@ -819,7 +819,7 @@ class Db extends Think
         if(isset($options['page'])) {
             // 根据页数计算limit
             list($page,$listRows) =  explode(',',$options['page']);
-            $listRows = $listRows?$listRows:($options['limit']?$options['limit']:20);
+            $listRows = $listRows?$listRows:((isset($options['limit']) && is_numeric($options['limit']))?$options['limit']:20);
             $offset  =  $listRows*((int)$page-1);
             $options['limit'] =  $offset.','.$listRows;
         }

@@ -338,12 +338,14 @@ class Model extends Think
         $this->_before_insert($data,$options);
         // 写入数据到数据库
         $result = $this->db->insert($data,$options);
-        $insertId   =   $this->getLastInsID();
-        if($insertId) {
-            // 自增主键返回插入ID
-            $data[$this->getPk()]  = $insertId;
-            $this->_after_insert($data,$options);
-            return $insertId;
+        if(false !== $result ) {
+            $insertId   =   $this->getLastInsID();
+            if($insertId) {
+                // 自增主键返回插入ID
+                $data[$this->getPk()]  = $insertId;
+                $this->_after_insert($data,$options);
+                return $insertId;
+            }
         }
         return $result;
     }
@@ -420,8 +422,10 @@ class Model extends Think
         }
         $this->_before_update($data,$options);
         $result = $this->db->update($data,$options);
-        if(isset($pkValue)) $data[$pk]   =  $pkValue;
-        $this->_after_update($data,$options);
+        if(false !== $result) {
+            if(isset($pkValue)) $data[$pk]   =  $pkValue;
+            $this->_after_update($data,$options);
+        }
         return $result;
     }
     // 更新数据前的回调方法
@@ -463,9 +467,11 @@ class Model extends Think
         // 分析表达式
         $options =  $this->_parseOptions($options);
         $result=    $this->db->delete($options);
-        $data = array();
-        if(isset($pkValue)) $data[$pk]   =  $pkValue;
-        $this->_after_delete($data,$options);
+        if(false !== $result) {
+            $data = array();
+            if(isset($pkValue)) $data[$pk]   =  $pkValue;
+            $this->_after_delete($data,$options);
+        }
         // 返回删除记录个数
         return $result;
     }
@@ -493,8 +499,11 @@ class Model extends Think
         // 分析表达式
         $options =  $this->_parseOptions($options);
         $resultSet = $this->db->select($options);
-        if(empty($resultSet)) { // 查询结果为空
+        if(false === $resultSet) {
             return false;
+        }
+        if(empty($resultSet)) { // 查询结果为空
+            return null;
         }
         $this->_after_select($resultSet,$options);
         return $resultSet;
@@ -570,8 +579,11 @@ class Model extends Think
         // 分析表达式
         $options =  $this->_parseOptions($options);
         $resultSet = $this->db->select($options);
-        if(empty($resultSet)) {// 查询结果为空
+        if(false === $resultSet) {
             return false;
+        }
+        if(empty($resultSet)) {// 查询结果为空
+            return null;
         }
         $this->data = $resultSet[0];
         $this->_after_find($this->data,$options);
@@ -761,7 +773,7 @@ class Model extends Think
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function execute($sql='')
+    public function execute($sql)
     {
         if(!empty($sql)) {
             if(strpos($sql,'__TABLE__'))
