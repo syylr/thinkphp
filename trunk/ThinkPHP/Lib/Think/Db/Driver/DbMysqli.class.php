@@ -220,17 +220,14 @@ class DbMysqli extends Db{
      +----------------------------------------------------------
      * 获得所有的查询数据
      +----------------------------------------------------------
-     * @access public
+     * @access private
      +----------------------------------------------------------
      * @param string $sql  sql语句
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      */
-    public function getAll() {
-        if ( !$this->queryID ) {
-            throw_exception($this->error());
-        }
+    private function getAll() {
         //返回数据集
         $result = array();
         if($this->numRows>0) {
