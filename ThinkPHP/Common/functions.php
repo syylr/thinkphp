@@ -36,6 +36,8 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
     $array   =  parse_url($url);
     $app      =  isset($array['scheme'])?   $array['scheme']  :APP_NAME;
     $route    =  isset($array['user'])?$array['user']:'';
+    if (defined('GROUP_NAME') && strcasecmp(GROUP_NAME,C('DEFAULT_GROUP')))
+        $group=  GROUP_NAME;
     if(isset($array['path'])) {
         $action  =  substr($array['path'],1);
         if(!isset($array['host'])) {
@@ -49,8 +51,6 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
             }
         }
     }else{ // 只指定操作
-        if (defined('GROUP_NAME') && strcasecmp(GROUP_NAME,C('DEFAULT_GROUP')))
-            $group=  GROUP_NAME;
         $module = MODULE_NAME;
         $action   =  $array['host'];
     }
