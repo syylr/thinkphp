@@ -36,7 +36,7 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
     $array   =  parse_url($url);
     $app      =  isset($array['scheme'])?   $array['scheme']  :APP_NAME;
     $route    =  isset($array['user'])?$array['user']:'';
-    if (defined('GROUP_NAME') && strcasecmp(GROUP_NAME,C('DEFAULT_GROUP')))
+    if (defined('GROUP_NAME') && GROUP_NAME != C('DEFAULT_GROUP'))
         $group=  GROUP_NAME;
     if(isset($array['path'])) {
         $action  =  substr($array['path'],1);
