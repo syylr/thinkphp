@@ -427,7 +427,7 @@ class AdvModel extends Model {
 
     /**
      +----------------------------------------------------------
-     * 字段值增长
+     * 字段值延迟增长
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -439,7 +439,7 @@ class AdvModel extends Model {
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setInc($field,$condition='',$step=1,$lazyTime=0) {
+    public function setLazyInc($field,$condition='',$step=1,$lazyTime=0) {
         if(empty($condition) && isset($this->options['where']))
             $condition   =  $this->options['where'];
         if(empty($condition)) { // 没有条件不做任何更新
@@ -455,7 +455,7 @@ class AdvModel extends Model {
 
     /**
      +----------------------------------------------------------
-     * 字段值减少
+     * 字段值延迟减少
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -467,7 +467,7 @@ class AdvModel extends Model {
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setDec($field,$condition='',$step=1,$lazyTime=0) {
+    public function setLazyDec($field,$condition='',$step=1,$lazyTime=0) {
         if(empty($condition) && isset($this->options['where']))
             $condition   =  $this->options['where'];
         if(empty($condition)) { // 没有条件不做任何更新
