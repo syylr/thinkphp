@@ -504,9 +504,6 @@ class  ThinkTemplate extends Think
                 case 'include':
                     return $this->parseInclude($args);
                     break;
-                case 'call':
-                    return $this->parseCall($args);
-                    break;
                 case 'load':
                     return $this->parseLoad($args);
                     break;
@@ -523,25 +520,6 @@ class  ThinkTemplate extends Think
         return C('TMPL_L_DELIM') . $tagStr .C('TMPL_R_DELIM');
     }
 
-    /**
-     +----------------------------------------------------------
-     * 调用操作方法 {call:module/action?a=1&b=2}
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $params  参数
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function parseCall($params) {
-        $array   =  parse_url($params);
-        $parseStr   =  '';
-        list($module,$action) = explode('/',$array['path']);
-        $vars = $array['query'];
-        $parseStr   =  '<?php $_module = A(\''.$module.'\');parse_str(\''.$vars.'\',$_vars);if(method_exists($_module,\''.$action.'\')): $_module->'.$action.'($_vars);endif;?>';
-        return $parseStr;
-    }
 
     /**
      +----------------------------------------------------------
