@@ -621,6 +621,40 @@ class Model extends Think
 
     /**
      +----------------------------------------------------------
+     * 字段值增长
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $field  字段名
+     * @param mixed $condition  条件
+     * @param integer $step  增长值
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function setInc($field,$condition='',$step=1) {
+        return $this->setField($field,array('exp',$field.'+'.$step),$condition);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 字段值减少
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $field  字段名
+     * @param mixed $condition  条件
+     * @param integer $step  减少值
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function setDec($field,$condition='',$step=1) {
+        return $this->setField($field,array('exp',$field.'-'.$step),$condition);
+    }
+
+    /**
+     +----------------------------------------------------------
      * 获取一条记录的某个字段值
      +----------------------------------------------------------
      * @access public
@@ -736,6 +770,190 @@ class Model extends Think
             }
             // 验证完成销毁session
             unset($_SESSION[$name]);
+        }
+        return true;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 使用正则验证数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $value  要验证的数据
+     * @param string $rule 验证规则
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function regex($value,$rule) {
+        $validate = array(
+            'require'=> '/.+/',
+            'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
+            'url' => '/^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/',
+            'currency' => '/^\d+(\.\d+)?$/',
+            'number' => '/\d+$/',
+            'zip' => '/^[1-9]\d{5}$/',
+            'integer' => '/^[-\+]?\d+$/',
+            'double' => '/^[-\+]?\d+(\.\d+)?$/',
+            'english' => '/^[A-Za-z]+$/',
+        );
+        // 检查是否有内置的正则表达式
+        if(isset($validate[strtolower($rule)]))
+            $rule   =   $validate[strtolower($rule)];
+        return preg_match($rule,$value)===1;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 自动表单处理
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $data 创建数据
+     * @param string $type 创建类型
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    private function autoOperation(&$data,$type) {
+        // 自动填充
+        if(!empty($this->_auto)) {
+            foreach ($this->_auto as $auto){
+                // 填充因子定义格式
+                // array('field','填充内容','填充条件','附加规则',[额外参数])
+                if(empty($auto[2])) $auto[2] = self::MODEL_INSERT; // 默认为新增的时候自动填充
+                if( $type == $auto[2] || $auto[2] == self::MODEL_BOTH) {
+                    switch($auto[3]) {
+                        case 'function':    //  使用函数进行填充 字段的值作为参数
+                        case 'callback': // 使用回调方法
+                            $args = isset($auto[4])?$auto[4]:array();
+                            array_unshift($args,$data[$auto[0]]);
+                            if('function'==$auto[3]) {
+                                $data[$auto[0]]  = call_user_func_array($auto[1], $args);
+                            }else{
+                                $data[$auto[0]]  =  call_user_func_array(array(&$this,$auto[1]), $args);
+                            }
+                            break;
+                        case 'field':    // 用其它字段的值进行填充
+                            $data[$auto[0]] = $data[$auto[1]];
+                            break;
+                        case 'string':
+                        default: // 默认作为字符串填充
+                            $data[$auto[0]] = $auto[1];
+                    }
+                    if(false === $data[$auto[0]] )   unset($data[$auto[0]]);
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 自动表单验证
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $data 创建数据
+     * @param string $type 创建类型
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    private function autoValidation($data,$type) {
+        // 属性验证
+        if(!empty($this->_validate)) {
+            // 如果设置了数据自动验证
+            // 则进行数据验证
+            // 重置验证错误信息
+            foreach($this->_validate as $key=>$val) {
+                // 验证因子定义格式
+                // array(field,rule,message,condition,type,when,params)
+                // 判断是否需要执行验证
+                if(empty($val[5]) || $val[5]== self::MODEL_BOTH || $val[5]== $type ) {
+                    if(0==strpos($val[2],'{%') && strpos($val[2],'}'))
+                        // 支持提示信息的多语言 使用 {%语言定义} 方式
+                        $val[2]  =  L(substr($val[2],2,-1));
+                    $val[3]  =  isset($val[3])?$val[3]:self::EXISTS_VAILIDATE;
+                    $val[4]  =  isset($val[4])?$val[4]:'regex';
+                    // 判断验证条件
+                    switch($val[3]) {
+                        case self::MUST_VALIDATE:   // 必须验证 不管表单是否有设置该字段
+                            if(false === $this->_validationField($data,$val)){
+                                $this->error    =   $val[2];
+                                return false;
+                            }
+                            break;
+                        case self::VALUE_VAILIDATE:    // 值不为空的时候才验证
+                            if('' != trim($data[$val[0]])){
+                                if(false === $this->_validationField($data,$val)){
+                                    $this->error    =   $val[2];
+                                    return false;
+                                }
+                            }
+                            break;
+                        default:    // 默认表单存在该字段就验证
+                            if(isset($data[$val[0]])){
+                                if(false === $this->_validationField($data,$val)){
+                                    $this->error    =   $val[2];
+                                    return false;
+                                }
+                            }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 根据验证因子验证字段
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $data 创建数据
+     * @param string $val 验证规则
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    private function _validationField($data,$val) {
+        switch($val[4]) {
+            case 'function':// 使用函数进行验证
+            case 'callback':// 调用方法进行验证
+                $args = isset($val[6])?$val[6]:array();
+                array_unshift($args,$data[$val[0]]);
+                if('function'==$val[4]) {
+                    return call_user_func_array($val[1], $args);
+                }else{
+                    return call_user_func_array(array(&$this, $val[1]), $args);
+                }
+            case 'confirm': // 验证两个字段是否相同
+                return $data[$val[0]] == $data[$val[1]];
+            case 'in': // 验证是否在某个数组范围之内
+                return in_array($data[$val[0]] ,$val[1]);
+            case 'equal': // 验证是否等于某个值
+                return $data[$val[0]] == $val[1];
+            case 'unique': // 验证某个值是否唯一
+                if(is_string($val[0]) && strpos($val[0],','))
+                    $val[0]  =  explode(',',$val[0]);
+                $map = array();
+                if(is_array($val[0])) {
+                    // 支持多个字段验证
+                    foreach ($val[0] as $field)
+                        $map[$field]   =  $data[$field];
+                }else{
+                    $map[$val[0]] = $data[$val[0]];
+                }
+                if($this->where($map)->find())
+                    return false;
+                break;
+            case 'regex':
+            default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
+                // 检查附加规则
+                return $this->regex($data[$val[0]],$val[1]);
         }
         return true;
     }
@@ -990,190 +1208,6 @@ class Model extends Think
 
     /**
      +----------------------------------------------------------
-     * 使用正则验证数据
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $value  要验证的数据
-     * @param string $rule 验证规则
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    public function regex($value,$rule) {
-        $validate = array(
-            'require'=> '/.+/',
-            'email' => '/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/',
-            'url' => '/^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/',
-            'currency' => '/^\d+(\.\d+)?$/',
-            'number' => '/\d+$/',
-            'zip' => '/^[1-9]\d{5}$/',
-            'integer' => '/^[-\+]?\d+$/',
-            'double' => '/^[-\+]?\d+(\.\d+)?$/',
-            'english' => '/^[A-Za-z]+$/',
-        );
-        // 检查是否有内置的正则表达式
-        if(isset($validate[strtolower($rule)]))
-            $rule   =   $validate[strtolower($rule)];
-        return preg_match($rule,$value)===1;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 自动表单处理
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $data 创建数据
-     * @param string $type 创建类型
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    private function autoOperation(&$data,$type) {
-        // 自动填充
-        if(!empty($this->_auto)) {
-            foreach ($this->_auto as $auto){
-                // 填充因子定义格式
-                // array('field','填充内容','填充条件','附加规则',[额外参数])
-                if(empty($auto[2])) $auto[2] = self::MODEL_INSERT; // 默认为新增的时候自动填充
-                if( $type == $auto[2] || $auto[2] == self::MODEL_BOTH) {
-                    switch($auto[3]) {
-                        case 'function':    //  使用函数进行填充 字段的值作为参数
-                        case 'callback': // 使用回调方法
-                            $args = isset($auto[4])?$auto[4]:array();
-                            array_unshift($args,$data[$auto[0]]);
-                            if('function'==$auto[3]) {
-                                $data[$auto[0]]  = call_user_func_array($auto[1], $args);
-                            }else{
-                                $data[$auto[0]]  =  call_user_func_array(array(&$this,$auto[1]), $args);
-                            }
-                            break;
-                        case 'field':    // 用其它字段的值进行填充
-                            $data[$auto[0]] = $data[$auto[1]];
-                            break;
-                        case 'string':
-                        default: // 默认作为字符串填充
-                            $data[$auto[0]] = $auto[1];
-                    }
-                    if(false === $data[$auto[0]] )   unset($data[$auto[0]]);
-                }
-            }
-        }
-        return $data;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 自动表单验证
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $data 创建数据
-     * @param string $type 创建类型
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    private function autoValidation($data,$type) {
-        // 属性验证
-        if(!empty($this->_validate)) {
-            // 如果设置了数据自动验证
-            // 则进行数据验证
-            // 重置验证错误信息
-            foreach($this->_validate as $key=>$val) {
-                // 验证因子定义格式
-                // array(field,rule,message,condition,type,when,params)
-                // 判断是否需要执行验证
-                if(empty($val[5]) || $val[5]== self::MODEL_BOTH || $val[5]== $type ) {
-                    if(0==strpos($val[2],'{%') && strpos($val[2],'}'))
-                        // 支持提示信息的多语言 使用 {%语言定义} 方式
-                        $val[2]  =  L(substr($val[2],2,-1));
-                    $val[3]  =  isset($val[3])?$val[3]:self::EXISTS_VAILIDATE;
-                    $val[4]  =  isset($val[4])?$val[4]:'regex';
-                    // 判断验证条件
-                    switch($val[3]) {
-                        case self::MUST_VALIDATE:   // 必须验证 不管表单是否有设置该字段
-                            if(false === $this->_validationField($data,$val)){
-                                $this->error    =   $val[2];
-                                return false;
-                            }
-                            break;
-                        case self::VALUE_VAILIDATE:    // 值不为空的时候才验证
-                            if('' != trim($data[$val[0]])){
-                                if(false === $this->_validationField($data,$val)){
-                                    $this->error    =   $val[2];
-                                    return false;
-                                }
-                            }
-                            break;
-                        default:    // 默认表单存在该字段就验证
-                            if(isset($data[$val[0]])){
-                                if(false === $this->_validationField($data,$val)){
-                                    $this->error    =   $val[2];
-                                    return false;
-                                }
-                            }
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 根据验证因子验证字段
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $data 创建数据
-     * @param string $val 验证规则
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    private function _validationField($data,$val) {
-        switch($val[4]) {
-            case 'function':// 使用函数进行验证
-            case 'callback':// 调用方法进行验证
-                $args = isset($val[6])?$val[6]:array();
-                array_unshift($args,$data[$val[0]]);
-                if('function'==$val[4]) {
-                    return call_user_func_array($val[1], $args);
-                }else{
-                    return call_user_func_array(array(&$this, $val[1]), $args);
-                }
-            case 'confirm': // 验证两个字段是否相同
-                return $data[$val[0]] == $data[$val[1]];
-            case 'in': // 验证是否在某个数组范围之内
-                return in_array($data[$val[0]] ,$val[1]);
-            case 'equal': // 验证是否等于某个值
-                return $data[$val[0]] == $val[1];
-            case 'unique': // 验证某个值是否唯一
-                if(is_string($val[0]) && strpos($val[0],','))
-                    $val[0]  =  explode(',',$val[0]);
-                $map = array();
-                if(is_array($val[0])) {
-                    // 支持多个字段验证
-                    foreach ($val[0] as $field)
-                        $map[$field]   =  $data[$field];
-                }else{
-                    $map[$val[0]] = $data[$val[0]];
-                }
-                if($this->where($map)->find())
-                    return false;
-                break;
-            case 'regex':
-            default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
-                // 检查附加规则
-                return $this->regex($data[$val[0]],$val[1]);
-        }
-        return true;
-    }
-
-    /**
-     +----------------------------------------------------------
      * 设置模型的属性值
      +----------------------------------------------------------
      * @access public
@@ -1181,12 +1215,13 @@ class Model extends Think
      * @param string $name 名称
      * @param mixed $value 值
      +----------------------------------------------------------
-     * @return void
+     * @return Model
      +----------------------------------------------------------
      */
     public function setProperty($name,$value) {
         if(property_exists($this,$name))
             $this->$name = $value;
+        return $this;
     }
 };
 ?>
