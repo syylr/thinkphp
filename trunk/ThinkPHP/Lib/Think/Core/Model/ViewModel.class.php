@@ -23,7 +23,7 @@
  */
 class ViewModel extends Model {
 
-    protected $viewFields;
+    protected $viewFields = array();
 
     /**
      +----------------------------------------------------------
@@ -193,14 +193,14 @@ class ViewModel extends Model {
      +----------------------------------------------------------
      * 检查fields表达式中的视图字段
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $fields 字段
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function checkFields($fields='') {
+    protected function checkFields($fields='') {
         if(empty($fields) || '*'==$fields ) {
             // 获取全部视图字段
             $fields =   array();
@@ -254,6 +254,5 @@ class ViewModel extends Model {
         }
         return $fields;
     }
-
 }
 ?>

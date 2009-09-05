@@ -23,7 +23,7 @@
  */
 class RelationModel extends Model {
     // 关联定义
-    protected    $_link;
+    protected    $_link = array();
 
     /**
      +----------------------------------------------------------
@@ -122,7 +122,7 @@ class RelationModel extends Model {
      +----------------------------------------------------------
      * 获取返回数据集的关联记录
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param array $resultSet  返回数据
      * @param string|array $name  关联名称
@@ -130,7 +130,7 @@ class RelationModel extends Model {
      * @return array
      +----------------------------------------------------------
      */
-    public function getRelations(&$resultSet,$name='') {
+    protected function getRelations(&$resultSet,$name='') {
         // 获取记录集的主键列表
         foreach($resultSet as $key=>$val) {
             $val  = $this->getRelation($val,$name);
@@ -143,7 +143,7 @@ class RelationModel extends Model {
      +----------------------------------------------------------
      * 获取返回数据的关联记录
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $result  返回数据
      * @param string|array $name  关联名称
@@ -152,7 +152,7 @@ class RelationModel extends Model {
      * @return array
      +----------------------------------------------------------
      */
-    public function getRelation(&$result,$name='',$return=false)
+    protected function getRelation(&$result,$name='',$return=false)
     {
         if(!empty($this->_link)) {
             foreach($this->_link as $key=>$val) {
@@ -245,7 +245,7 @@ class RelationModel extends Model {
      +----------------------------------------------------------
      * 操作关联数据
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $opType  操作方式 ADD SAVE DEL
      * @param mixed $data  数据对象
@@ -254,7 +254,7 @@ class RelationModel extends Model {
      * @return mixed
      +----------------------------------------------------------
      */
-    public function opRelation($opType,$data='',$name='')
+    protected function opRelation($opType,$data='',$name='')
     {
         $result =   false;
         if(empty($data) && !empty($this->data)){
@@ -352,7 +352,7 @@ class RelationModel extends Model {
                                             // 插入关联表数据
                                             $sql  = 'INSERT INTO '.$mappingRelationTable.' ('.$mappingFk.','.$mappingRelationFk.') SELECT a.'.$this->getPk().',b.'.$model->getPk().' FROM '.$this->getTableName().' AS a ,'.$model->getTableName()." AS b where a.".$this->getPk().' ='. $pk.' AND  b.'.$model->getPk().' IN ('.$relationId.") ";
                                             $result =   $model->execute($sql);
-                                            if($result)
+                                            if(false !== $result)
                                                 // 提交事务
                                                 $this->commit();
                                             else
@@ -403,8 +403,7 @@ class RelationModel extends Model {
     public function relationGet($name) {
         if(empty($this->data))
             return false;
-        $relation   = $this->getRelation($this->data,$name,true);
-        return $relation;
+        return $this->getRelation($this->data,$name,true);
     }
 }
 ?>

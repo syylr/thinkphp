@@ -199,7 +199,7 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      * 返回数据
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param array $data 数据
      * @param string $type 返回类型 默认为数组
@@ -207,7 +207,7 @@ class AdvModel extends Model {
      * @return mixed
      +----------------------------------------------------------
      */
-    protected function returnResult($data,$type='') {
+    public function returnResult($data,$type='') {
         if('' === $type)
             $type = $this->returnType;
         switch($type) {
@@ -225,14 +225,14 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      * 获取数据的时候过滤数据字段
      +----------------------------------------------------------
-     * @access pubic
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $result 查询的数据
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      */
-    public function getFilterFields(&$result) {
+    protected function getFilterFields(&$result) {
         if(!empty($this->_filter)) {
             foreach ($this->_filter as $field=>$filter){
                 if(isset($result[$field])) {
@@ -252,7 +252,7 @@ class AdvModel extends Model {
         return $result;
     }
 
-    public function getFilterListFields(&$resultSet) {
+    protected function getFilterListFields(&$resultSet) {
         if(!empty($this->_filter)) {
             foreach ($resultSet as $key=>$result)
                 $resultSet[$key]  =  $this->getFilterFields($result);
@@ -271,7 +271,7 @@ class AdvModel extends Model {
      * @return array
      +----------------------------------------------------------
      */
-    public function setFilterFields($data) {
+    protected function setFilterFields($data) {
         if(!empty($this->_filter)) {
             foreach ($this->_filter as $field=>$filter){
                 if(isset($data[$field])) {
@@ -309,7 +309,7 @@ class AdvModel extends Model {
         return $resultSet;
     }
 
-    public function checkBlobFields(&$data) {
+    protected function checkBlobFields(&$data) {
         // 检查Blob文件保存字段
         if(!empty($this->blobFields)) {
             foreach ($this->blobFields as $field){
@@ -329,7 +329,7 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      * 获取数据集的文本字段
      +----------------------------------------------------------
-     * @access pubic
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $resultSet 查询的数据
      * @param string $field 查询的字段
@@ -337,7 +337,7 @@ class AdvModel extends Model {
      * @return void
      +----------------------------------------------------------
      */
-    public function getListBlobFields(&$resultSet,$field='') {
+    protected function getListBlobFields(&$resultSet,$field='') {
         if(!empty($this->blobFields)) {
             foreach ($resultSet as $key=>$result){
                 $result =   $this->getBlobFields($result,$field);
@@ -351,7 +351,7 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      * 获取数据的文本字段
      +----------------------------------------------------------
-     * @access pubic
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $data 查询的数据
      * @param string $field 查询的字段
@@ -359,7 +359,7 @@ class AdvModel extends Model {
      * @return void
      +----------------------------------------------------------
      */
-    public function getBlobFields(&$data,$field='') {
+    protected function getBlobFields(&$data,$field='') {
         if(!empty($this->blobFields)) {
             $pk =   $this->getPk();
             $id =   $data[$pk];
@@ -380,14 +380,14 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      * 保存File方式的字段
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $data 保存的数据
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function saveBlobFields(&$data) {
+    protected function saveBlobFields(&$data) {
         if(!empty($this->blobFields)) {
             foreach ($this->blobValues as $key=>$val){
                 if(strpos($key,'@?id@'))
@@ -401,7 +401,7 @@ class AdvModel extends Model {
      +----------------------------------------------------------
      * 删除File方式的字段
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param mixed $data 保存的数据
      * @param string $field 查询的字段
@@ -409,7 +409,7 @@ class AdvModel extends Model {
      * @return void
      +----------------------------------------------------------
      */
-    public function delBlobFields(&$data,$field='') {
+    protected function delBlobFields(&$data,$field='') {
         if(!empty($this->blobFields)) {
             $pk =   $this->getPk();
             $id =   $data[$pk];
