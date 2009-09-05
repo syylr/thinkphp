@@ -147,10 +147,8 @@ class UploadFile extends Think
             $this->error = '文件上传保存错误！';
             return false;
         }
-        if($this->thumb) {
-            // 生成图像缩略图
-            import("ORG.Util.Image");
-            $image =  Image::getImageInfo($filename);
+        if($this->thumb && in_array(strtolower($file['extension']),array('gif','jpg','jpeg','bmp','png'))) {
+            $image =  getimagesize($filename);
             if(false !== $image) {
                 //是图像文件生成缩略图
                 $thumbWidth		=	explode(',',$this->thumbMaxWidth);
@@ -159,6 +157,8 @@ class UploadFile extends Think
                 $thumbSuffix = explode(',',$this->thumbSuffix);
                 $thumbFile			=	explode(',',$this->thumbFile);
                 $thumbPath    =  $this->thumbPath?$this->thumbPath:$file['savepath'];
+                // 生成图像缩略图
+                import("ORG.Util.Image");
                 for($i=0,$len=count($thumbWidth); $i<$len; $i++) {
                     $thumbname	=	$thumbPath.$thumbPrefix[$i].substr($file['savename'],0,strrpos($file['savename'], '.')).$thumbSuffix[$i].'.'.$file['extension'];
                     Image::thumb($filename,$thumbname,'',$thumbWidth[$i],$thumbHeight[$i],true);
