@@ -73,7 +73,7 @@ class App extends Base
         }else{
             // 设置系统时区 PHP5支持
             if(function_exists('date_default_timezone_set'))
-                date_default_timezone_set(C('DEFAULT_TIMEZONE'));
+                date_default_timezone_set(C('TIME_ZONE'));
 
             if('FILE' != strtoupper(C('SESSION_TYPE'))) {
                 // 其它方式Session支持 目前支持Db 通过过滤器方式扩展
@@ -177,7 +177,7 @@ class App extends Base
         // 加载项目公共文件
         if(file_exists_case(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
-            if(!C('APP_DEBUG')) {
+            if(!C('DEBUG_MODE')) {
                 if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
                     $common	= file_get_contents(COMMON_PATH.'common.php');
                 }else{
@@ -189,7 +189,7 @@ class App extends Base
             }
         }
         // 如果是调试模式加载调试模式配置文件
-        if(C('APP_DEBUG')) {
+        if(C('DEBUG_MODE')) {
             // 加载系统默认的开发模式配置文件
             C(include THINK_PATH.'/Common/debug.php');
             if(file_exists_case(CONFIG_PATH.'debug.php')) {

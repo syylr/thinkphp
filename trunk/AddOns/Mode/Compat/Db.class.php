@@ -745,7 +745,7 @@ class Db extends Base
                 $sets = $sets->toArray();
             }
         }
-        $sets    = auto_charset($sets,C('DEFAULT_CHARSET'),C('DB_CHARSET'));
+        $sets    = auto_charset($sets,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
         if(is_array($sets)){
             foreach ($sets as $key=>$val){
                 $key    =   $this->addSpecialChar($key);
@@ -1120,7 +1120,7 @@ class Db extends Base
             $data[$key] =   $val;
         }
         //转换数据库编码
-        $data    = auto_charset($data,C('DEFAULT_CHARSET'),C('DB_CHARSET'));
+        $data    = auto_charset($data,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
         $fields = array_keys($data);
         array_walk($fields, array($this, 'addSpecialChar'));
         $fieldsStr = implode(',', $fields);
@@ -1161,7 +1161,7 @@ class Db extends Base
                         $_data[$key]    =   $val;
                     }
                 }
-                $_data    = auto_charset($_data,C('DEFAULT_CHARSET'),C('DB_CHARSET'));
+                $_data    = auto_charset($_data,C('OUTPUT_CHARSET'),C('DB_CHARSET'));
                 $_values = array_values($_data);
                 array_walk($_values, array($this, 'fieldFormat'),true);
                 $values[] = '( '.implode(',', $_values).' )';

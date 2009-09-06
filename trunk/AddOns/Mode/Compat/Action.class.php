@@ -503,18 +503,18 @@ abstract class Action extends Base
         $result['status']  =  $status;
         $result['info'] =  $info;
         $result['data'] = $data;
-        if(empty($type)) $type  =   C('DEFAULT_AJAX_TYPE');
+        if(empty($type)) $type  =   C('AJAX_RETURN_TYPE');
         if(strtoupper($type)=='JSON') {
             // 返回JSON数据格式到客户端 包含状态信息
             header("Content-Type:text/html; charset=".C('OUTPUT_CHARSET'));
             exit(json_encode($result));
         }elseif(strtoupper($type)=='XML'){
             // 返回xml格式数据
-            header("Content-Type:text/xml; charset=".C('DEFAULT_CHARSET'));
+            header("Content-Type:text/xml; charset=".C('OUTPUT_CHARSET'));
             exit(xml_encode($result));
         }elseif(strtoupper($type)=='EVAL'){
             // 返回可执行的js脚本
-            header("Content-Type:text/html; charset=".C('DEFAULT_CHARSET'));
+            header("Content-Type:text/html; charset=".C('OUTPUT_CHARSET'));
             exit($data);
         }else{
             // TODO 增加其它格式
@@ -604,7 +604,7 @@ abstract class Action extends Base
         if($this->isAjax() ) {
             // 用于Ajax附件上传 显示信息
             if($this->get('_ajax_upload_')) {
-                header("Content-Type:text/html; charset=".C('DEFAULT_CHARSET'));
+                header("Content-Type:text/html; charset=".C('OUTPUT_CHARSET'));
                 exit($this->get('_ajax_upload_'));
             }else {
                 $this->ajaxReturn();

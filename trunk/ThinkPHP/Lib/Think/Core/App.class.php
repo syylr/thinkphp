@@ -333,7 +333,7 @@ class App
         }else{
             $appRoot   =  __ROOT__.'/'.APP_NAME.'/';
         }
-        $depr = C('URL_PATHINFO_MODEL')==2?C('URL_PATH_DEPR'):'/';
+        $depr = C('URL_PATHINFO_MODEL')==2?C('URL_PATHINFO_DEPR'):'/';
         $module = defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
         if(defined('GROUP_NAME')) {
             $group   = C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME;
@@ -346,7 +346,7 @@ class App
             C('CACHE_PATH',CACHE_PATH);
         }
         //当前操作地址
-        define('__ACTION__',__URL__.C('URL_PATH_DEPR').ACTION_NAME);
+        define('__ACTION__',__URL__.C('URL_PATHINFO_DEPR').ACTION_NAME);
         define('__CURRENT__', __ROOT__.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
         //项目模板目录
         define('APP_TMPL_PATH', $appRoot.$tmplDir);

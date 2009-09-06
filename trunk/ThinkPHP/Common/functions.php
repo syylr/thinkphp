@@ -59,8 +59,8 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
         $params = array_merge($query,$params);
     }
 
-    if(C('URL_DISPATCH_ON') && C('URL_ACCESS_MODEL')>0) {
-        $depr = C('URL_PATHINFO_MODEL')==2?C('URL_PATH_DEPR'):'/';
+    if(C('URL_DISPATCH_ON') && C('URL_MODEL')>0) {
+        $depr = C('URL_PATHINFO_MODEL')==2?C('URL_PATHINFO_DEPR'):'/';
         $str    =   $depr;
         foreach ($params as $var=>$val)
             $str .= $var.$depr.$val.$depr;
@@ -71,8 +71,8 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
         }else{
             $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$group.$module.$depr.$action.$str;
         }
-        if($suffix && C('HTML_URL_SUFFIX'))
-            $url .= C('HTML_URL_SUFFIX');
+        if($suffix && C('URL_HTML_SUFFIX'))
+            $url .= C('URL_HTML_SUFFIX');
     }else{
         $params =   http_build_query($params);
         if(isset($group)) {
@@ -317,7 +317,7 @@ function require_cache($filename)
 // 区分大小写的文件存在判断
 function file_exists_case($filename) {
     if(is_file($filename)) {
-        if(IS_WIN && C('APP_FILE_CHECKCASE')) {
+        if(IS_WIN && C('APP_FILE_CASE')) {
             if(basename(realpath($filename)) != basename($filename))
                 return false;
         }

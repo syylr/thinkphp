@@ -10,7 +10,7 @@
 /* 项目设定 */
 'APP_DEBUG'				----->  'DEBUG_MODE',
 'APP_PLUGIN_ON'         ----->  'TAG_PLUGIN_ON',
-'APP_FILE_CHECKCASE'    ----->  'CHECK_FILE_CASE',
+'APP_FILE_CASE'         ----->  'CHECK_FILE_CASE',
 'APP_GROUP_DEPR'        ----->  'GROUP_DEPR',    // 新增
 'APP_GROUP_LIST'        ----->  'APP_GROUP',     // 新增
 'APP_AUTOLOAD_REG'      ----->  'AUTOLOAD_REG',  // 新增
@@ -22,7 +22,7 @@
 'DEFAULT_GROUP'         ----->  // 新增
 'DEFAULT_CHARSET'       ----->  'OUTPUT_CHARSET',
 'DEFAULT_TIMEZONE'      ----->  'TIME_ZONE',
-'DEFAULT_AJAX_TYPE'     ----->  'AJAX_RETURN_TYPE',
+'DEFAULT_AJAX_RETURN'   ----->  'AJAX_RETURN_TYPE',
 
 /* 数据库设置 */
 'DB_FIELDTYPE_CHECK'    ----->  // 新增
@@ -52,7 +52,7 @@
 'TMPL_ACTION_SUCCESS'   ----->  'ACTION_JUMP_TMPL',
 'TMPL_TRACE_FILE'       ----->  // 2.0 新增,
 'TMPL_EXCEPTION_FILE'   ----->  // 2.0 新增,
-'TMPL_FILE_DEPR'=>'/', ----->   // 2.0 新增,
+'TMPL_FILE_DEPR'        ----->   // 2.0 新增,
 
 
 // Think模板引擎标签库相关设定
@@ -70,9 +70,10 @@
 'URL_CASE_INSENSITIVE'  ----->  // 新增
 'URL_ROUTER_ON'         ----->  'ROUTER_ON',
 'URL_DISPATCH_ON'       ----->  'DISPATCH_ON',
-'URL_ACCESS_MODEL'      ----->  'URL_MODEL',
+'URL_MODEL'             ----->  'URL_MODEL',
 'URL_PATHINFO_MODEL'    ----->  'PATH_MODEL',
 'URL_PATHINFO_DEPR'     ----->  'PATH_DEPR',
+'URL_HTML_SUFFIX'       ----->  'HTML_URL_SUFFIX',
 
 /* 系统变量名称设置 */
 'VAR_GROUP'             ----->  // 新增

@@ -35,7 +35,7 @@ class Dispatcher extends Think
      */
     static public function dispatch()
     {
-        $urlMode  =  C('URL_ACCESS_MODEL');
+        $urlMode  =  C('URL_MODEL');
         if($urlMode == URL_REWRITE ) {
             //当前项目地址
             $url    =   dirname(_PHP_FILE_);
@@ -55,7 +55,7 @@ class Dispatcher extends Think
                 $_GET  =  array_merge (self :: parsePathInfo(),$_GET);
                 $_varModule =   C('VAR_MODULE');
                 $_varAction =   C('VAR_ACTION');
-                $_depr  =   C('URL_PATH_DEPR');
+                $_depr  =   C('URL_PATHINFO_DEPR');
                 $_pathModel =   C('URL_PATHINFO_MODEL');
                 // 设置默认模块和操作
                 if(empty($_GET[$_varModule])) $_GET[$_varModule] = C('DEFAULT_MODULE');
@@ -101,7 +101,7 @@ class Dispatcher extends Think
     {
         $pathInfo = array();
         if(C('URL_PATHINFO_MODEL')==2){
-            $paths = explode(C('URL_PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
+            $paths = explode(C('URL_PATHINFO_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
             $pathInfo[C('VAR_MODULE')] = array_shift($paths);
             $pathInfo[C('VAR_ACTION')] = array_shift($paths);
             for($i = 0, $cnt = count($paths); $i <$cnt; $i++){
@@ -112,7 +112,7 @@ class Dispatcher extends Think
                 }
             }
         }else {
-            $res = preg_replace('@(\w+)'.C('URL_PATH_DEPR').'([^,\/]+)@e', '$pathInfo[\'\\1\']="\\2";', $_SERVER['PATH_INFO']);
+            $res = preg_replace('@(\w+)'.C('URL_PATHINFO_DEPR').'([^,\/]+)@e', '$pathInfo[\'\\1\']="\\2";', $_SERVER['PATH_INFO']);
         }
         return $pathInfo;
     }

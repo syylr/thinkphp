@@ -116,7 +116,7 @@ class DbOracle extends Db{
         $this->queryID = oci_parse($this->_linkID,$this->queryStr);
         $this->debug();
         if (!oci_execute($this->queryID, $this->mode)) {
-		    if ( $this->debug || C('APP_DEBUG'))
+		    if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
             else
                 return false;
@@ -158,7 +158,7 @@ class DbOracle extends Db{
         $stmt = oci_parse($this->_linkID,$this->queryStr);
         $this->debug();
         if (!oci_execute($stmt)) {
-            if ( $this->debug || C('APP_DEBUG'))
+            if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
             else
                 return false;

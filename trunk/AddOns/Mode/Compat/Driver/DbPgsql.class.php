@@ -116,7 +116,7 @@ class DbPgsql extends Db{
         $this->queryID = pg_query($this->_linkID,$this->queryStr );
         $this->debug();
         if ( !$this->queryID ) {
-            if ( $this->debug || C('APP_DEBUG'))
+            if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
             else
                 return false;
@@ -166,7 +166,7 @@ class DbPgsql extends Db{
         $result =   pg_query($this->_linkID,$this->queryStr.$tableName);
         $this->debug();
         if ( false === $result ) {
-            if ( $this->debug || C('APP_DEBUG'))
+            if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
             else
                 return false;

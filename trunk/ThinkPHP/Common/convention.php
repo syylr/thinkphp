@@ -30,12 +30,12 @@ return  array(
     'APP_DEBUG'				=> false,	// 是否开启调试模式
     'APP_DOMAIN_DEPLOY'     => false,   // 是否使用独立域名部署项目
     'APP_PLUGIN_ON'         => false,   // 是否开启插件机制
-    'APP_FILE_CHECKCASE'    => false,   // 是否检查文件的大小写 对Windows平台有效
+    'APP_FILE_CASE'         => false,   // 是否检查文件的大小写 对Windows平台有效
     'APP_GROUP_DEPR'        => '.',     // 模块分组之间的分割符
     'APP_GROUP_LIST'        => '',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
     'APP_AUTOLOAD_REG'      => false,   // 是否开启SPL_AUTOLOAD_REGISTER
     'APP_AUTOLOAD_PATH'     => 'Think.Util.',// __autoLoad 机制额外检测路径设置,注意搜索顺序
-    'APP_CONFIG_LIST' => array('taglibs','routes','tags','htmls','modules','actions'),// 项目额外需要加载的配置列表，默认包括：taglibs(标签库定义),routes(路由定义),tags(标签定义),(htmls)静态缓存定义, modules(扩展模块),actions(扩展操作)
+    'APP_CONFIG_LIST'       => array('taglibs','routes','tags','htmls','modules','actions'),// 项目额外需要加载的配置列表，默认包括：taglibs(标签库定义),routes(路由定义),tags(标签定义),(htmls)静态缓存定义, modules(扩展模块),actions(扩展操作)
 
     /* Cookie设置 */
     'COOKIE_EXPIRE'         => 3600,    // Coodie有效期
@@ -50,7 +50,7 @@ return  array(
     'DEFAULT_ACTION'        => 'index', // 默认操作名称
     'DEFAULT_CHARSET'       => 'utf-8', // 默认输出编码
     'DEFAULT_TIMEZONE'      => 'PRC',	// 默认时区
-    'DEFAULT_AJAX_TYPE'     => 'JSON',  // 默认AJAX 数据返回格式,可选JSON XML ...
+    'DEFAULT_AJAX_RETURN'   => 'JSON',  // 默认AJAX 数据返回格式,可选JSON XML ...
 
     /* 数据库设置 */
     'DB_TYPE'               => 'mysql',     // 数据库类型
@@ -85,7 +85,6 @@ return  array(
     'HTML_CACHE_TIME'		=> 60,      // 静态缓存有效期
     'HTML_READ_TYPE'        => 1,       // 静态缓存读取方式 0 readfile 1 redirect
     'HTML_FILE_SUFFIX'      => '.shtml',// 默认静态文件后缀
-    'HTML_URL_SUFFIX'       => '',      // 伪静态后缀设置
 
     /* 语言设置 */
     'LANG_AUTO_DETECT'      => false,   // 自动侦测语言
@@ -154,13 +153,14 @@ return  array(
 	'URL_CASE_INSENSITIVE'  => false,   // URL地址是否不区分大小写
     'URL_ROUTER_ON'         => false,   // 是否开启URL路由
     'URL_DISPATCH_ON'       => true,	// 是否启用Dispatcher
-    'URL_ACCESS_MODEL'      => 1,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：
+    'URL_MODEL'      => 1,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：
     // 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式) 当URL_DISPATCH_ON开启后有效; 默认为PATHINFO 模式，提供最好的用户体验和SEO支持
     'URL_PATHINFO_MODEL'    => 2,       // PATHINFO 模式,使用数字1、2、3代表以下三种模式:
     // 1 普通模式(参数没有顺序,例如/m/module/a/action/id/1);
     // 2 智能模式(系统默认使用的模式，可自动识别模块和操作/module/action/id/1/ 或者 /module,action,id,1/...);
     // 3 兼容模式(通过一个GET变量将PATHINFO传递给dispather，默认为s index.php?s=/module/action/id/1)
     'URL_PATHINFO_DEPR'     => '/',	// PATHINFO模式下，各参数之间的分割符号
+    'URL_HTML_SUFFIX'       => '',  // URL伪静态后缀设置
 
     /* 系统变量名称设置 */
     'VAR_GROUP'             => 'g',     // 默认分组获取变量

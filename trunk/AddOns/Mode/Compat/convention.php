@@ -33,7 +33,7 @@ return  array(
 	'DISPATCH_ON'				=>	true,	// 是否启用Dispatcher
 	'DISPATCH_NAME'			=>	'Think',	// 默认的Dispatcher名称
 	// URL模式： 0 普通模式 1 PATHINFO 2 REWRITE 3 兼容模式
-	'URL_ACCESS_MODEL'					=>	1,		// 默认为PATHINFO 模式，提供最好的用户体验和SEO支持
+	'URL_MODEL'					=>	1,		// 默认为PATHINFO 模式，提供最好的用户体验和SEO支持
 	// PATHINFO 模式
 	// 普通模式1 参数没有顺序/m/module/a/action/id/1
 	// 智能模式2 自动识别模块和操作/module/action/id/1/ 或者 /module,action,id,1/...
@@ -44,7 +44,7 @@ return  array(
 	'COMPONENT_DEPR'			=>	'@',		// 组件模块和操作的URL分割符
 	'COMPONENT_TYPE'			=>	1,	 //组件目录结构  1 Lib\User\Action\ 2 Lib\Action\User\
     'URL_CASE_INSENSITIVE'  =>   false, // URL是否不区分大小写
-    'APP_FILE_CHECKCASE'  =>   false, // 是否检查文件的大小写 对Windows平台有效
+    'CHECK_FILE_CASE'  =>   false, // 是否检查文件的大小写 对Windows平台有效
 
 	/* 日志设置 */
 	'WEB_LOG_RECORD'			=>	false,	 // 默认不记录日志
@@ -59,7 +59,7 @@ return  array(
 	'LIMIT_REFLESH_TIMES'	=>	3,	// 页面防刷新时间 默认3秒
 
 	/* 错误设置 */
-	'APP_DEBUG'				=>	false,	 // 调试模式默认关闭
+	'DEBUG_MODE'				=>	false,	 // 调试模式默认关闭
 	'ERROR_MESSAGE'			=>	'您浏览的页面暂时发生了错误！请稍后再试～',	// 错误显示信息 非调试模式有效
 	'ERROR_PAGE'					=>	'',	// 错误定向页面
     'SHOW_ERROR_MSG'        =>   true,
@@ -90,7 +90,7 @@ return  array(
 	'TEMPLATE_SUFFIX'			=>	'.html',	 // 默认模板文件后缀
 	'CACHFILE_SUFFIX'			=>	'.php',	// 默认模板缓存后缀
 	'TEMPLATE_CHARSET'		=>	'utf-8',	// 模板模板编码
-	'DEFAULT_CHARSET'			=>	'utf-8',	// 默认输出编码
+	'OUTPUT_CHARSET'			=>	'utf-8',	// 默认输出编码
     'DEFAULT_LAYOUT'         =>    'Layout:index', // 默认布局模板文件
 
 	/* 模型设置 */
@@ -113,7 +113,7 @@ return  array(
 	'LANG_SWITCH_ON'			=>	false,	 // 默认关闭多语言包功能
     'LANG_CACHE_ON'           =>    false, // 默认关闭语言包的缓存 大型应用可以开启 按照模块的语言包来缓存
 	'DEFAULT_LANGUAGE'		=>	'zh-cn',	 // 默认语言
-	'DEFAULT_TIMEZONE'					=>	'PRC',		 // 默认时区
+	'TIME_ZONE'					=>	'PRC',		 // 默认时区
 
 	/* 用户认证设置 */
 	'USER_AUTH_ON'				=>	false,		// 默认不启用用户认证
@@ -190,11 +190,11 @@ return  array(
     'COOKIE_SECRET_KEY'     =>   '',  // Cookie 加密Key
 
 	/* 分页设置 */
-	'PAGE_ROLLPAGE'				=>	5,			// 分页显示页数
-	'PAGE_LISTROWS'				=>	20,			// 分页每页显示记录数
+	'PAGE_NUMBERS'				=>	5,			// 分页显示页数
+	'LIST_NUMBERS'				=>	20,			// 分页每页显示记录数
 
 	/* 数据格式设置 */
-	'DEFAULT_AJAX_TYPE'		=>	'JSON', //AJAX 数据返回格式 JSON XML ...
+	'AJAX_RETURN_TYPE'		=>	'JSON', //AJAX 数据返回格式 JSON XML ...
 	'DATA_RESULT_TYPE'		=>	0,	// 默认数据返回格式 1 对象 0 数组
 
 	/* 其它设置 */
