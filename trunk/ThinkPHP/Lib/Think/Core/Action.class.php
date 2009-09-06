@@ -296,7 +296,7 @@ abstract class Action extends Think
         $result['status']  =  $status;
         $result['info'] =  $info;
         $result['data'] = $data;
-        if(empty($type)) $type  =   C('AJAX_RETURN_TYPE');
+        if(empty($type)) $type  =   C('DEFAULT_AJAX_TYPE');
         if(strtoupper($type)=='JSON') {
             // 返回JSON数据格式到客户端 包含状态信息
             header("Content-Type:text/html; charset=utf-8");

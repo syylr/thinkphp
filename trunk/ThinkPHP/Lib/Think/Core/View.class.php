@@ -167,7 +167,7 @@ class View extends Think
         if(null===$templateFile)
             // 使用null参数作为模版名直接返回不做任何输出
             return ;
-        if(empty($charset))  $charset = C('OUTPUT_CHARSET');
+        if(empty($charset))  $charset = C('DEFAULT_CHARSET');
         // 网页字符编码
         header("Content-Type:".$contentType."; charset=".$charset);
         header("Cache-control: private");  //支持页面回跳

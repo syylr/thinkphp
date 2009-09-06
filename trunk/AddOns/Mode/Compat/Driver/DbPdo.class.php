@@ -128,7 +128,7 @@ class DbPdo extends Db{
         $result =   $this->PDOStatement->execute();
         $this->debug();
         if ( !$result ) {
-            if ( $this->debug || C('DEBUG_MODE'))
+            if ( $this->debug || C('APP_DEBUG'))
                 throw_exception($this->error());
             else
                 return false;
@@ -174,7 +174,7 @@ class DbPdo extends Db{
         $result	=	$this->PDOStatement->execute();
         $this->debug();
         if ( false === $result) {
-            if ( $this->debug || C('DEBUG_MODE'))
+            if ( $this->debug || C('APP_DEBUG'))
                 throw_exception($this->error());
             else
                 return false;

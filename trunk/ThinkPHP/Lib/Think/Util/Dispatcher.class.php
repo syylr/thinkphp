@@ -36,7 +36,7 @@ class Dispatcher extends Think
      */
     static public function dispatch()
     {
-        $urlMode  =  C('URL_MODEL');
+        $urlMode  =  C('URL_ACCESS_MODEL');
         if($urlMode == URL_REWRITE ) {
             //当前项目地址
             $url    =   dirname(_PHP_FILE_);
@@ -58,8 +58,8 @@ class Dispatcher extends Think
                 $_varModule =   C('VAR_MODULE');
                 $_varAction =   C('VAR_ACTION');
                 $_depr  =   C('URL_PATH_DEPR');
-                $_pathModel =   C('URL_PATH_MODEL');
-                if (C('APP_GROUP')) {
+                $_pathModel =   C('URL_PATHINFO_MODEL');
+                if (C('APP_GROUP_LIST')) {
                     if(empty($_GET[$_varGroup]))
                         $_GET[$_varGroup] = C('DEFAULT_GROUP');
                 }else {
@@ -112,9 +112,9 @@ class Dispatcher extends Think
     private static function parsePathInfo()
     {
         $pathInfo = array();
-        if(C('URL_PATH_MODEL')==2){
+        if(C('URL_PATHINFO_MODEL')==2){
             $paths = explode(C('URL_PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
-            $groupApp = C('APP_GROUP');
+            $groupApp = C('APP_GROUP_LIST');
             if ($groupApp) {
                 $arr = array_map('strtolower',explode(',',$groupApp));
                 $pathInfo[C('VAR_GROUP')] = in_array(strtolower($paths[0]),$arr)? array_shift($paths) : C('DEFAULT_GROUP');
@@ -212,10 +212,10 @@ class Dispatcher extends Think
                 // 读取当前路由名称的路由规则
                 // 路由定义格式 routeName=>array(‘模块名称’,’操作名称’,’参数定义’,’额外参数’)
                 $route = $routes[$routeName];
-                if(strpos($route[0],C('GROUP_DEPR'))) {
-                    $array   =  explode(C('GROUP_DEPR'),$route[0]);
+                if(strpos($route[0],C('APP_GROUP_DEPR'))) {
+                    $array   =  explode(C('APP_GROUP_DEPR'),$route[0]);
                     $_GET[C('VAR_MODULE')]  =   array_pop($array);
-                    $_GET[C('VAR_GROUP')]  =   implode(C('GROUP_DEPR'),$array);
+                    $_GET[C('VAR_GROUP')]  =   implode(C('APP_GROUP_DEPR'),$array);
                 }else{
                     $_GET[C('VAR_MODULE')]  =   $route[0];
                 }
@@ -247,7 +247,7 @@ class Dispatcher extends Think
                     // 匹配路由定义
                     if(preg_match($rule,$regx,$matches)) {
                         // 检测是否存在分组 2009/06/23
-                        $temp = explode(C('GROUP_DEPR'),$route[1]);
+                        $temp = explode(C('APP_GROUP_DEPR'),$route[1]);
                         if ($temp[1]) {
                             $_GET[C('VAR_GROUP')]  = $temp[0];
                             $_GET[C('VAR_MODULE')] = $temp[1];

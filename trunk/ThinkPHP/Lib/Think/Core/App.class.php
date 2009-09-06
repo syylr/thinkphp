@@ -53,14 +53,14 @@ class App
         //[/RUNTIME]
 
         // 项目开始标签
-        if(C('PLUGIN_ON'))   tag('app_begin');
+        if(C('APP_PLUGIN_ON'))   tag('app_begin');
 
         // 设置系统时区 PHP5支持
         if(function_exists('date_default_timezone_set'))
-            date_default_timezone_set(C('TIME_ZONE'));
+            date_default_timezone_set(C('DEFAULT_TIMEZONE'));
 
         // 允许注册AUTOLOAD方法
-        if(C('AUTOLOAD_REG') && function_exists('spl_autoload_register'))
+        if(C('APP_AUTOLOAD_REG') && function_exists('spl_autoload_register'))
                 spl_autoload_register(array('Think', 'autoload'));
 
         if(C('SESSION_AUTO_START'))  session_start(); // Session初始化
@@ -80,7 +80,7 @@ class App
         if(!defined('MODULE_NAME')) define('MODULE_NAME',   App::getModule());       // Module名称
         if(!defined('ACTION_NAME')) define('ACTION_NAME',   App::getAction());        // Action操作
         // 加载项目分组公共文件
-        if(C('APP_GROUP')) {
+        if(C('APP_GROUP_LIST')) {
             if(!defined('GROUP_NAME')) define('GROUP_NAME', App::getGroup());       // Group名称
             // 分组配置文件
             if(is_file(CONFIG_PATH.GROUP_NAME.'/config.php'))
@@ -100,7 +100,7 @@ class App
             HtmlCache::readHTMLCache();
 
         // 项目初始化标签
-        if(C('PLUGIN_ON'))   tag('app_init');
+        if(C('APP_PLUGIN_ON'))   tag('app_init');
         return ;
     }
     //[RUNTIME]
@@ -124,7 +124,7 @@ class App
         $runtime = defined('RUNTIME_ALLINONE');
         $common   = '';
          //是否调试模式 ALL_IN_ONE模式下面调试模式无效
-        $debug  =  C('DEBUG_MODE') && !$runtime;
+        $debug  =  C('APP_DEBUG') && !$runtime;
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
@@ -141,7 +141,7 @@ class App
             }
         }
         // 读取扩展配置文件
-        $list = C('EXTEND_CONFIG_LIST');
+        $list = C('APP_CONFIG_LIST');
         foreach ($list as $val){
             if(is_file(CONFIG_PATH.$val.'.php'))
                 C('_'.$val.'_',include CONFIG_PATH.$val.'.php');
@@ -333,7 +333,7 @@ class App
         }else{
             $appRoot   =  __ROOT__.'/'.APP_NAME.'/';
         }
-        $depr = C('URL_PATH_MODEL')==2?C('URL_PATH_DEPR'):'/';
+        $depr = C('URL_PATHINFO_MODEL')==2?C('URL_PATH_DEPR'):'/';
         $module = defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
         if(defined('GROUP_NAME')) {
             $group   = C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME;
@@ -342,7 +342,7 @@ class App
             C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
             define('__URL__',PHP_FILE.'/'.$module);
-            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('GROUP_DEPR'),'/',MODULE_NAME).'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
+            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('APP_GROUP_DEPR'),'/',MODULE_NAME).'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH);
         }
         //当前操作地址
@@ -371,12 +371,12 @@ class App
     static public function exec()
     {
         // 是否开启标签扩展
-        $tagOn   =  C('PLUGIN_ON');
+        $tagOn   =  C('APP_PLUGIN_ON');
         // 项目运行标签
         if($tagOn)  tag('app_run');
 
         //创建Action控制器实例
-        $group =  defined('GROUP_NAME') ? GROUP_NAME.C('GROUP_DEPR') : '';
+        $group =  defined('GROUP_NAME') ? GROUP_NAME.C('APP_GROUP_DEPR') : '';
         $module  =  A($group.MODULE_NAME);
         if(!$module) {
             // 是否存在扩展模块

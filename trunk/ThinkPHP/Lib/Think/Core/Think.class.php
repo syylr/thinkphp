@@ -78,8 +78,8 @@ class Think
             require_cache(LIB_PATH.'Action/'.$classname.'.class.php');
         }else {
             // 根据自动加载路径设置进行尝试搜索
-            if(C('AUTOLOAD_PATH')) {
-                $paths  =   explode(',',C('AUTOLOAD_PATH'));
+            if(C('APP_AUTOLOAD_PATH')) {
+                $paths  =   explode(',',C('APP_AUTOLOAD_PATH'));
                 foreach ($paths as $path){
                     if(import($path.$classname))
                         // 如果加载类成功则返回

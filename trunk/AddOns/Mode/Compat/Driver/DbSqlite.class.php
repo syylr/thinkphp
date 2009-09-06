@@ -112,7 +112,7 @@ class DbSqlite extends Db
         $this->queryID = sqlite_query($this->_linkID,$this->queryStr);
         $this->debug();
         if ( !$this->queryID ) {
-            if ( $this->debug || C('DEBUG_MODE'))
+            if ( $this->debug || C('APP_DEBUG'))
                 throw_exception($this->error());
             else
                 return false;
@@ -151,7 +151,7 @@ class DbSqlite extends Db
         $result	=	sqlite_exec($this->_linkID,$this->queryStr);
         $this->debug();
         if ( false === $result ) {
-            if ( $this->debug || C('DEBUG_MODE'))
+            if ( $this->debug || C('APP_DEBUG'))
                 throw_exception($this->error());
             else
                 return false;

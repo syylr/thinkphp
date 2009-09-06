@@ -179,7 +179,7 @@ class View extends Base
             return ;
         }
         if(empty($charset)) {
-            $charset = C('OUTPUT_CHARSET');
+            $charset = C('DEFAULT_CHARSET');
         }
         // 网页字符编码
         header("Content-Type:".$contentType."; charset=".$charset);
@@ -462,8 +462,8 @@ class View extends Base
             $log    =   Log::$log;
             $this->trace('日志记录',count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录');
             $_trace =   array_merge($_trace,$this->trace);
-            $_trace = auto_charset($_trace,'utf-8',C('OUTPUT_CHARSET'));
-            $_title =   auto_charset('页面Trace信息','utf-8',C('OUTPUT_CHARSET'));
+            $_trace = auto_charset($_trace,'utf-8',C('DEFAULT_CHARSET'));
+            $_title =   auto_charset('页面Trace信息','utf-8',C('DEFAULT_CHARSET'));
             // 调用Trace页面模板
             include THINK_PATH.'/Tpl/PageTrace.tpl.php';
         }

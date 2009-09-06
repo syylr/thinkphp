@@ -78,7 +78,7 @@ class App
             C(include CONFIG_PATH.'config.php');
         }
         $common   = '';
-        $debug  =  C('DEBUG_MODE');  //  是否调试模式
+        $debug  =  C('APP_DEBUG');  //  是否调试模式
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';

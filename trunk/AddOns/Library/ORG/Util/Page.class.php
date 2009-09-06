@@ -132,8 +132,8 @@ class Page extends Think
     {
         $this->totalRows = $totalRows;
         $this->parameter = $parameter;
-        $this->rollPage = C('PAGE_NUMBERS');
-        $this->listRows = !empty($listRows)?$listRows:C('LIST_NUMBERS');
+        $this->rollPage = C('PAGE_ROLLPAGE');
+        $this->listRows = !empty($listRows)?$listRows:C('PAGE_LISTROWS');
         $this->totalPages = ceil($this->totalRows/$this->listRows);     //总页数
         $this->coolPages  = ceil($this->totalPages/$this->rollPage);
         $this->nowPage  = !empty($_GET[C('VAR_PAGE')])&&($_GET[C('VAR_PAGE')] >0)?$_GET[C('VAR_PAGE')]:1;

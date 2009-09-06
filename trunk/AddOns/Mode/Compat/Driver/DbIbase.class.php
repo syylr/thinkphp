@@ -122,7 +122,7 @@ Class DbIbase extends Db{
         $this->queryID = ibase_query($this->_linkID, $this->queryStr);
         $this->debug();
         if ( !$this->queryID ) {
-            if ( $this->debug || C('DEBUG_MODE'))
+            if ( $this->debug || C('APP_DEBUG'))
                 throw_exception($this->error());
             else
                 return false;
@@ -161,7 +161,7 @@ Class DbIbase extends Db{
         $result =   ibase_query($this->_linkID, $this->queryStr) ;
         $this->debug();
         if ( false === $result) {
-            if ( $this->debug || C('DEBUG_MODE'))
+            if ( $this->debug || C('APP_DEBUG'))
                 throw_exception($this->error());
             else
                 return false;

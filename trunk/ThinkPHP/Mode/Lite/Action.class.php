@@ -99,7 +99,7 @@ abstract class Action extends Think
      */
     protected function display($templateFile='',$charset='',$contentType='text/html')
     {
-        if(empty($charset))  $charset = C('OUTPUT_CHARSET');
+        if(empty($charset))  $charset = C('DEFAULT_CHARSET');
         // 网页字符编码
         header("Content-Type:".$contentType."; charset=".$charset);
         header("Cache-control: private");  //支持页面回跳
