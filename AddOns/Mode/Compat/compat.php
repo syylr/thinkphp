@@ -50,7 +50,7 @@ function get_client_ip(){
  +----------------------------------------------------------
  */
 function url($action=ACTION_NAME,$module=MODULE_NAME,$route='',$app=APP_NAME,$params=array()) {
-    if(C('DISPATCH_ON') && C('URL_MODEL')>0) {
+    if(C('DISPATCH_ON') && C('URL_ACCESS_MODEL')>0) {
         $depr = C('PATH_MODEL')==2?C('PATH_DEPR'):'/';
         if(!empty($route)) {
             $url    =   str_replace(APP_NAME,$app,__APP__).'/'.$route.$depr.implode($depr,$params);

@@ -37,7 +37,7 @@ class Dispatcher extends Base
      */
     static function dispatch()
     {
-        $urlMode  =  C('URL_MODEL');
+        $urlMode  =  C('URL_ACCESS_MODEL');
         if($urlMode == URL_REWRITE ) {
             //当前项目地址
             $url    =   dirname(_PHP_FILE_);

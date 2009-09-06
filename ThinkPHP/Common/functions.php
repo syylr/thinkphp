@@ -36,7 +36,7 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
     $array   =  parse_url($url);
     $app      =  isset($array['scheme'])?   $array['scheme']  :APP_NAME;
     $route    =  isset($array['user'])?$array['user']:'';
-    if (defined('GROUP_NAME') && GROUP_NAME != C('DEFAULT_GROUP'))
+    if(defined('GROUP_NAME') && strcasecmp(GROUP_NAME,C('DEFAULT_GROUP')))
         $group=  GROUP_NAME;
     if(isset($array['path'])) {
         $action  =  substr($array['path'],1);
@@ -59,8 +59,8 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
         $params = array_merge($query,$params);
     }
 
-    if(C('URL_DISPATCH_ON') && C('URL_MODEL')>0) {
-        $depr = C('URL_PATH_MODEL')==2?C('URL_PATH_DEPR'):'/';
+    if(C('URL_DISPATCH_ON') && C('URL_ACCESS_MODEL')>0) {
+        $depr = C('URL_PATHINFO_MODEL')==2?C('URL_PATH_DEPR'):'/';
         $str    =   $depr;
         foreach ($params as $var=>$val)
             $str .= $var.$depr.$val.$depr;
@@ -115,7 +115,7 @@ function parse_name($name,$type=0) {
 function halt($error) {
     if(IS_CLI)   exit ($error);
     $e = array();
-    if(C('DEBUG_MODE')){
+    if(C('APP_DEBUG')){
         //调试模式下输出错误信息
         if(!is_array($error)) {
             $trace = debug_backtrace();
@@ -283,8 +283,8 @@ function __autoload($name)
         require_cache(LIB_PATH.'Action/'.$name.'.class.php');
     }else {
         // 根据自动加载路径设置进行尝试搜索
-        if(C('AUTOLOAD_PATH')) {
-            $paths  =   explode(',',C('AUTOLOAD_PATH'));
+        if(C('APP_AUTOLOAD_PATH')) {
+            $paths  =   explode(',',C('APP_AUTOLOAD_PATH'));
             foreach ($paths as $path){
                 if(import($path.$name)) {
                     // 如果加载类成功则返回
@@ -317,7 +317,7 @@ function require_cache($filename)
 // 区分大小写的文件存在判断
 function file_exists_case($filename) {
     if(is_file($filename)) {
-        if(IS_WIN && C('CHECK_FILE_CASE')) {
+        if(IS_WIN && C('APP_FILE_CHECKCASE')) {
             if(basename(realpath($filename)) != basename($filename))
                 return false;
         }
@@ -450,12 +450,12 @@ function D($name='',$app='')
 {
     static $_model = array();
     if(empty($name)) return new Model;
-    if(empty($app))   $app =  C('MODEL_DEFAULT_APP');
+    if(empty($app))   $app =  C('DEFAULT_APP');
     if(isset($_model[$app.$name]))
         return $_model[$app.$name];
     $OriClassName = $name;
-    if(strpos($name,C('GROUP_DEPR'))) {
-        $array   =  explode(C('GROUP_DEPR'),$name);
+    if(strpos($name,C('APP_GROUP_DEPR'))) {
+        $array   =  explode(C('APP_GROUP_DEPR'),$name);
         $name = array_pop($array);
         $className =  $name.'Model';
         import($app.'.Model.'.implode('.',$array).'.'.$className);
@@ -504,8 +504,8 @@ function A($name,$app='@')
     if(isset($_action[$app.$name]))
         return $_action[$app.$name];
     $OriClassName = $name;
-    if(strpos($name,C('GROUP_DEPR'))) {
-        $array   =  explode(C('GROUP_DEPR'),$name);
+    if(strpos($name,C('APP_GROUP_DEPR'))) {
+        $array   =  explode(C('APP_GROUP_DEPR'),$name);
         $name = array_pop($array);
         $className =  $name.'Action';
         import($app.'.Action.'.implode('.',$array).'.'.$className);

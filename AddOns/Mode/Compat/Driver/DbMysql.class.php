@@ -124,7 +124,7 @@ class DbMysql extends Db{
         $this->queryID = mysql_query($this->queryStr, $this->_linkID);
         $this->debug();
         if ( !$this->queryID ) {
-            if ( $this->debug || C('DEBUG_MODE'))
+            if ( $this->debug || C('APP_DEBUG'))
                 throw_exception($this->error());
             else
                 return false;
@@ -163,7 +163,7 @@ class DbMysql extends Db{
         $result =   mysql_query($this->queryStr, $this->_linkID) ;
         $this->debug();
         if ( false === $result) {
-            if ( $this->debug || C('DEBUG_MODE'))
+            if ( $this->debug || C('APP_DEBUG'))
                 throw_exception($this->error());
             else
                 return false;

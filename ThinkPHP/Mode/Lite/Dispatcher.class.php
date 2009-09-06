@@ -35,7 +35,7 @@ class Dispatcher extends Think
      */
     static public function dispatch()
     {
-        $urlMode  =  C('URL_MODEL');
+        $urlMode  =  C('URL_ACCESS_MODEL');
         if($urlMode == URL_REWRITE ) {
             //当前项目地址
             $url    =   dirname(_PHP_FILE_);
@@ -56,7 +56,7 @@ class Dispatcher extends Think
                 $_varModule =   C('VAR_MODULE');
                 $_varAction =   C('VAR_ACTION');
                 $_depr  =   C('URL_PATH_DEPR');
-                $_pathModel =   C('URL_PATH_MODEL');
+                $_pathModel =   C('URL_PATHINFO_MODEL');
                 // 设置默认模块和操作
                 if(empty($_GET[$_varModule])) $_GET[$_varModule] = C('DEFAULT_MODULE');
                 if(empty($_GET[$_varAction])) $_GET[$_varAction] = C('DEFAULT_ACTION');
@@ -100,7 +100,7 @@ class Dispatcher extends Think
     private static function parsePathInfo()
     {
         $pathInfo = array();
-        if(C('URL_PATH_MODEL')==2){
+        if(C('URL_PATHINFO_MODEL')==2){
             $paths = explode(C('URL_PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
             $pathInfo[C('VAR_MODULE')] = array_shift($paths);
             $pathInfo[C('VAR_ACTION')] = array_shift($paths);
