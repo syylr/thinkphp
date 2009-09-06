@@ -36,7 +36,7 @@ class Dispatcher extends Think
      */
     static public function dispatch()
     {
-        $urlMode  =  C('URL_ACCESS_MODEL');
+        $urlMode  =  C('URL_MODEL');
         if($urlMode == URL_REWRITE ) {
             //当前项目地址
             $url    =   dirname(_PHP_FILE_);
@@ -57,7 +57,7 @@ class Dispatcher extends Think
                 $_varGroup =   C('VAR_GROUP'); // 分组变量
                 $_varModule =   C('VAR_MODULE');
                 $_varAction =   C('VAR_ACTION');
-                $_depr  =   C('URL_PATH_DEPR');
+                $_depr  =   C('URL_PATHINFO_DEPR');
                 $_pathModel =   C('URL_PATHINFO_MODEL');
                 if (C('APP_GROUP_LIST')) {
                     if(empty($_GET[$_varGroup]))
@@ -113,7 +113,7 @@ class Dispatcher extends Think
     {
         $pathInfo = array();
         if(C('URL_PATHINFO_MODEL')==2){
-            $paths = explode(C('URL_PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
+            $paths = explode(C('URL_PATHINFO_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
             $groupApp = C('APP_GROUP_LIST');
             if ($groupApp) {
                 $arr = array_map('strtolower',explode(',',$groupApp));
@@ -129,7 +129,7 @@ class Dispatcher extends Think
                 }
             }
         }else {
-            $res = preg_replace('@(\w+)'.C('URL_PATH_DEPR').'([^,\/]+)@e', '$pathInfo[\'\\1\']="\\2";', $_SERVER['PATH_INFO']);
+            $res = preg_replace('@(\w+)'.C('URL_PATHINFO_DEPR').'([^,\/]+)@e', '$pathInfo[\'\\1\']="\\2";', $_SERVER['PATH_INFO']);
         }
         return $pathInfo;
     }
@@ -179,8 +179,8 @@ class Dispatcher extends Think
                 reset($_SERVER);
             }
         }
-        if(C('HTML_URL_SUFFIX') && !empty($path)) {
-            $suffix =   substr(C('HTML_URL_SUFFIX'),1);
+        if(C('URL_HTML_SUFFIX') && !empty($path)) {
+            $suffix =   substr(C('URL_HTML_SUFFIX'),1);
             $path   =   preg_replace('/\.'.$suffix.'$/','',$path);
         }
         $_SERVER['PATH_INFO'] = empty($path) ? '/' : $path;
@@ -204,7 +204,7 @@ class Dispatcher extends Think
                 $routeName  =   $_GET[C('VAR_ROUTER')];
                 unset($_GET[C('VAR_ROUTER')]);
             }else{
-                $paths = explode(C('URL_PATH_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
+                $paths = explode(C('URL_PATHINFO_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
                 // 获取路由名称
                 $routeName  =   array_shift($paths);
             }

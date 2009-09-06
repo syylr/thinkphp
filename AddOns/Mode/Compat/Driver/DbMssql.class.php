@@ -120,7 +120,7 @@ class DbMssql extends Db{
         $this->queryID = @mssql_query($this->queryStr, $this->_linkID);
         $this->debug();
         if ( !$this->queryID ) {
-            if ( $this->debug || C('APP_DEBUG'))
+            if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
             else
                 return false;
@@ -158,7 +158,7 @@ class DbMssql extends Db{
         $this->debug();
         $result	=	mssql_query($this->queryStr, $this->_linkID);
         if ( false === $result ) {
-            if ( $this->debug || C('APP_DEBUG'))
+            if ( $this->debug || C('DEBUG_MODE'))
                 throw_exception($this->error());
             else
                 return false;
