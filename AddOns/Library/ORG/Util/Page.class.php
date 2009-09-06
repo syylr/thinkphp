@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2008 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -10,111 +10,25 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-/**
- +------------------------------------------------------------------------------
- * 分页显示类
- +------------------------------------------------------------------------------
- * @category   ORG
- * @package  ORG
- * @subpackage  Util
- * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
- +------------------------------------------------------------------------------
- */
-class Page extends Think
-{//类定义开始
-
-    /**
-     +----------------------------------------------------------
-     * 分页起始行数
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
-    protected $firstRow ;
-
-    /**
-     +----------------------------------------------------------
-     * 列表每页显示行数
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
-    protected $listRows ;
-
-    /**
-     +----------------------------------------------------------
-     * 页数跳转时要带的参数
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
+class Page extends Think {
+    // 起始行数
+    protected $firstRow	;
+    // 列表每页显示行数
+    protected $listRows	;
+    // 页数跳转时要带的参数
     protected $parameter  ;
-
-    /**
-     +----------------------------------------------------------
-     * 分页总页面数
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
+    // 分页总页面数
     protected $totalPages  ;
-
-    /**
-     +----------------------------------------------------------
-     * 总行数
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
+    // 总行数
     protected $totalRows  ;
-
-    /**
-     +----------------------------------------------------------
-     * 当前页数
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
+    // 当前页数
     protected $nowPage    ;
-
-    /**
-     +----------------------------------------------------------
-     * 分页的栏的总页数
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
+    // 分页的栏的总页数
     protected $coolPages   ;
-
-    /**
-     +----------------------------------------------------------
-     * 分页栏每页显示的页数
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
+    // 分页栏每页显示的页数
     protected $rollPage   ;
-
-    /**
-     +----------------------------------------------------------
-     * 分页记录名称
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
-
-    // 分页显示定制
-    protected $config   =   array('header'=>'条记录','prev'=>'上一页','next'=>'下一页','first'=>'第一页','last'=>'最后一页');
+	// 分页显示定制
+    protected $config  =	array('header'=>'条记录','prev'=>'上一页','next'=>'下一页','first'=>'第一页','last'=>'最后一页','theme'=>' %totalRow% %header% %nowPage%/%totalPage% 页 %upPage% %downPage% %first%  %prePage%  %linkPage%  %nextPage% %end%');
 
     /**
      +----------------------------------------------------------
@@ -123,21 +37,18 @@ class Page extends Think
      * @access public
      +----------------------------------------------------------
      * @param array $totalRows  总的记录数
-     * @param array $firstRow  起始记录位置
      * @param array $listRows  每页显示记录数
      * @param array $parameter  分页跳转的参数
      +----------------------------------------------------------
      */
-    public function __construct($totalRows,$listRows='',$parameter='')
-    {
+    public function __construct($totalRows,$listRows,$parameter='') {
         $this->totalRows = $totalRows;
         $this->parameter = $parameter;
         $this->rollPage = C('PAGE_ROLLPAGE');
         $this->listRows = !empty($listRows)?$listRows:C('PAGE_LISTROWS');
         $this->totalPages = ceil($this->totalRows/$this->listRows);     //总页数
         $this->coolPages  = ceil($this->totalPages/$this->rollPage);
-        $this->nowPage  = !empty($_GET[C('VAR_PAGE')])&&($_GET[C('VAR_PAGE')] >0)?$_GET[C('VAR_PAGE')]:1;
-
+        $this->nowPage  = !empty($_GET[C('VAR_PAGE')])?$_GET[C('VAR_PAGE')]:1;
         if(!empty($this->totalPages) && $this->nowPage>$this->totalPages) {
             $this->nowPage = $this->totalPages;
         }
@@ -152,31 +63,33 @@ class Page extends Think
 
     /**
      +----------------------------------------------------------
-     * 分页显示
-     * 用于在页面显示的分页栏的输出
+     * 分页显示输出
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
      */
-    public function show($isArray=false){
-
-        if(0 == $this->totalRows) return;
+    public function show() {
+        if(0 == $this->totalRows) return '';
+        $p = C('VAR_PAGE');
         $nowCoolPage      = ceil($this->nowPage/$this->rollPage);
         $url  =  $_SERVER['REQUEST_URI'].(strpos($_SERVER['REQUEST_URI'],'?')?'':"?").$this->parameter;
-
+        $parse = parse_url($url);
+        if(isset($parse['query'])) {
+            parse_str($parse['query'],$params);
+            unset($params[$p]);
+            $url   =  $parse['path'].'?'.http_build_query($params);
+        }
         //上下翻页字符串
         $upRow   = $this->nowPage-1;
         $downRow = $this->nowPage+1;
         if ($upRow>0){
-            $upPage="[<a href='".$url."&".C('VAR_PAGE')."=$upRow'>".$this->config['prev']."</a>]";
+            $upPage="<a href='".$url."&".$p."=$upRow'>".$this->config['prev']."</a>";
         }else{
             $upPage="";
         }
 
         if ($downRow <= $this->totalPages){
-            $downPage="[<a href='".$url."&".C('VAR_PAGE')."=$downRow'>".$this->config['next']."</a>]";
+            $downPage="<a href='".$url."&".$p."=$downRow'>".$this->config['next']."</a>";
         }else{
             $downPage="";
         }
@@ -186,8 +99,8 @@ class Page extends Think
             $prePage = "";
         }else{
             $preRow =  $this->nowPage-$this->rollPage;
-            $prePage = "[<a href='".$url."&".C('VAR_PAGE')."=$preRow' >上".$this->rollPage."页</a>]";
-            $theFirst = "[<a href='".$url."&".C('VAR_PAGE')."=1' >".$this->config['first']."</a>]";
+            $prePage = "<a href='".$url."&".$p."=$preRow' >上".$this->rollPage."页</a>";
+            $theFirst = "<a href='".$url."&".$p."=1' >".$this->config['first']."</a>";
         }
         if($nowCoolPage == $this->coolPages){
             $nextPage = "";
@@ -195,8 +108,8 @@ class Page extends Think
         }else{
             $nextRow = $this->nowPage+$this->rollPage;
             $theEndRow = $this->totalPages;
-            $nextPage = "[<a href='".$url."&".C('VAR_PAGE')."=$nextRow' >下".$this->rollPage."页</a>]";
-            $theEnd = "[<a href='".$url."&".C('VAR_PAGE')."=$theEndRow' >".$this->config['last']."</a>]";
+            $nextPage = "<a href='".$url."&".$p."=$nextRow' >下".$this->rollPage."页</a>";
+            $theEnd = "<a href='".$url."&".$p."=$theEndRow' >".$this->config['last']."</a>";
         }
         // 1 2 3 4 5
         $linkPage = "";
@@ -204,32 +117,21 @@ class Page extends Think
             $page=($nowCoolPage-1)*$this->rollPage+$i;
             if($page!=$this->nowPage){
                 if($page<=$this->totalPages){
-                    $linkPage .= "&nbsp;<a href='".$url."&".C('VAR_PAGE')."=$page'>&nbsp;".$page."&nbsp;</a>";
+                    $linkPage .= "&nbsp;<a href='".$url."&".$p."=$page'>&nbsp;".$page."&nbsp;</a>";
                 }else{
                     break;
                 }
             }else{
                 if($this->totalPages != 1){
-                    $linkPage .= " [".$page."]";
+                    $linkPage .= "&nbsp;<span class='current'>".$page."</span>";
                 }
             }
         }
-        $pageStr = '共'.$this->totalRows.' '.$this->config['header'].'/'.$this->totalPages.'页 '.$upPage.' '.$downPage.' '.$theFirst.' '.$prePage.' '.$linkPage.' '.$nextPage.' '.$theEnd;
-        if($isArray) {
-            $pageArray['totalRows'] =   $this->totalRows;
-            $pageArray['upPage']    =   $url.'&'.C('VAR_PAGE')."=$upRow";
-            $pageArray['downPage']  =   $url.'&'.C('VAR_PAGE')."=$downRow";
-            $pageArray['totalPages']=   $this->totalPages;
-            $pageArray['firstPage'] =   $url.'&'.C('VAR_PAGE')."=1";
-            $pageArray['endPage']   =   $url.'&'.C('VAR_PAGE')."=$theEndRow";
-            $pageArray['nextPages'] =   $url.'&'.C('VAR_PAGE')."=$nextRow";
-            $pageArray['prePages']  =   $url.'&'.C('VAR_PAGE')."=$preRow";
-            $pageArray['linkPages'] =   $linkPage;
-            $pageArray['nowPage'] =   $this->nowPage;
-            return $pageArray;
-        }
+        $pageStr	 =	 str_replace(
+            array('%header%','%nowPage%','%totalRow%','%totalPage%','%upPage%','%downPage%','%first%','%prePage%','%linkPage%','%nextPage%','%end%'),
+            array($this->config['header'],$this->nowPage,$this->totalRows,$this->totalPages,$upPage,$downPage,$theFirst,$prePage,$linkPage,$nextPage,$theEnd),$this->config['theme']);
         return $pageStr;
     }
 
-}//类定义结束
+}
 ?>
