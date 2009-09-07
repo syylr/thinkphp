@@ -26,11 +26,7 @@ return  array(
     /* 日志设置 */
     'LOG_RECORD'=>true,  // 进行日志记录
 
-    /* 模板设置 */
-    'TMPL_CACHE_ON'=>false,      // 关闭模板缓存
-
     /* 数据库设置 */
-    'SQL_DEBUG_LOG'=>true,          // 记录SQL语句到日志文件
     'LOG_RECORD_LEVEL'       =>   array('EMERG','ALERT','CRIT','ERR','WARN','NOTIC','INFO','DEBUG','SQL'),  // 允许记录的日志级别
     'DB_FIELDS_CACHE'=> false,
 
