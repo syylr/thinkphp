@@ -397,11 +397,11 @@ function load($name,$baseUrl='',$ext='.php') {
     if(empty($baseUrl)) {
         if(0 === strpos($name,'@/')) {
             //加载当前项目函数库
-            $baseUrl   =  APP_PATH.'/Functions/';
+            $baseUrl   =  APP_PATH.'/Common/';
             $name =  substr($name,2);
         }else{
             //加载ThinkPHP 系统函数库
-            $baseUrl =  THINK_PATH.'/Functions/';
+            $baseUrl =  THINK_PATH.'/Common/';
         }
     }
     if(substr($baseUrl, -1) != "/")    $baseUrl .= "/";
