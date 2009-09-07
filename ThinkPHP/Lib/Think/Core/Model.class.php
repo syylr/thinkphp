@@ -536,7 +536,7 @@ class Model extends Think
             $options['table'] =$this->getTableName();
         // 字段类型验证
         if(C('DB_FIELDTYPE_CHECK')) {
-            if(is_array($options['where'])) {
+            if(isset($options['where']) && is_array($options['where'])) {
                 // 对数组查询条件进行字段类型检查
                 foreach ($options['where'] as $key=>$val){
                     if(in_array($key,$this->fields,true) && is_scalar($val)){
@@ -828,7 +828,9 @@ class Model extends Think
                         case 'function':    //  使用函数进行填充 字段的值作为参数
                         case 'callback': // 使用回调方法
                             $args = isset($auto[4])?$auto[4]:array();
-                            array_unshift($args,$data[$auto[0]]);
+                            if(isset($data[$auto[0]])) {
+                                array_unshift($args,$data[$auto[0]]);
+                            }
                             if('function'==$auto[3]) {
                                 $data[$auto[0]]  = call_user_func_array($auto[1], $args);
                             }else{

@@ -329,6 +329,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      */
     protected function redirect($url,$params=array(),$delay=0,$msg='') {
+        if(C('LOG_RECORD')) Log::save();
         $url    =   U($url,$params);
         redirect($url,$delay,$msg);
     }
@@ -352,6 +353,7 @@ abstract class Action extends Think
     {
         // 判断是否为AJAX返回
         if($ajax || $this->isAjax()) $this->ajaxReturn('',$message,$status);
+        if(C('LOG_RECORD')) Log::save();
         // 提示标题
         $this->assign('msgTitle',$status? L('_OPERATION_SUCCESS_') : L('_OPERATION_FAIL_'));
         //如果设置了关闭窗口，则提示完毕后自动关闭窗口
