@@ -335,7 +335,9 @@ class Model extends Think
         $options =  $this->_parseOptions($options);
         // 数据处理
         $data = $this->_facade($data);
-        $this->_before_insert($data,$options);
+        if(false === $this->_before_insert($data,$options)) {
+            return false;
+        }
         // 写入数据到数据库
         $result = $this->db->insert($data,$options);
         if(false !== $result ) {
@@ -407,6 +409,9 @@ class Model extends Think
         $data = $this->_facade($data);
         // 分析表达式
         $options =  $this->_parseOptions($options);
+        if(false === $this->_before_update($data,$options)) {
+            return false;
+        }
         if(!isset($options['where']) ) {
             // 如果存在主键数据 则自动作为更新条件
             if(isset($data[$this->getPk()])) {
@@ -420,7 +425,6 @@ class Model extends Think
                 return false;
             }
         }
-        $this->_before_update($data,$options);
         $result = $this->db->update($data,$options);
         if(false !== $result) {
             if(isset($pkValue)) $data[$pk]   =  $pkValue;
