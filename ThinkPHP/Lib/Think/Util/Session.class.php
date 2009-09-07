@@ -10,7 +10,6 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-define('SESSION_PREFIX',      'THINK_');
 define("HTTP_SESSION_STARTED",      1);
 define("HTTP_SESSION_CONTINUED",    2);
 
