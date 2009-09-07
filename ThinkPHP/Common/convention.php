@@ -87,8 +87,8 @@ return  array(
     'HTML_FILE_SUFFIX'      => '.shtml',// 默认静态文件后缀
 
     /* 语言设置 */
-    'LANG_AUTO_DETECT'      => false,   // 自动侦测语言
     'LANG_SWITCH_ON'        => false,   // 默认关闭多语言包功能
+    'LANG_AUTO_DETECT'      => true,   // 自动侦测语言 开启多语言功能后有效
     'LANG_DEFAULT'          => 'zh-cn', // 默认语言
 
     /* 日志设置 */
