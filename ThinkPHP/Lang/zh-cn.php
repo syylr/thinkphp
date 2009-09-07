@@ -51,5 +51,6 @@ return array(
 	'_SELECT_NOT_EXIST_'=>'记录不存在！',
     '_EXPRESS_ERROR_'=>'表达式错误',
     '_TOKEN_ERROR_'=>'表单令牌错误',
+    '_RECORD_HAS_UPDATE_'=>'记录已经更新',
 );
 ?>

@@ -25,6 +25,7 @@ class AdvModel extends Model {
     // 数据库连接对象列表
     private $_db = array();
     private $_fields = null;
+    protected $optimLock = 'lock_version';
     protected $returnType  =  'array';
     protected $blobFields     =   array();
     protected $blobValues    = null;
@@ -77,6 +78,8 @@ class AdvModel extends Model {
         $this->getBlobFields($result);
         // 检查字段过滤
         $result   =  $this->getFilterFields($result);
+        // 缓存乐观锁
+        $this->cacheLockVersion($result);
     }
 
     // 查询数据集成功后的回调方法
@@ -91,9 +94,13 @@ class AdvModel extends Model {
 
     // 写入前的回调方法
     protected function _before_insert(&$data,$options='') {
+        // 记录乐观锁
+        $data = $this->recordLockVersion($data);
         // 检查文本字段
         $data = $this->checkBlobFields($data);
+        // 检查字段过滤
         $data   =  $this->setFilterFields($data);
+        // 检查序列化字段
         $data = $this->serializeField($data);
     }
 
@@ -104,6 +111,10 @@ class AdvModel extends Model {
 
     // 更新前的回调方法
     protected function _before_update(&$data,$options='') {
+        // 检查乐观锁
+        if(!$this->checkLockVersion($data,$options)) {
+            return false;
+        }
         // 检查文本字段
         $data = $this->checkBlobFields($data);
         // 检查只读字段
@@ -122,6 +133,86 @@ class AdvModel extends Model {
     protected function _after_delete($data,$options) {
         // 删除Blob数据
         $this->delBlobFields($data);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 记录乐观锁
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $data 数据对象
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    protected function recordLockVersion($data) {
+        // 记录乐观锁
+        if($this->optimLock && !isset($data[$this->optimLock]) ) {
+            if(in_array($this->optimLock,$this->fields,true)) {
+                $data[$this->optimLock]  =   0;
+            }
+        }
+        return $data;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 缓存乐观锁
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $data 数据对象
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    protected function cacheLockVersion($data) {
+        if($this->optimLock) {
+            if(isset($data[$this->optimLock]) && isset($data[$this->getPk()])) {
+                // 只有当存在乐观锁字段和主键有值的时候才记录乐观锁
+                $_SESSION[$this->name.'_'.$data[$this->getPk()].'_lock_version']    =   $data[$this->optimLock];
+            }
+        }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 检查乐观锁
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $data  当前数据
+     * @param array $options 查询表达式
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    protected function checkLockVersion(&$data,$options) {
+        $id = $data[$this->getPk()];
+        // 检查乐观锁
+        $identify   = $this->name.'_'.$id.'_lock_version';
+        if($this->optimLock && isset($_SESSION[$identify])) {
+            $lock_version = $_SESSION[$identify];
+            $vo   =  $this->field($this->optimLock)->find($id);
+            $_SESSION[$identify]     =   $lock_version;
+            $curr_version = $vo[$this->optimLock];
+            if(isset($curr_version)) {
+                if($curr_version>0 && $lock_version != $curr_version) {
+                    // 记录已经更新
+                    $this->error = L('_RECORD_HAS_UPDATE_');
+                    return false;
+                }else{
+                    // 更新乐观锁
+                    $save_version = $data[$this->optimLock];
+                    if($save_version != $lock_version+1) {
+                        $data[$this->optimLock]  =   $lock_version+1;
+                    }
+                    $_SESSION[$identify]     =   $lock_version+1;
+                }
+            }
+        }
+        return true;
     }
 
     /**
