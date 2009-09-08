@@ -469,41 +469,15 @@ class DbPdo extends Db{
 
     /**
      +----------------------------------------------------------
-     * 获取最后插入id ,仅适用于采用序列+触发器结合生成ID的方式,
-     * ORACLE列程
-       在config.php中指定
-        'DB_TRIGGER_PREFIX'	=>	'tr_',
-        'DB_SEQUENCE_PREFIX' =>	'ts_',
-     * eg:表 tb_user
-       相对tb_user的序列为：
-        -- Create sequence
-        create sequence TS_USER
-        minvalue 1
-        maxvalue 999999999999999999999999999
-        start with 1
-        increment by 1
-        nocache;
-       相对tb_user,ts_user的触发器为：
-        create or replace trigger TR_USER
-          before insert on "TB_USER"
-          for each row
-        begin
-            select "TS_USER".nextval into :NEW.ID from dual;
-        end;
+     * 获取最后插入id ,暂不支持Oracle
      +----------------------------------------------------------
      * @access public
-     +----------------------------------------------------------
-     * @param string $str  序列名称，默认为序列前缀+表名（无前缀）
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
      */
     public function getLastInsertId()
     {
-        if(empty($this->tableName))
-        {
-            return 0;
-        }
          switch($this->dbType)
          {
             case 'PGSQL':
@@ -514,9 +488,8 @@ class DbPdo extends Db{
                 return $this->_linkID->lastInsertId();
             case 'ORACLE':
             case 'OCI':
-                $sequenceName = C("DB_SEQUENCE_PREFIX") . $this->tableName;
-                $vo = $this->query("SELECT {$sequenceName}.currval currval FROM dual");
-                return $vo?$vo[0]["currval"]:0;
+                // TODO 完善
+                return 0;
         }
     }
 
