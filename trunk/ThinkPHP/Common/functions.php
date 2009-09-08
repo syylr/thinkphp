@@ -598,7 +598,8 @@ function tag($name,$params=array()) {
 function B($name) {
     $class = $name.'Behavior';
     require_cache(LIB_PATH.'Behavior/'.$class.'.class.php');
-    call_user_func_array(array($class, 'run'));
+    $behavior   =  new $class();
+    $behavior->run();
 }
 
 // 渲染输出Widget
