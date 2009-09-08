@@ -70,6 +70,23 @@ class AdvModel extends Model {
         }
     }
 
+    /**
+     +----------------------------------------------------------
+     * 对保存到数据库的数据进行处理
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param mixed $data 要操作的数据
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+     protected function _facade($data) {
+        // 检查序列化字段
+        $data = $this->serializeField($data);
+        return parent::_facade($data);
+     }
+
     // 查询成功后的回调方法
     protected function _after_find(&$result,$options='') {
         // 检查序列化字段
@@ -100,8 +117,6 @@ class AdvModel extends Model {
         $data = $this->checkBlobFields($data);
         // 检查字段过滤
         $data   =  $this->setFilterFields($data);
-        // 检查序列化字段
-        $data = $this->serializeField($data);
     }
 
     protected function _after_insert($data,$options) {
@@ -121,8 +136,6 @@ class AdvModel extends Model {
         $data = $this->checkReadonlyField($data);
         // 检查字段过滤
         $data   =  $this->setFilterFields($data);
-        // 检查序列化字段
-        $data = $this->serializeField($data);
     }
 
     protected function _after_update($data,$options) {
