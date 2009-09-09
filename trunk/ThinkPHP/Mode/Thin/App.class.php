@@ -48,8 +48,6 @@ class App
         // 取得模块和操作名称
         define('MODULE_NAME',   App::getModule());       // Module名称
         define('ACTION_NAME',   App::getAction());        // Action操作
-        // 不使用语言包功能，仅仅加载框架语言文件
-        //L(include THINK_PATH.'/Lang/'.C('LANG_DEFAULT').'.php');
 
         // 记录应用初始化时间
         if(C('SHOW_RUN_TIME'))  $GLOBALS['_initTime'] = microtime(TRUE);
