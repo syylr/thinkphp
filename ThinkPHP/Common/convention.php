@@ -51,6 +51,8 @@ return  array(
     'DEFAULT_CHARSET'       => 'utf-8', // 默认输出编码
     'DEFAULT_TIMEZONE'      => 'PRC',	// 默认时区
     'DEFAULT_AJAX_RETURN'   => 'JSON',  // 默认AJAX 数据返回格式,可选JSON XML ...
+    'DEFAULT_THEME'    => 'default',	// 默认模板主题名称
+    'DEFAULT_LANG'          => 'zh-cn', // 默认语言
 
     /* 数据库设置 */
     'DB_TYPE'               => 'mysql',     // 数据库类型
@@ -89,7 +91,6 @@ return  array(
     /* 语言设置 */
     'LANG_SWITCH_ON'        => false,   // 默认关闭多语言包功能
     'LANG_AUTO_DETECT'      => true,   // 自动侦测语言 开启多语言功能后有效
-    'LANG_DEFAULT'          => 'zh-cn', // 默认语言
 
     /* 日志设置 */
     'LOG_RECORD'            => false,   // 默认不记录日志
@@ -118,7 +119,6 @@ return  array(
 
     /* 模板引擎设置 */
     'TMPL_ENGINE_TYPE'		=> 'Think',     // 默认模板引擎 以下设置仅对使用Think模板引擎有效
-    'TMPL_DEFAULT_THEME'    => 'default',	// 默认模板主题名称
     'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
     'TMPL_TEMPLATE_SUFFIX'  => '.html',     // 默认模板文件后缀
     'TMPL_CACHFILE_SUFFIX'  => '.php',      // 默认模板缓存后缀

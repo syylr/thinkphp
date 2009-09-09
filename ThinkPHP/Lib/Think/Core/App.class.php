@@ -246,7 +246,7 @@ class App
      */
     static private function checkLanguage()
     {
-        $langSet = C('LANG_DEFAULT');
+        $langSet = C('DEFAULT_LANG');
         // 不开启语言包功能，仅仅加载框架语言文件直接返回
         if (!C('LANG_SWITCH_ON')){
             L(include THINK_PATH.'/Lang/'.$langSet.'.php');
@@ -306,15 +306,15 @@ class App
                 if(cookie('think_template')){
                     $templateSet = cookie('think_template');
                 }else{
-                    $templateSet =    C('TMPL_DEFAULT_THEME');
+                    $templateSet =    C('DEFAULT_THEME');
                     cookie('think_template',$templateSet,3600);
                 }
             }
             if(!is_dir(TMPL_PATH.$templateSet))
                 //模版不存在的话，使用默认模版
-                $templateSet =    C('TMPL_DEFAULT_THEME');
+                $templateSet =    C('DEFAULT_THEME');
         }else{
-            $templateSet =    C('TMPL_DEFAULT_THEME');
+            $templateSet =    C('DEFAULT_THEME');
         }
         //模版名称
         define('TEMPLATE_NAME',$templateSet);
