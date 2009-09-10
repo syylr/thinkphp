@@ -451,7 +451,8 @@ function list_to_tree($list, $pk='id',$pid = 'pid',$child = '_child',$root=0)
  +----------------------------------------------------------
  * @param array $list 查询结果
  * @param string $field 排序的字段名
- * @param array $sortby 排序类型 asc arsort natcaseror
+ * @param array $sortby 排序类型
+ * asc正向排序 desc逆向排序 nat自然排序
  +----------------------------------------------------------
  * @return array
  +----------------------------------------------------------
