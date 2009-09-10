@@ -106,7 +106,7 @@ class View extends Think
      +----------------------------------------------------------
      * 输出布局模板
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param string $charset 输出编码
      * @param string $contentType 输出类型
@@ -115,7 +115,7 @@ class View extends Think
      * @return mixed
      +----------------------------------------------------------
      */
-    public function layout($content,$charset='',$contentType='text/html')
+    protected function layout($content,$charset='',$contentType='text/html')
     {
         if(false !== strpos($content,'<!-- layout')) {
             // 查找布局包含的页面
