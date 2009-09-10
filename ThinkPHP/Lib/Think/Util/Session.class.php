@@ -336,7 +336,6 @@ class Session extends Think
         return $return;
     }
 
-
     /**
      +----------------------------------------------------------
      * 设置Session 是否使用cookie
