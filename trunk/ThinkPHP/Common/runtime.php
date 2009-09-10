@@ -44,10 +44,10 @@ function build_runtime() {
     // 检查项目目录结构 如果不存在则自动创建
     if(!is_dir(RUNTIME_PATH)) {
         // 创建项目目录结构
-        buildAppDir();
+        build_app_dir();
     }else{
         // 检查缓存目录
-        checkRuntime();
+        check_runtime();
     }
     // 生成核心编译缓存 去掉文件空白以减少大小
     if(!defined('NO_CACHE_RUNTIME')) {
@@ -66,6 +66,7 @@ function build_runtime() {
     }
 }
 
+// 批量创建目录
 function mkdirs($dirs,$mode=0777) {
     foreach ($dirs as $dir){
         if(!is_dir($dir))  mkdir($dir,$mode);
@@ -73,7 +74,7 @@ function mkdirs($dirs,$mode=0777) {
 }
 
 // 创建项目目录结构
-function buildAppDir() {
+function build_app_dir() {
     // 没有创建项目目录的话自动创建
     if(!is_dir(APP_PATH)) mk_dir(APP_PATH,0777);
     if(is_writeable(APP_PATH)) {
@@ -130,7 +131,7 @@ class IndexAction extends Action{
 }
 
 // 检查缓存目录(Runtime) 如果不存在则自动创建
-function checkRuntime() {
+function check_runtime() {
 	if(!is_writeable(RUNTIME_PATH)) {
 		header("Content-Type:text/html; charset=utf-8");
 		exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>目录 [ '.RUNTIME_PATH.' ] 不可写！</div>');
