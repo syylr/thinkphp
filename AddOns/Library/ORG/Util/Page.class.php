@@ -16,7 +16,7 @@ class Page extends Think {
     // 列表每页显示行数
     protected $listRows	;
     // 页数跳转时要带的参数
-    protected $parameter  ;
+    public $parameter  ;
     // 分页总页面数
     protected $totalPages  ;
     // 总行数
