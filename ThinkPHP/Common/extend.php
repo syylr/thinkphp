@@ -81,7 +81,7 @@ function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true)
  * @return string
  +----------------------------------------------------------
  */
-function rand_string($len=6,$type='',$addChars='') {
+function build_str_rand($len=6,$type='',$addChars='') {
     $str ='';
     switch($type) {
         case 0:
@@ -493,7 +493,7 @@ function list_sort_by($list,$field, $sortby='asc') {
  * @return array
  +----------------------------------------------------------
  */
-function search_list($list,$condition) {
+function list_search($list,$condition) {
     if(is_string($condition))
         parse_str($condition,$condition);
     // 返回的结果集合

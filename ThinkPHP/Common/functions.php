@@ -864,7 +864,7 @@ function cookie($name,$value='',$option=null)
        return;
     }
     $name = $config['prefix'].$name;
-    if ($value===''){
+    if (''===$value){
         return isset($_COOKIE[$name]) ? unserialize($_COOKIE[$name]) : null;// 获取指定Cookie
     }else {
         if (is_null($value)) {
