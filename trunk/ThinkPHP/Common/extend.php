@@ -81,7 +81,7 @@ function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true)
  * @return string
  +----------------------------------------------------------
  */
-function build_str_rand($len=6,$type='',$addChars='') {
+function rand_string($len=6,$type='',$addChars='') {
     $str ='';
     switch($type) {
         case 0:
