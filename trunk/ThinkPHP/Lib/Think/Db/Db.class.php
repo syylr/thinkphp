@@ -503,7 +503,7 @@ class Db extends Think
                                 $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
                             }elseif(preg_match('/BETWEEN/i',$val[0])){ // BETWEEN运算
                                 $data = is_string($val[1])? explode(',',$val[1]):$val[1];
-                                $whereStr .=  ' ('.$key.' BETWEEN '.$data[0].' AND '.$data[1].' )';
+                                $whereStr .=  ' ('.$key.' '.strtoupper($val[0]).' '.$data[0].' AND '.$data[1].' )';
                             }else{
                                 throw_exception(L('_EXPRESS_ERROR_').':'.$val[0]);
                             }
@@ -528,9 +528,8 @@ class Db extends Think
                         }
                     }else {
                         //对字符串类型字段采用模糊匹配
-                        if(C('LIKE_MATCH_FIELDS') && preg_match('/('.C('LIKE_MATCH_FIELDS').')/i',$key)) {
-                            $val = '%'.$val.'%';
-                            $whereStr .= $key." LIKE ".$this->parseValue($val);
+                        if(C('DB_LIKE_FIELDS') && preg_match('/('.C('DB_LIKE_FIELDS').')/i',$key)) {
+                            $whereStr .= $key." LIKE ".$this->parseValue('%'.$val.'%');
                         }else {
                             $whereStr .= $key." = ".$this->parseValue($val);
                         }
