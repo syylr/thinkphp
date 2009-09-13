@@ -254,9 +254,9 @@ class DbPdo extends Db{
      */
     public function getFields($tableName) {
         $this->initConnect(true);
-        if(C('TABLE_DESCRIBE_SQL')) {
+        if(C('DB_DESCRIBE_TABLE_SQL')) {
             // 定义特殊的字段查询SQL
-            $sql   = str_replace('%table%',$tableName,C('TABLE_DESCRIBE_SQL'));
+            $sql   = str_replace('%table%',$tableName,C('DB_DESCRIBE_TABLE_SQL'));
         }else{
             switch($this->dbType) {
                 case 'MSSQL':
@@ -292,16 +292,18 @@ class DbPdo extends Db{
         }
         $result = $this->query($sql);
         $info   =   array();
-        foreach ($result as $key => $val) {
-            $name= strtolower(isset($val['Field'])?$val['Field']:$val['Name']);
-            $info[$name] = array(
-                'name'    => $name ,
-                'type'    => $val['Type'],
-                'notnull' => (bool)(((isset($val['Null'])) && ($val['Null'] === '')) || ((isset($val['notnull'])) && ($val['notnull'] === ''))), // not null is empty, null is yes
-                'default' => isset($val['Default'])? $val['Default'] :(isset($val['dflt_value'])?$val['dflt_value']:""),
-                'primary' => isset($val['Key'])?strtolower($val['Key']) == 'pri':(isset($val['pk'])?$val['pk']:false),
-                'autoinc' => isset($val['Extra'])?strtolower($val['Extra']) == 'auto_increment':(isset($val['Key'])?$val['Key']:false),
-            );
+        if($result) {
+            foreach ($result as $key => $val) {
+                $name= strtolower(isset($val['Field'])?$val['Field']:$val['Name']);
+                $info[$name] = array(
+                    'name'    => $name ,
+                    'type'    => $val['Type'],
+                    'notnull' => (bool)(((isset($val['Null'])) && ($val['Null'] === '')) || ((isset($val['notnull'])) && ($val['notnull'] === ''))), // not null is empty, null is yes
+                    'default' => isset($val['Default'])? $val['Default'] :(isset($val['dflt_value'])?$val['dflt_value']:""),
+                    'primary' => isset($val['Key'])?strtolower($val['Key']) == 'pri':(isset($val['pk'])?$val['pk']:false),
+                    'autoinc' => isset($val['Extra'])?strtolower($val['Extra']) == 'auto_increment':(isset($val['Key'])?$val['Key']:false),
+                );
+            }
         }
         return $info;
     }
@@ -316,9 +318,9 @@ class DbPdo extends Db{
      +----------------------------------------------------------
      */
     public function getTables($dbName='') {
-        if(C('FETCH_TABLES_SQL')) {
+        if(C('DB_FETCH_TABLES_SQL')) {
             // 定义特殊的表查询SQL
-            $sql   = str_replace('%db%',$dnName,C('FETCH_TABLES_SQL'));
+            $sql   = str_replace('%db%',$dnName,C('DB_FETCH_TABLES_SQL'));
         }else{
             switch($this->dbType) {
             case 'ORACLE':

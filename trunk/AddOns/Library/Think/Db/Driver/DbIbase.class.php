@@ -283,16 +283,18 @@ class DbIbase extends Db{
     public function getFields($tableName) {
         $result   =  $this->query('SELECT RDB$FIELD_NAME AS FIELD, RDB$DEFAULT_VALUE AS DEFAULT1, RDB$NULL_FLAG AS NULL1 FROM RDB$RELATION_FIELDS WHERE RDB$RELATION_NAME=UPPER(\''.$tableName.'\') ORDER By RDB$FIELD_POSITION');
         $info   =   array();
-        foreach ($result as $key => $val) {
-            $info[trim($val['FIELD'])] = array(
-                'name'    => trim($val['FIELD']),
-                'type'    => '',
-                'notnull' => (bool) ($val['NULL1'] ==1), // 1表示不为Null
-                'default' => $val['DEFAULT1'],
-                'primary' => false,
-                'autoinc' => false,
-            );
-       }
+        if($result) {
+            foreach ($result as $key => $val) {
+                $info[trim($val['FIELD'])] = array(
+                    'name'    => trim($val['FIELD']),
+                    'type'    => '',
+                    'notnull' => (bool) ($val['NULL1'] ==1), // 1表示不为Null
+                    'default' => $val['DEFAULT1'],
+                    'primary' => false,
+                    'autoinc' => false,
+                );
+           }
+      }
       //剑雷 取表字段类型
      $sql='select first 1 * from '. $tableName;
      $rs_temp = ibase_query ($this->_linkID, $sql);
