@@ -47,22 +47,6 @@ class TagLibCx extends TagLib
 
     /**
      +----------------------------------------------------------
-     * comment标签解析
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $attr 标签属性
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function _comment($attr)
-    {
-        return '';
-    }
-
-    /**
-     +----------------------------------------------------------
      * php标签解析
      +----------------------------------------------------------
      * @access public
@@ -156,23 +140,6 @@ class TagLibCx extends TagLib
             return $parseStr;
         }
         return ;
-    }
-
-    public function _var($attr) {
-        $tag          =   $this->parseXmlAttr($attr,'var');
-        $name       = $tag['name'];
-        $default     =  !empty($tag['default'])?$tag['default']:'';
-        $varArray   = explode('|',$name);
-        $name       =   array_shift($varArray);
-        $name       = $this->autoBuildVar($name);
-        if(count($varArray)>0) {
-            $name = $this->tpl->parseVarFunction($name,$varArray);
-        }
-        if(!empty($default)) {
-            $name   = '('.$name.')?('.$name.'):\''.$default.'\'';
-        }
-        $parseStr   =   '<?php echo ('.$name.');?>';
-        return $parseStr;
     }
 
     /**
