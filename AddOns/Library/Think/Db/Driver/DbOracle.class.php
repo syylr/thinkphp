@@ -24,7 +24,7 @@
 class DbOracle extends Db{
 
     private $mode = OCI_COMMIT_ON_SUCCESS;
-    protected $selectSql  =     'SELECT * FROM (SELECT rownum AS numrow, thinkphp.* FROM (SELECT  %DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%) thinkphp ) WHERE %LIMIT%';
+    protected $selectSql  =     'SELECT * FROM (SELECT rownum AS numrow, thinkphp.* FROM (SELECT  %DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%) thinkphp ) %LIMIT%';
     /**
      +----------------------------------------------------------
      * 架构函数 读取数据库配置信息
@@ -145,7 +145,7 @@ class DbOracle extends Db{
             return false;
         } else {
             $this->numRows = oci_num_rows($stmt);
-            $this->lastInsID = preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $str)?$this->insert_last_id():0;//add by wyfeng at 2008.12.22
+            $this->lastInsID = 0;// TODO 完善
             return $this->numRows;
         }
     }
@@ -253,21 +253,22 @@ class DbOracle extends Db{
      +----------------------------------------------------------
      */
      public function getFields($tableName) {
-        $result = $this->_query("select a.column_name,data_type,decode(nullable,'Y',0,1) notnull,data_default,decode(a.column_name,b.column_name,1,0) pk "
+        $result = $this->query("select a.column_name,data_type,decode(nullable,'Y',0,1) notnull,data_default,decode(a.column_name,b.column_name,1,0) pk "
                   ."from user_tab_columns a,(select column_name from user_constraints c,user_cons_columns col "
           ."where c.constraint_name=col.constraint_name and c.constraint_type='P'and c.table_name='".strtoupper($tableName)
           ."') b where table_name='".strtoupper($tableName)."' and a.column_name=b.column_name(+)");
-
         $info   =   array();
-        foreach ($result as $key => $val) {
-            $info[strtolower($val['column_name'])] = array(
-                'name'    => strtolower($val['column_name']),
-                'type'    => strtolower($val['data_type']),
-                'notnull' => $val['notnull'],
-                'default' => $val['data_default'],
-                'primary' => $val['pk'],
-                'autoinc' => $val['pk'],
-            );
+        if($result) {
+            foreach ($result as $key => $val) {
+                $info[strtolower($val['column_name'])] = array(
+                    'name'    => strtolower($val['column_name']),
+                    'type'    => strtolower($val['data_type']),
+                    'notnull' => $val['notnull'],
+                    'default' => $val['data_default'],
+                    'primary' => $val['pk'],
+                    'autoinc' => $val['pk'],
+                );
+            }
         }
         return $info;
     }
@@ -282,7 +283,7 @@ class DbOracle extends Db{
      +----------------------------------------------------------
      */
     public function getTables($dbName='') {
-        $result = $this->_query("select table_name from user_tables");
+        $result = $this->query("select table_name from user_tables");
         $info   =   array();
         foreach ($result as $key => $val) {
             $info[$key] = current($val);
@@ -348,52 +349,8 @@ class DbOracle extends Db{
      +----------------------------------------------------------
      */
     public function escape_string($str) {
-        return str_ireplace("'", "''", $str);//add by wyfeng at 2008.12.22
+        return str_ireplace("'", "''", $str);
     }
-
-	/**
-     +----------------------------------------------------------
-     * 获取最后插入id ,仅适用于采用序列+触发器结合生成ID的方式
-	 * 在config.php中指定
- 		'DB_TRIGGER_PREFIX'	=>	'tr_',
-		'DB_SEQUENCE_PREFIX' =>	'ts_',
-	 * eg:表 tb_user
-	   相对tb_user的序列为：
-	 	-- Create sequence
-		create sequence TS_USER
-		minvalue 1
-		maxvalue 999999999999999999999999999
-		start with 1
-		increment by 1
-		nocache;
-	   相对tb_user,ts_user的触发器为：
-		create or replace trigger TR_USER
-		  before insert on "TB_USER"
-		  for each row
-		begin
-			select "TS_USER".nextval into :NEW.ID from dual;
-		end;
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $str  序列名称，默认为序列前缀+表名（无前缀）
-     +----------------------------------------------------------
-     * @return integer
-     +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
-	 */
- 	//add by wyfeng at 2008.12.22
-	public function insert_last_id()
-	{
-		if(empty($this->tableName))
-		{
-			return 0;
-		}
-		$sequenceName = C("DB_SEQUENCE_PREFIX") . $this->tableName;
-		$vo = $this->_query("SELECT {$sequenceName}.currval currval FROM dual");
-		return $vo?$vo[0]["currval"]:0;
-	}
 
     /**
      +----------------------------------------------------------
@@ -407,13 +364,13 @@ class DbOracle extends Db{
 	public function parseLimit($limit) {
         $limitStr    = '';
         if(!empty($limit)) {
-			$limit	=	explode(',',$limit);
-			if(count($limit)>1)
-				$limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
-			else
-				$limitStr = "(numrow>0 AND numrow<=".$limit[0].")";
-		}
-		return $limitStr;
-	}
+            $limit	=	explode(',',$limit);
+            if(count($limit)>1)
+                $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
+            else
+                $limitStr = "(numrow>0 AND numrow<=".$limit[0].")";
+        }
+        return $limitStr?' WHERE '.$limitStr:'';
+    }
 }//类定义结束
 ?>
