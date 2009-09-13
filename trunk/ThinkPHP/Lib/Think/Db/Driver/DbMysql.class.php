@@ -257,15 +257,17 @@ class DbMysql extends Db{
     public function getFields($tableName) {
         $result =   $this->query('SHOW COLUMNS FROM '.$tableName);
         $info   =   array();
-        foreach ($result as $key => $val) {
-            $info[$val['Field']] = array(
-                'name'    => $val['Field'],
-                'type'    => $val['Type'],
-                'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
-                'default' => $val['Default'],
-                'primary' => (strtolower($val['Key']) == 'pri'),
-                'autoinc' => (strtolower($val['Extra']) == 'auto_increment'),
-            );
+        if($result) {
+            foreach ($result as $key => $val) {
+                $info[$val['Field']] = array(
+                    'name'    => $val['Field'],
+                    'type'    => $val['Type'],
+                    'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
+                    'default' => $val['Default'],
+                    'primary' => (strtolower($val['Key']) == 'pri'),
+                    'autoinc' => (strtolower($val['Extra']) == 'auto_increment'),
+                );
+            }
         }
         return $info;
     }
