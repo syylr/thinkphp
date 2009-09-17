@@ -93,6 +93,26 @@ class ViewModel extends Model {
 
     /**
      +----------------------------------------------------------
+     * 检查是否定义了所有字段
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param string $name 模型名称
+     * @param array $fields 字段数组
+     +----------------------------------------------------------
+     * @return array
+     +----------------------------------------------------------
+     */
+    private function _checkFields($name,$fields) {
+        if(false !== $pos = array_search('*',$fields)) {// 定义所有字段
+            $fields  =  array_merge($val,M($name)->getDbFields());
+            unset($fields[$pos]);
+        }
+        return $fields;
+    }
+
+    /**
+     +----------------------------------------------------------
      * 检查条件中的视图字段
      +----------------------------------------------------------
      * @access protected
@@ -108,6 +128,7 @@ class ViewModel extends Model {
             // 检查视图字段
             foreach ($this->viewFields as $key=>$val){
                 $k = isset($val['_as'])?$val['_as']:$key;
+                $val  =  $this->_checkFields($key,$val);
                 foreach ($where as $name=>$value){
                     if(false !== $field = array_search($name,$val)) {
                         // 存在视图字段
@@ -144,6 +165,7 @@ class ViewModel extends Model {
                 // 解析成视图字段
                 foreach ($this->viewFields as $name=>$val){
                     $k = isset($val['_as'])?$val['_as']:$name;
+                    $val  =  $this->_checkFields($name,$val);
                     if(false !== $_field = array_search($field,$val)) {
                         // 存在视图字段
                         $field     =  is_numeric($_field)?$k.'.'.$field:$k.'.'.$_field;
@@ -176,6 +198,7 @@ class ViewModel extends Model {
                 // 解析成视图字段
                 foreach ($this->viewFields as $name=>$val){
                     $k = isset($val['_as'])?$val['_as']:$name;
+                    $val  =  $this->_checkFields($name,$val);
                     if(false !== $_field = array_search($field,$val)) {
                         // 存在视图字段
                         $field     =  is_numeric($_field)?$k.'.'.$field:$k.'.'.$_field;
@@ -206,6 +229,7 @@ class ViewModel extends Model {
             $fields =   array();
             foreach ($this->viewFields as $name=>$val){
                 $k = isset($val['_as'])?$val['_as']:$name;
+                $val  =  $this->_checkFields($name,$val);
                 foreach ($val as $key=>$field){
                     if(is_numeric($key)) {
                         $fields[]    =   $k.'.'.$field.' AS '.$field;
@@ -235,6 +259,7 @@ class ViewModel extends Model {
             }
             foreach ($this->viewFields as $name=>$val){
                 $k = isset($val['_as'])?$val['_as']:$name;
+                $val  =  $this->_checkFields($name,$val);
                 foreach ($fields as $key=>$field){
                     if(false !== $_field = array_search($field,$val)) {
                         // 存在视图字段
