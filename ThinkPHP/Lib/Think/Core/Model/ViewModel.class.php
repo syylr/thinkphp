@@ -105,7 +105,7 @@ class ViewModel extends Model {
      */
     private function _checkFields($name,$fields) {
         if(false !== $pos = array_search('*',$fields)) {// 定义所有字段
-            $fields  =  array_merge($val,M($name)->getDbFields());
+            $fields  =  array_merge($fields,M($name)->getDbFields());
             unset($fields[$pos]);
         }
         return $fields;
