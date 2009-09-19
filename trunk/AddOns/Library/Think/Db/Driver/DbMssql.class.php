@@ -330,7 +330,6 @@ class DbMssql extends Db{
             $limitStr	=	'(T1.ROW_NUMBER BETWEEN '.$limit[0].' + 1 AND '.$limit[0].' + '.$limit[1].')';
 		else
             $limitStr = '(T1.ROW_NUMBER BETWEEN 1 AND '.$limit[0].")";
-
         return $limitStr;
     }
 
