@@ -12,9 +12,9 @@
 
 class Page extends Think {
     // 起始行数
-    protected $firstRow	;
+    public $firstRow	;
     // 列表每页显示行数
-    protected $listRows	;
+    public $listRows	;
     // 页数跳转时要带的参数
     public $parameter  ;
     // 分页总页面数
