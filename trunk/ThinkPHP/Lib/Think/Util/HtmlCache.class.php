@@ -24,9 +24,56 @@
  */
 class HtmlCache extends Think
 {
-    static private $cacheFile = null;
-    static private $cacheTime = null;
-    static private $requireCache = false;
+    static private $cacheTime = null; // 缓存有效期（支持函数）
+    static private $requireCache = false;    // 是否需要缓存
+
+    // 判断是否需要静态缓存
+    static private function requireHtmlCache() {
+        // 分析当前的静态规则
+         $htmls = C('_htmls_'); // 读取静态规则
+         if(!empty($htmls)) {
+            // 静态规则文件定义格式 actionName=>array(‘静态规则’,’缓存时间’,’附加规则')
+            // 'read'=>array('{id},{name}',60,'md5') 必须保证静态规则的唯一性 和 可判断性
+            // 检测静态规则
+            if(isset($htmls[MODULE_NAME.':'.ACTION_NAME])) {
+                $html   =   $htmls[MODULE_NAME.':'.ACTION_NAME];   // 某个模块的操作的静态规则
+            }elseif(isset($htmls[ACTION_NAME])){
+                $html   =   $htmls[ACTION_NAME]; // 所有操作的静态规则
+            }elseif(isset($htmls['*'])){
+                $html   =   $htmls['*']; // 全局静态规则
+            }elseif(isset($htmls['Empty:index']) && !class_exists(MODULE_NAME.'Action')){
+                $html   =    $htmls['Empty:index']; // 空模块静态规则
+            }elseif(isset($htmls[MODULE_NAME.':_empty']) && self::isEmptyAction(MODULE_NAME,ACTION_NAME)){
+                $html   =    $htmls[MODULE_NAME.':_empty']; // 空操作静态规则
+            }
+            if(!empty($html)) {
+                self::$requireCache = true; // 需要缓存
+                // 解读静态规则
+                $rule    = $html[0];
+                // 以$_开头的系统变量
+                $rule  = preg_replace('/{\$(_\w+)\.(\w+)\|(\w+)}/e',"\\3(\$\\1['\\2'])",$rule);
+                $rule  = preg_replace('/{\$(_\w+)\.(\w+)}/e',"\$\\1['\\2']",$rule);
+                // {ID|FUN} GET变量的简写
+                $rule  = preg_replace('/{(\w+)\|(\w+)}/e',"\\2(\$_GET['\\1'])",$rule);
+                $rule  = preg_replace('/{(\w+)}/e',"\$_GET['\\1']",$rule);
+                // 特殊系统变量
+                $rule  = str_ireplace(
+                    array('{:app}','{:module}','{:action}','{:group}'),
+                    array(APP_NAME,MODULE_NAME,ACTION_NAME,GROUP_NAME),
+                    $rule);
+                // {|FUN} 单独使用函数
+                $rule  = preg_replace('/{|(\w+)}/e',"\\1()",$rule);
+                if(!empty($html[2])) $rule    =   $html[2]($rule); // 应用附加函数
+                self::$cacheTime = isset($html[1])?$html[1]:C('HTML_CACHE_TIME'); // 缓存有效期
+                // 当前缓存文件
+                define('HTML_FILE_NAME',HTML_PATH . $rule.C('HTML_FILE_SUFFIX'));
+                return true;
+            }
+        }
+        // 无需缓存
+        return false;
+    }
+
     /**
      +----------------------------------------------------------
      * 读取静态缓存
@@ -38,86 +85,19 @@ class HtmlCache extends Think
      */
     static function readHTMLCache()
     {
-         $htmls = C('_htmls_');
-         if(!empty($htmls)) {
-            // 读取静态规则文件
-            // 静态规则文件定义格式 actionName=>array(‘静态规则’,’缓存时间’,’附加规则')
-            // 'read'=>array('{id},{name}',60,'md5') 必须保证静态规则的唯一性 和 可判断性
-            // 检测操作的静态规则
-			foreach ($htmls as $value=>$key){
-				if (strpos($value,':')){
-					$htmls[ucfirst($value)]=$htmls[$value];
-					unset($htmls[$value]);
-				}
-			}
-            if(isset($htmls[MODULE_NAME.':'.ACTION_NAME])) {
-                // 定义了某个模块的操作的静态规则
-                $html   =   $htmls[MODULE_NAME.':'.ACTION_NAME];
-            }elseif(isset($htmls[ACTION_NAME])){
-                // 所有操作的静态规则
-                $html   =   $htmls[ACTION_NAME];
-            }elseif(isset($htmls['*'])){
-                // 定义了全局的静态规则
-                $html   =   $htmls['*'];
-            }elseif(HtmlCache::isEmptyModule(MODULE_NAME)){
-				$html   =    $htmls['Empty:index'];
-			}elseif(HtmlCache::isEmptyAction(MODULE_NAME,ACTION_NAME)){
-				$html   =    $htmls[MODULE_NAME.':_empty'];
-			}
-            if(!empty($html)) {
-                self::$requireCache = true;
-                // 解读静态规则
-                $rule    = $html[0];
-                // 以$_开头的系统变量
-                $rule  = preg_replace('/{\$(_\w+)\.(\w+)\|(\w+)}/e',"\\3(\$\\1['\\2'])",$rule);
-                $rule  = preg_replace('/{\$(_\w+)\.(\w+)}/e',"\$\\1['\\2']",$rule);
-                // {ID|FUN} GET变量的简写
-                $rule  = preg_replace('/{(\w+)\|(\w+)}/e',"\\2(\$_GET['\\1'])",$rule);
-                $rule  = preg_replace('/{(\w+)}/e',"\$_GET['\\1']",$rule);
-                // 特殊系统变量
-                $rule  = str_ireplace(
-                    array('{:app}','{:module}','{:action}'),
-                    array(APP_NAME,MODULE_NAME,ACTION_NAME),
-                    $rule);
-                // {|FUN} 单独使用函数
-                $rule  = preg_replace('/{|(\w+)}/e',"\\1()",$rule);
-                if(!empty($html[2]))
-                    // 应用附加函数
-                    $rule    =   $html[2]($rule);
-                $time = isset($html[1])?$html[1]:C('HTML_CACHE_TIME'); // 缓存有效期 -1 为永久缓存
-                self::$cacheTime = $time;
-                $cacheName  =   $rule.C('HTML_FILE_SUFFIX');
-                self::$cacheFile = $cacheName;
-                define('HTML_FILE_NAME',HTML_PATH . $cacheName);
-                if (self::checkHTMLCache(HTML_FILE_NAME,$time)) {//静态页面有效
-                    if(C('HTML_READ_TYPE')==1) {
-                        // 重定向到静态页面
-                        redirect(str_replace(array(realpath($_SERVER["DOCUMENT_ROOT"]),"\\"),array('',"/"),realpath(HTML_FILE_NAME)));
-                    }else {
-                        // 读取静态页面输出
-                        readfile(HTML_FILE_NAME);
-                        exit();
-                    }
-                }
+        if(self::requireHtmlCache() && self::checkHTMLCache(HTML_FILE_NAME,self::$cacheTime)) { //静态页面有效
+            if(C('HTML_READ_TYPE')==1) {
+                // 重定向到静态页面
+                redirect(str_replace(array(realpath($_SERVER["DOCUMENT_ROOT"]),"\\"),array('',"/"),realpath(HTML_FILE_NAME)));
+            }else {
+                // 读取静态页面输出
+                readfile(HTML_FILE_NAME);
+                exit();
             }
         }
         return ;
     }
-	//检测模块是否为空模块
-	function isEmptyModule($module){
-		$className =  $module.'Action';
-		if (class_exists($className)){
-			return false;
-		}else{
-			return true;
-		}
-	}
-	//检测是否是空操作
-	function isEmptyAction($module,$action){
-		$className =  $module.'Action';
-		$class=new $className;
-		return !method_exists($class,$action);
-	}
+
     /**
      +----------------------------------------------------------
      * 写入静态缓存
@@ -126,25 +106,23 @@ class HtmlCache extends Think
      +----------------------------------------------------------
      * @param string $content 页面内容
      +----------------------------------------------------------
-     * @return string
+     * @return void
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    static function writeHTMLCache(&$content)
+    static public function writeHTMLCache($content)
     {
         if(self::$requireCache) {
             //静态文件写入
             // 如果开启HTML功能 检查并重写HTML文件
             // 没有模版的操作不生成静态文件
-            if(MODULE_NAME != 'Public' && !self::checkHTMLCache(self::$cacheFile,self::$cacheTime)) {
-                if(!is_dir(dirname(HTML_FILE_NAME)))
-                    mk_dir(dirname(HTML_FILE_NAME));
-                if( false === file_put_contents( HTML_FILE_NAME , $content ))
-                    throw_exception(L('_CACHE_WRITE_ERROR_'));
-            }
+            if(!is_dir(dirname(HTML_FILE_NAME)))
+                mk_dir(dirname(HTML_FILE_NAME));
+            if( false === file_put_contents( HTML_FILE_NAME , $content ))
+                throw_exception(L('_CACHE_WRITE_ERROR_'));
         }
-        return $content;
+        return ;
     }
 
     /**
@@ -160,19 +138,16 @@ class HtmlCache extends Think
      * @return boolen
      +----------------------------------------------------------
      */
-    static function checkHTMLCache($cacheFile='',$cacheTime='')
+    static public function checkHTMLCache($cacheFile='',$cacheTime='')
     {
         if(!is_file($cacheFile)){
             return false;
-        }
-        elseif (filemtime(C('TMPL_FILE_NAME')) > filemtime($cacheFile)) {
+        }elseif (filemtime(C('TMPL_FILE_NAME')) > filemtime($cacheFile)) {
             // 模板文件如果更新静态文件需要更新
             return false;
-        }
-        elseif(!is_numeric($cacheTime) && function_exists($cacheTime)){
+        }elseif(!is_numeric($cacheTime) && function_exists($cacheTime)){
             return $cacheTime($cacheFile);
-        }
-        elseif ($cacheTime != -1 && time() > filemtime($cacheFile)+$cacheTime) {
+        }elseif ($cacheTime != -1 && time() > filemtime($cacheFile)+$cacheTime) {
             // 文件是否在有效期
             return false;
         }
@@ -180,5 +155,11 @@ class HtmlCache extends Think
         return true;
     }
 
+    //检测是否是空操作
+    static private function isEmptyAction($module,$action){
+        $className =  $module.'Action';
+        $class=new $className;
+        return !method_exists($class,$action);
+    }
 }
 ?>
