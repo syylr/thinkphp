@@ -683,10 +683,11 @@ class Model extends Think
                 $key =  array_shift($field);
                 $cols   =   array();
                 foreach ($resultSet as $result){
-                    $cols[$result[$key]] =  '';
+                    $name   = $result[$key];
+                    $cols[$name] =  '';
                     foreach ($field as $val)
-                        $cols[$result[$key]] .=  $result[$val].$sepa;
-                    $cols[$result[$key]]  = substr($cols[$result[$key]],0,-strlen($sepa));
+                        $cols[$name] .=  $result[$val].$sepa;
+                    $cols[$name]  = substr($cols[$name],0,-strlen($sepa));
                 }
                 return $cols;
             }
