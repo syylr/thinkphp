@@ -37,6 +37,8 @@ class HtmlCache extends Think
             // 检测静态规则
             if(isset($htmls[MODULE_NAME.':'.ACTION_NAME])) {
                 $html   =   $htmls[MODULE_NAME.':'.ACTION_NAME];   // 某个模块的操作的静态规则
+            }elseif(isset($htmls[MODULE_NAME.':'])){// 某个模块的静态规则
+                $html   =   $htmls[MODULE_NAME.':'];
             }elseif(isset($htmls[ACTION_NAME])){
                 $html   =   $htmls[ACTION_NAME]; // 所有操作的静态规则
             }elseif(isset($htmls['*'])){
