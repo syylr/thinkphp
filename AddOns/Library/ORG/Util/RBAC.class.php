@@ -208,7 +208,7 @@ class RBAC extends Think
     static public function getAccessList($authId)
     {
         // Db方式权限数据
-        $db     =   DB::getInstance();
+        $db     =   Db::getInstance();
         $table = array('role'=>C('RBAC_ROLE_TABLE'),'user'=>C('RBAC_USER_TABLE'),'access'=>C('RBAC_ACCESS_TABLE'),'node'=>C('RBAC_NODE_TABLE'));
         $sql    =   "select node.id,node.name from ".
                     $table['role']." as role,".
@@ -276,7 +276,7 @@ class RBAC extends Think
 	// 读取模块所属的记录访问权限
 	static public function getModuleAccessList($authId,$module) {
         // Db方式
-        $db     =   DB::getInstance();
+        $db     =   Db::getInstance();
         $table = array('role'=>C('RBAC_ROLE_TABLE'),'user'=>C('RBAC_USER_TABLE'),'access'=>C('RBAC_ACCESS_TABLE'));
         $sql    =   "select access.node_id from ".
                     $table['role']." as role,".
