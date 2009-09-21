@@ -24,6 +24,7 @@
 class DbOracle extends Db{
 
     private $mode = OCI_COMMIT_ON_SUCCESS;
+    private $table  =  '';
     protected $selectSql  =     'SELECT * FROM (SELECT rownum AS numrow, thinkphp.* FROM (SELECT  %DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%) thinkphp ) %LIMIT%';
     /**
      +----------------------------------------------------------
@@ -57,8 +58,7 @@ class DbOracle extends Db{
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config = $this->config;
             $conn = $this->pconnect ? 'oci_pconnect':'oci_new_connect';
-            $this->linkID[$linkNum] = $conn($config['username'], $config['password'],
-            "//{$config['hostname']}:{$config['hostport']}/{$config['database']}");//modify by wyfeng at 2008.12.19
+            $this->linkID[$linkNum] = $conn($config['username'], $config['password'],$config['database']);//modify by wyfeng at 2008.12.19
 
             if (!$this->linkID[$linkNum]){
                 $error = $this->error(false);
@@ -133,6 +133,13 @@ class DbOracle extends Db{
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         $this->queryStr = $str;
+        // 判断新增操作
+        $flag = false;
+        if(preg_match("/^\s*(INSERT\s+INTO)\s+(\w+)\s+/i", $this->queryStr, $match)) {
+            $this->table = C("DB_SEQUENCE_PREFIX") .str_ireplace(C("DB_PREFIX"), "", $match[2]);
+            $flag = (boolean)$this->query("SELECT * FROM user_sequences WHERE sequence_name='" . strtoupper($this->table) . "'");
+        }//modify by wyfeng at 2009.08.28
+
         //更改事务模式
         $this->mode = OCI_COMMIT_ON_SUCCESS;
         //释放前次的查询结果
@@ -145,7 +152,7 @@ class DbOracle extends Db{
             return false;
         } else {
             $this->numRows = oci_num_rows($stmt);
-            $this->lastInsID = 0;// TODO 完善
+            $this->lastInsID = $flag?$this->insert_last_id():0;//modify by wyfeng at 2009.08.28
             return $this->numRows;
         }
     }
@@ -350,6 +357,45 @@ class DbOracle extends Db{
      */
     public function escape_string($str) {
         return str_ireplace("'", "''", $str);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取最后插入id ,仅适用于采用序列+触发器结合生成ID的方式
+     * 在config.php中指定
+     'DB_TRIGGER_PREFIX'	=>	'tr_',
+     'DB_SEQUENCE_PREFIX' =>	'ts_',
+     * eg:表 tb_user
+     相对tb_user的序列为：
+     -- Create sequence
+     create sequence TS_USER
+     minvalue 1
+     maxvalue 999999999999999999999999999
+     start with 1
+     increment by 1
+     nocache;
+     相对tb_user,ts_user的触发器为：
+     create or replace trigger TR_USER
+     before insert on "TB_USER"
+     for each row
+     begin
+     select "TS_USER".nextval into :NEW.ID from dual;
+     end;
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return integer
+     +----------------------------------------------------------
+     * @throws ThinkExecption
+     +----------------------------------------------------------
+     */
+    public function insert_last_id() {
+        if(empty($this->table)) {
+            return 0;
+        }
+        $sequenceName = $this->table;
+        $vo = $this->query("SELECT {$sequenceName}.currval currval FROM dual");
+        return $vo?$vo[0]["currval"]:0;
     }
 
     /**

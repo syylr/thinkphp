@@ -24,6 +24,7 @@
 class DbPdo extends Db{
 
     protected $PDOStatement = null;
+    private   $table = '';
 
     /**
      +----------------------------------------------------------
@@ -59,10 +60,10 @@ class DbPdo extends Db{
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
-
             if($this->pconnect) {
-                $config['params'][constant('PDO::ATTR_PERSISTENT')] = true;
+                $config['params'][PDO::ATTR_PERSISTENT] = true;
             }
+            //$config['params'][PDO::ATTR_CASE] = C("DB_CASE_LOWER")?PDO::CASE_LOWER:PDO::CASE_UPPER;
             try{
                 $this->linkID[$linkNum] = new PDO( $config['dsn'], $config['username'], $config['password'],$config['params']);
             }catch (PDOException $e) {
@@ -140,6 +141,14 @@ class DbPdo extends Db{
         $this->initConnect(true);
         if ( !$this->_linkID ) return false;
         $this->queryStr = $str;
+        $flag = false;
+        if($this->dbType == 'OCI')
+        {
+            if(preg_match("/^\s*(INSERT\s+INTO)\s+(\w+)\s+/i", $this->queryStr, $match)) {
+                $this->table = C("DB_SEQUENCE_PREFIX").str_ireplace(C("DB_PREFIX"), "", $match[2]);
+                $flag = (boolean)$this->query("SELECT * FROM user_sequences WHERE sequence_name='" . strtoupper($this->table) . "'");
+            }
+        }//modify by wyfeng at 2009.08.28
         //释放前次的查询结果
         if ( !empty($this->PDOStatement) ) $this->free();
         $this->W(1);
@@ -154,7 +163,7 @@ class DbPdo extends Db{
             return false;
         } else {
             $this->numRows = $result;
-            if(preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $str)) {
+            if($flag || preg_match("/^\s*(INSERT\s+INTO|REPLACE\s+INTO)\s+/i", $str)) {
                 $this->lastInsID = $this->getLastInsertId();
             }
             return $this->numRows;
@@ -471,7 +480,7 @@ class DbPdo extends Db{
 
     /**
      +----------------------------------------------------------
-     * 获取最后插入id ,暂不支持Oracle
+     * 获取最后插入id
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -490,8 +499,9 @@ class DbPdo extends Db{
                 return $this->_linkID->lastInsertId();
             case 'ORACLE':
             case 'OCI':
-                // TODO 完善
-                return 0;
+                $sequenceName = $this->table;
+                $vo = $this->query("SELECT {$sequenceName}.currval currval FROM dual");
+                return $vo?$vo[0]["currval"]:0;
         }
     }
 
