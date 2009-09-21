@@ -394,11 +394,11 @@ class Input extends Think
         while(preg_match('/(<[^><]+)(window\.|javascript:|js:|about:|file:|document\.|vbs:|cookie)([^><]*)/i',$text,$mat)){
             $text=str_replace($mat[0],$mat[1].$mat[3],$text);
         }
-        if( empty($allowTags) ) { $allowTags = self::$$htmlTags['allow']; }
+        if( empty($allowTags) ) { $allowTags = self::$htmlTags['allow']; }
         //允许的HTML标签
         $text =  preg_replace('/<('.$allowTags.')( [^><\[\]]*)>/i','[\1\2]',$text);
         //过滤多余html
-        if ( empty($banTag) ) { $banTag = self::$$htmlTags['ban']; }
+        if ( empty($banTag) ) { $banTag = self::$htmlTags['ban']; }
         $text =  preg_replace('/<\/?('.$banTag.')[^><]*>/i','',$text);
         //过滤合法的html标签
         while(preg_match('/<([a-z]+)[^><\[\]]*>[^><]*<\/\1>/i',$text,$mat)){
