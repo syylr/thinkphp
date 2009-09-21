@@ -675,29 +675,26 @@ class Model extends Think
             $condition   =  $this->options['where'];
         $options['where'] =  $condition;
         $options['field']    =  $field;
-        if(strpos($field,',')) {
-            $resultSet = $this->select($options);
-            if($resultSet) {
+        $options =  $this->_parseOptions($options);
+        if(strpos($field,',')) { // 多字段
+            $resultSet = $this->db->select($options);
+            if(!empty($resultSet)) {
                 $field  =   explode(',',$field);
+                $key =  array_shift($field);
                 $cols   =   array();
                 foreach ($resultSet as $result){
-                    if(strpos($field[1],':')) {
-                        $array = explode(':',$field[1]);
-                        $cols[$result[$field[0]]] =  '';
-                        foreach ($array as $val)
-                            $cols[$result[$field[0]]] .=  $result[$val].$sepa;
-                    }else{
-                        $cols[$result[$field[0]]] =  $result[$field[1]];
-                    }
+                    $cols[$result[$key]] =  '';
+                    foreach ($field as $val)
+                        $cols[$result[$key]] .=  $result[$val].$sepa;
+                    $cols[$result[$key]]  = substr($cols[$result[$key]],0,-strlen($sepa));
                 }
                 return $cols;
             }
-        }else{
-            $result   =  $this->find($options);
-            if($result) {
-                // 2009-6-24 解决getField方法和add等方法冲突的问题
-                $this->data=  array();
-                return reset($result);
+        }else{   // 查找一条记录
+            $options['limit'] = 1;
+            $result = $this->db->select($options);
+            if(!empty($result)) {
+                return reset($result[0]);
             }
         }
         return null;
