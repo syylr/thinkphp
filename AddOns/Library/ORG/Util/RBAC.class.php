@@ -170,7 +170,7 @@ class RBAC extends Think
                 if(C('USER_AUTH_TYPE')==2) {
                     //加强验证和即时验证模式 更加安全 后台权限修改可以即时生效
                     //通过数据库进行访问检查
-                    $accessList = RBAC::getAccessList();
+                    $accessList = RBAC::getAccessList($_SESSION[C('USER_AUTH_KEY')]);
                 }else {
                     // 如果是管理员或者当前操作已经认证过，无需再次认证
                     if( $_SESSION[$accessGuid]) {
@@ -200,7 +200,7 @@ class RBAC extends Think
      +----------------------------------------------------------
      * 取得当前认证号的所有权限列表
      +----------------------------------------------------------
-     * @param string $appPrefix 数据库前缀
+     * @param integer $authId 用户ID
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
