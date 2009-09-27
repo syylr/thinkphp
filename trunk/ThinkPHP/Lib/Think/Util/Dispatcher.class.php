@@ -59,10 +59,7 @@ class Dispatcher extends Think
                 $_varAction =   C('VAR_ACTION');
                 $_depr  =   C('URL_PATHINFO_DEPR');
                 $_pathModel =   C('URL_PATHINFO_MODEL');
-                if (C('APP_GROUP_LIST')) {
-                    if(empty($_GET[$_varGroup]))
-                        $_GET[$_varGroup] = C('DEFAULT_GROUP');
-                }else {
+                if (!C('APP_GROUP_LIST')) {
                     $_GET[$_varGroup] = '';
                 }
                 // 设置默认模块和操作
@@ -117,7 +114,7 @@ class Dispatcher extends Think
             $groupApp = C('APP_GROUP_LIST');
             if ($groupApp) {
                 $arr = array_map('strtolower',explode(',',$groupApp));
-                $pathInfo[C('VAR_GROUP')] = in_array(strtolower($paths[0]),$arr)? array_shift($paths) : C('DEFAULT_GROUP');
+                $pathInfo[C('VAR_GROUP')] = in_array(strtolower($paths[0]),$arr)? array_shift($paths) : '';
             }
             $pathInfo[C('VAR_MODULE')] = array_shift($paths);
             $pathInfo[C('VAR_ACTION')] = array_shift($paths);
