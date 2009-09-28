@@ -393,7 +393,7 @@ class Db extends Think
      * @return string
      +----------------------------------------------------------
      */
-    protected function parseValue($value) {
+    protected function parseValue(&$value) {
         if(is_string($value)) {
             $value = '\''.$this->escape_string($value).'\'';
         }elseif(isset($value[0]) && is_string($value[0]) && strtolower($value[0]) == 'exp'){
@@ -499,7 +499,12 @@ class Db extends Think
                             }elseif('exp'==strtolower($val[0])){ // 使用表达式
                                 $whereStr .= ' ('.$key.' '.$val[1].') ';
                             }elseif(preg_match('/IN/i',$val[0])){ // IN 运算
-                                $zone   =   is_array($val[1])? implode(',',$this->parseValue($val[1])):$val[1];
+                                if(is_array($val[1])) {
+                                    array_walk($val[1], array($this, 'parseValue'));
+                                    $zone   =   implode(',',$val[1]);
+                                }else{
+                                    $zone   =   $val[1];
+                                }
                                 $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
                             }elseif(preg_match('/BETWEEN/i',$val[0])){ // BETWEEN运算
                                 $data = is_string($val[1])? explode(',',$val[1]):$val[1];
