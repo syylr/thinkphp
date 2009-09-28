@@ -77,8 +77,7 @@ class App
 
         // 取得模块和操作名称
         // 可以在Dispatcher中定义获取规则
-        if(!defined('MODULE_NAME')) define('MODULE_NAME',   App::getModule());       // Module名称
-        if(!defined('ACTION_NAME')) define('ACTION_NAME',   App::getAction());        // Action操作
+
         // 加载项目分组公共文件
         if(C('APP_GROUP_LIST')) {
             if(!defined('GROUP_NAME')) define('GROUP_NAME', App::getGroup());       // Group名称
@@ -89,6 +88,10 @@ class App
             if(is_file(COMMON_PATH.GROUP_NAME.'/function.php'))
                 include COMMON_PATH.GROUP_NAME.'/function.php';
         }
+
+        if(!defined('MODULE_NAME')) define('MODULE_NAME',   App::getModule());       // Module名称
+        if(!defined('ACTION_NAME')) define('ACTION_NAME',   App::getAction());        // Action操作
+
         // 加载模块配置文件
         if(is_file(CONFIG_PATH.strtolower(MODULE_NAME).'_config.php'))
             C(include CONFIG_PATH.strtolower(MODULE_NAME).'_config.php');
