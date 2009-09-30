@@ -16,7 +16,7 @@
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Think
- * @subpackage  Util
+ * @subpackage  Core
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
