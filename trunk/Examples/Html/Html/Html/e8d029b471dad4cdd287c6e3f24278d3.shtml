@@ -1,36 +1,0 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
- <HEAD>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <TITLE>ThinkPHP示例：静态页面生成</TITLE>
-<link rel='stylesheet' type='text/css' href='/tp1.6/examples/Public/Css/common.css'>
- </HEAD>
- <BODY>
- <div class="main">
- <H2>ThinkPHP示例之：静态页面生成</H2>
-设置页面生成静态和有效期<BR>
- <TABLE  cellpadding=3 cellspacing=3>
-  <TR>
-	<TD ><div class="result" style="color:red">当前时间：12:29:04</div></TD>
- </TR>
- <TR>
-	<TD class="tLeft" ><A HREF="javascript:location.reload()">刷新页面</A> 后注意看时间是否有变化</TD>
- </TR>
- <TR>
-	<TD ><HR> 示例源码<BR>配置文件config.php<BR><code><span style="color: #000000">
-<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">if&nbsp;(!</span><span style="color: #0000BB">defined</span><span style="color: #007700">(</span><span style="color: #DD0000">'THINK_PATH'</span><span style="color: #007700">))&nbsp;exit();<br />return&nbsp;array(<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #DD0000">'HTML_CACHE_ON'</span><span style="color: #007700">=&gt;</span><span style="color: #0000BB">true</span><span style="color: #007700">,<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #DD0000">'HTML_CACHE_TIME'</span><span style="color: #007700">=&gt;</span><span style="color: #0000BB">10</span><span style="color: #007700">,<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #DD0000">'HTML_READ_TYPE'</span><span style="color: #007700">=&gt;</span><span style="color: #0000BB">0</span><span style="color: #007700">,<br />);<br /></span><span style="color: #0000BB">?&gt;</span>
-</span>
-</code><BR>
-	静态定义文件htmls.php <BR><code><span style="color: #000000">
-<span style="color: #0000BB">&lt;?php&nbsp;<br /></span><span style="color: #007700">return&nbsp;array(<br /></span><span style="color: #DD0000">'*'</span><span style="color: #007700">=&gt;array(</span><span style="color: #DD0000">'Html/{$_SERVER.REQUEST_URI|md5}'</span><span style="color: #007700">),&nbsp;<br />);<br /></span><span style="color: #0000BB">?&gt;</span>
-</span>
-</code><BR>
-	控制器IndexAction类<BR><code><span style="color: #000000">
-<span style="color: #0000BB">&lt;?php&nbsp;<br /></span><span style="color: #FF8000">//&nbsp;静态页面生成<br /></span><span style="color: #007700">class&nbsp;</span><span style="color: #0000BB">IndexAction&nbsp;</span><span style="color: #007700">extends&nbsp;</span><span style="color: #0000BB">Action</span><span style="color: #007700">{<br />}&nbsp;<br /></span><span style="color: #0000BB">?&gt;</span>
-</span>
-</code>	</TD>
- </TR>
- </TABLE>
-</div>
- </BODY>
-</HTML>
