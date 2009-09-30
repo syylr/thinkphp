@@ -1,0 +1,75 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<div id="main" class="main" >
+<script language="JavaScript">
+<!--
+function read(filename){
+	ThinkAjax.send('__URL__/readFile','ajax=1',readComplete);
+}
+function build(){
+	ThinkAjax.send('__URL__/build/','ajax=1&id={$vo.id}');
+}
+function readComplete(data,status){
+	if (status==1)
+	{
+	alert(data);
+	}
+}
+
+//-->
+</script>
+<div class="content">
+<div class="title"><equal name="vo.level"  value="1">项目</equal><equal name="vo.level" value="2">模块</equal><equal name="vo.level"  value="3">操作</equal>设计 [ <a href="__URL__">返回列表</a> ]</div>
+<div class="operate" >
+<html:imageBtn name="add" value="生成" click="build()" style="impBtn hMargin fLeft shadow" />
+<html:imageBtn name="add" value="配置" click="read()" style="impBtn hMargin fLeft shadow" />
+<html:imageBtn name="add" value="插件" click="read()" style="impBtn hMargin fLeft shadow" />
+</div>
+<div id="result" class="result none"></div>
+<div class="list">
+<form method='post'  id="form1" >
+<switch name="vo.level" >
+<case value="1" >
+<table cellpadding=3 cellspacing=3 >
+<tr>
+	<td class="tRight" >项目名称：</td>
+	<td class="tLeft" ><input type="text" class="large readonly bLeftRequire" readonly check='^\w+$' warning="名称不能为空,且不能含有空格"  name="name" value="{$vo.name} {$vo.title}"></td>
+</tr>
+<tr>
+	<td class="tRight tTop" >已有模块列表：</td>
+	<td class="tLeft" ><SELECT class="medium bLeft" size="6" >
+	<volist name="list" id="vo">
+	<option value="">{$vo.name} [ {$vo.title} ]</option>
+	</volist>
+	</SELECT></td>
+</tr>
+<tr>
+	<td class="tRight tTop" >未安装模块列表：</td>
+	<td class="tLeft" ><SELECT class="medium bLeft" size="6" >
+	<volist name="modules" id="vo">
+	<option value="">{$vo.name} [ {$vo.title} ]</option>
+	</volist>
+	</SELECT></td>
+</tr>
+<tr>
+	<td class="tRight tTop">描 述：</td>
+	<td class="tLeft"><TEXTAREA class="large bLeft" name="remark" onfocus="notice('remark')" rows="5" cols="57">{$vo.remark}</textarea></td>
+</tr>
+<tr>
+	<td></td>
+	<td class="center"><div style="width:85%;margin:5px"><input type="hidden" name="id" value="{$vo.id}" >
+	<input type="hidden" name="ajax" value="1">
+	<input type="hidden" name="pid" value="{$vo.pid}">
+	<div class="impBtn fLeft"><input type="button" value="保存" onclick="sendForm('form1','__URL__/update/','tips')" class="save imgButton"></div>
+	<div class="impBtn fRig"><input type="reset" onclick="history.back(-1)" class="reset imgButton" value="取消" ></div>
+	</div></td>
+</tr>
+</table>
+</div>
+</case>
+<case value="2" ></case>
+<case value="3" ></case>
+</switch>
+</form>
+</div>
+</div>
