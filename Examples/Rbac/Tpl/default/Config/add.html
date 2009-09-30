@@ -1,0 +1,66 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+
+<div id="main" class="main" >
+<script language="JavaScript">
+<!--
+
+//-->
+</script>
+<div class="content">
+<div class="title">新增配置 [ <a href="__URL__">返回列表</a> ]</div>
+<form method='post' id="form1" >
+<table cellpadding=3 cellspacing=3>
+<tr>
+	<td class="tRight" >变 量：</td>
+	<td class="tLeft" ><input type="text" class="large bLeftRequire" check='^\S+$' warning="配置名不能为空,且不能含有空格" name="name"></td>
+</tr>
+<tr>
+	<td class="tRight" >名 称：</td>
+	<td class="tLeft" ><input type="text" class="large bLeft"  name="title"></td>
+</tr>
+<tr>
+	<td class="tRight tTop">配 置：</td>
+	<td class="tLeft"><TEXTAREA class="bLeft large" name="value" rows="5" cols="35"></textarea></td>
+</tr>
+<tr>
+	<td class="tRight">类 型：</td>
+	<td class="tLeft"><SELECT class="medium bLeft" name="type">
+	<option value="0">字符型</option>
+	<option value="1">数字型</option>
+	<option value="2">布尔型</option>
+	<option value="3">文本型</option>
+	<option value="4">枚举型</option>
+	</SELECT></td>
+</tr>
+<tr>
+	<td class="tRight" >归 属：</td>
+	<td class="tLeft" >
+	<SELECT class="medium bLeft" name="tag">
+	<volist name="list" id="vo">
+	<option value="{$vo.id}">{$vo.title}</option>
+	</volist>
+	</SELECT>
+	</td>
+</tr>
+<tr>
+	<td class="tRight tTop">参 数：</td>
+	<td class="tLeft">布尔型、枚举型请输入参数（用,分割）<br/><TEXTAREA class="bLeft large" name="extra" rows="5" cols="35"></textarea><br/>布尔型采用两个参数，前面的表示否</td>
+</tr>
+<tr>
+	<td class="tRight tTop">备  注：</td>
+	<td class="tLeft"><TEXTAREA class="bLeft large" name="remark" rows="5" cols="35"></textarea></td>
+</tr>
+<tr>
+	<td></td>
+	<td class="center">
+	<input type="hidden" name="ajax" value="1">
+	<div class="impBtn fLeft"><input type="button" value="保存" onclick="sendForm('form1','__URL__/insert/','tips')" class="save imgButton"></div>
+	<div class="impBtn fLeft hMargin"><input type="reset" class="reset imgButton" value="清空" ></div>
+	</td>
+</tr>
+</table>
+</form>
+</div>
+</div>
+
