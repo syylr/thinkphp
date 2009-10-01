@@ -2,7 +2,6 @@
 if (!defined('THINK_PATH')) exit();
 $config	=	require '../config.php';
 $array=array(
-    'URL_MODEL'=>2, //默认1;URL模式：0 普通模式 1 PATHINFO 2 REWRITE 3 兼容模式
 	'USER_AUTH_ON'=>true,
 	'USER_AUTH_TYPE'			=>1,		// 默认认证类型 1 登录认证 2 实时认证
 	'USER_AUTH_KEY'			=>'authId',	// 用户认证SESSION标记
