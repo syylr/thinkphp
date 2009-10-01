@@ -1,7 +1,8 @@
 <?php
 if (!defined('THINK_PATH')) exit();
-return array(
-  'LOG_RECORD'=>true
-);
-
+$config  =   require '../config.php';
+$array   =  array(
+   'LOG_RECORD'=>true
+  );
+return array_merge($config,$array);
 ?>
