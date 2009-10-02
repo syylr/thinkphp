@@ -40,7 +40,7 @@ class UserAction extends CommonAction {
 
 	protected function addRole($userId) {
 		//新增用户自动加入相应权限组
-		$RoleUser = D("RoleUser");
+		$RoleUser = M("RoleUser");
 		$RoleUser->user_id	=	$userId;
         // 默认加入网站编辑组
         $RoleUser->role_id	=	3;

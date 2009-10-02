@@ -1,7 +1,7 @@
 <?php
 // 节点模型
 class NodeModel extends CommonModel {
-	public $_validate	=	array(
+	protected $_validate	=	array(
 		array('name','checkNode','节点已经存在',0,'callback'),
 		);
 

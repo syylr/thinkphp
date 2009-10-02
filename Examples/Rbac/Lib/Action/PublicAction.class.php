@@ -23,8 +23,8 @@ class PublicAction extends Action {
 	public function top() {
 		C('SHOW_RUN_TIME',false);			// 运行时间显示
 		C('SHOW_PAGE_TRACE',false);
-		$model	=	D("Group");
-		$list	=	$model->getField('id,title','status=1');
+		$model	=	M("Group");
+		$list	=	$model->where('status=1')->getField('id,title');
 		$this->assign('nodeGroupList',$list);
 		$this->display();
 	}
@@ -38,7 +38,6 @@ class PublicAction extends Action {
 	public function menu() {
         $this->checkUser();
         if(isset($_SESSION[C('USER_AUTH_KEY')])) {
-
             //显示菜单项
             $menu  = array();
             if(isset($_SESSION['menu'.$_SESSION[C('USER_AUTH_KEY')]])) {
@@ -47,12 +46,12 @@ class PublicAction extends Action {
                 $menu   =   $_SESSION['menu'.$_SESSION[C('USER_AUTH_KEY')]];
             }else {
                 //读取数据库模块列表生成菜单项
-                $node    =   D("Node");
+                $node    =   M("Node");
 				$id	=	$node->getField("id");
 				$where['level']=2;
 				$where['status']=1;
 				$where['pid']=$id;
-                $list	=	$node->where($where)->field('id,name,group_id,title')->order('sort asc')->findAll();
+                $list	=	$node->where($where)->field('id,name,group_id,title')->order('sort asc')->select();
                 $accessList = $_SESSION['_ACCESS_LIST'];
                 foreach($list as $key=>$module) {
                      if(isset($accessList[strtoupper(APP_NAME)][strtoupper($module['name'])]) || $_SESSION['administrator']) {
@@ -82,7 +81,6 @@ class PublicAction extends Action {
             '运行环境'=>$_SERVER["SERVER_SOFTWARE"],
             'PHP运行方式'=>php_sapi_name(),
             'ThinkPHP版本'=>THINK_VERSION.' [ <a href="http://thinkphp.cn" target="_blank">查看最新版本</a> ]',
-            '数据库'=> mysql_get_server_info(),
             '上传附件限制'=>ini_get('upload_max_filesize'),
             '执行时间限制'=>ini_get('max_execution_time').'秒',
             '服务器时间'=>date("Y年n月j日 H:i:s"),
@@ -193,7 +191,7 @@ class PublicAction extends Action {
             $map['id']		=	$_SESSION[C('USER_AUTH_KEY')];
         }
         //检查用户
-        $User    =   D("User");
+        $User    =   M("User");
         if(!$User->where($map)->field('id')->find()) {
             $this->error('旧密码不符或者用户名错误！');
         }else {
@@ -204,7 +202,7 @@ class PublicAction extends Action {
     }
 public function profile() {
 		$this->checkUser();
-		$User	 =	 D("User");
+		$User	 =	 M("User");
 		$vo	=	$User->getById($_SESSION[C('USER_AUTH_KEY')]);
 		$this->assign('vo',$vo);
 		$this->display();
