@@ -13,11 +13,9 @@ class NodeAction extends CommonAction {
 		}
 		$_SESSION['currentNodeId']	=	$map['pid'];
 		//获取上级节点
-		$node  = D("Node");
-
+		$node  = M("Node");
         if(isset($map['pid'])) {
             if($node->getById($map['pid'])) {
-
                 $this->assign('level',$node->level+1);
                 $this->assign('nodeName',$node->name);
             }else {
@@ -27,33 +25,33 @@ class NodeAction extends CommonAction {
 	}
 
 	public function _before_index() {
-		$model	=	D("Group");
+		$model	=	M("Group");
 		$list	=	$model->where('status=1')->getField('id,title');
 		$this->assign('groupList',$list);
 	}
 
 	// 获取配置类型
 	public function _before_add() {
-		$model	=	D("Group");
+		$model	=	M("Group");
 		$list	=	$model->where('status=1')->select();
 		$this->assign('list',$list);
-		$node	=	D("Node");
+		$node	=	M("Node");
 		$node->getById($_SESSION['currentNodeId']);
         $this->assign('pid',$node->id);
 		$this->assign('level',$node->level+1);
 	}
 
     public function _before_patch() {
-		$model	=	D("Group");
+		$model	=	M("Group");
 		$list	=	$model->where('status=1')->select();
 		$this->assign('list',$list);
-		$node	=	D("Node");
+		$node	=	M("Node");
 		$node->getById($_SESSION['currentNodeId']);
         $this->assign('pid',$node->id);
 		$this->assign('level',$node->level+1);
     }
 	public function _before_edit() {
-		$model	=	D("Group");
+		$model	=	M("Group");
 		$list	=	$model->where('status=1')->select();
 		$this->assign('list',$list);
 	}
@@ -93,7 +91,7 @@ class NodeAction extends CommonAction {
      */
     public function sort()
     {
-		$node = D('Node');
+		$node = M('Node');
         if(!empty($_GET['sortId'])) {
             $map = array();
             $map['status'] = 1;
