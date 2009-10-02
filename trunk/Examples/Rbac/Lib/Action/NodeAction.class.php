@@ -55,31 +55,7 @@ class NodeAction extends CommonAction {
 		$list	=	$model->where('status=1')->select();
 		$this->assign('list',$list);
 	}
-    // 批量增加节点
-    public function patchAdd() {
-        $Node   =  D("Node");
-        $count   =  count($_POST['name']);
-        for($i=0;$i<$count;$i++) {
-            if(!empty($_POST['name'][$i])) {
-                $data['name'] =  $_POST['name'][$i];
-                $data['title']    =  $_POST['title'][$i];
-                $data['remark']   =  $_POST['remark'][$i];
-                $data['status'] = $_POST['status'][$i];
-                $data['group_id']     = $_POST['group_id'][$i];
-                $data['level']   =  $_POST['level'];
-                $data['pid']     =  $_POST['pid'];
-                if($Node->create($data)) {
-                    $result   =  $Node->add();
-                    if(!$result) {
-                        $this->error('添加失败！');
-                    }
-                }else{
-                    $this->error($Node->getError());
-                }
-            }
-        }
-        $this->success('批量添加成功！');
-    }
+
     /**
      +----------------------------------------------------------
      * 默认排序操作
