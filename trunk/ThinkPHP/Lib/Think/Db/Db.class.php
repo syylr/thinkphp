@@ -534,7 +534,8 @@ class Db extends Think
                     }else {
                         //对字符串类型字段采用模糊匹配
                         if(C('DB_LIKE_FIELDS') && preg_match('/('.C('DB_LIKE_FIELDS').')/i',$key)) {
-                            $whereStr .= $key." LIKE ".$this->parseValue('%'.$val.'%');
+                            $val  =  '%'.$val.'%';
+                            $whereStr .= $key." LIKE ".$this->parseValue($val);
                         }else {
                             $whereStr .= $key." = ".$this->parseValue($val);
                         }
