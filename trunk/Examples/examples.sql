@@ -150,8 +150,8 @@ CREATE TABLE IF NOT EXISTS `think_form` (
 --
 
 INSERT INTO `think_form` (`id`, `title`, `content`, `user_id`, `create_time`, `update_time`, `status`, `email`) VALUES
-(1, 'dfdfd', 'fdfdf', 1, 1254325349, 0, 1, ''),
-(2, '343', '43434', 33, 1254325948, 0, 1, '');
+(1, 'ThinkPHP2.0发布', '祖国60周年华诞献礼，ThinkPHP2.0新版正式发布了！', 1, 1254325349, 0, 1, ''),
+(2, '新版套装销售', 'ThinkPHP新版发布超值纪念套装火热征订中！还送2G主机空间！', 33, 1254325948, 0, 1, '');
 
 -- --------------------------------------------------------
 
