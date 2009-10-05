@@ -724,7 +724,7 @@ class Model extends Think
             return false;
         }
         // 状态
-        $type = $type?$type:(isset($data[$this->getPk()])?self::MODEL_UPDATE:self::MODEL_INSERT);
+        $type = $type?$type:(!empty($data[$this->getPk()])?self::MODEL_UPDATE:self::MODEL_INSERT);
 
         // 表单令牌验证
         if(C('TOKEN_ON') && !$this->autoCheckToken($data)) {
