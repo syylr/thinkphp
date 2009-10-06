@@ -268,6 +268,29 @@ class Dispatcher extends Think
                         break;
                     }
                 }
+            }elseif(isset($routes['*'])){
+                $routeItem = $routes['*'];
+                $regx = trim($_SERVER['PATH_INFO'],'/');
+                foreach ($routeItem as $route){
+                    $rule = $route[0];// 路由正则
+                    if(preg_match($rule,$regx,$matches)) {
+                        $_GET[C('VAR_MODULE')] = $route[1];
+                        $_GET[C('VAR_ACTION')] = $route[2];
+                        //  获取当前路由参数对应的变量
+                        if(!isset($_GET[C('VAR_ROUTER')])) {
+                            $vars    =   explode(',',$route[3]);
+                            for($i=0;$i<count($vars);$i++)
+                                $_GET[$vars[$i]]     =   $matches[$i+1];
+                            // 解析剩余的URL参数
+                            $res = preg_replace('@(\w+)\/([^,\/]+)@e', '$_GET[\'\\1\']="\\2";', str_replace($matches[0],'',$regx));
+                        }
+                        if(isset($route[4])) {
+                            parse_str($route[4],$params);
+                            $_GET   =   array_merge($_GET,$params);
+                        }
+                        break;
+                    }
+                }
             }
         }
     }
