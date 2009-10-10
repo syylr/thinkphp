@@ -147,7 +147,7 @@ class App
         $list = C('APP_CONFIG_LIST');
         foreach ($list as $val){
             if(is_file(CONFIG_PATH.$val.'.php'))
-                C('_'.$val.'_',include CONFIG_PATH.$val.'.php');
+                C('_'.$val.'_',array_change_key_case(include CONFIG_PATH.$val.'.php'));
         }
         // 如果是调试模式加载调试模式配置文件
         if($debug) {
