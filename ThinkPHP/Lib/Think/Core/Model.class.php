@@ -63,6 +63,7 @@ class Model extends Think
     protected $options  =   array();
     protected $_validate       = array();  // 自动验证定义
     protected $_auto           = array();  // 自动完成定义
+    protected $_map           = array();  // 字段映射定义
     // 是否自动检测数据表字段信息
     protected $autoCheckFields   =   true;
 
@@ -735,7 +736,7 @@ class Model extends Think
         if(!$this->autoValidation($data,$type)) return false;
 
         // 检查字段映射
-        if(isset($this->_map)) {
+        if(!empty($this->_map)) {
             foreach ($this->_map as $key=>$val){
                 if(isset($data[$key])) {
                     $data[$val] =   $data[$key];
