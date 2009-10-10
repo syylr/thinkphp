@@ -639,7 +639,7 @@ class  ThinkTemplate extends Think
         //取得模板禁止使用函数列表
         $template_deny_funs = explode(',',C('TMPL_DENY_FUNC_LIST'));
         for($i=0;$i<$length ;$i++ ){
-            $args = explode('=',$varArray[$i]);
+            $args = explode('=',$varArray[$i],0===stripos($varArray[$i],'default=')?2:'');
             //模板函数过滤
             $args[0] = trim($args[0]);
             switch(strtolower($args[0])) {
