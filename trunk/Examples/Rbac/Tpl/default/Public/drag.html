@@ -8,14 +8,14 @@
 body {
   margin: 0;
   padding: 0;
-  background: #DFDFDF url(__PUBLIC__/images/body_bg.gif) repeat-y ;
+  background: #DFDFDF url(__PUBLIC__/Images/body_bg.gif) repeat-y ;
   cursor: E-resize;
 }
 </style>
 <script type="text/javascript" language="JavaScript">
 <!--
 var pic = new Image();
-pic.src="__PUBLIC__/images/bar_open.gif";
+pic.src="__PUBLIC__/Images/bar_open.gif";
 
 function toggleMenu()
 {
@@ -25,12 +25,12 @@ function toggleMenu()
   if (frmBody.cols == "0, 7, *")
   {
     frmBody.cols="200, 7, *";
-    imgArrow.src = "__PUBLIC__/images/bar_close.gif";
+    imgArrow.src = "__PUBLIC__/Images/bar_close.gif";
   }
   else
   {
     frmBody.cols="0, 7, *";
-    imgArrow.src = "__PUBLIC__/images/bar_open.gif";
+    imgArrow.src = "__PUBLIC__/Images/bar_open.gif";
   }
 }
 
@@ -75,7 +75,7 @@ Utils.fixEvent = function(e)
 </script>
 <body onselect="return false;">
 <table height="100%" cellspacing="0" cellpadding="0" style="border-left:1px solid #BFBFBF;" id="tbl">
-  <tr><td><a href="javascript:toggleMenu();"><img src="__PUBLIC__/images/bar_close.gif" width="6" height="60" id="img" border="0" /></a></td></tr>
+  <tr><td><a href="javascript:toggleMenu();"><img src="__PUBLIC__/Images/bar_close.gif" width="6" height="60" id="img" border="0" /></a></td></tr>
 </table>
 </body>
 </html>
