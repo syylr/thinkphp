@@ -67,20 +67,20 @@ function getStatus($status, $imageShow = true) {
 	switch ($status) {
 		case 0 :
 			$showText = '禁用';
-			$showImg = '<IMG SRC="' . WEB_PUBLIC_PATH . '/images/locked.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="禁用">';
+			$showImg = '<IMG SRC="' . WEB_PUBLIC_PATH . '/Images/locked.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="禁用">';
 			break;
 		case 2 :
 			$showText = '待审';
-			$showImg = '<IMG SRC="' . WEB_PUBLIC_PATH . '/images/prected.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="待审">';
+			$showImg = '<IMG SRC="' . WEB_PUBLIC_PATH . '/Images/prected.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="待审">';
 			break;
 		case - 1 :
 			$showText = '删除';
-			$showImg = '<IMG SRC="' . WEB_PUBLIC_PATH . '/images/del.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="删除">';
+			$showImg = '<IMG SRC="' . WEB_PUBLIC_PATH . '/Images/del.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="删除">';
 			break;
 		case 1 :
 		default :
 			$showText = '正常';
-			$showImg = '<IMG SRC="' . WEB_PUBLIC_PATH . '/images/ok.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="正常">';
+			$showImg = '<IMG SRC="' . WEB_PUBLIC_PATH . '/Images/ok.gif" WIDTH="20" HEIGHT="20" BORDER="0" ALT="正常">';
 
 	}
 	return ($imageShow === true) ?  $showImg  : $showText;
