@@ -12,6 +12,7 @@
 
 // 系统默认的核心列表文件
 return array(
+    THINK_PATH.'/Common/functions.php',   // 系统函数库
     THINK_PATH.'/Lib/Think/Exception/ThinkException.class.php',  // 异常处理类
     THINK_PATH.'/Lib/Think/Core/Log.class.php',    // 日志处理类
     THINK_PATH.'/Lib/Think/Core/App.class.php',   // 应用程序类
