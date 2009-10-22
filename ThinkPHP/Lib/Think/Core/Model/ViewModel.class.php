@@ -265,7 +265,7 @@ class ViewModel extends Model {
                         // 存在视图字段
                         if(is_numeric($_field)) {
                             $array[]    =   $k.'.'.$field.' AS '.$field;
-                        }else{
+                        }elseif('_' != substr($_field,0,1)){
                             if( false !== strpos($_field,'*') ||  false !== strpos($_field,'(') || false !== strpos($_field,'.'))
                                 //如果包含* 或者 使用了sql方法 则不再添加前面的表名
                                 $array[]    =   $_field.' AS '.$field;
