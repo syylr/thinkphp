@@ -465,11 +465,11 @@ function D($name='',$app='')
     }
     if(class_exists($className)) {
         $model = new $className();
-        $_model[$app.$OriClassName] =  $model;
-        return $model;
     }else {
-        throw_exception($className.L('_MODEL_NOT_EXIST_'));
+        $model  = new Model($name);
     }
+    $_model[$app.$OriClassName] =  $model;
+    return $model;
 }
 
 /**
