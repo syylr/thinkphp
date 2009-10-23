@@ -123,7 +123,7 @@ class Db extends Think
      * 执行查询 主要针对 SELECT, SHOW 等指令
      * 返回数据集
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -132,7 +132,7 @@ class Db extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function query($str='') {
+    public function query($str='') {
         $this->connect();
         if ( !$this->linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
@@ -156,7 +156,7 @@ class Db extends Think
      +----------------------------------------------------------
      * 执行语句 针对 INSERT, UPDATE 以及DELETE
      +----------------------------------------------------------
-     * @access protected
+     * @access public
      +----------------------------------------------------------
      * @param string $str  sql指令
      +----------------------------------------------------------
@@ -165,7 +165,7 @@ class Db extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function execute($str='') {
+    public function execute($str='') {
         $this->connect();
         if ( !$this->linkID ) return false;
         if ( $str != '' ) $this->queryStr = $str;
