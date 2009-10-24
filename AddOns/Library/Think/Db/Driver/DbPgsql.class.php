@@ -54,7 +54,7 @@ class DbPgsql extends Db{
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
             $conn = $this->pconnect ? 'pg_pconnect':'pg_connect';
-            $this->linkID[$linkNum] =  $conn('host='.$config['hostname'].'port='.$config['hostport'].'dbname='.$config['database'].'user='.$config['username'].' password='.$config['password']);
+            $this->linkID[$linkNum] =  $conn('host='.$config['hostname'].' port='.$config['hostport'].' dbname='.$config['database'].' user='.$config['username'].'  password='.$config['password']);
             if (0 !== pg_connection_status($this->linkID[$linkNum])){
                 throw_exception($this->error(false));
             }
