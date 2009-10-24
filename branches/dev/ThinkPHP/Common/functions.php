@@ -577,7 +577,7 @@ function C($name=null,$value=null)
     }
     // 批量设置
     if(is_array($name))
-        return $_config = array_merge($_config,array_change_key_case($name));
+        return $_config = array_merge($_config,array_change_key_case_recursive($name));
     return null;// 避免非法参数
 }
 
