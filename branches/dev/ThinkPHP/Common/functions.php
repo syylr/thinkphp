@@ -878,7 +878,7 @@ function cookie($name,$value='',$option=null)
         }
     }
 }
-//将数组的所有的KEY 都转换为大写或小写(支持多维数组)
+//将数组的所有的KEY都转换为大写或小写(支持多维数组)
 function array_change_key_case_recursive($array, $case = null){
         if(!is_array($array)){
             trigger_error("Invalid input array '{$array}'",E_USER_NOTICE); exit;
