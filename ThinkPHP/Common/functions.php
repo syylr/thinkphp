@@ -577,7 +577,7 @@ function C($name=null,$value=null)
     }
     // 批量设置
     if(is_array($name))
-        return $_config = array_merge($_config,array_change_key_case($name));
+        return $_config = array_merge($_config,array_change_key_case_recursive($name));
     return null;// 避免非法参数
 }
 
@@ -878,4 +878,24 @@ function cookie($name,$value='',$option=null)
         }
     }
 }
+//将数组的所有的KEY都转换为大写或小写(支持多维数组)
+function array_change_key_case_recursive($array, $case = null){
+        if(!is_array($array)){
+            trigger_error("Invalid input array '{$array}'",E_USER_NOTICE); exit;
+        }
+        // CASE_UPPER|CASE_LOWER
+        if(null === $case){
+            $case = CASE_LOWER;
+        }
+        if(!in_array($case, array(CASE_UPPER, CASE_LOWER))){
+            trigger_error("Case parameter '{$case}' is invalid.", E_USER_NOTICE); exit;
+        }
+        $array = array_change_key_case($array, $case);
+        foreach($array as $key=>$arr){
+            if(is_array($arr)){
+                $array[$key] = array_change_key_case_recursive($arr, $case);
+            }
+        }
+        return $array;
+    }
 ?>
