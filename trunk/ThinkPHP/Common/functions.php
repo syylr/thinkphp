@@ -465,11 +465,11 @@ function D($name='',$app='')
     }
     if(class_exists($className)) {
         $model = new $className();
-        $_model[$app.$OriClassName] =  $model;
-        return $model;
     }else {
-        throw_exception($className.L('_MODEL_NOT_EXIST_'));
+        $model  = new Model($name);
     }
+    $_model[$app.$OriClassName] =  $model;
+    return $model;
 }
 
 /**
@@ -561,8 +561,8 @@ function C($name=null,$value=null)
     // 优先执行设置获取或赋值
     if (is_string($name))
     {
-        $name = strtolower($name);
         if (!strpos($name,'.')) {
+            $name = strtolower($name);
             if (is_null($value))
                 return isset($_config[$name])? $_config[$name] : null;
             $_config[$name] = $value;
@@ -571,13 +571,13 @@ function C($name=null,$value=null)
         // 二维数组设置和获取支持
         $name = explode('.',$name);
         if (is_null($value))
-            return isset($_config[$name[0]][$name[1]]) ? $_config[$name[0]][$name[1]] : null;
+            return isset($_config[strtolower($name[0])][$name[1]]) ? $_config[strtolower($name[0])][$name[1]] : null;
         $_config[$name[0]][$name[1]] = $value;
         return;
     }
     // 批量设置
     if(is_array($name))
-        return $_config = array_merge($_config,array_change_key_case_recursive($name));
+        return $_config = array_merge($_config,array_change_key_case($name));
     return null;// 避免非法参数
 }
 
@@ -878,24 +878,4 @@ function cookie($name,$value='',$option=null)
         }
     }
 }
-//将数组的所有的KEY都转换为大写或小写(支持多维数组)
-function array_change_key_case_recursive($array, $case = null){
-        if(!is_array($array)){
-            trigger_error("Invalid input array '{$array}'",E_USER_NOTICE); exit;
-        }
-        // CASE_UPPER|CASE_LOWER
-        if(null === $case){
-            $case = CASE_LOWER;
-        }
-        if(!in_array($case, array(CASE_UPPER, CASE_LOWER))){
-            trigger_error("Case parameter '{$case}' is invalid.", E_USER_NOTICE); exit;
-        }
-        $array = array_change_key_case($array, $case);
-        foreach($array as $key=>$arr){
-            if(is_array($arr)){
-                $array[$key] = array_change_key_case_recursive($arr, $case);
-            }
-        }
-        return $array;
-    }
 ?>
