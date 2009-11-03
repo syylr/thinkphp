@@ -71,7 +71,7 @@ class DbPdo extends Db{
             }
             // 因为PDO的连接切换可能导致数据库类型不同，因此重新获取下当前的数据库类型
             $this->dbType = $this->_getDsnType($config['dsn']);
-            if(in_array($this->dbType,array('MSSQL','ORACLE','IBASE','OCI')) {
+            if(in_array($this->dbType,array('MSSQL','ORACLE','IBASE','OCI'))) {
                 throw_exception('PDO暂时不支持'.$this->dbType);
             }
             $this->linkID[$linkNum]->exec('SET NAMES '.C('DB_CHARSET'));
