@@ -566,7 +566,7 @@ class  ThinkTemplate extends Think
         $varExists = true;
         if(!empty($varStr)){
             // 检查运算符
-            if($pos = strpos($varStr,'*') || $pos = strpos($varStr,'+') || $pos = strpos($varStr,'-') || $pos = strpos($varStr,'/')) {
+            if(($pos = strpos($varStr,'*')) || ($pos = strpos($varStr,'+')) || ($pos = strpos($varStr,'-')) || ($pos = strpos($varStr,'/'))) {
                 $name   = $this->parseVarItem(substr($varStr,0,$pos)).substr($varStr,$pos,1).$this->parseVarItem(substr($varStr,$pos+1));
             }else{
                 $name   = $this->parseVarItem($varStr);
