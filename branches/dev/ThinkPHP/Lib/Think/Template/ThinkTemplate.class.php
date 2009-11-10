@@ -557,7 +557,7 @@ class  ThinkTemplate extends Think
      * @return string
      +----------------------------------------------------------
      */
-    public function parseVar($varStr){dump($varStr);
+    public function parseVar($varStr){
         $varStr = trim($varStr);
         static $_varParseList = array();
         //如果已经解析过该变量字串，则直接返回变量值
