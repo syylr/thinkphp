@@ -446,7 +446,7 @@ class  ThinkTemplate extends Think
         $name   = substr($tagStr,1);
         if('$' == $flag){
             //解析模板变量 格式 {$varName}
-            return $this->parseVar($name);
+            return $this->parseVar($tagStr);
         }elseif(':' == $flag){
             // 输出某个函数的结果
             return  '<?php echo '.$name.';?>';
@@ -557,7 +557,7 @@ class  ThinkTemplate extends Think
      * @return string
      +----------------------------------------------------------
      */
-    public function parseVar($varStr){
+    public function parseVar($varStr){dump($varStr);
         $varStr = trim($varStr);
         static $_varParseList = array();
         //如果已经解析过该变量字串，则直接返回变量值
@@ -565,61 +565,77 @@ class  ThinkTemplate extends Think
         $parseStr ='';
         $varExists = true;
         if(!empty($varStr)){
-            $varArray = explode('|',$varStr);
-            //取得变量名称
-            $var = array_shift($varArray);
-            //非法变量过滤 不允许在变量里面使用 ->
-            //TODO：还需要继续完善
-            if(preg_match('/->/is',$var))
-                return '';
-            if('Think.' == substr($var,0,6)){
-                // 所有以Think.打头的以特殊变量对待 无需模板赋值就可以输出
-                $name = $this->parseThinkVar($var);
+            // 检查运算符
+            if($pos = strpos($varStr,'*') || $pos = strpos($varStr,'+') || $pos = strpos($varStr,'-') || $pos = strpos($varStr,'/')) {
+                $name   = $this->parseVarItem(substr($varStr,0,$pos)).substr($varStr,$pos,1).$this->parseVarItem(substr($varStr,$pos+1));
+            }else{
+                $name   = $this->parseVarItem($varStr);
             }
-            elseif( false !== strpos($var,'.')) {
-                //支持 {$var.property}
-                $vars = explode('.',$var);
-                $var  =  array_shift($vars);
-                switch(strtolower(C('TMPL_VAR_IDENTIFY'))) {
-                    case 'array': // 识别为数组
-                        $name = '$'.$var;
-                        foreach ($vars as $key=>$val)
-                            $name .= '["'.$val.'"]';
-                        break;
-                    case 'obj':  // 识别为对象
-                        $name = '$'.$var;
-                        foreach ($vars as $key=>$val)
-                            $name .= '->'.$val;
-                        break;
-                    default:  // 自动判断数组或对象 只支持二维
-                        $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
-                }
-            }
-            elseif(false !==strpos($var,':')){
-                //支持 {$var:property} 方式输出对象的属性
-                $vars = explode(':',$var);
-                $var  =  str_replace(':','->',$var);
-                $name = "$".$var;
-                $var  = $vars[0];
-            }
-            elseif(false !== strpos($var,'[')) {
-                //支持 {$var['key']} 方式输出数组
-                $name = "$".$var;
-                preg_match('/(.+?)\[(.+?)\]/is',$var,$match);
-                $var = $match[1];
-            }
-            else {
-                $name = "$$var";
-            }
-            //对变量使用函数
-            if(count($varArray)>0)
-                $name = $this->parseVarFunction($name,$varArray);
             $parseStr = '<?php echo ('.$name.'); ?>';
         }
         $_varParseList[$varStr] = $parseStr;
         return $parseStr;
     }
 
+    public function parseVarItem($varStr)
+    {
+        if('$' != substr($varStr,0,1)) {
+            return $varStr;
+        }else{
+            $varStr  =  substr($varStr,1);
+        }
+        $varArray = explode('|',$varStr);
+        //取得变量名称
+        $var = array_shift($varArray);
+        //非法变量过滤 不允许在变量里面使用 ->
+        //TODO：还需要继续完善
+        if(preg_match('/->/is',$var))
+            return '';
+        if('Think.' == substr($var,0,6)){
+            // 所有以Think.打头的以特殊变量对待 无需模板赋值就可以输出
+            $name = $this->parseThinkVar($var);
+        }
+        elseif( false !== strpos($var,'.')) {
+            //支持 {$var.property}
+            $vars = explode('.',$var);
+            $var  =  array_shift($vars);
+            switch(strtolower(C('TMPL_VAR_IDENTIFY'))) {
+                case 'array': // 识别为数组
+                    $name = '$'.$var;
+                    foreach ($vars as $key=>$val)
+                        $name .= '["'.$val.'"]';
+                    break;
+                case 'obj':  // 识别为对象
+                    $name = '$'.$var;
+                    foreach ($vars as $key=>$val)
+                        $name .= '->'.$val;
+                    break;
+                default:  // 自动判断数组或对象 只支持二维
+                    $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
+            }
+        }
+        elseif(false !==strpos($var,':')){
+            //支持 {$var:property} 方式输出对象的属性
+            $vars = explode(':',$var);
+            $var  =  str_replace(':','->',$var);
+            $name = "$".$var;
+            $var  = $vars[0];
+        }
+        elseif(false !== strpos($var,'[')) {
+            //支持 {$var['key']} 方式输出数组
+            $name = "$".$var;
+            preg_match('/(.+?)\[(.+?)\]/is',$var,$match);
+            $var = $match[1];
+        }
+        else {
+            $name = "$$var";
+        }
+        //对变量使用函数
+        if(count($varArray)>0)
+            $name = $this->parseVarFunction($name,$varArray);
+        return $name;
+    }
+    
     /**
      +----------------------------------------------------------
      * 对模板变量使用函数
@@ -639,7 +655,10 @@ class  ThinkTemplate extends Think
         //取得模板禁止使用函数列表
         $template_deny_funs = explode(',',C('TMPL_DENY_FUNC_LIST'));
         for($i=0;$i<$length ;$i++ ){
-            $args = explode('=',$varArray[$i]);
+            if (0===stripos($varArray[$i],'default='))
+                $args = explode('=',$varArray[$i],2);
+            else
+                $args = explode('=',$varArray[$i]);
             //模板函数过滤
             $args[0] = trim($args[0]);
             switch(strtolower($args[0])) {
