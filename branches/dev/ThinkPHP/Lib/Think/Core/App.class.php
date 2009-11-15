@@ -94,6 +94,10 @@ class App
         }
 
         if(!defined('MODULE_NAME')) define('MODULE_NAME',   App::getModule());       // Module名称
+        //检查模块是否允许URL访问
+        if(in_array(MODULE_NAME,C('APP_MODULE_DENY_LIST'))) {
+            halt('模块禁止访问');
+        }
         if(!defined('ACTION_NAME')) define('ACTION_NAME',   App::getAction());        // Action操作
 
         // 加载模块配置文件
