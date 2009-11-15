@@ -26,6 +26,29 @@ import('TagLib');
 class TagLibCx extends TagLib
 {//类定义开始
 
+    // 标签定义
+    protected $tags   =  array(
+        // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
+        'php'=>array('attr'=>'','close'=>0),
+        'volist'=>array('attr'=>'name,id,offset,length,key,mod','level'=>3,'alias'=>'iterate'),
+        'include'=>array('attr'=>'file','close'=>0),
+        'if'=>array('attr'=>'condition'),
+        'elseif'=>array('attr'=>'condition'),
+        'else'=>array('attr'=>'','close'=>0),
+        'switch'=>array('attr'=>'name','level'=>3),
+        'case'=>array('attr'=>'value,break'),
+        'default'=>array('attr'=>'','close'=>0),
+        'compare'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'eq,equal,notequal,neq,gt,lt,egt,elt,heq,nheq'),
+        'range'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'in,notin'),
+        'empty'=>array('attr'=>'name','level'=>3),
+        'notempty'=>array('attr'=>'name','level'=>3),
+        'present'=>array('attr'=>'name','level'=>3),
+        'notpresent'=>array('attr'=>'name','level'=>3),
+        'defined'=>array('attr'=>'name','level'=>3),
+        'notdefined'=>array('attr'=>'name','level'=>3),
+        'import'=>array('attr'=>'file,href,type,value,basepath','close'=>0,'alias'=>'load,css,js'),       
+        );
+
     /**
      +----------------------------------------------------------
      * include标签解析

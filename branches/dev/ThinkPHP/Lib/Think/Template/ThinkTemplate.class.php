@@ -354,37 +354,38 @@ class  ThinkTemplate extends Think
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
         $tLib =  Think::instance('TagLib'.ucwords(strtolower($tagLib)));
-        if($tLib->valid()) {
-            //如果标签库有效则取出支持标签列表
-            $tagList =  $tLib->getTagList();
-            //遍历标签列表进行模板标签解析
-            foreach($tagList as $tag) {
+        foreach ($tLib->tags as $tag=>$val){
+            if(isset($val['alias'])) {// 别名设置
+                $tags = explode(',',$val['alias']);
+                $tags[]  =  $tag;
+            }else{
+                $tags[] = $tag;
+            }
+            $level = isset($val['level'])?$val['level']:1;
+            $closeTag = isset($val['close'])?$val['close']:true;
+            foreach ($tags as $tag){
                 // 实际要解析的标签名称
-                if( !$hide)
-                    $startTag = $tagLib.':'.$tag['name'];
-                else
-                    $startTag = $tag['name'];
-                // 检查可嵌套标签以及嵌套级别
-                if($tag['nested'] && $this->config['tag_level']>1)
-                    $level   =   $this->config['tag_level'];
-                else
-                    $level   =   1;
-                $endTag = $startTag;
-                if(false !== stripos($content,C('TAGLIB_BEGIN').$startTag)) {
-                    if(empty($tag['attribute'])){
-                        // 无属性标签
-                        if($tag['content'] !='empty'){
-                            for($i=0;$i<$level;$i++)
-                                $content = preg_replace('/'.$begin.$startTag.'(\s*?)'.$end.'(.*?)'.$begin.'\/'.$endTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-                        }else{
-                            $content = preg_replace('/'.$begin.$startTag.'(\s*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
-                        }
-                    }elseif($tag['content'] !='empty') {//闭合标签解析
+                $parseTag = !$hide?$tagLib.':'.$tag:$tag;
+                if(empty($val['attr'])){
+                    // 无属性标签
+                    if(!$closeTag) {
+                        $content = preg_replace('/'.$begin.$parseTag.'(\s.*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','')",$content);
+                    }else{
                         for($i=0;$i<$level;$i++)
-                            $content = preg_replace('/'.$begin.$startTag.'\s(.*?)'.$end.'(.+?)'.$begin.'\/'.$endTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-                    }else {//开放标签解析
-                        // 开始标签必须有一个空格
-                        $content = preg_replace('/'.$begin.$startTag.'\s(.*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+                            $content = preg_replace('/'.$begin.$parseTag.'(\s*?)'.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','\\2')",$content);
+                    }
+                    if(!$closeTag) {
+                        $content = preg_replace('/'.$begin.$parseTag.'(\s*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlItem('$tag','\\1','')",$content);
+                    }else{
+                        for($i=0;$i<$level;$i++)
+                            $content = preg_replace('/'.$begin.$parseTag.'(\s*?)'.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlItem('$tag','\\1','\\2')",$content);
+                    }
+                }else{
+                    if(!$closeTag) {
+                        $content = preg_replace('/'.$begin.$parseTag.'\s(.*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','')",$content);
+                    }else{
+                        for($i=0;$i<$level;$i++)
+                            $content = preg_replace('/'.$begin.$parseTag.'\s(.*?)'.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','\\2')",$content);
                     }
                 }
             }
@@ -415,11 +416,9 @@ class  ThinkTemplate extends Think
         if(ini_get('magic_quotes_sybase'))
             $attr =  str_replace('\"','\'',$attr);
         $tLib =  get_instance_of('TagLib'.ucwords(strtolower($tagLib)));
-        if($tLib->valid()) {
-            $parse = '_'.$tag;
-            $content = trim($content);
-            return $tLib->$parse($attr,$content);
-        }
+        $parse = '_'.$tag;
+        $content = trim($content);
+        return $tLib->$parse($attr,$content);
     }
 
     /**
@@ -446,7 +445,7 @@ class  ThinkTemplate extends Think
         $name   = substr($tagStr,1);
         if('$' == $flag){
             //解析模板变量 格式 {$varName}
-            return $this->parseVar($tagStr);
+            return $this->parseVar($name);
         }elseif(':' == $flag){
             // 输出某个函数的结果
             return  '<?php echo '.$name.';?>';
@@ -565,77 +564,61 @@ class  ThinkTemplate extends Think
         $parseStr ='';
         $varExists = true;
         if(!empty($varStr)){
-            // 检查运算符
-            if(($pos = strpos($varStr,'*')) || ($pos = strpos($varStr,'+')) || ($pos = strpos($varStr,'-')) || ($pos = strpos($varStr,'/'))) {
-                $name   = $this->parseVarItem(substr($varStr,0,$pos)).substr($varStr,$pos,1).$this->parseVarItem(substr($varStr,$pos+1));
-            }else{
-                $name   = $this->parseVarItem($varStr);
+            $varArray = explode('|',$varStr);
+            //取得变量名称
+            $var = array_shift($varArray);
+            //非法变量过滤 不允许在变量里面使用 ->
+            //TODO：还需要继续完善
+            if(preg_match('/->/is',$var))
+                return '';
+            if('Think.' == substr($var,0,6)){
+                // 所有以Think.打头的以特殊变量对待 无需模板赋值就可以输出
+                $name = $this->parseThinkVar($var);
             }
+            elseif( false !== strpos($var,'.')) {
+                //支持 {$var.property}
+                $vars = explode('.',$var);
+                $var  =  array_shift($vars);
+                switch(strtolower(C('TMPL_VAR_IDENTIFY'))) {
+                    case 'array': // 识别为数组
+                        $name = '$'.$var;
+                        foreach ($vars as $key=>$val)
+                            $name .= '["'.$val.'"]';
+                        break;
+                    case 'obj':  // 识别为对象
+                        $name = '$'.$var;
+                        foreach ($vars as $key=>$val)
+                            $name .= '->'.$val;
+                        break;
+                    default:  // 自动判断数组或对象 只支持二维
+                        $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
+                }
+            }
+            elseif(false !==strpos($var,'::')){
+                //支持 {$var:property} 方式输出对象的属性
+                $vars = explode('::',$var);
+                $var  =  str_replace('::','->',$var);
+                $name = "$".$var;
+                $var  = $vars[0];
+            }
+            elseif(false !== strpos($var,'[')) {
+                //支持 {$var['key']} 方式输出数组
+                $name = "$".$var;
+                preg_match('/(.+?)\[(.+?)\]/is',$var,$match);
+                $var = $match[1];
+            }
+            else {
+                $name = "$$var";
+            }
+            //对变量使用函数
+            if(count($varArray)>0)
+                $name = $this->parseVarFunction($name,$varArray);
             $parseStr = '<?php echo ('.$name.'); ?>';
         }
         $_varParseList[$varStr] = $parseStr;
         return $parseStr;
     }
 
-    public function parseVarItem($varStr)
-    {
-        if('$' != substr($varStr,0,1)) {
-            return $varStr;
-        }else{
-            $varStr  =  substr($varStr,1);
-        }
-        $varArray = explode('|',$varStr);
-        //取得变量名称
-        $var = array_shift($varArray);
-        //非法变量过滤 不允许在变量里面使用 ->
-        //TODO：还需要继续完善
-        if(preg_match('/->/is',$var))
-            return '';
-        if('Think.' == substr($var,0,6)){
-            // 所有以Think.打头的以特殊变量对待 无需模板赋值就可以输出
-            $name = $this->parseThinkVar($var);
-        }
-        elseif( false !== strpos($var,'.')) {
-            //支持 {$var.property}
-            $vars = explode('.',$var);
-            $var  =  array_shift($vars);
-            switch(strtolower(C('TMPL_VAR_IDENTIFY'))) {
-                case 'array': // 识别为数组
-                    $name = '$'.$var;
-                    foreach ($vars as $key=>$val)
-                        $name .= '["'.$val.'"]';
-                    break;
-                case 'obj':  // 识别为对象
-                    $name = '$'.$var;
-                    foreach ($vars as $key=>$val)
-                        $name .= '->'.$val;
-                    break;
-                default:  // 自动判断数组或对象 只支持二维
-                    $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
-            }
-        }
-        elseif(false !==strpos($var,':')){
-            //支持 {$var:property} 方式输出对象的属性
-            $vars = explode(':',$var);
-            $var  =  str_replace(':','->',$var);
-            $name = "$".$var;
-            $var  = $vars[0];
-        }
-        elseif(false !== strpos($var,'[')) {
-            //支持 {$var['key']} 方式输出数组
-            $name = "$".$var;
-            preg_match('/(.+?)\[(.+?)\]/is',$var,$match);
-            $var = $match[1];
-        }
-        else {
-            $name = "$$var";
-        }
-        //对变量使用函数
-        if(count($varArray)>0)
-            $name = $this->parseVarFunction($name,$varArray);
-        return $name;
-    }
-    
     /**
      +----------------------------------------------------------
      * 对模板变量使用函数
