@@ -354,12 +354,13 @@ class  ThinkTemplate extends Think
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
         $tLib =  Think::instance('TagLib'.ucwords(strtolower($tagLib)));
-        foreach ($tLib->tags as $tag=>$val){
+        foreach ($tLib->tags as $name=>$val){
+            $tags = array();
             if(isset($val['alias'])) {// 别名设置
                 $tags = explode(',',$val['alias']);
-                $tags[]  =  $tag;
+                $tags[]  =  $name;
             }else{
-                $tags[] = $tag;
+                $tags[] = $name;
             }
             $level = isset($val['level'])?$val['level']:1;
             $closeTag = isset($val['close'])?$val['close']:true;
@@ -373,12 +374,6 @@ class  ThinkTemplate extends Think
                     }else{
                         for($i=0;$i<$level;$i++)
                             $content = preg_replace('/'.$begin.$parseTag.'(\s*?)'.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','\\2')",$content);
-                    }
-                    if(!$closeTag) {
-                        $content = preg_replace('/'.$begin.$parseTag.'(\s*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlItem('$tag','\\1','')",$content);
-                    }else{
-                        for($i=0;$i<$level;$i++)
-                            $content = preg_replace('/'.$begin.$parseTag.'(\s*?)'.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlItem('$tag','\\1','\\2')",$content);
                     }
                 }else{
                     if(!$closeTag) {
