@@ -819,7 +819,7 @@ function data_to_xml($data) {
 
 /**
  +----------------------------------------------------------
- * Cookie 设置、获取、清除 (支持数组或对象直接设置) 2009-07-9
+ * Cookie 设置、获取、清除
  +----------------------------------------------------------
  * 1 获取cookie: cookie('name')
  * 2 清空当前设置前缀的所有cookie: cookie(null)
@@ -828,7 +828,6 @@ function data_to_xml($data) {
  * 5 删除cookie: cookie('name',null)
  +----------------------------------------------------------
  * $option 可用设置prefix,expire,path,domain
- * 支持数组形式:cookie('name','value',array('expire'=>1,'prefix'=>'think_'))
  * 支持query形式字符串:cookie('name','value','prefix=tp_&expire=10000')
  */
 function cookie($name,$value='',$option=null)
@@ -866,7 +865,7 @@ function cookie($name,$value='',$option=null)
     }
     $name = $config['prefix'].$name;
     if (''===$value){
-        return isset($_COOKIE[$name]) ? unserialize($_COOKIE[$name]) : null;// 获取指定Cookie
+        return isset($_COOKIE[$name]) ? $_COOKIE[$name] : null;// 获取指定Cookie
     }else {
         if (is_null($value)) {
             setcookie($name,'',time()-3600,$config['path'],$config['domain']);
@@ -874,8 +873,8 @@ function cookie($name,$value='',$option=null)
         }else {
             // 设置cookie
             $expire = !empty($config['expire'])? time()+ intval($config['expire']):0;
-            setcookie($name,serialize($value),$expire,$config['path'],$config['domain']);
-            $_COOKIE[$name] = serialize($value);
+            setcookie($name,$value,$expire,$config['path'],$config['domain']);
+            $_COOKIE[$name] = $value;
         }
     }
 }
