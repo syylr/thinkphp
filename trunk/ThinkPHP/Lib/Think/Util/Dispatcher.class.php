@@ -52,7 +52,7 @@ class Dispatcher extends Think
         if($urlMode) {
 			// 获取PATHINFO信息
             self::getPathInfo();
-            if (!empty($_GET) && !isset($_GET[C('VAR_ROUTER')])) {
+            if (C('URL_AUTO_REDIRECT') && !empty($_GET) && !isset($_GET[C('VAR_ROUTER')])) {
                 $_GET  =  array_merge (self :: parsePathInfo(),$_GET);
                 $_varGroup =   C('VAR_GROUP'); // 分组变量
                 $_varModule =   C('VAR_MODULE');
