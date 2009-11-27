@@ -161,6 +161,7 @@ return  array(
     // 3 兼容模式(通过一个GET变量将PATHINFO传递给dispather，默认为s index.php?s=/module/action/id/1)
     'URL_PATHINFO_DEPR'     => '/',	// PATHINFO模式下，各参数之间的分割符号
     'URL_HTML_SUFFIX'       => '',  // URL伪静态后缀设置
+    'URL_AUTO_REDIRECT'    =>true, // 自动重定向到规范的URL
 
     /* 系统变量名称设置 */
     'VAR_GROUP'             => 'g',     // 默认分组获取变量
