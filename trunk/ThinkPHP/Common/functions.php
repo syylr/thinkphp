@@ -828,7 +828,8 @@ function data_to_xml($data) {
  * 5 删除cookie: cookie('name',null)
  +----------------------------------------------------------
  * $option 可用设置prefix,expire,path,domain
- * 支持query形式字符串:cookie('name','value','prefix=tp_&expire=10000')
+ * 支持数组形式对参数设置:cookie('name','value',array('expire'=>1,'prefix'=>'think_'))
+ * 支持query形式字符串对参数设置:cookie('name','value','prefix=tp_&expire=10000')
  */
 function cookie($name,$value='',$option=null)
 {
