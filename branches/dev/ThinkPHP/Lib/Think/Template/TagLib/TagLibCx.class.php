@@ -47,6 +47,8 @@ class TagLibCx extends TagLib
         'defined'=>array('attr'=>'name','level'=>3),
         'notdefined'=>array('attr'=>'name','level'=>3),
         'import'=>array('attr'=>'file,href,type,value,basepath','close'=>0,'alias'=>'load,css,js'),       
+        'assign'=>array('attr'=>'name,value','close'=>0),
+        'define'=>array('attr'=>'name,value','close'=>0),
         );
 
     /**
@@ -638,6 +640,60 @@ class TagLibCx extends TagLib
     public function _js($attr,$content)
     {
         return $this->_import($attr,$content,true,'js');
+    }
+
+    /**
+     +----------------------------------------------------------
+     * assign标签解析
+     * 在模板中给某个变量赋值 支持变量赋值
+     * 格式： <assign name="" value="" />
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function _assign($attr,$content)
+    {
+        $tag      = $this->parseXmlAttr($attr,'assign');
+        $name   = $this->autoBuildVar($tag['name']);
+        if('$'==substr($tag['value'],0,1)) {
+            $value   =  $this->autoBuildVar(substr($tag['value'],1));
+        }else{
+            $value   =   '\''.$tag['value']. '\'';
+        }
+        $parseStr  = '<?php '.$name.' = '.$value.'; ?>';
+        return $parseStr;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * define标签解析
+     * 在模板中定义常量 支持变量赋值
+     * 格式： <define name="" value="" />
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function _define($attr,$content)
+    {
+        $tag      = $this->parseXmlAttr($attr,'define');
+        $name   =  '\''.$tag['name']. '\'';
+        if('$'==substr($tag['value'],0,1)) {
+            $value   =  $this->autoBuildVar(substr($tag['value'],1));
+        }else{
+            $value   =   '\''.$tag['value']. '\'';
+        }
+        $parseStr  = '<?php define('.$name.', '.$value.'); ?>';
+        return $parseStr;
     }
 
 }//类定义结束
