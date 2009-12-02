@@ -588,6 +588,9 @@ function tag($name,$params=array()) {
         foreach ($tags   as $key=>$call){
             if(is_callable($call))
                 $result = call_user_func_array($call,$params);
+            else{
+                $result   =  B($call);
+            }
         }
         return $result;
     }
@@ -599,7 +602,7 @@ function B($name) {
     $class = $name.'Behavior';
     require_cache(LIB_PATH.'Behavior/'.$class.'.class.php');
     $behavior   =  new $class();
-    $behavior->run();
+    return $behavior->run();
 }
 
 // 渲染输出Widget
