@@ -516,7 +516,7 @@ function list_search($list,$condition) {
 }
 
 // 发送Http状态信息
-function send_http_status($status) {
+function send_http_status($code) {
     static $_status = array(
         // Informational 1xx
         100 => 'Continue',
