@@ -250,7 +250,7 @@ class  ThinkTemplate extends Think
         // 预先加载的标签库 无需在每个模板中使用taglib标签加载
         if(C('TAGLIB_PRE_LOAD')) {
             $tagLibs =  explode(',',C('TAGLIB_PRE_LOAD'));
-            foreach ($taglibs as $tag){
+            foreach ($tagLibs as $tag){
                 $this->parseTagLib($tag,$content);
             }
         }
