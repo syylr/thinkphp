@@ -578,7 +578,7 @@ class AdvModel extends Model {
             return false;
         }
         if($lazyTime>0) {// 延迟写入
-            $guid =  md5($this->name.'_'.$field.'_'.serialize($conditon));
+            $guid =  md5($this->name.'_'.$field.'_'.serialize($condition));
             $step = $this->lazyWrite($guid,$step,$lazyTime);
             if(false === $step ) return true; // 等待下次写入
         }
