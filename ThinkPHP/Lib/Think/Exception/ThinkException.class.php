@@ -97,8 +97,11 @@ class ThinkException extends Exception
         $error['line']      = $this->line;
         $error['trace']     = $traceInfo;
 
-        //记录系统日志
-        Log::Write('('.$this->type.') '.$this->message);
+        // 是否记录 Exception 日志
+        if(C('LOG_EXCEPTION_RECORD')) {
+            //记录系统日志
+            Log::Write('('.$this->type.') '.$this->message);
+        }
 
         return $error ;
     }
