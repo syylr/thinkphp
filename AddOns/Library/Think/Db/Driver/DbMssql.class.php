@@ -57,9 +57,9 @@ class DbMssql extends Db{
             // 处理不带端口号的socket连接情况
             $host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
             $this->linkID[$linkNum] = $conn( $host, $config['username'], $config['password']);
-
-            if ( !$this->linkID[$linkNum] || (!empty($config['database'])  && !mssql_select_db($config['database'], $this->linkID[$linkNum])) ) {
-                throw_exception($this->error());
+            if ( !$this->linkID[$linkNum] )  throw_exception("Couldn't connect to SQL Server on $host");
+            if ( !empty($config['database'])  && !mssql_select_db($config['database'], $this->linkID[$linkNum]) ) {
+                throw_exception("Couldn't open database '".$config['database']);
             }
             // 标记连接成功
             $this->connected =  true;
