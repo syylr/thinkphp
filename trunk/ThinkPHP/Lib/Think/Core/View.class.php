@@ -97,7 +97,7 @@ class View extends Think
      * @return mixed
      +----------------------------------------------------------
      */
-    public function display($templateFile='',$charset='',$contentType='text/html')
+    public function display($templateFile='',$charset='',$contentType='')
     {
         $this->fetch($templateFile,$charset,$contentType,true);
     }
@@ -115,7 +115,7 @@ class View extends Think
      * @return mixed
      +----------------------------------------------------------
      */
-    protected function layout($content,$charset='',$contentType='text/html')
+    protected function layout($content,$charset='',$contentType='')
     {
         if(false !== strpos($content,'<!-- layout')) {
             // 查找布局包含的页面
@@ -161,7 +161,7 @@ class View extends Think
      * @return mixed
      +----------------------------------------------------------
      */
-    public function fetch($templateFile='',$charset='',$contentType='text/html',$display=false)
+    public function fetch($templateFile='',$charset='',$contentType='',$display=false)
     {
         $GLOBALS['_viewStartTime'] = microtime(TRUE);
         if(null===$templateFile)
@@ -169,6 +169,7 @@ class View extends Think
             return ;
         if(empty($charset))  $charset = C('DEFAULT_CHARSET');
         // 网页字符编码
+        $contentType =  $contentType?$contentType:C('TMPL_CONTENT_TYPE');
         header("Content-Type:".$contentType."; charset=".$charset);
         header("Cache-control: private");  //支持页面回跳
         //页面缓存
@@ -255,7 +256,7 @@ class View extends Think
      * @return string
      +----------------------------------------------------------
      */
-    public function buildHtml($htmlfile,$htmlpath='',$templateFile='',$charset='',$contentType='text/html') {
+    public function buildHtml($htmlfile,$htmlpath='',$templateFile='',$charset='',$contentType='') {
         $content = $this->fetch($templateFile,$charset,$contentType);
         $htmlpath   = !empty($htmlpath)?$htmlpath:HTML_PATH;
         $htmlfile =  $htmlpath.$htmlfile.C('HTML_FILE_SUFFIX');
