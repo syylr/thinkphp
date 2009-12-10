@@ -122,6 +122,7 @@ return  array(
     'TMPL_ENGINE_TYPE'		=> 'Think',     // 默认模板引擎 以下设置仅对使用Think模板引擎有效
     'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
     'TMPL_TEMPLATE_SUFFIX'  => '.html',     // 默认模板文件后缀
+    'TMPL_CONTENT_TYPE'    =>'text/html', // 默认模板输出类型
     'TMPL_CACHFILE_SUFFIX'  => '.php',      // 默认模板缓存后缀
     'TMPL_DENY_FUNC_LIST'	=> 'echo,exit',	// 模板引擎禁用函数
     'TMPL_PARSE_STRING'     => '',          // 模板引擎要自动替换的字符串，必须是数组形式。
