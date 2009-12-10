@@ -130,7 +130,7 @@ class ViewModel extends Model {
                 $k = isset($val['_as'])?$val['_as']:$key;
                 $val  =  $this->_checkFields($key,$val);
                 foreach ($where as $name=>$value){
-                    if(false !== $field = array_search($name,$val)) {
+                    if(false !== $field = array_search($name,$val,true)) {
                         // 存在视图字段
                         $_key   =   is_numeric($field)?    $k.'.'.$name   :   $k.'.'.$field;
                         $view[$_key]    =   $value;
@@ -166,7 +166,7 @@ class ViewModel extends Model {
                 foreach ($this->viewFields as $name=>$val){
                     $k = isset($val['_as'])?$val['_as']:$name;
                     $val  =  $this->_checkFields($name,$val);
-                    if(false !== $_field = array_search($field,$val)) {
+                    if(false !== $_field = array_search($field,$val,true)) {
                         // 存在视图字段
                         $field     =  is_numeric($_field)?$k.'.'.$field:$k.'.'.$_field;
                         break;
@@ -199,7 +199,7 @@ class ViewModel extends Model {
                 foreach ($this->viewFields as $name=>$val){
                     $k = isset($val['_as'])?$val['_as']:$name;
                     $val  =  $this->_checkFields($name,$val);
-                    if(false !== $_field = array_search($field,$val)) {
+                    if(false !== $_field = array_search($field,$val,true)) {
                         // 存在视图字段
                         $field     =  is_numeric($_field)?$k.'.'.$field:$k.'.'.$_field;
                         break;
@@ -261,7 +261,7 @@ class ViewModel extends Model {
                 $k = isset($val['_as'])?$val['_as']:$name;
                 $val  =  $this->_checkFields($name,$val);
                 foreach ($fields as $key=>$field){
-                    if(false !== $_field = array_search($field,$val)) {
+                    if(false !== $_field = array_search($field,$val,true)) {
                         // 存在视图字段
                         if(is_numeric($_field)) {
                             $array[]    =   $k.'.'.$field.' AS '.$field;
