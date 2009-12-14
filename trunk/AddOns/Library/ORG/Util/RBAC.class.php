@@ -28,6 +28,11 @@
 // REQUIRE_AUTH_MODULE  需要认证模块
 // NOT_AUTH_MODULE 无需认证模块
 // USER_AUTH_GATEWAY 认证网关
+// RBAC_DB_DSN  数据库连接DSN
+// RBAC_ROLE_TABLE 角色表名称
+// RBAC_USER_TABLE 用户表名称
+// RBAC_ACCESS_TABLE 权限表名称
+// RBAC_NODE_TABLE 节点表名称
 /*
 -- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `think_access` (
@@ -208,7 +213,7 @@ class RBAC extends Think
     static public function getAccessList($authId)
     {
         // Db方式权限数据
-        $db     =   Db::getInstance();
+        $db     =   Db::getInstance(C('RBAC_DB_DSN'));
         $table = array('role'=>C('RBAC_ROLE_TABLE'),'user'=>C('RBAC_USER_TABLE'),'access'=>C('RBAC_ACCESS_TABLE'),'node'=>C('RBAC_NODE_TABLE'));
         $sql    =   "select node.id,node.name from ".
                     $table['role']." as role,".
@@ -276,7 +281,7 @@ class RBAC extends Think
 	// 读取模块所属的记录访问权限
 	static public function getModuleAccessList($authId,$module) {
         // Db方式
-        $db     =   Db::getInstance();
+        $db     =   Db::getInstance(C('RBAC_DB_DSN'));
         $table = array('role'=>C('RBAC_ROLE_TABLE'),'user'=>C('RBAC_USER_TABLE'),'access'=>C('RBAC_ACCESS_TABLE'));
         $sql    =   "select access.node_id from ".
                     $table['role']." as role,".
