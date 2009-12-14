@@ -494,11 +494,13 @@ function M($name='',$class='Model') {
  +----------------------------------------------------------
  * @param string name Action名称
  * @param string app Model所在项目
+ * @param string actionName 执行Action中的actionName操作(不为空有效)
+ * @param array args 执行actionName操作时附带的参数
  +----------------------------------------------------------
  * @return Action
  +----------------------------------------------------------
  */
-function A($name,$app='@')
+function A($name,$app='@', $actionName='', $args=array())
 {
     static $_action = array();
     if(isset($_action[$app.$name]))
@@ -516,7 +518,15 @@ function A($name,$app='@')
     if(class_exists($className)) {
         $action = new $className();
         $_action[$app.$OriClassName] = $action;
-        return $action;
+        if('' != $actionName) {
+            if(method_exists($action,$actionName)) {
+                $action->$actionName($args);
+            } else {
+                throw_exception(L('_ERROR_ACTION_').':'.$actionName);
+            }
+        } else {
+            return $action;
+        }
     }else {
         return false;
     }
