@@ -44,7 +44,7 @@ class String extends Think
 	 +----------------------------------------------------------
 	 */
 	static public function keyGen() {
-		return str_replace('-','',substr(com_create_guid(),1,-1));
+		return str_replace('-','',substr(String::uuid(),1,-1));
 	}
 
 	/**
@@ -56,7 +56,7 @@ class String extends Think
 	 * @return Boolean
 	 +----------------------------------------------------------
 	 */
-	function is_utf8($str) {
+	static public function is_utf8($str) {
 		$c=0; $b=0;
 		$bits=0;
 		$len=strlen($str);
