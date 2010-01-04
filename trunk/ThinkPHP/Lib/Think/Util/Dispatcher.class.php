@@ -113,7 +113,7 @@ class Dispatcher extends Think
             $paths = explode(C('URL_PATHINFO_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
 
 			// 解析 多级域名部署 配置
-            if(C('APP_MULTILEVELDOMAIN_DEPLOY_ON') && !empty(C('APP_MULTILEVELDOMAIN_DEPLOY'))){
+            if(C('APP_MULTILEVELDOMAIN_DEPLOY_ON') && C('APP_MULTILEVELDOMAIN_DEPLOY')){
 				// 获取二级域名的值(当前域名的第一段，所以可以是三级、四级等域名)
                 $host = array_shift(explode('.',$_SERVER['HTTP_HOST']));
 				// 获取映射配置列表
