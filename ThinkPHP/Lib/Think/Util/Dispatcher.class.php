@@ -131,7 +131,7 @@ class Dispatcher extends Think
 					$pathInfo[C('VAR_ACTION')] = (isset($deploys['1']) && !empty($deploys['1'])) ? $deploys['1'] : array_shift($paths);
 					// 合并其他参数
 					if(isset($deploys['2']) && !empty($deploys['2'])){
-						parser_str($deploys['2'],$__query);
+						parse_str($deploys['2'],$__query);
 						$_GET = array_merge($__query,$_GET);
 					}
 				}
