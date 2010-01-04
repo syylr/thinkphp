@@ -127,8 +127,8 @@ class Dispatcher extends Think
 						$pathInfo[C('VAR_GROUP')] = isset($deploys['4']) ? $deploys['4'] : $host;
 					}
 					// 分配Module、Action给GET
-					$pathInfo[C('VAR_MODULE')] = (isset($deploys['0']) && !empty($deploys['0'])) ? $deploys['0'] : NULL;
-					$pathInfo[C('VAR_ACTION')] = (isset($deploys['1']) && !empty($deploys['1'])) ? $deploys['1'] : NULL;
+					$pathInfo[C('VAR_MODULE')] = ucfirst((isset($deploys['0']) && !empty($deploys['0'])) ? $deploys['0'] : array_shift($paths));
+					$pathInfo[C('VAR_ACTION')] = (isset($deploys['1']) && !empty($deploys['1'])) ? $deploys['1'] : array_shift($paths);
 					// 合并其他参数
 					if(isset($deploys['2']) && !empty($deploys['2'])){
 						parser_str($deploys['2'],$__query);
