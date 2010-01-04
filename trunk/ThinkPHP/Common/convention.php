@@ -36,6 +36,14 @@ return  array(
     'APP_AUTOLOAD_REG'      => false,   // 是否开启SPL_AUTOLOAD_REGISTER
     'APP_AUTOLOAD_PATH'     => 'Think.Util.',// __autoLoad 机制额外检测路径设置,注意搜索顺序
     'APP_CONFIG_LIST'       => array('taglibs','routes','tags','htmls','modules','actions'),// 项目额外需要加载的配置列表，默认包括：taglibs(标签库定义),routes(路由定义),tags(标签定义),(htmls)静态缓存定义, modules(扩展模块),actions(扩展操作)
+	'APP_MULTILEVELDOMAIN_DEPLOY_ON' => false,// 是否开启多级域名部署(目前暂时只支持二级域名)
+	'APP_MULTILEVELDOMAIN_DEPLOY' => array(),//  多级域名部署详细配置方案，例如：
+	/**
+	 *  array(
+	 *     // member.domain.com/login - 使用member模块的login操作,开启分组模式(在本配置项中),member即为分组名称
+	 *     'member' => array('操作Module','操作Action','附加参数(合并到GET数组中)','是否分组模式(boolean)false为否，true为是,默认为false','分组名称(开启分组模式有效)')
+	 *  )
+	 */
 
     /* Cookie设置 */
     'COOKIE_EXPIRE'         => 3600,    // Coodie有效期
