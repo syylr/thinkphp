@@ -564,9 +564,9 @@ class TagLibCx extends TagLib
             // 文件方式导入
             $array =  explode(',',$file);
             foreach ($array as $val){
-                if (!$type)
+                if (!$type || isset($reset))
                 {
-                    $type = strtolower(substr(strrchr($val, '.'),1));
+                    $type = $reset = strtolower(substr(strrchr($val, '.'),1));
                 }
                 switch($type) {
                 case 'js':
