@@ -46,7 +46,7 @@ class TagLibCx extends TagLib
         'notpresent'=>array('attr'=>'name','level'=>3),
         'defined'=>array('attr'=>'name','level'=>3),
         'notdefined'=>array('attr'=>'name','level'=>3),
-        'import'=>array('attr'=>'file,href,type,value,basepath','close'=>0,'alias'=>'load,css,js'),       
+        'import'=>array('attr'=>'file,href,type,value,basepath','close'=>0,'alias'=>'load,css,js'),
         'assign'=>array('attr'=>'name,value','close'=>0),
         'define'=>array('attr'=>'name,value','close'=>0),
         );
@@ -585,10 +585,14 @@ class TagLibCx extends TagLib
         }
         if($isFile) {
             // 根据文件名后缀自动识别
-            $type       = $type?$type:(!empty($tag['type'])?strtolower($tag['type']):strtolower(substr(strrchr($file, '.'),1)));
+            $type = $type?$type:(!empty($tag['type'])?strtolower($tag['type']):null);
             // 文件方式导入
             $array =  explode(',',$file);
             foreach ($array as $val){
+                if (!$type || isset($reset))
+                {
+                    $type = $reset = strtolower(substr(strrchr($val, '.'),1));
+                }
                 switch($type) {
                 case 'js':
                     $parseStr .= '<script type="text/javascript" src="'.$val.'"></script>';
