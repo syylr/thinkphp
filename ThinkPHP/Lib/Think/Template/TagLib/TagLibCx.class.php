@@ -560,10 +560,14 @@ class TagLibCx extends TagLib
         }
         if($isFile) {
             // 根据文件名后缀自动识别
-            $type       = $type?$type:(!empty($tag['type'])?strtolower($tag['type']):strtolower(substr(strrchr($file, '.'),1)));
+            $type = $type?$type:(!empty($tag['type'])?strtolower($tag['type']):null);
             // 文件方式导入
             $array =  explode(',',$file);
             foreach ($array as $val){
+                if (!$type)
+                {
+                    $type = strtolower(substr(strrchr($val, '.'),1));
+                }
                 switch($type) {
                 case 'js':
                     $parseStr .= '<script type="text/javascript" src="'.$val.'"></script>';
