@@ -45,7 +45,7 @@ class Crypt
         $v = "";
 		$len = strlen($str);
 		$l = strlen($r);
-        for ($i=0;$i<$str;$i++){
+        for ($i=0;$i<$len;$i++){
          if ($c== $l) $c=0;
          $v.= substr($r,$c,1) .
              (substr($str,$i,1) ^ substr($r,$c,1));
