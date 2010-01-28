@@ -269,7 +269,7 @@ class DbPgsql extends Db{
             inner join pg_type t on a.atttypid = t.oid
             left join pg_attrdef d on a.attrelid=d.adrelid and d.adnum=a.attnum
             left join pg_index i on a.attnum=ANY(i.indkey) and c.oid = i.indrelid
-            where (c.relname='{$tablename}' or c.relname = lower('{$tablename}'))   AND a.attnum > 0
+            where (c.relname='{$tableName}' or c.relname = lower('{$tableName}'))   AND a.attnum > 0
                 order by a.attnum asc;");
         $info   =   array();
         if($result) {
