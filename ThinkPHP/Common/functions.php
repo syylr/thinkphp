@@ -857,7 +857,7 @@ function cookie($name,$value='',$option=null)
             $option = array('expire'=>$option);
         elseif( is_string($option) )
             parse_str($option,$option);
-        array_merge($config,array_change_key_case($option));
+        $config = array_merge($config,array_change_key_case($option));
     }
     // 清除指定前缀的所有cookie
     if (is_null($name)) {
