@@ -29,7 +29,7 @@ class CronRunBehavior extends Behavior {
         if(is_file(RUNTIME_PATH.'~crons.php')) {
             $crons	=	include RUNTIME_PATH.'~crons.php';
         }elseif(is_file(CONFIG_PATH.'~crons.php')){
-            $crons	=	include CONFIG_PATH.'crons.php';
+            $crons	=	include CONFIG_PATH.'~crons.php';
         }
         if(isset($crons) && is_array($crons)) {
             $update	 =	 false;
