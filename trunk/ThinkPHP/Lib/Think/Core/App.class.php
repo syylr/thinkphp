@@ -260,33 +260,33 @@ class App
         if (C('LANG_AUTO_DETECT')){
             if(isset($_GET[C('VAR_LANGUAGE')])){// 检测浏览器支持语言
                 $langSet = $_GET[C('VAR_LANGUAGE')];// url中设置了语言变量
-                cookie('think_language',$langSet,3600);
+                cookie('think_language',$langSet);
             }elseif(cookie('think_language'))// 获取上次用户的选择
                 $langSet = cookie('think_language');
             elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){// 自动侦测浏览器语言
                 preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
-                $langSet = $matches[1];
-                cookie('think_language',$langSet,3600);
+                $langSet = strtolower($matches[1]);
+                cookie('think_language',$langSet);
             }
         }
         // 定义当前语言
         define('LANG_SET',strtolower($langSet));
         // 加载框架语言包
-        if(is_file(THINK_PATH.'/Lang/'.$langSet.'.php'))
-            L(include THINK_PATH.'/Lang/'.$langSet.'.php');
+        if(is_file(THINK_PATH.'/Lang/'.LANG_SET.'.php'))
+            L(include THINK_PATH.'/Lang/'.LANG_SET.'.php');
         // 读取项目公共语言包
-        if (is_file(LANG_PATH.$langSet.'/common.php'))
-            L(include LANG_PATH.$langSet.'/common.php');
+        if (is_file(LANG_PATH.LANG_SET.'/common.php'))
+            L(include LANG_PATH.LANG_SET.'/common.php');
         $group = '';
         // 读取当前分组公共语言包
         if (defined('GROUP_NAME')){
             $group = GROUP_NAME.C('TMPL_FILE_DEPR');
-            if (is_file(LANG_PATH.$langSet.'/'.$group.'lang.php'))
-                L(include LANG_PATH.$langSet.'/'.$group.'lang.php');
+            if (is_file(LANG_PATH.LANG_SET.'/'.$group.'lang.php'))
+                L(include LANG_PATH.LANG_SET.'/'.$group.'lang.php');
         }
         // 读取当前模块语言包
-        if (is_file(LANG_PATH.$langSet.'/'.$group.strtolower(MODULE_NAME).'.php'))
-            L(include LANG_PATH.$langSet.'/'.$group.strtolower(MODULE_NAME).'.php');
+        if (is_file(LANG_PATH.LANG_SET.'/'.$group.strtolower(MODULE_NAME).'.php'))
+            L(include LANG_PATH.LANG_SET.'/'.$group.strtolower(MODULE_NAME).'.php');
     }
 
     /**
