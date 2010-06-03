@@ -829,6 +829,24 @@ function data_to_xml($data) {
 }
 
 /**
+ * 获取项目当前的URL(index.php对应的URL绝对路径)
+ +----------------------------------------------------------
+ * 例如：
+ *     本地路径      ：/htdocs/project_name/index.php
+ *     URL绝对路径   ：http://localhost/project_name/index.php
+ *     去除index.php : http://localhost/project_name/home/index/do/showuser
+ *
+ * 则，返回：
+ *     http://localhost/project_name
+ +----------------------------------------------------------
+ */
+function getSiteUrl() {
+    $local_path = dirname($_SERVER['SCRIPT_NAME']);
+    $uri = 'http'.(@$_SERVER['HTTPS']=='on'?'s':'').'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+    return substr($uri,0,strpos($uri,$local_path)+strlen($local_path));
+}
+
+/**
  +----------------------------------------------------------
  * Cookie 设置、获取、清除
  +----------------------------------------------------------
