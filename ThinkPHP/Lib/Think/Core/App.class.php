@@ -399,7 +399,9 @@ class App
         }
 
         //获取当前操作名
-        $action = ACTION_NAME;
+        //如果指定的操作名第一个字符为_则不允许执行(例如：_getuser)
+        $action = substr(ACTION_NAME,0,1) == '_' ? C('DEFAULT_ACTION') : ACTION_NAME;
+
         if(strpos($action,':')) {
             // 执行操作链 最多只能有一个输出
             $actionList	=	explode(':',$action);
@@ -407,12 +409,25 @@ class App
                 $module->$action();
             }
         }else{
+            // 如果检测到Module中已经定义系统内置的前置操作方法并自动执行开关为开启状态
+            if (method_exists($module,'_before_system') && C('APP_AUTORUN_SYSACTION') === TRUE) {
+                //执行系统内置的前置操作
+                call_user_func(array(&$module,'_before_system_'));
+            }
+
             if (method_exists($module,'_before_'.$action)) {
                 // 执行前置操作
                 call_user_func(array(&$module,'_before_'.$action));
             }
             //执行当前操作
             call_user_func(array(&$module,$action));
+
+            // 如果检测到Module中已经定义系统后置的前置操作方法并自动执行开关为开启状态
+            if (method_exists($module,'_after_system') && C('APP_AUTORUN_SYSACTION') === TRUE) {
+                //执行系统内置的后置操作
+                call_user_func(array(&$module,'_after_system_'));
+            }
+
             if (method_exists($module,'_after_'.$action)) {
                 //  执行后缀操作
                 call_user_func(array(&$module,'_after_'.$action));

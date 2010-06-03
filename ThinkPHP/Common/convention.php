@@ -27,6 +27,7 @@ if (!defined('THINK_PATH')) exit();
 return  array(
 
     /* 项目设定 */
+    'APP_AUTORUN_SYSACTION' => true,   // 是否自动执行系统默认的前置和后置方法(_before_system、_after_system)
     'APP_DEBUG'				=> false,	// 是否开启调试模式
     'APP_DOMAIN_DEPLOY'     => false,   // 是否使用独立域名部署项目
     'APP_PLUGIN_ON'         => false,   // 是否开启插件机制
