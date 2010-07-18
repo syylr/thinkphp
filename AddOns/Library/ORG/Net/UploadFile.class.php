@@ -425,7 +425,7 @@ class UploadFile extends Think
         }
         if($this->autoSub) {
             // 使用子目录保存文件
-            $filename = $saveName;
+            $filename['savename'] = $saveName;
             $saveName = $this->getSubName($filename).'/'.$saveName;
         }
         return $saveName;
