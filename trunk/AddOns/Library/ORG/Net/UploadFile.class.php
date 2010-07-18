@@ -340,18 +340,20 @@ class UploadFile extends Think
      */
     private function dealFiles($files) {
        $fileArray = array();
+       $n = 0;
        foreach ($files as $file){
            if(is_array($file['name'])) {
                $keys = array_keys($file);
                $count	 =	 count($file['name']);
                for ($i=0; $i<$count; $i++) {
                    foreach ($keys as $key)
-                       $fileArray[$i][$key] = $file[$key][$i];
+                       $fileArray[$n][$key] = $file[$key][$i];
+                   $n++;
                }
            }else{
-               $fileArray	=	$files;
+               $fileArray[$n] = $files;
+               $n++;
            }
-           break;
        }
        return $fileArray;
     }
@@ -423,7 +425,8 @@ class UploadFile extends Think
         }
         if($this->autoSub) {
             // 使用子目录保存文件
-            $saveName   =  $this->getSubName($filename).'/'.$saveName;
+            $filename = $saveName;
+            $saveName = $this->getSubName($filename).'/'.$saveName;
         }
         return $saveName;
     }
@@ -450,7 +453,7 @@ class UploadFile extends Think
                 $name = md5($file['savename']);
                 $dir   =  '';
                 for($i=0;$i<$this->hashLevel;$i++) {
-                    $dir   .=  $name{0}.'/';
+                    $dir   .=  $name{$i}.'/';
                 }
                 break;
         }
