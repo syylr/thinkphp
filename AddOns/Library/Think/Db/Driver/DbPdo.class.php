@@ -292,7 +292,7 @@ class DbPdo extends Db{
                       ."') b where table_name='".strtoupper($tableName)."' and a.column_name=b.column_name(+)";
                     break;
                 case 'PGSQL':
-                    $sql   = 'select fields_name as "Field",fields_type as "Type",fields_not_null as "Null",fields_key_name as "Key",fields_default as "Default",fields_default as "Extra" from table_msg('.$tableName.');';
+                    $sql   = 'select fields_name as "Name",fields_type as "Type",fields_not_null as "Null",fields_key_name as "Key",fields_default as "Default",fields_default as "Extra" from table_msg('.$tableName.');';
                     break;
                 case 'IBASE':
                     break;
@@ -305,6 +305,7 @@ class DbPdo extends Db{
         $info   =   array();
         if($result) {
             foreach ($result as $key => $val) {
+                $val['Name'] = isset($val['name'])?$val['name']:$val['Name'];
                 $name= strtolower(isset($val['Field'])?$val['Field']:$val['Name']);
                 $info[$name] = array(
                     'name'    => $name ,
