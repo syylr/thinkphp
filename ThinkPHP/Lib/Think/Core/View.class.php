@@ -312,7 +312,6 @@ class View extends Think
     protected function templateContentReplace($content) {
         // 系统默认的特殊变量替换
         $replace =  array(
-            '__SURL__'    => getSiteUrl(),   // 项目当前的URL(index.php对应的URL绝对路径)
             '../Public'   => APP_PUBLIC_PATH,// 项目公共目录
             '__PUBLIC__'  => WEB_PUBLIC_PATH,// 站点公共目录
             '__TMPL__'    => APP_TMPL_PATH,  // 项目模板目录
