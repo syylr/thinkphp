@@ -82,7 +82,7 @@ class RelationModel extends Model {
     }
 
     // 写入成功后的回调方法
-    protected function _after_insert(&$data,$options='') {
+    protected function _after_insert($data,$options='') {
         // 关联写入
         if(!empty($options['link']))
             $this->opRelation('ADD',$data,$options['link']);
