@@ -91,7 +91,7 @@ class Socket extends Think {
 		return !$this->connected;
 	}
 
- 	private function __destruct() {
+ 	public function __destruct() {
  		$this->disconnect();
  	}
 
