@@ -274,7 +274,7 @@ class Dispatcher extends Think
                     if(preg_match($rule,$regx,$matches)) {
                         // 检测是否存在分组 2009/06/23
                         $temp = explode(C('APP_GROUP_DEPR'),$route[1]);
-                        if ($temp[1]) {
+                        if (!empty($temp[1])) {
                             $_GET[C('VAR_GROUP')]  = $temp[0];
                             $_GET[C('VAR_MODULE')] = $temp[1];
                         }else {
