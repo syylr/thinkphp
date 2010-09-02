@@ -267,7 +267,7 @@ class Dispatcher extends Think
                 // array('路由正则2',‘模块名称’,’操作名称’,’参数定义’,’额外参数’),
                 // ...)
                 $routeItem = $routes[$routeName.'@'];
-                $regx = str_replace($routeName,'',trim($_SERVER['PATH_INFO'],'/'));
+                $regx = str_ireplace($routeName,'',trim($_SERVER['PATH_INFO'],'/'));
                 foreach ($routeItem as $route){
                     $rule    =   $route[0];// 路由正则
                     // 匹配路由定义
