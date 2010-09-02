@@ -227,12 +227,12 @@ class Dispatcher extends Think
         if(!empty($routes)) {
             if(isset($_GET[C('VAR_ROUTER')])) {
                 // 存在路由变量
-                $routeName  =   $_GET[C('VAR_ROUTER')];
+                $routeName  =   strtolower($_GET[C('VAR_ROUTER')]);
                 unset($_GET[C('VAR_ROUTER')]);
             }else{
                 $paths = explode(C('URL_PATHINFO_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
                 // 获取路由名称
-                $routeName  =   array_shift($paths);
+                $routeName  =   strtolower(array_shift($paths));
             }
             if(isset($routes[$routeName])) {
                 // 读取当前路由名称的路由规则
