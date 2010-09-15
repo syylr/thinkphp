@@ -88,7 +88,7 @@ class ThinkException extends Exception
         $error['detail']    = L('_MODULE_').'['.MODULE_NAME.'] '.L('_ACTION_').'['.ACTION_NAME.']'."\n";
         $error['detail']   .=   ($this->line-2).': '.$file[$this->line-3];
         $error['detail']   .=   ($this->line-1).': '.$file[$this->line-2];
-        $error['detail']   .=   '<font color="#FF6600" >'.($this->line).': <b>'.$file[$this->line-1].'</b></font>';
+        $error['detail']   .=   '<font color="#FF6600" >'.($this->line).': <strong>'.$file[$this->line-1].'</strong></font>';
         $error['detail']   .=   ($this->line+1).': '.$file[$this->line];
         $error['detail']   .=   ($this->line+2).': '.$file[$this->line+1];
         $error['class']     =   $this->class;
@@ -97,9 +97,8 @@ class ThinkException extends Exception
         $error['line']      = $this->line;
         $error['trace']     = $traceInfo;
 
-        // 是否记录 Exception 日志
+        // 记录 Exception 日志
         if(C('LOG_EXCEPTION_RECORD')) {
-            //记录系统日志
             Log::Write('('.$this->type.') '.$this->message);
         }
 

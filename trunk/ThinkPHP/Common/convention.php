@@ -27,7 +27,6 @@ if (!defined('THINK_PATH')) exit();
 return  array(
 
     /* 项目设定 */
-    'APP_AUTORUN_SYSACTION' => true,   // 是否自动执行系统默认的前置和后置方法(_before_system、_after_system)
     'APP_DEBUG'				=> false,	// 是否开启调试模式
     'APP_DOMAIN_DEPLOY'     => false,   // 是否使用独立域名部署项目
     'APP_PLUGIN_ON'         => false,   // 是否开启插件机制
@@ -37,14 +36,6 @@ return  array(
     'APP_AUTOLOAD_REG'      => false,   // 是否开启SPL_AUTOLOAD_REGISTER
     'APP_AUTOLOAD_PATH'     => 'Think.Util.',// __autoLoad 机制额外检测路径设置,注意搜索顺序
     'APP_CONFIG_LIST'       => array('taglibs','routes','tags','htmls','modules','actions'),// 项目额外需要加载的配置列表，默认包括：taglibs(标签库定义),routes(路由定义),tags(标签定义),(htmls)静态缓存定义, modules(扩展模块),actions(扩展操作)
-	'APP_MULTILEVELDOMAIN_DEPLOY_ON' => false,// 是否开启多级域名部署(目前暂时只支持二级域名)
-	'APP_MULTILEVELDOMAIN_DEPLOY' => array(),//  多级域名部署详细配置方案，例如：
-	/**
-	 *  array(
-	 *     // member.domain.com/login - 使用member模块的login操作,开启分组模式(在本配置项中),member即为分组名称
-	 *     'member' => array('操作Module','操作Action','附加参数(合并到GET数组中)','是否分组模式(boolean)false为否，true为是,默认为false','分组名称(开启分组模式有效)')
-	 *  )
-	 */
 
     /* Cookie设置 */
     'COOKIE_EXPIRE'         => 3600,    // Coodie有效期
@@ -131,7 +122,7 @@ return  array(
     'TMPL_ENGINE_TYPE'		=> 'Think',     // 默认模板引擎 以下设置仅对使用Think模板引擎有效
     'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
     'TMPL_TEMPLATE_SUFFIX'  => '.html',     // 默认模板文件后缀
-    'TMPL_CONTENT_TYPE'    =>'text/html', // 默认模板输出类型
+    'TMPL_CONTENT_TYPE'     => 'text/html', // 默认模板输出类型
     'TMPL_CACHFILE_SUFFIX'  => '.php',      // 默认模板缓存后缀
     'TMPL_DENY_FUNC_LIST'	=> 'echo,exit',	// 模板引擎禁用函数
     'TMPL_PARSE_STRING'     => '',          // 模板引擎要自动替换的字符串，必须是数组形式。
@@ -156,9 +147,9 @@ return  array(
     'TAG_EXTEND_PARSE'      => '',   // 指定对普通标签进行扩展定义和解析的函数名称。
 
     /* 表单令牌验证 */
-    'TOKEN_ON'                    =>   true,     // 开启令牌验证
-    'TOKEN_NAME'                =>   '__hash__',    // 令牌验证的表单隐藏字段名称
-    'TOKEN_TYPE'                 =>    'md5',   // 令牌验证哈希规则
+    'TOKEN_ON'              => true,     // 开启令牌验证
+    'TOKEN_NAME'            => '__hash__',    // 令牌验证的表单隐藏字段名称
+    'TOKEN_TYPE'            => 'md5',   // 令牌验证哈希规则
 
     /* URL设置 */
 	'URL_CASE_INSENSITIVE'  => false,   // URL地址是否不区分大小写
@@ -172,7 +163,7 @@ return  array(
     // 3 兼容模式(通过一个GET变量将PATHINFO传递给dispather，默认为s index.php?s=/module/action/id/1)
     'URL_PATHINFO_DEPR'     => '/',	// PATHINFO模式下，各参数之间的分割符号
     'URL_HTML_SUFFIX'       => '',  // URL伪静态后缀设置
-    'URL_AUTO_REDIRECT'    =>true, // 自动重定向到规范的URL
+    'URL_AUTO_REDIRECT'     => true, // 自动重定向到规范的URL
 
     /* 系统变量名称设置 */
     'VAR_GROUP'             => 'g',     // 默认分组获取变量

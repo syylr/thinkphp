@@ -17,6 +17,8 @@ alias_import(array(
     'Db'                  =>    THINK_PATH.'/Mode/Lite/Db.class.php',
     'Debug'              =>    THINK_PATH.'/Lib/Think/Util/Debug.class.php',
     'Session'             =>   THINK_PATH.'/Lib/Think/Util/Session.class.php',
+    'ThinkTemplateLite'   =>    THINK_PATH.'/Mode/Lite/ThinkTemplateLite.class.php',
+    'ThinkTemplateCompiler'   =>    THINK_PATH.'/Mode/Lite/ThinkTemplateCompiler.class.php',
     )
 );
 ?>
