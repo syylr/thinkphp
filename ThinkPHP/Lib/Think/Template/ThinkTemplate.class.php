@@ -355,37 +355,33 @@ class  ThinkTemplate extends Think
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
         $tLib =  Think::instance('TagLib'.ucwords(strtolower($tagLib)));
-        if($tLib->valid()) {
-            //如果标签库有效则取出支持标签列表
-            $tagList =  $tLib->getTagList();
-            //遍历标签列表进行模板标签解析
-            foreach($tagList as $tag) {
+        foreach ($tLib->tags as $name=>$val){
+            $tags = array();
+            if(isset($val['alias'])) {// 别名设置
+                $tags = explode(',',$val['alias']);
+                $tags[]  =  $name;
+            }else{
+                $tags[] = $name;
+            }
+            $level = isset($val['level'])?$val['level']:1;
+            $closeTag = isset($val['close'])?$val['close']:true;
+            foreach ($tags as $tag){
                 // 实际要解析的标签名称
-                if( !$hide)
-                    $startTag = $tagLib.':'.$tag['name'];
-                else
-                    $startTag = $tag['name'];
-                // 检查可嵌套标签以及嵌套级别
-                if($tag['nested'] && $this->config['tag_level']>1)
-                    $level   =   $this->config['tag_level'];
-                else
-                    $level   =   1;
-                $endTag = $startTag;
-                if(false !== stripos($content,C('TAGLIB_BEGIN').$startTag)) {
-                    if(empty($tag['attribute'])){
-                        // 无属性标签
-                        if($tag['content'] !='empty'){
-                            for($i=0;$i<$level;$i++)
-                                $content = preg_replace('/'.$begin.$startTag.'(\s*?)'.$end.'(.*?)'.$begin.'\/'.$endTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-                        }else{
-                            $content = preg_replace('/'.$begin.$startTag.'(\s*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
-                        }
-                    }elseif($tag['content'] !='empty') {//闭合标签解析
+                $parseTag = !$hide?$tagLib.':'.$tag:$tag;
+                if(empty($val['attr'])){
+                    // 无属性标签
+                    if(!$closeTag) {
+                        $content = preg_replace('/'.$begin.$parseTag.'(\s.*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','')",$content);
+                    }else{
                         for($i=0;$i<$level;$i++)
-                            $content = preg_replace('/'.$begin.$startTag.'\s(.*?)'.$end.'(.+?)'.$begin.'\/'.$endTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','\\2')",$content);
-                    }else {//开放标签解析
-                        // 开始标签必须有一个空格
-                        $content = preg_replace('/'.$begin.$startTag.'\s(.*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('".$tagLib."','".$tag['name']."','\\1','')",$content);
+                            $content = preg_replace('/'.$begin.$parseTag.'(\s*?)'.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','\\2')",$content);
+                    }
+                }else{
+                    if(!$closeTag) {
+                        $content = preg_replace('/'.$begin.$parseTag.'\s(.*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','')",$content);
+                    }else{
+                        for($i=0;$i<$level;$i++)
+                            $content = preg_replace('/'.$begin.$parseTag.'\s(.*?)'.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','\\2')",$content);
                     }
                 }
             }
@@ -416,11 +412,9 @@ class  ThinkTemplate extends Think
         if(ini_get('magic_quotes_sybase'))
             $attr =  str_replace('\"','\'',$attr);
         $tLib =  get_instance_of('TagLib'.ucwords(strtolower($tagLib)));
-        if($tLib->valid()) {
-            $parse = '_'.$tag;
-            $content = trim($content);
-            return $tLib->$parse($attr,$content);
-        }
+        $parse = '_'.$tag;
+        $content = trim($content);
+        return $tLib->$parse($attr,$content);
     }
 
     /**
@@ -596,10 +590,10 @@ class  ThinkTemplate extends Think
                         $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
                 }
             }
-            elseif(false !==strpos($var,':')){
+            elseif(false !==strpos($var,'::')){
                 //支持 {$var:property} 方式输出对象的属性
-                $vars = explode(':',$var);
-                $var  =  str_replace(':','->',$var);
+                $vars = explode('::',$var);
+                $var  =  str_replace('::','->',$var);
                 $name = "$".$var;
                 $var  = $vars[0];
             }

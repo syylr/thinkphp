@@ -17,7 +17,7 @@ function build_runtime() {
     // 加载路径定义文件
     require defined('PATH_DEFINE_FILE')?PATH_DEFINE_FILE:THINK_PATH.'/Common/paths.php';
     // 定义核心编译的文件
-    $runtime[]  =  THINK_PATH.'/Common/functions.php'; // 系统函数
+    //$runtime[]  =  THINK_PATH.'/Common/functions.php'; // 系统函数
     if(version_compare(PHP_VERSION,'5.2.0','<') )
         // 加载兼容函数
         $runtime[]	=	 THINK_PATH.'/Common/compat.php';

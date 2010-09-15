@@ -26,6 +26,31 @@ import('TagLib');
 class TagLibCx extends TagLib
 {//类定义开始
 
+    // 标签定义
+    protected $tags   =  array(
+        // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
+        'php'=>array('attr'=>'','close'=>0),
+        'volist'=>array('attr'=>'name,id,offset,length,key,mod','level'=>3,'alias'=>'iterate'),
+        'include'=>array('attr'=>'file','close'=>0),
+        'if'=>array('attr'=>'condition'),
+        'elseif'=>array('attr'=>'condition'),
+        'else'=>array('attr'=>'','close'=>0),
+        'switch'=>array('attr'=>'name','level'=>3),
+        'case'=>array('attr'=>'value,break'),
+        'default'=>array('attr'=>'','close'=>0),
+        'compare'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'eq,equal,notequal,neq,gt,lt,egt,elt,heq,nheq'),
+        'range'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'in,notin'),
+        'empty'=>array('attr'=>'name','level'=>3),
+        'notempty'=>array('attr'=>'name','level'=>3),
+        'present'=>array('attr'=>'name','level'=>3),
+        'notpresent'=>array('attr'=>'name','level'=>3),
+        'defined'=>array('attr'=>'name','level'=>3),
+        'notdefined'=>array('attr'=>'name','level'=>3),
+        'import'=>array('attr'=>'file,href,type,value,basepath','close'=>0,'alias'=>'load,css,js'),
+        'assign'=>array('attr'=>'name,value','close'=>0),
+        'define'=>array('attr'=>'name,value','close'=>0),
+        );
+
     /**
      +----------------------------------------------------------
      * include标签解析
@@ -619,6 +644,60 @@ class TagLibCx extends TagLib
     public function _js($attr,$content)
     {
         return $this->_import($attr,$content,true,'js');
+    }
+
+    /**
+     +----------------------------------------------------------
+     * assign标签解析
+     * 在模板中给某个变量赋值 支持变量赋值
+     * 格式： <assign name="" value="" />
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function _assign($attr,$content)
+    {
+        $tag      = $this->parseXmlAttr($attr,'assign');
+        $name   = $this->autoBuildVar($tag['name']);
+        if('$'==substr($tag['value'],0,1)) {
+            $value   =  $this->autoBuildVar(substr($tag['value'],1));
+        }else{
+            $value   =   '\''.$tag['value']. '\'';
+        }
+        $parseStr  = '<?php '.$name.' = '.$value.'; ?>';
+        return $parseStr;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * define标签解析
+     * 在模板中定义常量 支持变量赋值
+     * 格式： <define name="" value="" />
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function _define($attr,$content)
+    {
+        $tag      = $this->parseXmlAttr($attr,'define');
+        $name   =  '\''.$tag['name']. '\'';
+        if('$'==substr($tag['value'],0,1)) {
+            $value   =  $this->autoBuildVar(substr($tag['value'],1));
+        }else{
+            $value   =   '\''.$tag['value']. '\'';
+        }
+        $parseStr  = '<?php define('.$name.', '.$value.'); ?>';
+        return $parseStr;
     }
 
 }//类定义结束

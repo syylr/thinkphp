@@ -111,42 +111,13 @@ class Dispatcher extends Think
         $pathInfo = array();
         if(C('URL_PATHINFO_MODEL')==2){
             $paths = explode(C('URL_PATHINFO_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
-
-			// 解析 多级域名部署 配置
-            if(C('APP_MULTILEVELDOMAIN_DEPLOY_ON') && C('APP_MULTILEVELDOMAIN_DEPLOY')){
-				// 获取二级域名的值(当前域名的第一段，所以可以是三级、四级等域名)
-                $host = array_shift(explode('.',$_SERVER['HTTP_HOST']));
-				// 获取映射配置列表
-				$deploys = (array)C('APP_MULTILEVELDOMAIN_DEPLOY');
-				$deploys = isset($deploys[$host]) ? $deploys[$host] : (isset($deploys['*']) ? $deploys['*'] : false);
-				if($deploys){
-					// 该配置项(APP_MULTILEVELDOMAIN_DEPLOY)是否声明当前二级域名为分组模式
-					if(isset($deploys['3']) && TRUE === $deploys['3'] && isset($deploys['4'])){
-						// 如果该配置声明当前的二级域名应该启用分组模式，分配分组名称给GET
-						$pathInfo[C('VAR_GROUP')] = isset($deploys['4']) ? $deploys['4'] : $host;
-					}
-					// 分配Module、Action给GET
-					$pathInfo[C('VAR_MODULE')] = ucfirst((isset($deploys['0']) && !empty($deploys['0'])) ? $deploys['0'] : array_shift($paths));
-					$pathInfo[C('VAR_ACTION')] = (isset($deploys['1']) && !empty($deploys['1'])) ? $deploys['1'] : array_shift($paths);
-				} else {
-					$pathInfo[C('VAR_MODULE')] = ucfirst(array_shift($paths));
-					$pathInfo[C('VAR_ACTION')] = array_shift($paths);
-				}
-				// 合并其他参数
-				if(isset($deploys['2']) && !empty($deploys['2'])){
-					parse_str($deploys['2'],$__query);
-					$_GET = array_merge($__query,$_GET);
-				}
-				unset($deploys,$host,$__query);
-			} else {
-				$groupApp = C('APP_GROUP_LIST');
-				if ($groupApp) {
-					$arr = array_map('strtolower',explode(',',$groupApp));
-					$pathInfo[C('VAR_GROUP')] = in_array(strtolower($paths[0]),$arr)? array_shift($paths) : '';
-				}
-				$pathInfo[C('VAR_MODULE')] = array_shift($paths);
-				$pathInfo[C('VAR_ACTION')] = array_shift($paths);
-			}
+            $groupApp = C('APP_GROUP_LIST');
+            if ($groupApp) {
+                $arr = array_map('strtolower',explode(',',$groupApp));
+                $pathInfo[C('VAR_GROUP')] = in_array(strtolower($paths[0]),$arr)? array_shift($paths) : '';
+            }
+            $pathInfo[C('VAR_MODULE')] = array_shift($paths);
+            $pathInfo[C('VAR_ACTION')] = array_shift($paths);
             for($i = 0, $cnt = count($paths); $i <$cnt; $i++){
                 if(isset($paths[$i+1])) {
                     $pathInfo[$paths[$i]] = (string)$paths[++$i];

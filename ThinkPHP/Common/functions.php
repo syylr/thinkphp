@@ -494,13 +494,11 @@ function M($name='',$class='Model') {
  +----------------------------------------------------------
  * @param string name Action名称
  * @param string app Model所在项目
- * @param string actionName 执行Action中的actionName操作(不为空有效)
- * @param array args 执行actionName操作时附带的参数
  +----------------------------------------------------------
  * @return Action
  +----------------------------------------------------------
  */
-function A($name,$app='@', $actionName='', $args=array())
+function A($name,$app='@')
 {
     static $_action = array();
     if(isset($_action[$app.$name]))
@@ -518,15 +516,7 @@ function A($name,$app='@', $actionName='', $args=array())
     if(class_exists($className)) {
         $action = new $className();
         $_action[$app.$OriClassName] = $action;
-        if('' != $actionName) {
-            if(method_exists($action,$actionName)) {
-                $action->$actionName($args);
-            } else {
-                throw_exception(L('_ERROR_ACTION_').':'.$actionName);
-            }
-        } else {
-            return $action;
-        }
+        return $action;
     }else {
         return false;
     }
@@ -599,6 +589,9 @@ function tag($name,$params=array()) {
         foreach ($tags   as $key=>$call){
             if(is_callable($call))
                 $result = call_user_func_array($call,$params);
+            else{
+                $result   =  B($call);
+            }
         }
         return $result;
     }
@@ -610,7 +603,7 @@ function B($name) {
     $class = $name.'Behavior';
     require_cache(LIB_PATH.'Behavior/'.$class.'.class.php');
     $behavior   =  new $class();
-    $behavior->run();
+    return $behavior->run();
 }
 
 // 渲染输出Widget
@@ -667,7 +660,7 @@ function F($name,$value='',$path=DATA_PATH) {
             $dir   =  dirname($filename);
             // 目录不存在则创建
             if(!is_dir($dir))  mkdir($dir);
-            $_cache[$name]   =   $value;
+            $_cache[$name] = $value;
             return file_put_contents($filename,"<?php\nreturn ".var_export($value,true).";\n?>");
         }
     }
@@ -826,24 +819,6 @@ function data_to_xml($data) {
         $xml.="</$key>";
     }
     return $xml;
-}
-
-/**
- * 获取项目当前的URL(index.php对应的URL绝对路径)
- +----------------------------------------------------------
- * 例如：
- *     本地路径      ：/htdocs/project_name/index.php
- *     URL绝对路径   ：http://localhost/project_name/index.php
- *     去除index.php : http://localhost/project_name/home/index/do/showuser
- *
- * 则，返回：
- *     http://localhost/project_name
- +----------------------------------------------------------
- */
-function getSiteUrl() {
-    $local_path = dirname($_SERVER['SCRIPT_NAME']);
-    $uri = 'http'.(@$_SERVER['HTTPS']=='on'?'s':'').'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-    return substr($uri,0,strpos($uri,$local_path)+strlen($local_path));
 }
 
 /**
