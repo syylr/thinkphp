@@ -952,6 +952,9 @@ class Model extends Think
                 }else{
                     $map[$val[0]] = $data[$val[0]];
                 }
+                if(!empty($data[$this->getPk()])) { // 完善编辑的时候验证唯一
+                    $map[$this->getPk()]	=	array('neq',$data[$this->getPk()]);
+                }
                 if($this->where($map)->find())
                     return false;
                 break;
