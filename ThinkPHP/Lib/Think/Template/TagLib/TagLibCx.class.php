@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -29,8 +29,9 @@ class TagLibCx extends TagLib
     // 标签定义
     protected $tags   =  array(
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
-        'php'=>array('attr'=>'','close'=>0),
+        'php'=>array(),
         'volist'=>array('attr'=>'name,id,offset,length,key,mod','level'=>3,'alias'=>'iterate'),
+        'foreach' =>array('attr'=>'name,item,key'),
         'include'=>array('attr'=>'file','close'=>0),
         'if'=>array('attr'=>'condition'),
         'elseif'=>array('attr'=>'condition'),
@@ -46,6 +47,7 @@ class TagLibCx extends TagLib
         'notpresent'=>array('attr'=>'name','level'=>3),
         'defined'=>array('attr'=>'name','level'=>3),
         'notdefined'=>array('attr'=>'name','level'=>3),
+        'layout' =>array('attr'=>'name,cache','close'=>0),
         'import'=>array('attr'=>'file,href,type,value,basepath','close'=>0,'alias'=>'load,css,js'),
         'assign'=>array('attr'=>'name,value','close'=>0),
         'define'=>array('attr'=>'name,value','close'=>0),
@@ -67,7 +69,15 @@ class TagLibCx extends TagLib
     {
         $tag    = $this->parseXmlAttr($attr,'include');
         $file   =   $tag['file'];
-        return $this->tpl->parseInclude($file);
+        $parseStr = $this->tpl->parseInclude($file);
+		 foreach ($tag as $key=>$val) {
+            if ($key == 'file') {
+                continue;
+            }
+            //echo $key;
+            $parseStr = str_replace('['.$key.']',$val,$parseStr);
+        }
+        return $this->tpl->parse($parseStr);
     }
 
     /**
@@ -232,7 +242,7 @@ class TagLibCx extends TagLib
      +----------------------------------------------------------
      * switch标签解析
      * 格式：
-     * <switch name="$a.name" >
+     * <switch name="a.name" >
      * <case value="1" break="false">1</case>
      * <case value="2" >2</case>
      * <default />other
@@ -394,6 +404,7 @@ class TagLibCx extends TagLib
      * range标签解析
      * 如果某个变量存在于某个范围 则输出内容 type= in 表示在范围内 否则表示在范围外
      * 格式： <range name="var|function"  value="val" type='in|notin' >content</range>
+     * example: <range name="a"  value="1,2,3" type='in' >content</range>
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -512,7 +523,13 @@ class TagLibCx extends TagLib
         $parseStr  = '<?php if(!empty('.$name.')): ?>'.$content.'<?php endif; ?>';
         return $parseStr;
     }
-
+    /**
+     * 判断是否已经定义了该常量
+     * <define name='TXT'>已定义</define>
+     * @param <type> $attr
+     * @param <type> $content
+     * @return string
+     */
     public function _defined($attr,$content)
     {
         $tag        = $this->parseXmlAttr($attr,'defined');

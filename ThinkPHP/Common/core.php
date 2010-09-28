@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -13,6 +13,7 @@
 // 系统默认的核心列表文件
 return array(
     THINK_PATH.'/Common/functions.php',   // 系统函数库
+    THINK_PATH.'/Lib/Think/Core/Think.class.php',
     THINK_PATH.'/Lib/Think/Exception/ThinkException.class.php',  // 异常处理类
     THINK_PATH.'/Lib/Think/Core/Log.class.php',    // 日志处理类
     THINK_PATH.'/Lib/Think/Core/App.class.php',   // 应用程序类

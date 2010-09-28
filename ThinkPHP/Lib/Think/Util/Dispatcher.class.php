@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -49,86 +49,85 @@ class Dispatcher extends Think
             //当前项目地址
             define('PHP_FILE',_PHP_FILE_);
         }
-        if($urlMode) {
-			// 获取PATHINFO信息
-            self::getPathInfo();
-            if (C('URL_AUTO_REDIRECT') && !empty($_GET) && !isset($_GET[C('VAR_ROUTER')])) {
-                $_GET  =  array_merge (self :: parsePathInfo(),$_GET);
-                $_varGroup =   C('VAR_GROUP'); // 分组变量
-                $_varModule =   C('VAR_MODULE');
-                $_varAction =   C('VAR_ACTION');
-                $_depr  =   C('URL_PATHINFO_DEPR');
-                $_pathModel =   C('URL_PATHINFO_MODEL');
-                if (!C('APP_GROUP_LIST')) {
-                    $_GET[$_varGroup] = '';
+
+        // 开启子域名部署
+        if(C('APP_SUB_DOMAIN_DEPLOY')) {
+            $rules = C('APP_SUB_DOMAIN_RULES');
+            $subDomain    = strtolower(substr($_SERVER['HTTP_HOST'],0,strpos($_SERVER['HTTP_HOST'],'.')));
+            if($subDomain && array_key_exists($subDomain,$rules)) {
+                $rule =  $rules[$subDomain];
+            }elseif(isset($rules['*'])){ // 泛域名支持
+                if('www' != $subDomain && !in_array($subDomain,C('APP_SUB_DOMAIN_DENY'))) {
+                    $rule =  $rules['*'];
                 }
-                // 设置默认模块和操作
-                if(empty($_GET[$_varModule])) $_GET[$_varModule] = C('DEFAULT_MODULE');
-                if(empty($_GET[$_varAction])) $_GET[$_varAction] = C('DEFAULT_ACTION');
-                // 组装新的URL地址
-                $_URL = '/';
-                if($_pathModel==2) {
-                    // groupName/modelName/actionName/
-                    $_URL .= $_GET[$_varGroup].($_GET[$_varGroup]?$_depr:'').$_GET[$_varModule].$_depr.$_GET[$_varAction].$_depr;
-                    unset($_GET[$_varGroup],$_GET[$_varModule],$_GET[$_varAction]);
+            }
+            if(!empty($rule)) {
+                // 子域名部署规则 '子域名'=>array('分组名/[模块名]','var1=a&var2=b');
+                $array   =  explode('/',$rule[0]);
+                $module = array_pop($array);
+                if(!empty($module)) {
+                    $_GET[C('VAR_MODULE')] = $module;
+                    $domainModule   =  true;
                 }
-                foreach ($_GET as $_VAR => $_VAL) {
-                    if('' != trim($_GET[$_VAR])) {
-                        if($_pathModel==2) {
-                            $_URL .= $_VAR.$_depr.rawurlencode($_VAL).$_depr;
-                        }else{
-                            $_URL .= $_VAR.'/'.rawurlencode($_VAL).'/';
-                        }
+                if(!empty($array)) {
+                    $_GET[C('VAR_GROUP')]  = array_pop($array);
+                    $domainGroup =  true;
+                }
+                if(isset($rule[1])) { // 传入参数
+                    parse_str($rule[1],$parms);
+                    $_GET   =  array_merge($_GET,$parms);
+                }
+            }
+        }
+        $depr = C('URL_PATHINFO_DEPR');
+        // 分析PATHINFO信息
+        self::getPathInfo();
+        if(!empty($_SERVER['PATH_INFO'])) {
+            if(C('URL_HTML_SUFFIX'))
+                $_SERVER['PATH_INFO']   =   preg_replace('/\.'.C('URL_HTML_SUFFIX').'$/','',$_SERVER['PATH_INFO']);
+            if(!self::routerCheck()){   // 检测路由规则 如果没有则按默认规则调度URL
+                $paths = explode($depr,trim($_SERVER['PATH_INFO'],'/'));
+                $var  =  array();
+                if (C('APP_GROUP_LIST') && !isset($_GET[C('VAR_GROUP')])){
+                    $var[C('VAR_GROUP')] = in_array(strtolower($paths[0]),explode(',',strtolower(C('APP_GROUP_LIST'))))? array_shift($paths) : '';
+                    if(C('APP_GROUP_DENY') && in_array(strtolower($var[C('VAR_GROUP')]),explode(',',strtolower(C('APP_GROUP_DENY'))))) {
+                        // 禁止直接访问分组
+                        exit;
                     }
                 }
-                if($_depr==',') $_URL = substr($_URL, 0, -1).'/';
-                //重定向成规范的URL格式
-                redirect(PHP_FILE.$_URL);
-            }else{
-                if(C('URL_ROUTER_ON')) self::routerCheck();   // 检测路由规则
-                //给_GET赋值 以保证可以按照正常方式取_GET值
-                $_GET = array_merge(self :: parsePathInfo(),$_GET);
-                //保证$_REQUEST正常取值
-                $_REQUEST = array_merge($_POST,$_GET);
-            }
-        }else{
-            // 普通URL模式 检查路由规则
-            if(isset($_GET[C('VAR_ROUTER')])) self::routerCheck();
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 分析PATH_INFO的参数
-     +----------------------------------------------------------
-     * @access private
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    private static function parsePathInfo()
-    {
-        $pathInfo = array();
-        if(C('URL_PATHINFO_MODEL')==2){
-            $paths = explode(C('URL_PATHINFO_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
-            $groupApp = C('APP_GROUP_LIST');
-            if ($groupApp) {
-                $arr = array_map('strtolower',explode(',',$groupApp));
-                $pathInfo[C('VAR_GROUP')] = in_array(strtolower($paths[0]),$arr)? array_shift($paths) : '';
-            }
-            $pathInfo[C('VAR_MODULE')] = array_shift($paths);
-            $pathInfo[C('VAR_ACTION')] = array_shift($paths);
-            for($i = 0, $cnt = count($paths); $i <$cnt; $i++){
-                if(isset($paths[$i+1])) {
-                    $pathInfo[$paths[$i]] = (string)$paths[++$i];
-                }elseif($i==0) {
-                    $pathInfo[$pathInfo[C('VAR_ACTION')]] = (string)$paths[$i];
+                if(!isset($_GET[C('VAR_MODULE')])) {// 还没有定义模块名称
+                    $var[C('VAR_MODULE')]  =   array_shift($paths);
                 }
+                $var[C('VAR_ACTION')]  =   array_shift($paths);
+                // 解析剩余的URL参数
+                $res = preg_replace('@(\w+)'.$depr.'([^\/]+)@e', '$var[\'\\1\']="\\2";', implode('/',$paths));
+                $_GET   =  array_merge($var,$_GET);
             }
-        }else {
-            $res = preg_replace('@(\w+)'.C('URL_PATHINFO_DEPR').'([^,\/]+)@e', '$pathInfo[\'\\1\']="\\2";', $_SERVER['PATH_INFO']);
         }
-        return $pathInfo;
+        // 获取分组 模块和操作名称
+        if (C('APP_GROUP_LIST')) define('GROUP_NAME', self::getGroup(C('VAR_GROUP')));
+        define('MODULE_NAME',self::getModule(C('VAR_MODULE')));
+        define('ACTION_NAME',self::getAction(C('VAR_ACTION')));
+        // URL常量
+        // 当前页面地址
+        //define('__SELF__',$_SERVER['PHP_SELF']);
+        define('__SELF__',$_SERVER['REQUEST_URI']);
+        define('__INFO__',$_SERVER['PATH_INFO']);
+        // 当前项目地址
+        define('__APP__',PHP_FILE);
+        // 当前模块和分组地址
+        $module = defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
+        if(defined('GROUP_NAME')) {
+            $group   = C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME;
+            define('__GROUP__',(!empty($domainGroup) || GROUP_NAME == C('DEFAULT_GROUP') )?__APP__ : __APP__.'/'.$group);
+            define('__URL__',!empty($domainModule)?__GROUP__.$depr : __GROUP__.$depr.$module);
+        }else{
+            define('__URL__',!empty($domainModule)?__APP__.'/' : __APP__.'/'.$module);
+        }
+        // 当前操作地址
+        define('__ACTION__',__URL__.$depr.ACTION_NAME);
+        //保证$_REQUEST正常取值
+        $_REQUEST = array_merge($_POST,$_GET);
     }
 
     /**
@@ -193,83 +192,119 @@ class Dispatcher extends Think
      +----------------------------------------------------------
      */
     static public function routerCheck() {
-        // 搜索路由映射 把路由名称解析为对应的模块和操作
-        $routes = C('_routes_');
-        if(!empty($routes)) {
-            if(isset($_GET[C('VAR_ROUTER')])) {
-                // 存在路由变量
-                $routeName  =   strtolower($_GET[C('VAR_ROUTER')]);
-                unset($_GET[C('VAR_ROUTER')]);
-            }else{
-                $paths = explode(C('URL_PATHINFO_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
-                // 获取路由名称
-                $routeName  =   strtolower(array_shift($paths));
-            }
-            if(isset($routes[$routeName])) {
-                // 读取当前路由名称的路由规则
-                // 路由定义格式 routeName=>array(‘模块名称’,’操作名称’,’参数定义’,’额外参数’)
-                $route = $routes[$routeName];
-                if(strpos($route[0],C('APP_GROUP_DEPR'))) {
-                    $array   =  explode(C('APP_GROUP_DEPR'),$route[0]);
-                    $_GET[C('VAR_MODULE')]  =   array_pop($array);
-                    $_GET[C('VAR_GROUP')]  =   implode(C('APP_GROUP_DEPR'),$array);
-                }else{
-                    $_GET[C('VAR_MODULE')]  =   $route[0];
-                }
-                $_GET[C('VAR_ACTION')]  =   $route[1];
-                //  获取当前路由参数对应的变量
-                if(!isset($_GET[C('VAR_ROUTER')])) {
+        // 是否开启路由使用
+        if(!C('URL_ROUTER_ON')) return false;
+        // 路由定义文件优先于config中的配置定义
+        $routes = C('URL_ROUTE_RULES');
+        if(is_array(C('_routes_')))
+            $routes = C('_routes_');
+        // 路由处理
+        if(!empty($routes))
+        {
+            $regx = trim($_SERVER['PATH_INFO'],'/');
+            $depr = C('URL_PATHINFO_DEPR');
+
+            foreach ($routes as $key=>$route){
+                if(0 === stripos($regx.$depr,$route[0].$depr)) {
+                    // 简单路由定义：array('路由定义','分组/模块/操作名', '路由对应变量','额外参数'),
+                    $var  =  self::parseUrl($route[1]);
+                    //  获取当前路由参数对应的变量
+                    $paths = explode($depr,trim(str_ireplace($route[0],'',$regx),$depr));
                     $vars    =   explode(',',$route[2]);
                     for($i=0;$i<count($vars);$i++)
-                        $_GET[$vars[$i]]     =   array_shift($paths);
+                        $var[$vars[$i]]     =   array_shift($paths);
                     // 解析剩余的URL参数
-                    $res = preg_replace('@(\w+)\/([^,\/]+)@e', '$_GET[\'\\1\']="\\2";', implode('/',$paths));
-                }
-                if(isset($route[3])) {
-                    // 路由里面本身包含固定参数 形式为 a=111&b=222
-                    parse_str($route[3],$params);
-                    $_GET   =   array_merge($_GET,$params);
-                }
-                //unset($_SERVER['PATH_INFO']);
-            }elseif(isset($routes[$routeName.'@'])){
-                // 存在泛路由
-                // 路由定义格式 routeName@=>array(
-                // array('路由正则1',‘模块名称’,’操作名称’,’参数定义’,’额外参数’),
-                // array('路由正则2',‘模块名称’,’操作名称’,’参数定义’,’额外参数’),
-                // ...)
-                $routeItem = $routes[$routeName.'@'];
-                $regx = str_ireplace($routeName,'',trim($_SERVER['PATH_INFO'],'/'));
-                foreach ($routeItem as $route){
-                    $rule    =   $route[0];// 路由正则
-                    // 匹配路由定义
-                    if(preg_match($rule,$regx,$matches)) {
-                        // 检测是否存在分组 2009/06/23
-                        $temp = explode(C('APP_GROUP_DEPR'),$route[1]);
-                        if (!empty($temp[1])) {
-                            $_GET[C('VAR_GROUP')]  = $temp[0];
-                            $_GET[C('VAR_MODULE')] = $temp[1];
-                        }else {
-                            $_GET[C('VAR_MODULE')] = $temp[0];
-                        }
-                        $_GET[C('VAR_ACTION')]  =   $route[2];
-                        //  获取当前路由参数对应的变量
-                        if(!isset($_GET[C('VAR_ROUTER')])) {
-                            $vars    =   explode(',',$route[3]);
-                            for($i=0;$i<count($vars);$i++)
-                                $_GET[$vars[$i]]     =   $matches[$i+1];
-                            // 解析剩余的URL参数
-                            $res = preg_replace('@(\w+)\/([^,\/]+)@e', '$_GET[\'\\1\']="\\2";', str_replace($matches[0],'',$regx));
-                        }
-                        if(isset($route[4])) {
-                            // 路由里面本身包含固定参数 形式为 a=111&b=222
-                            parse_str($route[4],$params);
-                            $_GET   =   array_merge($_GET,$params);
-                        }
-                        break;
+                    $res = preg_replace('@(\w+)\/([^,\/]+)@e', '$var[\'\\1\']="\\2";', implode('/',$paths));
+                    $_GET   =  array_merge($var,$_GET);
+                    if(isset($route[3])) {
+                        parse_str($route[3],$params);
+                        $_GET   =   array_merge($_GET,$params);
                     }
+                    return true;
+                }elseif(preg_match($route[0],$regx,$matches)) {
+                    // 路由定义规则：array('正则定义','分组/模块/操作名', '路由对应变量','额外参数'),
+                    $var  =  self::parseUrl($route[1]);
+                    //  获取当前路由参数对应的变量
+                    $vars    =   explode(',',$route[2]);
+                    for($i=0;$i<count($vars);$i++)
+                        $var[$vars[$i]]     =   $matches[$i+1];
+                    // 解析剩余的URL参数
+                    $res = preg_replace('@(\w+)\/([^,\/]+)@e', '$var[\'\\1\']="\\2";', str_replace($matches[0],'',$regx));
+                    $_GET   =  array_merge($var,$_GET);
+                    if(isset($route[3])) {
+                        parse_str($route[3],$params);
+                        $_GET   =   array_merge($_GET,$params);
+                    }
+                    return true;
                 }
             }
         }
+        return false;
+    }
+
+    static private function parseUrl($route) {
+        $array   =  explode('/',$route);
+        $var  =  array();
+        $var[C('VAR_ACTION')] = array_pop($array);
+        $var[C('VAR_MODULE')] = array_pop($array);
+        if(!empty($array)) $var[C('VAR_GROUP')]  = array_pop($array);
+        return $var;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获得实际的模块名称
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static private function getModule($var)
+    {
+        $module = (!empty($_GET[$var])? $_GET[$var]:C('DEFAULT_MODULE'));
+        if(C('URL_CASE_INSENSITIVE')) {
+            // URL地址不区分大小写
+            define('P_MODULE_NAME',strtolower($module));
+            // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
+            $module = ucfirst(parse_name(P_MODULE_NAME,1));
+        }
+        unset($_GET[$var]);
+        return $module;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获得实际的操作名称
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static private function getAction($var)
+    {
+        $action   = !empty($_POST[$var]) ?
+            $_POST[$var] :
+            (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
+        unset($_POST[$var],$_GET[$var]);
+        return $action;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获得实际的分组名称
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static private function getGroup($var)
+    {
+        $group   = (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_GROUP'));
+        unset($_GET[$var]);
+        return ucfirst(strtolower($group));
     }
 }//类定义结束
 ?>

@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -112,7 +112,9 @@ class DbMysql extends Db{
         $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
-        $this->Q(1);
+        N('db_query',1);
+        // 记录开始执行时间
+        G('queryStartTime');
         $this->queryID = mysql_query($str, $this->_linkID);
         $this->debug();
         if ( false === $this->queryID ) {
@@ -143,7 +145,9 @@ class DbMysql extends Db{
         $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
-        $this->W(1);
+        N('db_write',1);
+        // 记录开始执行时间
+        G('queryStartTime');
         $result =   mysql_query($str, $this->_linkID) ;
         $this->debug();
         if ( false === $result) {

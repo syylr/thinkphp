@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -112,7 +112,7 @@ class TagLib extends Think
      */
     public function parseXmlAttr($attr,$tag)
     {
-        //XML解析安全过滤
+             //XML解析安全过滤
         $attr = str_replace('&','___', $attr);
         $xml =  '<tpl><tag '.$attr.' /></tpl>';
         $xml = simplexml_load_string($xml);
@@ -121,16 +121,15 @@ class TagLib extends Think
         }
         $xml = (array)($xml->tag->attributes());
         $array = array_change_key_case($xml['@attributes']);
-        $attrs  = explode(',',$this->tags[strtolower($tag)]['attr']);
-        foreach($attrs as $val) {
-            $name   = strtolower($val['name']);
-            if( !isset($array[$name])) {
-                $array[$name] = '';
-            }else{
-                $array[$name] = str_replace('___','&',$array[$name]);
+        if($array) {
+            $attrs  = explode(',',$this->tags[strtolower($tag)]['attr']);
+            foreach($attrs as $name) {
+                if( isset($array[$name])) {
+                    $array[$name] = str_replace('___','&',$array[$name]);
+                }
             }
+            return $array;
         }
-        return $array;
     }
 
     /**

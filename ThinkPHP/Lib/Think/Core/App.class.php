@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -43,17 +43,14 @@ class App
         // 在部署模式下会自动在第一次执行的时候编译项目
         if(defined('RUNTIME_MODEL')){
             // 运行模式无需载入项目编译缓存
-        }elseif(is_file(RUNTIME_PATH.'~app.php') && (!is_file(CONFIG_PATH.'config.php') || filemtime(RUNTIME_PATH.'~app.php')>filemtime(CONFIG_PATH.'config.php'))) {
+        }elseif(is_file(RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php') && (!is_file(CONFIG_PATH.'config.php') || filemtime(RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php')>filemtime(CONFIG_PATH.'config.php'))) {
             // 直接读取编译后的项目文件
-            C(include RUNTIME_PATH.'~app.php');
+            C(include RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php');
         }else{
             // 预编译项目
             App::build();
         }
         //[/RUNTIME]
-
-        // 项目开始标签
-        if(C('APP_PLUGIN_ON'))   tag('app_begin');
 
         // 设置系统时区 PHP5支持
         if(function_exists('date_default_timezone_set'))
@@ -61,44 +58,22 @@ class App
 
         // 允许注册AUTOLOAD方法
         if(C('APP_AUTOLOAD_REG') && function_exists('spl_autoload_register'))
-                spl_autoload_register(array('Think', 'autoload'));
+            spl_autoload_register(array('Think', 'autoload'));
 
-        if(C('SESSION_AUTO_START'))  session_start(); // Session初始化
-
-        // 应用调度过滤器
-        // 如果没有加载任何URL调度器
-        // 默认只支持 QUERY_STRING 方式
-        if(C('URL_DISPATCH_ON'))   Dispatcher::dispatch();
-
-        if(!defined('PHP_FILE'))
-            // PHP_FILE 由内置的Dispacher定义
-            // 如果不使用该插件，需要重新定义
-            define('PHP_FILE',_PHP_FILE_);
-
-        // 取得模块和操作名称
-        // 可以在Dispatcher中定义获取规则
+         // Session初始化
+        if(C('SESSION_AUTO_START'))  session_start();
+        // URL调度
+        Dispatcher::dispatch();
 
         // 加载项目分组公共文件
-        if(C('APP_GROUP_LIST')) {
-            $Group_name = App::getGroup();
-            if($Group_name != '') {
-
-            if(!defined('GROUP_NAME')) define('GROUP_NAME', $Group_name);       // Group名称
+        if(defined('GROUP_NAME')) {
             // 分组配置文件
             if(is_file(CONFIG_PATH.GROUP_NAME.'/config.php'))
                 C(include CONFIG_PATH.GROUP_NAME.'/config.php');
             // 分组函数文件
             if(is_file(COMMON_PATH.GROUP_NAME.'/function.php'))
                 include COMMON_PATH.GROUP_NAME.'/function.php';
-            }
         }
-
-        if(!defined('MODULE_NAME')) define('MODULE_NAME',   App::getModule());       // Module名称
-        //检查模块是否允许URL访问
-        if(in_array(MODULE_NAME,C('APP_MODULE_DENY_LIST'))) {
-            halt('模块禁止访问');
-        }
-        if(!defined('ACTION_NAME')) define('ACTION_NAME',   App::getAction());        // Action操作
 
         // 加载模块配置文件
         if(is_file(CONFIG_PATH.strtolower(MODULE_NAME).'_config.php'))
@@ -107,8 +82,9 @@ class App
         // 系统检查
         App::checkLanguage();     //语言检查
         App::checkTemplate();     //模板检查
-        if(C('HTML_CACHE_ON')) // 开启静态缓存
-            HtmlCache::readHTMLCache();
+
+        // 开启静态缓存
+        if(C('HTML_CACHE_ON'))  HtmlCache::readHTMLCache();
 
         // 项目初始化标签
         if(C('APP_PLUGIN_ON'))   tag('app_init');
@@ -139,7 +115,8 @@ class App
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
-            if(!$debug) // 编译文件
+            // 编译文件
+            if(!$debug)
                 $common   .= compile(COMMON_PATH.'common.php',$runtime);
         }
         // 加载项目编译文件列表
@@ -167,7 +144,7 @@ class App
         }else{
             // 部署模式下面生成编译文件
             // 下次直接加载项目编译文件
-            if(defined('RUNTIME_ALLINONE')) {
+            if($runtime) {
                 // 获取用户自定义变量
                 $defs = get_defined_constants(TRUE);
                 $content  = array_define($defs['user']);
@@ -182,68 +159,6 @@ class App
         return ;
     }
     //[/RUNTIME]
-    /**
-     +----------------------------------------------------------
-     * 获得实际的模块名称
-     +----------------------------------------------------------
-     * @access private
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    static private function getModule()
-    {
-        $var  =  C('VAR_MODULE');
-        $module = !empty($_POST[$var]) ?
-            $_POST[$var] :
-            (!empty($_GET[$var])? $_GET[$var]:C('DEFAULT_MODULE'));
-        if(C('URL_CASE_INSENSITIVE')) {
-            // URL地址不区分大小写
-            define('P_MODULE_NAME',strtolower($module));
-            // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-            $module = ucfirst(parse_name(P_MODULE_NAME,1));
-        }
-        unset($_POST[$var],$_GET[$var]);
-        return $module;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 获得实际的操作名称
-     +----------------------------------------------------------
-     * @access private
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    static private function getAction()
-    {
-        $var  =  C('VAR_ACTION');
-        $action   = !empty($_POST[$var]) ?
-            $_POST[$var] :
-            (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
-        unset($_POST[$var],$_GET[$var]);
-        return $action;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 获得实际的分组名称
-     +----------------------------------------------------------
-     * @access private
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    static private function getGroup()
-    {
-        $var  =  C('VAR_GROUP');
-        $group   = !empty($_POST[$var]) ?
-            $_POST[$var] :
-            (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_GROUP'));
-        unset($_POST[$var],$_GET[$var]);
-        return ucfirst(strtolower($group));
-    }
 
     /**
      +----------------------------------------------------------
@@ -332,35 +247,16 @@ class App
         // 当前模版路径
         define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME);
         $tmplDir = TMPL_DIR.'/'.TEMPLATE_NAME.'/';
-
-        //当前项目地址
-        define('__APP__',PHP_FILE);
-        //当前页面地址
-        define('__SELF__',$_SERVER['PHP_SELF']);
-        // 应用URL根目录
-        if(C('APP_DOMAIN_DEPLOY')) {
-            // 独立域名部署需要指定模板从根目录开始
-            $appRoot   =  '/';
-        }else{
-            $appRoot   =  __ROOT__.'/'.APP_NAME.'/';
-        }
-        $depr = C('URL_PATHINFO_MODEL')==2?C('URL_PATHINFO_DEPR'):'/';
-        $module = defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
         if(defined('GROUP_NAME')) {
-            $group   = C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME;
-            define('__URL__',PHP_FILE.'/'.((GROUP_NAME != C('DEFAULT_GROUP'))?$group.$depr:'').$module);
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
-            define('__URL__',PHP_FILE.'/'.$module);
-            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace(C('APP_GROUP_DEPR'),'/',MODULE_NAME).'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
+            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace('.','/',MODULE_NAME).'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH);
         }
-        //当前操作地址
-        define('__ACTION__',__URL__.C('URL_PATHINFO_DEPR').ACTION_NAME);
         define('__CURRENT__', __ROOT__.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
         //项目模板目录
-        define('APP_TMPL_PATH', $appRoot.$tmplDir);
+        define('APP_TMPL_PATH', __ROOT__.'/'.APP_NAME.'/'.$tmplDir);
         //网站公共文件目录
         define('WEB_PUBLIC_PATH', __ROOT__.'/Public');
         //项目公共文件目录
@@ -443,7 +339,7 @@ class App
     static public function run() {
         App::init();
         // 记录应用初始化时间
-        if(C('SHOW_RUN_TIME'))  $GLOBALS['_initTime'] = microtime(TRUE);
+        if(C('SHOW_RUN_TIME')) G('initTime');
         App::exec();
         // 保存日志记录
         if(C('LOG_RECORD')) Log::save();
