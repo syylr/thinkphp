@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -378,7 +378,7 @@ class ThinkTemplateCompiler {
     protected function parseXmlItem($tag,$attr,$content) {
         $attr = stripslashes($attr);
         $content = stripslashes(trim($content));
-        $fun  =  '_'.$tag; 
+        $fun  =  '_'.$tag;
         return $this->$fun($attr,$this->parseTag($content));
     }
     // literal标签
@@ -390,7 +390,7 @@ class ThinkTemplateCompiler {
         $parseStr   =   "<!--###literal{$i}###-->";
         $this->literal[$i]  = $content;
         return $parseStr;
-    }    
+    }
     protected function restoreLiteral($tag) {
         // 还原literal标签
         $parseStr   =  $this->literal[$tag];

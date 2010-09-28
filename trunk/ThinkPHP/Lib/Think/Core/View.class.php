@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -84,6 +84,13 @@ class View extends Think
             return false;
     }
 
+    // 调试页面所有的模板变量
+    public function traceVar(){
+        foreach ($this->tVar as $name=>$val){
+            dump($val,1,'['.$name.']<br/>');
+        }
+    }
+
     /**
      +----------------------------------------------------------
      * 加载模板和页面输出 可以返回输出内容
@@ -163,23 +170,20 @@ class View extends Think
      */
     public function fetch($templateFile='',$charset='',$contentType='',$display=false)
     {
-        $GLOBALS['_viewStartTime'] = microtime(TRUE);
-        if(null===$templateFile)
-            // 使用null参数作为模版名直接返回不做任何输出
-            return ;
-        if(empty($charset))  $charset = C('DEFAULT_CHARSET');
+        G('_viewStartTime');
+        // 使用null参数作为模版名直接返回不做任何输出
+        if(null===$templateFile) return;
         // 网页字符编码
-        $contentType =  $contentType?$contentType:C('TMPL_CONTENT_TYPE');
+        if(empty($charset))  $charset = C('DEFAULT_CHARSET');
+        if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
         header("Content-Type:".$contentType."; charset=".$charset);
         header("Cache-control: private");  //支持页面回跳
         //页面缓存
         ob_start();
         ob_implicit_flush(0);
-
+        // 自动定位模板文件
         if(!file_exists_case($templateFile))
-            // 自动定位模板文件
             $templateFile   = $this->parseTemplateFile($templateFile);
-
         $engine  = strtolower(C('TMPL_ENGINE_TYPE'));
         if('php'==$engine) {
             // 模板阵列变量分解成为独立变量
@@ -312,15 +316,21 @@ class View extends Think
     protected function templateContentReplace($content) {
         // 系统默认的特殊变量替换
         $replace =  array(
-            '../Public'   => APP_PUBLIC_PATH,// 项目公共目录
-            '__PUBLIC__'  => WEB_PUBLIC_PATH,// 站点公共目录
-            '__TMPL__'    => APP_TMPL_PATH,  // 项目模板目录
-            '__ROOT__'    => __ROOT__,       // 当前网站地址
-            '__APP__'     => __APP__,        // 当前项目地址
-            '__URL__'     => __URL__,        // 当前模块地址
-            '__ACTION__'  => __ACTION__,     // 当前操作地址
-            '__SELF__'    => __SELF__,       // 当前页面地址
+            '../Public'     => APP_PUBLIC_PATH,// 项目公共目录
+            '__PUBLIC__'    => WEB_PUBLIC_PATH,// 站点公共目录
+            '__TMPL__'      => APP_TMPL_PATH,  // 项目模板目录
+            '__ROOT__'      => __ROOT__,       // 当前网站地址
+            '__APP__'       => __APP__,        // 当前项目地址
+            '__UPLOAD__'    => __ROOT__.'/Uploads',
+            '__ACTION__'    => __ACTION__,     // 当前操作地址
+            '__SELF__'      => __SELF__,       // 当前页面地址
+            '__URL__'       => __URL__,
+            '__INFO__'      => __INFO__,
         );
+        if(defined('GROUP_NAME'))
+        {
+            $replace['__GROUP__'] = __GROUP__;// 当前项目地址
+        }
         if(C('TOKEN_ON')) {
             if(strpos($content,'{__TOKEN__}')) {
                 // 指定表单令牌隐藏域位置
@@ -381,7 +391,7 @@ class View extends Think
             $templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
         }elseif(strpos($templateFile,':')){
             // 引入其它模块的操作模板
-            $templateFile   =   TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
+            $templateFile   =   TEMPLATE_PATH.'/'.(defined(GROUP_NAME)?GROUP_NAME.'/':'').str_replace(':','/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
         }elseif(!is_file($templateFile))    {
             // 引入当前模块的其它操作模板
             $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
@@ -402,27 +412,19 @@ class View extends Think
      */
     private function showTime() {
         // 显示运行时间
-        $startTime =  $GLOBALS['_viewStartTime'];
-        $endTime = microtime(TRUE);
-        $total_run_time =   number_format(($endTime - $GLOBALS['_beginTime']), 3);
-        $showTime   =   'Process: '.$total_run_time.'s ';
+        G('viewStartTime');
+        $showTime   =   'Process: '.G('beginTime','viewEndTime').'s ';
         if(C('SHOW_ADV_TIME')) {
             // 显示详细运行时间
-            $_load_time =   number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3);
-            $_init_time =   number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3);
-            $_exec_time =   number_format(($startTime  -$GLOBALS['_initTime'] ), 3);
-            $_parse_time    =   number_format(($endTime - $startTime), 3);
-            $showTime .= '( Load:'.$_load_time.'s Init:'.$_init_time.'s Exec:'.$_exec_time.'s Template:'.$_parse_time.'s )';
+            $showTime .= '( Load:'.G('beginTime','loadTime').'s Init:'.G('loadTime','initTime').'s Exec:'.G('initTime','viewStartTime').'s Template:'.G('viewStartTime','viewEndTime').'s )';
         }
         if(C('SHOW_DB_TIMES') && class_exists('Db',false) ) {
             // 显示数据库操作次数
-            $db =   Db::getInstance();
-            $showTime .= ' | DB :'.$db->Q().' queries '.$db->W().' writes ';
+            $showTime .= ' | DB :'.N('db_query').' queries '.N('db_write').' writes ';
         }
         if(C('SHOW_CACHE_TIMES') && class_exists('Cache',false)) {
             // 显示缓存读写次数
-            $cache  =   Cache::getInstance();
-            $showTime .= ' | Cache :'.$cache->Q().' gets '.$cache->W().' writes ';
+            $showTime .= ' | Cache :'.N('cache_read').' gets '.N('cache_write').' writes ';
         }
         if(MEMORY_LIMIT_ON && C('SHOW_USE_MEM')) {
             // 显示内存开销

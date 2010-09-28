@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -154,6 +154,7 @@ return  array(
     /* URL设置 */
 	'URL_CASE_INSENSITIVE'  => false,   // URL地址是否不区分大小写
     'URL_ROUTER_ON'         => false,   // 是否开启URL路由
+    'URL_ROUTE_RULES'       => array(), // 默认路由规则，注：分组配置无法替代
     'URL_DISPATCH_ON'       => true,	// 是否启用Dispatcher
     'URL_MODEL'      => 1,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：
     // 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式) 当URL_DISPATCH_ON开启后有效; 默认为PATHINFO 模式，提供最好的用户体验和SEO支持

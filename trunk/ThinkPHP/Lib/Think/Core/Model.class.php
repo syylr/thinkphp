@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -77,7 +77,7 @@ class Model extends Think
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($name='')
+    public function __construct($name='',$connection='')
     {
         // 模型初始化
         $this->_initialize();
@@ -90,7 +90,7 @@ class Model extends Think
         // 数据库初始化操作
         // 获取数据库操作对象
         // 当前模型有独立的数据库连接信息
-        $this->db = Db::getInstance(empty($this->connection)?'':$this->connection);
+        $this->db = Db::getInstance(empty($this->connection)?$connection:$this->connection);
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
         $this->tableSuffix = $this->tableSuffix?$this->tableSuffix:C('DB_SUFFIX');
@@ -254,7 +254,7 @@ class Model extends Think
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('field','table','where','order','limit','page','having','group','lock','distinct'),true)) {
+        if(in_array(strtolower($method),array('field','table','where','order','limit','page','alias','having','group','lock','distinct'),true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
@@ -318,11 +318,12 @@ class Model extends Think
      +----------------------------------------------------------
      * @param mixed $data 数据
      * @param array $options 表达式
+     * @param boolean $replace 是否replace
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function add($data='',$options=array()) {
+    public function add($data='',$options=array(),$replace=false) {
         if(empty($data)) {
             // 没有传递数据，获取当前数据对象的值
             if(!empty($this->data)) {
@@ -340,7 +341,7 @@ class Model extends Think
             return false;
         }
         // 写入数据到数据库
-        $result = $this->db->insert($data,$options);
+        $result = $this->db->insert($data,$options,$replace);
         if(false !== $result ) {
             $insertId   =   $this->getLastInsID();
             if($insertId) {
@@ -356,6 +357,28 @@ class Model extends Think
     protected function _before_insert(&$data,$options) {}
     // 插入成功后的回调方法
     protected function _after_insert($data,$options) {}
+
+    public function addAll($dataList,$options=array(),$replace=false){
+        if(empty($dataList)) {
+            $this->error = L('_DATA_TYPE_INVALID_');
+            return false;
+        }
+        // 分析表达式
+        $options =  $this->_parseOptions($options);
+        // 数据处理
+        foreach ($dataList as $key=>$data){
+            $dataList[$key] = $this->_facade($data);
+        }
+        // 写入数据到数据库
+        $result = $this->db->insertAll($dataList,$options,$replace);
+        if(false !== $result ) {
+            $insertId   =   $this->getLastInsID();
+            if($insertId) {
+                return $insertId;
+            }
+        }
+        return $result;
+    }
 
     /**
      +----------------------------------------------------------
@@ -539,6 +562,9 @@ class Model extends Think
         if(!isset($options['table']))
             // 自动获取表名
             $options['table'] =$this->getTableName();
+        if(!empty($options['alias'])) {
+            $options['table']   .= ' '.$options['alias'];
+        }
         // 字段类型验证
         if(C('DB_FIELDTYPE_CHECK')) {
             if(isset($options['where']) && is_array($options['where'])) {
@@ -574,7 +600,7 @@ class Model extends Think
      +----------------------------------------------------------
      */
      public function find($options=array()) {
-         if(is_numeric($options) || is_string($options)) {
+         if(!empty($options) && ( is_numeric($options) || is_string($options))) {
              $where  =  $this->getPk().'=\''.$options.'\'';
              $options = array();
              $options['where'] = $where;
@@ -743,6 +769,13 @@ class Model extends Think
                     unset($data[$key]);
                 }
             }
+        }
+        //检查序列化字段
+        if(!empty($this->serializeField)) {
+            foreach($this->serializeField as $name){
+                $this->fields = array_merge($this->fields,$name);
+            }
+
         }
         // 验证完成生成数据对象
         $vo   =  array();
@@ -953,7 +986,7 @@ class Model extends Think
                     $map[$val[0]] = $data[$val[0]];
                 }
                 if(!empty($data[$this->getPk()])) { // 完善编辑的时候验证唯一
-                    $map[$this->getPk()]	=	array('neq',$data[$this->getPk()]);
+                    $map[$this->getPk()] = array('neq',$data[$this->getPk()]);
                 }
                 if($this->where($map)->find())
                     return false;
@@ -1008,6 +1041,30 @@ class Model extends Think
         }else {
             return false;
         }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 切换当前的数据库连接
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function db($linkNum,$config=''){
+        static $_db = array();
+        if(!isset($_db[$linkNum]) && !empty($config)) {
+            // 创建一个新的实例
+            $_db[$linkNum]            =    Db::getInstance($config);
+        }elseif(NULL === $config){
+            $_db[$linkNum]->close(); // 关闭数据库连接
+            unset($_db[$linkNum]);
+            return ;
+        }
+        // 切换数据库连接
+        $this->db   =    $_db[$linkNum];
+        return $this;
     }
 
     /**
@@ -1188,6 +1245,8 @@ class Model extends Think
     public function data($data){
         if(is_object($data)){
             $data   =   get_object_vars($data);
+        }elseif(is_string($data)){
+            parse_str($data,$data);
         }elseif(!is_array($data)){
             throw_exception(L('_DATA_TYPE_INVALID_'));
         }

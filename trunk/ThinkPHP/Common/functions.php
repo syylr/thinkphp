@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -20,6 +20,19 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
+
+// 设置和获取统计数据
+function N($key,$step=0){
+    static $_num = array();
+    if(!isset($_num[$key])) {
+        $_num[$key]  =  0;
+    }
+    if(empty($step))
+        return $_num[$key];
+    else
+        $_num[$key]  =  $_num[$key]+(int)$step;
+}
+
 
 // URL组装 支持不同模式和路由
 function U($url,$params=array(),$redirect=false,$suffix=true) {
@@ -220,7 +233,7 @@ function dump($var, $echo=true,$label=null, $strict=true)
             $output = print_r($var, true);
             $output = "<pre>".$label.htmlspecialchars($output,ENT_QUOTES)."</pre>";
         } else {
-            $output = $label . " : " . print_r($var, true);
+            $output = $label . print_r($var, true);
         }
     }else {
         ob_start();
@@ -454,8 +467,8 @@ function D($name='',$app='')
     if(isset($_model[$app.$name]))
         return $_model[$app.$name];
     $OriClassName = $name;
-    if(strpos($name,C('APP_GROUP_DEPR'))) {
-        $array   =  explode(C('APP_GROUP_DEPR'),$name);
+    if(strpos($name,'.')) {
+        $array   =  explode('.',$name);
         $name = array_pop($array);
         $className =  $name.'Model';
         import($app.'.Model.'.implode('.',$array).'.'.$className);
@@ -504,8 +517,8 @@ function A($name,$app='@')
     if(isset($_action[$app.$name]))
         return $_action[$app.$name];
     $OriClassName = $name;
-    if(strpos($name,C('APP_GROUP_DEPR'))) {
-        $array   =  explode(C('APP_GROUP_DEPR'),$name);
+    if(strpos($name,'.')) {
+        $array   =  explode('.',$name);
         $name = array_pop($array);
         $className =  $name.'Action';
         import($app.'.Action.'.implode('.',$array).'.'.$className);
@@ -584,26 +597,28 @@ function C($name=null,$value=null)
 
 // 处理标签
 function tag($name,$params=array()) {
-    $tags   =  C('_tags_.'.$name);
-    if($tags) {
+    $tags   =  C('TAGS_FILTER_LIST.'.$name);
+    if(!empty($tags)) {
         foreach ($tags   as $key=>$call){
-            if(is_callable($call))
-                $result = call_user_func_array($call,$params);
-            else{
-                $result   =  B($call);
-            }
+            $result   =  B($call,$params);
         }
-        return $result;
     }
-    return false;
+}
+
+// 过滤器方法
+function filter($name,&$content) {
+    $class = $name.'Filter';
+    require_cache(LIB_PATH.'Filter/'.$class.'.class.php');
+    $filter   =  new $class();
+    $content = $filter->run($content);
 }
 
 // 执行行为
-function B($name) {
+function B($name,$params=array()) {
     $class = $name.'Behavior';
     require_cache(LIB_PATH.'Behavior/'.$class.'.class.php');
     $behavior   =  new $class();
-    return $behavior->run();
+    return $behavior->run($params);
 }
 
 // 渲染输出Widget
@@ -660,8 +675,7 @@ function F($name,$value='',$path=DATA_PATH) {
             $dir   =  dirname($filename);
             // 目录不存在则创建
             if(!is_dir($dir))  mkdir($dir);
-            $_cache[$name] = $value;
-            return file_put_contents($filename,"<?php\nreturn ".var_export($value,true).";\n?>");
+            return file_put_contents($filename,strip_whitespace("<?php\nreturn ".var_export($value,true).";\n?>"));
         }
     }
     if(isset($_cache[$name])) return $_cache[$name];
@@ -759,7 +773,7 @@ function array_define($array) {
 //[/RUNTIME]
 
 // 循环创建目录
-function mk_dir($dir, $mode = 0755)
+function mk_dir($dir, $mode = 0777)
 {
   if (is_dir($dir) || @mkdir($dir,$mode)) return true;
   if (!mk_dir(dirname($dir),$mode)) return false;
@@ -850,7 +864,7 @@ function cookie($name,$value='',$option=null)
             $option = array('expire'=>$option);
         elseif( is_string($option) )
             parse_str($option,$option);
-        $config = array_merge($config,array_change_key_case($option));
+        array_merge($config,array_change_key_case($option));
     }
     // 清除指定前缀的所有cookie
     if (is_null($name)) {
@@ -861,7 +875,7 @@ function cookie($name,$value='',$option=null)
        {
            foreach($_COOKIE as $key=>$val) {
                if (0 === stripos($key,$prefix)){
-                    setcookie($_COOKIE[$key],'',time()-3600,$config['path'],$config['domain']);
+                    setcookie($key,'',time()-3600,$config['path'],$config['domain']);
                     unset($_COOKIE[$key]);
                }
            }
@@ -879,7 +893,7 @@ function cookie($name,$value='',$option=null)
             // 设置cookie
             $expire = !empty($config['expire'])? time()+ intval($config['expire']):0;
             setcookie($name,$value,$expire,$config['path'],$config['domain']);
-            $_COOKIE[$name] = $value;
+            //$_COOKIE[$name] = $value;
         }
     }
 }

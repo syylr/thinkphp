@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2010 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
@@ -10,35 +10,41 @@
 // +----------------------------------------------------------------------
 // $Id$
 
+// 检查缓存目录(Runtime) 如果不存在则自动创建
+function check_runtime() {
+	if(!is_writeable(RUNTIME_PATH)) {
+		header("Content-Type:text/html; charset=utf-8");
+		exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>目录 [ '.RUNTIME_PATH.' ] 不可写！</div>');
+	}
+	if(!is_dir(CACHE_PATH)) mkdir(CACHE_PATH);  // 模板缓存目录
+	if(!is_dir(LOG_PATH))	mkdir(LOG_PATH);    // 日志目录
+	if(!is_dir(TEMP_PATH))  mkdir(TEMP_PATH);	// 数据缓存目录
+	if(!is_dir(DATA_PATH))	mkdir(DATA_PATH);	// 数据文件目录
+	return true;
+}
+
 // 生成核心编译缓存
 function build_runtime() {
     // 加载常量定义文件
     require THINK_PATH.'/Common/defines.php';
     // 加载路径定义文件
     require defined('PATH_DEFINE_FILE')?PATH_DEFINE_FILE:THINK_PATH.'/Common/paths.php';
-    // 定义核心编译的文件
-    //$runtime[]  =  THINK_PATH.'/Common/functions.php'; // 系统函数
-    if(version_compare(PHP_VERSION,'5.2.0','<') )
-        // 加载兼容函数
-        $runtime[]	=	 THINK_PATH.'/Common/compat.php';
-    // 核心基类必须加载
-    $runtime[]  =  THINK_PATH.'/Lib/Think/Core/Think.class.php';
     // 读取核心编译文件列表
     if(is_file(CONFIG_PATH.'core.php')) {
         // 加载项目自定义的核心编译文件列表
         $list   =  include CONFIG_PATH.'core.php';
+    }elseif(defined('THINK_MODE')) {
+        // 根据设置的运行模式加载不同的核心编译文件
+        $list   =  include THINK_PATH.'/Mode/'.strtolower(THINK_MODE).'.php';
     }else{
-        if(defined('THINK_MODE')) {
-            // 根据设置的运行模式加载不同的核心编译文件
-            $list   =  include THINK_PATH.'/Mode/'.strtolower(THINK_MODE).'.php';
-        }else{
-            // 默认核心
-            $list   =  include THINK_PATH.'/Common/core.php';
-        }
+        // 默认核心
+        $list = include THINK_PATH.'/Common/core.php';
     }
-    $runtime   =  array_merge($runtime,$list);
+     // 加载兼容函数
+    if(version_compare(PHP_VERSION,'5.2.0','<') )
+        $list[]	= THINK_PATH.'/Common/compat.php';
     // 加载核心编译文件列表
-    foreach ($runtime as $key=>$file){
+    foreach ($list as $key=>$file){
         if(is_file($file))  require $file;
     }
     // 检查项目目录结构 如果不存在则自动创建
@@ -54,7 +60,7 @@ function build_runtime() {
         $compile = defined('RUNTIME_ALLINONE');
         $content  = compile(THINK_PATH.'/Common/defines.php',$compile);
         $content .= compile(defined('PATH_DEFINE_FILE')?   PATH_DEFINE_FILE  :   THINK_PATH.'/Common/paths.php',$compile);
-        foreach ($runtime as $file){
+        foreach ($list as $file){
             $content .= compile($file,$compile);
         }
         if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
@@ -100,7 +106,7 @@ function build_app_dir() {
             if(!defined('DIR_SECURE_FILENAME')) define('DIR_SECURE_FILENAME','index.html');
             if(!defined('DIR_SECURE_CONTENT')) define('DIR_SECURE_CONTENT',' ');
             // 自动写入目录安全文件
-            $content        =   DIR_SECURE_CONTENT;
+            $content = DIR_SECURE_CONTENT;
             $a = explode(',', DIR_SECURE_FILENAME);
             foreach ($a as $filename){
                 foreach ($dirs as $dir)
@@ -111,39 +117,20 @@ function build_app_dir() {
         if(!is_file(CONFIG_PATH.'config.php'))
             file_put_contents(CONFIG_PATH.'config.php',"<?php\nreturn array(\n\t//'配置项'=>'配置值'\n);\n?>");
         // 写入测试Action
-        if(!is_file(LIB_PATH.'Action/IndexAction.class.php')) {
-            $content     =
-'<?php
-// 本类由系统自动生成，仅供测试用途
-class IndexAction extends Action{
-    public function index(){
-        header("Content-Type:text/html; charset=utf-8");
-        echo "<div style=\'font-weight:normal;color:blue;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;font-size:14px;font-family:Tahoma\'>^_^ Hello,欢迎使用<span style=\'font-weight:bold;color:red\'>ThinkPHP</span></div>";
-    }
-}
-?>';
+        if(!is_file(LIB_PATH.'Action/IndexAction.class.php'))
+        {
+            $_tpl = THINK_PATH.'/Tpl/ThinkCheckIndex.tpl.php';
+            if(defined('APP_BUILD_MODE'))
+            {
+                $_tpl = THINK_PATH.'/Tpl/'.APP_BUILD_MODE.'.tpl.php';
+                $_tpl = is_file($_tpl)? $_tpl : THINK_PATH.'/Tpl/DefaultIndex.tpl.php';
+            }
+            $content = file_get_contents($_tpl);
             file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
         }
     }else{
         header("Content-Type:text/html; charset=utf-8");
         exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>项目目录不可写，目录无法自动生成！<BR>请使用项目生成器或者手动生成项目目录~</div>');
     }
-}
-
-// 检查缓存目录(Runtime) 如果不存在则自动创建
-function check_runtime() {
-	if(!is_writeable(RUNTIME_PATH)) {
-		header("Content-Type:text/html; charset=utf-8");
-		exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>目录 [ '.RUNTIME_PATH.' ] 不可写！</div>');
-	}
-	if(!is_dir(CACHE_PATH)) 		// 模板缓存目录
-		mkdir(CACHE_PATH);
-	if(!is_dir(LOG_PATH))		// 日志目录
-		mkdir(LOG_PATH);
-	if(!is_dir(TEMP_PATH))	// 数据缓存目录
-		mkdir(TEMP_PATH);
-	if(!is_dir(DATA_PATH))		// 数据文件目录
-		mkdir(DATA_PATH);
-	return true;
 }
 ?>
