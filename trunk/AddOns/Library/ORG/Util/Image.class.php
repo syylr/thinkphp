@@ -63,42 +63,61 @@ class Image extends Think
      * @static
      * @access public
      +----------------------------------------------------------
-     * @param string $imgFile 图像文件名
-     * @param string $text 文字字符串
-     * @param string $width 图像宽度
-     * @param string $height 图像高度
+     * @param string $imgFile 背景图像文件名
+     * @param string $text 文字字符串或者图片路径
+     * @param string $x 水印在背景图片X坐标位置
+     * @param string $y 水印在背景图片Y坐标位置
+     * @param string $alpha 水印透明度
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    static function showImg($imgFile,$text='',$width=80,$height=30) {
+    function showImg($imgFile,$text='',$x='10',$y='10',$alpha='50') {
         //获取图像文件信息
-        $info = Image::getImageInfo($imgFile);
+		//2007/6/26 增加图片水印输出，$text为图片的完整路径即可
+		$info = Image::getImageInfo($imgFile);
         if($info !== false) {
             $createFun  =   str_replace('/','createfrom',$info['mime']);
             $im = $createFun($imgFile);
-            if($im) {
+                if($im) {
                 $ImageFun= str_replace('/','',$info['mime']);
+				//水印开始
                 if(!empty($text)) {
                     $tc  = imagecolorallocate($im, 0, 0, 0);
-                    imagestring($im, 3, 5, 5, $text, $tc);
+					if(is_file($text)&&file_exists($text)){//判断$text是否是图片路径
+						// 取得水印信息
+						$textInfo = Image::getImageInfo($text);
+						$createFun2= str_replace('/','createfrom',$textInfo['mime']);
+						$waterMark = $createFun2($text);
+						//$waterMark=imagecolorallocatealpha($text,255,255,0,50);
+						$imgW	=	$info["width"];
+						$imgH	=	$info["width"]*$textInfo["height"]/$textInfo["width"];
+						//$y	=	($info["height"]-$textInfo["height"])/2;
+						//设置水印的显示位置和透明度支持各种图片格式
+						imagecopymerge($im, $waterMark,$x,$y,0,0,$textInfo['width'],$textInfo['height'],$alpha);
+					}
+						else{
+						imagestring($im,80, $x, $y, $text, $tc);
+					}
+					//ImageDestroy($tc);
                 }
+				//水印结束
                 if($info['type']=='png' || $info['type']=='gif') {
-                imagealphablending($im, false);//取消默认的混色模式
-                imagesavealpha($im,true);//设定保存完整的 alpha 通道信息
+                imagealphablending($im, FALSE);//取消默认的混色模式
+                imagesavealpha($im,TRUE);//设定保存完整的 alpha 通道信息
                 }
-                header("Content-type: ".$info['mime']);
+                Header("Content-type: ".$info['mime']);
                 $ImageFun($im);
-                imagedestroy($im);
+                @ImageDestroy($im);
                 return ;
             }
         }
         //获取或者创建图像文件失败则生成空白PNG图片
-        $im  = imagecreatetruecolor($width, $height);
+        $im  = imagecreatetruecolor(80, 30);
         $bgc = imagecolorallocate($im, 255, 255, 255);
         $tc  = imagecolorallocate($im, 0, 0, 0);
         imagefilledrectangle($im, 0, 0, 150, 30, $bgc);
-        imagestring($im, 4, 5, 5, "NO PIC", $tc);
+        imagestring($im, 4, 5, 5, "no pic", $tc);
         Image::output($im);
         return ;
     }
