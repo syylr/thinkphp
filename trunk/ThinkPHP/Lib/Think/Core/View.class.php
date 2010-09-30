@@ -178,6 +178,7 @@ class View extends Think
         if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
         header("Content-Type:".$contentType."; charset=".$charset);
         header("Cache-control: private");  //支持页面回跳
+        header("X-Powered-By:ThinkPHP".THINK_VERSION);
         //页面缓存
         ob_start();
         ob_implicit_flush(0);
@@ -391,7 +392,7 @@ class View extends Think
             $templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
         }elseif(strpos($templateFile,':')){
             // 引入其它模块的操作模板
-            $templateFile   =   TEMPLATE_PATH.'/'.(defined(GROUP_NAME)?GROUP_NAME.'/':'').str_replace(':','/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
+            $templateFile   =   TEMPLATE_PATH.'/'.(defined('GROUP_NAME')?GROUP_NAME.'/':'').str_replace(':','/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
         }elseif(!is_file($templateFile))    {
             // 引入当前模块的其它操作模板
             $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TMPL_TEMPLATE_SUFFIX');

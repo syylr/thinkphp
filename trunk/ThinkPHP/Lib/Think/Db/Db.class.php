@@ -760,37 +760,6 @@ class Db extends Think
 
     /**
      +----------------------------------------------------------
-     * 插入记录
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $dataList 数据
-     * @param array $options 参数表达式
-     * @param boolean $replace 是否replace
-     +----------------------------------------------------------
-     * @return false | integer
-     +----------------------------------------------------------
-     */
-    public function insertAll($dataList,$options=array(),$replace=false) {
-        if(!is_array($dataList[0])) return false;
-        $fields = array_keys($dataList[0]);
-        array_walk($fields, array($this, 'addSpecialChar'));
-        $values  =  array();
-        foreach ($dataList as $data){
-            $value   =  array();
-            foreach ($data as $key=>$val){
-                $val   =  $this->parseValue($val);
-                if(is_scalar($val)) { // 过滤非标量数据
-                    $value[]   =  $val;
-                }
-            }
-            $values[]    = '('.implode(',', $value).')';
-        }
-        $sql   =  ($replace?'REPLACE':'INSERT').' INTO '.$this->parseTable($options['table']).' ('.implode(',', $fields).') VALUES '.implode(',',$values);
-        return $this->execute($sql);
-    }
-    /**
-     +----------------------------------------------------------
      * 更新记录
      +----------------------------------------------------------
      * @access public

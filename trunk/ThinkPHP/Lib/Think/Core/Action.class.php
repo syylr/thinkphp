@@ -361,7 +361,7 @@ abstract class Action extends Think
     private function _dispatch_jump($message,$status=1,$ajax=false)
     {
         // 判断是否为AJAX返回
-        if($ajax || $this->isAjax()) $this->ajaxReturn('',$message,$status);
+        if($ajax || $this->isAjax()) $this->ajaxReturn($ajax,$message,$status);
         // 提示标题
         $this->assign('msgTitle',$status? L('_OPERATION_SUCCESS_') : L('_OPERATION_FAIL_'));
         //如果设置了关闭窗口，则提示完毕后自动关闭窗口
