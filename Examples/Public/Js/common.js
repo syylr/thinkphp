@@ -617,11 +617,10 @@ function getSelectCheckboxValues(){
     
   function   out(e)   
   {   
-	var e = e || event;
-  var   oObj   =   e.srcElement   ||   e.target;   
-
-
-  
+	var e = (e) ? e : ((window.event) ? window.event : "")
+  var   oObj   =  (e.target) ? e.target : e.srcElement
+ 
+	
   var   oTr   =   oObj.parentNode;   
   if(!oTr.tag)   
   oTr.className   =   "out";   
@@ -630,8 +629,8 @@ function getSelectCheckboxValues(){
     
   function   over(e)   
   {   
-	var e = e || event;
-  var   oObj   =   e.srcElement   ||   e.target;   
+	var e = (e) ? e : ((window.event) ? window.event : "")
+    var   oObj   =  (e.target) ? e.target : e.srcElement  
   
   var   oTr   =   oObj.parentNode;   
   if(!oTr.tag)   

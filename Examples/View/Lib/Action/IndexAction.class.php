@@ -4,7 +4,7 @@ class IndexAction extends Action{
 	public function index(){
 		$Form	= D("FormView");
         // 按照id排序显示前6条记录
-		$list	=	$Form->field('id,title,username,create_time')->limit(6)->select();
+		$list	=	$Form->field('id,title,username,content,create_time')->limit(6)->select();
 		$this->assign('list',$list);
 		$this->display();
 	}

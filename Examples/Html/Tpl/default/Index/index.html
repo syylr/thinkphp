@@ -11,7 +11,7 @@
 设置页面生成静态和有效期<br/>
  <table  cellpadding=3 cellspacing=3>
   <tr>
-	<td><div class="result" style="color:red">当前时间：{$id|time|date='H:i:s',###}</div></td>
+	<td><div class="result" style="color:red">当前时间：{:date('H:i:s',time())}</div></td>
  </tr>
  <tr>
 	<td class="tLeft" ><a href="javascript:location.reload()">刷新页面</a> 后注意看时间是否有变化</td>
