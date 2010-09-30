@@ -29,6 +29,7 @@ return  array(
     /* 项目设定 */
     'APP_DEBUG'				=> false,	// 是否开启调试模式
     'APP_DOMAIN_DEPLOY'     => false,   // 是否使用独立域名部署项目
+    'APP_SUB_DOMAIN_DEPLOY' => false,   // 是否开启子域名
     'APP_PLUGIN_ON'         => false,   // 是否开启插件机制
     'APP_FILE_CASE'         => false,   // 是否检查文件的大小写 对Windows平台有效
     'APP_GROUP_DEPR'        => '.',     // 模块分组之间的分割符
@@ -155,7 +156,7 @@ return  array(
 	'URL_CASE_INSENSITIVE'  => false,   // URL地址是否不区分大小写
     'URL_ROUTER_ON'         => false,   // 是否开启URL路由
     'URL_ROUTE_RULES'       => array(), // 默认路由规则，注：分组配置无法替代
-    'URL_DISPATCH_ON'       => true,	// 是否启用Dispatcher
+    //'URL_DISPATCH_ON'       => true,	// 是否启用Dispatcher，不再生效
     'URL_MODEL'      => 1,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：
     // 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式) 当URL_DISPATCH_ON开启后有效; 默认为PATHINFO 模式，提供最好的用户体验和SEO支持
     'URL_PATHINFO_MODEL'    => 2,       // PATHINFO 模式,使用数字1、2、3代表以下三种模式:
@@ -164,7 +165,7 @@ return  array(
     // 3 兼容模式(通过一个GET变量将PATHINFO传递给dispather，默认为s index.php?s=/module/action/id/1)
     'URL_PATHINFO_DEPR'     => '/',	// PATHINFO模式下，各参数之间的分割符号
     'URL_HTML_SUFFIX'       => '',  // URL伪静态后缀设置
-    'URL_AUTO_REDIRECT'     => true, // 自动重定向到规范的URL
+    //'URL_AUTO_REDIRECT'     => true, // 自动重定向到规范的URL 不再生效
 
     /* 系统变量名称设置 */
     'VAR_GROUP'             => 'g',     // 默认分组获取变量

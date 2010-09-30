@@ -61,7 +61,7 @@ class HtmlCache extends Think
                 // 特殊系统变量
                 $rule  = str_ireplace(
                     array('{:app}','{:module}','{:action}','{:group}'),
-                    array(APP_NAME,MODULE_NAME,ACTION_NAME,GROUP_NAME),
+                    array(APP_NAME,MODULE_NAME,ACTION_NAME,defined('GROUP_NAME')?GROUP_NAME:''),
                     $rule);
                 // {|FUN} 单独使用函数
                 $rule  = preg_replace('/{|(\w+)}/e',"\\1()",$rule);
