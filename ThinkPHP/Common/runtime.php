@@ -79,6 +79,16 @@ function mkdirs($dirs,$mode=0777) {
     }
 }
 
+// 默认创建测试Action处理函数
+if (!function_exists('build_action'))
+{
+    function build_action()
+    {
+        $content = file_get_contents(THINK_PATH.'/Tpl/'.(defined('BUILD_MODE')?BUILD_MODE:'Autoindex').'.tpl.php');
+        file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
+    }
+}
+
 // 创建项目目录结构
 function build_app_dir() {
     // 没有创建项目目录的话自动创建
@@ -118,16 +128,7 @@ function build_app_dir() {
             file_put_contents(CONFIG_PATH.'config.php',"<?php\nreturn array(\n\t//'配置项'=>'配置值'\n);\n?>");
         // 写入测试Action
         if(!is_file(LIB_PATH.'Action/IndexAction.class.php'))
-        {
-            $_tpl = THINK_PATH.'/Tpl/ThinkCheckIndex.tpl.php';
-            if(defined('APP_BUILD_MODE'))
-            {
-                $_tpl = THINK_PATH.'/Tpl/'.APP_BUILD_MODE.'.tpl.php';
-                $_tpl = is_file($_tpl)? $_tpl : THINK_PATH.'/Tpl/DefaultIndex.tpl.php';
-            }
-            $content = file_get_contents($_tpl);
-            file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
-        }
+            build_action();
     }else{
         header("Content-Type:text/html; charset=utf-8");
         exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>项目目录不可写，目录无法自动生成！<BR>请使用项目生成器或者手动生成项目目录~</div>');
