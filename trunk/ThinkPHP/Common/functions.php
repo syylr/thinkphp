@@ -864,7 +864,7 @@ function cookie($name,$value='',$option=null)
             $option = array('expire'=>$option);
         elseif( is_string($option) )
             parse_str($option,$option);
-        array_merge($config,array_change_key_case($option));
+        $config = array_merge($config,array_change_key_case($option));
     }
     // 清除指定前缀的所有cookie
     if (is_null($name)) {
@@ -893,7 +893,7 @@ function cookie($name,$value='',$option=null)
             // 设置cookie
             $expire = !empty($config['expire'])? time()+ intval($config['expire']):0;
             setcookie($name,$value,$expire,$config['path'],$config['domain']);
-            //$_COOKIE[$name] = $value;
+            $_COOKIE[$name] = $value;
         }
     }
 }
