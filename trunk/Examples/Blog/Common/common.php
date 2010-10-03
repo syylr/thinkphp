@@ -188,7 +188,7 @@ function byte_format($input, $dec=0)
  * @return string
  +----------------------------------------------------------
  */
-    function ubb($Text) {
+function ubb($Text) {
       $Text=trim($Text);
       //$Text=htmlspecialchars($Text);
       //$Text=ereg_replace("\n","<br>",$Text);
@@ -225,7 +225,52 @@ function byte_format($input, $dec=0)
       $Text=preg_replace("/\[php\](.+?)\[\/php\]/eis","highlight_code('\\1')", $Text);
       $Text=preg_replace("/\[sig\](.+?)\[\/sig\]/is","<div style='text-align: left; color: darkgreen; margin-left: 5%'><br><br>--------------------------<br>\\1<br>--------------------------</div>", $Text);
       return $Text;
+}
+
+/**
+ +----------------------------------------------------------
+ * 代码加亮
+ +----------------------------------------------------------
+ * @param String  $str 要高亮显示的字符串 或者 文件名
+ * @param Boolean $show 是否输出
+ +----------------------------------------------------------
+ * @return String
+ +----------------------------------------------------------
+ */
+function highlight_code($str,$show=false)
+{
+    if(file_exists($str)) {
+        $str    =   file_get_contents($str);
     }
+    $str  =  stripslashes(trim($str));
+    $str = str_replace(array('&lt;', '&gt;'), array('<', '>'), $str);
+    $str = str_replace(array('&lt;?php', '?&gt;',  '\\'), array('phptagopen', 'phptagclose', 'backslashtmp'), $str);
+    $str = '<?php //tempstart'."\n".$str.'//tempend ?>'; // <?
+    $str = highlight_string($str, TRUE);
+    if (abs(phpversion()) < 5)
+    {
+        $str = str_replace(array('<font ', '</font>'), array('<span ', '</span>'), $str);
+        $str = preg_replace('#color="(.*?)"#', 'style="color: \\1"', $str);
+    }
+    // Remove our artificially added PHP
+    $str = preg_replace("#\<code\>.+?//tempstart\<br />\</span\>#is", "<code>\n", $str);
+    $str = preg_replace("#\<code\>.+?//tempstart\<br />#is", "<code>\n", $str);
+    $str = preg_replace("#//tempend.+#is", "</span>\n</code>", $str);
+    // Replace our markers back to PHP tags.
+    $str = str_replace(array('phptagopen', 'phptagclose', 'backslashtmp'), array('&lt;?php', '?&gt;', '\\'), $str); //<?
+    $line   =   explode("<br />", rtrim(ltrim($str,'<code>'),'</code>'));
+    $result =   '<div class="code"><ol>';
+    foreach($line as $key=>$val) {
+        $result .=  '<li>'.$val.'</li>';
+    }
+    $result .=  '</ol></div>';
+    $result = str_replace("\n", "", $result);
+    if( $show!== false) {
+        echo($result);
+    }else {
+        return $result;
+    }
+}
 
 function color_txt($str)
 {
