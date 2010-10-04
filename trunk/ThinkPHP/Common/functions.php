@@ -702,19 +702,6 @@ function to_guid_string($mix)
     return md5($mix);
 }
 
-//[RUNTIME]
-// 编译文件
-function compile($filename,$runtime=false) {
-    $content = file_get_contents($filename);
-    if(true === $runtime)
-        // 替换预编译指令
-        $content = preg_replace('/\/\/\[RUNTIME\](.*?)\/\/\[\/RUNTIME\]/s','',$content);
-    $content = substr(trim($content),5);
-    if('?>' == substr($content,-2))
-        $content = substr($content,0,-2);
-    return $content;
-}
-
 // 去除代码中的空白和注释
 function strip_whitespace($content) {
     $stripStr = '';
@@ -752,6 +739,20 @@ function strip_whitespace($content) {
     }
     return $stripStr;
 }
+
+//[RUNTIME]
+// 编译文件
+function compile($filename,$runtime=false) {
+    $content = file_get_contents($filename);
+    if(true === $runtime)
+        // 替换预编译指令
+        $content = preg_replace('/\/\/\[RUNTIME\](.*?)\/\/\[\/RUNTIME\]/s','',$content);
+    $content = substr(trim($content),5);
+    if('?>' == substr($content,-2))
+        $content = substr($content,0,-2);
+    return $content;
+}
+
 // 根据数组生成常量定义
 function array_define($array) {
     $content = '';
