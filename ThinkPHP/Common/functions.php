@@ -675,7 +675,7 @@ function F($name,$value='',$path=DATA_PATH) {
             $dir   =  dirname($filename);
             // 目录不存在则创建
             if(!is_dir($dir))  mkdir($dir);
-            return file_put_contents($filename,strip_whitespace("<?php\nreturn ".var_export($value,true).";\n?>"));
+            return file_put_contents($filename,"<?php\nreturn ".var_export($value,true).";\n?>");
         }
     }
     if(isset($_cache[$name])) return $_cache[$name];
@@ -702,6 +702,8 @@ function to_guid_string($mix)
     return md5($mix);
 }
 
+//[RUNTIME]
+// 编译文件
 // 去除代码中的空白和注释
 function strip_whitespace($content) {
     $stripStr = '';
@@ -740,8 +742,6 @@ function strip_whitespace($content) {
     return $stripStr;
 }
 
-//[RUNTIME]
-// 编译文件
 function compile($filename,$runtime=false) {
     $content = file_get_contents($filename);
     if(true === $runtime)
