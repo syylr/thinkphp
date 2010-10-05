@@ -758,7 +758,7 @@ function array_define($array) {
     $content = '';
     foreach($array as $key=>$val) {
         $key =  strtoupper($key);
-        if(in_array($key,array('THINK_PATH','APP_NAME','APP_PATH','RUNTIME_PATH','RUNTIME_ALLINONE','THINK_MODE')))
+        if(in_array($key,array('THINK_PATH','APP_NAME','APP_PATH','APP_CACHE_NAME','RUNTIME_PATH','RUNTIME_ALLINONE','THINK_MODE')))
             $content .= 'if(!defined(\''.$key.'\')) ';
         if(is_int($val) || is_float($val)) {
             $content .= "define('".$key."',".$val.");";
