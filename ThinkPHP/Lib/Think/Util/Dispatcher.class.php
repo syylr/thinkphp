@@ -54,6 +54,7 @@ class Dispatcher extends Think
         if(C('APP_SUB_DOMAIN_DEPLOY')) {
             $rules = C('APP_SUB_DOMAIN_RULES');
             $subDomain    = strtolower(substr($_SERVER['HTTP_HOST'],0,strpos($_SERVER['HTTP_HOST'],'.')));
+            define('SUB_DOMAIN',$subDomain); // 二级域名定义
             if($subDomain && array_key_exists($subDomain,$rules)) {
                 $rule =  $rules[$subDomain];
             }elseif(isset($rules['*'])){ // 泛域名支持
