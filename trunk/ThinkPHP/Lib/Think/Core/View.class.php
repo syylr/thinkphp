@@ -387,15 +387,12 @@ class View extends Think
         if(''==$templateFile) {
             // 如果模板文件名为空 按照默认规则定位
             $templateFile = C('TMPL_FILE_NAME');
-        }elseif(strpos($templateFile,'@')){
-            // 引入其它主题的操作模板 必须带上模块名称 例如 blue@User:add
-            $templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
-        }elseif(strpos($templateFile,':')){
-            // 引入其它模块的操作模板
-            $templateFile   =   TEMPLATE_PATH.'/'.(defined('GROUP_NAME')?GROUP_NAME.'/':'').str_replace(':','/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
-        }elseif(!is_file($templateFile))    {
-            // 引入当前模块的其它操作模板
-            $templateFile =  dirname(C('TMPL_FILE_NAME')).'/'.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
+        }else{
+            $templateFile  = str_replace(array('@',':'),'/',$templateFile,$count);
+            $path   = dirname(C('TMPL_FILE_NAME'));
+            for($i=0;$i<$count;$i++)
+                $path   = dirname($path);
+            $templateFile =  $path.'/'.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
         }
         if(!file_exists_case($templateFile))
             throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
