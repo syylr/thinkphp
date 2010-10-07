@@ -761,17 +761,11 @@ class  ThinkTemplate extends Think
             $parseStr = file_get_contents($tmplPublicName);
         }else {
             $tmplPublicName = trim($tmplPublicName);
-            if(strpos($tmplPublicName,'@')){
-                // 引入其它模块的操作模板
-                $tmplTemplateFile   =   dirname(dirname(dirname($this->templateFile))).'/'.str_replace(array('@',':'),'/',$tmplPublicName);
-            }elseif(strpos($tmplPublicName,':')){
-                // 引入其它模块的操作模板
-                $tmplTemplateFile   =   dirname(dirname($this->templateFile)).'/'.str_replace(':','/',$tmplPublicName);
-            }else{
-                // 默认导入当前模块下面的模板
-                $tmplTemplateFile = dirname($this->templateFile).'/'.$tmplPublicName;
-            }
-            $tmplTemplateFile .=  $this->config['template_suffix'];
+            $tmplPublicName  = str_replace(array('@',':'),'/',$tmplPublicName,$count);
+            $path   = dirname($this->templateFile);
+            for($i=0;$i<$count;$i++)
+                $path   = dirname($path);
+            $tmplTemplateFile = $path.'/'.$tmplPublicName.$this->config['template_suffix'];
             $parseStr = file_get_contents($tmplTemplateFile);
         }
         //再次对包含文件进行模板分析
