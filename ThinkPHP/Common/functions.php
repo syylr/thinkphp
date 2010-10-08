@@ -72,7 +72,7 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
         $params = array_merge($query,$params);
     }
 
-    if(C('URL_DISPATCH_ON') && C('URL_MODEL')>0) {
+    if(C('URL_MODEL')>0) {
         $depr = C('URL_PATHINFO_MODEL')==2?C('URL_PATHINFO_DEPR'):'/';
         $str    =   $depr;
         foreach ($params as $var=>$val)
