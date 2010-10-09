@@ -371,7 +371,7 @@ class  ThinkTemplate extends Think
                 if(empty($val['attr'])){
                     // 无属性标签
                     if(!$closeTag) {
-                        $content = preg_replace('/'.$begin.$parseTag.'(\s.*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','')",$content);
+                        $content = preg_replace('/'.$begin.$parseTag.'(\s*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','')",$content);
                     }else{
                         for($i=0;$i<$level;$i++)
                             $content = preg_replace('/'.$begin.$parseTag.'(\s*?)'.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','\\2')",$content);
