@@ -389,10 +389,7 @@ abstract class Action extends Think
     }
 
     protected function showTrace(){
-        $var  =  $this->view->getAllVar();
-        foreach ($var as $name=>$val){
-            dump($val,1,'['.$name.']<br/>');
-        }
+        $this->view->traceVar();
     }
 
 }//类定义结束

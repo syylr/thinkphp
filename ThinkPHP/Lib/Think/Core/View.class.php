@@ -84,6 +84,11 @@ class View extends Think
             return false;
     }
 
+    /* 取得所有模板变量 */
+    public function getAllVar(){
+        return $this->tVar;
+    }
+
     // 调试页面所有的模板变量
     public function traceVar(){
         foreach ($this->tVar as $name=>$val){
