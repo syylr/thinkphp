@@ -5,7 +5,6 @@ if (!defined('THINK_PATH'))	exit();
 $config = require("../config.php");
 
 $array = array(
-	'APP_DEBUG'		=> false,
     'URL_ROUTER_ON' => true,
 	'DEFAULT_MODULE' =>	'Blog',
     'TOKEN_ON'  => false,
