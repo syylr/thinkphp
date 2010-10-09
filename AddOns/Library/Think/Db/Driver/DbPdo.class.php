@@ -298,7 +298,7 @@ class DbPdo extends Db{
                     break;
                 case 'MYSQL':
                 default:
-                    $sql   = 'DESCRIBE '.$tableName;
+                    $sql   = 'DESCRIBE `'.$tableName.'`';
             }
         }
         $result = $this->query($sql);
