@@ -68,7 +68,7 @@ function toDate($time,$format='Y年m月d日 H:i:s')
 		return '';
 	}
     $format = str_replace('#',':',$format);
-	return date(auto_charset($format),$time);
+	return date($format,$time);
 }
 
 function showTags($tags)
