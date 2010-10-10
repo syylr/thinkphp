@@ -761,7 +761,8 @@ class  ThinkTemplate extends Think
             $parseStr = file_get_contents($tmplPublicName);
         }else {
             $tmplPublicName = trim($tmplPublicName);
-            $tmplPublicName  = str_replace(array('@',':'),'/',$tmplPublicName,$count);
+            $tmplPublicName  = str_replace(array('@',':'),'/',$tmplPublicName);
+            $count  = substr_count($templateFile,'/');
             $path   = dirname($this->templateFile);
             for($i=0;$i<$count;$i++)
                 $path   = dirname($path);

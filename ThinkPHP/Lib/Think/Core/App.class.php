@@ -223,44 +223,41 @@ class App
      */
     static private function checkTemplate()
     {
+        /* 获取模板主题名称 */
+        $templateSet =  C('DEFAULT_THEME');
         if(C('TMPL_DETECT_THEME')) {// 自动侦测模板主题
             $t = C('VAR_TEMPLATE');
             if (isset($_GET[$t])){
                 $templateSet = $_GET[$t];
-                cookie('think_template',$templateSet,3600);
-            }else{
-                if(cookie('think_template')){
-                    $templateSet = cookie('think_template');
-                }else{
-                    $templateSet =    C('DEFAULT_THEME');
-                    cookie('think_template',$templateSet,3600);
-                }
+            }elseif(cookie('think_template')){
+                $templateSet = cookie('think_template');
             }
+            // 主题不存在时仍改回使用默认主题
             if(!is_dir(TMPL_PATH.$templateSet))
-                //模版不存在的话，使用默认模版
-                $templateSet =    C('DEFAULT_THEME');
-        }else{
-            $templateSet =    C('DEFAULT_THEME');
+                $templateSet = C('DEFAULT_THEME');
+            cookie('think_template',$templateSet);
         }
-        //模版名称
-        define('TEMPLATE_NAME',$templateSet);
-        // 当前模版路径
-        define('TEMPLATE_PATH',TMPL_PATH.TEMPLATE_NAME);
-        $tmplDir = TMPL_DIR.'/'.TEMPLATE_NAME.'/';
+
+        $appPath = __ROOT__.'/'.APP_NAME.'/';
+        $tmplDir = TMPL_DIR.'/'.$templateSet.'/';
+
+        /* 模板相关目录常量 */
+        define('TEMPLATE_NAME',   $templateSet);                  // 当前模板主题名称
+        define('TEMPLATE_PATH',   TMPL_PATH.TEMPLATE_NAME);       // 当前模版路径
+        define('__CURRENT__',     $appPath.$tmplDir.MODULE_NAME); // 当前默认模板目录
+        define('APP_TMPL_PATH',   $appPath.$tmplDir);             // 当前项目模板目录
+        define('WEB_PUBLIC_PATH', __ROOT__.'/Public');            // 网站公共文件目录
+        define('APP_PUBLIC_PATH', APP_TMPL_PATH.'Public');        // 项目公共文件目录
+
         if(defined('GROUP_NAME')) {
+            C('TMPL_FILE_PATH',TEMPLATE_PATH.'/'.GROUP_NAME.'/'); // 分组下模板默认根目录
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
-            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.str_replace('.','/',MODULE_NAME).'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
+            C('TMPL_FILE_PATH',TEMPLATE_PATH.'/'); // 模板默认根目录
+            C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH);
         }
-        define('__CURRENT__', __ROOT__.'/'.APP_NAME.'/'.$tmplDir.MODULE_NAME);
-        //项目模板目录
-        define('APP_TMPL_PATH', __ROOT__.'/'.APP_NAME.'/'.$tmplDir);
-        //网站公共文件目录
-        define('WEB_PUBLIC_PATH', __ROOT__.'/Public');
-        //项目公共文件目录
-        define('APP_PUBLIC_PATH', APP_TMPL_PATH.'Public');
         return ;
     }
 

@@ -389,16 +389,26 @@ class View extends Think
      +----------------------------------------------------------
      */
     private function parseTemplateFile($templateFile) {
+        // 如果模板文件名为空 按照默认规则定位
         if(''==$templateFile) {
-            // 如果模板文件名为空 按照默认规则定位
             $templateFile = C('TMPL_FILE_NAME');
-        }else{
-            $templateFile  = str_replace(array('@',':'),'/',$templateFile);
-            $count   =  substr_count($templateFile,'/');
-            $path   = dirname(C('TMPL_FILE_NAME'));
-            for($i=0;$i<$count;$i++)
-                $path   = dirname($path);
-            $templateFile =  $path.'/'.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
+        }else {
+            // 默认对应目录
+            $path = C('TMPL_FILE_PATH');
+            // @指定模板主题，blue@edit自动对应blue[分组][模块]，而blue@Admin/Index/edit : 对应.tpl/blue/Admin/Index/edit
+            if( false !== strpos($templateFile,'@') ){
+                list($path,$templateFile) = explode('@',$templateFile);
+                $path = TMPL_PATH.$path.'/';
+                if( false === strpos($templateFile,'/') ) {
+                    $templateFile = (defined('GROUP_NAME') ? GROUP_NAME.'/' : '').MODULE_NAME.'/'.$templateFile;
+                }
+            }
+            // 指定默认主题下的目录(分组) Admin:Index/edit 对应.tpl/default/Admin/Index/edit
+            elseif( false !== strpos($templateFile,':') ) {
+                list($path,$templateFile) = explode(':',$templateFile);
+                $path = TEMPLATE_PATH.'/'.$path.'/';
+            }
+            $templateFile = $path.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
         }
         if(!file_exists_case($templateFile))
             throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
