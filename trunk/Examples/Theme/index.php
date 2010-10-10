@@ -17,5 +17,5 @@ define('APP_PATH', '.');
 // 加载框架入口文件
 require(THINK_PATH."/ThinkPHP.php");
 //应用程序初始化
-App:run();
+App::run();
 ?>
