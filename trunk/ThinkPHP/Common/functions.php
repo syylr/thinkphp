@@ -782,7 +782,7 @@ function mk_dir($dir, $mode = 0777)
 }
 
 // 自动转换字符集 支持数组转换
-function auto_charset($fContents,$from,$to){
+function auto_charset($fContents,$from='gbk',$to='utf-8'){
     $from   =  strtoupper($from)=='UTF8'? 'utf-8':$from;
     $to       =  strtoupper($to)=='UTF8'? 'utf-8':$to;
     if( strtoupper($from) === strtoupper($to) || empty($fContents) || (is_scalar($fContents) && !is_string($fContents)) ){
