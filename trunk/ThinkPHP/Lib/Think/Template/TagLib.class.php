@@ -33,7 +33,7 @@ class TagLib extends Think
      +----------------------------------------------------------
      */
     protected $xml = '';
-
+    protected $tags = array();// 标签定义
     /**
      +----------------------------------------------------------
      * 标签库名称
@@ -112,7 +112,7 @@ class TagLib extends Think
      */
     public function parseXmlAttr($attr,$tag)
     {
-             //XML解析安全过滤
+        //XML解析安全过滤
         $attr = str_replace('&','___', $attr);
         $xml =  '<tpl><tag '.$attr.' /></tpl>';
         $xml = simplexml_load_string($xml);
