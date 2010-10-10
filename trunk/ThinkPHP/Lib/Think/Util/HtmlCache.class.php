@@ -35,18 +35,19 @@ class HtmlCache extends Think
             // 静态规则文件定义格式 actionName=>array(‘静态规则’,’缓存时间’,’附加规则')
             // 'read'=>array('{id},{name}',60,'md5') 必须保证静态规则的唯一性 和 可判断性
             // 检测静态规则
-            if(isset($htmls[MODULE_NAME.':'.ACTION_NAME])) {
-                $html   =   $htmls[MODULE_NAME.':'.ACTION_NAME];   // 某个模块的操作的静态规则
-            }elseif(isset($htmls[MODULE_NAME.':'])){// 某个模块的静态规则
-                $html   =   $htmls[MODULE_NAME.':'];
+            $moduleName = strtolower(MODULE_NAME);
+            if(isset($htmls[$moduleName.':'.ACTION_NAME])) {
+                $html   =   $htmls[$moduleName.':'.ACTION_NAME];   // 某个模块的操作的静态规则
+            }elseif(isset($htmls[$moduleName.':'])){// 某个模块的静态规则
+                $html   =   $htmls[$moduleName.':'];
             }elseif(isset($htmls[ACTION_NAME])){
                 $html   =   $htmls[ACTION_NAME]; // 所有操作的静态规则
             }elseif(isset($htmls['*'])){
                 $html   =   $htmls['*']; // 全局静态规则
-            }elseif(isset($htmls['Empty:index']) && !class_exists(MODULE_NAME.'Action')){
-                $html   =    $htmls['Empty:index']; // 空模块静态规则
-            }elseif(isset($htmls[MODULE_NAME.':_empty']) && self::isEmptyAction(MODULE_NAME,ACTION_NAME)){
-                $html   =    $htmls[MODULE_NAME.':_empty']; // 空操作静态规则
+            }elseif(isset($htmls['empty:index']) && !class_exists(MODULE_NAME.'Action')){
+                $html   =    $htmls['empty:index']; // 空模块静态规则
+            }elseif(isset($htmls[$moduleName.':_empty']) && self::isEmptyAction(MODULE_NAME,ACTION_NAME)){
+                $html   =    $htmls[$moduleName.':_empty']; // 空操作静态规则
             }
             if(!empty($html)) {
                 self::$requireCache = true; // 需要缓存
