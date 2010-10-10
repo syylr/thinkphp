@@ -177,16 +177,14 @@ Class BlogAction extends PublicAction {
                 $this->assign('verify',$verify);
         }
         public function add() {
-            dump ( $_GET );
             $this->display();
         }
 	public function index() {
-
             $Blog = D("BlogView");
             $count = $Blog->where("status=1")->count();
-            $mode = $_REQUEST["mode"];
-            if (!isset($mode)) {
-                $mode = "normal";
+            $mode = "normal";
+            if (isset($_REQUEST["mode"])) {
+                $mode = $_REQUEST["mode"];
             }
             if ($mode == "list") {
                 $listRows = 45;

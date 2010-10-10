@@ -121,7 +121,7 @@ class TagLibCx extends TagLib
         $cacheIterateId = md5($attr.$content);
         if(isset($_iterateParseCache[$cacheIterateId]))
             return $_iterateParseCache[$cacheIterateId];
-        $tag      = $this->parseXmlAttr($attr,'iterate');
+        $tag      = $this->parseXmlAttr($attr,'volist');
         $name   = $tag['name'];
         $id        = $tag['id'];
         $empty  = isset($tag['empty'])?$tag['empty']:'';
@@ -300,7 +300,8 @@ class TagLibCx extends TagLib
             $value	=	'case "'.$value.'": ';
         }
         $parseStr = '<?php '.$value.' ?>'.$content;
-        if('' ==$tag['break'] || $tag['break']) {
+        $isBreak  = isset($tag['break']) ? $tag['break'] : '';
+        if('' ==$isBreak || $isBreak) {
             $parseStr .= '<?php break;?>';
         }
         return $parseStr;
@@ -343,7 +344,7 @@ class TagLibCx extends TagLib
         $tag      = $this->parseXmlAttr($attr,'compare');
         $name   = $tag['name'];
         $value   = $tag['value'];
-        $type    =   $tag['type']?$tag['type']:$type;
+        $type    =   isset($tag['type'])?$tag['type']:$type;
         $type    =   $this->parseCondition(' '.$type.' ');
         $varArray = explode('|',$name);
         $name   =   array_shift($varArray);
@@ -364,7 +365,7 @@ class TagLibCx extends TagLib
     }
 
     public function _equal($attr,$content) {
-        return $this->_eq($attr,$content);
+        return $this->_compare($attr,$content,'eq');
     }
 
     public function _neq($attr,$content) {
@@ -372,7 +373,7 @@ class TagLibCx extends TagLib
     }
 
     public function _notequal($attr,$content) {
-        return $this->_neq($attr,$content);
+        return $this->_compare($attr,$content,'neq');
     }
 
     public function _gt($attr,$content) {
@@ -422,7 +423,7 @@ class TagLibCx extends TagLib
         $varArray = explode('|',$name);
         $name   =   array_shift($varArray);
         $name = $this->autoBuildVar($name);
-        $type    =   $tag['type']?$tag['type']:$type;
+        $type    =   isset($tag['type'])?$tag['type']:$type;
         $fun  =  ($type == 'in')? 'in_array'    :   '!in_array';
         if(count($varArray)>0)
             $name = $this->tpl->parseVarFunction($name,$varArray);
@@ -485,7 +486,7 @@ class TagLibCx extends TagLib
      */
     public function _notpresent($attr,$content)
     {
-        $tag      = $this->parseXmlAttr($attr,'present');
+        $tag      = $this->parseXmlAttr($attr,'notpresent');
         $name   = $tag['name'];
         $name   = $this->autoBuildVar($name);
         $parseStr  = '<?php if(!isset('.$name.')): ?>'.$content.'<?php endif; ?>';
@@ -517,7 +518,7 @@ class TagLibCx extends TagLib
 
     public function _notempty($attr,$content)
     {
-        $tag      = $this->parseXmlAttr($attr,'empty');
+        $tag      = $this->parseXmlAttr($attr,'notempty');
         $name   = $tag['name'];
         $name   = $this->autoBuildVar($name);
         $parseStr  = '<?php if(!empty('.$name.')): ?>'.$content.'<?php endif; ?>';
@@ -540,7 +541,7 @@ class TagLibCx extends TagLib
 
     public function _notdefined($attr,$content)
     {
-        $tag        = $this->parseXmlAttr($attr,'defined');
+        $tag        = $this->parseXmlAttr($attr,'_notdefined');
         $name     = $tag['name'];
         $parseStr = '<?php if(!defined("'.$name.'")): ?>'.$content.'<?php endif; ?>';
         return $parseStr;
@@ -562,7 +563,7 @@ class TagLibCx extends TagLib
     public function _layout($attr,$content) {
         $tag      = $this->parseXmlAttr($attr,'layout');
         $name   =   $tag['name'];
-        $cache   =   $tag['cache']?$tag['cache']:0;
+        $cache   =   isset($tag['cache'])?$tag['cache']:0;
         $parseStr=   "<!-- layout::$name::$cache -->";
         return $parseStr;
     }
@@ -584,11 +585,11 @@ class TagLibCx extends TagLib
     public function _import($attr,$content,$isFile=false,$type='')
     {
         $tag  = $this->parseXmlAttr($attr,'import');
-        $file   = $tag['file']?$tag['file']:$tag['href'];
+        $file   = isset($tag['file'])?$tag['file']:$tag['href'];
         $parseStr = '';
         $endStr   = '';
         // 判断是否存在加载条件 允许使用函数判断(默认为isset)
-        if ($tag['value'])
+        if (isset($tag['value']))
         {
             $varArray  = explode('|',$tag['value']);
             $name      = array_shift($varArray);

@@ -238,14 +238,11 @@ class App
             cookie('think_template',$templateSet);
         }
 
-        $appPath = __ROOT__.'/'.APP_NAME.'/';
-        $tmplDir = TMPL_DIR.'/'.$templateSet.'/';
-
         /* 模板相关目录常量 */
         define('TEMPLATE_NAME',   $templateSet);                  // 当前模板主题名称
+        define('APP_TMPL_PATH',   __ROOT__.'/'.APP_NAME.'/'.TMPL_DIR.'/'.TEMPLATE_NAME.'/');// 当前项目模板目录
         define('TEMPLATE_PATH',   TMPL_PATH.TEMPLATE_NAME);       // 当前模版路径
-        define('__CURRENT__',     $appPath.$tmplDir.MODULE_NAME); // 当前默认模板目录
-        define('APP_TMPL_PATH',   $appPath.$tmplDir);             // 当前项目模板目录
+        define('__CURRENT__',     APP_TMPL_PATH.MODULE_NAME);     // 当前默认模板目录
         define('WEB_PUBLIC_PATH', __ROOT__.'/Public');            // 网站公共文件目录
         define('APP_PUBLIC_PATH', APP_TMPL_PATH.'Public');        // 项目公共文件目录
 
