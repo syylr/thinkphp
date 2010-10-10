@@ -222,7 +222,7 @@ class Dispatcher extends Think
                         $_GET   =   array_merge($_GET,$params);
                     }
                     return true;
-                }elseif(preg_match($route[0],$regx,$matches)) {
+                }elseif(1 < substr_count($route[0],'/') && preg_match($route[0],$regx,$matches)) {
                     // 路由定义规则：array('正则定义','分组/模块/操作名', '路由对应变量','额外参数'),
                     $var  =  self::parseUrl($route[1]);
                     //  获取当前路由参数对应的变量
