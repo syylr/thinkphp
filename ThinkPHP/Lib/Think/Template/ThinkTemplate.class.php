@@ -761,12 +761,21 @@ class  ThinkTemplate extends Think
             $parseStr = file_get_contents($tmplPublicName);
         }else {
             $tmplPublicName = trim($tmplPublicName);
-            $tmplPublicName  = str_replace(array('@',':'),'/',$tmplPublicName);
-            $count  = substr_count($templateFile,'/');
-            $path   = dirname($this->templateFile);
-            for($i=0;$i<$count;$i++)
-                $path   = dirname($path);
-            $tmplTemplateFile = $path.'/'.$tmplPublicName.$this->config['template_suffix'];
+            $path = C('TMPL_FILE_PATH');
+            // @指定模板主题，blue@edit自动对应blue/[分组][模块]/edit，而blue@Admin/Index/edit : 对应.tpl/blue/Admin/Index/edit
+            if( false !== strpos($tmplPublicName,'@') ){
+                list($path,$tmplPublicName) = explode('@',$tmplPublicName);
+                $path = TMPL_PATH.$path.'/';
+                if( false === strpos($tmplPublicName,'/') ) {
+                    $$tmplPublicName = (defined('GROUP_NAME') ? GROUP_NAME.'/' : '').MODULE_NAME.'/'.$tmplPublicName;
+                }
+            }
+            // 指定默认主题下的目录(分组) Admin:Index/edit 对应.tpl/default/Admin/Index/edit
+            elseif( false !== strpos($tmplPublicName,':') ) {
+                list($path,$tmplPublicName) = explode(':',$tmplPublicName);
+                $path = TEMPLATE_PATH.'/'.$path.'/';
+            }
+            $tmplTemplateFile = $path.$tmplPublicName.$this->config['template_suffix'];
             $parseStr = file_get_contents($tmplTemplateFile);
         }
         //再次对包含文件进行模板分析

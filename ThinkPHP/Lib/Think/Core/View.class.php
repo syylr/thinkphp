@@ -395,7 +395,7 @@ class View extends Think
         }else {
             // 默认对应目录
             $path = C('TMPL_FILE_PATH');
-            // @指定模板主题，blue@edit自动对应blue[分组][模块]，而blue@Admin/Index/edit : 对应.tpl/blue/Admin/Index/edit
+            // @指定模板主题，blue@edit自动对应blue/[分组][模块]/edit，而blue@Admin/Index/edit : 对应.tpl/blue/Admin/Index/edit
             if( false !== strpos($templateFile,'@') ){
                 list($path,$templateFile) = explode('@',$templateFile);
                 $path = TMPL_PATH.$path.'/';
