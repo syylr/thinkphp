@@ -22,7 +22,7 @@
 <default />
 <volist id="vo" name="list">
 <div id="blog_{$vo.id}">
-<div class="textbox-title"><H4><IMG SRC="../Public/images/icon_point2.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="" align="absmiddle"> <A HREF="__URL__/show/id/{$vo.id}">{$vo.title|ubb}</A> <span style="color:gray;font-weight:normal"><equal name="vo.isTop" value="1">[ 置顶 ]</equal> </span></H4><div class="textbox-label">[ {$vo.cTime|toDate='Y-m-d H:i:s'}  | <A HREF="__APP__/Blog/category/id/{$vo.categoryId}">{$vo.category} </A>] </div></div>
+<div class="textbox-title"><H4><IMG SRC="../Public/images/icon_point2.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="" align="absmiddle"> <A HREF="__URL__/show/id/{$vo.id}">{$vo.title|ubb}</A> </H4><div class="textbox-label">[ {$vo.cTime|toDate='Y-m-d H:i:s'}  | <A HREF="__APP__/Blog/category/id/{$vo.categoryId}">{$vo.category} </A>] </div></div>
 <div class="textbox-content">{$vo.content}</div>
 <div class="textbox-bottom"> [ 管理：<A HREF="__URL__/edit/id/{$vo.id}">编辑</A> <A HREF="javascript:delBlog({$vo.id})">删除</A> ]   关键词: {$vo.tags|showTags} | <A HREF="__URL__/show/id/{$vo.id}#reply">评论: {$vo.commentCount}</A> | 浏览: {$vo.readCount}</div><P>
 </div>

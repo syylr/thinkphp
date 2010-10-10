@@ -1,5 +1,5 @@
 <taglib name="html" />
-<include file="../Public/header" />
+<include file="Public:header" />
 <div id="mainWrapper">
 <div id="content" class="content">
 <div id="innerContent">
@@ -131,11 +131,11 @@ function doComplete(data,status){
 	<INPUT TYPE="hidden" name="_uploadSavePath" value="<?php echo APP_PATH.'/../'.'Public/Uploads/';?>" />
 	<INPUT TYPE="button" value="增 加" onclick="addRow();" class="submit small" />
 	<INPUT TYPE="submit" value="上 传" onclick="uploading();" class="small submit" />
-        
+
 	<TABLE id='tbl' style="clear:both"></TABLE>
         </form>
 	</TD>
-        
+
 </TR>
 </TABLE>
 
@@ -155,4 +155,4 @@ var tbl	=	$('tbl');
 addRow();
 //-->
 </SCRIPT>
-<include file="../Public/footer" />
+<include file="Public:footer" />
