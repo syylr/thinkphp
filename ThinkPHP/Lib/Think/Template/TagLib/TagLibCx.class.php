@@ -34,7 +34,7 @@ class TagLibCx extends TagLib
         'foreach' =>array('attr'=>'name,item,key'),
         'include'=>array('attr'=>'file','close'=>0),
         'if'=>array('attr'=>'condition'),
-        'elseif'=>array('attr'=>'condition'),
+        'elseif'=>array('attr'=>'condition','close'=>0),
         'else'=>array('attr'=>'','close'=>0),
         'switch'=>array('attr'=>'name','level'=>3),
         'case'=>array('attr'=>'value,break'),
