@@ -3,11 +3,7 @@
  <head>
  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>ThinkPHP示例：表单提交验证</title>
-<load type="css" href='__PUBLIC__/Css/common.css' />
-<load href="__PUBLIC__/Js/Base.js" />
-<load href="__PUBLIC__/Js/prototype.js" />
-<load href="__PUBLIC__/Js/mootools.js" />
-<load href="__PUBLIC__/Js/Ajax/ThinkAjax.js" />
+<load href="__PUBLIC__/Css/common.css,__PUBLIC__/Js/Base.js,__PUBLIC__/Js/prototype.js,__PUBLIC__/Js/mootools.js,__PUBLIC__/Js/Ajax/ThinkAjax.js" />
  </head>
  <body><script language="JavaScript">
  <!--
@@ -19,7 +15,7 @@
 		if (status==1)
 		{
 		// 更新列表
-		$('list').innerHTML += 
+		$('list').innerHTML +=
 		'<div class="result" style=\'font-weight:normal;background:#A6FF4D\'><div style="border-bottom:1px dotted silver">'+data.title+'  ['+data.email+data.create_time+']</div><div class="content">'+data.content+'</div></div>';
 		}
 	}

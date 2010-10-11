@@ -6,10 +6,9 @@ class PublicAction extends Action {
 	$id = $_GET['id'];
         $dao = M('Attach');
         $attachs = $dao->where("module=".MODULE_NAME)->where("recordId=".$id)->select();
-		if(count($attachs)>0) {
 		//模板变量赋值
-		$this->assign("attachs",$attachs);
-		}
+		$this->assign("attachs",$attachs?$attachs:'');
+
 	}
     public function download()
     {

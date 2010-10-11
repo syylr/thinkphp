@@ -133,7 +133,7 @@ function getBlogTitle($id)
 	$dao = D("Blog");
     $blog   =  $dao->getById($id);
     if($blog) {
-    	return $blog->title;
+    	return $blog['title'];
     }else {
     	return '';
     }
