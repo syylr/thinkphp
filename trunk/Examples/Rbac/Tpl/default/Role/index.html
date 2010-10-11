@@ -1,7 +1,7 @@
 {// 引入标签库 }
 <tagLib name="html" />
 {// 加载头部公共文件 }
-<include file="../Public/header" />
+<include file="Public:header" />
 <!-- 菜单区域  -->
 
 <!-- 主页面开始 -->
@@ -51,7 +51,7 @@ location.href='__URL__/userList/id/'+groupId;
 
 <!-- 列表显示区域  -->
 <div class="list" >
-<div id="result" class="result none"></div><html:list id="checkList" style="list" name="action" checkbox="true" action="true" datasource="list" show="id:编号|10%,name:组名:edit,pid|getGroupName:上级组,status|getStatus:状态,remark:描述" actionlist="status|showStatus=$action['id'],id|app|授权,id|user|用户列表" /> 
+<div id="result" class="result none"></div><html:list id="checkList" style="list" name="action" checkbox="true" action="true" datasource="list" show="id:编号|10%,name:组名:edit,pid|getGroupName:上级组,status|getStatus:状态,remark:描述" actionlist="status|showStatus=$action['id'],id|app|授权,id|user|用户列表" />
 </div>
 <!--  分页显示区域 -->
 <div class="page">{$page}</div>

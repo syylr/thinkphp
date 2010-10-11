@@ -1,7 +1,7 @@
 {// 引入标签库 }
 <tagLib name="html" />
 {// 加载头部公共文件 }
-<include file="../Public/header" />
+<include file="Public:header" />
 <!-- 菜单区域  -->
 
 <!-- 主页面开始 -->
@@ -28,7 +28,7 @@ function goType(type){
 <tr><td >
 <html:select name="groupUserId[]" id="sourceS" options="userList" selected="groupUserList"  multiple="true" style="multiSelect" size="15" />
 </td>
-</tr> 
+</tr>
 <tr>
 <td  class="row tCenter" >
 <input type="button" onclick="allSelect()" value="全 选" class="submit  ">&nbsp;
