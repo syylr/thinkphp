@@ -247,11 +247,9 @@ class App
         define('APP_PUBLIC_PATH', APP_TMPL_PATH.'Public');        // 项目公共文件目录
 
         if(defined('GROUP_NAME')) {
-            C('TMPL_FILE_PATH',TEMPLATE_PATH.'/'.GROUP_NAME.'/'); // 分组下模板默认根目录
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
-            C('TMPL_FILE_PATH',TEMPLATE_PATH.'/'); // 模板默认根目录
             C('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH);
         }

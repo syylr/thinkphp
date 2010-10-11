@@ -649,7 +649,7 @@ class TagLibCx extends TagLib
     // import别名 采用文件方式加载 例如 <load file="__PUBLIC__/Js/Base.js" />
     public function _load($attr,$content)
     {
-        return $this->_import($attr,$content,true);
+        return $this->_import($attr,$content);
     }
 
     // import别名使用 导入css文件 <css file="__PUBLIC__/Css/Base.css" />
