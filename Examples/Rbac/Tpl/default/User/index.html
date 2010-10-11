@@ -1,7 +1,7 @@
 {// 引入标签库 }
 <tagLib name="html" />
 {// 加载头部公共文件 }
-<include file="../Public/header" />
+<include file="Public:header" />
 <!-- 菜单区域  -->
 
 <!-- 主页面开始 -->
@@ -30,7 +30,7 @@
 
 <!-- 列表显示区域  -->
 <div class="list" >
-<html:list id="checkList" name="user" style="list" checkbox="true" action="true" datasource="list" show="id:编号|8%,account:用户名:edit,nickname:昵称,create_time|toDate='Y-m-d H#i#s':添加时间,last_login_time|toDate='Y-m-d H#i#s':上次登录,login_count:登录次数,status|getStatus:状态" actionlist="status|showStatus=$user['id']" /> 
+<html:list id="checkList" name="user" style="list" checkbox="true" action="true" datasource="list" show="id:编号|8%,account:用户名:edit,nickname:昵称,create_time|toDate='Y-m-d H#i#s':添加时间,last_login_time|toDate='Y-m-d H#i#s':上次登录,login_count:登录次数,status|getStatus:状态" actionlist="status|showStatus=$user['id']" />
 </div>
 <!--  分页显示区域 -->
 <div class="page">{$page}</div>
