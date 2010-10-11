@@ -4,8 +4,8 @@
 <div id="content" class="content">
 <div id="innerContent">
   <div class="article-top">
-    <div class="prev-article"><A HREF="__URL__/{$vo.id+1}">{$vo.id+1|getBlogTitle}</A></div>
-    <div class="next-article"> <A HREF="__URL__/{$vo.id-1}">{$vo.id-1|getBlogTitle} </A></div>
+    <div class="prev-article"> <A HREF="__URL__/{$vo['id']+1}">{$vo['id']+1|getBlogTitle}</A></div>
+    <div class="next-article"> <A HREF="__URL__/{$vo['id']-1}">{$vo['id']-1|getBlogTitle}</A></div>
   </div>
 	<div class="textbox-title"><H4><IMG SRC="__PUBLIC__/Images/icon_ctb.gif" WIDTH="11" HEIGHT="11" BORDER="0" ALT="" align="absmiddle">  {$vo.title|ubb} </h4>
 	<div class="textbox-label"><span style="color:gray;font-weight:normal">[ <IMG SRC="__PUBLIC__/Images/write.gif" WIDTH="17" HEIGHT="16" BORDER="0" ALT="" align="absmiddle">  {$vo.cTime|toDate='Y-m-d H:i:s'} 发表在 <A HREF="__APP__/cate/{$vo.categoryId}">{$vo.category}</A>  ]</div></div>

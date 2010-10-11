@@ -632,10 +632,10 @@ class TagLibCx extends TagLib
             foreach ($array as $val){
                 switch($type) {
                 case 'js':
-                    $parseStr .= "<script type='text/javascript' src='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$val).'.js'."'></script> ";
+                    $parseStr .= '<script type="text/javascript" src="'.$basepath.'/'.str_replace(array('.','#'), array('/','.'),$val).'.js"></script>';
                     break;
                 case 'css':
-                    $parseStr .= "<link rel='stylesheet' type='text/css' href='".$basepath.'/'.str_replace(array('.','#'), array('/','.'),$val).'.css'."' />";
+                    $parseStr .= '<link rel="stylesheet" type="text/css" href="'.$basepath.'/'.str_replace(array('.','#'), array('/','.'),$val).'css" />';
                     break;
                 case 'php':
                     $parseStr .= '<?php import("'.$val.'"); ?>';
@@ -646,10 +646,10 @@ class TagLibCx extends TagLib
         return $parseStr.$endStr;
     }
 
-    // import别名 采用文件方式加载 例如 <load file="__PUBLIC__/Js/Base.js" />
+    // import别名 采用文件方式加载(要使用命名空间必须用import) 例如 <load file="__PUBLIC__/Js/Base.js" />
     public function _load($attr,$content)
     {
-        return $this->_import($attr,$content);
+        return $this->_import($attr,$content,true);
     }
 
     // import别名使用 导入css文件 <css file="__PUBLIC__/Css/Base.css" />
