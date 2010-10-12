@@ -124,7 +124,7 @@
                                     <TR>
                                         <TD class="tRight tTop">附件：</TD>
                                         <TD class="tLeft tTop"><INPUT TYPE="hidden" name="ajax" value="1">
-                                            <iframe name="iframeUpload" src="" width="350" height="35" frameborder=0  SCROLLING="no" style="display:none"></iframe>
+                                            <iframe name="iframeUpload" src="" width="350" height="35" frameborder=0  SCROLLING="no" style="display:none;" ></iframe>
                                             <INPUT TYPE="hidden" name="_uploadFileResult" value="result">
                                             <INPUT TYPE="hidden" name="_uploadFormId" value="upload">
                                             <INPUT TYPE="hidden" name="_uploadFileSize" value="-1">
@@ -133,7 +133,7 @@
                                             <INPUT TYPE="hidden" name="_uploadFileType" value="jpeg,jpg,gif,png,doc,rar,zip,mp3,wav,flv,rm,asf">
                                             <INPUT TYPE="hidden" name="_uploadSavePath" value="<?php echo APP_PATH.'/../'.'Public/Uploads/';?>" >
                                             <INPUT TYPE="button" value="增 加" onclick="addRow();" class="submit small">
-											<INPUT TYPE="submit" value="提交" class="submit small" >
+	                                        <INPUT TYPE="submit" value="上 传" onclick="uploading();" class="small submit" />
                                             <TABLE id='tbl' style="clear:both"></TABLE>
                                         </TD>
                                     </TR>

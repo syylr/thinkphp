@@ -19,9 +19,8 @@ class PublicAction extends Action {
         $filename   =   $attach["savepath"].$attach["savename"];
         if(is_file($filename)) {
 			if(!isset($_SESSION['attach_down_count_'.$id])) {
-				// 下载计数
 				$dao->setInc('downCount',"id=".$id);
-				$_SESSION['attach_down_count_'.$id]	=	true;
+				$_SESSION['attach_down_count_'.$id]	= true;
 			}
             Http::download($filename,auto_charset($attach->name,'utf-8','gbk'));
         }
@@ -52,6 +51,8 @@ class PublicAction extends Action {
         if(isset($_POST['_uploadSaveRule'])) {
             //设置附件命名规则
             $upload->saveRule =  $_POST['_uploadSaveRule'];
+        }else{
+              $upload->saveRule = 'uniqid';
         }
         if(!empty($_POST['_uploadFileTable'])) {
             //设置附件关联数据表
@@ -128,7 +129,7 @@ class PublicAction extends Action {
             	// 附件数据需要保存到数据库
                  //取得成功上传的文件信息
                 $uploadList = $upload->getUploadFileInfo();
-		$remark = $_POST['remark'];
+				$remark = $_POST['remark'];
                 //保存附件信息到数据库
                 $Attach = M('Attach');
                 //启动事务
@@ -267,8 +268,8 @@ class PublicAction extends Action {
 
         public function upload() {
             if(!empty($_FILES)) {//如果有文件上传
-		// 上传附件并保存信息到数据库
-		$this->_upload(MODULE_NAME);
+			// 上传附件并保存信息到数据库
+			$this->_upload(MODULE_NAME);
             }
 	}
 
