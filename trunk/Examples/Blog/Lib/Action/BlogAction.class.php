@@ -15,7 +15,6 @@ Class BlogAction extends PublicAction {
                     $comment = $Comment->where('status=1')->order("id desc")->top8();
                     $this->assign("lastArticles", $new);
                     $this->assign("lastComments", $comment);
-
                     // 标签列表
                     $List = M("Tag");
                     $list  = $List->where("module='Blog'")->field('id,name,count')->order('count desc')->limit('0,25')->findAll();
@@ -52,59 +51,55 @@ Class BlogAction extends PublicAction {
                        $map["name"] = $val;
                        $tagg = $Tag->where($map)->find();
                         if ($tagg) {
-                        //    if(!in_array($tag["id"],$exists_tags)) {
+							$tagId = $tagg['id'];
                             $Tag->setInc('count','id='.$tagg["id"]);
-                            //}
                         }else {
-                            $tag = array();
-                            $tag["name"] = $val;
-                            $tag["count"] = 1;
-                            $tag["module"] = $module;
-                            $result = $Tag->add($tag);
-                            $tag["id"] = $result;
+                            $t = array();
+                            $t["name"] = $val;
+                            $t["count"] = 1;
+                            $t["module"] = $module;
+                            $result = $Tag->add($t);
+                            $tagId = $result;
                        }
                     }
-                    //记录tag信息
-                    $t = array();
-                    $t["module"] = $module;
-                    $t["recordId"] = $list;
-                    $t["tagTime"] = time();
-                    $t["tagId"] = $tag["id"];
-                    $Tagged->add($t);
+					//记录tag信息
+					$t = array();
+					$t["module"] = $module;
+					$t["recordId"] = $list;
+					$t["tagTime"] = time();
+					$t["tagId"] = $tagId;
+					$Tagged->add($t);
                 }
             }
         }
         // 保存日志的标签和附件
 	public function _trigger($vo,$list) {
 		if(ACTION_NAME=='insert') {
-			// 补充附件表信息
-                        $dao = M("Attach");
+            $dao = M("Attach");
 			$attach['verify'] = 0;
 			$attach['recordId'] = $list;
-			//$dao->save($attach,"verify='".$_SESSION['attach_verify']."'");
-                        $dao->where("verify='".$_SESSION["attach_verify"]."'")->save($attach);
+            $dao->where("verify='".$_SESSION["attach_verify"]."'")->save($attach);
 		}
 		$this->saveTag($vo,$list,"Blog");
 	}
 
 
-        public function insert() {
+   public function insert() {
 		$Blog = D("Blog");
-                if ($vo = $Blog->create()) {
-                    $list = $Blog->add();
-                    if ($list) {
-                        //数据保存触发器
-                        if (method_exists($this,'_trigger')) {
-                            $this->_trigger($vo,$list);
-                        }
-
-                        $this->success("操作成功");
-                    }else {
-                        $this->error("操作失败");
-                    }
-                }else {
-                    $this->error($Blog->getError());
-                }
+		if ($vo = $Blog->create()) {
+			$list = $Blog->add();
+			if ($list) {
+				//数据保存触发器
+				if (method_exists($this,'_trigger')) {
+					$this->_trigger($vo,$list);
+				}
+				$this->success("操作成功");
+			}else {
+				$this->error("操作失败");
+			}
+		}else {
+			$this->error($Blog->getError());
+		}
 	}
 	// 查看分类日志
         public function category() {
@@ -146,7 +141,6 @@ Class BlogAction extends PublicAction {
             if (!empty($id)) {
                $Blog = D("BlogView");
                $result = $Blog->where('Blog.id='.$id)->find();  // 这里为什么用select()就读不出来
-               //dump($Blog->getLastSql());
                if ($result) {
                    $this->assign('vo', $result);
                }else {
@@ -220,13 +214,19 @@ Class BlogAction extends PublicAction {
                 $Blog = D('BlogView');
                 $begin_time = strtotime($_REQUEST["year"].$_REQUEST["month"]."01");
                 $end_time = strtotime("+1 month", $begin_time);
-                $this->assign('title',toDate($begin_time,'Y年m月').' 归档日志');
+                //$this->assign('title',toDate($begin_time,'Y年m月').' 归档日志');
+				import("@.ORG.Page");
                 $map = "Blog.cTime > $begin_time and Blog.cTime < $end_time and Blog.status=1";
                 $count = $Blog->where($map)->count();
-                $voList  = $Blog->where($map)->order('Blog.cTime desc')->findAll();
+				$listRows = 10;
+				$p = new Page($count, $listRows);
+                $voList  = $Blog->where($map)->order('Blog.cTime desc')->limit($p->firstRow.','.$p->listRows)->findAll();
                 //模板赋值显示
+				$page = $p->show();
+				$this->assign("page", $page);
+				$this->assign('date',$begin_time);
                 $this->assign('list',$voList);
-		$this->assign("count",$count);
+				$this->assign("count",$count);
             }
             $this->display();
         }
@@ -235,21 +235,18 @@ Class BlogAction extends PublicAction {
             $Tag = M("Tag");
             if(!empty($_GET['name'])) {
                 $name = trim($_REQUEST['name']);
-                $list = $Tag->getField("id,id","module='Blog' and name='$name'");
-                $tagId  =  implode(',',$list);
-                $dao = D("Tagged");
-                import("@.ORG.Page");
-                $listRows = 45;
-                $fields	= 'a.id,a.categoryId,a.cTime,a.readCount,a.commentCount,a.title,c.title as category';
-                $count = $Tag->where("tagId  in ('$tagId')")->count();
-                $p = new Page($count,$listRows);
-                $p->setConfig('header' ,'篇日志 ');
-                $dao = D("Blog");
-                $list = $dao->query("select ".$fields." from ".C('DB_PREFIX').'blog as a,'.C('DB_PREFIX').'tagged as b, '.C('DB_PREFIX').'category as c where b.tagId  in ('.$tagId.') and a.categoryId= c.id and a.status=1  and a.id=b.recordId order by a.id desc limit '.$p->firstRow.','.$p->listRows);
-                if($list) {
-                    //分页显示
+                $list = $Tag->where("module='Blog' and name='$name'")->field('id,count')->find();
+				$tagId = $list['id'];
+				$count = $list['count'];
+				import("@.ORG.Page");
+				$listRows = 10;
+				$fields	= 'a.id,a.userId,a.categoryId,a.cTime,a.readCount,a.commentCount,a.title,c.title as category';
+				$p = new Page($count,$listRows);
+				$p->setConfig('header' ,'篇日志 ');
+				$dao = D("Blog");
+				$list = $dao->query("select ".$fields." from ".C('DB_PREFIX').'blog as a,'.C('DB_PREFIX').'tagged as b, '.C('DB_PREFIX').'category as c where b.tagId  in ('.$tagId.') and a.categoryId= c.id and a.status=1  and a.id=b.recordId order by a.id desc limit '.$p->firstRow.','.$p->listRows);
+				if($list) {
                     $page = $p->show();
-                    //模板赋值显示
                     $this->assign("page", $page);
                     $this->assign('list',$list);
                 }

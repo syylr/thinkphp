@@ -139,6 +139,10 @@ function getBlogTitle($id)
     }
 }
 
+function getUserName($id){
+    return '游客';
+}
+
 function getTopicTitle($id)
 {
 	$dao = D("Topic");

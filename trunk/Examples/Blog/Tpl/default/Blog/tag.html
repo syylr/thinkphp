@@ -4,16 +4,25 @@
 <div id="innerContent">
 <div class="announce">
 <div class="announce-content" style="height:45px">
-<present name="tags"> <H4 >标签云集</H4></present>
-<notpresent name="tags"><H4>和[ <span style="color:#63B4CD">{$tag}</span> ] 相关的日志<span style="font-weight:normal"> [ {$count} ] </span></H4></notpresent>
+<present name="list"> 
+<H4>和[ <span style="color:#63B4CD">{$tag}</span> ] 相关的日志<span style="font-weight:normal"> [ {$count} ] </span></H4>
+<else/>
+<H4 >标签云集</H4>
+<volist id="vo" name="tags" ><A HREF="__APP__/Blog/tag/name/{$vo.name|rawurlencode}"><span style="font-size:{$vo.count|getTitleSize};color:{$vo.id|rand_color}">{$vo.name}</span></A> &nbsp;&nbsp; </volist>
+</present>
 </div>
 </div>
-<present name="tags"><volist id="vo" name="tags" ><A HREF="__APP__/Blog/tag/name/{$vo.name|rawurlencode}"><span style="font-size:{$vo.count|getTitleSize};color:{$vo.id|rand_color}">{$vo.name}</span></A> &nbsp;&nbsp; </volist></present>
 <present name="list">
 <div class="article-top"><div class="pages">{$page}</div></div>
 <volist id="vo" name="list" >
 <div class="textbox-list">
-<div class="textbox-list-title"><IMG SRC="../Public/images/icon_point2.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="" align="absmiddle"> [ <A HREF="__APP__/cate/{$vo.categoryId}">{$vo.category} </A> ] <A HREF="__APP__/blog/{$vo.id}">{$vo.title|ubb}</A> {$vo.cTime|toDate='Y-m-d'} </div><div class="textbox-author"> <A HREF="__URL__/author/id/{$vo.userId}">{$vo.userName}</A> [ <A HREF="__APP__/blog/{$vo.id}#reply"> {$vo.commentCount}</A> | {$vo.readCount}  ]</div></div>
+<div class="textbox-list-title">
+<IMG SRC="../Public/images/icon_point2.gif" WIDTH="13" HEIGHT="13" BORDER="0" ALT="" align="absmiddle"> 
+[ <A HREF="__APP__/cate/{$vo.categoryId}">{$vo.category} </A> ]
+<A HREF="__APP__/blog/{$vo.id}">{$vo.title|ubb}</A> {$vo.cTime|toDate='Y-m-d'} </div>
+<div class="textbox-author"> 
+<A HREF="__URL__/author/id/{$vo.userId}">{$vo.userId|getUserName}
+</A> [ <A HREF="__APP__/blog/{$vo.id}#reply"> {$vo.commentCount}</A> | {$vo.readCount}  ]</div></div>
 </volist>
 <div class="article-bottom"><div class="pages">{$page}</div></div>
 </present>
