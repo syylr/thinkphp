@@ -29,6 +29,8 @@ class IndexAction extends Action {
         $upload->savePath = '../Public/Uploads/';
         //设置需要生成缩略图，仅对图像文件有效
         $upload->thumb = true;
+        // 设置引用图片类库包路径
+        $upload->imageClassPath = '@.ORG.Image';
         //设置需要生成缩略图的文件后缀
         $upload->thumbPrefix = 'm_,s_';  //生产2张缩略图
         //设置缩略图最大宽度
