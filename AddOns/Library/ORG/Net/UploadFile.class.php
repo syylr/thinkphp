@@ -40,6 +40,8 @@ class UploadFile extends Think
 
     // 使用对上传图片进行缩略图处理
     public $thumb   =  false;
+    // 图库类包路径
+    public $imageClassPath = 'ORG.Util.Image';
     // 缩略图最大宽度
     public $thumbMaxWidth;
     // 缩略图最大高度
@@ -158,7 +160,7 @@ class UploadFile extends Think
                 $thumbFile			=	explode(',',$this->thumbFile);
                 $thumbPath    =  $this->thumbPath?$this->thumbPath:$file['savepath'];
                 // 生成图像缩略图
-                import("ORG.Util.Image");
+                import($this->imageClassPath);
                 $realFilename  =  $this->autoSub?basename($file['savename']):$file['savename'];
                 for($i=0,$len=count($thumbWidth); $i<$len; $i++) {
                     $thumbname	=	$thumbPath.$thumbPrefix[$i].substr($realFilename,0,strrpos($realFilename, '.')).$thumbSuffix[$i].'.'.$file['extension'];
@@ -351,7 +353,7 @@ class UploadFile extends Think
                    $n++;
                }
            }else{
-               $fileArray[$n] = $files;
+               $fileArray[$n] = $file;
                $n++;
            }
        }

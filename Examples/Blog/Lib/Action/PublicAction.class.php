@@ -79,6 +79,7 @@ class PublicAction extends Action {
         if(!empty($_POST['_uploadImgThumb'])) {
             //设置需要生成缩略图，仅对图像文件有效
             $upload->thumb =  $_POST['_uploadImgThumb'];
+            $upload->imageClassPath = '@.ORG.Image';
         }
         if(!empty($_POST['_uploadThumbSuffix'])) {
             //设置需要生成缩略图的文件后缀
