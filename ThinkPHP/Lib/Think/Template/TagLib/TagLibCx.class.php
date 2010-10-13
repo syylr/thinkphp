@@ -635,7 +635,7 @@ class TagLibCx extends TagLib
                     $parseStr .= '<script type="text/javascript" src="'.$basepath.'/'.str_replace(array('.','#'), array('/','.'),$val).'.js"></script>';
                     break;
                 case 'css':
-                    $parseStr .= '<link rel="stylesheet" type="text/css" href="'.$basepath.'/'.str_replace(array('.','#'), array('/','.'),$val).'css" />';
+                    $parseStr .= '<link rel="stylesheet" type="text/css" href="'.$basepath.'/'.str_replace(array('.','#'), array('/','.'),$val).'.css" />';
                     break;
                 case 'php':
                     $parseStr .= '<?php import("'.$val.'"); ?>';
