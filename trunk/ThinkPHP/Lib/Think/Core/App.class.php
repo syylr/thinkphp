@@ -65,16 +65,6 @@ class App
         // URL调度
         Dispatcher::dispatch();
 
-        // 加载项目分组公共文件
-        if(defined('GROUP_NAME')) {
-            // 分组配置文件
-            if(is_file(CONFIG_PATH.GROUP_NAME.'/config.php'))
-                C(include CONFIG_PATH.GROUP_NAME.'/config.php');
-            // 分组函数文件
-            if(is_file(COMMON_PATH.GROUP_NAME.'/function.php'))
-                include COMMON_PATH.GROUP_NAME.'/function.php';
-        }
-
         // 加载模块配置文件
         if(is_file(CONFIG_PATH.strtolower(MODULE_NAME).'_config.php'))
             C(include CONFIG_PATH.strtolower(MODULE_NAME).'_config.php');
