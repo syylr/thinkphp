@@ -31,7 +31,7 @@ class TagLibCx extends TagLib
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
         'php'=>array(),
         'volist'=>array('attr'=>'name,id,offset,length,key,mod','level'=>3,'alias'=>'iterate'),
-        'foreach' =>array('attr'=>'name,item,key'),
+        'foreach' =>array('attr'=>'name,item,key','level'=>3),
         'include'=>array('attr'=>'file','close'=>0),
         'if'=>array('attr'=>'condition'),
         'elseif'=>array('attr'=>'condition','close'=>0),
