@@ -88,10 +88,11 @@ function U($url,$params=array(),$redirect=false,$suffix=true) {
             $url .= C('URL_HTML_SUFFIX');
     }else{
         $params =   http_build_query($params);
+        $params = !empty($params) ? '&'.$params : '';
         if(isset($group)) {
-            $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_GROUP').'='.$group.'&'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.'&'.$params;
+            $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_GROUP').'='.$group.'&'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.$params;
         }else{
-            $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.'&'.$params;
+            $url    =   str_replace(APP_NAME,$app,__APP__).'?'.C('VAR_MODULE').'='.$module.'&'.C('VAR_ACTION').'='.$action.$params;
         }
     }
     if($redirect)
