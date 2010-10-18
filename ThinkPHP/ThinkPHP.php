@@ -44,9 +44,10 @@ if(defined('RUNTIME_ALLINONE') && is_file(RUNTIME_PATH.'~allinone.php')) {
     // ThinkPHP系统目录定义
     if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
     if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
-    if(is_file(RUNTIME_PATH.'~runtime.php')) {
+    $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
+    if(is_file(RUNTIME_PATH.$runtime)) {
         // 加载框架核心编译缓存
-        require RUNTIME_PATH.'~runtime.php';
+        require RUNTIME_PATH.$runtime;
     }else{
         // 加载编译函数文件
         require THINK_PATH."/Common/runtime.php";

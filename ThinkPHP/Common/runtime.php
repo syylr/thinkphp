@@ -63,10 +63,11 @@ function build_runtime() {
         foreach ($list as $file){
             $content .= compile($file,$compile);
         }
+        $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
         if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
-            file_put_contents(RUNTIME_PATH.'~runtime.php','<?php'.$content);
+            file_put_contents(RUNTIME_PATH.$runtime,'<?php'.$content);
         }else{
-            file_put_contents(RUNTIME_PATH.'~runtime.php',strip_whitespace('<?php'.$content));
+            file_put_contents(RUNTIME_PATH.$runtime,strip_whitespace('<?php'.$content));
         }
         unset($content);
     }
