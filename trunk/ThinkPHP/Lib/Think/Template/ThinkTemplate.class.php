@@ -767,7 +767,7 @@ class  ThinkTemplate extends Think
                 list($path,$tmplPublicName) = explode('@',$tmplPublicName);
                 $path = TMPL_PATH.$path.'/';
                 if( false === strpos($tmplPublicName,'/') ) {
-                    $$tmplPublicName = (defined('GROUP_NAME') ? GROUP_NAME.'/' : '').MODULE_NAME.'/'.$tmplPublicName;
+                    $tmplPublicName = (defined('GROUP_NAME') ? GROUP_NAME.'/' : '').MODULE_NAME.'/'.$tmplPublicName;
                 }
             }
             $tmplTemplateFile = $path.str_replace(':','/',$tmplPublicName).$this->config['template_suffix'];
