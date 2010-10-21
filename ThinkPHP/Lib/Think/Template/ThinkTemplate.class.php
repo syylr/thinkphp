@@ -760,13 +760,13 @@ class  ThinkTemplate extends Think
             // 直接包含文件
             $parseStr = file_get_contents($tmplPublicName);
         }else {
-            $templateFile  = str_replace(array('@',':'),'/',$templateFile);
-            $count   =  substr_count($templateFile,'/'); 
+            $tmplPublicName  = str_replace(array('@',':'),'/',$tmplPublicName);
+            $count   =  substr_count($tmplPublicName,'/'); 
             $path   = dirname(C('TMPL_FILE_NAME'));
             for($i=0;$i<$count;$i++)
                 $path   = dirname($path);
-            $templateFile =  $path.'/'.$templateFile.$this->config['template_suffix'];
-            $parseStr = file_get_contents($tmplTemplateFile);
+            $templateFile =  $path.'/'.$tmplPublicName.$this->config['template_suffix'];
+            $parseStr = file_get_contents($templateFile);
         }
         //再次对包含文件进行模板分析
         return $this->parse($parseStr);
