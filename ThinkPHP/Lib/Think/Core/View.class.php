@@ -392,7 +392,7 @@ class View extends Think
         if(''==$templateFile) {              
             // 如果模板文件名为空 按照默认规则定位
             $templateFile = C('TMPL_FILE_NAME');
-        }elseif(!is_file($templateFile)){
+        }elseif(false === strpos($templateFile,'.')){
             $templateFile  = str_replace(array('@',':'),'/',$templateFile);
             $count   =  substr_count($templateFile,'/'); 
             $path   = dirname(C('TMPL_FILE_NAME'));
