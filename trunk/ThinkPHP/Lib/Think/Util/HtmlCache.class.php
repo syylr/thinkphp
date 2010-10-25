@@ -123,7 +123,7 @@ class HtmlCache extends Think
             if(!is_dir(dirname(HTML_FILE_NAME)))
                 mk_dir(dirname(HTML_FILE_NAME));
             if( false === file_put_contents( HTML_FILE_NAME , $content ))
-                throw_exception(L('_CACHE_WRITE_ERROR_'));
+                throw_exception(L('_CACHE_WRITE_ERROR_').':'.HTML_FILE_NAME);
         }
         return ;
     }

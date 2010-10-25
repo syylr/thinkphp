@@ -274,7 +274,7 @@ class View extends Think
             // 如果静态目录不存在 则创建
             mk_dir(dirname($htmlfile));
         if(false === file_put_contents($htmlfile,$content))
-            throw_exception(L('_CACHE_WRITE_ERROR_'));
+            throw_exception(L('_CACHE_WRITE_ERROR_').':'.$htmlfile);
         return $content;
     }
 
