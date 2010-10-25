@@ -120,7 +120,7 @@ class  ThinkTemplate extends Think
         if(!is_file($tmplTemplateFile)){
             $tmplTemplateFile =  dirname($this->config['default_tmpl']).'/'.$tmplTemplateFile.$this->config['template_suffix'];
             if(!is_file($tmplTemplateFile))
-                throw_exception(L('_TEMPLATE_NOT_EXIST_'));
+                throw_exception(L('_TEMPLATE_NOT_EXIST_').':'.$tmplTemplateFile);
         }
         $this->templateFile    =  $tmplTemplateFile;
 
