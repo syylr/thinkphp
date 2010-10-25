@@ -93,7 +93,7 @@ class ThinkTemplateLite {
             mk_dir($this->config['cache_path']);
         //重写Cache文件
         if( false === file_put_contents($tmplCacheFile,trim($tmplContent)))
-            throw_exception(L('_CACHE_WRITE_ERROR_'));
+            throw_exception(L('_CACHE_WRITE_ERROR_').':'.$tmplCacheFile);
     }
     // 模板编译
     protected function compiler($tmplContent,$templateFile) {
