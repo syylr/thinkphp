@@ -112,7 +112,7 @@ class Think
                     self::$_instance[$identify] = $o;
             }
             else
-                halt(L('_CLASS_NOT_EXIST_'));
+                halt(L('_CLASS_NOT_EXIST_').':'.$class);
         }
         return self::$_instance[$identify];
     }
