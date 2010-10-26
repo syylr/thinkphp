@@ -138,7 +138,8 @@ class App
                 // 获取用户自定义变量
                 $defs = get_defined_constants(TRUE);
                 $content  = array_define($defs['user']);
-                $content .= substr(file_get_contents(RUNTIME_PATH.'~runtime.php'),5);
+                $runtimefile = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
+                $content .= substr(file_get_contents(RUNTIME_PATH.$runtimefile),5);
                 $content .= $common."\nreturn ".var_export(C(),true).';';
                 file_put_contents(RUNTIME_PATH.'~allinone.php',strip_whitespace('<?php '.$content));
             }else{
