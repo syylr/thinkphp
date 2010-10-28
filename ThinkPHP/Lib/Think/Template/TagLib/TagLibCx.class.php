@@ -127,8 +127,15 @@ class TagLibCx extends TagLib
         $empty  = isset($tag['empty'])?$tag['empty']:'';
         $key     =   !empty($tag['key'])?$tag['key']:'i';
         $mod    =   isset($tag['mod'])?$tag['mod']:'2';
-        $name   = $this->autoBuildVar($name);
-        $parseStr  =  '<?php if(is_array('.$name.')): $'.$key.' = 0;';
+        // 允许使用函数设定数据集 <volist name=":fun('arg')" id="vo">{$vo.name}</volist>
+        $parseStr   =  '<?php ';
+        if(0===strpos($name,':')) {
+            $parseStr   .= '$_result='.substr($name,1).';';
+            $name   = '$_result';
+        }else{
+            $name   = $this->autoBuildVar($name);
+        }
+        $parseStr  .=  'if(is_array('.$name.')): $'.$key.' = 0;';
 		if(isset($tag['length']) && '' !=$tag['length'] ) {
 			$parseStr  .= ' $__LIST__ = array_slice('.$name.','.$tag['offset'].','.$tag['length'].');';
 		}elseif(isset($tag['offset'])  && '' !=$tag['offset']){
