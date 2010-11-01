@@ -83,28 +83,26 @@ class Dispatcher extends Think
         $depr = C('URL_PATHINFO_DEPR');
         // 分析PATHINFO信息
         self::getPathInfo();
-        if(!empty($_SERVER['PATH_INFO'])) {
-            if(C('URL_HTML_SUFFIX'))
-                $_SERVER['PATH_INFO']   =   preg_replace('/\.'.C('URL_HTML_SUFFIX').'$/','',$_SERVER['PATH_INFO']);
-            if(!self::routerCheck()){   // 检测路由规则 如果没有则按默认规则调度URL
-                $paths = explode($depr,trim($_SERVER['PATH_INFO'],'/'));
-                $var  =  array();
-                if (C('APP_GROUP_LIST') && !isset($_GET[C('VAR_GROUP')])){
-                    $var[C('VAR_GROUP')] = in_array(strtolower($paths[0]),explode(',',strtolower(C('APP_GROUP_LIST'))))? array_shift($paths) : '';
-                    if(C('APP_GROUP_DENY') && in_array(strtolower($var[C('VAR_GROUP')]),explode(',',strtolower(C('APP_GROUP_DENY'))))) {
-                        // 禁止直接访问分组
-                        exit;
-                    }
+
+        if(!self::routerCheck()){   // 检测路由规则 如果没有则按默认规则调度URL
+            $paths = explode($depr,trim($_SERVER['PATH_INFO'],'/'));
+            $var  =  array();
+            if (C('APP_GROUP_LIST') && !isset($_GET[C('VAR_GROUP')])){
+                $var[C('VAR_GROUP')] = in_array(strtolower($paths[0]),explode(',',strtolower(C('APP_GROUP_LIST'))))? array_shift($paths) : '';
+                if(C('APP_GROUP_DENY') && in_array(strtolower($var[C('VAR_GROUP')]),explode(',',strtolower(C('APP_GROUP_DENY'))))) {
+                    // 禁止直接访问分组
+                    exit;
                 }
-                if(!isset($_GET[C('VAR_MODULE')])) {// 还没有定义模块名称
-                    $var[C('VAR_MODULE')]  =   array_shift($paths);
-                }
-                $var[C('VAR_ACTION')]  =   array_shift($paths);
-                // 解析剩余的URL参数
-                $res = preg_replace('@(\w+)'.$depr.'([^\/]+)@e', '$var[\'\\1\']="\\2";', implode($depr,$paths));
-                $_GET   =  array_merge($var,$_GET);
             }
+            if(!isset($_GET[C('VAR_MODULE')])) {// 还没有定义模块名称
+                $var[C('VAR_MODULE')]  =   array_shift($paths);
+            }
+            $var[C('VAR_ACTION')]  =   array_shift($paths);
+            // 解析剩余的URL参数
+            $res = preg_replace('@(\w+)'.$depr.'([^\/]+)@e', '$var[\'\\1\']="\\2";', implode($depr,$paths));
+            $_GET   =  array_merge($var,$_GET);
         }
+
         // 获取分组 模块和操作名称
         if (C('APP_GROUP_LIST'))
         {
@@ -186,8 +184,7 @@ class Dispatcher extends Think
             }
         }
         if(C('URL_HTML_SUFFIX') && !empty($path)) {
-            $suffix =   substr(C('URL_HTML_SUFFIX'),1);
-            $path   =   preg_replace('/\.'.$suffix.'$/','',$path);
+            $path = preg_replace('/'.C('URL_HTML_SUFFIX').'$/', '', $path);
         }
         $_SERVER['PATH_INFO'] = empty($path) ? '/' : $path;
     }
