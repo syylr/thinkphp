@@ -201,6 +201,8 @@ class Dispatcher extends Think
     static public function routerCheck() {
         // 是否开启路由使用
         if(!C('URL_ROUTER_ON')) return false;
+        $regx = trim($_SERVER['PATH_INFO'],'/');
+        if(empty($regx)) return true;
         // 路由定义文件优先于config中的配置定义
         $routes = C('URL_ROUTE_RULES');
         if(is_array(C('_routes_')))
@@ -208,9 +210,7 @@ class Dispatcher extends Think
         // 路由处理
         if(!empty($routes))
         {
-            $regx = trim($_SERVER['PATH_INFO'],'/');
             $depr = C('URL_PATHINFO_DEPR');
-
             foreach ($routes as $key=>$route){
                 if(0 === stripos($regx.$depr,$route[0].$depr)) {
                     // 简单路由定义：array('路由定义','分组/模块/操作名', '路由对应变量','额外参数'),
