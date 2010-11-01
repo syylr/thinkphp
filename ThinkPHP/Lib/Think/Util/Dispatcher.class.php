@@ -199,10 +199,10 @@ class Dispatcher extends Think
      +----------------------------------------------------------
      */
     static public function routerCheck() {
-        // 是否开启路由使用
-        if(!C('URL_ROUTER_ON')) return false;
         $regx = trim($_SERVER['PATH_INFO'],'/');
         if(empty($regx)) return true;
+        // 是否开启路由使用
+        if(!C('URL_ROUTER_ON')) return false;
         // 路由定义文件优先于config中的配置定义
         $routes = C('URL_ROUTE_RULES');
         if(is_array(C('_routes_')))
