@@ -184,7 +184,7 @@ class Dispatcher extends Think
             }
         }
         if(C('URL_HTML_SUFFIX') && !empty($path)) {
-            $path = preg_replace('/'.C('URL_HTML_SUFFIX').'$/', '', $path);
+            $path = preg_replace('/\.'.trim(C('URL_HTML_SUFFIX'),'.').'$/', '', $path);
         }
         $_SERVER['PATH_INFO'] = empty($path) ? '/' : $path;
     }
