@@ -412,7 +412,7 @@ class DbOracle extends Db{
         if(!empty($limit)) {
             $limit	=	explode(',',$limit);
             if(count($limit)>1)
-                $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . $limit[1] . ")";
+                $limitStr = "(numrow>" . $limit[0] . ") AND (numrow<=" . ($limit[0]+$limit[1]) . ")";
             else
                 $limitStr = "(numrow>0 AND numrow<=".$limit[0].")";
         }
