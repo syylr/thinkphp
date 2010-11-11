@@ -29,7 +29,7 @@ if(version_compare(PHP_VERSION,'6.0.0','<') ) {
 }
 define('MEMORY_LIMIT_ON',function_exists('memory_get_usage'));
 define('IS_CGI',substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
-define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
+define('IS_WIN',DIRECTORY_SEPARATOR == '\\'? 1 : 0 );
 define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
 
 if(!IS_CLI) {
