@@ -295,7 +295,7 @@ class Dispatcher extends Think
             $_POST[$var] :
             (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
         unset($_POST[$var],$_GET[$var]);
-        return $action;
+        return strtolower($action);
     }
 
     /**
