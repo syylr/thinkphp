@@ -293,12 +293,10 @@ class View extends Think
     protected function output($content,$display) {
         if(C('HTML_CACHE_ON'))  HtmlCache::writeHTMLCache($content);
         if($display) {
-            if(C('SHOW_RUN_TIME')){
-                $runtime = '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>';
-                 if(strpos($content,'{__RUNTIME__}'))
-                     $content   =  str_replace('{__RUNTIME__}',$runtime,$content);
-                 else
-                     $content   .=  $runtime;
+            if(false !== strpos($content,'{__RUNTIME__}'))
+            {
+                $runtime = C('SHOW_RUN_TIME')? '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>' : '';
+                $content = str_replace('{__RUNTIME__}', $runtime, $content);
             }
             echo $content;
             if(C('SHOW_PAGE_TRACE'))   $this->showTrace();
@@ -389,12 +387,12 @@ class View extends Think
      +----------------------------------------------------------
      */
     private function parseTemplateFile($templateFile) {
-        if(''==$templateFile) {              
+        if(''==$templateFile) {
             // 如果模板文件名为空 按照默认规则定位
             $templateFile = C('TMPL_FILE_NAME');
         }elseif(false === strpos($templateFile,'.')){
             $templateFile  = str_replace(array('@',':'),'/',$templateFile);
-            $count   =  substr_count($templateFile,'/'); 
+            $count   =  substr_count($templateFile,'/');
             $path   = dirname(C('TMPL_FILE_NAME'));
             for($i=0;$i<$count;$i++)
                 $path   = dirname($path);
