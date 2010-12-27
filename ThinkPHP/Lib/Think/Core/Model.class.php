@@ -886,7 +886,7 @@ class Model extends Think
      +----------------------------------------------------------
      * 自动表单验证
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param array $data 创建数据
      * @param string $type 创建类型
@@ -894,7 +894,7 @@ class Model extends Think
      * @return boolean
      +----------------------------------------------------------
      */
-    private function autoValidation($data,$type) {
+    protected function autoValidation($data,$type) {
         // 属性验证
         if(!empty($this->_validate)) {
             // 如果设置了数据自动验证
@@ -944,7 +944,7 @@ class Model extends Think
      +----------------------------------------------------------
      * 根据验证因子验证字段
      +----------------------------------------------------------
-     * @access public
+     * @access protected
      +----------------------------------------------------------
      * @param array $data 创建数据
      * @param string $val 验证规则
@@ -952,7 +952,7 @@ class Model extends Think
      * @return boolean
      +----------------------------------------------------------
      */
-    private function _validationField($data,$val) {
+    protected function _validationField($data,$val) {
         switch($val[4]) {
             case 'function':// 使用函数进行验证
             case 'callback':// 调用方法进行验证
