@@ -264,7 +264,10 @@ class App
         $tagOn   =  C('APP_PLUGIN_ON');
         // 项目运行标签
         if($tagOn)  tag('app_run');
-
+        // 安全检测
+        if(!preg_match('/^[A-Za-z_0-9]+$/',MODULE_NAME)){
+            throw_exception(L('_MODULE_NOT_EXIST_'));
+        }
         //创建Action控制器实例
         $group =  defined('GROUP_NAME') ? GROUP_NAME.C('APP_GROUP_DEPR') : '';
         $module  =  A($group.MODULE_NAME);
