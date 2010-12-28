@@ -265,8 +265,8 @@ class Model extends Think
         }elseif(strtolower(substr($method,0,5))=='getby') {
             // 根据某个字段获取记录
             $field   =   parse_name(substr($method,5));
-            $options['where'] =  $field.'=\''.$args[0].'\'';
-            return $this->find($options);
+            $where[$field] =  $args[0];
+            return $this->where($where)->find();
         }else{
             throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             return;
@@ -440,7 +440,8 @@ class Model extends Think
             // 如果存在主键数据 则自动作为更新条件
             if(isset($data[$this->getPk()])) {
                 $pk   =  $this->getPk();
-                $options['where']  =  $pk.'=\''.$data[$pk].'\'';
+                $where[$pk]   =  $data[$pk];
+                $options['where']  =  $where;
                 $pkValue = $data[$pk];
                 unset($data[$pk]);
             }else{
@@ -484,9 +485,9 @@ class Model extends Think
             // 根据主键删除记录
             $pk   =  $this->getPk();
             if(strpos($options,',')) {
-                $where  =  $pk.' IN ('.$options.')';
+                $where[$pk]   =  array('IN', $options);
             }else{
-                $where  =  $pk.'=\''.$options.'\'';
+                $where[$pk]   =  $options;
                 $pkValue = $options;
             }
             $options =  array();
@@ -520,7 +521,12 @@ class Model extends Think
     public function select($options=array()) {
         if(is_string($options) || is_numeric($options)) {
             // 根据主键查询
-            $where   =  $this->getPk().' IN ('.$options.')';
+            $pk   =  $this->getPk();
+            if(strpos($options,',')) {
+                $where[$pk] =  array('IN',$options);
+            }else{
+                $where[$pk]   =  $options;
+            }
             $options =  array();
             $options['where'] =  $where;
         }
@@ -601,7 +607,7 @@ class Model extends Think
      */
      public function find($options=array()) {
          if(!empty($options) && ( is_numeric($options) || is_string($options))) {
-             $where  =  $this->getPk().'=\''.$options.'\'';
+             $where[$this->getPk()] =$options;
              $options = array();
              $options['where'] = $where;
          }
