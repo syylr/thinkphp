@@ -370,7 +370,7 @@ function import($class,$baseUrl = '',$ext='.class.php')
         if('@'==$class_strut[0] || APP_NAME == $class_strut[0] ) {
             //加载当前项目应用类库
             $baseUrl   =  dirname(LIB_PATH);
-            $class =  str_replace(array(APP_NAME.'/','@/'),LIB_DIR.'/',$class);
+            $class    =   substr_replace($class, 'Lib/', 0,strlen($class_strut[0])+1);
         }elseif(in_array(strtolower($class_strut[0]),array('think','org','com'))) {
             //加载ThinkPHP基类库或者公共类库
             // think 官方基类库 org 第三方公共类库 com 企业公共类库
