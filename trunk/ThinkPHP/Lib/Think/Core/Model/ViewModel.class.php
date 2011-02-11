@@ -87,6 +87,8 @@ class ViewModel extends Model {
             $options['field'] = $this->checkFields();
         if(isset($options['group']))
             $options['group']  =  $this->checkGroup($options['group']);
+        if(isset($options['where']))
+            $options['where']  =  $this->checkCondition($options['where']);
         if(isset($options['order']))
             $options['order']  =  $this->checkOrder($options['order']);
     }
