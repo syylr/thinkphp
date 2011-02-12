@@ -886,7 +886,7 @@ class AdvModel extends Model {
             // 进行联合查询，必须设定 partition['num']
             $tableName  =   array();
             for($i=0;$i<$this->partition['num'];$i++)
-                $tableName[] = 'SELECT * FROM '.$this->getTableName().'_'.$i;
+                $tableName[] = 'SELECT * FROM '.$this->getTableName().'_'.($i+1);
             $tableName = '( '.implode(" UNION ",$tableName).') AS '.$this->name;
             return $tableName;
         }
