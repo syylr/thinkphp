@@ -255,7 +255,7 @@ class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     function getFields($tableName) {
-        $result =   $this->query('SHOW COLUMNS FROM '.$tableName);
+        $result =   $this->query('SHOW COLUMNS FROM `'.$tableName.'`');
         $info   =   array();
         if($result) {
             foreach ($result as $key => $val) {
