@@ -598,7 +598,7 @@ function C($name=null,$value=null)
 
 // 处理标签
 function tag($name,$params=array()) {
-    $tags   =  C('TAGS_FILTER_LIST.'.$name);
+    $tags   =  C('_TAGS_.'.$name);
     if(!empty($tags)) {
         foreach ($tags   as $key=>$call){
             $result   =  B($call,$params);
