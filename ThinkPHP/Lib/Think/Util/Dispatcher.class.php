@@ -99,7 +99,7 @@ class Dispatcher extends Think
             }
             $var[C('VAR_ACTION')]  =   array_shift($paths);
             // 解析剩余的URL参数
-            $res = preg_replace('@(\w+)'.$depr.'([^\/]+)@e', '$var[\'\\1\']="\\2";', implode($depr,$paths));
+            $res = preg_replace('@(\w+)'.$depr.'([^'.$depr.'\/]+)@e', '$var[\'\\1\']="\\2";', implode($depr,$paths));
             $_GET   =  array_merge($var,$_GET);
         }
 
