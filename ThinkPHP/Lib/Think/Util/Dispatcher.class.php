@@ -295,7 +295,7 @@ class Dispatcher extends Think
             $_POST[$var] :
             (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
         unset($_POST[$var],$_GET[$var]);
-        return strtolower($action);
+        return C('URL_CASE_INSENSITIVE')?strtolower($action):$action;
     }
 
     /**
