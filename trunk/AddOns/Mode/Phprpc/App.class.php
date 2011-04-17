@@ -50,7 +50,7 @@ class App
     	Vendor('phpRPC.phprpc_server');
     	//实例化phprpc
     	$server = new PHPRPC_Server();
-        $actions =  explode(',',C('APP_PHPPRC_ACTIONS'));
+        $actions =  explode(',',C('APP_PHPRPC_ACTIONS'));
         foreach ($actions as $action){
        	    //$server -> setClass($action.'Action'); 
 			$temp = $action.'Action';
