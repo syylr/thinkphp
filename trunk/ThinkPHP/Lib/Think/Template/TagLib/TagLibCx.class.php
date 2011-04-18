@@ -533,7 +533,7 @@ class TagLibCx extends TagLib
     }
     /**
      * 判断是否已经定义了该常量
-     * <define name='TXT'>已定义</define>
+     * <defined name='TXT'>已定义</defined>
      * @param <type> $attr
      * @param <type> $content
      * @return string
