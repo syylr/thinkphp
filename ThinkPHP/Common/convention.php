@@ -171,7 +171,7 @@ return  array(
     'VAR_GROUP'             => 'g',     // 默认分组获取变量
     'VAR_MODULE'            => 'm',		// 默认模块获取变量
     'VAR_ACTION'            => 'a',		// 默认操作获取变量
-    'VAR_ROUTER'            => 'r',     // 默认路由获取变量
+    //'VAR_ROUTER'            => 'r',     // 默认路由获取变量,不再生效
    	'VAR_PAGE'              => 'p',		// 默认分页跳转变量
     'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
 	'VAR_LANGUAGE'          => 'l',		// 默认语言切换变量
