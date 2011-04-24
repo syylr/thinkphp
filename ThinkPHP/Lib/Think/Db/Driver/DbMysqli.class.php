@@ -106,7 +106,6 @@ class DbMysqli extends Db{
         N('db_query',1);
         // 记录开始执行时间
         G('queryStartTime');
-
         $this->queryID = $this->_linkID->query($str);
         $this->debug();
         if ( false === $this->queryID ) {

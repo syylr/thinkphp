@@ -105,7 +105,9 @@ class DbOracle extends Db{
         $this->mode = OCI_COMMIT_ON_SUCCESS;
         //释放前次的查询结果
         if ( $this->queryID ) $this->free();
-        $this->Q(1);
+        N('db_query',1);
+        // 记录开始执行时间
+        G('queryStartTime');
         $this->queryID = oci_parse($this->_linkID,$str);
         $this->debug();
         if (false === oci_execute($this->queryID, $this->mode)) {
@@ -144,7 +146,9 @@ class DbOracle extends Db{
         $this->mode = OCI_COMMIT_ON_SUCCESS;
         //释放前次的查询结果
         if ( $this->queryID ) $this->free();
-        $this->W(1);
+        N('db_write',1);
+        // 记录开始执行时间
+        G('queryStartTime');
         $stmt = oci_parse($this->_linkID,$str);
         $this->debug();
         if (false === oci_execute($stmt)) {
