@@ -55,8 +55,6 @@ class Db extends Think
     protected $connected       = false;
     // 数据库连接参数配置
     protected $config             = '';
-    // SQL 执行时间记录
-    protected $beginTime;
     // 数据库表达式
     protected $comparison      = array('eq'=>'=','neq'=>'!=','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','notlike'=>'NOT LIKE','like'=>'LIKE');
     // 查询表达式
@@ -862,50 +860,6 @@ class Db extends Think
             }
         }
         return $value;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 查询次数更新或者查询
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $times
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    public function Q($times='') {
-        static $_times = 0;
-        if(empty($times)) {
-            return $_times;
-        }else{
-            $_times++;
-            // 记录开始执行时间
-            $this->beginTime = microtime(TRUE);
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 写入次数更新或者查询
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $times
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    public function W($times='') {
-        static $_times = 0;
-        if(empty($times)) {
-            return $_times;
-        }else{
-            $_times++;
-            // 记录开始执行时间
-            G('queryStartTime');
-        }
     }
 
     /**
