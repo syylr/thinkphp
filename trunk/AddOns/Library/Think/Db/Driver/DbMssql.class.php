@@ -100,7 +100,9 @@ class DbMssql extends Db{
         $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) $this->free();
-        $this->Q(1);
+        N('db_query',1);
+        // 记录开始执行时间
+        G('queryStartTime');
         $this->queryID = mssql_query($str, $this->_linkID);
         $this->debug();
         if ( false === $this->queryID ) {
@@ -131,7 +133,9 @@ class DbMssql extends Db{
         $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) $this->free();
-        $this->W(1);
+        N('db_write',1);
+        // 记录开始执行时间
+        G('queryStartTime');
         $result	=	mssql_query($str, $this->_linkID);
         $this->debug();
         if ( false === $result ) {
