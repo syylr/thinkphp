@@ -90,7 +90,7 @@ class Model extends Think
         // 数据库初始化操作
         // 获取数据库操作对象
         // 当前模型有独立的数据库连接信息
-        $this->db = Db::getInstance(empty($this->connection)?$connection:$this->connection);
+        $this->db(0,empty($this->connection)?$connection:$this->connection);
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
         $this->tableSuffix = $this->tableSuffix?$this->tableSuffix:C('DB_SUFFIX');
@@ -1050,12 +1050,12 @@ class Model extends Think
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @return string
+     * @return Model
      +----------------------------------------------------------
      */
     public function db($linkNum,$config=''){
         static $_db = array();
-        if(!isset($_db[$linkNum]) && !empty($config)) {
+        if(!isset($_db[$linkNum])) {
             // 创建一个新的实例
             $_db[$linkNum]            =    Db::getInstance($config);
         }elseif(NULL === $config){
