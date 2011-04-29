@@ -57,6 +57,10 @@ class App
 			$methods = get_class_methods($temp);
 			$server->add($methods,new $temp);
 		}
+        if(C('APP_DEBUG')) {
+            $server->setDebugMode(true);
+        }
+        $server->setEnableGZIP(true);
 		$server->start();
 		//C('PHPRPC_COMMENT',$server->comment());
 		echo $server->comment();
