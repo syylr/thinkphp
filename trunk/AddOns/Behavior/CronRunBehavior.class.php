@@ -37,10 +37,9 @@ class CronRunBehavior extends Behavior {
             foreach ($crons as $key=>$cron){
                 if(empty($cron[2]) || $_SERVER['REQUEST_TIME']>=$cron[2]) {
                     // 到达时间 执行cron文件
-                    $_beginTime	=	microtime(TRUE);
-                    include CRON_PATH.$cron[0];
-                    $_endTime	=	microtime(TRUE);
-                    $_useTime	 =	 number_format(($_endTime - $_beginTime), 6);
+                    G('cronStart');
+                    include LIB_PATH.'Cron/'.$cron[0].'.php';
+                    $_useTime	 =	 G('cronStart','cronEnd', 6);
                     // 更新cron记录
                     $cron[2]	=	$_SERVER['REQUEST_TIME']+$cron[1];
                     $crons[$key]	=	$cron;
