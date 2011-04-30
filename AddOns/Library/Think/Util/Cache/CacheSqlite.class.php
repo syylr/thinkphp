@@ -82,7 +82,7 @@ class CacheSqlite extends Cache
      */
     public function get($name)
     {
-		$this->Q(1);
+        N('cache_read',1);
 		$name   = sqlite_escape_string($name);
         $sql = 'SELECT '.$this->options['value'].
                ' FROM '.$this->options['table'].
@@ -114,7 +114,7 @@ class CacheSqlite extends Cache
      */
     public function set($name, $value,$expireTime=0)
     {
-		$this->W(1);
+        N('cache_write',1);
         $expire =  !empty($expireTime)? $expireTime : C('DATA_CACHE_TIME');
         $name  = sqlite_escape_string($name);
         $value = sqlite_escape_string(serialize($value));

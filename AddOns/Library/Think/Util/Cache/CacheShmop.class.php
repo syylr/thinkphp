@@ -61,7 +61,7 @@ class CacheShmop extends Cache
      */
     public function get($name = false)
     {
-		$this->Q(1);
+        N('cache_read',1);
         $id = shmop_open($this->handler, 'c', 0600, 0);
         if ($id !== false) {
             $ret = unserialize(shmop_read($id, 0, shmop_size($id)));
@@ -99,7 +99,7 @@ class CacheShmop extends Cache
      */
     public function set($name, $value)
     {
-		$this->W(1);
+        N('cache_write',1);
         $lh = $this->_lock();
         $val = $this->get();
         if (!is_array($val)) $val = array();

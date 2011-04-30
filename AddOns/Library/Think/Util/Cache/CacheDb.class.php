@@ -97,7 +97,7 @@ class CacheDb extends Cache
     public function get($name)
     {
         $name  =  addslashes($name);
-		$this->Q(1);
+        N('cache_read',1);
         $result  =  $this->db->getRow('select `data`,`datacrc`,`datasize` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' and (`expire` =-1 OR `expire`>'.time().') limit 0,1');
         if(false !== $result ) {
             if(is_object($result)) {
@@ -138,7 +138,7 @@ class CacheDb extends Cache
     {
         $data   =   serialize($value);
         $name  =  addslashes($name);
-		$this->W(1);
+        N('cache_write',1);
         if( C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
             //数据压缩
             $data   =   gzcompress($data,3);

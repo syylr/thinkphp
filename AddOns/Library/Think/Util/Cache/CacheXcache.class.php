@@ -53,7 +53,7 @@ class CacheXcache extends Cache
      */
     public function get($name)
     {
-		$this->Q(1);
+        N('cache_read',1);
 		if (xcache_isset($name)) {
 			return xcache_get($name);
 		}
@@ -74,7 +74,7 @@ class CacheXcache extends Cache
      */
     public function set($name, $value,$expire='')
     {
-		$this->W(1);
+        N('cache_write',1);
 		if(empty($expire)) {
 			$expire = $this->expire ;
 		}

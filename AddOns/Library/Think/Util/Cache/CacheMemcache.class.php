@@ -81,7 +81,7 @@ class CacheMemcache extends Cache
      */
     public function get($name)
     {
-		$this->Q(1);
+        N('cache_read',1);
         return $this->handler->get($name);
     }
 
@@ -99,7 +99,7 @@ class CacheMemcache extends Cache
      */
     public function set($name, $value, $ttl = null)
     {
-		$this->W(1);
+        N('cache_write',1);
         if(isset($ttl) && is_int($ttl))
             $expire = $ttl;
         else
