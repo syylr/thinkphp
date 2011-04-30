@@ -378,19 +378,19 @@ abstract class Action extends Think
      */
     private function showTime() {
         // 显示运行时间
-        $startTime =  $GLOBALS['_viewStartTime'];
-        $endTime = microtime(TRUE);
-        $total_run_time =   number_format(($endTime - $GLOBALS['_beginTime']), 3);
-        $showTime   =   'Process: '.$total_run_time.'s ';
+        G('viewStartTime');
+        $showTime   =   'Process: '.G('beginTime','viewEndTime').'s ';
+        if(C('SHOW_ADV_TIME')) {
+            // 显示详细运行时间
+            $showTime .= '( Load:'.G('beginTime','loadTime').'s Init:'.G('loadTime','initTime').'s Exec:'.G('initTime','viewStartTime').'s Template:'.G('viewStartTime','viewEndTime').'s )';
+        }
         if(C('SHOW_DB_TIMES') && class_exists('Db',false) ) {
             // 显示数据库操作次数
-            $db =   Db::getInstance();
-            $showTime .= ' | DB :'.$db->Q().' queries '.$db->W().' writes ';
+            $showTime .= ' | DB :'.N('db_query').' queries '.N('db_write').' writes ';
         }
         if(C('SHOW_CACHE_TIMES') && class_exists('Cache',false)) {
             // 显示缓存读写次数
-            $cache  =   Cache::getInstance();
-            $showTime .= ' | Cache :'.$cache->Q().' gets '.$cache->W().' writes ';
+            $showTime .= ' | Cache :'.N('cache_read').' gets '.N('cache_write').' writes ';
         }
         if(MEMORY_LIMIT_ON && C('SHOW_USE_MEM')) {
             // 显示内存开销
