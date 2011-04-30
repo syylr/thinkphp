@@ -60,7 +60,7 @@ if(!IS_CLI) {
     define('URL_COMPAT',      3);   // 兼容模式
 }
 //  版本信息
-define('THINK_VERSION', '2.1RC1');
+define('THINK_VERSION', '2.1');
 //[/RUNTIME]
 // 记录内存初始使用
 if(MEMORY_LIMIT_ON) {
