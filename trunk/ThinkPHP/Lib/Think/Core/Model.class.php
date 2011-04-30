@@ -1065,7 +1065,6 @@ class Model extends Think
         }
         // 切换数据库连接
         $this->db   =    $_db[$linkNum];
-        $this->flush(); // 刷新字段缓存
         return $this;
     }
 
