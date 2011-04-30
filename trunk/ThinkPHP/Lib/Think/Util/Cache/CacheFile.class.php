@@ -130,7 +130,7 @@ class CacheFile extends Cache
         if (!$this->isConnected() || !is_file($filename)) {
            return false;
         }
-        $this->Q(1);
+        N('cache_read',1);
         $content    =   file_get_contents($filename);
         if( false !== $content) {
             $expire  =  (int)substr($content,8, 12);
@@ -175,7 +175,7 @@ class CacheFile extends Cache
      */
     public function set($name,$value,$expire='')
     {
-        $this->W(1);
+        N('cache_write',1);
         if('' === $expire) {
             $expire =  $this->expire;
         }
