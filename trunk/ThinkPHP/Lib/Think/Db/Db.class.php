@@ -13,7 +13,6 @@
 /**
  +------------------------------------------------------------------------------
  * ThinkPHP 数据库中间层实现类
- * 支持Mysql 可以使用PDO
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Think
@@ -69,7 +68,7 @@ class Db extends Think
      * @param array $config 数据库配置数组
      +----------------------------------------------------------
      */
-    function __construct($config=''){
+    public function __construct($config=''){
         return $this->factory($config);
     }
 
