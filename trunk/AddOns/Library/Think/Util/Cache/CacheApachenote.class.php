@@ -83,7 +83,7 @@ class CacheApachenote extends Cache
          for ($data = ''; !feof($this->handler);) {
              $data .= fread($this->handler, 4096);
          }
-		$this->Q(1);
+        N('cache_read',1);
          $this->close();
          return $data === '' ? '' : unserialize($data);
      }
@@ -102,7 +102,7 @@ class CacheApachenote extends Cache
      */
     public function set($name, $value)
     {
-		$this->W(1);
+        N('cache_write',1);
 		$this->open();
         $value = serialize($value);
         $s = 'S' . pack('NN', strlen($name), strlen($value)) . $name . $value;
