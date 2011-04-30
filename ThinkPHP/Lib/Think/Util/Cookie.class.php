@@ -54,7 +54,7 @@ class Cookie extends Think
 
     // 删除某个Cookie值
     static function delete($name) {
-        Cookie::set($name,'',time()-3600);
+        Cookie::set($name,'',-3600);
         unset($_COOKIE[C('COOKIE_PREFIX').$name]);
     }
 
