@@ -1,5 +1,5 @@
 <?php
 return array(
-	'HTML_URL_SUFFIX'=>'.shtml',
+	'URL_HTML_SUFFIX'=>'.shtml',
 	);
 ?>
