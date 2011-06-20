@@ -709,6 +709,7 @@ class Db extends Think
      +----------------------------------------------------------
      */
     public function insert($data,$options=array(),$replace=false) {
+        $values  =  $fields    = array();
         foreach ($data as $key=>$val){
             $value   =  $this->parseValue($val);
             if(is_scalar($value)) { // 过滤非标量数据
