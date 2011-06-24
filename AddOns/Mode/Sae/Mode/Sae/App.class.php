@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id$
+// $Id: App.class.php 16 2011-06-24 08:39:23Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
  * @package  Think
  * @subpackage  Core
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: App.class.php 16 2011-06-24 08:39:23Z luofei614@126.com $
  +------------------------------------------------------------------------------
  */
 class App
@@ -63,7 +63,8 @@ class App
 	'DB_PWD'=> SAE_MYSQL_PASS,         // 密码
 	'DB_PORT'=> SAE_MYSQL_PORT,        // 端口
         'DB_DEPLOY_TYPE'=> 1, // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
-        'DATA_CACHE_TYPE'=> 'Memcache'//S缓存类型为Memcache
+        'DATA_CACHE_TYPE'=> 'Memcache',//S缓存类型为Memcache
+        'LOG_RECORD'=>false
         ));
         // 设置系统时区 PHP5支持
         if(function_exists('date_default_timezone_set'))

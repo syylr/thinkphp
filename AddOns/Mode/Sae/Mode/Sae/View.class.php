@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id$
+// $Id: View.class.php 16 2011-06-24 08:39:23Z luofei614@126.com $
 
 /**
   +------------------------------------------------------------------------------
@@ -20,7 +20,7 @@
  * @package  Think
  * @subpackage  Core
  * @author liu21st <liu21st@gmail.com>
- * @version  $Id$
+ * @version  $Id: View.class.php 16 2011-06-24 08:39:23Z luofei614@126.com $
   +------------------------------------------------------------------------------
  */
 class View extends Think {
@@ -459,7 +459,7 @@ class View extends Think {
         $this->trace('请求时间', date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']));
         $this->trace('用户代理', $_SERVER['HTTP_USER_AGENT']);
         $this->trace('会话ID', session_id());
-        $log = Log::$log;
+        //$log = Log::$log;
         $this->trace('日志记录', count($log) ? count($log) . '条日志<br/>' . implode('<br/>', $log) : '无日志记录');
         $files = get_included_files();
         $this->trace('加载文件', count($files) . str_replace("\n", '<br/>', substr(substr(print_r($files, true), 7), 0, -2)));
