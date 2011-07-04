@@ -105,7 +105,7 @@ function setGroupActions($groupId,$actionIdList)
 	    $actionIdList = implode(',',$actionIdList);
 	}
     $where = 'a.id ='.$groupId.' AND b.id in('.$actionIdList.')';
-    $rs = $this->db->execute('INSERT INTO '.$this->tablePrefix.'access (role_id,node_id,pid,level) SELECT a.id, b.id,b.pid,b.level FROM '.$this->tablePrefix.'role a, '.$this->tablePrefix.'node b WHERE '.$where);
+    $result = $this->db->execute('INSERT INTO '.$this->tablePrefix.'access (role_id,node_id,pid,level) SELECT a.id, b.id,b.pid,b.level FROM '.$this->tablePrefix.'role a, '.$this->tablePrefix.'node b WHERE '.$where);
     if($result===false) {
         return false;
     }else {
@@ -153,7 +153,7 @@ function setGroupActions($groupId,$actionIdList)
 		array_walk($userIdList, array($this, 'fieldFormat'));
 		$userIdList	 =	 implode(',',$userIdList);
 		$where = 'a.id ='.$groupId.' AND b.id in('.$userIdList.')';
-		$rs = $this->execute('INSERT INTO '.$this->tablePrefix.'role_user (role_id,user_id) SELECT a.id, b.id FROM '.$this->tablePrefix.'role a, '.$this->tablePrefix.'user b WHERE '.$where);
+		$result = $this->execute('INSERT INTO '.$this->tablePrefix.'role_user (role_id,user_id) SELECT a.id, b.id FROM '.$this->tablePrefix.'role a, '.$this->tablePrefix.'user b WHERE '.$where);
 		if($result===false) {
 			return false;
 		}else {
