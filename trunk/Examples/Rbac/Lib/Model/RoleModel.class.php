@@ -69,7 +69,7 @@ class RoleModel extends CommonModel {
 			$moduleIdList = implode(',',$moduleIdList);
 		}
 		$where = 'a.id ='.$groupId.' AND b.id in('.$moduleIdList.')';
-		$rs = $this->db->execute('INSERT INTO '.$this->tablePrefix.'access (role_id,node_id,pid,level) SELECT a.id, b.id,b.pid,b.level FROM '.$this->tablePrefix.'role a, '.$this->tablePrefix.'node b WHERE '.$where);
+		$result = $this->db->execute('INSERT INTO '.$this->tablePrefix.'access (role_id,node_id,pid,level) SELECT a.id, b.id,b.pid,b.level FROM '.$this->tablePrefix.'role a, '.$this->tablePrefix.'node b WHERE '.$where);
 		if($result===false) {
 			return false;
 		}else {
