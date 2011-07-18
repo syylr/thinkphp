@@ -274,7 +274,7 @@ class Dispatcher extends Think
             // URL地址不区分大小写
             define('P_MODULE_NAME',strtolower($module));
             // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-            $module = parse_name(P_MODULE_NAME,1);
+            $module = ucfirst(parse_name(P_MODULE_NAME,1));
         }
         unset($_GET[$var]);
         return $module;
