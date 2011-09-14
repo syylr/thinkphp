@@ -58,14 +58,14 @@ class Tplcache {
      * 缓存名称加上了SAE版本号，避免同一应用不同版本缓存共享。
      */
     public function set($name, $value) {
-        $this->handler->set($name . "_" . $_SERVER["HTTP_APPVERSION"], time() . $value, MEMCACHE_COMPRESSED, 0);
+        $this->handler->set($name . "_" . APP_NAME."_" .$_SERVER["HTTP_APPVERSION"], time() . $value, MEMCACHE_COMPRESSED, 0);
     }
 
     /**
      * 获得模板缓存，同时记录模版的创建时间
      */
     public function get($name) {
-        $content = $this->handler->get($name . "_" . $_SERVER["HTTP_APPVERSION"]);
+        $content = $this->handler->get($name . "_" . APP_NAME."_" .$_SERVER["HTTP_APPVERSION"]);
         if ($content !== false) {
             $this->mtime = substr($content, 0, 10);
             return substr($content, 10);
@@ -78,7 +78,7 @@ class Tplcache {
      * 删除模板缓存
      */
     public function delete($name) {
-        return $this->handler->delete($name . "_" . $_SERVER["HTTP_APPVERSION"]);
+        return $this->handler->delete($name . "_" . APP_NAME."_" .$_SERVER["HTTP_APPVERSION"]);
     }
 
     public function __call($name, $args) {
