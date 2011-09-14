@@ -192,50 +192,6 @@ class Db extends Think
 
     /**
      +----------------------------------------------------------
-     * 增加数据库连接(相同类型的)
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param mixed $config 数据库连接信息
-     * @param mixed $linkNum  创建的连接序号
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    public function addConnect($config,$linkNum=null) {
-        $db_config  =   $this->parseConfig($config);
-        if(empty($linkNum))
-            $linkNum     =   count($this->linkID);
-        if(isset($this->linkID[$linkNum]))
-            // 已经存在连接
-            return false;
-        // 创建新的数据库连接
-        return $this->connect($db_config,$linkNum);
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 切换数据库连接
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param integer $linkNum  创建的连接序号
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    public function switchConnect($linkNum) {
-        if(isset($this->linkID[$linkNum])) {
-            // 存在指定的数据库连接序号
-            $this->_linkID  =   $this->linkID[$linkNum];
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
      * 初始化数据库连接
      +----------------------------------------------------------
      * @access protected
