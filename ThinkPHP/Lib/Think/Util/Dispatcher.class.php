@@ -216,7 +216,7 @@ class Dispatcher extends Think
                     // 简单路由定义：array('路由定义','分组/模块/操作名', '路由对应变量','额外参数'),
                     $var  =  self::parseUrl($route[1]);
                     //  获取当前路由参数对应的变量
-                    $paths = explode($depr,trim(str_ireplace($route[0].$depr,$depr,$regx),$depr));
+                    $paths = explode($depr,trim(substr_replace($regx, '', 0, strlen($route[0])),$depr));
                     $vars    =   explode(',',$route[2]);
                     for($i=0;$i<count($vars);$i++)
                         $var[$vars[$i]]     =   array_shift($paths);
