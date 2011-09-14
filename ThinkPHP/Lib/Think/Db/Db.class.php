@@ -163,7 +163,18 @@ class Db extends Think
         if ( !empty($db_config) && is_string($db_config)) {
             // 如果DSN字符串则进行解析
             $db_config = $this->parseDSN($db_config);
-        }else if(empty($db_config)){
+        }elseif(is_array($db_config)){ // 数组配置
+             $db_config = array(
+                  'dbms'        => $db_config['DB_TYPE'],
+                  'username'  => $db_config['DB_USER'],
+                  'password'   => $db_config['DB_PWD'],
+                  'hostname'  => $db_config['DB_HOST'],
+                  'hostport'    => $db_config['DB_PORT'],
+                  'database'   => $db_config['DB_NAME'],
+                  'dsn'         => $db_config['DB_DSN'],
+                  'params'   => $db_config['DB_PARAMS'],
+             );
+        }elseif(empty($db_config)){
             // 如果配置为空，读取配置文件设置
             $db_config = array (
                 'dbms'        =>   C('DB_TYPE'),
