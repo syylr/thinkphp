@@ -55,7 +55,8 @@ class DbMssql extends Db{
             if(empty($config))	$config  =  $this->config;
             $conn = $this->pconnect ? 'mssql_pconnect':'mssql_connect';
             // 处理不带端口号的socket连接情况
-            $host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
+            $sepr = IS_WIN ? ',' : ':';
+            $host = $config['hostname'].($config['hostport']?$sepr."{$config['hostport']}":'');
             $this->linkID[$linkNum] = $conn( $host, $config['username'], $config['password']);
             if ( !$this->linkID[$linkNum] )  throw_exception("Couldn't connect to SQL Server on $host");
             if ( !empty($config['database'])  && !mssql_select_db($config['database'], $this->linkID[$linkNum]) ) {
