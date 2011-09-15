@@ -591,10 +591,10 @@ class  ThinkTemplate extends Think
                         $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
                 }
             }
-            elseif(false !==strpos($var,'::')){
+            elseif(false !==strpos($var,':')){
                 //支持 {$var:property} 方式输出对象的属性
-                $vars = explode('::',$var);
-                $var  =  str_replace('::','->',$var);
+                $vars = explode(':',$var);
+                $var  =  str_replace(':','->',$var);
                 $name = "$".$var;
                 $var  = $vars[0];
             }
