@@ -560,6 +560,7 @@ class Image extends Think {//类定义开始
     }
 
     static function output($im, $type='png', $filename='') {
+        ob_clean(); //防止出现'图像因其本身有错无法显示'的问题
         header("Content-type: image/" . $type);
         $ImageFun = 'image' . $type;
         if (empty($filename)) {
