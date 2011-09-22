@@ -291,6 +291,7 @@ class Db extends Think
             'database'   => $matches[6]
             );
         }
+        $dsn['dsn'] =  ''; // 兼容配置信息数组
         return $dsn;
      }
 
