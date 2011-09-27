@@ -61,7 +61,7 @@ class App
             spl_autoload_register(array('Think', 'autoload'));
 
          // Session初始化
-        if(C('SESSION_AUTO_START'))  session_start();
+        if(C('SESSION_AUTO_START')) isset($_REQUEST[C("VAR_SESSION_ID")])?session_start($_REQUEST[C("VAR_SESSION_ID")]):session_start();
         // URL调度
         Dispatcher::dispatch();
 
