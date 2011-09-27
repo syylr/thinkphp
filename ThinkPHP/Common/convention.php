@@ -105,6 +105,7 @@ return  array(
 
     /* SESSION设置 */
     'SESSION_AUTO_START'    => true,    // 是否自动开启Session
+    'VAR_SESSION_ID'=>'session_id',     //sessionID的提交变量
     // 内置SESSION类可用参数
     //'SESSION_NAME'          => '',      // Session名称
     //'SESSION_PATH'          => '',      // Session保存路径
