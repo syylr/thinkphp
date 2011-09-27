@@ -798,15 +798,17 @@ class Model extends Think
 
     // 自动表单令牌验证
     public function autoCheckToken($data) {
-        $name   = C('TOKEN_NAME');
-        if(isset($_SESSION[$name])) {
-            // 当前需要令牌验证
-            if(empty($data[$name]) || $_SESSION[$name] != $data[$name]) {
-                // 非法提交
-                return false;
+        if(C('TOKEN_ON')){
+            $name   = C('TOKEN_NAME');
+            if(isset($_SESSION[$name])) {
+                // 当前需要令牌验证
+                if(!empty($data[$name]) && $_SESSION[$name] == $data[$name]) {
+                    return true;
+                }
+                // 验证完成销毁session
+                unset($_SESSION[$name]);
             }
-            // 验证完成销毁session
-            unset($_SESSION[$name]);
+            return false;
         }
         return true;
     }
