@@ -305,8 +305,9 @@ abstract class Action extends Think
         $result['status']  =  $status;
         $result['info'] =  $info;
         $result['data'] = $data;
-		//扩展ajax返回数据, 在Action中定义function ajaxAssign(&$result){} 方法 扩展ajax返回数据。
-		if(method_exists($this,"ajaxAssign")) $this->ajaxAssign($result);
+        //扩展ajax返回数据, 在Action中定义function ajaxAssign(&$result){} 方法 扩展ajax返回数据。
+        if(method_exists($this,"ajaxAssign")) 
+            $this->ajaxAssign($result);
         if(empty($type)) $type  =   C('DEFAULT_AJAX_RETURN');
         if(strtoupper($type)=='JSON') {
             // 返回JSON数据格式到客户端 包含状态信息
