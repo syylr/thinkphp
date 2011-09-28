@@ -293,10 +293,16 @@ class View extends Think
     protected function output($content,$display) {
         if(C('HTML_CACHE_ON'))  HtmlCache::writeHTMLCache($content);
         if($display) {
-            if(false !== strpos($content,'{__RUNTIME__}'))
-            {
-                $runtime = C('SHOW_RUN_TIME')? '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>' : '';
-                $content = str_replace('{__RUNTIME__}', $runtime, $content);
+            if(C('SHOW_RUN_TIME')){
+                if(false !== strpos($content,'{__NORUNTIME__}')) {
+                    $content   =  str_replace('{__NORUNTIME__}','',$content);
+                }else{
+                    $runtime = '<div  id="think_run_time" class="think_run_time">'.get_runtime_info().'</div>';
+                     if(strpos($content,'{__RUNTIME__}'))
+                         $content   =  str_replace('{__RUNTIME__}',$runtime,$content);
+                     else
+                         $content   .=  $runtime;
+                }
             }
             echo $content;
             if(C('SHOW_PAGE_TRACE'))   $this->showTrace();
