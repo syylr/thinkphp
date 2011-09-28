@@ -297,7 +297,7 @@ class View extends Think
                 if(false !== strpos($content,'{__NORUNTIME__}')) {
                     $content   =  str_replace('{__NORUNTIME__}','',$content);
                 }else{
-                    $runtime = '<div  id="think_run_time" class="think_run_time">'.get_runtime_info().'</div>';
+                    $runtime = '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>';
                      if(strpos($content,'{__RUNTIME__}'))
                          $content   =  str_replace('{__RUNTIME__}',$runtime,$content);
                      else
