@@ -1115,11 +1115,9 @@ class Model extends Think
                 $tableName .= parse_name($this->name);
             }
             $tableName .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
-            if(!empty($this->dbName))
-                $tableName    =  $this->dbName.'.'.$tableName;
             $this->trueTableName    =   strtolower($tableName);
         }
-        return $this->trueTableName;
+        return (!empty($this->dbName)?$this->dbName.'.':'').$this->trueTableName;
     }
 
     /**
