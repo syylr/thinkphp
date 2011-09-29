@@ -212,6 +212,8 @@ class Dispatcher extends Think
         {
             $depr = C('URL_PATHINFO_DEPR');
             foreach ($routes as $key=>$route){
+                // 检测路由跳转
+                self::checkRedirect($route,$regx);
                 if(0 === stripos($regx.$depr,$route[0].$depr)) {
                     // 简单路由定义：array('路由定义','分组/模块/操作名', '路由对应变量','额外参数'),
                     $var  =  self::parseUrl($route[1]);
@@ -312,6 +314,28 @@ class Dispatcher extends Think
         $group   = (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_GROUP'));
         unset($_GET[$var]);
         return ucfirst(strtolower($group));
+    }
+
+    // 检测路由跳转
+    static private function checkRedirect($route,$regx) {
+         // 跳转路由定义规则：array('简单路由或者正则定义','[redirect]','跳转地址','状态码'),
+        if('[redirect]' == $route[1]) {
+            $depr = C('URL_PATHINFO_DEPR');
+            $location = '';
+            if(0 === strpos($regx.$depr,$route[0].$depr)){
+                $location = $route[2];
+            }elseif(strstr($route[0],'/') && preg_match($route[0],$regx,$matches)){
+                //  获取当前路由参数对应的变量
+                $count    =   count($matches);
+                for($i=1;$i<$count+1;$i++)
+                    $route[2]     =   str_replace('{'.$i.'}',$matches[$i],$route[2]);
+                $location = $route[2];
+            }
+            if(!empty($location)) {
+                header("Location: $location", true, isset($route[3])?$route[3]:302);
+                exit;
+            }
+        }
     }
 }//类定义结束
 ?>
