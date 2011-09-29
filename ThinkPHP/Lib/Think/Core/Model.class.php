@@ -752,7 +752,9 @@ class Model extends Think
             $data    =   $_POST;
         }elseif(is_object($data)){
             $data   =   get_object_vars($data);
-        }elseif(!is_array($data)){
+        }
+        // 验证数据
+        if(empty($data) || !is_array($data)) {
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
         }
