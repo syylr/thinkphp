@@ -61,7 +61,10 @@ class App
             spl_autoload_register(array('Think', 'autoload'));
 
          // Session初始化 支持其他客户端
-        if(C('SESSION_AUTO_START')) session_start(isset($_REQUEST[C("VAR_SESSION_ID")])?$_REQUEST[C("VAR_SESSION_ID")]:'');
+		if(isset($_REQUEST[C("VAR_SESSION_ID")]))
+			session_id($_REQUEST[C("VAR_SESSION_ID")]);
+        if(C('SESSION_AUTO_START')) 
+			session_start();
         // URL调度
         Dispatcher::dispatch();
 
