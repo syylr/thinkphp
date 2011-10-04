@@ -34,8 +34,7 @@ class Dispatcher extends Think
      * @return void
      +----------------------------------------------------------
      */
-    static public function dispatch()
-    {
+    static public function dispatch() {
         $urlMode  =  C('URL_MODEL');
         if($urlMode == URL_REWRITE ) {
             //当前项目地址
@@ -104,8 +103,7 @@ class Dispatcher extends Think
         }
 
         // 获取分组 模块和操作名称
-        if (C('APP_GROUP_LIST'))
-        {
+        if (C('APP_GROUP_LIST')) {
             define('GROUP_NAME', self::getGroup(C('VAR_GROUP')));
             // 加载分组配置文件
             if(is_file(CONFIG_PATH.GROUP_NAME.'/config.php'))
@@ -147,8 +145,7 @@ class Dispatcher extends Think
     * @return void
     +----------------------------------------------------------
     */
-    public static function getPathInfo()
-    {
+    public static function getPathInfo() {
         if(!empty($_GET[C('VAR_PATHINFO')])) {
             // 兼容PATHINFO 参数
             $path = $_GET[C('VAR_PATHINFO')];
@@ -269,8 +266,7 @@ class Dispatcher extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static private function getModule($var)
-    {
+    static private function getModule($var) {
         $module = (!empty($_GET[$var])? $_GET[$var]:C('DEFAULT_MODULE'));
         if(C('URL_CASE_INSENSITIVE')) {
             // URL地址不区分大小写
@@ -291,8 +287,7 @@ class Dispatcher extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static private function getAction($var)
-    {
+    static private function getAction($var) {
         $action   = !empty($_POST[$var]) ?
             $_POST[$var] :
             (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
@@ -309,8 +304,7 @@ class Dispatcher extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static private function getGroup($var)
-    {
+    static private function getGroup($var) {
         $group   = (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_GROUP'));
         unset($_GET[$var]);
         return ucfirst(strtolower($group));
