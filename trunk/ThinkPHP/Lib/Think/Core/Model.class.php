@@ -606,7 +606,7 @@ class Model extends Think
      +----------------------------------------------------------
      */
      public function find($options=array()) {
-         if(!empty($options) && ( is_numeric($options) || is_string($options))) {
+         if(is_numeric($options) || is_string($options)) {
              $where[$this->getPk()] =$options;
              $options = array();
              $options['where'] = $where;
