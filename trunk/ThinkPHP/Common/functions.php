@@ -719,8 +719,6 @@ function to_guid_string($mix) {
     return md5($mix);
 }
 
-//[RUNTIME]
-// 编译文件
 // 去除代码中的空白和注释
 function strip_whitespace($content) {
     $stripStr = '';
@@ -753,6 +751,8 @@ function strip_whitespace($content) {
     return $stripStr;
 }
 
+//[RUNTIME]
+// 编译文件
 function compile($filename, $runtime=false) {
     $content = file_get_contents($filename);
     if (true === $runtime)
