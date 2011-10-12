@@ -996,6 +996,14 @@ class Model extends Think
                 if($this->where($map)->find())
                     return false;
                 break;
+            case 'length': // 验证长度
+                $length  =  mb_strlen($data[$val[0]],'utf-8'); // 当前数据长度
+                if(strpos($val[1],',')) { // 长度区间
+                    list($min,$max)   =  explode(',',$val[1]);
+                    return $length >= $min && $length <= $max;
+                }else{// 指定长度
+                    return $length == $val[1];
+                }
             case 'regex':
             default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
                 // 检查附加规则
