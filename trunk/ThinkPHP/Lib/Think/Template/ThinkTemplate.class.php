@@ -156,11 +156,10 @@ class  ThinkTemplate extends Think
      */
     protected function compiler( $tmplContent)
     {
+        // 检查PHP语法
+        $tmplContent  =  $this->parsePhp($tmplContent);
         //模板解析
         $tmplContent = $this->parse($tmplContent);
-        if(ini_get('short_open_tag'))
-            // 开启短标签的情况要将<?标签用echo方式输出 否则无法正常输出xml标识
-            $tmplContent = preg_replace('/(<\?(?!php|=|$))/i', '<?php echo \'\\1\'; ?>'."\n", $tmplContent );
         // 还原被替换的Literal标签
         $tmplContent = preg_replace('/<!--###literal(\d)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
         // 添加安全代码
@@ -222,7 +221,6 @@ class  ThinkTemplate extends Think
         $end   = $this->config['taglib_end'];
         // 首先替换literal标签内容
         $content = preg_replace('/'.$begin.'literal'.$end.'(.*?)'.$begin.'\/literal'.$end.'/eis',"\$this->parseLiteral('\\1')",$content);
-
         // 获取需要引入的标签库列表
         // 标签库只需要定义一次，允许引入多个一次
         // 一般放在文件的最前面
@@ -262,6 +260,18 @@ class  ThinkTemplate extends Think
         }
         //解析普通模板标签 {tagName:}
         $content = preg_replace('/('.$this->config['tmpl_begin'].')(\S.+?)('.$this->config['tmpl_end'].')/eis',"\$this->parseTag('\\2')",$content);
+        return $content;
+    }
+
+    // 检查PHP语法
+    protected function parsePhp($content) {
+        // PHP语法检查
+        if(!C('TMPL_ALLOW_PHP') && false !== strpos($content,'<?php')) {
+            throw_exception(L('_NOT_ALLOW_PHP_'));
+        }elseif(ini_get('short_open_tag')){
+            // 开启短标签的情况要将<?标签用echo方式输出 否则无法正常输出xml标识
+            $content = preg_replace('/(<\?(?!php|=|$))/i', '<?php echo \'\\1\'; ?>'."\n", $content );
+        }
         return $content;
     }
 
@@ -769,6 +779,8 @@ class  ThinkTemplate extends Think
             $templateFile =  $path.'/'.$tmplPublicName.$this->config['template_suffix'];
             $parseStr = file_get_contents($templateFile);
         }
+        // 检查PHP语法
+        $parseStr  =  $this->parsePhp($parseStr);
         //再次对包含文件进行模板分析
         return $this->parse($parseStr);
     }
