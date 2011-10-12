@@ -127,6 +127,7 @@ return  array(
     'TMPL_CONTENT_TYPE'     => 'text/html', // 默认模板输出类型
     'TMPL_CACHFILE_SUFFIX'  => '.php',      // 默认模板缓存后缀
     'TMPL_DENY_FUNC_LIST'	=> 'echo,exit',	// 模板引擎禁用函数
+    'TMPL_ALLOW_PHP'  =>true, // 默认模板引擎是否支持PHP原生代码
     'TMPL_PARSE_STRING'     => '',          // 模板引擎要自动替换的字符串，必须是数组形式。
     'TMPL_L_DELIM'          => '{',			// 模板引擎普通标签开始标记
     'TMPL_R_DELIM'          => '}',			// 模板引擎普通标签结束标记

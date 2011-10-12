@@ -52,5 +52,6 @@ return array(
     '_EXPRESS_ERROR_'=>'表达式错误',
     '_TOKEN_ERROR_'=>'表单令牌错误',
     '_RECORD_HAS_UPDATE_'=>'记录已经更新',
+    '_NOT_ALLOW_PHP_'=>'模板禁用PHP代码',
 );
 ?>
