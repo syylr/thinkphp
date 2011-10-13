@@ -37,9 +37,9 @@ class App
         // 在部署模式下会自动在第一次执行的时候编译项目
         if(defined('RUNTIME_MODEL')){
             // 运行模式无需载入项目编译缓存
-        }elseif(is_file(RUNTIME_PATH.'~app.php')  && (!is_file(CONFIG_PATH.'config.php') || filemtime(RUNTIME_PATH.'~app.php')>filemtime(CONFIG_PATH.'config.php'))) {
+        }elseif(is_file(RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php')  && (!is_file(CONFIG_PATH.'config.php') || filemtime(RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php')>filemtime(CONFIG_PATH.'config.php'))) {
             // 直接读取编译后的项目文件
-            C(include RUNTIME_PATH.'~app.php');
+            C(include RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php');
         }else{
             // 预编译项目
             App::build();
@@ -112,12 +112,13 @@ class App
                 // 获取用户自定义变量
                 $defs = get_defined_constants(TRUE);
                 $content  = array_define($defs['user']);
-                $content .= substr(file_get_contents(RUNTIME_PATH.'~runtime.php'),5);
+                $runtimefile = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
+                $content .= substr(file_get_contents(RUNTIME_PATH.$runtimefile),5);
                 $content .= $common."\nreturn ".var_export(C(),true).';';
                 file_put_contents(RUNTIME_PATH.'~allinone.php',strip_whitespace('<?php '.$content));
             }else{
                 $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
-                file_put_contents(RUNTIME_PATH.'~app.php',strip_whitespace($content));
+                file_put_contents(RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php',strip_whitespace($content));
             }
         }
         return ;
