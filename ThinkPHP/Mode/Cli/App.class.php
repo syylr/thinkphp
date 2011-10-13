@@ -49,6 +49,11 @@ class App
         define('MODULE_NAME',   isset($_SERVER['argv'][1])?$_SERVER['argv'][1]:C('DEFAULT_MODULE'));
         define('ACTION_NAME',    isset($_SERVER['argv'][2])?$_SERVER['argv'][2]:C('DEFAULT_ACTION'));
 
+        if($_SERVER['argc']>3) {
+            // 解析剩余参数 并采用GET方式获取
+            preg_replace('@(\w+),([^,\/]+)@e', '$_GET[\'\\1\']="\\2";', implode(',',array_slice($_SERVER['argv'],3)));
+        }
+
         // 执行操作
         R(MODULE_NAME,ACTION_NAME);
         // 保存日志记录
