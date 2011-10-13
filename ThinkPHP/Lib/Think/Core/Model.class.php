@@ -1004,6 +1004,11 @@ class Model extends Think
                 }else{// 指定长度
                     return $length == $val[1];
                 }
+            case 'expire': // 操作有效期验证 支持时间戳和日期格式定义
+                list($start,$end)   =  explode(',',$val[1]);
+                if(!is_numeric($start)) $start   =  strtotime($start);
+                if(!is_numeric($end)) $end   =  strtotime($end);
+                return NOW_TIME >= $start && NOW_TIME <= $end;
             case 'regex':
             default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
                 // 检查附加规则
