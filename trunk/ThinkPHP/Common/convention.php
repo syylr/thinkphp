@@ -54,6 +54,7 @@ return  array(
     'DEFAULT_AJAX_RETURN'   => 'JSON',  // 默认AJAX 数据返回格式,可选JSON XML ...
     'DEFAULT_THEME'    => 'default',	// 默认模板主题名称
     'DEFAULT_LANG'          => 'zh-cn', // 默认语言
+    'DEFAULT_FILTER' =>'htmlspecialchars', // 默认参数过滤方法 用于 $this->get('变量名');$this->post('变量名')...
 
     /* 数据库设置 */
     'DB_TYPE'               => 'mysql',     // 数据库类型

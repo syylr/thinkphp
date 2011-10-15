@@ -209,12 +209,12 @@ abstract class Action extends Think
      * @access public
      +----------------------------------------------------------
      * @param string $method 方法名
-     * @param array $parms 参数
+     * @param array $args 参数
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function __call($method,$parms) {
+    public function __call($method,$args) {
         if( 0 === strcasecmp($method,ACTION_NAME)) {
             // 检查扩展操作方法
             $_action = C('_actions_');
@@ -233,7 +233,7 @@ abstract class Action extends Think
             }
             // 如果定义了_empty操作 则调用
             if(method_exists($this,'_empty')) {
-                $this->_empty($method,$parms);
+                $this->_empty($method,$args);
             }else {
                 // 检查是否存在默认模版 如果有直接输出模版
                 if(file_exists_case(C('TMPL_FILE_NAME')))
@@ -242,10 +242,35 @@ abstract class Action extends Think
                     // 抛出异常
                     throw_exception(L('_ERROR_ACTION_').':'.ACTION_NAME);
             }
-        }elseif(in_array(strtolower($method),array('ispost','isget','ishead','isdelete','isput'))){
-            return strtolower($_SERVER['REQUEST_METHOD']) == strtolower(substr($method,2));
         }else{
-            throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
+            switch(strtolower($method)) {
+                // 判断提交方式
+                case 'ispost':
+                case 'isget':
+                case 'ishead':
+                case 'isdelete':
+                case 'isput':
+                    return strtolower($_SERVER['REQUEST_METHOD']) == strtolower(substr($method,2));
+                // 获取变量 支持过滤和默认值 调用方式 $this->post($key,$filter,$default);
+                case 'get':      $input =& $_GET;break;
+                case 'post':$input =& $_POST;break;
+                case 'put': parse_str(file_get_contents('php://input'), $input);break;
+                case 'request': $input =& $_REQUEST;break;
+                case 'session': $input =& $_SESSION;break;
+                case 'cookie':  $input =& $_COOKIE;break;
+                case 'server':  $input =& $_SERVER;break;
+                case 'globals':  $input =& $GLOBALS;break;
+                default:
+                    throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
+            }
+            if(isset($input[$args[0]])) { // 取值操作
+                $data	 =	 $input[$args[0]];
+                $fun  =  $args[1]?$args[1]:C('DEFAULT_FILTER');
+                $data	 =	 $fun($data); // 参数过滤
+            }else{ // 变量默认值
+                $data	 =	 isset($args[2])?$args[2]:NULL;
+            }
+            return $data;
         }
     }
 
