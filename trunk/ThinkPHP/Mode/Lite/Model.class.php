@@ -60,9 +60,9 @@ class Model extends Think
             $this->name =   $this->getModelName();
         }
         // 数据库初始化操作
-        import("Db");
         // 获取数据库操作对象
-        $this->db = Db::getInstance(empty($this->connection)?'':$this->connection);
+        // 当前模型有独立的数据库连接信息
+        $this->db(0,empty($this->connection)?$connection:$this->connection);
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
         // 字段检测
@@ -494,12 +494,9 @@ class Model extends Think
             }else{
                 $tableName .= parse_name($this->name);
             }
-            if(!empty($this->dbName)) {
-                $tableName    =  $this->dbName.'.'.$tableName;
-            }
             $this->trueTableName    =   strtolower($tableName);
         }
-        return $this->trueTableName;
+        return (!empty($this->dbName)?$this->dbName.'.':'').$this->trueTableName;
     }
 
     /**
@@ -569,6 +566,82 @@ class Model extends Think
      */
     public function getLastSql() {
         return $this->db->getLastSql();
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 切换当前的数据库连接
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param integer $linkNum  连接序号
+     * @param mixed $config  数据库连接信息
+     * @param array $params  模型参数
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function db($linkNum,$config='',$params=array()){
+        static $_db = array();
+        if(!isset($_db[$linkNum])) {
+            // 创建一个新的实例
+            $_db[$linkNum]            =    Db::getInstance($config);
+        }elseif(NULL === $config){
+            $_db[$linkNum]->close(); // 关闭数据库连接
+            unset($_db[$linkNum]);
+            return ;
+        }
+        if(!empty($params)) {
+            if(is_string($params))    parse_str($params,$params);
+            foreach ($params as $name=>$value){
+                $this->setProperty($name,$value);
+            }
+        }
+        // 切换数据库连接
+        $this->db   =    $_db[$linkNum];
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 设置数据对象值
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $data 数据
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function data($data){
+        if(is_object($data)){
+            $data   =   get_object_vars($data);
+        }elseif(is_string($data)){
+            parse_str($data,$data);
+        }elseif(!is_array($data)){
+            throw_exception(L('_DATA_TYPE_INVALID_'));
+        }
+        $this->data = $data;
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 查询SQL组装 join
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $join
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function join($join) {
+        if(is_array($join))
+            $this->options['join'] =  $join;
+        else
+            $this->options['join'][]  =   $join;
+        return $this;
     }
 };
 ?>
