@@ -240,7 +240,7 @@ abstract class Action extends Think
                     $this->display();
                 else
                     // 抛出异常
-                    throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
+                    throw_exception(L('_ERROR_ACTION_').':'.ACTION_NAME);
             }
         }elseif(in_array(strtolower($method),array('ispost','isget','ishead','isdelete','isput'))){
             return strtolower($_SERVER['REQUEST_METHOD']) == strtolower(substr($method,2));
