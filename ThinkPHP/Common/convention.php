@@ -155,7 +155,7 @@ return  array(
     'TOKEN_TYPE'            => 'md5',   // 令牌验证哈希规则
 
     /* URL设置 */
-	'URL_CASE_INSENSITIVE'  => false,   // URL地址是否不区分大小写
+	'URL_CASE_INSENSITIVE'  => false,   // 默认false 表示URL区分大小写 true则表示不区分大小写
     'URL_ROUTER_ON'         => false,   // 是否开启URL路由
     'URL_ROUTE_RULES'       => array(), // 默认路由规则，注：分组配置无法替代
     //'URL_DISPATCH_ON'       => true,	// 是否启用Dispatcher，不再生效
