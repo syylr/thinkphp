@@ -594,7 +594,7 @@ function C($name=null, $value=null) {
         if (!strpos($name, '.')) {
             if (is_null($value))
                 return isset($_config[$name]) ? $_config[$name] : null;
-            $_config[$name] = $value;
+            $_config[$name] = is_array($value)?array_change_key_case($value):$value;
             return;
         }
         // 二维数组设置和获取支持
@@ -605,8 +605,14 @@ function C($name=null, $value=null) {
         return;
     }
     // 批量设置
-    if (is_array($name))
+    if (is_array($name)){
+        foreach ($name as $key=>$val){
+            if(is_array($val)) {
+                $name[$key]  =  array_change_key_case($val);
+            }
+        }
         return $_config = array_merge($_config, array_change_key_case($name));
+    }
     return null; // 避免非法参数
 }
 
