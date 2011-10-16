@@ -71,7 +71,7 @@ class Think
     {
         // 检查是否存在别名定义
         if(alias_import($classname)) return ;
-        // 自动加载当前项目的Actioon类和Model类
+        // 自动加载当前项目的Action类和Model类
         if(substr($classname,-5)=="Model") {
             require_cache(LIB_PATH.'Model/'.$classname.'.class.php');
         }elseif(substr($classname,-6)=="Action"){
