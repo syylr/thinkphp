@@ -51,9 +51,13 @@ class ViewModel extends Model {
             $tableName = '';
             foreach ($this->viewFields as $key=>$view){
                 // 获取数据表名称
-                $class  =   $key.'Model';
-                $Model  =  class_exists($class)?new $class():M($key);
-                $tableName .= $Model->getTableName();
+                if(isset($view['_table'])) { // 2011/10/17 添加实际表名定义支持 可以实现同一个表的视图
+                    $tableName .= $view['_table'];
+                }else{
+                    $class  =   $key.'Model';
+                    $Model  =  class_exists($class)?new $class():M($key);
+                    $tableName .= $Model->getTableName();
+                }
                 // 表别名定义
                 $tableName .= !empty($view['_as'])?' '.$view['_as']:' '.$key;
                 // 支持ON 条件定义
