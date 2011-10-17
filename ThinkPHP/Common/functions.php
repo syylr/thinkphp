@@ -508,14 +508,16 @@ function D($name='', $app='') {
  * M函数用于实例化一个没有模型文件的Model
   +----------------------------------------------------------
  * @param string name Model名称
+ * @param string tablePrefix 表前缀
+ * @param string class 要实例化的模型类名
   +----------------------------------------------------------
  * @return Model
   +----------------------------------------------------------
  */
-function M($name='', $class='Model') {
+function M($name='', $tablePrefix='',$class='Model') {
     static $_model = array();
     if (!isset($_model[$name . '_' . $class]))
-        $_model[$name . '_' . $class] = new $class($name);
+        $_model[$name . '_' . $class] = new $class($name,$tablePrefix);
     return $_model[$name . '_' . $class];
 }
 

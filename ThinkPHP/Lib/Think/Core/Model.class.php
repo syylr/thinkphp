@@ -75,18 +75,27 @@ class Model extends Think
      * 取得DB类的实例对象 字段检查
      +----------------------------------------------------------
      * @param string $name 模型名称
+     * @param string $tablePrefix 表前缀
+     * @param mixed $connection 数据库连接信息
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($name='',$connection='') {
+    public function __construct($name='',$tablePrefix='',$connection='') {
         // 模型初始化
         $this->_initialize();
         // 获取模型名称
         if(!empty($name)) {
-            $this->name   =  $name;
+            if(strpos($name,'.')) { // 支持 数据库名.模型名的 定义
+                list($this->dbName,$this->name) = explode('.',$name);
+            }else{
+                $this->name   =  $name;
+            }
         }elseif(empty($this->name)){
             $this->name =   $this->getModelName();
+        }
+        if(!empty($tablePrefix)) {
+            $this->tablePrefix =  $tablePrefix;
         }
         // 数据库初始化操作
         // 获取数据库操作对象
