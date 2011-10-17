@@ -645,27 +645,24 @@ class  ThinkTemplate extends Think
         //取得模板禁止使用函数列表
         $template_deny_funs = explode(',',C('TMPL_DENY_FUNC_LIST'));
         for($i=0;$i<$length ;$i++ ){
-            if (0===stripos($varArray[$i],'default='))
-                $args = explode('=',$varArray[$i],2);
-            else
-                $args = explode('=',$varArray[$i]);
+            $args = explode('=',$varArray[$i],2);
             //模板函数过滤
-            $args[0] = trim($args[0]);
-            switch(strtolower($args[0])) {
+            $fun = strtolower(trim($args[0]));
+            switch($fun) {
             case 'default':  // 特殊模板函数
                 $name   = '('.$name.')?('.$name.'):'.$args[1];
                 break;
             default:  // 通用模板函数
-                if(!in_array($args[0],$template_deny_funs)){
+                if(!in_array($fun,$template_deny_funs)){
                     if(isset($args[1])){
                         if(strstr($args[1],'###')){
                             $args[1] = str_replace('###',$name,$args[1]);
-                            $name = "$args[0]($args[1])";
+                            $name = "$fun($args[1])";
                         }else{
-                            $name = "$args[0]($name,$args[1])";
+                            $name = "$fun($name,$args[1])";
                         }
                     }else if(!empty($args[0])){
-                        $name = "$args[0]($name)";
+                        $name = "$fun($name)";
                     }
                 }
             }
