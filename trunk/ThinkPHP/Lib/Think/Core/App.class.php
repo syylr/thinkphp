@@ -52,6 +52,11 @@ class App
         }
         //[/RUNTIME]
 
+        // 加载动态项目配置文件
+        if(is_file(CONFIG_PATH.'extend.php'))  C(include CONFIG_PATH.'extend.php');
+        // 加载动态项目公共文件
+        if(is_file(COMMON_PATH.'extend.php')) include COMMON_PATH.'extend.php';
+
         // 设置系统时区 PHP5支持
         if(function_exists('date_default_timezone_set'))
             date_default_timezone_set(C('DEFAULT_TIMEZONE'));
