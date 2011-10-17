@@ -64,7 +64,7 @@ class Log extends Think
     static function record($message,$level=self::ERR,$record=false) {
         if($record || in_array($level,C('LOG_RECORD_LEVEL'))) {
             $now = date(self::$format);
-            self::$log[] =   "{$now} {$level}: {$message}\r\n";
+            self::$log[] =   "{$now} ".__SELF__." | {$level}: {$message}\r\n";
         }
     }
 
@@ -123,7 +123,7 @@ class Log extends Think
             if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) )
                   rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
         }
-        error_log("{$now} {$level}: {$message}\r\n", $type,$destination,$extra );
+        error_log("{$now} ".__SELF__." | {$level}: {$message}\r\n", $type,$destination,$extra );
         //clearstatcache();
     }
 
