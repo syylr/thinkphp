@@ -66,6 +66,8 @@ class Model extends Think
     protected $_map           = array();  // 字段映射定义
     // 是否自动检测数据表字段信息
     protected $autoCheckFields   =   true;
+    // 是否批处理验证
+    protected $patchValidate   =  false;
 
     /**
      +----------------------------------------------------------
@@ -905,10 +907,10 @@ class Model extends Think
      */
     protected function autoValidation($data,$type) {
         // 属性验证
-        if(!empty($this->_validate)) {
-            // 如果设置了数据自动验证
-            // 则进行数据验证
-            // 重置验证错误信息
+        if(!empty($this->_validate)) { // 如果设置了数据自动验证则进行数据验证
+            if($this->patchValidate) { // 重置验证错误信息
+                $this->error = array();
+            }
             foreach($this->_validate as $key=>$val) {
                 // 验证因子定义格式
                 // array(field,rule,message,condition,type,when,params)
@@ -922,31 +924,50 @@ class Model extends Think
                     // 判断验证条件
                     switch($val[3]) {
                         case self::MUST_VALIDATE:   // 必须验证 不管表单是否有设置该字段
-                            if(false === $this->_validationField($data,$val)){
-                                $this->error    =   $val[2];
+                            if(false === $this->_validationField($data,$val)) 
                                 return false;
-                            }
                             break;
                         case self::VALUE_VAILIDATE:    // 值不为空的时候才验证
-                            if('' != trim($data[$val[0]])){
-                                if(false === $this->_validationField($data,$val)){
-                                    $this->error    =   $val[2];
+                            if('' != trim($data[$val[0]]))
+                                if(false === $this->_validationField($data,$val)) 
                                     return false;
-                                }
-                            }
                             break;
                         default:    // 默认表单存在该字段就验证
-                            if(isset($data[$val[0]])){
-                                if(false === $this->_validationField($data,$val)){
-                                    $this->error    =   $val[2];
+                            if(isset($data[$val[0]]))
+                                if(false === $this->_validationField($data,$val)) 
                                     return false;
-                                }
-                            }
                     }
                 }
             }
+            // 批量验证的时候最后返回错误
+            if(!empty($this->error)) return false;
         }
         return true;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 验证表单字段 支持批量验证
+     * 如果批量验证返回错误的数组信息
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param array $data 创建数据
+     * @param array $val 验证因子
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    protected function _validationField($data,$val) {
+        if(false === $this->_validationFieldItem($data,$val)){
+            if($this->patchValidate) {
+                $this->error[$val[0]]  =  $val[2];
+            }else{
+                $this->error    =   $val[2];
+                return false;
+            }
+        }
+        return ;
     }
 
     /**
@@ -961,7 +982,7 @@ class Model extends Think
      * @return boolean
      +----------------------------------------------------------
      */
-    protected function _validationField($data,$val) {
+    protected function _validationFieldItem($data,$val) {
         switch($val[4]) {
             case 'function':// 使用函数进行验证
             case 'callback':// 调用方法进行验证
