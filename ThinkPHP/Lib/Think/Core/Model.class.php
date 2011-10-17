@@ -43,8 +43,6 @@ class Model extends Think
     protected $pk  = 'id';
     // 数据表前缀
     protected $tablePrefix  =   '';
-    // 数据表后缀
-    protected $tableSuffix   =  '';
     // 模型名称
     protected $name = '';
     // 数据库名称
@@ -103,7 +101,6 @@ class Model extends Think
         $this->db(0,empty($this->connection)?$connection:$this->connection);
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
-        $this->tableSuffix = $this->tableSuffix?$this->tableSuffix:C('DB_SUFFIX');
         // 字段检测
         if(!empty($this->name) && $this->autoCheckFields)    $this->_checkTableInfo();
     }
@@ -1158,7 +1155,6 @@ class Model extends Think
             }else{
                 $tableName .= parse_name($this->name);
             }
-            $tableName .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
             $this->trueTableName    =   strtolower($tableName);
         }
         return (!empty($this->dbName)?$this->dbName.'.':'').$this->trueTableName;
