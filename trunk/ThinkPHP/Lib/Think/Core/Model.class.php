@@ -809,14 +809,17 @@ class Model extends Think
     public function autoCheckToken($data) {
         if(C('TOKEN_ON')){
             $name   = C('TOKEN_NAME');
-            if(isset($_SESSION[$name])) {
-                // 当前需要令牌验证
-                if(!empty($data[$name]) && $_SESSION[$name] == $data[$name]) {
-                    return true;
-                }
-                // 验证完成销毁session
-                unset($_SESSION[$name]);
+            if(!isset($data[$name]) || !isset($_SESSION[$name])) { // 令牌数据无效
+                return false;
             }
+            // 令牌验证
+            list($key,$value)  =  explode('_',$data[$name]);
+            if($_SESSION[$name][$key] == $value) {
+                unset($_SESSION[$name][$key]); // 验证完成销毁session
+                return true;
+            }
+            // 开启TOKEN重置
+            if(C('TOKEN_RESET')) unset($_SESSION[$name][$key]);
             return false;
         }
         return true;

@@ -344,7 +344,7 @@ class View extends Think
                 $replace['{__TOKEN__}'] =  $this->buildFormToken();
             }elseif(strpos($content,'{__NOTOKEN__}')){
                 // 标记为不需要令牌验证
-                $replace['{__NOTOKEN__}'] =  '';
+                $replace['{__NOTOKEN__}'] =  $this->buildFormToken();
             }elseif(preg_match('/<\/form(\s*)>/is',$content,$match)) {
                 // 智能生成表单令牌隐藏域
                 $replace[$match[0]] = $this->buildFormToken().$match[0];
@@ -367,12 +367,20 @@ class View extends Think
      +----------------------------------------------------------
      */
     private function buildFormToken() {
-        // 开启表单验证自动生成表单令牌
         $tokenName   = C('TOKEN_NAME');
         $tokenType = C('TOKEN_TYPE');
-        $tokenValue = $tokenType(microtime(TRUE));
-        $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenValue.'" />';
-        $_SESSION[$tokenName]  =  $tokenValue;
+        if(!isset($_SESSION[$tokenName])) {
+            $_SESSION[$tokenName]  = array();
+        }
+        // 标识当前页面唯一性
+        $tokenKey  =  md5(__SELF__);
+        if(isset($_SESSION[$tokenName][$tokenKey])) {// 相同页面不重复生成session
+            $tokenValue = $_SESSION[$tokenName][$tokenKey];
+        }else{
+            $tokenValue = $tokenType(microtime(TRUE));
+            $_SESSION[$tokenName][$tokenKey]   =  $tokenValue;
+        }
+        $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenKey.'_'.$tokenValue.'" />';
         return $token;
     }
 
