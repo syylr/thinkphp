@@ -31,6 +31,7 @@ define('MEMORY_LIMIT_ON',function_exists('memory_get_usage'));
 define('IS_CGI',substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
+define('NOW_TIME',isset($_SERVER['REQUEST_TIME'])?$_SERVER['REQUEST_TIME']:time());
 
 if(!IS_CLI) {
     // 当前文件名
