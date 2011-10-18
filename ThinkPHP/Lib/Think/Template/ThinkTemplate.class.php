@@ -581,8 +581,7 @@ class  ThinkTemplate extends Think
             if('Think.' == substr($var,0,6)){
                 // 所有以Think.打头的以特殊变量对待 无需模板赋值就可以输出
                 $name = $this->parseThinkVar($var);
-            }
-            elseif( false !== strpos($var,'.')) {
+            }elseif( false !== strpos($var,'.')) {
                 //支持 {$var.property}
                 $vars = explode('.',$var);
                 $var  =  array_shift($vars);
@@ -600,21 +599,18 @@ class  ThinkTemplate extends Think
                     default:  // 自动判断数组或对象 只支持二维
                         $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
                 }
-            }
-            elseif(false !==strpos($var,':')){
+            }elseif(false !==strpos($var,':')){
                 //支持 {$var:property} 方式输出对象的属性
                 $vars = explode(':',$var);
                 $var  =  str_replace(':','->',$var);
                 $name = "$".$var;
                 $var  = $vars[0];
-            }
-            elseif(false !== strpos($var,'[')) {
+            }elseif(false !== strpos($var,'[')) {
                 //支持 {$var['key']} 方式输出数组
                 $name = "$".$var;
                 preg_match('/(.+?)\[(.+?)\]/is',$var,$match);
                 $var = $match[1];
-            }
-            else {
+            }else {
                 $name = "$$var";
             }
             //对变量使用函数
