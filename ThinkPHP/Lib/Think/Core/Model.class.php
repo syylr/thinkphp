@@ -274,6 +274,11 @@ class Model extends Think
             $field   =   parse_name(substr($method,5));
             $where[$field] =  $args[0];
             return $this->where($where)->find();
+        }elseif(strtolower(substr($method,0,10))=='getfieldby') {
+            // 根据某个字段获取记录的某个值
+            $name   =   parse_name(substr($method,10));
+            $where[$name] =$args[0];
+            return $this->where($where)->getField($args[1]);
         }else{
             throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             return;
