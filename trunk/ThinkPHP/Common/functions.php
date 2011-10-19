@@ -92,7 +92,7 @@ function U($url, $params=array(), $redirect=false, $suffix=true) {
     }
 
     if (C('URL_MODEL') > 0) {
-        $depr = C('URL_PATHINFO_MODEL') == 2 ? C('URL_PATHINFO_DEPR') : '/';
+        $depr = C('URL_PATHINFO_DEPR');
         $str = $depr;
         foreach ($params as $var => $val)
             $str .= $var . $depr . $val . $depr;
