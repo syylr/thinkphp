@@ -154,6 +154,7 @@ return  array(
     'TOKEN_ON'              => true,     // 开启令牌验证
     'TOKEN_NAME'            => '__hash__',    // 令牌验证的表单隐藏字段名称
     'TOKEN_TYPE'            => 'md5',   // 令牌验证哈希规则
+    'TOKEN_RESET'               =>   true, // 令牌错误后是否重置
 
     /* URL设置 */
 	'URL_CASE_INSENSITIVE'  => false,   // 默认false 表示URL区分大小写 true则表示不区分大小写
