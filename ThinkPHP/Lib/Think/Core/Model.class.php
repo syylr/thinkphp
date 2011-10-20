@@ -557,10 +557,6 @@ class Model extends Think
     // 查询成功后的回调方法
     protected function _after_select(&$resultSet,$options) {}
 
-    public function findAll($options=array()) {
-        return $this->select($options);
-    }
-
     /**
      +----------------------------------------------------------
      * 分析表达式
