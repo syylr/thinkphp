@@ -1009,8 +1009,12 @@ class Model extends Think
                 }
             case 'confirm': // 验证两个字段是否相同
                 return $data[$val[0]] == $data[$val[1]];
-            case 'in': // 验证是否在某个数组范围之内
-                return in_array($data[$val[0]] ,$val[1]);
+            case 'in': // 验证是否在某个指定范围之内 逗号分隔字符串或者数组
+                $range   = is_array($val[1])?$val[1]:explode(',',$val[1]);
+                return in_array($data[$val[0]] ,$range);
+            case 'between': // 验证是否在某个范围
+                list($min,$max)   =  explode(',',$val[1]);
+                return $data[$val[0]]>=$min && $data[$val[0]]<=$max;
             case 'equal': // 验证是否等于某个值
                 return $data[$val[0]] == $val[1];
             case 'unique': // 验证某个值是否唯一
