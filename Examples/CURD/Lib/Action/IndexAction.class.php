@@ -5,7 +5,7 @@ class IndexAction extends Action{
 	// 查询数据
 	public function index(){
 		$Form	= M("Form");
-		$list	=	$Form->limit(5)->order('id desc')->findAll();
+		$list	=	$Form->limit(5)->order('id desc')->select();
 		$this->assign('list',$list);
 		$this->display();
 	}

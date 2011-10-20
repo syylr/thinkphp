@@ -48,14 +48,14 @@ class RoleAction extends CommonAction {
     {
         //读取系统的项目列表
         $node    =  D("Node");
-        $list	=	$node->where('level=1')->field('id,title')->findAll();
+        $list	=	$node->where('level=1')->field('id,title')->select();
 		foreach ($list as $vo){
 			$appList[$vo['id']]	=	$vo['title'];
 		}
 
         //读取系统组列表
 		$group   =  D('Role');
-        $list       =  $group->field('id,name')->findAll();
+        $list       =  $group->field('id,name')->select();
 		foreach ($list as $vo){
 			$groupList[$vo['id']]	=	$vo['name'];
 		}
@@ -127,7 +127,7 @@ class RoleAction extends CommonAction {
 
 		$group   =  D("Role");
         //读取系统组列表
-        $list=$group->field('id,name')->findAll();
+        $list=$group->field('id,name')->select();
 		foreach ($list as $vo){
 			$groupList[$vo['id']]	=	$vo['name'];
 		}
@@ -148,7 +148,7 @@ class RoleAction extends CommonAction {
         	//读取当前项目的模块列表
 			$where['level']=2;
 			$where['pid']=$appId;
-            $nodelist=$node->field('id,title')->where($where)->findAll();
+            $nodelist=$node->field('id,title')->where($where)->select();
 			foreach ($nodelist as $vo){
 				$moduleList[$vo['id']]	=	$vo['title'];
 			}
@@ -220,7 +220,7 @@ class RoleAction extends CommonAction {
 
 		$group   =  D("Role");
         //读取系统组列表
-        $grouplist=$group->field('id,name')->findAll();
+        $grouplist=$group->field('id,name')->select();
 		foreach ($grouplist as $vo){
 			$groupList[$vo['id']]	=	$vo['name'];
 		}
@@ -251,7 +251,7 @@ class RoleAction extends CommonAction {
         	//读取当前项目的操作列表
 			$map['level']=3;
 			$map['pid']=$moduleId;
-            $list	=	$node->where($map)->field('id,title')->findAll();
+            $list	=	$node->where($map)->field('id,title')->select();
 			if($list) {
 				foreach ($list as $vo){
 					$actionList[$vo['id']]	=	$vo['title'];
@@ -322,7 +322,7 @@ class RoleAction extends CommonAction {
     {
         //读取系统的用户列表
         $user    =   D("User");
-		$list2=$user->field('id,account,nickname')->findAll();
+		$list2=$user->field('id,account,nickname')->select();
 		//echo $user->getlastsql();
 		//dump(	$user);
 		foreach ($list2 as $vo){
@@ -330,7 +330,7 @@ class RoleAction extends CommonAction {
 		}
 
 		$group    =   D("Role");
-        $list=$group->field('id,name')->findAll();
+        $list=$group->field('id,name')->select();
 		foreach ($list as $vo){
 			$groupList[$vo['id']]	=	$vo['name'];
 		}
@@ -357,14 +357,14 @@ class RoleAction extends CommonAction {
 	public function _before_edit(){
 	   $Group = D('Role');
         //查找满足条件的列表数据
-        $list     = $Group->field('id,name')->findAll();
+        $list     = $Group->field('id,name')->select();
         $this->assign('list',$list);
 
 	}
 	public function _before_add(){
 	   $Group = D('Role');
         //查找满足条件的列表数据
-        $list     = $Group->field('id,name')->findAll();
+        $list     = $Group->field('id,name')->select();
         $this->assign('list',$list);
 
 	}
@@ -374,7 +374,7 @@ class RoleAction extends CommonAction {
         //创建数据对象
         $Group = D('Role');
         //查找满足条件的列表数据
-        $list     = $Group->field('id,name')->findAll();
+        $list     = $Group->field('id,name')->select();
         $this->assign('list',$list);
         $this->display();
         return;
