@@ -4,7 +4,7 @@ Class BlogAction extends PublicAction {
 
 	public function _initialize() {
 		$Cate = M("Category");
-		$cateList = $Cate->findAll();
+		$cateList = $Cate->select();
 		$this->assign("category", $cateList);
                 if (ACTION_NAME != "add") {
                     //切换到高级模型
@@ -17,7 +17,7 @@ Class BlogAction extends PublicAction {
                     $this->assign("lastComments", $comment);
                     // 标签列表
                     $List = M("Tag");
-                    $list  = $List->where("module='Blog'")->field('id,name,count')->order('count desc')->limit('0,25')->findAll();
+                    $list  = $List->where("module='Blog'")->field('id,name,count')->order('count desc')->limit('0,25')->select();
                     $this->assign('tags',$list);
 
                     $list = array();
@@ -220,7 +220,7 @@ Class BlogAction extends PublicAction {
                 $count = $Blog->where($map)->count();
 				$listRows = 10;
 				$p = new Page($count, $listRows);
-                $voList  = $Blog->where($map)->order('Blog.cTime desc')->limit($p->firstRow.','.$p->listRows)->findAll();
+                $voList  = $Blog->where($map)->order('Blog.cTime desc')->limit($p->firstRow.','.$p->listRows)->select();
                 //模板赋值显示
 				$page = $p->show();
 				$this->assign("page", $page);
@@ -253,7 +253,7 @@ Class BlogAction extends PublicAction {
                 $this->assign('tag',$name);
                 $this->assign("count",$count);
             }else {
-                $list = $Tag->where("module='Blog'")->findAll();
+                $list = $Tag->where("module='Blog'")->select();
                 //dump($list);
                 $this->assign('tags',$list);
             }

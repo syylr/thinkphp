@@ -4,7 +4,7 @@ class IndexAction extends Action{
 	public function index(){
 		$Form	= M("Form");
         // 按照id排序显示前5条记录
-		$list	=	$Form->order('id desc')->limit(5)->findAll();
+		$list	=	$Form->order('id desc')->limit(5)->select();
 		$this->assign('list',$list);
 		$this->display();
 	}

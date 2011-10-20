@@ -130,7 +130,7 @@ class CommonAction extends Action {
 			$p = new Page ( $count, $listRows );
 			//分页查询数据
 
-			$voList = $model->where($map)->order( "`" . $order . "` " . $sort)->limit($p->firstRow . ',' . $p->listRows)->findAll ( );
+			$voList = $model->where($map)->order( "`" . $order . "` " . $sort)->limit($p->firstRow . ',' . $p->listRows)->select ( );
 			//echo $model->getlastsql();
 			//分页跳转的时候保证查询条件
 			foreach ( $map as $key => $val ) {

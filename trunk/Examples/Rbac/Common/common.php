@@ -209,7 +209,7 @@ function getGroupName($id) {
 		return $list [$id];
 	}
 	$dao = D ( "Role" );
-	$list = $dao->findAll ( array ('field' => 'id,name' ) );
+	$list = $dao->select ( array ('field' => 'id,name' ) );
 	foreach ( $list as $vo ) {
 		$nameList [$vo ['id']] = $vo ['name'];
 	}

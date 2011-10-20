@@ -4,7 +4,7 @@ class IndexAction extends Action {
 
     public function index() {
         $Photo = M('Photo');
-        $list = $Photo->order('create_time desc')->limit(2)->findAll();
+        $list = $Photo->order('create_time desc')->limit(2)->select();
         $this->assign('list', $list);
         $this->display();
     }

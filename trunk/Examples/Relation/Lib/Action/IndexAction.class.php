@@ -35,7 +35,7 @@ class IndexAction extends Action{
         $this->assign('user1',$user);
         $user   =  $User->relation('Profile')->find($id);
         $this->assign('user2',$user);
-        $list   =  $User->relation(true)->findAll();
+        $list   =  $User->relation(true)->select();
         $this->assign('list',$list);
 
         // 关联更新

@@ -6,7 +6,7 @@ class IndexAction extends Action{
 			import("@.ORG.Page"); //导入分页类
 			$count = $Form->count();    //计算总数
 			$p = new Page ( $count, 5 );
-			$list=$Form->limit($p->firstRow.','.$p->listRows)->order('id desc')->findAll();
+			$list=$Form->limit($p->firstRow.','.$p->listRows)->order('id desc')->select();
 			$p->setConfig('header','篇记录');
 			$p->setConfig('prev',"<");
 			$p->setConfig('next','>');
@@ -24,7 +24,7 @@ class IndexAction extends Action{
 			import("@.ORG.Page"); //导入分页类
 			$count = $Form->count();    //计算总数
 			$p = new Page ( $count, 5 );
-			$list=$Form->limit($p->firstRow.','.$p->listRows)->order('id desc')->findAll();
+			$list=$Form->limit($p->firstRow.','.$p->listRows)->order('id desc')->select();
 			$page = $p->show ();
 			$this->assign ( "page", $page );
 			$this->assign ( "list", $list );
