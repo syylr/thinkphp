@@ -1278,6 +1278,10 @@ class Model extends Think
     public function getLastSql() {
         return $this->db->getLastSql();
     }
+    // 鉴于getLastSql比较常用 增加_sql 别名
+    public function _sql(){
+        return $this->getLastSql();
+    }
 
     /**
      +----------------------------------------------------------
