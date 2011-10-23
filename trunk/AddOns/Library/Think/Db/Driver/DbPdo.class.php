@@ -310,6 +310,7 @@ class DbPdo extends Db{
         if($result) {
             foreach ($result as $key => $val) {
                 $val['Name'] = isset($val['name'])?$val['name']:$val['Name'];
+                $val['Type'] = isset($val['type'])?$val['type']: $val['Type'];
                 $name= strtolower(isset($val['Field'])?$val['Field']:$val['Name']);
                 $info[$name] = array(
                     'name'    => $name ,
