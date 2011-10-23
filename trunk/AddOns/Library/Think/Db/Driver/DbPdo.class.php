@@ -277,6 +277,7 @@ class DbPdo extends Db{
         }else{
             switch($this->dbType) {
                 case 'MSSQL':
+                case 'SQLSRV':
                     $sql   = "SELECT   column_name as 'Name',   data_type as 'Type',   column_default as 'Default',   is_nullable as 'Null'
         FROM    information_schema.tables AS t
         JOIN    information_schema.columns AS c
@@ -345,6 +346,7 @@ class DbPdo extends Db{
                 $sql   = 'SELECT table_name FROM user_tables';
                 break;
             case 'MSSQL':
+            case 'SQLSRV':
                 $sql   = "SELECT TABLE_NAME	FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
                 break;
             case 'PGSQL':
