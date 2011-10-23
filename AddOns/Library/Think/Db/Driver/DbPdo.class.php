@@ -403,6 +403,7 @@ class DbPdo extends Db{
                     }
                     break;
                 case 'MSSQL':
+                case 'SQLSRV':
                     break;
                 case 'IBASE':
                     // 暂时不支持
@@ -468,6 +469,7 @@ class DbPdo extends Db{
          {
             case 'PGSQL':
             case 'MSSQL':
+            case 'SQLSRV':
             case 'IBASE':
             case 'MYSQL':
                 return addslashes($str);
@@ -494,6 +496,7 @@ class DbPdo extends Db{
             case 'PGSQL':
             case 'SQLITE':
             case 'MSSQL':
+            case 'SQLSRV':
             case 'IBASE':
             case 'MYSQL':
                 return $this->_linkID->lastInsertId();
