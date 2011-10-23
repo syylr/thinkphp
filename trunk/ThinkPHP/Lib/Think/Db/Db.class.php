@@ -451,52 +451,20 @@ class Db extends Think
                     // 解析特殊条件表达式
                     $whereStr   .= $this->parseThinkWhere($key,$val);
                 }else{
+                    // 查询字段的安全过滤
+                    if(!preg_match('/^[A-Z_\|\-.a-z0-9]+$/',trim($key))){
+                        throw_exception(L('_EXPRESS_ERROR_').':'.$key);
+                    }
                     $key = $this->addSpecialChar($key);
-                    if(is_array($val)) {
-                        if(is_string($val[0])) {
-                            if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)$/i',$val[0])) { // 比较运算
-                                $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
-                            }elseif('exp'==strtolower($val[0])){ // 使用表达式
-                                $whereStr .= ' ('.$key.' '.$val[1].') ';
-                            }elseif(preg_match('/IN/i',$val[0])){ // IN 运算
-                                if(is_string($val[1])) {
-                                     $val[1] =  explode(',',$val[1]);
-                                }
-                                $zone   =   implode(',',$this->parseValue($val[1]));
-                                $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
-                            }elseif(preg_match('/BETWEEN/i',$val[0])){ // BETWEEN运算
-                                $data = is_string($val[1])? explode(',',$val[1]):$val[1];
-                                $whereStr .=  ' ('.$key.' '.strtoupper($val[0]).' '.$data[0].' AND '.$data[1].' )';
-                            }else{
-                                throw_exception(L('_EXPRESS_ERROR_').':'.$val[0]);
-                            }
-                        }else {
-                            $count = count($val);
-                            if(in_array(strtoupper(trim($val[$count-1])),array('AND','OR','XOR'))) {
-                                $rule = strtoupper(trim($val[$count-1]));
-                                $count   =  $count -1;
-                            }else{
-                                $rule = 'AND';
-                            }
-                            for($i=0;$i<$count;$i++) {
-                                $data = is_array($val[$i])?$val[$i][1]:$val[$i];
-                                if('exp'==strtolower($val[$i][0])) {
-                                    $whereStr .= '('.$key.' '.$data.') '.$rule.' ';
-                                }else{
-                                    $op = is_array($val[$i])?$this->comparison[strtolower($val[$i][0])]:'=';
-                                    $whereStr .= '('.$key.' '.$op.' '.$this->parseValue($data).') '.$rule.' ';
-                                }
-                            }
-                            $whereStr = substr($whereStr,0,-4);
+                    if(strpos($key,'|')) { // 支持 name|title|nickname 方式定义查询字段
+                        $array   =  explode('|',$key);
+                        $str   = array();
+                        foreach ($array as $k){
+                            $str[]   = '('.$this->parseWhereItem($k,$val).')';
                         }
-                    }else {
-                        //对字符串类型字段采用模糊匹配
-                        if(C('DB_LIKE_FIELDS') && preg_match('/('.C('DB_LIKE_FIELDS').')/i',$key)) {
-                            $val  =  '%'.$val.'%';
-                            $whereStr .= $key." LIKE ".$this->parseValue($val);
-                        }else {
-                            $whereStr .= $key." = ".$this->parseValue($val);
-                        }
+                        $whereStr .= '('.implode(' OR ',$str).')';
+                    }else{
+                        $whereStr   .= $this->parseWhereItem($key,$val);
                     }
                 }
                 $whereStr .= ' )'.$operate;
@@ -504,6 +472,58 @@ class Db extends Think
             $whereStr = substr($whereStr,0,-strlen($operate));
         }
         return empty($whereStr)?'':' WHERE '.$whereStr;
+    }
+
+    // where子单元分析
+    protected function parseWhereItem($key,$val) {
+        $whereStr = '';
+        if(is_array($val)) {
+            if(is_string($val[0])) {
+                if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)$/i',$val[0])) { // 比较运算
+                    $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
+                }elseif('exp'==strtolower($val[0])){ // 使用表达式
+                    $whereStr .= ' ('.$key.' '.$val[1].') ';
+                }elseif(preg_match('/IN/i',$val[0])){ // IN 运算
+                    if(is_string($val[1])) {
+                         $val[1] =  explode(',',$val[1]);
+                    }
+                    $zone   =   implode(',',$this->parseValue($val[1]));
+                    $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
+                }elseif(preg_match('/BETWEEN/i',$val[0])){ // BETWEEN运算
+                    $data = is_string($val[1])? explode(',',$val[1]):$val[1];
+                    $whereStr .=  ' ('.$key.' '.strtoupper($val[0]).' '.$data[0].' AND '.$data[1].' )';
+                }else{
+                    throw_exception(L('_EXPRESS_ERROR_').':'.$val[0]);
+                }
+            }else {
+                $count = count($val);
+                if(in_array(strtoupper(trim($val[$count-1])),array('AND','OR','XOR'))) {
+                    $rule = strtoupper(trim($val[$count-1]));
+                    $count   =  $count -1;
+                }else{
+                    $rule = 'AND';
+                }
+                for($i=0;$i<$count;$i++) {
+                    $data = is_array($val[$i])?$val[$i][1]:$val[$i];
+                    if('exp'==strtolower($val[$i][0])) {
+                        $whereStr .= '('.$key.' '.$data.') '.$rule.' ';
+                    }else{
+                        $op = is_array($val[$i])?$this->comparison[strtolower($val[$i][0])]:'=';
+                        $whereStr .= '('.$key.' '.$op.' '.$this->parseValue($data).') '.$rule.' ';
+                    }
+                }
+                $whereStr = substr($whereStr,0,-4);
+            }
+        }else {
+            //对字符串类型字段采用模糊匹配
+            if(C('DB_LIKE_FIELDS') && preg_match('/('.C('DB_LIKE_FIELDS').')/i',$key)) {
+                $val  =  '%'.$val.'%';
+                $whereStr .= $key." LIKE ".$this->parseValue($val);
+            }else {
+                $whereStr .= $key." = ".$this->parseValue($val);
+            }
+        }
+        return $whereStr;
     }
 
     /**
