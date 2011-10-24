@@ -230,35 +230,24 @@ class  ThinkTemplate extends Think
             $this->getIncludeTagLib($content);
             if(!empty($this->tagLib)) {
                 // 对导入的TagLib进行解析
-                $_taglibs = C('_taglibs_');
                 foreach($this->tagLib as $tagLibName) {
-                    // 内置标签库
-                    $tagLibName   = strtolower($tagLibName);
-                    if(!import('Think.Template.TagLib.TagLib'.ucwords($tagLibName))) {
-                        // 扩展标签库
-                        if($_taglibs && isset($_taglibs[$tagLibName]))
-                            // 'tagLibName'=>'importPath'
-                            import($_taglibs[$tagLibName]);
-                        else
-                            throw_exception($tagLibName.L('_TAGLIB_NOT_EXIST_'));
-                    }
                     $this->parseTagLib($tagLibName,$content);
                 }
             }
         }
-        // 预先加载的标签库 无需在每个模板中使用taglib标签加载
+        // 预先加载的标签库 无需在每个模板中使用taglib标签加载 但必须使用标签库XML前缀
         if(C('TAGLIB_PRE_LOAD')) {
             $tagLibs =  explode(',',C('TAGLIB_PRE_LOAD'));
             foreach ($tagLibs as $tag){
                 $this->parseTagLib($tag,$content);
             }
         }
-        // 内置标签库 无需使用taglib标签导入就可以使用
+        // 内置标签库 无需使用taglib标签导入就可以使用 并且不需使用标签库XML前缀
         $tagLibs =  explode(',',C('TAGLIB_BUILD_IN'));
         foreach ($tagLibs as $tag){
             $this->parseTagLib($tag,$content,true);
         }
-        //解析普通模板标签 {tagName:}
+        //解析普通模板标签 {tagName}
         $content = preg_replace('/('.$this->config['tmpl_begin'].')(\S.+?)('.$this->config['tmpl_end'].')/eis',"\$this->parseTag('\\2')",$content);
         return $content;
     }
@@ -364,8 +353,11 @@ class  ThinkTemplate extends Think
     {
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
-        require_cache(dirname(__FILE__).'/TagLib/TagLib'.ucwords($tagLib).'.class.php');
-        $tLib =  Think::instance('TagLib'.ucwords(strtolower($tagLib)));
+        $className = 'TagLib'.ucwords($tagLib);
+        if(!import($className)) {
+            require_cache(dirname(__FILE__).'/TagLib/'.$className.'.class.php');
+        }
+        $tLib =  Think::instance($className);
         foreach ($tLib->tags as $name=>$val){
             $tags = array();
             if(isset($val['alias'])) {// 别名设置
