@@ -455,16 +455,23 @@ class Db extends Think
                     if(!preg_match('/^[A-Z_\|\-.a-z0-9]+$/',trim($key))){
                         throw_exception(L('_EXPRESS_ERROR_').':'.$key);
                     }
-                    $key = $this->addSpecialChar($key);
+                    $key = trim($key);
                     if(strpos($key,'|')) { // 支持 name|title|nickname 方式定义查询字段
                         $array   =  explode('|',$key);
                         $str   = array();
                         foreach ($array as $k){
-                            $str[]   = '('.$this->parseWhereItem($k,$val).')';
+                            $str[]   = '('.$this->parseWhereItem($this->addSpecialChar($k),$val).')';
                         }
                         $whereStr .= '('.implode(' OR ',$str).')';
+                    }elseif(strpos($key,'&')){
+                        $array   =  explode('&',$key);
+                        $str   = array();
+                        foreach ($array as $k){
+                            $str[]   = '('.$this->parseWhereItem($this->addSpecialChar($k),$val).')';
+                        }
+                        $whereStr .= '('.implode(' AND ',$str).')';
                     }else{
-                        $whereStr   .= $this->parseWhereItem($key,$val);
+                        $whereStr   .= $this->parseWhereItem($this->addSpecialChar($key),$val);
                     }
                 }
                 $whereStr .= ' )'.$operate;
