@@ -462,14 +462,14 @@ class Db extends Think
                         foreach ($array as $k){
                             $str[]   = '('.$this->parseWhereItem($this->addSpecialChar($k),$val).')';
                         }
-                        $whereStr .= '('.implode(' OR ',$str).')';
+                        $whereStr .= implode(' OR ',$str);
                     }elseif(strpos($key,'&')){
                         $array   =  explode('&',$key);
                         $str   = array();
                         foreach ($array as $k){
                             $str[]   = '('.$this->parseWhereItem($this->addSpecialChar($k),$val).')';
                         }
-                        $whereStr .= '('.implode(' AND ',$str).')';
+                        $whereStr .= implode(' AND ',$str);
                     }else{
                         $whereStr   .= $this->parseWhereItem($this->addSpecialChar($key),$val);
                     }
