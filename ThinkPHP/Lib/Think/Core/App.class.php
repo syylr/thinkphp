@@ -61,8 +61,8 @@ class App
         if(function_exists('date_default_timezone_set'))
             date_default_timezone_set(C('DEFAULT_TIMEZONE'));
 
-        // 允许注册AUTOLOAD方法
-        if(C('APP_AUTOLOAD_REG') && function_exists('spl_autoload_register'))
+        // 注册AUTOLOAD方法
+        if(function_exists('spl_autoload_register'))
             spl_autoload_register(array('Think', 'autoload'));
 
          // Session初始化 支持其他客户端
