@@ -23,7 +23,7 @@
 //[RUNTIME]
 if (!defined('THINK_PATH')) exit();
 //   系统信息
-if(version_compare(PHP_VERSION,'6.0.0','<') ) {
+if(version_compare(PHP_VERSION,'5.4.0','<') ) {
     @set_magic_quotes_runtime (0);
     define('MAGIC_QUOTES_GPC',get_magic_quotes_gpc()?True:False);
 }
