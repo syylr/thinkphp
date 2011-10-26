@@ -39,6 +39,9 @@ class DbIbase extends Db{
         }
         if(!empty($config)) {
             $this->config   =   $config;
+            if(empty($this->config['params'])) {
+                $this->config['params'] =   array();
+            }
         }
     }
 
@@ -54,7 +57,8 @@ class DbIbase extends Db{
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
-            $conn = $this->pconnect ? 'ibase_pconnect':'ibase_connect';
+            $pconnect   = !empty($config['params']['persist'])? $config['params']['persist']:$this->pconnect;
+            $conn = $pconnect ? 'ibase_pconnect':'ibase_connect';
             // 处理不带端口号的socket连接情况
             $host = $config['hostname'].($config['hostport']?"/{$config['hostport']}":'');
             $this->linkID[$linkNum] = $conn($host.':'.$config['database'], $config['username'], $config['password'],C('DB_CHARSET'),0,3);

@@ -38,6 +38,9 @@ class DbPgsql extends Db{
         }
         if(!empty($config)) {
             $this->config   =   $config;
+            if(empty($this->config['params'])) {
+                $this->config['params'] =   array();
+            }
         }
     }
 
@@ -53,7 +56,8 @@ class DbPgsql extends Db{
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
-            $conn = $this->pconnect ? 'pg_pconnect':'pg_connect';
+            $pconnect   = !empty($config['params']['persist'])? $config['params']['persist']:$this->pconnect;
+            $conn = $pconnect ? 'pg_pconnect':'pg_connect';
             $this->linkID[$linkNum] =  $conn('host='.$config['hostname'].' port='.$config['hostport'].' dbname='.$config['database'].' user='.$config['username'].'  password='.$config['password']);
             if (0 !== pg_connection_status($this->linkID[$linkNum])){
                 throw_exception($this->error(false));

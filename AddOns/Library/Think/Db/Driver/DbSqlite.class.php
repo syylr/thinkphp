@@ -42,6 +42,9 @@ class DbSqlite extends Db
                 $config['mode']	=	0666;
             }
             $this->config	=	$config;
+            if(empty($this->config['params'])) {
+                $this->config['params'] =   array();
+            }
         }
     }
 
@@ -57,7 +60,8 @@ class DbSqlite extends Db
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))	$config	=	$this->config;
-            $conn = $this->pconnect ? 'sqlite_popen':'sqlite_open';
+            $pconnect   = !empty($config['params']['persist'])? $config['params']['persist']:$this->pconnect;
+            $conn = $pconnect ? 'sqlite_popen':'sqlite_open';
             $this->linkID[$linkNum] = $conn($config['database'],$config['mode']);
             if ( !$this->linkID[$linkNum]) {
                 throw_exception(sqlite_error_string());

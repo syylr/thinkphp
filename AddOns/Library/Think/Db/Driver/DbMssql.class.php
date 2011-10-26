@@ -38,6 +38,9 @@ class DbMssql extends Db{
         }
         if(!empty($config)) {
             $this->config	=	$config;
+            if(empty($this->config['params'])) {
+                $this->config['params'] =   array();
+            }
         }
     }
 
@@ -53,7 +56,8 @@ class DbMssql extends Db{
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))	$config  =  $this->config;
-            $conn = $this->pconnect ? 'mssql_pconnect':'mssql_connect';
+            $pconnect   = !empty($config['params']['persist'])? $config['params']['persist']:$this->pconnect;
+            $conn = $pconnect ? 'mssql_pconnect':'mssql_connect';
             // 处理不带端口号的socket连接情况
             $sepr = IS_WIN ? ',' : ':';
             $host = $config['hostname'].($config['hostport']?$sepr."{$config['hostport']}":'');

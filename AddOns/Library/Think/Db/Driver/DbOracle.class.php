@@ -42,6 +42,9 @@ class DbOracle extends Db{
         }
         if(!empty($config)) {
             $this->config        =        $config;
+            if(empty($this->config['params'])) {
+                $this->config['params'] =   array();
+            }
         }
     }
 
@@ -57,7 +60,8 @@ class DbOracle extends Db{
     public function connect($config='',$linkNum=0) {
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config = $this->config;
-            $conn = $this->pconnect ? 'oci_pconnect':'oci_new_connect';
+            $pconnect   = !empty($config['params']['persist'])? $config['params']['persist']:$this->pconnect;
+            $conn = $pconnect ? 'oci_pconnect':'oci_new_connect';
             $this->linkID[$linkNum] = $conn($config['username'], $config['password'],$config['database']);//modify by wyfeng at 2008.12.19
 
             if (!$this->linkID[$linkNum]){
