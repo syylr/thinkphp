@@ -108,8 +108,7 @@ class View extends Think{
      * @return mixed
      +----------------------------------------------------------
      */
-    public function display($templateFile='',$charset='',$contentType='')
-    {
+    public function display($templateFile='',$charset='',$contentType='') {
         $this->fetch($templateFile,$charset,$contentType,true);
     }
 
@@ -126,8 +125,7 @@ class View extends Think{
      * @return mixed
      +----------------------------------------------------------
      */
-    protected function layout($content,$charset='',$contentType='')
-    {
+    protected function layout($content,$charset='',$contentType='') {
         if(false !== strpos($content,'<!-- layout')) {
             // 查找布局包含的页面
             $find = preg_match_all('/<!-- layout::(.+?)::(.+?) -->/is',$content,$matches);
@@ -172,8 +170,7 @@ class View extends Think{
      * @return mixed
      +----------------------------------------------------------
      */
-    public function fetch($templateFile='',$charset='',$contentType='',$display=false)
-    {
+    public function fetch($templateFile='',$charset='',$contentType='',$display=false) {
         G('_viewStartTime');
         // 使用null参数作为模版名直接返回不做任何输出
         if(null===$templateFile) return;
@@ -231,8 +228,7 @@ class View extends Think{
      * @return boolen
      +----------------------------------------------------------
      */
-    protected function checkCache($tmplTemplateFile)
-    {
+    protected function checkCache($tmplTemplateFile) {
         if (!C('TMPL_CACHE_ON')) // 优先对配置设定检测
             return false;
         $tmplCacheFile = C('CACHE_PATH').md5($tmplTemplateFile).C('TMPL_CACHFILE_SUFFIX');
