@@ -154,10 +154,7 @@ class  ThinkTemplate extends Think
      * @return string
      +----------------------------------------------------------
      */
-    protected function compiler( $tmplContent)
-    {
-        // 检查PHP语法
-        $tmplContent  =  $this->parsePhp($tmplContent);
+    protected function compiler( $tmplContent) {
         //模板解析
         $tmplContent = $this->parse($tmplContent);
         // 还原被替换的Literal标签
@@ -215,8 +212,12 @@ class  ThinkTemplate extends Think
      * @return string
      +----------------------------------------------------------
      */
-    public function parse($content)
-    {
+    public function parse($content) {
+        // 内容为空不解析
+        if(empty($content)) return '';
+        // 检查PHP语法
+        $content  =  $this->parsePhp($content);
+
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
         // 首先替换literal标签内容
@@ -767,8 +768,6 @@ class  ThinkTemplate extends Think
         foreach ($vars as $key=>$val) {
             $parseStr = str_replace('['.$key.']',$val,$parseStr);
         }
-        // 检查PHP语法
-        $parseStr  =  $this->parsePhp($parseStr);
         //再次对包含文件进行模板分析
         return $this->parse($parseStr);
     }
