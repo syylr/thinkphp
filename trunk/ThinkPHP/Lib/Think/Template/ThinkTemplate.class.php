@@ -73,8 +73,7 @@ class  ThinkTemplate extends Think
     }
 
     private function stripPreg($str) {
-        $str = str_replace(array('{','}','(',')','|','[',']'),array('\{','\}','\(','\)','\|','\[','\]'),$str);
-        return $str;
+        return str_replace(array('{','}','(',')','|','[',']'),array('\{','\}','\(','\)','\|','\[','\]'),$str);
     }
 
     // 模板变量获取和设置
@@ -124,20 +123,15 @@ class  ThinkTemplate extends Think
 
         //根据模版文件名定位缓存文件
         $tmplCacheFile = $this->config['cache_path'].md5($tmplTemplateFile).$this->config['cache_suffix'];
-        $tmplContent = '';
-        // 检查Cache文件是否需要更新
-        if (!$this->checkCache($tmplTemplateFile)) {
-            // 需要更新模版 读出原模板内容
-            $tmplContent = file_get_contents($tmplTemplateFile);
-            //编译模板内容
-            $tmplContent = $this->compiler($tmplContent);
-            // 检测分组目录
-            if(!is_dir($this->config['cache_path']))
-                mk_dir($this->config['cache_path']);
-            //重写Cache文件
-            if( false === file_put_contents($tmplCacheFile,trim($tmplContent)))
-                throw_exception(L('_CACHE_WRITE_ERROR_').':'.$tmplCacheFile);
-        }
+        $tmplContent = file_get_contents($tmplTemplateFile);
+        //编译模板内容
+        $tmplContent = $this->compiler($tmplContent);
+        // 检测分组目录
+        if(!is_dir($this->config['cache_path']))
+            mk_dir($this->config['cache_path']);
+        //重写Cache文件
+        if( false === file_put_contents($tmplCacheFile,trim($tmplContent)))
+            throw_exception(L('_CACHE_WRITE_ERROR_').':'.$tmplCacheFile);
         return $tmplCacheFile;
     }
 
@@ -152,7 +146,7 @@ class  ThinkTemplate extends Think
      * @return string
      +----------------------------------------------------------
      */
-    protected function compiler( $tmplContent) {
+    protected function compiler($tmplContent) {
         //模板解析
         $tmplContent = $this->parse($tmplContent);
         // 还原被替换的Literal标签
@@ -166,35 +160,6 @@ class  ThinkTemplate extends Think
             $tmplContent = preg_replace($find, $replace, $tmplContent);
         }
         return trim($tmplContent);
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 检查缓存文件是否有效
-     * 如果无效则需要重新更新
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $tmplTemplateFile  模板文件名
-     +----------------------------------------------------------
-     * @return boolen
-     +----------------------------------------------------------
-     */
-    protected function checkCache($tmplTemplateFile) {
-        if (!$this->config['tmpl_cache']) // 优先对配置检测
-            return false;
-        $tmplCacheFile = $this->config['cache_path'].md5($tmplTemplateFile).$this->config['cache_suffix'];
-        if(!is_file($tmplCacheFile)){
-            return false;
-        }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
-            // 模板文件如果有更新则缓存需要更新
-            return false;
-        }elseif ($this->config['cache_time'] != -1 && time() > filemtime($tmplCacheFile)+$this->config['cache_time']) {
-            // 缓存是否在有效期
-            return false;
-        }
-        //缓存有效
-        return true;
     }
 
     /**
@@ -266,14 +231,14 @@ class  ThinkTemplate extends Think
      +----------------------------------------------------------
      * 替换页面中的literal标签
      +----------------------------------------------------------
-     * @access public
+     * @access private
      +----------------------------------------------------------
      * @param string $content  模板内容
      +----------------------------------------------------------
      * @return string|false
      +----------------------------------------------------------
      */
-    function parseLiteral($content) {
+    private function parseLiteral($content) {
         if(trim($content)=='')
             return '';
         $content = stripslashes($content);
@@ -287,14 +252,14 @@ class  ThinkTemplate extends Think
      +----------------------------------------------------------
      * 还原被替换的literal标签
      +----------------------------------------------------------
-     * @access public
+     * @access private
      +----------------------------------------------------------
      * @param string $tag  literal标签序号
      +----------------------------------------------------------
      * @return string|false
      +----------------------------------------------------------
      */
-    function restoreLiteral($tag) {
+    private function restoreLiteral($tag) {
         // 还原literal标签
         $parseStr   =  $this->literal[$tag];
         // 销毁literal记录
