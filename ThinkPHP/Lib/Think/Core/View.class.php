@@ -22,8 +22,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-class View extends Think
-{
+class View extends Think{
     protected $tVar        =  array(); // 模板输出变量
     protected $trace       = array();  // 页面trace变量
     protected $templateFile  = '';      // 模板文件名
