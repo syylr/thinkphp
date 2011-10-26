@@ -45,8 +45,7 @@ class  ThinkTemplate extends Think
      * @return ThinkTemplate
      +----------------------------------------------------------
      */
-    static public function  getInstance()
-    {
+    static public function  getInstance() {
         return get_instance_of(__CLASS__);
     }
 
@@ -114,8 +113,7 @@ class  ThinkTemplate extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function loadTemplate ($tmplTemplateFile='')
-    {
+    public function loadTemplate ($tmplTemplateFile='') {
         if(empty($tmplTemplateFile))    $tmplTemplateFile = $this->config['default_tmpl'];
         if(!is_file($tmplTemplateFile)){
             $tmplTemplateFile =  dirname($this->config['default_tmpl']).'/'.$tmplTemplateFile.$this->config['template_suffix'];
@@ -182,8 +180,7 @@ class  ThinkTemplate extends Think
      * @return boolen
      +----------------------------------------------------------
      */
-    protected function checkCache($tmplTemplateFile)
-    {
+    protected function checkCache($tmplTemplateFile) {
         if (!$this->config['tmpl_cache']) // 优先对配置检测
             return false;
         $tmplCacheFile = $this->config['cache_path'].md5($tmplTemplateFile).$this->config['cache_suffix'];
@@ -317,8 +314,7 @@ class  ThinkTemplate extends Think
      * @return string|false
      +----------------------------------------------------------
      */
-    public function getIncludeTagLib(& $content)
-    {
+    public function getIncludeTagLib(& $content) {
         //搜索是否有TagLib标签
         $find = preg_match('/'.$this->config['taglib_begin'].'taglib\s(.+?)(\s*?)\/'.$this->config['taglib_end'].'\W/is',$content,$matches);
         if($find) {
@@ -350,8 +346,7 @@ class  ThinkTemplate extends Think
      * @return string
      +----------------------------------------------------------
      */
-    public function parseTagLib($tagLib,&$content,$hide=false)
-    {
+    public function parseTagLib($tagLib,&$content,$hide=false) {
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
         $className = 'TagLib'.ucwords($tagLib);
@@ -407,8 +402,7 @@ class  ThinkTemplate extends Think
      * @return string|false
      +----------------------------------------------------------
      */
-    public function parseXmlTag($tagLib,$tag,$attr,$content)
-    {
+    public function parseXmlTag($tagLib,$tag,$attr,$content) {
         //if (MAGIC_QUOTES_GPC) {
             $attr = stripslashes($attr);
             $content = stripslashes($content);
@@ -744,6 +738,7 @@ class  ThinkTemplate extends Think
      * @access public
      +----------------------------------------------------------
      * @param string $tmplPublicName  公共模板文件名
+     * @param array $vars  要传递的变量列表
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
