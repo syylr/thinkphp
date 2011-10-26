@@ -615,8 +615,8 @@ class Db extends Think
                 $joinStr .= ' LEFT JOIN ' .$join;
             }
         }
-		//将DB_PREFIX这个字符串替换为数据表前缀，这样省的每次写join的时候都要带着前缀
-		$joinStr = str_replace('DB_PREFIX',C('DB_PREFIX'),$joinStr);
+		//将__TABLE_NAME__这样的字符串替换成正规的表名,并且带上前缀和后缀
+		$joinStr = preg_replace("/__([A-Z_-]+)__/eisU",C("DB_PREFIX").".strtolower('$1')".C("DB_SUFFIX"),$joinStr);
         return $joinStr;
     }
 
