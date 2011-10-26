@@ -69,15 +69,8 @@ class TagLibCx extends TagLib
     {
         $tag    = $this->parseXmlAttr($attr,'include');
         $file   =   $tag['file'];
-        $parseStr = $this->tpl->parseInclude($file);
-		 foreach ($tag as $key=>$val) {
-            if ($key == 'file') {
-                continue;
-            }
-            //echo $key;
-            $parseStr = str_replace('['.$key.']',$val,$parseStr);
-        }
-        return $this->tpl->parse($parseStr);
+        unset($tag['file']);
+        return $this->tpl->parseInclude($file,$tag);
     }
 
     /**

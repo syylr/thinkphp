@@ -747,7 +747,7 @@ class  ThinkTemplate extends Think
      * @return string
      +----------------------------------------------------------
      */
-    public function parseInclude($tmplPublicName){
+    public function parseInclude($tmplPublicName,$vars=array()){
         if(substr($tmplPublicName,0,1)=='$')
             //支持加载变量文件名
             $tmplPublicName = $this->get(substr($tmplPublicName,1));
@@ -763,6 +763,9 @@ class  ThinkTemplate extends Think
                 $path   = dirname($path);
             $templateFile =  $path.'/'.$tmplPublicName.$this->config['template_suffix'];
             $parseStr = file_get_contents($templateFile);
+        }
+        foreach ($vars as $key=>$val) {
+            $parseStr = str_replace('['.$key.']',$val,$parseStr);
         }
         // 检查PHP语法
         $parseStr  =  $this->parsePhp($parseStr);
