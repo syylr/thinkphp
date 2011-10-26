@@ -399,6 +399,7 @@ class Db extends Think
         }else{
             $fieldsStr = '*';
         }
+		//TODO 如果是查询全部字段，并且是join的方式，那么就把要查的表加个别名，以免字段被覆盖
         return $fieldsStr;
     }
 
@@ -614,6 +615,8 @@ class Db extends Think
                 $joinStr .= ' LEFT JOIN ' .$join;
             }
         }
+		//将DB_PREFIX这个字符串替换为数据表前缀，这样省的每次写join的时候都要带着前缀
+		$joinStr = str_replace('DB_PREFIX',C('DB_PREFIX'),$joinStr);
         return $joinStr;
     }
 
