@@ -14,7 +14,7 @@
 return array(
     THINK_PATH.'/Common/functions.php',   // 系统函数库
     THINK_PATH.'/Lib/Think/Core/Think.class.php',
-    THINK_PATH.'/Lib/Think/Core/Log.class.php',
+    THINK_PATH.'/Mode/Cli/Log.class.php',
     THINK_PATH.'/Mode/Cli/App.class.php',
     THINK_PATH.'/Mode/Cli/Action.class.php',
     THINK_PATH.'/Mode/Cli/alias.php', // 加载别名
