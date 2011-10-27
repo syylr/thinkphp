@@ -226,16 +226,15 @@ abstract class Action extends Think
                     return ;
                 }
             }
-            // 如果定义了_empty操作 则调用
             if(method_exists($this,'_empty')) {
+                // 如果定义了_empty操作 则调用
                 $this->_empty($method,$args);
-            }else {
+            }elseif(file_exists_case(C('TMPL_FILE_NAME'))){
                 // 检查是否存在默认模版 如果有直接输出模版
-                if(file_exists_case(C('TMPL_FILE_NAME')))
-                    $this->display();
-                else
-                    // 抛出异常
-                    throw_exception(L('_ERROR_ACTION_').':'.ACTION_NAME);
+                $this->display();
+            }else{
+                // 抛出异常
+                throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
             }
         }else{
             switch(strtolower($method)) {
