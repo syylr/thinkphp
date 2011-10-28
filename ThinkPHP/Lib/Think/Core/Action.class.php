@@ -375,6 +375,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * @param string $message 提示信息
      * @param Boolean $status 状态
+     * @param string $jumpUrl 页面跳转地址
      * @param Boolean $ajax 是否为Ajax方式
      +----------------------------------------------------------
      * @access private
