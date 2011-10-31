@@ -424,17 +424,5 @@ where a.rdb$constraint_type=\'PRIMARY KEY\' and a.rdb$relation_name=UPPER(\''.$t
 		return $limitStr;
 	}
 
-   /**
-     +----------------------------------------------------------
-     * 析构方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     */
-    public function __destruct()
-    {
-        // 关闭连接
-        $this->close();
-    }
 }//类定义结束
 ?>
