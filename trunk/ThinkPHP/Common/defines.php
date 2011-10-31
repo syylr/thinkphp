@@ -59,6 +59,7 @@ if(!IS_CLI) {
     define('URL_PATHINFO',    1);   //PATHINFO模式
     define('URL_REWRITE',     2);   //REWRITE模式
     define('URL_COMPAT',      3);   // 兼容模式
+    define('__SELF__',$_SERVER['REQUEST_URI']); // 当前请求地址
 }
 //  版本信息
 define('THINK_VERSION', '2.1');

@@ -456,7 +456,7 @@ class View extends Think{
         $traceFile  =   CONFIG_PATH.'trace.php';
         $_trace =   is_file($traceFile)? include $traceFile : array();
          // 系统默认显示信息
-        $this->trace('当前页面',    $_SERVER['REQUEST_URI']);
+        $this->trace('当前页面',    __SELF__);
         $this->trace('模板缓存',    C('CACHE_PATH').md5($this->templateFile).C('TMPL_CACHFILE_SUFFIX'));
         $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
         $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
