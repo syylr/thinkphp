@@ -408,30 +408,6 @@ class  ThinkTemplate extends Think
             return  '<?php echo '.$name.';?>';
         }elseif('~' == $flag){ // 执行某个函数
             return  '<?php '.$name.';?>';
-        }elseif('&' == $flag){ // 输出配置参数
-            return '<?php echo C("'.$name.'");?>';
-        }elseif('%' == $flag){ // 输出语言变量
-            return '<?php echo L("'.$name.'");?>';
-        }elseif('@' == $flag){ // 输出SESSION变量
-            if(strpos($name,'.')) {
-                $array   =  explode('.',$name);
-                return '<?php echo $_SESSION["'.$array[0].'"]["'.$array[1].'"];?>';
-            }else{
-                return '<?php echo $_SESSION["'.$name.'"];?>';
-            }
-        }elseif('#' == $flag){ // 输出COOKIE变量
-            if(strpos($name,'.')) {
-                $array   =  explode('.',$name);
-                return '<?php echo $_COOKIE["'.$array[0].'"]["'.$array[1].'"];?>';
-            }else{
-                return '<?php echo $_COOKIE["'.$name.'"];?>';
-            }
-        }elseif('.' == $flag){ // 输出GET变量
-            return '<?php echo $_GET["'.$name.'"];?>';
-        }elseif('^' == $flag){ // 输出POST变量
-            return '<?php echo $_POST["'.$name.'"];?>';
-        }elseif('*' == $flag){ // 输出常量
-            return '<?php echo constant("'.$name.'");?>';
         }elseif(substr($tagStr,0,2)=='//' || (substr($tagStr,0,2)=='/*' && substr($tagStr,-2)=='*/')){
             //注释标签
             return '';
