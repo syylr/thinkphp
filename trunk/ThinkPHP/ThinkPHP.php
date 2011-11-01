@@ -17,6 +17,9 @@
  */
 //记录开始运行时间
 G('beginTime');
+define('MEMORY_LIMIT_ON',function_exists('memory_get_usage'));
+// 记录内存初始使用
+if(MEMORY_LIMIT_ON) $GLOBALS['_startUseMems'] = memory_get_usage();
 if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Runtime/');
 if(!defined('APP_DEPLOY')) define('APP_DEPLOY',false); // 应用开发模式 false 调试模式 true 部署模式
