@@ -492,11 +492,15 @@ class Db extends Think
                 }elseif('exp'==strtolower($val[0])){ // 使用表达式
                     $whereStr .= ' ('.$key.' '.$val[1].') ';
                 }elseif(preg_match('/IN/i',$val[0])){ // IN 运算
-                    if(is_string($val[1])) {
-                         $val[1] =  explode(',',$val[1]);
+                    if(isset($val[2]) && 'exp'==$val[2]) {
+                        $whereStr .= $key.' '.strtoupper($val[0]).' '.$val[1];
+                    }else{
+                        if(is_string($val[1])) {
+                             $val[1] =  explode(',',$val[1]);
+                        }
+                        $zone   =   implode(',',$this->parseValue($val[1]));
+                        $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
                     }
-                    $zone   =   implode(',',$this->parseValue($val[1]));
-                    $whereStr .= $key.' '.strtoupper($val[0]).' ('.$zone.')';
                 }elseif(preg_match('/BETWEEN/i',$val[0])){ // BETWEEN运算
                     $data = is_string($val[1])? explode(',',$val[1]):$val[1];
                     $whereStr .=  ' ('.$key.' '.strtoupper($val[0]).' '.$data[0].' AND '.$data[1].' )';
