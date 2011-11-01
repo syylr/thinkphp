@@ -27,8 +27,7 @@ class App
      * @return void
      +----------------------------------------------------------
      */
-    static public function run()
-    {
+    static public function run() {
         // 设定错误和异常处理
         set_error_handler(array('App',"appError"));
         set_exception_handler(array('App',"appException"));
@@ -39,7 +38,9 @@ class App
         if(C('URL_MODEL')==1) {// PATHINFO 模式URL下面 采用 index.php module/action/id/4
             $depr = C('URL_PATHINFO_DEPR');
             $path   = isset($_SERVER['argv'][1])?$_SERVER['argv'][1]:'';
-            $params = explode($depr,trim($path,$depr));
+            if(!empty($path)) {
+                $params = explode($depr,trim($path,$depr));
+            }
             // 取得模块和操作名称
             define('MODULE_NAME',   !empty($params)?array_shift($params):C('DEFAULT_MODULE'));
             define('ACTION_NAME',  !empty($params)?array_shift($params):C('DEFAULT_ACTION'));
@@ -73,8 +74,7 @@ class App
      * @return string
      +----------------------------------------------------------
      */
-    static private function build()
-    {
+    static private function build() {
         // 加载惯例配置文件
         C(include THINK_PATH.'/Common/convention.php');
         // 加载项目配置文件
@@ -120,8 +120,7 @@ class App
      * @param mixed $e 异常对象
      +----------------------------------------------------------
      */
-    static public function appException($e)
-    {
+    static public function appException($e) {
         exit($e->__toString());
     }
 
@@ -139,8 +138,7 @@ class App
      * @return void
      +----------------------------------------------------------
      */
-    static public function appError($errno, $errstr, $errfile, $errline)
-    {
+    static public function appError($errno, $errstr, $errfile, $errline) {
       switch ($errno) {
           case E_ERROR:
           case E_USER_ERROR:
