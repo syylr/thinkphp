@@ -33,8 +33,7 @@ class App
      * @return void
      +----------------------------------------------------------
      */
-    static public function init()
-    {
+    static public function init() {
         // 设定错误和异常处理
         set_error_handler(array('App','appError'));
         set_exception_handler(array('App','appException'));
@@ -84,8 +83,7 @@ class App
      * @return string
      +----------------------------------------------------------
      */
-    static private function build()
-    {
+    static private function build() {
         // 加载惯例配置文件
         C(include THINK_PATH.'/Common/convention.php');
         // 加载项目配置文件
@@ -139,8 +137,7 @@ class App
      * @return void
      +----------------------------------------------------------
      */
-    static private function checkLanguage()
-    {
+    static private function checkLanguage() {
         $langSet = C('DEFAULT_LANG');
         // 不开启语言包功能，仅仅加载框架语言文件直接返回
         if (!C('LANG_SWITCH_ON')){
@@ -190,8 +187,7 @@ class App
      * @return void
      +----------------------------------------------------------
      */
-    static private function checkTemplate()
-    {
+    static private function checkTemplate() {
         /* 获取模板主题名称 */
         $templateSet =  C('DEFAULT_THEME');
         if(C('TMPL_DETECT_THEME')) {// 自动侦测模板主题
@@ -236,8 +232,7 @@ class App
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    static public function exec()
-    {
+    static public function exec() {
         // 是否开启标签扩展
         $tagOn   =  C('APP_PLUGIN_ON');
         // 项目运行标签
@@ -319,8 +314,7 @@ class App
      * @param mixed $e 异常对象
      +----------------------------------------------------------
      */
-    static public function appException($e)
-    {
+    static public function appException($e) {
         halt($e->__toString());
     }
 
@@ -338,8 +332,7 @@ class App
      * @return void
      +----------------------------------------------------------
      */
-    static public function appError($errno, $errstr, $errfile, $errline)
-    {
+    static public function appError($errno, $errstr, $errfile, $errline) {
       switch ($errno) {
           case E_ERROR:
           case E_USER_ERROR:

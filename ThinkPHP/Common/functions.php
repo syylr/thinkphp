@@ -304,8 +304,7 @@ function get_instance_of($name, $method='', $args=array()) {
  * @return void
  +----------------------------------------------------------
  */
-function __autoload($name)
-{
+function __autoload($name) {
     // 检查是否存在别名定义
     if(alias_import($name)) return ;
     // 自动加载当前项目的Actioon类和Model类
@@ -917,7 +916,7 @@ function cookie($name, $value='', $option=null) {
 }
 
 // 获取客户端IP地址
-function get_client_ip(){
+function get_client_ip() {
     static $ip = NULL;
     if ($ip !== NULL) return $ip;
     if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -934,5 +933,4 @@ function get_client_ip(){
     $ip = (false !== ip2long($ip)) ? $ip : '0.0.0.0';
     return $ip;
 }
-
 ?>

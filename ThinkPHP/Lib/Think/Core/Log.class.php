@@ -82,8 +82,7 @@ class Log extends Think
      * @return void
      +----------------------------------------------------------
      */
-    static function save($type=self::FILE,$destination='',$extra='')
-    {
+    static function save($type=self::FILE,$destination='',$extra='') {
         if(empty($destination))
             $destination = LOG_PATH.date('y_m_d').".log";
         if(self::FILE == $type) { // 文件方式记录日志信息
@@ -113,8 +112,7 @@ class Log extends Think
      * @return void
      +----------------------------------------------------------
      */
-    static function write($message,$level=self::ERR,$type=self::FILE,$destination='',$extra='')
-    {
+    static function write($message,$level=self::ERR,$type=self::FILE,$destination='',$extra='') {
         $now = date(self::$format);
         if(empty($destination))
             $destination = LOG_PATH.date('y_m_d').".log";
