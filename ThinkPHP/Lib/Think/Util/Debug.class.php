@@ -36,8 +36,7 @@ class Debug extends Think
      * @return void
      +----------------------------------------------------------
      */
-    static public function mark($name)
-    {
+    static public function mark($name) {
         self::$marker['time'][$name]  =  microtime(TRUE);
         if(MEMORY_LIMIT_ON) {
             self::$marker['mem'][$name] = memory_get_usage();
@@ -58,8 +57,7 @@ class Debug extends Think
      * @return integer
      +----------------------------------------------------------
      */
-    static public function useTime($start,$end,$decimals = 6)
-    {
+    static public function useTime($start,$end,$decimals = 6) {
         if ( ! isset(self::$marker['time'][$start]))
             return '';
         if ( ! isset(self::$marker['time'][$end]))
@@ -79,8 +77,7 @@ class Debug extends Think
      * @return integer
      +----------------------------------------------------------
      */
-    static public function useMemory($start,$end)
-    {
+    static public function useMemory($start,$end) {
         if(!MEMORY_LIMIT_ON)
             return '';
         if ( ! isset(self::$marker['mem'][$start]))

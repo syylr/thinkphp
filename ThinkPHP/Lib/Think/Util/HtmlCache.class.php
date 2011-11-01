@@ -114,8 +114,7 @@ class HtmlCache extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    static public function writeHTMLCache($content)
-    {
+    static public function writeHTMLCache($content) {
         if(self::$requireCache) {
             //静态文件写入
             // 如果开启HTML功能 检查并重写HTML文件
@@ -141,8 +140,7 @@ class HtmlCache extends Think
      * @return boolen
      +----------------------------------------------------------
      */
-    static public function checkHTMLCache($cacheFile='',$cacheTime='')
-    {
+    static public function checkHTMLCache($cacheFile='',$cacheTime='') {
         if(!is_file($cacheFile)){
             return false;
         }elseif (filemtime(C('TMPL_FILE_NAME')) > filemtime($cacheFile)) {
@@ -159,7 +157,7 @@ class HtmlCache extends Think
     }
 
     //检测是否是空操作
-    static private function isEmptyAction($module,$action){
+    static private function isEmptyAction($module,$action) {
         $className =  $module.'Action';
         $class=new $className;
         return !method_exists($class,$action);

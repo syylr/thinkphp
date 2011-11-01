@@ -98,8 +98,7 @@ class Cache extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function connect($type='',$options=array())
-    {
+    public function connect($type='',$options=array()) {
         if(empty($type))  $type = C('DATA_CACHE_TYPE');
         $cachePath = dirname(__FILE__).'/Cache/';
         $cacheClass = 'Cache'.ucwords(strtolower(trim($type)));
@@ -139,8 +138,7 @@ class Cache extends Think
      * @return mixed
      +----------------------------------------------------------
      */
-    static function getInstance()
-    {
+    static function getInstance() {
        $param = func_get_args();
         return get_instance_of(__CLASS__,'connect',$param);
     }
