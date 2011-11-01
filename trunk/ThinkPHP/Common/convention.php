@@ -27,7 +27,6 @@ if (!defined('THINK_PATH')) exit();
 return  array(
 
     /* 项目设定 */
-    'APP_DEBUG'				=> false,	// 是否开启调试模式
     'APP_DOMAIN_DEPLOY'     => false,   // 是否使用独立域名部署项目
     'APP_SUB_DOMAIN_DEPLOY' => false,   // 是否开启子域名
     'APP_PLUGIN_ON'         => false,   // 是否开启插件机制

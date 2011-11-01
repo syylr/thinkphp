@@ -33,17 +33,7 @@ class App
         set_error_handler(array('App',"appError"));
         set_exception_handler(array('App',"appException"));
         //[RUNTIME]
-        // 检查项目是否编译过
-        // 在部署模式下会自动在第一次执行的时候编译项目
-        if(defined('RUNTIME_MODEL')){
-            // 运行模式无需载入项目编译缓存
-        }elseif(is_file(RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php')) {
-            // 直接读取编译后的项目文件
-            C(include RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php');
-        }else{
-            // 预编译项目
-            App::build();
-        }
+        App::build(); // 预编译项目
         //[/RUNTIME]
 
         if(C('URL_MODEL')==1) {// PATHINFO 模式URL下面 采用 index.php module/action/id/4
@@ -92,13 +82,10 @@ class App
             C(include CONFIG_PATH.'config.php');
         }
         $common   = '';
-        $debug  =  C('APP_DEBUG');  //  是否调试模式
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
-            if(!$debug) { // 编译文件
-                $common   .= compile(COMMON_PATH.'common.php');
-            }
+            if(APP_DEPLOY)  $common   .= compile(COMMON_PATH.'common.php');
         }
         // 加载项目编译文件列表
         if(is_file(CONFIG_PATH.'app.php')) {
@@ -106,33 +93,19 @@ class App
             foreach ($list as $key=>$file){
                 // 加载并编译文件
                 require $file;
-                if(!$debug) {
-                    $common   .= compile($file);
-                }
+                if(APP_DEPLOY)  $common   .= compile($file);
             }
         }
         // 如果是调试模式加载调试模式配置文件
-        if($debug) {
+        if(APP_DEPLOY) {
+            // 部署模式下面生成编译文件
+            build_runtime_cache($common);
+        }else{
             // 加载系统默认的开发模式配置文件
             C(include THINK_PATH.'/Common/debug.php');
             if(is_file(CONFIG_PATH.'debug.php')) {
                 // 允许项目增加开发模式配置定义
                 C(include CONFIG_PATH.'debug.php');
-            }
-        }else{
-            // 部署模式下面生成编译文件
-            // 下次直接加载项目编译文件
-            if(defined('RUNTIME_ALLINONE')) {
-                // 获取用户自定义变量
-                $defs = get_defined_constants(TRUE);
-                $content  = array_define($defs['user']);
-                $runtimefile = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
-                $content .= substr(file_get_contents(RUNTIME_PATH.$runtimefile),5);
-                $content .= $common."\nreturn ".var_export(C(),true).';';
-                file_put_contents(RUNTIME_PATH.'~allinone.php',strip_whitespace('<?php '.$content));
-            }else{
-                $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
-                file_put_contents(RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php',strip_whitespace($content));
             }
         }
         return ;

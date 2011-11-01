@@ -57,7 +57,7 @@ class App
 			$methods = get_class_methods($temp);
 			$server->add($methods,new $temp);
 		}
-        if(C('APP_DEBUG')) {
+        if(!APP_DEPLOY) {
             $server->setDebugMode(true);
         }
         $server->setEnableGZIP(true);
@@ -87,13 +87,10 @@ class App
             C(include CONFIG_PATH.'config.php');
         }
         $common   = '';
-        $debug  =  C('APP_DEBUG');  //  是否调试模式
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
-            if(!$debug) { // 编译文件
-                $common   .= compile(COMMON_PATH.'common.php');
-            }
+            if(APP_DEPLOY)  $common   .= compile(COMMON_PATH.'common.php');
         }
         // 加载项目编译文件列表
         if(is_file(CONFIG_PATH.'app.php')) {
@@ -101,34 +98,19 @@ class App
             foreach ($list as $key=>$file){
                 // 加载并编译文件
                 require $file;
-                if(!$debug) {
-                    $common   .= compile($file);
-                }
+                if(APP_DEPLOY)  $common   .= compile($file);
             }
         }
         // 如果是调试模式加载调试模式配置文件
-        if($debug) {
-            // 加载系统默认的开发模式配置文件
+        if(APP_DEPLOY) {
+            // 部署模式下面生成编译文件
+            build_runtime_cache($common);
+        }else{
+            // 调试模式加载系统默认的开发模式配置文件
             C(include THINK_PATH.'/Common/debug.php');
-            if(is_file(CONFIG_PATH.'debug.php')) {
+            if(is_file(CONFIG_PATH.'debug.php'))
                 // 允许项目增加开发模式配置定义
                 C(include CONFIG_PATH.'debug.php');
-            }
-        }else{
-            // 部署模式下面生成编译文件
-            // 下次直接加载项目编译文件
-            if(defined('RUNTIME_ALLINONE')) {
-                // 获取用户自定义变量
-                $defs = get_defined_constants(TRUE);
-                $content  = array_define($defs['user']);
-                $runtimefile = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
-                $content .= substr(file_get_contents(RUNTIME_PATH.$runtimefile),5);
-                $content .= $common."\nreturn ".var_export(C(),true).';';
-                file_put_contents(RUNTIME_PATH.'~allinone.php',strip_whitespace('<?php '.$content));
-            }else{
-                $content  = "<?php ".$common."\nreturn ".var_export(C(),true).";\n?>";
-                file_put_contents(RUNTIME_PATH.'~'.APP_CACHE_NAME.'.php',strip_whitespace($content));
-            }
         }
         return ;
     }
