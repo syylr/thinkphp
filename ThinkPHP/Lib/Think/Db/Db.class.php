@@ -806,11 +806,12 @@ class Db extends Think
      * @access public
      +----------------------------------------------------------
      * @param array $options 表达式
+     * @param boolean $query 是否执行查询
      +----------------------------------------------------------
-     * @return array
+     * @return mixed
      +----------------------------------------------------------
      */
-    public function select($options=array()) {
+    public function select($options=array(),$query=true) {
         if(isset($options['page'])) {
             // 根据页数计算limit
             list($page,$listRows) =  explode(',',$options['page']);
@@ -833,7 +834,7 @@ class Db extends Think
                 $this->parseLimit(isset($options['limit'])?$options['limit']:'')
             ),$this->selectSql);
         $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
-        return $this->query($sql);
+        return $query?$this->query($sql):$sql;
     }
 
     /**
