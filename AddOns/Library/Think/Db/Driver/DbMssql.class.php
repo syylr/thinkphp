@@ -162,8 +162,7 @@ class DbMssql extends Db{
      * @return integer
      +----------------------------------------------------------
      */
-    public function mssql_insert_id()
-    {
+    public function mssql_insert_id() {
         $query  =   "SELECT @@IDENTITY as last_insert_id";
         $result =   mssql_query($query, $this->_linkID);
         list($last_insert_id)   =   mssql_fetch_row($result);
@@ -200,8 +199,7 @@ class DbMssql extends Db{
      * @return boolen
      +----------------------------------------------------------
      */
-    public function commit()
-    {
+    public function commit() {
         if ($this->transTimes > 0) {
             $result = mssql_query('COMMIT TRAN', $this->_linkID);
             $this->transTimes = 0;
@@ -221,8 +219,7 @@ class DbMssql extends Db{
      * @return boolen
      +----------------------------------------------------------
      */
-    public function rollback()
-    {
+    public function rollback() {
         if ($this->transTimes > 0) {
             $result = mssql_query('ROLLBACK TRAN', $this->_linkID);
             $this->transTimes = 0;
