@@ -122,8 +122,7 @@ class Db extends Think
                 $db->dbType = strtoupper($this->dbType);
             else
                 $db->dbType = $this->_getDsnType($db_config['dsn']);
-            if(C('APP_DEBUG'))
-                $db->debug    = true;
+            if(!APP_DEPLOY)  $db->debug    = true;
         }else {
             // 类没有定义
             throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);

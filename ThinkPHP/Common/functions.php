@@ -154,7 +154,7 @@ function halt($error) {
     if (IS_CLI)
         exit($error);
     $e = array();
-    if (C('APP_DEBUG')) {
+    if (!APP_DEPLOY) {
         //调试模式下输出错误信息
         if (!is_array($error)) {
             $trace = debug_backtrace();
@@ -295,37 +295,37 @@ function get_instance_of($name, $method='', $args=array()) {
 }
 
 /**
-  +----------------------------------------------------------
+ +----------------------------------------------------------
  * 系统自动加载ThinkPHP基类库和当前项目的model和Action对象
  * 并且支持配置自动加载路径
-  +----------------------------------------------------------
+ +----------------------------------------------------------
  * @param string $name 对象类名
-  +----------------------------------------------------------
+ +----------------------------------------------------------
  * @return void
-  +----------------------------------------------------------
+ +----------------------------------------------------------
  */
-function __autoload($name) {
+function __autoload($name)
+{
     // 检查是否存在别名定义
-    if (alias_import($name))
-        return;
+    if(alias_import($name)) return ;
     // 自动加载当前项目的Actioon类和Model类
-    if (substr($name, -5) == "Model") {
-        require_cache(LIB_PATH . 'Model/' . $name . '.class.php');
-    } elseif (substr($name, -6) == "Action") {
-        require_cache(LIB_PATH . 'Action/' . $name . '.class.php');
-    } else {
+    if(substr($name,-5)=="Model") {
+        require_cache(LIB_PATH.'Model/'.$name.'.class.php');
+    }elseif(substr($name,-6)=="Action"){
+        require_cache(LIB_PATH.'Action/'.$name.'.class.php');
+    }else {
         // 根据自动加载路径设置进行尝试搜索
-        if (C('APP_AUTOLOAD_PATH')) {
-            $paths = explode(',', C('APP_AUTOLOAD_PATH'));
-            foreach ($paths as $path) {
-                if (import($path . $name)) {
+        if(C('APP_AUTOLOAD_PATH')) {
+            $paths  =   explode(',',C('APP_AUTOLOAD_PATH'));
+            foreach ($paths as $path){
+                if(import($path.$name)) {
                     // 如果加载类成功则返回
-                    return;
+                    return ;
                 }
             }
         }
     }
-    return;
+    return ;
 }
 
 // 优化的require_once
@@ -497,7 +497,7 @@ function D($name='', $app='') {
     if (class_exists($className)) {
         $model = new $className();
     } else {
-        $model = new Model($name);
+        throw_exception(L('_CLASS_NOT_EXIST_').':'.$className);
     }
     $_model[$app . $OriClassName] = $model;
     return $model;
@@ -761,11 +761,10 @@ function strip_whitespace($content) {
 
 //[RUNTIME]
 // 编译文件
-function compile($filename, $runtime=false) {
+function compile($filename) {
     $content = file_get_contents($filename);
-    if (true === $runtime)
     // 替换预编译指令
-        $content = preg_replace('/\/\/\[RUNTIME\](.*?)\/\/\[\/RUNTIME\]/s', '', $content);
+    $content = preg_replace('/\/\/\[RUNTIME\](.*?)\/\/\[\/RUNTIME\]/s', '', $content);
     $content = substr(trim($content), 5);
     if ('?>' == substr($content, -2))
         $content = substr($content, 0, -2);
@@ -777,7 +776,7 @@ function array_define($array) {
     $content = '';
     foreach ($array as $key => $val) {
         $key = strtoupper($key);
-        if (in_array($key, array('THINK_PATH', 'APP_NAME', 'APP_PATH', 'APP_CACHE_NAME', 'RUNTIME_PATH', 'RUNTIME_ALLINONE', 'THINK_MODE')))
+        if (in_array($key, array('THINK_PATH', 'APP_NAME', 'APP_PATH', 'APP_DEPLOY', 'RUNTIME_PATH', 'THINK_MODE')))
             $content .= 'if(!defined(\'' . $key . '\')) ';
         if (is_int($val) || is_float($val)) {
             $content .= "define('" . $key . "'," . $val . ");";
@@ -935,4 +934,5 @@ function get_client_ip(){
     $ip = (false !== ip2long($ip)) ? $ip : '0.0.0.0';
     return $ip;
 }
+
 ?>
