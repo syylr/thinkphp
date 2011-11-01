@@ -82,8 +82,7 @@ class Db extends Think
      * @return mixed 返回数据库驱动类
      +----------------------------------------------------------
      */
-    public static function getInstance()
-    {
+    public static function getInstance() {
         $args = func_get_args();
         return get_instance_of(__CLASS__,'factory',$args);
     }
@@ -101,8 +100,7 @@ class Db extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function factory($db_config='')
-    {
+    public function factory($db_config='') {
         // 读取数据库配置
         $db_config = $this->parseConfig($db_config);
         if(empty($db_config['dbms']))
@@ -266,8 +264,7 @@ class Db extends Think
      * @return array
      +----------------------------------------------------------
      */
-    public function parseDSN($dsnStr)
-    {
+    public function parseDSN($dsnStr) {
         if( empty($dsnStr) ){return false;}
         $info = parse_url($dsnStr);
         if($info['scheme']){
@@ -660,8 +657,7 @@ class Db extends Think
      * @return string
      +----------------------------------------------------------
      */
-    protected function parseGroup($group)
-    {
+    protected function parseGroup($group) {
         return !empty($group)? ' GROUP BY '.$group:'';
     }
 
@@ -676,8 +672,7 @@ class Db extends Think
      * @return string
      +----------------------------------------------------------
      */
-    protected function parseHaving($having)
-    {
+    protected function parseHaving($having) {
         return  !empty($having)?   ' HAVING '.$having:'';
     }
 
@@ -791,8 +786,7 @@ class Db extends Think
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function delete($options=array())
-    {
+    public function delete($options=array()) {
         $sql   = 'DELETE FROM '
             .$this->parseTable($options['table'])
             .$this->parseWhere(isset($options['where'])?$options['where']:'')

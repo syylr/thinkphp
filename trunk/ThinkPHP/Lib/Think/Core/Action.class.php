@@ -36,8 +36,7 @@ abstract class Action extends Think
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct()
-    {
+    public function __construct() {
         //实例化视图类
         $this->view       = Think::instance('View');
         //控制器初始化
@@ -95,8 +94,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    protected function display($templateFile='',$charset='',$contentType='text/html')
-    {
+    protected function display($templateFile='',$charset='',$contentType='text/html') {
         if(false === $templateFile) {
             $this->showTrace();
         }else{
@@ -119,8 +117,7 @@ abstract class Action extends Think
      * @return string
      +----------------------------------------------------------
      */
-    protected function fetch($templateFile='',$charset='',$contentType='text/html')
-    {
+    protected function fetch($templateFile='',$charset='',$contentType='text/html') {
         return $this->view->fetch($templateFile,$charset,$contentType);
     }
 
@@ -156,8 +153,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    protected function assign($name,$value='')
-    {
+    protected function assign($name,$value='') {
         $this->view->assign($name,$value);
     }
 
@@ -192,8 +188,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    protected function trace($name,$value='')
-    {
+    protected function trace($name,$value='') {
         $this->view->trace($name,$value);
     }
 
@@ -281,8 +276,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    protected function error($message,$jumpUrl='',$ajax=false)
-    {
+    protected function error($message,$jumpUrl='',$ajax=false) {
         $this->_dispatch_jump($message,0,$jumpUrl,$ajax);
     }
 
@@ -299,8 +293,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    protected function success($message,$jumpUrl='',$ajax=false)
-    {
+    protected function success($message,$jumpUrl='',$ajax=false) {
         $this->_dispatch_jump($message,1,$jumpUrl,$ajax);
     }
 
@@ -318,8 +311,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    protected function ajaxReturn($data,$info='',$status=1,$type='')
-    {
+    protected function ajaxReturn($data,$info='',$status=1,$type='') {
         // 保证AJAX返回后也能保存日志
         if(C('LOG_RECORD')) Log::save();
         $result  =  array();
@@ -383,8 +375,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    private function _dispatch_jump($message,$status=1,$jumpUrl='',$ajax=false)
-    {
+    private function _dispatch_jump($message,$status=1,$jumpUrl='',$ajax=false) {
         // 判断是否为AJAX返回
         if($ajax || $this->isAjax()) $this->ajaxReturn($ajax,$message,$status);
         if(!empty($jumpUrl)) $this->assign('jumpUrl',$jumpUrl);
@@ -414,7 +405,7 @@ abstract class Action extends Think
         exit ;
     }
 
-    protected function showTrace(){
+    protected function showTrace() {
         $this->view->traceVar();
     }
 

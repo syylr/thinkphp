@@ -35,8 +35,7 @@ class Think
      * @param $value  属性值
      +----------------------------------------------------------
      */
-    public function __set($name ,$value)
-    {
+    public function __set($name ,$value) {
         if(property_exists($this,$name))
             $this->$name = $value;
     }
@@ -52,8 +51,7 @@ class Think
      * @return mixed
      +----------------------------------------------------------
      */
-    public function __get($name)
-    {
+    public function __get($name) {
         return isset($this->$name)?$this->$name:null;
     }
 
@@ -67,8 +65,7 @@ class Think
      * @return void
      +----------------------------------------------------------
      */
-    public static function autoload($classname)
-    {
+    public static function autoload($classname) {
         // 检查是否存在别名定义
         if(alias_import($classname)) return ;
         // 自动加载当前项目的Action类和Model类
@@ -100,8 +97,7 @@ class Think
      * @return object
      +----------------------------------------------------------
      */
-    static public function instance($class,$method='')
-    {
+    static public function instance($class,$method='') {
         $identify   =   $class.$method;
         if(!isset(self::$_instance[$identify])) {
             if(class_exists($class)){
