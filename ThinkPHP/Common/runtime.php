@@ -12,15 +12,15 @@
 
 // 检查缓存目录(Runtime) 如果不存在则自动创建
 function check_runtime() {
-	if(!is_writeable(RUNTIME_PATH)) {
-		header("Content-Type:text/html; charset=utf-8");
-		exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>目录 [ '.RUNTIME_PATH.' ] 不可写！</div>');
-	}
-	if(!is_dir(CACHE_PATH)) mkdir(CACHE_PATH);  // 模板缓存目录
-	if(!is_dir(LOG_PATH))	mkdir(LOG_PATH);    // 日志目录
-	if(!is_dir(TEMP_PATH))  mkdir(TEMP_PATH);	// 数据缓存目录
-	if(!is_dir(DATA_PATH))	mkdir(DATA_PATH);	// 数据文件目录
-	return true;
+    if(!is_writeable(RUNTIME_PATH)) {
+        header("Content-Type:text/html; charset=utf-8");
+        exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>目录 [ '.RUNTIME_PATH.' ] 不可写！</div>');
+    }
+    if(!is_dir(CACHE_PATH)) mkdir(CACHE_PATH);  // 模板缓存目录
+    if(!is_dir(LOG_PATH))	mkdir(LOG_PATH);    // 日志目录
+    if(!is_dir(TEMP_PATH))  mkdir(TEMP_PATH);	// 数据缓存目录
+    if(!is_dir(DATA_PATH))	mkdir(DATA_PATH);	// 数据文件目录
+    return true;
 }
 
 // 加载模式列表文件
@@ -81,7 +81,7 @@ function build_runtime_cache($append='') {
         $content .= compile($file);
     }
     $content .= $append."\nreturn ".var_export(C(),true).';';
-    $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_allinone.php':'~allinone.php';
+    $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
     file_put_contents(RUNTIME_PATH.$runtime,strip_whitespace('<?php '.$content));
 }
 
@@ -93,10 +93,8 @@ function mkdirs($dirs,$mode=0777) {
 }
 
 // 默认创建测试Action处理函数
-if (!function_exists('build_action'))
-{
-    function build_action()
-    {
+if (!function_exists('build_action')) {
+    function build_action() {
         $content = file_get_contents(THINK_PATH.'/Tpl/'.(defined('BUILD_MODE')?BUILD_MODE:'AutoIndex').'.tpl.php');
         file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
     }
