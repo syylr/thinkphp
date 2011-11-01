@@ -31,8 +31,7 @@ class CacheFile extends Cache
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($options='')
-    {
+    public function __construct($options='') {
         if(!empty($options['temp'])){
             $this->options['temp'] = $options['temp'];
         }else {
@@ -55,8 +54,7 @@ class CacheFile extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    private function init()
-    {
+    private function init() {
         $stat = stat($this->options['temp']);
         $dir_perms = $stat['mode'] & 0007777; // Get the permission bits.
         $file_perms = $dir_perms & 0000666; // Remove execute bits for files.
@@ -78,8 +76,7 @@ class CacheFile extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    private function isConnected()
-    {
+    private function isConnected() {
         return $this->connected;
     }
 
@@ -94,8 +91,7 @@ class CacheFile extends Cache
      * @return string
      +----------------------------------------------------------
      */
-    private function filename($name)
-    {
+    private function filename($name) {
         $name	=	md5($name);
         if(C('DATA_CACHE_SUBDIR')) {
             // 使用子目录
@@ -124,8 +120,7 @@ class CacheFile extends Cache
      * @return mixed
      +----------------------------------------------------------
      */
-    public function get($name)
-    {
+    public function get($name) {
         $filename   =   $this->filename($name);
         if (!$this->isConnected() || !is_file($filename)) {
            return false;
@@ -173,8 +168,7 @@ class CacheFile extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name,$value,$expire='')
-    {
+    public function set($name,$value,$expire='') {
         N('cache_write',1);
         if('' === $expire) {
             $expire =  $this->expire;
@@ -211,8 +205,7 @@ class CacheFile extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function rm($name)
-    {
+    public function rm($name) {
         return unlink($this->filename($name));
     }
 
@@ -227,8 +220,7 @@ class CacheFile extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function clear()
-    {
+    public function clear() {
         $path   =  $this->options['temp'];
         if ( $dir = opendir( $path ) )
         {

@@ -33,7 +33,7 @@ class DbIbase extends Db{
      * @param array $config 数据库配置数组
      +----------------------------------------------------------
      */
-    public function __construct($config=''){
+    public function __construct($config='') {
         if ( !extension_loaded('interbase') ) {
             throw_exception(L('_NOT_SUPPERT_').':Interbase or Firebird');
         }
@@ -173,8 +173,7 @@ class DbIbase extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function commit()
-    {
+    public function commit() {
         if ($this->transTimes > 0) {
             $result =  ibase_commit($this->_linkID);
             $this->transTimes = 0;
@@ -196,8 +195,7 @@ class DbIbase extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function rollback()
-    {
+    public function rollback() {
         if ($this->transTimes > 0) {
             $result =ibase_rollback($this->_linkID);
             $this->transTimes = 0;
@@ -221,8 +219,7 @@ class DbIbase extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-     public function BlobDecode($blob)
-    {
+     public function BlobDecode($blob) {
         $maxblobsize = 262144;
         $blob_data = ibase_blob_info($this->_linkID, $blob );
         $blobid = ibase_blob_open($this->_linkID, $blob );
@@ -237,7 +234,6 @@ class DbIbase extends Db{
         ibase_blob_close( $blobid );
         return( $realblob );
     }
-
 
     /**
      +----------------------------------------------------------

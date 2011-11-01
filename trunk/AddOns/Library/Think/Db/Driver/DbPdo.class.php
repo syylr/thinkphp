@@ -207,8 +207,7 @@ class DbPdo extends Db{
      * @return boolen
      +----------------------------------------------------------
      */
-    public function commit()
-    {
+    public function commit() {
         if ($this->transTimes > 0) {
             $result = $this->_linkID->commit();
             $this->transTimes = 0;
@@ -230,8 +229,7 @@ class DbPdo extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function rollback()
-    {
+    public function rollback() {
         if ($this->transTimes > 0) {
             $result = $this->_linkID->rollback();
             $this->transTimes = 0;
@@ -489,8 +487,7 @@ class DbPdo extends Db{
      * @return integer
      +----------------------------------------------------------
      */
-    public function getLastInsertId()
-    {
+    public function getLastInsertId() {
          switch($this->dbType)
          {
             case 'PGSQL':

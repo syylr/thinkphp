@@ -32,7 +32,7 @@ class DbSqlsrv extends Db{
      * @param array $config 数据库配置数组
      +----------------------------------------------------------
      */
-    public function __construct($config=''){
+    public function __construct($config='') {
         if ( !function_exists('sqlsrv_connect') ) {
             throw_exception(L('_NOT_SUPPERT_').':sqlsrv');
         }
@@ -153,8 +153,7 @@ class DbSqlsrv extends Db{
      * @return integer
      +----------------------------------------------------------
      */
-    public function mssql_insert_id()
-    {
+    public function mssql_insert_id() {
         $query  =   "SELECT @@IDENTITY as last_insert_id";
         $result =   sqlsrv_query($this->_linkID,$query);
         list($last_insert_id)   =   sqlsrv_fetch_array($result);
@@ -191,8 +190,7 @@ class DbSqlsrv extends Db{
      * @return boolen
      +----------------------------------------------------------
      */
-    public function commit()
-    {
+    public function commit() {
         if ($this->transTimes > 0) {
             $result = sqlsrv_commit($this->_linkID);
             $this->transTimes = 0;
@@ -212,8 +210,7 @@ class DbSqlsrv extends Db{
      * @return boolen
      +----------------------------------------------------------
      */
-    public function rollback()
-    {
+    public function rollback() {
         if ($this->transTimes > 0) {
             $result = sqlsrv_rollback($this->_linkID);
             $this->transTimes = 0;
