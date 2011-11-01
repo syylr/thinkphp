@@ -93,8 +93,7 @@ class TagLib extends Think
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->tagLib  = strtolower(substr(get_class($this),6));
         $this->tpl       = Think::instance('ThinkTemplate');//ThinkTemplate::getInstance();
     }
@@ -110,8 +109,7 @@ class TagLib extends Think
      * @return array
      +----------------------------------------------------------
      */
-    public function parseXmlAttr($attr,$tag)
-    {
+    public function parseXmlAttr($attr,$tag) {
         //XML解析安全过滤
         $attr = str_replace('&','___', $attr);
         $xml =  '<tpl><tag '.$attr.' /></tpl>';
