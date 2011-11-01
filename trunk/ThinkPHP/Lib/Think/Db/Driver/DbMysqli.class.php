@@ -184,8 +184,7 @@ class DbMysqli extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function commit()
-    {
+    public function commit() {
         if ($this->transTimes > 0) {
             $result = $this->_linkID->commit();
             $this->_linkID->autocommit( true);
@@ -208,8 +207,7 @@ class DbMysqli extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function rollback()
-    {
+    public function rollback() {
         if ($this->transTimes > 0) {
             $result = $this->_linkID->rollback();
             $this->transTimes = 0;

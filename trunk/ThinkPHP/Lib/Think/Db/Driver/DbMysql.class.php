@@ -198,8 +198,7 @@ class DbMysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function commit()
-    {
+    public function commit() {
         if ($this->transTimes > 0) {
             $result = mysql_query('COMMIT', $this->_linkID);
             $this->transTimes = 0;
@@ -221,8 +220,7 @@ class DbMysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function rollback()
-    {
+    public function rollback() {
         if ($this->transTimes > 0) {
             $result = mysql_query('ROLLBACK', $this->_linkID);
             $this->transTimes = 0;
