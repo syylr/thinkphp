@@ -895,5 +895,8 @@ class Db extends Think
         // 关闭连接
         $this->close();
     }
+
+    // 关闭数据库 由驱动类定义
+    public function close(){}
 }//类定义结束
 ?>
