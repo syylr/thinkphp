@@ -46,8 +46,7 @@ class ThinkException extends Exception
      * @param string $message  异常信息
      +----------------------------------------------------------
      */
-    public function __construct($message,$code=0,$extra=false)
-    {
+    public function __construct($message,$code=0,$extra=false) {
         parent::__construct($message,$code);
         $this->type = get_class($this);
         $this->extra = $extra;
@@ -64,8 +63,7 @@ class ThinkException extends Exception
      * @return array
      +----------------------------------------------------------
      */
-    public function __toString()
-    {
+    public function __toString() {
         $trace = $this->getTrace();
         if($this->extra)
             // 通过throw_exception抛出的异常要去掉多余的调试信息
@@ -101,7 +99,6 @@ class ThinkException extends Exception
         if(C('LOG_EXCEPTION_RECORD')) {
             Log::Write('('.$this->type.') '.$this->message);
         }
-
         return $error ;
     }
 
