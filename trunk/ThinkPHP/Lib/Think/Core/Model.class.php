@@ -541,6 +541,11 @@ class Model extends Think
             }
             $options =  array();
             $options['where'] =  $where;
+        }elseif(false === $options){ // 用于子查询 不查询只返回SQL
+            $options =  array();
+            // 分析表达式
+            $options =  $this->_parseOptions($options);
+            return  '( '.$this->db->select($options,false).' )';
         }
         // 分析表达式
         $options =  $this->_parseOptions($options);
