@@ -15,25 +15,12 @@
  * ThinkPHP公共文件
  +------------------------------------------------------------------------------
  */
-// 记录和统计时间（微秒）
-function G($start,$end='',$dec=3) {
-    static $_info = array();
-    if(!empty($end)) { // 统计时间
-        if(!isset($_info[$end])) {
-            $_info[$end]   =  microtime(TRUE);
-        }
-        return number_format(($_info[$end]-$_info[$start]),$dec);
-    }else{ // 记录时间
-        $_info[$start]  =  microtime(TRUE);
-    }
-}
-
 //记录开始运行时间
 G('beginTime');
 if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Runtime/');
 if(!defined('APP_DEPLOY')) define('APP_DEPLOY',false); // 应用开发模式 false 调试模式 true 部署模式
-$runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_allinone.php':'~allinone.php';
+$runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
 if(APP_DEPLOY && is_file(RUNTIME_PATH.$runtime)) {
     // 部署模式直接载入allinone缓存
     $result   =  require RUNTIME_PATH.$runtime;
@@ -51,4 +38,16 @@ if(APP_DEPLOY && is_file(RUNTIME_PATH.$runtime)) {
 }
 // 记录加载文件时间
 G('loadTime');
+// 记录和统计时间（微秒）
+function G($start,$end='',$dec=3) {
+    static $_info = array();
+    if(!empty($end)) { // 统计时间
+        if(!isset($_info[$end])) {
+            $_info[$end]   =  microtime(TRUE);
+        }
+        return number_format(($_info[$end]-$_info[$start]),$dec);
+    }else{ // 记录时间
+        $_info[$start]  =  microtime(TRUE);
+    }
+}
 ?>
