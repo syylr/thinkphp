@@ -97,15 +97,6 @@ class App
             // 编译文件
             if(!APP_DEBUG)  $common   .= compile(COMMON_PATH.'common.php');
         }
-        // 加载项目编译文件列表
-        if(is_file(CONFIG_PATH.'app.php')) {
-            $list   =  include CONFIG_PATH.'app.php';
-            foreach ($list as $file){
-                // 加载并编译文件
-                require $file;
-                if(!APP_DEBUG) $common   .= compile($file);
-            }
-        }
         // 读取扩展配置文件
         $list = C('APP_CONFIG_LIST');
         foreach ($list as $val){
