@@ -64,6 +64,9 @@ class Db extends Think
             throw_exception(L('_NOT_SUPPERT_').':mysql');
         }
         $this->config   =   $this->parseConfig($config);
+        if(APP_DEBUG) {
+            $this->debug  =  true;
+        }
     }
 
     /**
@@ -80,7 +83,8 @@ class Db extends Think
             $config =   $this->config;
             // 处理不带端口号的socket连接情况
             $host = $config['hostname'].($config['hostport']?":{$config['hostport']}":'');
-            if($this->pconnect) {
+            $pconnect   = !empty($config['params']['persist'])? $config['params']['persist']:$this->pconnect;
+            if($pconnect) {
                 $this->linkID = mysql_pconnect( $host, $config['username'], $config['password'],CLIENT_MULTI_RESULTS);
             }else{
                 $this->linkID = mysql_connect( $host, $config['username'], $config['password'],true,CLIENT_MULTI_RESULTS);

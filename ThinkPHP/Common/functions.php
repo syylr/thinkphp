@@ -154,7 +154,7 @@ function halt($error) {
     if (IS_CLI)
         exit($error);
     $e = array();
-    if (!APP_DEPLOY) {
+    if (APP_DEBUG) {
         //调试模式下输出错误信息
         if (!is_array($error)) {
             $trace = debug_backtrace();
@@ -775,7 +775,7 @@ function array_define($array) {
     $content = '';
     foreach ($array as $key => $val) {
         $key = strtoupper($key);
-        if (in_array($key, array('THINK_PATH', 'APP_NAME', 'APP_PATH', 'APP_DEPLOY','MEMORY_LIMIT_ON', 'RUNTIME_PATH', 'THINK_MODE')))
+        if (in_array($key, array('THINK_PATH', 'APP_NAME', 'APP_PATH', 'APP_DEBUG','MEMORY_LIMIT_ON', 'RUNTIME_PATH', 'THINK_MODE')))
             $content .= 'if(!defined(\'' . $key . '\')) ';
         if (is_int($val) || is_float($val)) {
             $content .= "define('" . $key . "'," . $val . ");";

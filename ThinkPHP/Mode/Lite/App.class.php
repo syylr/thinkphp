@@ -76,7 +76,7 @@ class App
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
-            if(APP_DEPLOY) $common   .= compile(COMMON_PATH.'common.php');
+            if(!APP_DEBUG) $common   .= compile(COMMON_PATH.'common.php');
         }
         // 加载项目编译文件列表
         if(is_file(CONFIG_PATH.'app.php')) {
@@ -84,19 +84,19 @@ class App
             foreach ($list as $key=>$file){
                 // 加载并编译文件
                 require $file;
-                if(APP_DEPLOY)  $common   .= compile($file);
+                if(!APP_DEBUG)  $common   .= compile($file);
             }
         }
-        if(APP_DEPLOY) {
-            // 部署模式下面生成编译文件
-            build_runtime_cache($common);
-        }else{
-            // 加载系统默认的开发模式配置文件
+        if(APP_DEBUG) {
+            // 调试模式可以加载调试配置文件
             C(include THINK_PATH.'/Common/debug.php');
             if(is_file(CONFIG_PATH.'debug.php')) {
-                // 允许项目增加开发模式配置定义
+                // 允许项目增加调试模式配置定义
                 C(include CONFIG_PATH.'debug.php');
             }
+        }else{
+            // 部署模式下面生成编译文件
+            build_runtime_cache($common);
         }
         return ;
     }
