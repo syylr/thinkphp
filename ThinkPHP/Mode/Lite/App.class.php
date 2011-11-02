@@ -78,15 +78,6 @@ class App
             include COMMON_PATH.'common.php';
             if(!APP_DEBUG) $common   .= compile(COMMON_PATH.'common.php');
         }
-        // 加载项目编译文件列表
-        if(is_file(CONFIG_PATH.'app.php')) {
-            $list   =  include CONFIG_PATH.'app.php';
-            foreach ($list as $key=>$file){
-                // 加载并编译文件
-                require $file;
-                if(!APP_DEBUG)  $common   .= compile($file);
-            }
-        }
         if(APP_DEBUG) {
             // 调试模式可以加载调试配置文件
             C(include THINK_PATH.'/Common/debug.php');
