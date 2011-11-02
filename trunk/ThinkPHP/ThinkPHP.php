@@ -22,9 +22,9 @@ define('MEMORY_LIMIT_ON',function_exists('memory_get_usage'));
 if(MEMORY_LIMIT_ON) $GLOBALS['_startUseMems'] = memory_get_usage();
 if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Runtime/');
-if(!defined('APP_DEPLOY')) define('APP_DEPLOY',false); // 应用开发模式 false 调试模式 true 部署模式
+if(!defined('APP_DEBUG')) define('APP_DEBUG',false); // 是否调试模式
 $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
-if(APP_DEPLOY && is_file(RUNTIME_PATH.$runtime)) {
+if(!APP_DEBUG && is_file(RUNTIME_PATH.$runtime)) {
     // 部署模式直接载入allinone缓存
     $result   =  require RUNTIME_PATH.$runtime;
     C($result);
