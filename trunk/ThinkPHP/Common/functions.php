@@ -496,7 +496,7 @@ function D($name='', $app='') {
     if (class_exists($className)) {
         $model = new $className();
     } else {
-        throw_exception(L('_CLASS_NOT_EXIST_').':'.$className);
+        $model = new Model($name);
     }
     $_model[$app . $OriClassName] = $model;
     return $model;
