@@ -351,7 +351,7 @@ abstract class Action extends Think
     protected function templateContentReplace($content) {
         // 系统默认的特殊变量替换
         $replace =  array(
-            '../Public'   =>  __ROOT__.'/'.APP_NAME.'/'.TMPL_DIR.'/Public',// 项目公共目录
+            '../Public'   =>  __ROOT__.'/'.APP_NAME.(APP_NAME?'/':'').TMPL_DIR.'/Public',// 项目公共目录
             '__PUBLIC__'  =>  __ROOT__.'/Public',// 站点公共目录
             '__ROOT__'    => __ROOT__,       // 当前网站地址
             '__APP__'     => PHP_FILE,        // 当前项目地址
