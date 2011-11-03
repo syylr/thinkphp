@@ -221,7 +221,10 @@ abstract class Action extends Think
                     return ;
                 }
             }
-            if(method_exists($this,'_empty')) {
+            $restMethod   =  $method.'_'.strtolower($_SERVER['REQUEST_METHOD']);
+            if(method_exists($this,$restMethod)) { // RESTFul方法支持
+                $this->$restMethod();
+            }elseif(method_exists($this,'_empty')) {
                 // 如果定义了_empty操作 则调用
                 $this->_empty($method,$args);
             }elseif(file_exists_case(C('TMPL_FILE_NAME'))){
