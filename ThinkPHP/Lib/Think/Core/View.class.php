@@ -329,7 +329,7 @@ class View extends Think{
             '__GROUP__'   =>   defined('GROUP_NAME')?__GROUP__:__APP__,
             '__UPLOAD__'    => __ROOT__.'/Uploads',
             '__ACTION__'    => __ACTION__,     // 当前操作地址
-            '__SELF__'      => __SELF__,       // 当前页面地址
+            '__SELF__'      => $_SERVER['REQUEST_URI'],       // 当前页面地址
             '__URL__'       => __URL__,
             '__INFO__'      => __INFO__,
         );
@@ -368,7 +368,7 @@ class View extends Think{
             $_SESSION[$tokenName]  = array();
         }
         // 标识当前页面唯一性
-        $tokenKey  =  md5(__SELF__);
+        $tokenKey  =  md5($_SERVER['REQUEST_URI']);
         if(isset($_SESSION[$tokenName][$tokenKey])) {// 相同页面不重复生成session
             $tokenValue = $_SESSION[$tokenName][$tokenKey];
         }else{
@@ -456,7 +456,7 @@ class View extends Think{
         $traceFile  =   CONFIG_PATH.'trace.php';
         $_trace =   is_file($traceFile)? include $traceFile : array();
          // 系统默认显示信息
-        $this->trace('当前页面',    __SELF__);
+        $this->trace('当前页面',    $_SERVER['REQUEST_URI']);
         $this->trace('模板缓存',    C('CACHE_PATH').md5($this->templateFile).C('TMPL_CACHFILE_SUFFIX'));
         $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
         $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);

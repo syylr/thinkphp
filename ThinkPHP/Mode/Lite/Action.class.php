@@ -358,7 +358,7 @@ abstract class Action extends Think
             '__APP__'     => PHP_FILE,        // 当前项目地址
             '__URL__'     => PHP_FILE.'/'.MODULE_NAME,        // 当前模块地址
             '__ACTION__'  => PHP_FILE.'/'.MODULE_NAME.'/'.ACTION_NAME,     // 当前操作地址
-            '__SELF__'    => $_SERVER['PHP_SELF'],       // 当前页面地址
+            '__SELF__'    => $_SERVER['REQUEST_URI'],       // 当前页面地址
         );
         // 允许用户自定义模板的字符串替换
         if(is_array(C('TMPL_PARSE_STRING')) )
