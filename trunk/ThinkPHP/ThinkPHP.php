@@ -26,9 +26,7 @@ if(!defined('APP_DEBUG')) define('APP_DEBUG',false); // 是否调试模式
 $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
 if(!APP_DEBUG && is_file(RUNTIME_PATH.$runtime)) {
     // 部署模式直接载入allinone缓存
-    $result   =  require RUNTIME_PATH.$runtime;
-    C($result);
-    unset($result);
+    require RUNTIME_PATH.$runtime;
 }else{
     if(version_compare(PHP_VERSION,'5.0.0','<'))  die('require PHP > 5.0 !');
     // ThinkPHP系统目录定义
