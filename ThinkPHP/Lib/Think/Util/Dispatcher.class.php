@@ -115,6 +115,7 @@ class Dispatcher extends Think
         define('MODULE_NAME',self::getModule(C('VAR_MODULE')));
         define('ACTION_NAME',self::getAction(C('VAR_ACTION')));
         // URL常量
+        define('__SELF__',$_SERVER['REQUEST_URI']);
         define('__INFO__',$_SERVER['PATH_INFO']);
         // 当前项目地址
         define('__APP__',PHP_FILE);
