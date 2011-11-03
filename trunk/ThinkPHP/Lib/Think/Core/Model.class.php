@@ -774,12 +774,6 @@ class Model extends Think
         // 状态
         $type = $type?$type:(!empty($data[$this->getPk()])?self::MODEL_UPDATE:self::MODEL_INSERT);
 
-        // 表单令牌验证
-        if(C('TOKEN_ON') && !$this->autoCheckToken($data)) {
-            $this->error = L('_TOKEN_ERROR_');
-            return false;
-        }
-
         // 检查字段映射
         if(!empty($this->_map)) {
             foreach ($this->_map as $key=>$val){
@@ -792,6 +786,12 @@ class Model extends Think
 
         // 数据自动验证
         if(!$this->autoValidation($data,$type)) return false;
+
+        // 表单令牌验证
+        if(C('TOKEN_ON') && !$this->autoCheckToken($data)) {
+            $this->error = L('_TOKEN_ERROR_');
+            return false;
+        }
 
         // 验证完成生成数据对象
         $vo   =  array();
