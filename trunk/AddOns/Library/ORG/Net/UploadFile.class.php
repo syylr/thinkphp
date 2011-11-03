@@ -91,8 +91,7 @@ class UploadFile extends Think
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($maxSize='',$allowExts='',$allowTypes='',$savePath='',$saveRule='')
-    {
+    public function __construct($maxSize='',$allowExts='',$allowTypes='',$savePath='',$saveRule='') {
         if(!empty($maxSize) && is_numeric($maxSize)) {
             $this->maxSize = $maxSize;
         }
@@ -132,8 +131,7 @@ class UploadFile extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    private function save($file)
-    {
+    private function save($file) {
         $filename = $file['savepath'].$file['savename'];
         if(!$this->uploadReplace && is_file($filename)) {
             // 不覆盖同名文件
@@ -192,8 +190,7 @@ class UploadFile extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function upload($savePath ='')
-    {
+    public function upload($savePath ='') {
         //如果不指定保存文件名，则由系统默认
         if(empty($savePath))
             $savePath = $this->savePath;
@@ -373,8 +370,7 @@ class UploadFile extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    protected function error($errorNo)
-    {
+    protected function error($errorNo) {
          switch($errorNo) {
             case 1:
                 $this->error = '上传的文件超过了 php.ini 中 upload_max_filesize 选项限制的值';
@@ -411,8 +407,7 @@ class UploadFile extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function getSaveName($filename)
-    {
+    private function getSaveName($filename) {
         $rule = $this->saveRule;
         if(empty($rule)) {//没有定义命名规则，则保持文件名不变
             $saveName = $filename['name'];
@@ -444,8 +439,7 @@ class UploadFile extends Think
      * @return string
      +----------------------------------------------------------
      */
-    private function getSubName($file)
-    {
+    private function getSubName($file) {
         switch($this->subType) {
             case 'date':
                 $dir   =  date($this->dateFormat,time());
@@ -520,8 +514,7 @@ class UploadFile extends Think
      * @return boolean
      +----------------------------------------------------------
      */
-    private function checkType($type)
-    {
+    private function checkType($type) {
         if(!empty($this->allowTypes))
             return in_array(strtolower($type),$this->allowTypes);
         return true;
@@ -539,8 +532,7 @@ class UploadFile extends Think
      * @return boolean
      +----------------------------------------------------------
      */
-    private function checkExt($ext)
-    {
+    private function checkExt($ext) {
         if(!empty($this->allowExts))
             return in_array(strtolower($ext),$this->allowExts,true);
         return true;
@@ -557,8 +549,7 @@ class UploadFile extends Think
      * @return boolean
      +----------------------------------------------------------
      */
-    private function checkSize($size)
-    {
+    private function checkSize($size) {
         return !($size > $this->maxSize) || (-1 == $this->maxSize);
     }
 
@@ -573,8 +564,7 @@ class UploadFile extends Think
      * @return boolean
      +----------------------------------------------------------
      */
-    private function checkUpload($filename)
-    {
+    private function checkUpload($filename) {
         return is_uploaded_file($filename);
     }
 
@@ -589,8 +579,7 @@ class UploadFile extends Think
      * @return boolean
      +----------------------------------------------------------
      */
-    private function getExt($filename)
-    {
+    private function getExt($filename) {
         $pathinfo = pathinfo($filename);
         return $pathinfo['extension'];
     }
@@ -604,8 +593,7 @@ class UploadFile extends Think
      * @return array
      +----------------------------------------------------------
      */
-    public function getUploadFileInfo()
-    {
+    public function getUploadFileInfo() {
         return $this->uploadFileInfo;
     }
 
@@ -618,8 +606,7 @@ class UploadFile extends Think
      * @return string
      +----------------------------------------------------------
      */
-    public function getErrorMsg()
-    {
+    public function getErrorMsg() {
         return $this->error;
     }
 

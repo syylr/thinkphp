@@ -45,8 +45,7 @@ class ViewModel extends Model {
      * @return string
      +----------------------------------------------------------
      */
-    public function getTableName()
-    {
+    public function getTableName() {
         if(empty($this->trueTableName)) {
             $tableName = '';
             foreach ($this->viewFields as $key=>$view){

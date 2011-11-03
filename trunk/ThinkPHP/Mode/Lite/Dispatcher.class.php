@@ -33,8 +33,7 @@ class Dispatcher extends Think
      * @return void
      +----------------------------------------------------------
      */
-    static public function dispatch()
-    {
+    static public function dispatch() {
         $urlMode  =  C('URL_MODEL');
         if($urlMode == URL_REWRITE ) {
             //当前项目地址
@@ -90,8 +89,7 @@ class Dispatcher extends Think
      * @return void
      +----------------------------------------------------------
      */
-    private static function parsePathInfo()
-    {
+    private static function parsePathInfo() {
         $pathInfo = array();
         $paths = explode(C('URL_PATHINFO_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
         $pathInfo[C('VAR_MODULE')] = array_shift($paths);
@@ -115,8 +113,7 @@ class Dispatcher extends Think
     * @return void
     +----------------------------------------------------------
     */
-    public static function getPathInfo()
-    {
+    public static function getPathInfo() {
         if(!empty($_GET[C('VAR_PATHINFO')])) {
             // 兼容PATHINFO 参数
             $path = $_GET[C('VAR_PATHINFO')];

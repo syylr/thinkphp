@@ -54,8 +54,7 @@ class ThinkTemplateLite {
             return null;
     }
     // 模板变量赋值
-    public function assign($name,$value)
-    {
+    public function assign($name,$value) {
         if(is_array($name)) {
             $this->var   =  array_merge($this->var,$name);
         }else{
@@ -70,8 +69,7 @@ class ThinkTemplateLite {
             return false;
     }
     // 载入模板 模板引擎入口
-    public function fetch($templateFile,$templateVar='')
-    {
+    public function fetch($templateFile,$templateVar='') {
         if(!empty($templateVar))   $this->assign($templateVar);
         //根据模版文件名定位缓存文件
         $tmplCacheFile = $this->config['cache_path'].md5($templateFile).$this->config['cache_suffix'];

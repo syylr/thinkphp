@@ -116,8 +116,7 @@ class Session extends Think
      +----------------------------------------------------------
      */
     static function detectID() {
-        if(session_id()!='')
-        {
+        if(session_id()!='') {
             return session_id();
         }
         if (Session::useCookies()) {

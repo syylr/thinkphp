@@ -42,8 +42,7 @@ class Model extends Think{
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($name='')
-    {
+    public function __construct($name='') {
         // 模型初始化
         $this->_initialize();
         // 获取模型名称
@@ -74,8 +73,7 @@ class Model extends Think{
      * @return array
      +----------------------------------------------------------
      */
-    public function query($sql)
-    {
+    public function query($sql) {
         if(is_array($sql)) {
             return $this->patchQuery($sql);
         }
@@ -100,8 +98,7 @@ class Model extends Think{
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function execute($sql='')
-    {
+    public function execute($sql='') {
         if(!empty($sql)) {
             if(strpos($sql,'__TABLE__')) {
                 $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
@@ -122,8 +119,7 @@ class Model extends Think{
      * @return string
      +----------------------------------------------------------
      */
-    public function getModelName()
-    {
+    public function getModelName() {
         if(empty($this->name)) {
             $this->name =   substr(get_class($this),0,-5);
         }
@@ -139,8 +135,7 @@ class Model extends Think{
      * @return string
      +----------------------------------------------------------
      */
-    public function getTableName()
-    {
+    public function getTableName() {
         if(empty($this->trueTableName)) {
             $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
             if(!empty($this->tableName)) {
@@ -162,8 +157,7 @@ class Model extends Think{
      * @return void
      +----------------------------------------------------------
      */
-    public function startTrans()
-    {
+    public function startTrans() {
         $this->commit();
         $this->db->startTrans();
         return ;
@@ -178,8 +172,7 @@ class Model extends Think{
      * @return boolean
      +----------------------------------------------------------
      */
-    public function commit()
-    {
+    public function commit() {
         return $this->db->commit();
     }
 
@@ -192,8 +185,7 @@ class Model extends Think{
      * @return boolean
      +----------------------------------------------------------
      */
-    public function rollback()
-    {
+    public function rollback() {
         return $this->db->rollback();
     }
 

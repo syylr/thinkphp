@@ -38,8 +38,7 @@ class Xxtea
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function encrypt($str, $key)
-    {
+    function encrypt($str, $key) {
         if ($str == "") {
             return "";
         }
@@ -81,8 +80,7 @@ class Xxtea
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function decrypt($str, $key)
-    {
+    function decrypt($str, $key) {
         if ($str == "") {
             return "";
         }
@@ -128,14 +126,12 @@ class Xxtea
     function long2str($v, $w) {
         $len = count($v);
         $s = array();
-        for ($i = 0; $i < $len; $i++)
-        {
+        for ($i = 0; $i < $len; $i++) {
             $s[$i] = pack("V", $v[$i]);
         }
         if ($w) {
             return substr(join('', $s), 0, $v[$len - 1]);
-        }
-        else {
+        }else{
             return join('', $s);
         }
     }

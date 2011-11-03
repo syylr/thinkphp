@@ -58,8 +58,7 @@ class RelationModel extends Model {
      * @return string
      +----------------------------------------------------------
      */
-    public function getRelationTableName($relation)
-    {
+    public function getRelationTableName($relation) {
         $relationTable  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
         $relationTable .= $this->tableName?$this->tableName:$this->name;
         $relationTable .= '_'.$relation->getModelName();
@@ -151,8 +150,7 @@ class RelationModel extends Model {
      * @return array
      +----------------------------------------------------------
      */
-    protected function getRelation(&$result,$name='',$return=false)
-    {
+    protected function getRelation(&$result,$name='',$return=false) {
         if(!empty($this->_link)) {
             foreach($this->_link as $key=>$val) {
                     $mappingName =  !empty($val['mapping_name'])?$val['mapping_name']:$key; // 映射名称
@@ -253,8 +251,7 @@ class RelationModel extends Model {
      * @return mixed
      +----------------------------------------------------------
      */
-    protected function opRelation($opType,$data='',$name='')
-    {
+    protected function opRelation($opType,$data='',$name='') {
         $result =   false;
         if(empty($data) && !empty($this->data)){
             $data = $this->data;

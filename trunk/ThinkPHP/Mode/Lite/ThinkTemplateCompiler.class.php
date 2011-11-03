@@ -40,8 +40,7 @@ class ThinkTemplateCompiler {
         );
 
     // 构造方法
-    public function __construct()
-    {
+    public function __construct() {
         $this->tpl       = Think::instance('ThinkTemplateLite');
     }
     // 模板编译
@@ -415,8 +414,7 @@ class ThinkTemplateCompiler {
         return $name;
     }
     // 解析标签属性
-    public function parseXmlAttr($attr,$tag)
-    {
+    public function parseXmlAttr($attr,$tag) {
         //XML解析安全过滤
         $attr = str_replace('&','___', $attr);
         $xml =  '<tpl><tag '.$attr.' /></tpl>';
@@ -443,16 +441,14 @@ class ThinkTemplateCompiler {
         return $parseStr;
     }
     // include
-    public function _include($attr,$content)
-    {
+    public function _include($attr,$content) {
         $tag    = $this->parseXmlAttr($attr,'include');
         $file   =   $tag['file'];
         unset($tag['file']);
         return $this->parseInclude($file,$tag);
     }
     // volist
-    public function _volist($attr,$content)
-    {
+    public function _volist($attr,$content) {
         static $_iterateParseCache = array();
         //如果已经解析过，则直接返回变量值
         $cacheIterateId = md5($attr.$content);
@@ -488,8 +484,7 @@ class ThinkTemplateCompiler {
         return ;
     }
     // foreach
-    public function _foreach($attr,$content)
-    {
+    public function _foreach($attr,$content) {
         static $_iterateParseCache = array();
         //如果已经解析过，则直接返回变量值
         $cacheIterateId = md5($attr.$content);
@@ -570,8 +565,7 @@ class ThinkTemplateCompiler {
         return $parseStr;
     }
     // compare
-    public function _compare($attr,$content,$type='eq')
-    {
+    public function _compare($attr,$content,$type='eq') {
         $tag      = $this->parseXmlAttr($attr,'compare');
         $name   = $tag['name'];
         $value   = $tag['value'];
@@ -619,16 +613,14 @@ class ThinkTemplateCompiler {
         return $this->_range($attr,$content,'notin');
     }
     // present
-    public function _present($attr,$content)
-    {
+    public function _present($attr,$content) {
         $tag      = $this->parseXmlAttr($attr,'present');
         $name   = $tag['name'];
         $name   = $this->autoBuildVar($name);
         $parseStr  = '<?php if(isset('.$name.')): ?>'.$content.'<?php endif; ?>';
         return $parseStr;
     }
-    public function _notpresent($attr,$content)
-    {
+    public function _notpresent($attr,$content) {
         $tag      = $this->parseXmlAttr($attr,'present');
         $name   = $tag['name'];
         $name   = $this->autoBuildVar($name);
@@ -636,16 +628,14 @@ class ThinkTemplateCompiler {
         return $parseStr;
     }
     // empty
-    public function _empty($attr,$content)
-    {
+    public function _empty($attr,$content) {
         $tag      = $this->parseXmlAttr($attr,'empty');
         $name   = $tag['name'];
         $name   = $this->autoBuildVar($name);
         $parseStr  = '<?php if(empty('.$name.')): ?>'.$content.'<?php endif; ?>';
         return $parseStr;
     }
-    public function _notempty($attr,$content)
-    {
+    public function _notempty($attr,$content) {
         $tag      = $this->parseXmlAttr($attr,'empty');
         $name   = $tag['name'];
         $name   = $this->autoBuildVar($name);
@@ -653,30 +643,26 @@ class ThinkTemplateCompiler {
         return $parseStr;
     }
     // define
-    public function _defined($attr,$content)
-    {
+    public function _defined($attr,$content) {
         $tag        = $this->parseXmlAttr($attr,'defined');
         $name     = $tag['name'];
         $parseStr = '<?php if(defined("'.$name.'")): ?>'.$content.'<?php endif; ?>';
         return $parseStr;
     }
-    public function _notdefined($attr,$content)
-    {
+    public function _notdefined($attr,$content) {
         $tag        = $this->parseXmlAttr($attr,'defined');
         $name     = $tag['name'];
         $parseStr = '<?php if(!defined("'.$name.'")): ?>'.$content.'<?php endif; ?>';
         return $parseStr;
     }
     // import
-    public function _import($attr,$content,$isFile=false,$type='')
-    {
+    public function _import($attr,$content,$isFile=false,$type='') {
         $tag  = $this->parseXmlAttr($attr,'import');
         $file   = $tag['file']?$tag['file']:$tag['href'];
         $parseStr = '';
         $endStr   = '';
         // 判断是否存在加载条件 允许使用函数判断(默认为isset)
-        if ($tag['value'])
-        {
+        if ($tag['value']) {
             $varArray  = explode('|',$tag['value']);
             $name      = array_shift($varArray);
             $name      = $this->autoBuildVar($name);
@@ -760,18 +746,15 @@ class ThinkTemplateCompiler {
     public function _nheq($attr,$content) {
         return $this->_compare($attr,$content,'nheq');
     }
-    public function _load($attr,$content)
-    {
+    public function _load($attr,$content) {
         return $this->_import($attr,$content,true);
     }
     // import别名使用 导入css文件 <css file="__PUBLIC__/Css/Base.css" />
-    public function _css($attr,$content)
-    {
+    public function _css($attr,$content) {
         return $this->_import($attr,$content,true,'css');
     }
     // import别名使用 导入js文件 <js file="__PUBLIC__/Js/Base.js" />
-    public function _js($attr,$content)
-    {
+    public function _js($attr,$content) {
         return $this->_import($attr,$content,true,'js');
     }
 

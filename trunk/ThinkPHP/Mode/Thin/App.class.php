@@ -27,8 +27,7 @@ class App
      * @return void
      +----------------------------------------------------------
      */
-    static public function run()
-    {
+    static public function run() {
         // 设定错误和异常处理
         set_error_handler(array('App',"appError"));
         set_exception_handler(array('App',"appException"));
@@ -57,8 +56,7 @@ class App
      * @return string
      +----------------------------------------------------------
      */
-    static private function build()
-    {
+    static private function build() {
         // 加载惯例配置文件
         C(include THINK_PATH.'/Common/convention.php');
         // 加载项目配置文件
@@ -94,8 +92,7 @@ class App
      * @return string
      +----------------------------------------------------------
      */
-    static private function getModule()
-    {
+    static private function getModule() {
         $var  =  C('VAR_MODULE');
         $module = !empty($_POST[$var]) ?
             $_POST[$var] :
@@ -119,8 +116,7 @@ class App
      * @return string
      +----------------------------------------------------------
      */
-    static private function getAction()
-    {
+    static private function getAction() {
         $var  =  C('VAR_ACTION');
         $action   = !empty($_POST[$var]) ?
             $_POST[$var] :
@@ -138,8 +134,7 @@ class App
      * @param mixed $e 异常对象
      +----------------------------------------------------------
      */
-    static public function appException($e)
-    {
+    static public function appException($e) {
         halt($e->__toString());
     }
 
@@ -157,8 +152,7 @@ class App
      * @return void
      +----------------------------------------------------------
      */
-    static public function appError($errno, $errstr, $errfile, $errline)
-    {
+    static public function appError($errno, $errstr, $errfile, $errline) {
       switch ($errno) {
           case E_ERROR:
           case E_USER_ERROR:
