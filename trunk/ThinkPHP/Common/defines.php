@@ -30,7 +30,6 @@ if(version_compare(PHP_VERSION,'5.4.0','<') ) {
 define('IS_CGI',substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
 define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
-define('NOW_TIME',isset($_SERVER['REQUEST_TIME'])?$_SERVER['REQUEST_TIME']:time());
 
 if(!IS_CLI) {
     // 当前文件名
@@ -58,7 +57,6 @@ if(!IS_CLI) {
     define('URL_PATHINFO',    1);   //PATHINFO模式
     define('URL_REWRITE',     2);   //REWRITE模式
     define('URL_COMPAT',      3);   // 兼容模式
-    define('__SELF__',$_SERVER['REQUEST_URI']); // 当前请求地址
 }
 //  版本信息
 define('THINK_VERSION', '2.1');
