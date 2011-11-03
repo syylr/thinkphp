@@ -86,8 +86,7 @@ class HtmlCache extends Think
      * @return void
      +----------------------------------------------------------
      */
-    static function readHTMLCache()
-    {
+    static function readHTMLCache() {
         if(self::requireHtmlCache() && self::checkHTMLCache(HTML_FILE_NAME,self::$cacheTime)) { //静态页面有效
             if(C('HTML_READ_TYPE')==1) {
                 // 重定向到静态页面

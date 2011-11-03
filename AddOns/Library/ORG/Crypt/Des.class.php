@@ -45,8 +45,7 @@ class Des
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function encrypt($str, $key)
-    {
+    function encrypt($str, $key) {
         if ($str == "") {
             return "";
         }
@@ -68,8 +67,7 @@ class Des
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function decrypt($str, $key)
-    {
+    function decrypt($str, $key) {
         if ($str == "") {
             return "";
         }

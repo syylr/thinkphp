@@ -271,8 +271,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    protected function display($templateFile='',$charset='',$contentType='text/html')
-    {
+    protected function display($templateFile='',$charset='',$contentType='text/html') {
         if(empty($charset))  $charset = C('DEFAULT_CHARSET');
         // 网页字符编码
         header("Content-Type:".$contentType."; charset=".$charset);
@@ -329,7 +328,7 @@ abstract class Action extends Think
         }elseif(strpos($templateFile,':')){
             // 引入其它模块的操作模板
             $templateFile   =   TMPL_PATH.str_replace(':','/',$templateFile).C('TMPL_TEMPLATE_SUFFIX');
-        }elseif(!is_file($templateFile))    {
+        }elseif(!is_file($templateFile)) {
             // 引入当前模块的其它操作模板
             $templateFile =  TMPL_PATH.MODULE_NAME.'/'.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
         }

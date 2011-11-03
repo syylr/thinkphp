@@ -25,8 +25,7 @@ abstract class Action extends Think
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct()
-    {
+    public function __construct() {
         //控制器初始化
         if(method_exists($this,'_initialize')) {
             $this->_initialize();

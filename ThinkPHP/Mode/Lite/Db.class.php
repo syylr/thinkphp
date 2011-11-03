@@ -223,8 +223,7 @@ class Db extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function commit()
-    {
+    public function commit() {
         if ($this->transTimes > 0) {
             $result = mysql_query('COMMIT', $this->linkID);
             $this->transTimes = 0;
@@ -247,8 +246,7 @@ class Db extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function rollback()
-    {
+    public function rollback() {
         if ($this->transTimes > 0) {
             $result = mysql_query('ROLLBACK', $this->linkID);
             $this->transTimes = 0;
@@ -389,8 +387,7 @@ class Db extends Think
      * @access public
      +----------------------------------------------------------
      */
-    public function __destruct()
-    {
+    public function __destruct() {
         // 关闭连接
         $this->close();
     }
@@ -405,8 +402,7 @@ class Db extends Think
      * @return mixed 返回数据库驱动类
      +----------------------------------------------------------
      */
-    public static function getInstance($db_config='')
-    {
+    public static function getInstance($db_config='') {
 		if ( self::$_instance==null ){
 			self::$_instance = new Db($db_config);
 		}
@@ -457,8 +453,7 @@ class Db extends Think
      * @return array
      +----------------------------------------------------------
      */
-    public function parseDSN($dsnStr)
-    {
+    public function parseDSN($dsnStr) {
         if( empty($dsnStr) ){return false;}
         $info = parse_url($dsnStr);
         if($info['scheme']){
@@ -800,8 +795,7 @@ class Db extends Think
      * @return string
      +----------------------------------------------------------
      */
-    protected function parseGroup($group)
-    {
+    protected function parseGroup($group) {
         return !empty($group)? ' GROUP BY '.$group:'';
     }
 
@@ -816,8 +810,7 @@ class Db extends Think
      * @return string
      +----------------------------------------------------------
      */
-    protected function parseHaving($having)
-    {
+    protected function parseHaving($having) {
         return  !empty($having)?   ' HAVING '.$having:'';
     }
 
@@ -895,8 +888,7 @@ class Db extends Think
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function delete($options=array())
-    {
+    public function delete($options=array()) {
         $sql   = 'DELETE FROM '
             .$this->parseTable($options['table'])
             .$this->parseWhere(isset($options['where'])?$options['where']:'')

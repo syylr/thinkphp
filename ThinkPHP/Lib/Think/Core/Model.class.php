@@ -812,6 +812,7 @@ class Model extends Think
      }
 
     // 自动表单令牌验证
+    // TODO  ajax无刷新多次提交咱不能满足
     public function autoCheckToken($data) {
         if(C('TOKEN_ON')){
             $name   = C('TOKEN_NAME');

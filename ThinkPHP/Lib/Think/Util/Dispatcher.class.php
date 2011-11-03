@@ -164,8 +164,7 @@ class Dispatcher extends Think
             $path = $_SERVER['REDIRECT_PATH_INFO'];
         }elseif(!empty($_SERVER["REDIRECT_Url"])){
             $path = $_SERVER["REDIRECT_Url"];
-            if(empty($_SERVER['QUERY_STRING']) || $_SERVER['QUERY_STRING'] == $_SERVER["REDIRECT_QUERY_STRING"])
-            {
+            if(empty($_SERVER['QUERY_STRING']) || $_SERVER['QUERY_STRING'] == $_SERVER["REDIRECT_QUERY_STRING"]) {
                 $parsedUrl = parse_url($_SERVER["REQUEST_URI"]);
                 if(!empty($parsedUrl['query'])) {
                     $_SERVER['QUERY_STRING'] = $parsedUrl['query'];
@@ -203,8 +202,7 @@ class Dispatcher extends Think
         if(is_array(C('_routes_')))
             $routes = C('_routes_');
         // 路由处理
-        if(!empty($routes))
-        {
+        if(!empty($routes)) {
             $depr = C('URL_PATHINFO_DEPR');
             foreach ($routes as $key=>$route){
                 // 检测路由跳转

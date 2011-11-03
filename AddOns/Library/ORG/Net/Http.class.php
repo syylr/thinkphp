@@ -214,8 +214,7 @@ class Http
      * @return string
      +----------------------------------------------------------
      */
-    static function get_header_info($header='',$echo=true)
-    {
+    static function get_header_info($header='',$echo=true) {
         ob_start();
         $headers   = getallheaders();
         if(!empty($header)) {
@@ -306,8 +305,7 @@ if( !function_exists ('mime_content_type')) {
      * @return string
      +----------------------------------------------------------
      */
-    function mime_content_type($filename)
-    {
+    function mime_content_type($filename) {
        static $contentType = array(
 			'ai'	=> 'application/postscript',
 				'aif'	=> 'audio/x-aiff',
@@ -513,13 +511,10 @@ if( !function_exists ('mime_content_type')) {
     }
 }
 
-if(!function_exists('image_type_to_extension'))
-{
-   function image_type_to_extension($imagetype)
-   {
+if(!function_exists('image_type_to_extension')){
+   function image_type_to_extension($imagetype) {
        if(empty($imagetype)) return false;
-       switch($imagetype)
-       {
+       switch($imagetype) {
            case IMAGETYPE_GIF    : return '.gif';
            case IMAGETYPE_JPEG    : return '.jpg';
            case IMAGETYPE_PNG    : return '.png';

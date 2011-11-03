@@ -194,8 +194,7 @@ function highlight_code($str,$show=false)
 
     // Prior to PHP 5, the highlight function used icky font tags
     // so we'll replace them with span tags.
-    if (abs(phpversion()) < 5)
-    {
+    if (abs(phpversion()) < 5) {
         $str = str_replace(array('<font ', '</font>'), array('<span ', '</span>'), $str);
         $str = preg_replace('#color="(.*?)"#', 'style="color: \\1"', $str);
     }
