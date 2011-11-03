@@ -253,23 +253,15 @@ class App
 
         //获取当前操作名
         $action = ACTION_NAME;
-        if(strpos($action,':')) {
-            // 执行操作链 最多只能有一个输出
-            $actionList	=	explode(':',$action);
-            foreach ($actionList as $action){
-                $module->$action();
-            }
-        }else{
-            if (method_exists($module,'_before_'.$action)) {
-                // 执行前置操作
-                call_user_func(array(&$module,'_before_'.$action));
-            }
-            //执行当前操作
-            call_user_func(array(&$module,$action));
-            if (method_exists($module,'_after_'.$action)) {
-                //  执行后缀操作
-                call_user_func(array(&$module,'_after_'.$action));
-            }
+        if (method_exists($module,'_before_'.$action)) {
+            // 执行前置操作
+            call_user_func(array(&$module,'_before_'.$action));
+        }
+        //执行当前操作
+        call_user_func(array(&$module,$action));
+        if (method_exists($module,'_after_'.$action)) {
+            //  执行后缀操作
+            call_user_func(array(&$module,'_after_'.$action));
         }
         // 项目结束标签
         if($tagOn)  tag('app_end');
