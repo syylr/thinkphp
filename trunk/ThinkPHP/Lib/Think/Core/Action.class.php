@@ -224,7 +224,7 @@ abstract class Action extends Think
             $restMethod   =  $method.'_'.strtolower($_SERVER['REQUEST_METHOD']);
             if(method_exists($this,$restMethod)) { // RESTFul方法支持
                 $this->$restMethod();
-            }elseif(method_exists($this,$method.'_'.__EXT__)){ // 资源访问入口支持
+            }elseif(__EXT__ && method_exists($this,$method.'_'.__EXT__)){ // 资源访问入口支持
                 $fun  =  $method.'_'.__EXT__;
                 $this->$fun();
             }elseif(method_exists($this,'_empty')) {
