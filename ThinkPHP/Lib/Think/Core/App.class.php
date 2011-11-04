@@ -58,10 +58,6 @@ class App
         // URL调度
         Dispatcher::dispatch();
 
-        // 加载模块配置文件
-        if(is_file(CONFIG_PATH.strtolower(MODULE_NAME).'_config.php'))
-            C(include CONFIG_PATH.strtolower(MODULE_NAME).'_config.php');
-
         // 系统检查
         App::checkLanguage();     //语言检查
         App::checkTemplate();     //模板检查
