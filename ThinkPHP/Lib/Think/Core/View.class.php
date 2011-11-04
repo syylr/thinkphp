@@ -436,9 +436,7 @@ class View extends Think{
         }
         if(MEMORY_LIMIT_ON && C('SHOW_USE_MEM')) {
             // 显示内存开销
-            $startMem    =  array_sum(explode(' ', $GLOBALS['_startUseMems']));
-            $endMem     =  array_sum(explode(' ', memory_get_usage()));
-            $showTime .= ' | UseMem:'. number_format(($endMem - $startMem)/1024).' kb';
+            $showTime .= ' | UseMem:'. number_format((memory_get_usage() - $GLOBALS['_startUseMems'])/1024).' kb';
         }
         return $showTime;
     }
