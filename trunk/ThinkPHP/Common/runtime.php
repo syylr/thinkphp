@@ -10,6 +10,9 @@
 // +----------------------------------------------------------------------
 // $Id$
 
+// 加载模式列表文件
+load_think_mode();
+
 // 检查缓存目录(Runtime) 如果不存在则自动创建
 function check_runtime() {
     if(!is_writeable(RUNTIME_PATH)) {

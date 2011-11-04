@@ -34,8 +34,6 @@ if(!APP_DEBUG && is_file(RUNTIME_PATH.$runtime)) {
     if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
     // 加载运行时文件
     require THINK_PATH."/Common/runtime.php";
-    // 加载模式列表文件
-    load_think_mode();
 }
 // 记录加载文件时间
 G('loadTime');
