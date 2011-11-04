@@ -438,6 +438,9 @@ class View extends Think{
             // 显示内存开销
             $showTime .= ' | UseMem:'. number_format((memory_get_usage() - $GLOBALS['_startUseMems'])/1024).' kb';
         }
+        if(C('SHOW_LOAD_FILE')) {
+            $showTime .= ' | LoadFile:'.count(get_included_files());
+        }
         return $showTime;
     }
 
