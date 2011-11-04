@@ -171,7 +171,7 @@ class View extends Think{
      +----------------------------------------------------------
      */
     public function fetch($templateFile='',$charset='',$contentType='',$display=false) {
-        G('_viewStartTime');
+        G('viewStartTime');
         // 使用null参数作为模版名直接返回不做任何输出
         if(null===$templateFile) return;
         // 网页字符编码
