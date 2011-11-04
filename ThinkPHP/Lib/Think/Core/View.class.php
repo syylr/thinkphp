@@ -292,7 +292,7 @@ class View extends Think{
                 if(false !== strpos($content,'{__NORUNTIME__}')) {
                     $content   =  str_replace('{__NORUNTIME__}','',$content);
                 }else{
-                    $runtime = '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>';
+                    $runtime = $this->showTime();
                      if(strpos($content,'{__RUNTIME__}'))
                          $content   =  str_replace('{__RUNTIME__}',$runtime,$content);
                      else
@@ -420,7 +420,7 @@ class View extends Think{
      */
     private function showTime() {
         // 显示运行时间
-        G('viewStartTime');
+        G('viewEndTime');
         $showTime   =   'Process: '.G('beginTime','viewEndTime').'s ';
         if(C('SHOW_ADV_TIME')) {
             // 显示详细运行时间
