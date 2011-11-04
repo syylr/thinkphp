@@ -16,7 +16,13 @@ function check_runtime() {
         header("Content-Type:text/html; charset=utf-8");
         exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>目录 [ '.RUNTIME_PATH.' ] 不可写！</div>');
     }
-    if(!is_dir(CACHE_PATH)) mkdir(CACHE_PATH);  // 模板缓存目录
+    if(!is_dir(CACHE_PATH)) {
+        mkdir(CACHE_PATH);  // 模板缓存目录
+    }elseif(APP_DEBUG){
+        // 调试模式切换删除编译缓存
+        $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
+        if(is_file(RUNTIME_PATH.$runtime)) unlink(RUNTIME_PATH.$runtime);
+    }
     if(!is_dir(LOG_PATH))	mkdir(LOG_PATH);    // 日志目录
     if(!is_dir(TEMP_PATH))  mkdir(TEMP_PATH);	// 数据缓存目录
     if(!is_dir(DATA_PATH))	mkdir(DATA_PATH);	// 数据文件目录
