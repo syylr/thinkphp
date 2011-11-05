@@ -575,7 +575,7 @@ class Model extends Think
      * @return array
      +----------------------------------------------------------
      */
-    private function _parseOptions($options) {
+    private function _parseOptions($options=array()) {
         if(is_array($options))
             $options =  array_merge($this->options,$options);
         // 查询过后清空sql表达式组装 避免影响下次查询
