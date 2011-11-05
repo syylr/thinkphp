@@ -298,8 +298,9 @@ class DbMongo extends Db{
         if(isset($options['table'])) {
             $this->switchCollection($options['table']);
         }
+        $query   = $this->parseWhere($options['where']);
         N('db_write',1);
-        $result   = $this->_collection->remove($options);
+        $result   = $this->_collection->remove($query);
         return $result;
     }
 
