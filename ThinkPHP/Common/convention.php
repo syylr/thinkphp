@@ -90,7 +90,7 @@ return  array(
     'HTML_FILE_SUFFIX'      => '.shtml',// 默认静态文件后缀
 
     /* 语言设置 */
-    'LANG_SWITCH_ON'        => false,   // 默认关闭多语言包功能
+    'LANG_SWITCH_ON'        => false,   // 默认关闭语言包功能
     'LANG_AUTO_DETECT'      => true,   // 自动侦测语言 开启多语言功能后有效
 
     /* 日志设置 */
@@ -135,8 +135,8 @@ return  array(
     'TMPL_STRIP_SPACE'      => true,       // 是否去除模板文件里面的html空格与换行
     'TMPL_CACHE_ON'			=> true,        // 是否开启模板编译缓存,设为false则每次都会重新编译
     'TMPL_CACHE_TIME'		=>	-1,         // 模板缓存有效期 -1 为永久，(以数字为值，单位:秒)
-    'TMPL_ACTION_ERROR'     => 'Public:success', // 默认错误跳转对应的模板文件
-    'TMPL_ACTION_SUCCESS'   => 'Public:success', // 默认成功跳转对应的模板文件
+    'TMPL_ACTION_ERROR'     => THINK_PATH.'/Tpl/dispatch_jump.html', // 默认错误跳转对应的模板文件
+    'TMPL_ACTION_SUCCESS'   => THINK_PATH.'/Tpl/dispatch_jump.html', // 默认成功跳转对应的模板文件
     'TMPL_TRACE_FILE'       => THINK_PATH.'/Tpl/PageTrace.tpl.php',     // 页面Trace的模板文件
     'TMPL_EXCEPTION_FILE'   => THINK_PATH.'/Tpl/ThinkException.tpl.php',// 异常页面的模板文件
     'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
