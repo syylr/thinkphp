@@ -95,12 +95,12 @@ class Model extends Think
         if(!empty($tablePrefix)) {
             $this->tablePrefix =  $tablePrefix;
         }
+        // 设置表前缀
+        $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
         // 数据库初始化操作
         // 获取数据库操作对象
         // 当前模型有独立的数据库连接信息
         $this->db(0,empty($this->connection)?$connection:$this->connection);
-        // 设置表前缀
-        $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
         // 字段检测
         if(!empty($this->name) && $this->autoCheckFields)    $this->_checkTableInfo();
     }
