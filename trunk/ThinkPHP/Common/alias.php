@@ -27,6 +27,7 @@ alias_import(array(
     'ViewModel'     => THINK_PATH.'/Lib/Think/Core/Model/ViewModel.class.php',
     'AdvModel'      => THINK_PATH.'/Lib/Think/Core/Model/AdvModel.class.php',
     'RelationModel' => THINK_PATH.'/Lib/Think/Core/Model/RelationModel.class.php',
+    'MongoModel'  => THINK_PATH.'/Lib/Think/Core/Model/MongoModel.class.php',
     )
 );
 ?>
