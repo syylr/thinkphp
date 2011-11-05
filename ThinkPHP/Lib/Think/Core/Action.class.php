@@ -206,21 +206,6 @@ abstract class Action extends Think
      */
     public function __call($method,$args) {
         if( 0 === strcasecmp($method,ACTION_NAME)) {
-            // 检查扩展操作方法
-            $_action = C('_actions_');
-            if($_action) {
-                // 'module:action'=>'callback'
-                if(isset($_action[MODULE_NAME.':'.ACTION_NAME])) {
-                    $action  =  $_action[MODULE_NAME.':'.ACTION_NAME];
-                }elseif(isset($_action[ACTION_NAME])){
-                    // 'action'=>'callback'
-                    $action  =  $_action[ACTION_NAME];
-                }
-                if(!empty($action)) {
-                    call_user_func($action);
-                    return ;
-                }
-            }
             $restMethod   =  $method.'_'.strtolower($_SERVER['REQUEST_METHOD']);
             if(method_exists($this,$restMethod)) { // RESTFul方法支持
                 $this->$restMethod();
@@ -233,6 +218,9 @@ abstract class Action extends Think
             }elseif(file_exists_case(C('TMPL_FILE_NAME'))){
                 // 检查是否存在默认模版 如果有直接输出模版
                 $this->display();
+            }elseif(function_exists('__hack_action')) {
+                // hack 方式定义扩展操作
+                __hack_action();
             }else{
                 // 抛出异常
                 throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
