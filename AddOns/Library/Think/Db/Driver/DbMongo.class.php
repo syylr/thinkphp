@@ -252,7 +252,11 @@ class DbMongo extends Db{
      */
     public function mongo_next_id($pk) {
         N('db_read',1);
-        $result   =  $this->_collection->find(array(),array($pk=>1))->sort(array($pk=>-1))->limit(1);
+        try{
+            $result   =  $this->_collection->find(array(),array($pk=>1))->sort(array($pk=>-1))->limit(1);
+        } catch (MongoCursorException $e) {
+            throw_exception($e->getMessage());
+        }
         $data = $result->getNext();
         return isset($data[$pk])?$data[$pk]+1:1;
     }
@@ -300,8 +304,11 @@ class DbMongo extends Db{
         }
         $query   = $this->parseWhere($options['where']);
         N('db_write',1);
-        $result   = $this->_collection->remove($query);
-        return $result;
+        try{
+            return $this->_collection->remove($query);
+        } catch (MongoCursorException $e) {
+            throw_exception($e->getMessage());
+        }
     }
 
     /**
@@ -320,8 +327,11 @@ class DbMongo extends Db{
             $this->switchCollection($options['table']);
         }
         N('db_write',1);
-        $result   =   $this->_collection->drop();
-        return $result;
+        try{
+            return  $this->_collection->drop();
+        } catch (MongoCursorException $e) {
+            throw_exception($e->getMessage());
+        }
     }
 
     /**
@@ -342,7 +352,11 @@ class DbMongo extends Db{
         N('db_query',1);
         $query  =  $this->parseWhere($options['where']);
         $field =  $this->parseField($options['field']);
-        $_cursor   = $this->_collection->find($query,$field);
+        try{
+            $_cursor   = $this->_collection->find($query,$field);
+        } catch (MongoCursorException $e) {
+            throw_exception($e->getMessage());
+        }
         if($options['order']) {
             $order   =  $this->parseOrder($options['order']);
             $_cursor =  $_cursor->sort($order);
@@ -384,7 +398,11 @@ class DbMongo extends Db{
         N('db_query',1);
         $query  =  $this->parseWhere($options['where']);
         $fields    = $this->parseField($options['field']);
-        $result   = $this->_collection->findOne($query,$fields);
+        try{
+            $result   = $this->_collection->findOne($query,$fields);
+        } catch (MongoCursorException $e) {
+            throw_exception($e->getMessage());
+        }
         return $result;
     }
 
@@ -404,8 +422,12 @@ class DbMongo extends Db{
             $this->switchCollection($options['table']);
         }
         $query  =  $this->parseWhere($options['where']);
-        $count   = $this->_collection->count($query);
-        return $count;
+        try{
+            $count   = $this->_collection->count($query);
+            return $count;
+        } catch (MongoCursorException $e) {
+            throw_exception($e->getMessage());
+        }
     }
 
     public function group($keys,$initial,$reduce,$options=array()){
@@ -425,7 +447,11 @@ class DbMongo extends Db{
         if(!empty($collection) && $collection != $this->_collectionName) {
             $this->switchCollection($collection);
         }
-        $result   =  $this->_collection->findOne();
+        try{
+            $result   =  $this->_collection->findOne();
+        } catch (MongoCursorException $e) {
+            throw_exception($e->getMessage());
+        }
         if($result) { // 存在数据则分析字段
             $info =  array();
             foreach ($result as $key=>$val){
