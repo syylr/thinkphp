@@ -120,7 +120,8 @@ class Model extends Think
         if(empty($this->fields)) {
             // 如果数据表字段没有定义则自动获取
             if(C('DB_FIELDS_CACHE')) {
-                $this->fields = F('_fields/'.$this->name);
+                $db   =  $this->dbName?$this->dbName:C('DB_NAME');
+                $this->fields = F('_fields/'.$db.'.'.$this->name);
                 if(!$this->fields)   $this->flush();
             }else{
                 // 每次都会读取数据表信息
@@ -157,7 +158,8 @@ class Model extends Think
         // 2008-3-7 增加缓存开关控制
         if(C('DB_FIELDS_CACHE'))
             // 永久缓存数据表信息
-            F('_fields/'.$this->name,$this->fields);
+            $db   =  $this->dbName?$this->dbName:C('DB_NAME');
+            F('_fields/'.$db.'.'.$this->name,$this->fields);
     }
 
     /**
