@@ -231,13 +231,9 @@ class App
         $group =  defined('GROUP_NAME') ? GROUP_NAME.C('APP_GROUP_DEPR') : '';
         $module  =  A($group.MODULE_NAME);
         if(!$module) {
-            // 是否存在扩展模块
-            $_module = C('_modules_.'.MODULE_NAME);
-            if($_module) {
-                // 'module'=>array('classImportPath'[,'className'])
-                import($_module[0]);
-                $class = isset($_module[1])?$_module[1]:MODULE_NAME.'Action';
-                $module = new $class;
+            if(function_exists('__hack_module')) {
+                // hack 方式定义扩展模块 返回Action对象
+                $module = __hack_module();
             }else{
                 // 是否定义Empty模块
                 $module = A("Empty");
