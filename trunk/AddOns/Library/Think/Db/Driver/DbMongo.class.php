@@ -93,7 +93,11 @@ class DbMongo extends Db{
     public function switchCollection($collection){
         if ( !$this->_linkID ) $this->initConnect(false);
         $this->_collectionName  = $collection;
-        $this->_collection =  $this->_linkID->selectCollection($collection);
+        try{
+            $this->_collection =  $this->_linkID->selectCollection($collection);
+        }catch (MongoException $e){
+            throw_exception($e->getMessage());
+        }
     }
 
     /**
@@ -354,30 +358,34 @@ class DbMongo extends Db{
         $field =  $this->parseField($options['field']);
         try{
             $_cursor   = $this->_collection->find($query,$field);
+            if($options['order']) {
+                $order   =  $this->parseOrder($options['order']);
+                $_cursor =  $_cursor->sort($order);
+            }
+            if(isset($options['page'])) { // 根据页数计算limit
+                if(strpos($options['page'],',')) {
+                    list($page,$length) =  explode(',',$options['page']);
+                }else{
+                    $page    = $options['page'];
+                }
+                $page    = $page?$page:1;
+                $length = isset($length)?$length:(is_numeric($options['limit'])?$options['limit']:20);
+                $offset  =  $length*((int)$page-1);
+                $options['limit'] =  $offset.','.$length;
+            }
+            if(isset($options['limit'])) {
+                list($offset,$length) =  $this->parseLimit($options['limit']);
+                if(!empty($offset)) {
+                    $_cursor =  $_cursor->skip(intval($offset));
+                }
+                $_cursor =  $_cursor->limit(intval($length));
+            }
+            //$_cursor->snapshot();
+            $this->_cursor =  $_cursor;
+            return $_cursor;
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
         }
-        if($options['order']) {
-            $order   =  $this->parseOrder($options['order']);
-            $_cursor =  $_cursor->sort($order);
-        }
-        if(isset($options['page'])) { // 根据页数计算limit
-            list($page,$length) =  explode(',',$options['page']);
-            $page    = $page?$page:1;
-            $length = $length?$length:($options['limit']?$options['limit']:20);
-            $offset  =  $length*((int)$page-1);
-            $options['limit'] =  $offset.','.$length;
-        }
-        if(isset($options['limit'])) {
-            list($offset,$length) =  $this->parseLimit($options['limit']);
-            if(!empty($offset)) {
-                $_cursor =  $_cursor->skip(intval($offset));
-            }
-            $_cursor =  $_cursor->limit(intval($length));
-        }
-        $_cursor->snapshot();
-        $this->_cursor =  $_cursor;
-        return $_cursor;
     }
 
     /**
@@ -399,11 +407,10 @@ class DbMongo extends Db{
         $query  =  $this->parseWhere($options['where']);
         $fields    = $this->parseField($options['field']);
         try{
-            $result   = $this->_collection->findOne($query,$fields);
+            return $this->_collection->findOne($query,$fields);
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
         }
-        return $result;
     }
 
     /**
