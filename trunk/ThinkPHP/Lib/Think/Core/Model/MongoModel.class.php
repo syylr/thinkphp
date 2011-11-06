@@ -283,6 +283,100 @@ class MongoModel extends Model{
 
     /**
      +----------------------------------------------------------
+     * 保存数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $data 数据
+     * @param array $options 表达式
+     +----------------------------------------------------------
+     * @return boolean
+     +----------------------------------------------------------
+     */
+    public function save($data='',$options=array()) {
+        if(empty($data)) {
+            // 没有传递数据，获取当前数据对象的值
+            if(!empty($this->data)) {
+                $data    =   $this->data;
+            }else{
+                $this->error = L('_DATA_TYPE_INVALID_');
+                return false;
+            }
+        }
+        // 数据处理
+        $data = $this->_facade($data);
+        // 分析表达式
+        $options =  $this->_parseOptions($options);
+        if(false === $this->_before_update($data,$options)) {
+            return false;
+        }
+        if(!isset($options['where']) ) {
+            // 如果存在主键数据 则自动作为更新条件
+            if(isset($data[$this->getPk()])) {
+                $pk   =  $this->getPk();
+                $where[$pk]   =  $data[$pk];
+                $options['where']  =  $where;
+                $pkValue = $data[$pk];
+                unset($data[$pk]);
+            }else{
+                // 如果没有任何更新条件则不执行
+                $this->error = L('_OPERATION_WRONG_');
+                return false;
+            }
+        }
+        $result = $this->db->update($data,$options);
+        if(false !== $result) {
+            if(isset($pkValue)) $data[$pk]   =  $pkValue;
+            $this->_after_update($data,$options);
+        }
+        return $result;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 删除数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $options 表达式
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+    public function delete($options=array()) {
+        if(empty($options) && empty($this->options)) {
+            // 如果删除条件为空 则删除当前数据对象所对应的记录
+            if(!empty($this->data) && isset($this->data[$this->getPk()]))
+                return $this->delete($this->data[$this->getPk()]);
+            else
+                return false;
+        }
+        if(is_numeric($options)  || is_string($options)) {
+            // 根据主键删除记录
+            $pk   =  $this->getPk();
+            if(strpos($options,',')) {
+                $where[$pk]   =  array('IN', $options);
+            }else{
+                $where[$pk]   =  $options;
+                $pkValue = $options;
+            }
+            $options =  array();
+            $options['where'] =  $where;
+        }
+        // 分析表达式
+        $options =  $this->_parseOptions($options);
+        $result=    $this->db->delete($options);
+        if(false !== $result) {
+            $data = array();
+            if(isset($pkValue)) $data[$pk]   =  $pkValue;
+            $this->_after_delete($data,$options);
+        }
+        // 返回删除记录个数
+        return $result;
+    }
+
+    /**
+     +----------------------------------------------------------
      * 获取MongoId
      +----------------------------------------------------------
      * @access protected
