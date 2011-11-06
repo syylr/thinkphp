@@ -611,7 +611,7 @@ class DbMongo extends Db{
     public function parseWhere($where){
         $query   = array();
         foreach ($where as $key=>$val){
-            if(0===strpos($key,'_')) {
+            if('_id' != $key && 0===strpos($key,'_')) {
                 // 解析特殊条件表达式
                 $query   = $this->parseThinkWhere($key,$val);
             }else{
