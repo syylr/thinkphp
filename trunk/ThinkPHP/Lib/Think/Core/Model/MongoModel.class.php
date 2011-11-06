@@ -516,8 +516,30 @@ class MongoModel extends Model{
         // 切换数据库连接
         $this->db   =    $_db[$linkNum];
         // 切换Collection
-        $this->db->switchCollection($this->getTableName());
+        $this->db->switchCollection($this->getTableName(),$this->dbName?$this->dbName:C('db_name'));
         return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 得到完整的数据表名
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function getTableName() {
+        if(empty($this->trueTableName)) {
+            $tableName  = !empty($this->tablePrefix) ? $this->tablePrefix : '';
+            if(!empty($this->tableName)) {
+                $tableName .= $this->tableName;
+            }else{
+                $tableName .= parse_name($this->name);
+            }
+            $this->trueTableName    =   strtolower($tableName);
+        }
+        return $this->trueTableName;
     }
 
     /**
