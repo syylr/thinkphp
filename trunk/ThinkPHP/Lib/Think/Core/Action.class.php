@@ -234,15 +234,15 @@ abstract class Action extends Think
                 case 'isdelete':
                 case 'isput':
                     return strtolower($_SERVER['REQUEST_METHOD']) == strtolower(substr($method,2));
-                // 获取变量 支持过滤和默认值 调用方式 $this->post($key,$filter,$default);
-                case 'get':      $input =& $_GET;break;
-                case 'post':$input =& $_POST;break;
-                case 'put': parse_str(file_get_contents('php://input'), $input);break;
-                case 'request': $input =& $_REQUEST;break;
-                case 'session': $input =& $_SESSION;break;
-                case 'cookie':  $input =& $_COOKIE;break;
-                case 'server':  $input =& $_SERVER;break;
-                case 'globals':  $input =& $GLOBALS;break;
+                // 获取变量 支持过滤和默认值 调用方式 $this->_post($key,$filter,$default);
+                case '_get':      $input =& $_GET;break;
+                case '_post':$input =& $_POST;break;
+                case '_put': parse_str(file_get_contents('php://input'), $input);break;
+                case '_request': $input =& $_REQUEST;break;
+                case '_session': $input =& $_SESSION;break;
+                case '_cookie':  $input =& $_COOKIE;break;
+                case '_server':  $input =& $_SERVER;break;
+                case '_globals':  $input =& $GLOBALS;break;
                 default:
                     throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             }
