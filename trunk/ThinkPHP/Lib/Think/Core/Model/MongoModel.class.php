@@ -120,7 +120,7 @@ class MongoModel extends Model{
      */
     public function count(){
         // 分析表达式
-        $options =  $this->_parseOptions();
+        $options =  parent::_parseOptions();
         return $this->db->count($options);
     }
 
@@ -187,29 +187,40 @@ class MongoModel extends Model{
         if(isset($options['where'][$id]) && $this->_idType== self::TYPE_OBJECT) {
             $options['where'][$id] = new MongoId($options['where'][$id]);
         }
-        // 字段类型验证
-        if(C('DB_FIELDTYPE_CHECK')) {
-            if(isset($options['where']) && is_array($options['where'])) {
-                // 对数组查询条件进行字段类型检查
-                foreach ($options['where'] as $key=>$val){
-                    if(in_array($key,$this->fields,true) && is_scalar($val)){
-                        $fieldType = strtolower($this->fields['_type'][$key]);
-                        if(false !== strpos($fieldType,'int')) {
-                            $options['where'][$key]   =  intval($val);
-                        }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
-                            $options['where'][$key]   =  floatval($val);
-                        }elseif(false !== strpos($fieldType,'bool')){
-                            $options['where'][$key]   =  (bool)$val;
-                        }
-                    }
-                }
-            }
-        }    
     }
 
-     // 查询成功的回调方法
-     protected function _after_find(&$result,$options) {
-        $result   =  $this->checkMongoId($result);
+    /**
+     +----------------------------------------------------------
+     * 查询数据
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $options 表达式参数
+     +----------------------------------------------------------
+     * @return mixed
+     +----------------------------------------------------------
+     */
+     public function find($options=array()) {
+         if( is_numeric($options) || is_string($options)) {
+            $id   =  $this->getPk();
+            $where[$id] = $options;
+            $options = array();
+            $options['where'] = $where;
+         }
+        // 分析表达式
+        $options =  parent::_parseOptions($options);
+        $result = $this->db->find($options);
+        if(false === $result) {
+            return false;
+        }
+        if(empty($result)) {// 查询结果为空
+            return null;
+        }else{
+            $this->checkMongoId($result);
+        }
+        $this->data = $result;
+        $this->_after_find($this->data,$options);
+        return $this->data;
      }
 
     /**
@@ -264,7 +275,7 @@ class MongoModel extends Model{
             $condition   =  $this->options['where'];
         $options['where'] =  $condition;
         $options['field']    =  $field;
-        $options =  $this->_parseOptions($options);
+        $options =  parent::_parseOptions($options);
         if(strpos($field,',')) { // 多字段
             $resultSet = $this->db->select($options);
             if(!empty($resultSet)) {
