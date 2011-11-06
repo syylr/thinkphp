@@ -313,6 +313,8 @@ class Model extends Think
                         $data[$key]   =  intval($val);
                     }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
                         $data[$key]   =  floatval($val);
+                    }elseif(false !== strpos($filedType,'bool')){
+                        $data[$key]    = (bool)$val;
                     }
                 }
             }
@@ -568,14 +570,14 @@ class Model extends Think
      +----------------------------------------------------------
      * 分析表达式
      +----------------------------------------------------------
-     * @access private
+     * @access proteced
      +----------------------------------------------------------
      * @param array $options 表达式参数
      +----------------------------------------------------------
      * @return array
      +----------------------------------------------------------
      */
-    private function _parseOptions($options=array()) {
+    protected function _parseOptions($options=array()) {
         if(is_array($options))
             $options =  array_merge($this->options,$options);
         // 查询过后清空sql表达式组装 避免影响下次查询
@@ -597,6 +599,8 @@ class Model extends Think
                             $options['where'][$key]   =  intval($val);
                         }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
                             $options['where'][$key]   =  floatval($val);
+                        }elseif(false !== strpos($fieldType,'bool')){
+                            $options['where'][$key]   =  (bool)$val;
                         }
                     }
                 }
