@@ -23,10 +23,10 @@
  */
 class DbMongo extends Db{
 
-    protected $_mongo = null;
-    protected $_collection    = null;
+    protected $_mongo = null; // MongoDb
+    protected $_collection    = null; // MongoCollection
     protected $_collectionName = '';
-    protected $_cursor   =  null;
+    protected $_cursor   =  null; // MongoCursor
     protected $comparison      = array('neq'=>'ne','ne'=>'ne','gt'=>'gt','egt'=>'gte','gte'=>'gte','lt'=>'lt','elt'=>'lte','lte'=>'lte','in'=>'in','not in'=>'nin','nin'=>'nin');
 
     /**
@@ -64,12 +64,12 @@ class DbMongo extends Db{
             if(empty($config))  $config =   $this->config;
             $host = 'mongodb://'.($config['username']?"{$config['username']}":'').($config['password']?":{$config['password']}@":'').$config['hostname'].($config['hostport']?":{$config['hostport']}":'');
             try{
-                $this->_mongo = new mongo( $host,$config['params']);
+                $this->linkID[$linkNum] = new mongo( $host,$config['params']);
             }catch (MongoConnectionException $e){
                 throw_exception($e->getmessage());
             }
             if ( !empty($config['database']) ) {
-                $this->linkID[$linkNum] =  $this->_mongo->selectDB($config['database']);
+                //$this->linkID[$linkNum] =  $this->_mongo->selectDB($config['database']);
             }
             // 标记连接成功
             $this->connected    =   true;
@@ -81,20 +81,27 @@ class DbMongo extends Db{
 
     /**
      +----------------------------------------------------------
-     * 切换当前操作的Collection
+     * 切换当前操作的Db和Collection
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
      * @param string $collection  collection
+     * @param string $db  db
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function switchCollection($collection){
+    public function switchCollection($collection,$db=''){
+        // 当前没有连接 则首先进行数据库连接
         if ( !$this->_linkID ) $this->initConnect(false);
-        $this->_collectionName  = $collection;
         try{
-            $this->_collection =  $this->_linkID->selectCollection($collection);
+            if(!empty($db)) { // 传人Db则切换数据库
+                // 当前MongoDb对象
+                $this->_mongo = $this->_linkID->selectDb($db);
+            }
+            // 当前MongoCollection对象
+            $this->_collection =  $this->_mongo->selectCollection($collection);
+            $this->_collectionName  = $collection; // 记录当前Collection名称
         }catch (MongoException $e){
             throw_exception($e->getMessage());
         }
@@ -125,7 +132,7 @@ class DbMongo extends Db{
      +----------------------------------------------------------
      */
     public function command($command=array()) {
-        $result   = $this->_linkID->command($command);
+        $result   = $this->_mongo->command($command);
         if(!$result['ok']) {
             throw_exception($result['errmsg']);
         }
@@ -148,7 +155,7 @@ class DbMongo extends Db{
      */
     public function execute($code,$args=array()) {
         $this->queryStr = $code;
-        $result   = $this->_linkID->execute($code,$args);
+        $result   = $this->_mongo->execute($code,$args);
         if($result['ok']) {
             return $result['retval'];
         }else{
@@ -165,9 +172,11 @@ class DbMongo extends Db{
      */
     public function close() {
         if($this->_linkID) {
+            $this->_linkID->close();
             $this->_linkID = null;
+            $this->_mongo = null;
             $this->_collection =  null;
-            $this->_mongo->close();
+            $this->_cursor = null;
         }
     }
 
@@ -481,7 +490,7 @@ class DbMongo extends Db{
      +----------------------------------------------------------
      */
     public function getTables(){
-        $list   = $this->_linkID->listCollections();
+        $list   = $this->_mongo->listCollections();
         $info =  array();
         foreach ($list as $collection){
             $info[]   =  $collection->getName();
