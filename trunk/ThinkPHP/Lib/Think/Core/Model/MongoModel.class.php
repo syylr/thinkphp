@@ -35,6 +35,8 @@ class MongoModel extends Model{
     protected $_idType  =  self::TYPE_OBJECT;
     // 主键是否自动增长 支持Int型主键
     protected $_autoInc =  false;
+    // Mongo默认关闭字段检测 可以动态追加字段
+    protected $autoCheckFields   =   false;
 
     /**
      +----------------------------------------------------------
@@ -208,7 +210,7 @@ class MongoModel extends Model{
             $options['where'] = $where;
          }
         // 分析表达式
-        $options =  parent::_parseOptions($options);
+        $options =  $this->_parseOptions($options);
         $result = $this->db->find($options);
         if(false === $result) {
             return false;
@@ -275,7 +277,7 @@ class MongoModel extends Model{
             $condition   =  $this->options['where'];
         $options['where'] =  $condition;
         $options['field']    =  $field;
-        $options =  parent::_parseOptions($options);
+        $options =  $this->_parseOptions($options);
         if(strpos($field,',')) { // 多字段
             $resultSet = $this->db->select($options);
             if(!empty($resultSet)) {
@@ -300,13 +302,19 @@ class MongoModel extends Model{
         return null;
     }
 
+    // 获取上次查询 TODO
+    public function getLastSql() {
+        // 暂时不支持Mongo
+        return '';
+    }
+
     /**
      +----------------------------------------------------------
      * 执行Mongo指令
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $command  指令
+     * @param array $command  指令
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
@@ -331,40 +339,10 @@ class MongoModel extends Model{
         return $this->db->execute($code,$args);
     }
 
-    /**
-     +----------------------------------------------------------
-     * 切换当前的数据库连接
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param integer $linkNum  连接序号
-     * @param mixed $config  数据库连接信息
-     * @param array $params  模型参数
-     +----------------------------------------------------------
-     * @return Model
-     +----------------------------------------------------------
-     */
-    public function db($linkNum,$config='',$params=array()){
-        static $_db = array();
-        if(!isset($_db[$linkNum])) {
-            // 创建一个新的实例
-            $_db[$linkNum]            =    Db::getInstance($config);
-        }elseif(NULL === $config){
-            $_db[$linkNum]->close(); // 关闭数据库连接
-            unset($_db[$linkNum]);
-            return ;
-        }
-        if(!empty($params)) {
-            if(is_string($params))    parse_str($params,$params);
-            foreach ($params as $name=>$value){
-                $this->setProperty($name,$value);
-            }
-        }
-        // 切换数据库连接
-        $this->db   =    $_db[$linkNum];
+    // 数据库切换后回调方法
+    protected function _after_db() {
         // 切换Collection
-        $this->db->switchCollection($this->getTableName(),$this->dbName?$this->dbName:C('db_name'));
-        return $this;
+        $this->db->switchCollection($this->getTableName(),$this->dbName?$this->dbName:C('db_name'));    
     }
 
     /**

@@ -1158,8 +1158,11 @@ class Model extends Think
         }
         // 切换数据库连接
         $this->db   =    $_db[$linkNum];
+        $this->_after_db();
         return $this;
     }
+    // 数据库切换后回调方法
+    protected function _after_db() {}
 
     /**
      +----------------------------------------------------------
