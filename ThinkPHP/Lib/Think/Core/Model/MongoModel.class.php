@@ -100,43 +100,13 @@ class MongoModel extends Model{
         }
     }
 
-    /**
-     +----------------------------------------------------------
-     * 对保存到数据库的数据进行处理
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param mixed $data 要操作的数据
-     +----------------------------------------------------------
-     * @return array
-     +----------------------------------------------------------
-     */
-    protected function _facade($data) {
+    // 写入数据前的回调方法 包括新增和更新
+    protected function _before_write(&$data) {
         $pk   =  $this->getPk();
         // 根据主键类型处理主键数据
         if(isset($data[$pk]) && $this->_idType == self::TYPE_OBJECT) {
             $data[$pk] =  new MongoId($data[$pk]);
-        }
-        if(!empty($this->fields)) {
-            foreach ($data as $key=>$val){
-                // 检查非数据字段
-                if(!in_array($key,$this->fields,true)){
-                    unset($data[$key]);
-                }elseif(C('DB_FIELDTYPE_CHECK') && is_scalar($val)) {
-                    // 字段类型检查
-                    $fieldType = strtolower($this->fields['_type'][$key]);
-                    if(false !== strpos($fieldType,'int')) {
-                        $data[$key]   =  intval($val);
-                    }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
-                        $data[$key]   =  floatval($val);
-                    }elseif(false !== strpos($filedType,'bool')){
-                        $data[$key]    = (bool)$val;
-                    }
-                }
-            }
-        }
-        $this->_before_write($data);
-        return $data;
+        }    
     }
 
     /**
@@ -172,36 +142,8 @@ class MongoModel extends Model{
         return $this->db->mongo_next_id($pk);
     }
 
-    /**
-     +----------------------------------------------------------
-     * 新增数据
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $data 数据
-     * @param array $options 表达式
-     * @param boolean $replace 是否replace
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    public function add($data='',$options=array(),$replace=false) {
-        if(empty($data)) {
-            // 没有传递数据，获取当前数据对象的值
-            if(!empty($this->data)) {
-                $data    =   $this->data;
-            }else{
-                $this->error = L('_DATA_TYPE_INVALID_');
-                return false;
-            }
-        }
-        // 分析表达式
-        $options =  $this->_parseOptions($options);
-        // 数据处理
-        $data = $this->_facade($data);
-        if(false === $this->_before_insert($data,$options)) {
-            return false;
-        }
+    // 插入数据前的回调方法
+    protected function _before_insert(&$data,$options) {
         // 写入数据到数据库
         if($this->_autoInc && $this->_idType== self::TYPE_INT) { // 主键自动增长
             $pk   =  $this->getPk();
@@ -209,170 +151,16 @@ class MongoModel extends Model{
                 $data[$pk]   =  $this->db->mongo_last_id($pk);
             }
         }
-        $result = $this->db->insert($data,$options,$replace);
-        if(false !== $result ) {
-            $insertId   =   $this->getLastInsID();
-            if($insertId) {
-                // 自增主键返回插入ID
-                $data[$this->getPk()]  = $insertId;
-                $this->_after_insert($data,$options);
-                return $insertId;
-            }
-        }
-        return $result;
-    }
-
-    public function addAll($dataList,$options=array()){
-        if(empty($dataList)) {
-            $this->error = L('_DATA_TYPE_INVALID_');
-            return false;
-        }
-        // 分析表达式
-        $options =  $this->_parseOptions($options);
-        // 数据处理
-        foreach ($dataList as $key=>$data){
-            $dataList[$key] = $this->_facade($data);
-        }
-        // 写入数据到数据库
-        $result = $this->db->insertAll($dataList,$options);
-        return $result;
     }
 
     public function clear(){
         return $this->db->clear();
     }
 
-    /**
-     +----------------------------------------------------------
-     * 查询数据集
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $options 表达式参数
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    public function select($options=array()) {
-        if(is_string($options) || is_numeric($options)) {
-            // 根据主键查询
-            $where[$this->getPk()] =  array('IN',$options);
-            $options =  array();
-            $options['where'] =  $where;
-        }elseif(True===$options){
-            $iterator =  true;
-            $options =  array();
-        }
-        // 分析表达式
-        $options =  $this->_parseOptions($options);
-        $resultSet = $this->db->select($options);
-        if(false === $resultSet) {
-            return false;
-        }
-        if(empty($resultSet)) { // 查询结果为空
-            return null;
-        }elseif(!empty($iterator)){ // 返回Iterator对象用于其它操作
-            return $resultSet;
-        }else{
-            $resultSet   =  iterator_to_array($resultSet);
-            array_walk($resultSet,array($this,'checkMongoId'));
-            $this->_after_select($resultSet,$options);
-            return $resultSet;
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 保存数据
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $data 数据
-     * @param array $options 表达式
-     +----------------------------------------------------------
-     * @return boolean
-     +----------------------------------------------------------
-     */
-    public function save($data='',$options=array()) {
-        if(empty($data)) {
-            // 没有传递数据，获取当前数据对象的值
-            if(!empty($this->data)) {
-                $data    =   $this->data;
-            }else{
-                $this->error = L('_DATA_TYPE_INVALID_');
-                return false;
-            }
-        }
-        // 数据处理
-        $data = $this->_facade($data);
-        // 分析表达式
-        $options =  $this->_parseOptions($options);
-        if(false === $this->_before_update($data,$options)) {
-            return false;
-        }
-        if(!isset($options['where']) ) {
-            // 如果存在主键数据 则自动作为更新条件
-            if(isset($data[$this->getPk()])) {
-                $pk   =  $this->getPk();
-                $where[$pk]   =  $data[$pk];
-                $options['where']  =  $where;
-                $pkValue = $data[$pk];
-                unset($data[$pk]);
-            }else{
-                // 如果没有任何更新条件则不执行
-                $this->error = L('_OPERATION_WRONG_');
-                return false;
-            }
-        }
-        $result = $this->db->update($data,$options);
-        if(false !== $result) {
-            if(isset($pkValue)) $data[$pk]   =  $pkValue;
-            $this->_after_update($data,$options);
-        }
-        return $result;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 删除数据
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $options 表达式
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    public function delete($options=array()) {
-        if(empty($options) && empty($this->options)) {
-            // 如果删除条件为空 则删除当前数据对象所对应的记录
-            if(!empty($this->data) && isset($this->data[$this->getPk()]))
-                return $this->delete($this->data[$this->getPk()]);
-            else
-                return false;
-        }
-        if(is_numeric($options)  || is_string($options)) {
-            // 根据主键删除记录
-            $pk   =  $this->getPk();
-            if(strpos($options,',')) {
-                $where[$pk]   =  array('IN', $options);
-            }else{
-                $where[$pk]   =  $options;
-                $pkValue = $options;
-            }
-            $options =  array();
-            $options['where'] =  $where;
-        }
-        // 分析表达式
-        $options =  $this->_parseOptions($options);
-        $result=    $this->db->delete($options);
-        if(false !== $result) {
-            $data = array();
-            if(isset($pkValue)) $data[$pk]   =  $pkValue;
-            $this->_after_delete($data,$options);
-        }
-        // 返回删除记录个数
-        return $result;
+    // 查询成功后的回调方法
+    protected function _after_select(&$resultSet,$options) {
+        $resultSet   =  iterator_to_array($resultSet);
+        array_walk($resultSet,array($this,'checkMongoId'));
     }
 
     /**
@@ -393,22 +181,8 @@ class MongoModel extends Model{
         return $result;
     }
 
-    /**
-     +----------------------------------------------------------
-     * 分析表达式
-     +----------------------------------------------------------
-     * @access private
-     +----------------------------------------------------------
-     * @param array $options 表达式参数
-     +----------------------------------------------------------
-     * @return array
-     +----------------------------------------------------------
-     */
-    private function _parseOptions($options=array()) {
-        if(is_array($options))
-            $options =  array_merge($this->options,$options);
-        // 查询过后清空sql表达式组装 避免影响下次查询
-        $this->options  =   array();
+    // 表达式过滤回调方法
+    protected function _options_filter(&$options) {
         $id = $this->getPk();
         if(isset($options['where'][$id]) && $this->_idType== self::TYPE_OBJECT) {
             $options['where'][$id] = new MongoId($options['where'][$id]);
@@ -430,44 +204,12 @@ class MongoModel extends Model{
                     }
                 }
             }
-        }
-        // 表达式过滤
-        $this->_options_filter($options);
-        return $options;
+        }    
     }
 
-    /**
-     +----------------------------------------------------------
-     * 查询数据
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $options 表达式参数
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-     public function find($options=array()) {
-         if( is_numeric($options) || is_string($options)) {
-            $id   =  $this->getPk();
-            $where[$id] = $options;
-            $options = array();
-            $options['where'] = $where;
-         }
-        // 分析表达式
-        $options =  $this->_parseOptions($options);
-        $result = $this->db->find($options);
-        if(false === $result) {
-            return false;
-        }
-        if(empty($result)) {// 查询结果为空
-            return null;
-        }else{
-            $this->checkMongoId($result);
-        }
-        $this->data = $result;
-        $this->_after_find($this->data,$options);
-        return $this->data;
+     // 查询成功的回调方法
+     protected function _after_find(&$result,$options) {
+        $result   =  $this->checkMongoId($result);
      }
 
     /**
