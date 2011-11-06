@@ -120,7 +120,7 @@ class MongoModel extends Model{
      */
     public function count(){
         // 分析表达式
-        $options =  parent::_parseOptions();
+        $options =  $this->_parseOptions();
         return $this->db->count($options);
     }
 
