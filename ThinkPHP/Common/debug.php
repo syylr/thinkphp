@@ -27,7 +27,7 @@ return  array(
     'LOG_RECORD'=>true,  // 进行日志记录
 
     /* 数据库设置 */
-    'LOG_RECORD_LEVEL'       =>   array('EMERG','ALERT','CRIT','ERR','WARN','NOTIC','INFO','DEBUG','SQL'),  // 允许记录的日志级别
+    'LOG_RECORD_LEVEL'       =>   'EMERG,ALERT,CRIT,ERR,WARN,NOTIC,INFO,DEBUG,SQL',  // 允许记录的日志级别
     'DB_FIELDS_CACHE'=> false,
 
     /* 运行时间设置 */

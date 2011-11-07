@@ -62,7 +62,7 @@ class Log extends Think
      +----------------------------------------------------------
      */
     static function record($message,$level=self::ERR,$record=false) {
-        if($record || in_array($level,C('LOG_RECORD_LEVEL'))) {
+        if($record || strpos(C('LOG_RECORD_LEVEL'),$level)) {
             $now = date(self::$format);
             self::$log[] =   "{$now} ".$_SERVER['REQUEST_URI']." | {$level}: {$message}\r\n";
         }
