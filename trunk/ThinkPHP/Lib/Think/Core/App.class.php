@@ -143,6 +143,9 @@ class App
                 $langSet = $matches[1];
                 cookie('think_language',$langSet,3600);
             }
+            if(!in_array($langSet,C('LANG_LIST'))) { // 非法语言参数
+                $langSet = C('DEFAULT_LANG');
+            }
         }
         // 定义当前语言
         define('LANG_SET',strtolower($langSet));

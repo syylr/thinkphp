@@ -92,6 +92,7 @@ return  array(
     /* 语言设置 */
     'LANG_SWITCH_ON'        => false,   // 默认关闭语言包功能
     'LANG_AUTO_DETECT'      => true,   // 自动侦测语言 开启多语言功能后有效
+    'LANG_LIST' => array('zh-cn'), // 允许切换的语言列表
 
     /* 日志设置 */
     'LOG_EXCEPTION_RECORD'  => true,    // 是否记录异常信息日志(默认为开启状态)
