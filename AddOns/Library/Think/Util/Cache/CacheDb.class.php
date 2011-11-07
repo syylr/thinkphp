@@ -41,7 +41,7 @@ class CacheDb extends Cache
      * @access protected
      +----------------------------------------------------------
      */
-    var $db     ;
+    private $db     ;
 
     /**
      +----------------------------------------------------------
@@ -50,8 +50,7 @@ class CacheDb extends Cache
      * @access public
      +----------------------------------------------------------
      */
-    function __construct($options='')
-    {
+    function __construct($options='') {
         if(empty($options)){
             $options= array
             (
@@ -77,8 +76,7 @@ class CacheDb extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    private function isConnected()
-    {
+    private function isConnected() {
         return $this->connected;
     }
 
@@ -94,15 +92,12 @@ class CacheDb extends Cache
      * @return mixed
      +----------------------------------------------------------
      */
-    public function get($name)
-    {
+    public function get($name) {
         $name  =  addslashes($name);
         N('cache_read',1);
-        $result  =  $this->db->getRow('select `data`,`datacrc`,`datasize` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' and (`expire` =-1 OR `expire`>'.time().') limit 0,1');
+        $result  =  $this->db->query('select `data`,`datacrc`,`datasize` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' and (`expire` =-1 OR `expire`>'.time().') limit 0,1');
         if(false !== $result ) {
-            if(is_object($result)) {
-            	$result  =  get_object_vars($result);
-            }
+            $result   =  $result[0];
             if(C('DATA_CACHE_CHECK')) {//开启数据校验
                 if($result['datacrc'] != md5($result['data'])) {//校验错误
                     return false;
@@ -134,8 +129,7 @@ class CacheDb extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name, $value,$expireTime=0)
-    {
+    public function set($name, $value,$expireTime=0) {
         $data   =   serialize($value);
         $name  =  addslashes($name);
         N('cache_write',1);
@@ -155,7 +149,7 @@ class CacheDb extends Cache
         $map['datacrc']	=	$crc;
         $map['expire']	=	($expire==-1)?-1: (time()+$expire) ;//缓存有效期为－1表示永久缓存
         $map['datasize']	=	strlen($data);
-        $result  =  $this->db->getRow('select `id` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' limit 0,1');
+        $result  =  $this->db->query('select `id` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' limit 0,1');
         if(false !== $result ) {
         	//更新记录
             $result  =  $this->db->save($map,$this->options['table'],'`cachekey`=\''.$name.'\'');
@@ -181,10 +175,9 @@ class CacheDb extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function rm($name)
-    {
+    public function rm($name) {
         $name  =  addslashes($name);
-        return $this->db->_execute('delete from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\'');
+        return $this->db->execute('delete from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\'');
     }
 
     /**
@@ -196,9 +189,8 @@ class CacheDb extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function clear()
-    {
-        return $this->db->_execute('truncate table `'.$this->options['table'].'`');
+    public function clear() {
+        return $this->db->execute('truncate table `'.$this->options['table'].'`');
     }
 
 }//类定义结束
