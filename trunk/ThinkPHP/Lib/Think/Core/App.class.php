@@ -130,20 +130,20 @@ class App
             L(include THINK_PATH.'/Lang/'.$langSet.'.php');
             return;
         }
-        // 通过url变更语言
-        if(isset($_GET[C('VAR_LANGUAGE')])){
-            $langSet = $_GET[C('VAR_LANGUAGE')];
-            cookie('think_language',$langSet,3600);
-        }elseif(cookie('think_language'))// 获取上次用户的选择
-            $langSet = cookie('think_language');
-
-        // 自动侦测浏览器语言
-        if (C('LANG_AUTO_DETECT') && isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ){
-            preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
-            $langSet = strtolower($matches[1]);
-            cookie('think_language',$langSet,3600);
+        // 启用了语言包功能
+        // 根据是否启用自动侦测设置获取语言选择
+        if (C('LANG_AUTO_DETECT')){
+            if(isset($_GET[C('VAR_LANGUAGE')])){
+                $langSet = $_GET[C('VAR_LANGUAGE')];// url中设置了语言变量
+                cookie('think_language',$langSet,3600);
+            }elseif(cookie('think_language')){// 获取上次用户的选择
+                $langSet = cookie('think_language');
+            }elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){// 自动侦测浏览器语言
+                preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
+                $langSet = $matches[1];
+                cookie('think_language',$langSet,3600);
+            }
         }
-
         // 定义当前语言
         define('LANG_SET',strtolower($langSet));
         // 加载框架语言包
