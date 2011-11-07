@@ -11,12 +11,14 @@
 // $Id$
 
 class Page extends Think {
-    // 起始行数
-    public $firstRow	;
-    // 列表每页显示行数
-    public $listRows	;
+    // 分页栏每页显示的页数
+    public $rollPage = 5;
     // 页数跳转时要带的参数
     public $parameter  ;
+    // 默认列表每页显示行数
+    protected $listRows = 20;
+    // 起始行数
+    protected $firstRow	;
     // 分页总页面数
     protected $totalPages  ;
     // 总行数
@@ -25,9 +27,7 @@ class Page extends Think {
     protected $nowPage    ;
     // 分页的栏的总页数
     protected $coolPages   ;
-    // 分页栏每页显示的页数
-    protected $rollPage   ;
-	// 分页显示定制
+    // 分页显示定制
     protected $config  =	array('header'=>'条记录','prev'=>'上一页','next'=>'下一页','first'=>'第一页','last'=>'最后一页','theme'=>' %totalRow% %header% %nowPage%/%totalPage% 页 %upPage% %downPage% %first%  %prePage%  %linkPage%  %nextPage% %end%');
 
     /**
@@ -41,11 +41,12 @@ class Page extends Think {
      * @param array $parameter  分页跳转的参数
      +----------------------------------------------------------
      */
-    public function __construct($totalRows,$listRows,$parameter='') {
+    public function __construct($totalRows,$listRows='',$parameter='') {
         $this->totalRows = $totalRows;
         $this->parameter = $parameter;
-        $this->rollPage = C('PAGE_ROLLPAGE');
-        $this->listRows = !empty($listRows)?$listRows:C('PAGE_LISTROWS');
+        if(!empty($listRows)) {
+            $this->listRows = intval($listRows);
+        }
         $this->totalPages = ceil($this->totalRows/$this->listRows);     //总页数
         $this->coolPages  = ceil($this->totalPages/$this->rollPage);
         $this->nowPage  = !empty($_GET[C('VAR_PAGE')])?intval($_GET[C('VAR_PAGE')]):1;
