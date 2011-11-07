@@ -87,6 +87,8 @@ class MongoModel extends Model{
             return false;
         }
         $this->fields   =   array_keys($fields);
+        $this->fields['_pk'] = $this->pk;
+        $this->fields['_autoinc'] = $this->_autoInc;
         foreach ($fields as $key=>$val){
             // 记录字段类型
             $type[$key]    =   $val['type'];
@@ -325,11 +327,11 @@ class MongoModel extends Model{
 
     /**
      +----------------------------------------------------------
-     * 执行MongoCode指令
+     * 执行MongoCode
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $code  MongoCode指令
+     * @param string $code  MongoCode
      * @param array $args   参数
      +----------------------------------------------------------
      * @return mixed
@@ -347,7 +349,7 @@ class MongoModel extends Model{
 
     /**
      +----------------------------------------------------------
-     * 得到完整的数据表名
+     * 得到完整的数据表名 Mongo表名不带dbName
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -365,19 +367,6 @@ class MongoModel extends Model{
             $this->trueTableName    =   strtolower($tableName);
         }
         return $this->trueTableName;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 获取主键名称
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function getPk() {
-        return $this->pk;
     }
 
 };
