@@ -298,6 +298,8 @@ class View extends Think{
                      else
                          $content   .=  $runtime;
                 }
+            }else{
+                $content   =  str_replace(array('{__NORUNTIME__}','{__RUNTIME__}'),'',$content);
             }
             echo $content;
             if(C('SHOW_PAGE_TRACE'))   $this->showTrace();
