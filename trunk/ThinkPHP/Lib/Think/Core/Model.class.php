@@ -142,6 +142,9 @@ class Model extends Think
     public function flush() {
         // 缓存不存在则查询数据表信息
         $fields =   $this->db->getFields($this->getTableName());
+        if(!$fields) { // 无法获取字段信息
+            return false;
+        }
         $this->fields   =   array_keys($fields);
         $this->fields['_autoinc'] = false;
         foreach ($fields as $key=>$val){
