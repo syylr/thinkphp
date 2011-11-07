@@ -307,7 +307,7 @@ class DbMysqli extends Db{
             $value   =  $this->parseValue($val);
             if(is_scalar($value)) { // 过滤非标量数据
                 $values[]   =  $value;
-                $fields[]     =  $this->addSpecialChar($key);
+                $fields[]     =  $this->parseKey($key);
             }
         }
         $sql   =  'REPLACE INTO '.$this->parseTable($options['table']).' ('.implode(',', $fields).') VALUES ('.implode(',', $values).')';
@@ -330,7 +330,7 @@ class DbMysqli extends Db{
     public function insertAll($datas,$options=array(),$replace=false) {
         if(!is_array($datas[0])) return false;
         $fields = array_keys($datas[0]);
-        array_walk($fields, array($this, 'addSpecialChar'));
+        array_walk($fields, array($this, 'parseKey'));
         $values  =  array();
         foreach ($datas as $data){
             $value   =  array();
@@ -404,5 +404,25 @@ class DbMysqli extends Db{
         }
     }
 
+    /**
+     +----------------------------------------------------------
+     * 字段和表名处理添加`
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param string $key
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function parseKey(&$key) {
+        $key   =  trim($key);
+        if( false !== strpos($key,' ') || false !== strpos($key,',') || false !== strpos($key,'*') ||  false !== strpos($key,'(') || false !== strpos($key,'.') || false !== strpos($key,'`')) {
+            //如果包含* 或者 使用了sql方法 则不作处理
+        }else{
+            $key = '`'.$key.'`';
+        }
+        return $key;
+    }
 }//类定义结束
 ?>

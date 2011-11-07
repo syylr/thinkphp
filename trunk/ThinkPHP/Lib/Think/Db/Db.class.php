@@ -338,11 +338,26 @@ class Db extends Think
         foreach ($data as $key=>$val){
             $value   =  $this->parseValue($val);
             if(is_scalar($value)) // 过滤非标量数据
-                $set[]    = $this->addSpecialChar($key).'='.$value;
+                $set[]    = $this->parseKey($key).'='.$value;
         }
         return ' SET '.implode(',',$set);
     }
 
+    /**
+     +----------------------------------------------------------
+     * 字段名分析
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param string $key
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function parseKey(&$key) {
+        return $key;
+    }
+    
     /**
      +----------------------------------------------------------
      * value分析
@@ -385,17 +400,17 @@ class Db extends Think
             $array   =  array();
             foreach ($fields as $key=>$field){
                 if(!is_numeric($key))
-                    $array[] =  $this->addSpecialChar($key).' AS '.$this->addSpecialChar($field);
+                    $array[] =  $this->parseKey($key).' AS '.$this->parseKey($field);
                 else
-                    $array[] =  $this->addSpecialChar($field);
+                    $array[] =  $this->parseKey($field);
             }
             $fieldsStr = implode(',', $array);
         }elseif(is_string($fields) && !empty($fields)) {
-            $fieldsStr = $this->addSpecialChar($fields);
+            $fieldsStr = $this->parseKey($fields);
         }else{
             $fieldsStr = '*';
         }
-		//TODO 如果是查询全部字段，并且是join的方式，那么就把要查的表加个别名，以免字段被覆盖
+        //TODO 如果是查询全部字段，并且是join的方式，那么就把要查的表加个别名，以免字段被覆盖
         return $fieldsStr;
     }
 
@@ -413,7 +428,7 @@ class Db extends Think
     protected function parseTable($tables) {
         if(is_string($tables))
             $tables  =  explode(',',$tables);
-        array_walk($tables, array(&$this, 'addSpecialChar'));
+        array_walk($tables, array(&$this, 'parseKey'));
         return implode(',',$tables);
     }
 
@@ -457,18 +472,18 @@ class Db extends Think
                         $array   =  explode('|',$key);
                         $str   = array();
                         foreach ($array as $k){
-                            $str[]   = '('.$this->parseWhereItem($this->addSpecialChar($k),$val).')';
+                            $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$val).')';
                         }
                         $whereStr .= implode(' OR ',$str);
                     }elseif(strpos($key,'&')){
                         $array   =  explode('&',$key);
                         $str   = array();
                         foreach ($array as $k){
-                            $str[]   = '('.$this->parseWhereItem($this->addSpecialChar($k),$val).')';
+                            $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$val).')';
                         }
                         $whereStr .= implode(' AND ',$str);
                     }else{
-                        $whereStr   .= $this->parseWhereItem($this->addSpecialChar($key),$val);
+                        $whereStr   .= $this->parseWhereItem($this->parseKey($key),$val);
                     }
                 }
                 $whereStr .= ' )'.$operate;
@@ -568,7 +583,7 @@ class Db extends Think
                 }
                 $array   =  array();
                 foreach ($where as $field=>$data)
-                    $array[] = $this->addSpecialChar($field).' = '.$this->parseValue($data);
+                    $array[] = $this->parseKey($field).' = '.$this->parseValue($data);
                 $whereStr   = implode($op,$array);
                 break;
         }
@@ -636,9 +651,9 @@ class Db extends Think
             $array   =  array();
             foreach ($order as $key=>$val){
                 if(is_numeric($key)) {
-                    $array[] =  $this->addSpecialChar($val);
+                    $array[] =  $this->parseKey($val);
                 }else{
-                    $array[] =  $this->addSpecialChar($key).' '.$val;
+                    $array[] =  $this->parseKey($key).' '.$val;
                 }
             }
             $order   =  implode(',',$array);
@@ -710,7 +725,7 @@ class Db extends Think
             $value   =  $this->parseValue($val);
             if(is_scalar($value)) { // 过滤非标量数据
                 $values[]   =  $value;
-                $fields[]     =  $this->addSpecialChar($key);
+                $fields[]     =  $this->parseKey($key);
             }
         }
         $sql   =  ($replace?'REPLACE':'INSERT').' INTO '.$this->parseTable($options['table']).' ('.implode(',', $fields).') VALUES ('.implode(',', $values).')';
@@ -733,7 +748,7 @@ class Db extends Think
      */
     public function selectInsert($fields,$table,$options=array()) {
         if(is_string($fields))   $fields    = explode(',',$fields);
-        array_walk($fields, array($this, 'addSpecialChar'));
+        array_walk($fields, array($this, 'parseKey'));
         $sql   =    'INSERT INTO '.$this->parseTable($table).' ('.implode(',', $fields).') ';
         $sql  .= str_replace(
             array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%'),
@@ -836,30 +851,6 @@ class Db extends Think
             ),$this->selectSql);
         $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
         return $query?$this->query($sql):$sql;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 字段和表名添加`
-     * 保证指令中使用关键字不出错 针对mysql
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param mixed $value
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    protected function addSpecialChar(&$value) {
-        if(0 === strpos($this->dbType,'MYSQL')){
-            $value   =  trim($value);
-            if( false !== strpos($value,' ') || false !== strpos($value,',') || false !== strpos($value,'*') ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
-                //如果包含* 或者 使用了sql方法 则不作处理
-            }else{
-                $value = '`'.$value.'`';
-            }
-        }
-        return $value;
     }
 
     /**

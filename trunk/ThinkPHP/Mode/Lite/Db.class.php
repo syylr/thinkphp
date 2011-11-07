@@ -526,7 +526,7 @@ class Db extends Think
         foreach ($data as $key=>$val){
             $value   =  $this->parseValue($val);
             if(is_scalar($value)) // 过滤非标量数据
-                $set[]    = $this->addSpecialChar($key).'='.$value;
+                $set[]    = $this->parseKey($key).'='.$value;
         }
         return ' SET '.implode(',',$set);
     }
@@ -571,13 +571,13 @@ class Db extends Think
             $array   =  array();
             foreach ($fields as $key=>$field){
                 if(!is_numeric($key))
-                    $array[] =  $this->addSpecialChar($key).' AS '.$this->addSpecialChar($field);
+                    $array[] =  $this->parseKey($key).' AS '.$this->parseKey($field);
                 else
-                    $array[] =  $this->addSpecialChar($field);
+                    $array[] =  $this->parseKey($field);
             }
             $fieldsStr = implode(',', $array);
         }elseif(is_string($fields) && !empty($fields)) {
-            $fieldsStr = $this->addSpecialChar($fields);
+            $fieldsStr = $this->parseKey($fields);
         }else{
             $fieldsStr = '*';
         }
@@ -598,7 +598,7 @@ class Db extends Think
     protected function parseTable($tables) {
         if(is_string($tables))
             $tables  =  explode(',',$tables);
-        array_walk($tables, array(&$this, 'addSpecialChar'));
+        array_walk($tables, array(&$this, 'parseKey'));
         return implode(',',$tables);
     }
 
@@ -633,7 +633,7 @@ class Db extends Think
                     // 解析特殊条件表达式
                     $whereStr   .= $this->parseThinkWhere($key,$val);
                 }else{
-                    $key = $this->addSpecialChar($key);
+                    $key = $this->parseKey($key);
                     if(is_array($val)) {
                         if(is_string($val[0])) {
                             if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)$/i',$val[0])) { // 比较运算
@@ -719,7 +719,7 @@ class Db extends Think
                 }
                 $array   =  array();
                 foreach ($where as $field=>$data)
-                    $array[] = $this->addSpecialChar($field).' = '.$this->parseValue($data);
+                    $array[] = $this->parseKey($field).' = '.$this->parseValue($data);
                 $whereStr   = implode($op,$array);
                 break;
         }
@@ -846,7 +846,7 @@ class Db extends Think
             $value   =  $this->parseValue($val);
             if(is_scalar($value)) { // 过滤非标量数据
                 $values[]   =  $value;
-                $fields[]     =  $this->addSpecialChar($key);
+                $fields[]     =  $this->parseKey($key);
             }
         }
         $sql   =  'INSERT INTO '.$this->parseTable($options['table']).' ('.implode(',', $fields).') VALUES ('.implode(',', $values).')';
@@ -946,7 +946,7 @@ class Db extends Think
      * @return mixed
      +----------------------------------------------------------
      */
-    protected function addSpecialChar(&$value) {
+    protected function parseKey(&$value) {
         $value   =  trim($value);
         if( false !== strpos($value,' ') || false !== strpos($value,',') || false !== strpos($value,'*') ||  false !== strpos($value,'(') || false !== strpos($value,'.') || false !== strpos($value,'`')) {
             //如果包含* 或者 使用了sql方法 则不作处理
