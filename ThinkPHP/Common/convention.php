@@ -99,17 +99,9 @@ return  array(
     'LOG_FILE_SIZE'         => 2097152,	// 日志文件大小限制
     'LOG_RECORD_LEVEL'      => array('EMERG','ALERT','CRIT','ERR'),// 允许记录的日志级别
 
-    /* 分页设置 */
-	'PAGE_ROLLPAGE'         => 5,      // 分页显示页数
-	'PAGE_LISTROWS'         => 20,     // 分页每页显示记录数
-
     /* SESSION设置 */
     'SESSION_AUTO_START'    => true,    // 是否自动开启Session
     'VAR_SESSION_ID'=>'session_id',     //sessionID的提交变量
-    // 内置SESSION类可用参数
-    //'SESSION_NAME'          => '',      // Session名称
-    //'SESSION_PATH'          => '',      // Session保存路径
-    //'SESSION_CALLBACK'      => '',      // Session 对象反序列化时候的回调函数
 
     /* 运行时间设置 */
     'SHOW_RUN_TIME'			=> false,   // 运行时间显示
@@ -159,18 +151,15 @@ return  array(
 	'URL_CASE_INSENSITIVE'  => false,   // 默认false 表示URL区分大小写 true则表示不区分大小写
     'URL_ROUTER_ON'         => false,   // 是否开启URL路由
     'URL_ROUTE_RULES'       => array(), // 默认路由规则，注：分组配置无法替代
-    //'URL_DISPATCH_ON'       => true,	// 是否启用Dispatcher，不再生效
     'URL_MODEL'      => 1,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：
     // 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式)  默认为PATHINFO 模式，提供最好的用户体验和SEO支持
     'URL_PATHINFO_DEPR'     => '/',	// PATHINFO模式下，各参数之间的分割符号
     'URL_HTML_SUFFIX'       => '',  // URL伪静态后缀设置
-    //'URL_AUTO_REDIRECT'     => true, // 自动重定向到规范的URL 不再生效
 
     /* 系统变量名称设置 */
     'VAR_GROUP'             => 'g',     // 默认分组获取变量
     'VAR_MODULE'            => 'm',		// 默认模块获取变量
     'VAR_ACTION'            => 'a',		// 默认操作获取变量
-    //'VAR_ROUTER'            => 'r',     // 默认路由获取变量,不再生效
    	'VAR_PAGE'              => 'p',		// 默认分页跳转变量
     'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
 	'VAR_LANGUAGE'          => 'l',		// 默认语言切换变量
