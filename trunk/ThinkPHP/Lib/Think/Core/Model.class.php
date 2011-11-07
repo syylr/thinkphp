@@ -308,14 +308,7 @@ class Model extends Think
                     unset($data[$key]);
                 }elseif(C('DB_FIELDTYPE_CHECK') && is_scalar($val)) {
                     // 字段类型检查
-                    $fieldType = strtolower($this->fields['_type'][$key]);
-                    if(false !== strpos($fieldType,'int')) {
-                        $data[$key]   =  intval($val);
-                    }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
-                        $data[$key]   =  floatval($val);
-                    }elseif(false !== strpos($filedType,'bool')){
-                        $data[$key]    = (bool)$val;
-                    }
+                    $this->_parseType($data,$key);
                 }
             }
         }
@@ -594,14 +587,7 @@ class Model extends Think
                 // 对数组查询条件进行字段类型检查
                 foreach ($options['where'] as $key=>$val){
                     if(in_array($key,$this->fields,true) && is_scalar($val)){
-                        $fieldType = strtolower($this->fields['_type'][$key]);
-                        if(false !== strpos($fieldType,'int')) {
-                            $options['where'][$key]   =  intval($val);
-                        }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
-                            $options['where'][$key]   =  floatval($val);
-                        }elseif(false !== strpos($fieldType,'bool')){
-                            $options['where'][$key]   =  (bool)$val;
-                        }
+                        $this->_parseType($options['where'],$key);
                     }
                 }
             }
@@ -612,6 +598,29 @@ class Model extends Think
     }
     // 表达式过滤回调方法
     protected function _options_filter(&$options) {}
+
+    /**
+     +----------------------------------------------------------
+     * 数据类型检测
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param mixed $data 数据
+     * @param string $key 字段名
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    protected function _parseType(&$data,$key) {
+        $fieldType = strtolower($this->fields['_type'][$key]);
+        if(false !== strpos($fieldType,'int')) {
+            $data[$key]   =  intval($val);
+        }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
+            $data[$key]   =  floatval($val);
+        }elseif(false !== strpos($fieldType,'bool')){
+            $data[$key]   =  (bool)$val;
+        }
+    }
 
     /**
      +----------------------------------------------------------
