@@ -98,7 +98,7 @@ return  array(
     'LOG_EXCEPTION_RECORD'  => true,    // 是否记录异常信息日志(默认为开启状态)
     'LOG_RECORD'            => false,   // 默认不记录日志
     'LOG_FILE_SIZE'         => 2097152,	// 日志文件大小限制
-    'LOG_RECORD_LEVEL'      => array('EMERG','ALERT','CRIT','ERR'),// 允许记录的日志级别
+    'LOG_RECORD_LEVEL'      => 'EMERG,ALERT,CRIT,ERR',// 允许记录的日志级别
 
     /* SESSION设置 */
     'SESSION_AUTO_START'    => true,    // 是否自动开启Session
