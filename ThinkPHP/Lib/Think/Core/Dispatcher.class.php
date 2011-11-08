@@ -82,16 +82,6 @@ class Dispatcher extends Think
         $depr = C('URL_PATHINFO_DEPR');
         // 分析PATHINFO信息
         self::getPathInfo();
-        // 获取资源类型
-        if(!empty($_SERVER['PATH_INFO'])) {
-            $part =  pathinfo($_SERVER['PATH_INFO']);
-            if(isset($part['extension'])) { // 判断扩展名
-                define('__EXT__', strtolower($part['extension']));
-                $_SERVER['PATH_INFO']   =   preg_replace('/.'.__EXT__.'$/','',$_SERVER['PATH_INFO']);
-            }else{
-                define('__EXT__', '');
-            }
-        }
         if(!self::routerCheck()){   // 检测路由规则 如果没有则按默认规则调度URL
             $paths = explode($depr,trim($_SERVER['PATH_INFO'],'/'));
             $var  =  array();
@@ -186,10 +176,10 @@ class Dispatcher extends Think
                 reset($_SERVER);
             }
         }
-        /*
+        
         if(C('URL_HTML_SUFFIX') && !empty($path)) {
             $path = preg_replace('/\.'.trim(C('URL_HTML_SUFFIX'),'.').'$/', '', $path);
-        }*/
+        }
         $_SERVER['PATH_INFO'] = empty($path) ? '/' : $path;
     }
 
@@ -215,12 +205,6 @@ class Dispatcher extends Think
         if(!empty($routes)) {
             $depr = C('URL_PATHINFO_DEPR');
             foreach ($routes as $key=>$route){
-                if(isset($route[4]) && strtolower($_SERVER['REQUEST_METHOD']) != strtolower($route[4])) {
-                    continue; // 如果设置了提交类型则过滤
-                }
-                if(isset($route[5]) && __EXT__ != $route[5]) {
-                    continue; // 如果设置了扩展名则过滤
-                }
                 // 检测路由跳转
                 self::checkRedirect($route,$regx);
                 if(0 === stripos($regx.$depr,$route[0].$depr)) {
