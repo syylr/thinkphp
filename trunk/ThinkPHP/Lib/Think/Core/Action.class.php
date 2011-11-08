@@ -206,13 +206,7 @@ abstract class Action extends Think
      */
     public function __call($method,$args) {
         if( 0 === strcasecmp($method,ACTION_NAME)) {
-            $restMethod   =  $method.'_'.strtolower($_SERVER['REQUEST_METHOD']);
-            if(method_exists($this,$restMethod)) { // RESTFul方法支持
-                $this->$restMethod();
-            }elseif(__EXT__ && method_exists($this,$method.'_'.__EXT__)){ // 资源访问入口支持
-                $fun  =  $method.'_'.__EXT__;
-                $this->$fun();
-            }elseif(method_exists($this,'_empty')) {
+            if(method_exists($this,'_empty')) {
                 // 如果定义了_empty操作 则调用
                 $this->_empty($method,$args);
             }elseif(file_exists_case(C('TMPL_FILE_NAME'))){
