@@ -218,7 +218,7 @@ class Dispatcher extends Think
                 if(isset($route[4]) && strtolower($_SERVER['REQUEST_METHOD']) != strtolower($route[4])) {
                     continue; // 如果设置了提交类型则过滤
                 }
-                if(isset($route[5]) && __EXT__ != $route[5]) {
+                if(isset($route[5]) && !in_array(__EXT__,explode(',',$route[5]),true)) {
                     continue; // 如果设置了扩展名则过滤
                 }
                 // 检测路由跳转
