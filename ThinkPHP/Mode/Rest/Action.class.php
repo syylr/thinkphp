@@ -126,10 +126,10 @@ abstract class Action extends Think
             if(method_exists($this,$method.'_'.$this->_method.'_'.$this->_type)) { // RESTFul方法支持
                 $fun  =  $method.'_'.$this->_method.'_'.$this->_type;
                 $this->$fun();
-            }elseif($this->_method == 'get' && method_exists($this,$method.'_'.$this->_type) ){
+            }elseif($this->_method == C('REST_DEFAULT_METHOD') && method_exists($this,$method.'_'.$this->_type) ){
                 $fun  =  $method.'_'.$this->_type;
                 $this->$fun();
-            }elseif($this->_type == 'html' && method_exists($this,$method.'_'.$this->_method) ){
+            }elseif($this->_type == C('REST_DEFAULT_TYPE') && method_exists($this,$method.'_'.$this->_method) ){
                 $fun  =  $method.'_'.$this->_method;
                 $this->$fun();
             }elseif(method_exists($this,'_empty')) {
