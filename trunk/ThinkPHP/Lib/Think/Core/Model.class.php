@@ -829,15 +829,20 @@ class Model extends Think
         }
 
         // 验证完成生成数据对象
-        $vo   =  array();
-        foreach ($this->fields as $key=>$name){
-            if(substr($key,0,1)=='_') continue;
-            $val = isset($data[$name])?$data[$name]:null;
-            //保证赋值有效
-            if(!is_null($val)){
-                $vo[$name] = (MAGIC_QUOTES_GPC && is_string($val))?   stripslashes($val)  :  $val;
+        if($this->autoCheckFields) { // 开启字段检测 则过滤非法字段数据
+            $vo   =  array();
+            foreach ($this->fields as $key=>$name){
+                if(substr($key,0,1)=='_') continue;
+                $val = isset($data[$name])?$data[$name]:null;
+                //保证赋值有效
+                if(!is_null($val)){
+                    $vo[$name] = (MAGIC_QUOTES_GPC && is_string($val))?   stripslashes($val)  :  $val;
+                }
             }
+        }else{
+            $vo   =  $data;
         }
+
         // 创建完成对数据进行自动处理
         $this->autoOperation($vo,$type);
         // 赋值当前数据对象
