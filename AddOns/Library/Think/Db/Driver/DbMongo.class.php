@@ -1,6 +1,6 @@
 <?php
 // +----------------------------------------------------------------------
-// | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
+// | TOPThink [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
 // | Copyright (c) 2009 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
@@ -23,10 +23,11 @@
  */
 class DbMongo extends Db{
 
-    protected $_mongo = null; // MongoDb
-    protected $_collection    = null; // MongoCollection
-    protected $_collectionName = '';
-    protected $_cursor   =  null; // MongoCursor
+    protected $_mongo = null; // MongoDb Object
+    protected $_collection    = null; // MongoCollection Object
+    protected $_dbName = ''; // dbName
+    protected $_collectionName = ''; // collectionName
+    protected $_cursor   =  null; // MongoCursor Object
     protected $comparison      = array('neq'=>'ne','ne'=>'ne','gt'=>'gt','egt'=>'gte','gte'=>'gte','lt'=>'lt','elt'=>'lte','lte'=>'lte','in'=>'in','not in'=>'nin','nin'=>'nin');
 
     /**
@@ -68,9 +69,6 @@ class DbMongo extends Db{
             }catch (MongoConnectionException $e){
                 throw_exception($e->getmessage());
             }
-            if ( !empty($config['database']) ) {
-                //$this->linkID[$linkNum] =  $this->_mongo->selectDB($config['database']);
-            }
             // 标记连接成功
             $this->connected    =   true;
             // 注销数据库连接配置信息
@@ -97,11 +95,21 @@ class DbMongo extends Db{
         try{
             if(!empty($db)) { // 传人Db则切换数据库
                 // 当前MongoDb对象
+                $this->_dbName  =  $db;
                 $this->_mongo = $this->_linkID->selectDb($db);
             }
             // 当前MongoCollection对象
-            $this->_collection =  $this->_mongo->selectCollection($collection);
-            $this->_collectionName  = $collection; // 记录当前Collection名称
+            if($this->debug) {
+                $this->queryStr   =  $this->_dbName.'.getCollection('.$collection.')';
+            }
+            if($this->_collectionName != $collection) {
+                N('db_read',1);
+                // 记录开始执行时间
+                G('queryStartTime');
+                $this->_collection =  $this->_mongo->selectCollection($collection);
+                $this->debug();
+                $this->_collectionName  = $collection; // 记录当前Collection名称
+            }
         }catch (MongoException $e){
             throw_exception($e->getMessage());
         }
@@ -132,7 +140,12 @@ class DbMongo extends Db{
      +----------------------------------------------------------
      */
     public function command($command=array()) {
+        N('db_write',1);
+        $this->queryStr = 'command:'.json_encode($command);
+        // 记录开始执行时间
+        G('queryStartTime');
         $result   = $this->_mongo->command($command);
+        $this->debug();
         if(!$result['ok']) {
             throw_exception($result['errmsg']);
         }
@@ -154,8 +167,12 @@ class DbMongo extends Db{
      +----------------------------------------------------------
      */
     public function execute($code,$args=array()) {
-        $this->queryStr = $code;
+        N('db_write',1);
+        $this->queryStr = 'execute:'.$code;
+        // 记录开始执行时间
+        G('queryStartTime');
         $result   = $this->_mongo->execute($code,$args);
+        $this->debug();
         if($result['ok']) {
             return $result['retval'];
         }else{
@@ -212,16 +229,24 @@ class DbMongo extends Db{
             $this->switchCollection($options['table']);
         }
         N('db_write',1);
+        if($this->debug) {
+            $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.insert(';
+            $this->queryStr   .= $data?json_encode($data):'{}';
+            $this->queryStr   .= ')';
+        }
         try{
-           $result =  $replace?   $this->_collection->save($data,true):  $this->_collection->insert($data,true);
-           if($result) {
+            // 记录开始执行时间
+            G('queryStartTime');
+            $result =  $replace?   $this->_collection->save($data,true):  $this->_collection->insert($data,true);
+            $this->debug();
+            if($result) {
                $_id    = $data['_id'];
                 if(is_object($_id)) {
                     $_id = $_id->__toString();
                 }
                $this->lastInsID    = $_id;
-           }
-           return $result;
+            }
+            return $result;
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
         }
@@ -245,7 +270,10 @@ class DbMongo extends Db{
         }
         N('db_write',1);
         try{
+            // 记录开始执行时间
+            G('queryStartTime');
            $result =  $this->_collection->batchInsert($dataList);
+           $this->debug();
            return $result;
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
@@ -265,8 +293,14 @@ class DbMongo extends Db{
      */
     public function mongo_next_id($pk) {
         N('db_read',1);
+        if($this->debug) {
+            $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.find({},{'.$pk.':1}).sort({'.$pk.':-1}).limit(1)';
+        }
         try{
+            // 记录开始执行时间
+            G('queryStartTime');
             $result   =  $this->_collection->find(array(),array($pk=>1))->sort(array($pk=>-1))->limit(1);
+            $this->debug();
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
         }
@@ -293,8 +327,17 @@ class DbMongo extends Db{
         N('db_write',1);
         $query   = $this->parseWhere($options['where']);
         $set  =  $this->parseSet($data);
+        if($this->debug) {
+            $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.update(';
+            $this->queryStr   .= $query?json_encode($query):'{}';
+            $this->queryStr   .=  ','.json_encode($set).')';
+        }
         try{
-            return $this->_collection->update($query,$set,array("multiple" => true));
+            // 记录开始执行时间
+            G('queryStartTime');
+            $result   = $this->_collection->update($query,$set,array("multiple" => true));
+            $this->debug();
+            return $result;
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
         }
@@ -317,8 +360,15 @@ class DbMongo extends Db{
         }
         $query   = $this->parseWhere($options['where']);
         N('db_write',1);
+        if($this->debug) {
+            $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.remove('.json_encode($query).')';
+        }
         try{
-            return $this->_collection->remove($query);
+            // 记录开始执行时间
+            G('queryStartTime');
+            $result   = $this->_collection->remove($query);
+            $this->debug();
+            return $result;
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
         }
@@ -340,8 +390,15 @@ class DbMongo extends Db{
             $this->switchCollection($options['table']);
         }
         N('db_write',1);
+        if($this->debug) {
+            $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.remove({})';
+        }
         try{
-            return  $this->_collection->drop();
+            // 记录开始执行时间
+            G('queryStartTime');
+            $result   =  $this->_collection->drop();
+            $this->debug();
+            return $result;
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
         }
@@ -366,9 +423,20 @@ class DbMongo extends Db{
         $query  =  $this->parseWhere($options['where']);
         $field =  $this->parseField($options['field']);
         try{
+            if($this->debug) {
+                $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.find(';
+                $this->queryStr  .=  $query? json_encode($query):'{}';
+                $this->queryStr  .=  $field? ','.json_encode($field):'';
+                $this->queryStr  .=  ')';
+            }
+            // 记录开始执行时间
+            G('queryStartTime');
             $_cursor   = $this->_collection->find($query,$field);
             if($options['order']) {
                 $order   =  $this->parseOrder($options['order']);
+                if($this->debug) {
+                    $this->queryStr .= '.sort('.json_encode($order).')';
+                }
                 $_cursor =  $_cursor->sort($order);
             }
             if(isset($options['page'])) { // 根据页数计算limit
@@ -385,11 +453,17 @@ class DbMongo extends Db{
             if(isset($options['limit'])) {
                 list($offset,$length) =  $this->parseLimit($options['limit']);
                 if(!empty($offset)) {
+                    if($this->debug) {
+                        $this->queryStr .= '.skip('.intval($offset).')';
+                    }
                     $_cursor =  $_cursor->skip(intval($offset));
+                }
+                if($this->debug) {
+                    $this->queryStr .= '.limit('.intval($length).')';
                 }
                 $_cursor =  $_cursor->limit(intval($length));
             }
-            //$_cursor->snapshot();
+            $this->debug();
             $this->_cursor =  $_cursor;
             return $_cursor;
         } catch (MongoCursorException $e) {
@@ -415,8 +489,18 @@ class DbMongo extends Db{
         N('db_query',1);
         $query  =  $this->parseWhere($options['where']);
         $fields    = $this->parseField($options['field']);
+        if($this->debug) {
+            $this->queryStr = $this->_dbName.'.'.$this->_collectionName.'.fineOne(';
+            $this->queryStr .= $query?json_encode($query):'{}';
+            $this->queryStr .= $fields?','.json_encode($fields):'';
+            $this->queryStr .= ')';
+        }
         try{
-            return $this->_collection->findOne($query,$fields);
+            // 记录开始执行时间
+            G('queryStartTime');
+            $result   = $this->_collection->findOne($query,$fields);
+            $this->debug();
+            return $result;
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
         }
@@ -437,9 +521,18 @@ class DbMongo extends Db{
         if(isset($options['table'])) {
             $this->switchCollection($options['table']);
         }
+        N('db_query',1);
         $query  =  $this->parseWhere($options['where']);
+        if($this->debug) {
+            $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName;
+            $this->queryStr   .= $query?'.find('.json_encode($query).')':'';
+            $this->queryStr   .= '.count()';
+        }
         try{
+            // 记录开始执行时间
+            G('queryStartTime');
             $count   = $this->_collection->count($query);
+            $this->debug();
             return $count;
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
@@ -463,8 +556,15 @@ class DbMongo extends Db{
         if(!empty($collection) && $collection != $this->_collectionName) {
             $this->switchCollection($collection);
         }
+        N('db_query',1);
+        if($this->debug) {
+            $this->queryStr   =  $this->_dbName.'.'.$this->_collectionName.'.findOne()';
+        }
         try{
+            // 记录开始执行时间
+            G('queryStartTime');
             $result   =  $this->_collection->findOne();
+            $this->debug();
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
         }
@@ -490,7 +590,14 @@ class DbMongo extends Db{
      +----------------------------------------------------------
      */
     public function getTables(){
+        if($this->debug) {
+            $this->queryStr   =  $this->_dbName.'.getCollenctionNames()';
+        }
+        N('db_query',1);
+        // 记录开始执行时间
+        G('queryStartTime');
         $list   = $this->_mongo->listCollections();
+        $this->debug();
         $info =  array();
         foreach ($list as $collection){
             $info[]   =  $collection->getName();

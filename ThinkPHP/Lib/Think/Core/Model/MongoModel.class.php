@@ -304,12 +304,6 @@ class MongoModel extends Model{
         return null;
     }
 
-    // 获取上次查询 TODO
-    public function getLastSql() {
-        // 暂时不支持Mongo
-        return '';
-    }
-
     /**
      +----------------------------------------------------------
      * 执行Mongo指令
