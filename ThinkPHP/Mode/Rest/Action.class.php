@@ -28,15 +28,10 @@ abstract class Action extends Think
     private $name =  '';
     // 视图实例
     protected $view   =  null;
+    protected $_method =  ''; // 当前请求类型
+    protected $_type = ''; // 当前资源类型
     // 输出类型
-    protected $_types = array(
-        'xml' => 'application/xml',
-        'rawxml' => 'application/xml',
-        'json' => 'application/json',
-        'jsonp' => 'application/javascript',
-        'serialized' => 'application/vnd.php.serialized',
-        'html' => 'text/html',
-    );
+    protected $_types = array();
 
    /**
      +----------------------------------------------------------
@@ -48,6 +43,32 @@ abstract class Action extends Think
     public function __construct() {
         //实例化视图类
         $this->view       = Think::instance('View');
+
+        // 资源类型检测
+        if(empty(__EXT__)) { // 自动检测资源类型
+            $this->_type   =  get_accept_type();
+        }elseif(false === stripos(C('REST_CONTENT_TYPE_LIST'),__EXT__)) {
+            // 资源类型非法 则用默认资源类型访问
+            $this->_type   =  C('REST_DEFAULT_TYPE');
+        }else{
+            // 检测实际资源类型
+            if(get_accept_type() == __EXT__) {
+                $this->_type   =  __EXT__;
+            }else{
+                $this->_type   =  C('REST_DEFAULT_TYPE');
+            }
+        }
+
+        // 请求方式检测
+        $method  =  strtolower($_SERVER['REQUEST_METHOD']);
+        if(false === stripos(C('REST_METHOD_LIST'),$method)) {
+            // 请求方式非法 则用默认请求方法
+            $method = C('REST_DEFAULT_METHOD');
+        }
+        $this->_method = $method;
+        // 允许输出的资源类型
+        $this->_types  = C('REST_OUTPUT_TYPE');
+
         //控制器初始化
         if(method_exists($this,'_initialize'))
             $this->_initialize();
@@ -102,11 +123,14 @@ abstract class Action extends Think
      */
     public function __call($method,$args) {
         if( 0 === strcasecmp($method,ACTION_NAME)) {
-            $restMethod   =  $method.'_'.strtolower($_SERVER['REQUEST_METHOD']);
-            if(method_exists($this,$restMethod)) { // RESTFul方法支持
-                $this->$restMethod();
-            }elseif(__EXT__ && method_exists($this,$method.'_'.__EXT__)){ // 资源访问入口支持
-                $fun  =  $method.'_'.__EXT__;
+            if(method_exists($this,$method.'_'.$this->_method.'_'.$this->_type)) { // RESTFul方法支持
+                $fun  =  $method.'_'.$this->_method.'_'.$this->_type;
+                $this->$fun();
+            }elseif($this->_method == 'get' && method_exists($this,$method.'_'.$this->_type) ){
+                $fun  =  $method.'_'.$this->_type;
+                $this->$fun();
+            }elseif($this->_type == 'html' && method_exists($this,$method.'_'.$this->_method) ){
+                $fun  =  $method.'_'.$this->_method;
                 $this->$fun();
             }elseif(method_exists($this,'_empty')) {
                 // 如果定义了_empty操作 则调用
@@ -120,13 +144,6 @@ abstract class Action extends Think
             }
         }else{
             switch(strtolower($method)) {
-                // 判断提交方式
-                case 'ispost':
-                case 'isget':
-                case 'ishead':
-                case 'isdelete':
-                case 'isput':
-                    return strtolower($_SERVER['REQUEST_METHOD']) == strtolower(substr($method,2));
                 // 获取变量 支持过滤和默认值 调用方式 $this->_post($key,$filter,$default);
                 case '_get': $input =& $_GET;break;
                 case '_post':$input =& $_POST;break;
@@ -205,8 +222,8 @@ abstract class Action extends Think
         if(headers_sent()) return;
         if(empty($charset))  $charset = C('DEFAULT_CHARSET');
         $type = strtolower($type);
-        if(isset($this->types[$type])) //过滤content_type
-            header('Content-Type: '.$this->types[$type].'; charset='.$charset);
+        if(isset($this->_types[$type])) //过滤content_type
+            header('Content-Type: '.$this->_types[$type].'; charset='.$charset);
     }
 
     /**
@@ -225,7 +242,7 @@ abstract class Action extends Think
     protected function response($data,$type='',$code=200) {
         // 保存日志
         if(C('LOG_RECORD')) Log::save();
-        $this->setHttpStatus($code);
+        send_http_status($code);
         exit($this->encodeData($data,strtolower($type)));
     }
 
@@ -255,64 +272,6 @@ abstract class Action extends Think
         $this->setContentType($type);
         header('Content-Length: ' . strlen($data));
         return $data;
-    }
-
-    // 发送Http状态信息
-    protected function setHttpStatus($status) {
-        static $_status = array(
-            // Informational 1xx
-            100 => 'Continue',
-            101 => 'Switching Protocols',
-            // Success 2xx
-            200 => 'OK',
-            201 => 'Created',
-            202 => 'Accepted',
-            203 => 'Non-Authoritative Information',
-            204 => 'No Content',
-            205 => 'Reset Content',
-            206 => 'Partial Content',
-            // Redirection 3xx
-            300 => 'Multiple Choices',
-            301 => 'Moved Permanently',
-            302 => 'Moved Temporarily ',  // 1.1
-            303 => 'See Other',
-            304 => 'Not Modified',
-            305 => 'Use Proxy',
-            // 306 is deprecated but reserved
-            307 => 'Temporary Redirect',
-            // Client Error 4xx
-            400 => 'Bad Request',
-            401 => 'Unauthorized',
-            402 => 'Payment Required',
-            403 => 'Forbidden',
-            404 => 'Not Found',
-            405 => 'Method Not Allowed',
-            406 => 'Not Acceptable',
-            407 => 'Proxy Authentication Required',
-            408 => 'Request Timeout',
-            409 => 'Conflict',
-            410 => 'Gone',
-            411 => 'Length Required',
-            412 => 'Precondition Failed',
-            413 => 'Request Entity Too Large',
-            414 => 'Request-URI Too Long',
-            415 => 'Unsupported Media Type',
-            416 => 'Requested Range Not Satisfiable',
-            417 => 'Expectation Failed',
-            // Server Error 5xx
-            500 => 'Internal Server Error',
-            501 => 'Not Implemented',
-            502 => 'Bad Gateway',
-            503 => 'Service Unavailable',
-            504 => 'Gateway Timeout',
-            505 => 'HTTP Version Not Supported',
-            509 => 'Bandwidth Limit Exceeded'
-        );
-        if(array_key_exists($code,$_status)) {
-            header('HTTP/1.1 '.$code.' '.$_status[$code]);
-            // 确保FastCGI模式下正常
-            header('Status:'.$code.' '.$_status[$code]);
-        }
     }
 
 }//类定义结束
