@@ -545,7 +545,7 @@ class Model extends Think
             $options =  array();
             // 分析表达式
             $options =  $this->_parseOptions($options);
-            return  '( '.$this->db->select($options,false).' )';
+            return  '( '.$this->db->buildSelectSql($options).' )';
         }
         // 分析表达式
         $options =  $this->_parseOptions($options);
@@ -561,6 +561,23 @@ class Model extends Think
     }
     // 查询成功后的回调方法
     protected function _after_select(&$resultSet,$options) {}
+
+    /**
+     +----------------------------------------------------------
+     * 生成查询SQL 可用于子查询
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $options 表达式参数
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function buildSql($options=array()) {
+        // 分析表达式
+        $options =  $this->_parseOptions($options);
+        return  '( '.$this->db->buildSelectSql($options).' )';
+    }
 
     /**
      +----------------------------------------------------------
@@ -1375,6 +1392,38 @@ class Model extends Think
             $this->options['join'] =  $join;
         else
             $this->options['join'][]  =   $join;
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 查询SQL组装 union
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $union
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function union($union) {
+        if(empty($union)) return $this;
+        // 转换union表达式
+        if($union instanceof Model) {
+            $options   =  $union->getProperty('options');
+            if(!isset($options['table'])){
+                // 自动获取表名
+                $options['table'] =$union->getTableName();
+            }
+            if(!isset($options['field'])) {
+                $options['field'] =$this->options['field'];
+            }
+        }elseif(is_object($union)) {
+            $options   =  get_object_vars($union);
+        }elseif(!is_array($union)){
+            throw_exception(L('_DATA_TYPE_INVALID_'));
+        }
+        $this->options['union'][]  =   $options;
         return $this;
     }
 
