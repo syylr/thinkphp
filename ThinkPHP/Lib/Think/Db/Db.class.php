@@ -57,7 +57,7 @@ class Db extends Think
     // 数据库表达式
     protected $comparison      = array('eq'=>'=','neq'=>'!=','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','notlike'=>'NOT LIKE','like'=>'LIKE');
     // 查询表达式
-    protected $selectSql  =     'SELECT%DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%';
+    protected $selectSql  =     'SELECT%DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT% %UNION%';
 
     /**
      +----------------------------------------------------------
@@ -708,6 +708,25 @@ class Db extends Think
 
     /**
      +----------------------------------------------------------
+     * union分析
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param mixed $union
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function parseUnion($union) {
+        if(empty($union)) return '';
+        foreach ($union as $u){
+            $sql[] = 'UNION '.$this->buildSelectSql($u);
+        }
+        return implode(' ',$sql);
+    }
+
+    /**
+     +----------------------------------------------------------
      * 插入记录
      +----------------------------------------------------------
      * @access public
@@ -750,20 +769,7 @@ class Db extends Think
         if(is_string($fields))   $fields    = explode(',',$fields);
         array_walk($fields, array($this, 'parseKey'));
         $sql   =    'INSERT INTO '.$this->parseTable($table).' ('.implode(',', $fields).') ';
-        $sql  .= str_replace(
-            array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%'),
-            array(
-                $this->parseTable($options['table']),
-                $this->parseDistinct(isset($options['distinct'])?$options['distinct']:false),
-                $this->parseField(isset($options['field'])?$options['field']:'*'),
-                $this->parseJoin(isset($options['join'])?$options['join']:''),
-                $this->parseWhere(isset($options['where'])?$options['where']:''),
-                $this->parseGroup(isset($options['group'])?$options['group']:''),
-                $this->parseHaving(isset($options['having'])?$options['having']:''),
-                $this->parseOrder(isset($options['order'])?$options['order']:''),
-                $this->parseLimit(isset($options['limit'])?$options['limit']:'')
-            ),$this->selectSql);
-        $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
+        $sql   .= $this->buildSelectSql($options);
         return $this->execute($sql);
     }
 
@@ -818,12 +824,27 @@ class Db extends Think
      * @access public
      +----------------------------------------------------------
      * @param array $options 表达式
-     * @param boolean $query 是否执行查询
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function select($options=array(),$query=true) {
+    public function select($options=array()) {
+        $sql   = $this->buildSelectSql($options);
+        return $this->query($sql);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 生成查询SQL
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $options 表达式
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function buildSelectSql($options=array()) {
         if(isset($options['page'])) {
             // 根据页数计算limit
             if(strpos($options['page'],',')) {
@@ -837,7 +858,7 @@ class Db extends Think
             $options['limit'] =  $offset.','.$listRows;
         }
         $sql   = str_replace(
-            array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%'),
+            array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%','%UNION%'),
             array(
                 $this->parseTable($options['table']),
                 $this->parseDistinct(isset($options['distinct'])?$options['distinct']:false),
@@ -847,10 +868,11 @@ class Db extends Think
                 $this->parseGroup(isset($options['group'])?$options['group']:''),
                 $this->parseHaving(isset($options['having'])?$options['having']:''),
                 $this->parseOrder(isset($options['order'])?$options['order']:''),
-                $this->parseLimit(isset($options['limit'])?$options['limit']:'')
+                $this->parseLimit(isset($options['limit'])?$options['limit']:''),
+                $this->parseUnion(isset($options['union'])?$options['union']:'')
             ),$this->selectSql);
         $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
-        return $query?$this->query($sql):$sql;
+        return $sql;
     }
 
     /**
