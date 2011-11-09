@@ -20,5 +20,6 @@ return array(
     THINK_PATH.'/Mode/Rest/Dispatcher.class.php',// URL路由
     THINK_PATH.'/Mode/Rest/Action.class.php',// 控制器类
     THINK_PATH.'/Mode/Rest/alias.php', // 加载别名
+    THINK_PATH.'/Mode/Rest/common.php', // 加载REST公共函数
 );
 ?>
