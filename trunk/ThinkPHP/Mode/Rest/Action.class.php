@@ -26,6 +26,9 @@ abstract class Action extends Think
 
     // 当前Action名称
     private $name =  '';
+    // 视图实例
+    protected $view   =  null;
+    // 输出类型
     protected $_types = array(
         'xml' => 'application/xml',
         'rawxml' => 'application/xml',
