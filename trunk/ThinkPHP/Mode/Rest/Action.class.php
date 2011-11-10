@@ -45,7 +45,7 @@ abstract class Action extends Think
         $this->view       = Think::instance('View');
 
         // 资源类型检测
-        if(empty(__EXT__)) { // 自动检测资源类型
+        if(''==__EXT__) { // 自动检测资源类型
             $this->_type   =  get_accept_type();
         }elseif(false === stripos(C('REST_CONTENT_TYPE_LIST'),__EXT__)) {
             // 资源类型非法 则用默认资源类型访问
