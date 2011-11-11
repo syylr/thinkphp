@@ -653,13 +653,13 @@ class Model extends Think
      * @return mixed
      +----------------------------------------------------------
      */
-     public function find($options=array()) {
-         if(is_numeric($options) || is_string($options)) {
-             $where[$this->getPk()] =$options;
-             $options = array();
-             $options['where'] = $where;
-         }
-         // 总是查找一条记录
+    public function find($options=array()) {
+        if(is_numeric($options) || is_string($options)) {
+            $where[$this->getPk()] =$options;
+            $options = array();
+            $options['where'] = $where;
+        }
+        // 总是查找一条记录
         $options['limit'] = 1;
         // 分析表达式
         $options =  $this->_parseOptions($options);
@@ -673,9 +673,40 @@ class Model extends Think
         $this->data = $resultSet[0];
         $this->_after_find($this->data,$options);
         return $this->data;
-     }
-     // 查询成功的回调方法
-     protected function _after_find(&$result,$options) {}
+    }
+    // 查询成功的回调方法
+    protected function _after_find(&$result,$options) {}
+
+    /**
+     +----------------------------------------------------------
+     * 处理字段映射
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param array $data 当前数据
+     * @param integer $type 类型 0 写入 1 读取
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    public function parseFieldsMap(&$data,$type=1) {
+        // 检查字段映射
+        if(!empty($this->_map)) {
+            foreach ($this->_map as $key=>$val){
+                if($type==1) { // 读取
+                    if(isset($data[$val])) {
+                        $data[$key] =   $data[$val];
+                        unset($data[$val]);
+                    }
+                }else{
+                    if(isset($data[$key])) {
+                        $data[$val] =   $data[$key];
+                        unset($data[$key]);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      +----------------------------------------------------------
@@ -808,14 +839,7 @@ class Model extends Think
         }
 
         // 检查字段映射
-        if(!empty($this->_map)) {
-            foreach ($this->_map as $key=>$val){
-                if(isset($data[$key])) {
-                    $data[$val] =   $data[$key];
-                    unset($data[$key]);
-                }
-            }
-        }
+        $this->parseFieldsMap($data,0);
 
         // 状态
         $type = $type?$type:(!empty($data[$this->getPk()])?self::MODEL_UPDATE:self::MODEL_INSERT);
