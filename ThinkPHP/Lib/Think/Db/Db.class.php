@@ -426,9 +426,19 @@ class Db extends Think
      +----------------------------------------------------------
      */
     protected function parseTable($tables) {
-        if(is_string($tables))
+        if(is_array($tables)) {// 支持别名定义
+            $array   =  array();
+            foreach ($tables as $table=>$alias){
+                if(!is_numeric($table))
+                    $array[] =  $this->parseKey($table).' '.$this->parseKey($alias);
+                else
+                    $array[] =  $this->parseKey($table);
+            }
+            $tables  =  $array;
+        }elseif(is_string($tables)){
             $tables  =  explode(',',$tables);
-        array_walk($tables, array(&$this, 'parseKey'));
+            array_walk($tables, array(&$this, 'parseKey'));
+        }
         return implode(',',$tables);
     }
 
