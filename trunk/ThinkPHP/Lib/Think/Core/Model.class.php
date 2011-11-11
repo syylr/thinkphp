@@ -806,8 +806,6 @@ class Model extends Think
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
         }
-        // 状态
-        $type = $type?$type:(!empty($data[$this->getPk()])?self::MODEL_UPDATE:self::MODEL_INSERT);
 
         // 检查字段映射
         if(!empty($this->_map)) {
@@ -818,6 +816,9 @@ class Model extends Think
                 }
             }
         }
+
+        // 状态
+        $type = $type?$type:(!empty($data[$this->getPk()])?self::MODEL_UPDATE:self::MODEL_INSERT);
 
         // 数据自动验证
         if(!$this->autoValidation($data,$type)) return false;
@@ -852,7 +853,7 @@ class Model extends Think
      }
 
     // 自动表单令牌验证
-    // TODO  ajax无刷新多次提交咱不能满足
+    // TODO  ajax无刷新多次提交暂不能满足
     public function autoCheckToken($data) {
         if(C('TOKEN_ON')){
             $name   = C('TOKEN_NAME');
