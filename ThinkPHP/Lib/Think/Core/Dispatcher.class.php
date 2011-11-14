@@ -199,8 +199,7 @@ class Dispatcher extends Think
         if(!C('URL_ROUTER_ON')) return false;
         // 路由定义文件优先于config中的配置定义
         $routes = C('URL_ROUTE_RULES');
-        if(is_array(C('_routes_')))
-            $routes = C('_routes_');
+        if(is_array(C('routes')))  $routes = C('routes');
         // 路由处理
         if(!empty($routes)) {
             $depr = C('URL_PATHINFO_DEPR');

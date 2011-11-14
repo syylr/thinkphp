@@ -88,12 +88,16 @@ class App
             // 编译文件
             if(!APP_DEBUG)  $common   .= compile(COMMON_PATH.'common.php');
         }
-        // 读取扩展配置文件
-        $list = C('APP_CONFIG_LIST');
-        foreach ($list as $val){
-            if(is_file(CONFIG_PATH.$val.'.php'))
-                C('_'.$val.'_',array_change_key_case(include CONFIG_PATH.$val.'.php'));
+        // 加载动态配置文件
+        $configs =  C('APP_CONFIG_LIST');
+        if(is_string($configs)) 
+            $configs =  explode(',',$configs);
+        foreach ($configs as $config){
+            $file   = CONFIG_PATH.$config.'.php';
+            if(is_file($file))
+                C($config,array_change_key_case(include $file));
         }
+        C('APP_CONFIG_LIST',''); // 清除配置参数
         if(APP_DEBUG) {
             // 调试模式加载系统默认的开发模式配置文件
             C(include THINK_PATH.'/Common/debug.php');
