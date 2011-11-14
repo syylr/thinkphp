@@ -27,13 +27,11 @@ if (!defined('THINK_PATH')) exit();
 return  array(
 
     /* 项目设定 */
-    'APP_DOMAIN_DEPLOY'     => false,   // 是否使用独立域名部署项目
     'APP_SUB_DOMAIN_DEPLOY' => false,   // 是否开启子域名
     'APP_PLUGIN_ON'         => false,   // 是否开启插件机制
     'APP_FILE_CASE'         => false,   // 是否检查文件的大小写 对Windows平台有效
     'APP_GROUP_DEPR'        => '.',     // 模块分组之间的分割符
     'APP_GROUP_LIST'        => '',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
-    'APP_AUTOLOAD_REG'      => false,   // 是否开启SPL_AUTOLOAD_REGISTER
     'APP_AUTOLOAD_PATH'     => 'Think.Util.',// __autoLoad 机制额外检测路径设置,注意搜索顺序
     'APP_CONFIG_LIST'       => array('taglibs','routes','tags','htmls','modules','actions'),// 项目额外需要加载的配置列表，默认包括：taglibs(标签库定义),routes(路由定义),tags(标签定义),(htmls)静态缓存定义, modules(扩展模块),actions(扩展操作)
 

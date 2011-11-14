@@ -52,9 +52,6 @@ class App
         // 注册AUTOLOAD方法
         if(function_exists('spl_autoload_register'))  spl_autoload_register(array('Think', 'autoload'));
 
-         // Session初始化 支持其他客户端
-        if(isset($_REQUEST[C("VAR_SESSION_ID")]))   session_id($_REQUEST[C("VAR_SESSION_ID")]);
-        if(C('SESSION_AUTO_START'))  session_start();
         // URL调度
         Dispatcher::dispatch();
 
@@ -65,8 +62,6 @@ class App
         // 开启静态缓存
         if(C('HTML_CACHE_ON'))  HtmlCache::readHTMLCache();
 
-        // 项目初始化标签
-        if(C('APP_PLUGIN_ON'))   tag('app_init');
         return ;
     }
     //[RUNTIME]
@@ -222,10 +217,6 @@ class App
      +----------------------------------------------------------
      */
     static public function exec() {
-        // 是否开启标签扩展
-        $tagOn   =  C('APP_PLUGIN_ON');
-        // 项目运行标签
-        if($tagOn)  tag('app_run');
         // 安全检测
         if(!preg_match('/^[A-Za-z_0-9]+$/',MODULE_NAME)){
             throw_exception(L('_MODULE_NOT_EXIST_'));
@@ -258,8 +249,6 @@ class App
             //  执行后缀操作
             call_user_func(array(&$module,'_after_'.$action));
         }
-        // 项目结束标签
-        if($tagOn)  tag('app_end');
         return ;
     }
 
@@ -274,9 +263,20 @@ class App
      */
     static public function run() {
         App::init();
+        $plugin   =  C('APP_PLUGIN_ON');
+        // 项目初始化标签
+        if($plugin)   tag('app_init');
+         // Session初始化 支持其他客户端
+        if(isset($_REQUEST[C("VAR_SESSION_ID")]))
+            session_id($_REQUEST[C("VAR_SESSION_ID")]);
+        if(C('SESSION_AUTO_START'))  session_start();
         // 记录应用初始化时间
         if(C('SHOW_RUN_TIME')) G('initTime');
+        // 项目运行标签
+        if($plugin)   tag('app_begin');
         App::exec();
+        // 项目结束标签
+        if($plugin)   tag('app_end');
         // 保存日志记录
         if(C('LOG_RECORD')) Log::save();
         return ;
