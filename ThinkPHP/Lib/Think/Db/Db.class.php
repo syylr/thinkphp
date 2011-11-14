@@ -524,7 +524,7 @@ class Db extends Think
                     }
                 }elseif(preg_match('/BETWEEN/i',$val[0])){ // BETWEEN运算
                     $data = is_string($val[1])? explode(',',$val[1]):$val[1];
-                    $whereStr .=  ' ('.$key.' '.strtoupper($val[0]).' '.$data[0].' AND '.$data[1].' )';
+                    $whereStr .=  ' ('.$key.' '.strtoupper($val[0]).' '.$this->parseValue($data[0]).' AND '.$this->parseValue($data[1]).' )';
                 }else{
                     throw_exception(L('_EXPRESS_ERROR_').':'.$val[0]);
                 }
