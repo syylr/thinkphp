@@ -30,7 +30,7 @@ class HtmlCache extends Think
     // 判断是否需要静态缓存
     static private function requireHtmlCache() {
         // 分析当前的静态规则
-         $htmls = C('_htmls_'); // 读取静态规则
+         $htmls = C('htmls'); // 读取静态规则
          if(!empty($htmls)) {
             // 静态规则文件定义格式 actionName=>array(‘静态规则’,’缓存时间’,’附加规则')
             // 'read'=>array('{id},{name}',60,'md5') 必须保证静态规则的唯一性 和 可判断性
