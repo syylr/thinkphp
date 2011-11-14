@@ -264,16 +264,14 @@ class App
     static public function run() {
         App::init();
         $plugin   =  C('APP_PLUGIN_ON');
-        // 项目初始化标签
-        if($plugin)   tag('app_init');
+        // 项目开始标签
+        if($plugin)   tag('app_begin');
          // Session初始化 支持其他客户端
         if(isset($_REQUEST[C("VAR_SESSION_ID")]))
             session_id($_REQUEST[C("VAR_SESSION_ID")]);
         if(C('SESSION_AUTO_START'))  session_start();
         // 记录应用初始化时间
         if(C('SHOW_RUN_TIME')) G('initTime');
-        // 项目运行标签
-        if($plugin)   tag('app_begin');
         App::exec();
         // 项目结束标签
         if($plugin)   tag('app_end');
