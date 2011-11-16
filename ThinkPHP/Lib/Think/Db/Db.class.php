@@ -847,7 +847,7 @@ class Db extends Think
         if($cache) { // 查询缓存检测
             $key =  is_string($cache['key'])?$cache['key']:md5($sql);
             $value   =  S($key,'','',$cache['type']);
-            if($value) {
+            if(false !== $value) {
                 return $value;
             }
         }
