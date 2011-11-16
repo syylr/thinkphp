@@ -845,7 +845,7 @@ class Db extends Think
         $sql   = $this->buildSelectSql($options);
         $cache  =  isset($options['cache'])?$options['cache']:false;
         if($cache) { // 查询缓存检测
-            $key =  is_string($cache['key']?$cache['key']:md5($sql);
+            $key =  is_string($cache['key'])?$cache['key']:md5($sql);
             $value   =  S($key,'','',$cache['type']);
             if($value) {
                 return $value;
