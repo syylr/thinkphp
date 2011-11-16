@@ -394,6 +394,9 @@ class Db extends Think
      +----------------------------------------------------------
      */
     protected function parseField($fields) {
+        if(is_string($fields) && strpos($fields,',')) {
+            $fields    = explode(',',$fields);
+        }
         if(is_array($fields)) {
             // 完善数组方式传字段名的支持
             // 支持 'field1'=>'field2' 这样的字段别名定义
