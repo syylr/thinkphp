@@ -852,7 +852,7 @@ class Db extends Think
             }
         }
         $result   = $this->query($sql);
-        if($cache) { // 查询缓存写入
+        if($cache && false !== $result ) { // 查询缓存写入
             S($key,$result,$cache['expire'],$cache['type']);
         }
         return $result;
