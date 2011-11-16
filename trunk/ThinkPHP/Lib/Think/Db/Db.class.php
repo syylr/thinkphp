@@ -843,7 +843,19 @@ class Db extends Think
      */
     public function select($options=array()) {
         $sql   = $this->buildSelectSql($options);
-        return $this->query($sql);
+        $cache  =  isset($options['cache'])?$options['cache']:false;
+        if($cache) { // 查询缓存检测
+            $key =  is_string($cache['key']?$cache['key']:md5($sql);
+            $value   =  S($key,'','',$cache['type']);
+            if($value) {
+                return $value;
+            }
+        }
+        $result   = $this->query($sql);
+        if($cache) { // 查询缓存写入
+            S($key,$result,$cache['expire'],$cache['type']);
+        }
+        return $result;
     }
 
     /**
