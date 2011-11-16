@@ -554,4 +554,52 @@ function send_http_status($code) {
         header('HTTP/1.1 '.$code.' '.$_status[$code]);
     }
 }
+
+// URL组装 支持不同模式和路由
+// 格式： U('/Admin/User/add/','aaa=1&bbb=2');
+// U('__URL__/add/','aaa=1&bbb=2');
+function url($url,$vars='',$redirect=false,$suffix=true) {
+    $replace =  array(
+        '__APP__'       => __APP__,        // 项目地址
+        '__GROUP__'   =>   defined('GROUP_NAME')?__GROUP__:__APP__, // 分组地址
+        '__URL__'       => __URL__, // 模块地址
+        '__ACTION__'    => __ACTION__,     // 操作地址
+    );
+    $url = str_replace(array_keys($replace),array_values($replace),$url);
+    $url   =  str_replace(__APP__,'',$url);
+    $depr = C('URL_PATHINFO_DEPR');
+    if('/' != $depr) {
+        // 安全替换
+        $url   =  str_replace('/',$depr,$url);
+        if(0===strpos($url,$depr)) { // 恢复第一个 /
+            $url   =  '/'.substr($url,strlen($depr));
+        }
+    }
+    $url   =  rtrim($url,$depr);
+    if(C('URL_MODEL') == 0) { // 普通模式URL转换
+        $path = explode($depr,ltrim($url,'/'));
+        $var  =  array();
+        $var[C('VAR_ACTION')] = array_pop($path);
+        $var[C('VAR_MODULE')] = array_pop($path);
+        if(!empty($path)) $var[C('VAR_GROUP')]  = array_pop($path);
+        $url   =  __APP__.'?'.http_build_query($var);
+        if(!empty($vars)) {
+            if(is_array($vars)) $vars = http_build_query($vars);
+            $url   .= '&'.$vars;
+        }
+    }else{ // PATHINFO模式或者兼容URL模式
+        $url   =  __APP__.'/'.str_replace(__APP__,'',ltrim($url,'/'));
+        if(!empty($vars)) { // 添加参数
+            if(is_array($vars)) $vars = http_build_query($vars);
+            $url .= $depr.str_replace(array('=','&'),$depr,$vars);
+        }
+        if($suffix && C('URL_HTML_SUFFIX')) {// URL伪静态后缀
+            $url .= '.'.trim(C('URL_HTML_SUFFIX'),'.');
+        }
+    }
+    if($redirect) // 直接跳转URL
+        redirect($url);
+    else
+        return $url;
+}
 ?>
