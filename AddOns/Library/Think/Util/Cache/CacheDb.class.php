@@ -18,7 +18,6 @@
        cachekey varchar(255) NOT NULL,
        expire int(11) NOT NULL,
        data blob,
-       datasize int(11),
        datacrc int(32),
        PRIMARY KEY (id)
      );
@@ -95,7 +94,7 @@ class CacheDb extends Cache
     public function get($name) {
         $name  =  addslashes($name);
         N('cache_read',1);
-        $result  =  $this->db->query('select `data`,`datacrc`,`datasize` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' and (`expire` =-1 OR `expire`>'.time().') limit 0,1');
+        $result  =  $this->db->query('SELECT `data`,`datacrc` FROM `'.$this->options['table'].'` WHERE `cachekey`=\''.$name.'\' AND (`expire` =-1 OR `expire`>'.time().') LIMIT 0,1');
         if(false !== $result ) {
             $result   =  $result[0];
             if(C('DATA_CACHE_CHECK')) {//开启数据校验
@@ -143,19 +142,14 @@ class CacheDb extends Cache
         	$crc  =  '';
         }
         $expire =  !empty($expireTime)? $expireTime : $this->options['expire'];
-        $map    = array();
-        $map['cachekey']	 =	 $name;
-        $map['data']	=	$data	 ;
-        $map['datacrc']	=	$crc;
-        $map['expire']	=	($expire==-1)?-1: (time()+$expire) ;//缓存有效期为－1表示永久缓存
-        $map['datasize']	=	strlen($data);
+        $expire	=	($expire==-1)?-1: (time()+$expire) ;//缓存有效期为－1表示永久缓存
         $result  =  $this->db->query('select `id` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' limit 0,1');
-        if(false !== $result ) {
+        if(!empty($result) ) {
         	//更新记录
-            $result  =  $this->db->save($map,$this->options['table'],'`cachekey`=\''.$name.'\'');
+            $result  =  $this->db->execute('UPDATE '.$this->options['table'].' SET data=\''.$data.'\' ,datacrc=\''.$crc.'\',expire='.$expire.' WHERE `cachekey`=\''.$name.'\'');
         }else {
         	//新增记录
-             $result  =  $this->db->add($map,$this->options['table']);
+             $result  =  $this->db->execute('INSERT INTO '.$this->options['table'].' (`cachekey`,`data`,`datacrc`,`expire`) VALUES (\''.$name.'\',\''.$data.'\',\''.$crc.'\','.$expire.')');
         }
         if($result) {
             return true;
@@ -177,7 +171,7 @@ class CacheDb extends Cache
      */
     public function rm($name) {
         $name  =  addslashes($name);
-        return $this->db->execute('delete from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\'');
+        return $this->db->execute('DELETE FROM `'.$this->options['table'].'` WHERE `cachekey`=\''.$name.'\'');
     }
 
     /**
@@ -190,7 +184,7 @@ class CacheDb extends Cache
      +----------------------------------------------------------
      */
     public function clear() {
-        return $this->db->execute('truncate table `'.$this->options['table'].'`');
+        return $this->db->execute('TRUNCATE TABLE `'.$this->options['table'].'`');
     }
 
 }//类定义结束
