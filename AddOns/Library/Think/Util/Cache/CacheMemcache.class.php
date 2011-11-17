@@ -31,17 +31,15 @@ class CacheMemcache extends Cache
      * @access public
      +----------------------------------------------------------
      */
-    function __construct($options='')
-    {
+    function __construct($options='') {
         if ( !extension_loaded('memcache') ) {
             throw_exception(L('_NOT_SUPPERT_').':memcache');
         }
         if(empty($options)) {
-            $options = array
-            (
-                'host'  => '127.0.0.1',
-                'port'  => 11211,
-                'timeout' => false,
+            $options = array (
+                'host'  => C('MEMCACHE_HOST') ? C('MEMCACHE_HOST') : '127.0.0.1',
+                'port'  => C('MEMCACHE_PORT') ? C('MEMCACHE_PORT') : 11211,
+                'timeout' => C('DATA_CACHE_TIME') ? C('DATA_CACHE_TIME') : false,
                 'persistent' => false
             );
         }
@@ -63,8 +61,7 @@ class CacheMemcache extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    private function isConnected()
-    {
+    private function isConnected() {
         return $this->connected;
     }
 
@@ -79,8 +76,7 @@ class CacheMemcache extends Cache
      * @return mixed
      +----------------------------------------------------------
      */
-    public function get($name)
-    {
+    public function get($name) {
         N('cache_read',1);
         return $this->handler->get($name);
     }
@@ -97,8 +93,7 @@ class CacheMemcache extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name, $value, $ttl = null)
-    {
+    public function set($name, $value, $ttl = null) {
         N('cache_write',1);
         if(isset($ttl) && is_int($ttl))
             $expire = $ttl;
@@ -119,8 +114,7 @@ class CacheMemcache extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function rm($name, $ttl = false)
-    {
+    public function rm($name, $ttl = false) {
         return $ttl === false ?
             $this->handler->delete($name) :
             $this->handler->delete($name, $ttl);
@@ -135,8 +129,7 @@ class CacheMemcache extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function clear()
-    {
+    public function clear() {
         return $this->handler->flush();
     }
 }//类定义结束
