@@ -1203,6 +1203,9 @@ class Model extends Think
         static $_db = array();
         if(!isset($_db[$linkNum])) {
             // 创建一个新的实例
+            if(false === strpos($config,'/')) { // 支持读取配置参数
+                $config  =  C($config);
+            }
             $_db[$linkNum]            =    Db::getInstance($config);
         }elseif(NULL === $config){
             $_db[$linkNum]->close(); // 关闭数据库连接
