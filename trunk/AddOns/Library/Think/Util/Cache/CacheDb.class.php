@@ -14,12 +14,11 @@
  +------------------------------------------------------------------------------
  * 数据库类型缓存类
      CREATE TABLE THINK_CACHE (
-       id int(11) unsigned NOT NULL auto_increment,
        cachekey varchar(255) NOT NULL,
        expire int(11) NOT NULL,
        data blob,
        datacrc int(32),
-       PRIMARY KEY (id)
+       UNIQUE KEY `cachekey` (`cachekey`)
      );
  +------------------------------------------------------------------------------
  * @category   Think
@@ -143,7 +142,7 @@ class CacheDb extends Cache
         }
         $expire =  !empty($expireTime)? $expireTime : $this->options['expire'];
         $expire	=	($expire==-1)?-1: (time()+$expire) ;//缓存有效期为－1表示永久缓存
-        $result  =  $this->db->query('select `id` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' limit 0,1');
+        $result  =  $this->db->query('select `cachekey` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' limit 0,1');
         if(!empty($result) ) {
         	//更新记录
             $result  =  $this->db->execute('UPDATE '.$this->options['table'].' SET data=\''.$data.'\' ,datacrc=\''.$crc.'\',expire='.$expire.' WHERE `cachekey`=\''.$name.'\'');
