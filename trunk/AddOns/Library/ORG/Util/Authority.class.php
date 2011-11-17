@@ -20,7 +20,7 @@
  * 3，一个用户可以属于多个用户组(think_auth_group_access表 定义了用户所属用户组)。我们需要设置每个用户组拥有哪些规则(think_auth_group 定义了用户组权限)
  * 
  * 4，支持规则表达式。
- *      在think_auth_rule 表中定义一条规则时，如果type为1， condition字段就可以定义规则表达式。 如定义{score}>5  and {score}<100  表单用户的分数在5-100之间时这条规则才会通过。
+ *      在think_auth_rule 表中定义一条规则时，如果type为1， condition字段就可以定义规则表达式。 如定义{score}>5  and {score}<100  表示用户的分数在5-100之间时这条规则才会通过。
  * @category ORG
  * @package ORG
  * @subpackage Util
@@ -172,7 +172,7 @@ class Authority extends Think {
     }
     //获得用户资料,根据自己的情况读取数据库
     protected function getUserInfo($uid) {
-        return M()->talbe($this->_config['AUTH_USER'])->find($uid);
+        return M()->table($this->_config['AUTH_USER'])->find($uid);
     }
 
 }
