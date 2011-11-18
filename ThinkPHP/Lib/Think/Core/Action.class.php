@@ -390,6 +390,7 @@ abstract class Action extends Think
             if(!$this->view->get('jumpUrl')) $this->assign('jumpUrl',"javascript:history.back(-1);");
             $this->display(C('TMPL_ACTION_ERROR'));
             // 中止执行  避免出错后继续执行
+            if(C('LOG_RECORD')) Log::save();
             exit ;
         }
     }
@@ -406,8 +407,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      */
     public function __destruct() {
-        // 执行
-        if(C('LOG_RECORD')) Log::save();
+        // 执行后续操作
         if(C('APP_PLUGIN_ON')) tag('action_end');
     }
 }//类定义结束
