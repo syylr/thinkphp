@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id$
+// $Id: CacheMemcache.class.php 208 2011-11-18 08:04:40Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
  * @package  Think
  * @subpackage  Util
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: CacheMemcache.class.php 208 2011-11-18 08:04:40Z luofei614@126.com $
  +------------------------------------------------------------------------------
  */
 class CacheMemcache extends Cache
@@ -33,6 +33,7 @@ class CacheMemcache extends Cache
      */
     function __construct($options='')
     {
+        //sae下的初始化
         $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
        $result=$this->handler=memcache_init();
         $this->connected=$result;
@@ -66,6 +67,7 @@ class CacheMemcache extends Cache
      */
     public function get($name)
     {
+        N('cache_read',1);
         return $this->handler->get($name);
     }
 
@@ -83,6 +85,7 @@ class CacheMemcache extends Cache
      */
     public function set($name, $value, $ttl = null)
     {
+        N('cache_write',1);
         if(isset($ttl) && is_int($ttl))
             $expire = $ttl;
         else

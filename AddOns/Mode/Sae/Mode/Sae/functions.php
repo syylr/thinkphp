@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id$
+// $Id: functions.php 208 2011-11-18 08:04:40Z luofei614@126.com $
 
 /**
   +------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
  * @category   Think
  * @package  Common
  * @author   liu21st <liu21st@gmail.com>
- * @version  $Id$
+ * @version  $Id: functions.php 208 2011-11-18 08:04:40Z luofei614@126.com $
   +------------------------------------------------------------------------------
  */
 // 设置和获取统计数据
@@ -79,7 +79,7 @@ function U($url, $params=array(), $redirect=false, $suffix=true) {
                 $flag = true;
                 unset($module);
             }
-            if (!isset($group) && in_array(GROUP_NAME . "/" . $module, $rule) && in_array($key, array(SUB_DOMAIN, "*")))
+            if (!isset($group) && in_array(GROUP_NAME . "/" . $module, $rule) && in_array($key,array(SUB_DOMAIN,"*")))
                 unset($module);
             if ($flag) {
                 unset($group);
@@ -92,7 +92,7 @@ function U($url, $params=array(), $redirect=false, $suffix=true) {
     }
 
     if (C('URL_MODEL') > 0) {
-        $depr = C('URL_PATHINFO_MODEL') == 2 ? C('URL_PATHINFO_DEPR') : '/';
+        $depr = C('URL_PATHINFO_DEPR');
         $str = $depr;
         foreach ($params as $var => $val)
             $str .= $var . $depr . $val . $depr;
@@ -154,7 +154,7 @@ function halt($error) {
     if (IS_CLI)
         exit($error);
     $e = array();
-    if (C('APP_DEBUG')) {
+    if (APP_DEBUG) {
         //调试模式下输出错误信息
         if (!is_array($error)) {
             $trace = debug_backtrace();
@@ -295,37 +295,36 @@ function get_instance_of($name, $method='', $args=array()) {
 }
 
 /**
-  +----------------------------------------------------------
+ +----------------------------------------------------------
  * 系统自动加载ThinkPHP基类库和当前项目的model和Action对象
  * 并且支持配置自动加载路径
-  +----------------------------------------------------------
+ +----------------------------------------------------------
  * @param string $name 对象类名
-  +----------------------------------------------------------
+ +----------------------------------------------------------
  * @return void
-  +----------------------------------------------------------
+ +----------------------------------------------------------
  */
 function __autoload($name) {
     // 检查是否存在别名定义
-    if (alias_import($name))
-        return;
+    if(alias_import($name)) return ;
     // 自动加载当前项目的Actioon类和Model类
-    if (substr($name, -5) == "Model") {
-        require_cache(LIB_PATH . 'Model/' . $name . '.class.php');
-    } elseif (substr($name, -6) == "Action") {
-        require_cache(LIB_PATH . 'Action/' . $name . '.class.php');
-    } else {
+    if(substr($name,-5)=="Model") {
+        require_cache(LIB_PATH.'Model/'.$name.'.class.php');
+    }elseif(substr($name,-6)=="Action"){
+        require_cache(LIB_PATH.'Action/'.$name.'.class.php');
+    }else {
         // 根据自动加载路径设置进行尝试搜索
-        if (C('APP_AUTOLOAD_PATH')) {
-            $paths = explode(',', C('APP_AUTOLOAD_PATH'));
-            foreach ($paths as $path) {
-                if (import($path . $name)) {
+        if(C('APP_AUTOLOAD_PATH')) {
+            $paths  =   explode(',',C('APP_AUTOLOAD_PATH'));
+            foreach ($paths as $path){
+                if(import($path.$name)) {
                     // 如果加载类成功则返回
-                    return;
+                    return ;
                 }
             }
         }
     }
-    return;
+    return ;
 }
 
 // 优化的require_once
@@ -509,14 +508,16 @@ function D($name='', $app='') {
  * M函数用于实例化一个没有模型文件的Model
   +----------------------------------------------------------
  * @param string name Model名称
+ * @param string tablePrefix 表前缀
+ * @param string class 要实例化的模型类名
   +----------------------------------------------------------
  * @return Model
   +----------------------------------------------------------
  */
-function M($name='', $class='Model') {
+function M($name='', $tablePrefix='',$class='Model') {
     static $_model = array();
     if (!isset($_model[$name . '_' . $class]))
-        $_model[$name . '_' . $class] = new $class($name);
+        $_model[$name . '_' . $class] = new $class($name,$tablePrefix);
     return $_model[$name . '_' . $class];
 }
 
@@ -591,24 +592,29 @@ function C($name=null, $value=null) {
         return $_config;
     // 优先执行设置获取或赋值
     if (is_string($name)) {
+        $name = strtolower($name);
         if (!strpos($name, '.')) {
-            $name = strtolower($name);
             if (is_null($value))
                 return isset($_config[$name]) ? $_config[$name] : null;
-            $_config[$name] = $value;
+            $_config[$name] = is_array($value)?array_change_key_case($value):$value;
             return;
         }
         // 二维数组设置和获取支持
         $name = explode('.', $name);
-        $name[0] = strtolower($name[0]);
         if (is_null($value))
             return isset($_config[$name[0]][$name[1]]) ? $_config[$name[0]][$name[1]] : null;
         $_config[$name[0]][$name[1]] = $value;
         return;
     }
     // 批量设置
-    if (is_array($name))
+    if (is_array($name)){
+        foreach ($name as $key=>$val){
+            if(is_array($val)) {
+                $name[$key]  =  array_change_key_case($val);
+            }
+        }
         return $_config = array_merge($_config, array_change_key_case($name));
+    }
     return null; // 避免非法参数
 }
 
@@ -682,27 +688,25 @@ function S($name, $value='', $expire='', $type='') {
 
 // 快速文件数据读取和保存 针对简单类型数据 字符串、数组
 function F($name, $value='', $path="Data/") {
+	//sae使用KVDB实现F缓存
     static $_cache = array();
-    $tplcache = Tplcache::getInstance();
-    $filename = $path . $name . '.php';
+	static $kv;
+	if(!is_object($kv)){ 
+		$kv=new SaeKVClient();
+		$kv->init();
+		}
     if ('' !== $value) {
         if (is_null($value)) {
             // 删除缓存
-            return $tplcache->delete($filename);
+            return $kv->delete($name);
         } else {
-            return $tplcache->set($filename, "<?php\nreturn " . var_export($value, true) . ";\n?>");
+            return $kv->set($name,$value);
         }
     }
     if (isset($_cache[$name]))
         return $_cache[$name];
     // 获取缓存数据
-    $content = $tplcache->get($filename);
-    if ($content !== false) {
-        $value = eval("?>" . $content);
-        $_cache[$name] = $value;
-    } else {
-        $value = false;
-    }
+	$value=$kv->get($name);
     return $value;
 }
 
@@ -718,8 +722,6 @@ function to_guid_string($mix) {
     return md5($mix);
 }
 
-//[RUNTIME]
-// 编译文件
 // 去除代码中的空白和注释
 function strip_whitespace($content) {
     $stripStr = '';
@@ -752,11 +754,12 @@ function strip_whitespace($content) {
     return $stripStr;
 }
 
-function compile($filename, $runtime=false) {
+//[RUNTIME]
+// 编译文件
+function compile($filename) {
     $content = file_get_contents($filename);
-    if (true === $runtime)
     // 替换预编译指令
-        $content = preg_replace('/\/\/\[RUNTIME\](.*?)\/\/\[\/RUNTIME\]/s', '', $content);
+    $content = preg_replace('/\/\/\[RUNTIME\](.*?)\/\/\[\/RUNTIME\]/s', '', $content);
     $content = substr(trim($content), 5);
     if ('?>' == substr($content, -2))
         $content = substr($content, 0, -2);
@@ -768,7 +771,7 @@ function array_define($array) {
     $content = '';
     foreach ($array as $key => $val) {
         $key = strtoupper($key);
-        if (in_array($key, array('THINK_PATH', 'APP_NAME', 'APP_PATH', 'APP_CACHE_NAME', 'RUNTIME_PATH', 'RUNTIME_ALLINONE', 'THINK_MODE')))
+        if (in_array($key, array('THINK_PATH', 'APP_NAME', 'APP_PATH', 'APP_DEBUG','MEMORY_LIMIT_ON', 'RUNTIME_PATH', 'THINK_MODE')))
             $content .= 'if(!defined(\'' . $key . '\')) ';
         if (is_int($val) || is_float($val)) {
             $content .= "define('" . $key . "'," . $val . ");";
@@ -906,6 +909,25 @@ function cookie($name, $value='', $option=null) {
             $_COOKIE[$name] = $value;
         }
     }
+}
+
+// 获取客户端IP地址
+function get_client_ip() {
+    static $ip = NULL;
+    if ($ip !== NULL) return $ip;
+    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        $pos =  array_search('unknown',$arr);
+        if(false !== $pos) unset($arr[$pos]);
+        $ip   =  trim($arr[0]);
+    }elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    }elseif (isset($_SERVER['REMOTE_ADDR'])) {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+    // IP地址合法验证
+    $ip = (false !== ip2long($ip)) ? $ip : '0.0.0.0';
+    return $ip;
 }
 
 //以下是Sae函数
