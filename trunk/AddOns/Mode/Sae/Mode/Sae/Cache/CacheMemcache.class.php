@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id: CacheMemcache.class.php 208 2011-11-18 08:04:40Z luofei614@126.com $
+// $Id: CacheMemcache.class.php 234 2011-11-18 13:53:15Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
  * @package  Think
  * @subpackage  Util
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id: CacheMemcache.class.php 208 2011-11-18 08:04:40Z luofei614@126.com $
+ * @version   $Id: CacheMemcache.class.php 234 2011-11-18 13:53:15Z luofei614@126.com $
  +------------------------------------------------------------------------------
  */
 class CacheMemcache extends Cache
@@ -90,6 +90,8 @@ class CacheMemcache extends Cache
             $expire = $ttl;
         else
             $expire = $this->expire;
+        if($expire==-1)
+            $expire=0;//为-1时表示永不过期
         return $this->handler->set($name, $value, 0, $expire);
     }
 
