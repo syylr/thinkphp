@@ -84,6 +84,11 @@ class Cache extends Think
      */
     protected $expire     ;
 
+    // 缓存队列长度 0表示不限制
+    protected $queueLength = 0;
+    // 缓存队列的缓存方式 支持xcache apc file
+    protected $queueCacheType  =  'file';
+
     /**
      +----------------------------------------------------------
      * 连接缓存
@@ -128,6 +133,7 @@ class Cache extends Think
     public function getOptions($name) {
         return $this->options[$name];
     }
+
     /**
      +----------------------------------------------------------
      * 取得缓存类实例
@@ -143,5 +149,27 @@ class Cache extends Think
         return get_instance_of(__CLASS__,'connect',$param);
     }
 
+    // 队列缓存
+    protected function queue($key) {
+        static $_handler = array(
+            'file'=>array('F','F'),
+            'xcache'=>array('xcache_get','xcache_set'),
+            'apc'=>array('apc_fetch','apc_store'),
+        );
+        $fun  =  $_handler[$this->queueCacheType];
+        $value   =  $fun[0]('think_queue');
+        if(!$value) {
+            $value   =  array();
+        }
+        // 进列
+        array_push($value,$key);
+        if(count($value)>$this->queueLength) {
+            // 出列
+            $key =  array_shift($value);
+            // 删除缓存
+            $this->rm($key);
+        }
+        return $fun[1]('think_queue',$value);
+    }
 }//类定义结束
 ?>

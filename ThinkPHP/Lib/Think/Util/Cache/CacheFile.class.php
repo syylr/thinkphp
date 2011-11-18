@@ -38,6 +38,7 @@ class CacheFile extends Cache
             $this->options['temp'] = C('DATA_CACHE_PATH');
         }
         $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
+        $this->queueLength  =  isset($options['length'])?$options['length']:0;
         if(substr($this->options['temp'], -1) != "/")    $this->options['temp'] .= "/";
         $this->connected = is_dir($this->options['temp']) && is_writeable($this->options['temp']);
         $this->type = strtoupper(substr(__CLASS__,6));
@@ -187,6 +188,10 @@ class CacheFile extends Cache
         $data    = "<?php\n//".sprintf('%012d',$expire).$check.$data."\n?>";
         $result  =   file_put_contents($filename,$data);
         if($result) {
+            if($this->queueLength>0) {
+                // 记录缓存队列
+                $this->queue($name);
+            }
             clearstatcache();
             return true;
         }else {
