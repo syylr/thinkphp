@@ -37,6 +37,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      */
     public function __construct() {
+        if(C('APP_PLUGIN_ON')) tag('action_begin');
         //实例化视图类
         $this->view       = Think::instance('View');
         //控制器初始化
@@ -388,15 +389,26 @@ abstract class Action extends Think
             // 默认发生错误的话自动返回上页
             if(!$this->view->get('jumpUrl')) $this->assign('jumpUrl',"javascript:history.back(-1);");
             $this->display(C('TMPL_ACTION_ERROR'));
+            // 中止执行  避免出错后继续执行
+            exit ;
         }
-        if(C('LOG_RECORD')) Log::save();
-        // 中止执行  避免出错后继续执行
-        exit ;
     }
 
     protected function showTrace() {
         $this->view->traceVar();
     }
 
+   /**
+     +----------------------------------------------------------
+     * 析构方法
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     */
+    public function __destruct() {
+        // 执行
+        if(C('LOG_RECORD')) Log::save();
+        if(C('APP_PLUGIN_ON')) tag('action_end');
+    }
 }//类定义结束
 ?>
