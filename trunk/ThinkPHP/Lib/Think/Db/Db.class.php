@@ -230,11 +230,11 @@ class Db extends Think
         if(C('DB_RW_SEPARATE')){
             // 主从式采用读写分离
             if($master)
-                // 默认主服务器是连接第一个数据库配置
-                $r  =   0;
+                // 主服务器写入
+                $r  =   floor(mt_rand(0,C('DB_MASTER_NUM')-1));
             else
                 // 读操作连接从服务器
-                $r = floor(mt_rand(1,count($_config['hostname'])-1));   // 每次随机连接的数据库
+                $r = floor(mt_rand(C('DB_MASTER_NUM'),count($_config['hostname'])-1));   // 每次随机连接的数据库
         }else{
             // 读写操作不区分服务器
             $r = floor(mt_rand(0,count($_config['hostname'])-1));   // 每次随机连接的数据库
