@@ -159,10 +159,11 @@ class Model extends Think
         if(C('DB_FIELDTYPE_CHECK'))   $this->fields['_type'] =  $type;
 
         // 2008-3-7 增加缓存开关控制
-        if(C('DB_FIELDS_CACHE'))
+        if(C('DB_FIELDS_CACHE')){
             // 永久缓存数据表信息
             $db   =  $this->dbName?$this->dbName:C('DB_NAME');
             F('_fields/'.$db.'.'.$this->name,$this->fields);
+        }
     }
 
     /**
