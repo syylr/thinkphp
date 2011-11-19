@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id: App.class.php 208 2011-11-18 08:04:40Z luofei614@126.com $
+// $Id: App.class.php 253 2011-11-19 15:01:55Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
  * @package  Think
  * @subpackage  Core
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id: App.class.php 208 2011-11-18 08:04:40Z luofei614@126.com $
+ * @version   $Id: App.class.php 253 2011-11-19 15:01:55Z luofei614@126.com $
  +------------------------------------------------------------------------------
  */
 class App
@@ -81,19 +81,7 @@ class App
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
         //SEA模式的一些固定配置
-        C(array(
-        'DB_TYPE'=> 'mysql',     // 数据库类型
-	'DB_HOST'=> SAE_MYSQL_HOST_M.",".SAE_MYSQL_HOST_S, // 服务器地址
-	'DB_NAME'=> SAE_MYSQL_DB,        // 数据库名
-	'DB_USER'=> SAE_MYSQL_USER,    // 用户名
-	'DB_PWD'=> SAE_MYSQL_PASS,         // 密码
-	'DB_PORT'=> SAE_MYSQL_PORT,        // 端口
-	'DB_RW_SEPARATE'=>true,
-        'DB_DEPLOY_TYPE'=> 1, // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
-        'DATA_CACHE_TYPE'=> 'Memcache',//S缓存类型为Memcache
-        'LOG_RECORD'=>false,//TODU 开启日志
-        'LOG_EXCEPTION_RECORD'=>false
-        ));
+        C(include THINK_PATH.'/Mode/Sae/saeConfig.php');
         $common   = '';
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
