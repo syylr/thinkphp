@@ -32,12 +32,11 @@ class CacheApc extends Cache
      * @access public
      +----------------------------------------------------------
      */
-    function __construct($options='')
-    {
-		if(!function_exists('apc_cache_info')) {
-			throw_exception(L('_NOT_SUPPERT_').':Apc');
-		}
-		$this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
+    function __construct($options='') {
+        if(!function_exists('apc_cache_info')) {
+            throw_exception(L('_NOT_SUPPERT_').':Apc');
+        }
+        $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
         $this->type = strtoupper(substr(__CLASS__,6));
     }
 
@@ -52,8 +51,7 @@ class CacheApc extends Cache
      * @return mixed
      +----------------------------------------------------------
      */
-     function get($name)
-     {
+     function get($name) {
         N('cache_read',1);
          return apc_fetch($name);
      }
@@ -67,17 +65,16 @@ class CacheApc extends Cache
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      * @param mixed $value  存储数据
+     * @param integer $expire  有效时间（秒）
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
      */
-     function set($name, $value, $ttl = null)
-     {
+     function set($name, $value, $expire = null) {
         N('cache_write',1);
-        if(isset($ttl) && is_int($ttl))
-            $expire = $ttl;
-        else
-            $expire = $this->expire;
+        if(is_null($expire)) {
+            $expire  =  $this->expire;
+        }
          return apc_store($name, $value, $expire);
      }
 
@@ -93,8 +90,7 @@ class CacheApc extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-     function rm($name)
-     {
+     function rm($name) {
          return apc_delete($name);
      }
 
@@ -107,8 +103,7 @@ class CacheApc extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    function clear()
-    {
+    function clear() {
         return apc_clear_cache();
     }
 

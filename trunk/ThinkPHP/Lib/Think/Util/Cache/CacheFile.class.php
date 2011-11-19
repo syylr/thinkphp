@@ -164,14 +164,14 @@ class CacheFile extends Cache
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      * @param mixed $value  存储数据
-     * @param int $expire  有效时间 -1 为永久
+     * @param int $expire  有效时间 0为永久
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name,$value,$expire='') {
+    public function set($name,$value,$expire=null) {
         N('cache_write',1);
-        if('' === $expire) {
+        if(is_null($expire)) {
             $expire =  $this->expire;
         }
         $filename   =   $this->filename($name);

@@ -31,14 +31,12 @@ class CacheSqlite extends Cache
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($options='')
-    {
+    public function __construct($options='') {
         if ( !extension_loaded('sqlite') ) {
             throw_exception(L('_NOT_SUPPERT_').':sqlite');
         }
         if(empty($options)){
-            $options= array
-            (
+            $options= array (
                 'db'        => ':memory:',
                 'table'     => 'sharedmemory',
                 'var'       => 'var',
@@ -64,8 +62,7 @@ class CacheSqlite extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    private function isConnected()
-    {
+    private function isConnected() {
         return $this->connected;
     }
 
@@ -80,13 +77,12 @@ class CacheSqlite extends Cache
      * @return mixed
      +----------------------------------------------------------
      */
-    public function get($name)
-    {
+    public function get($name) {
         N('cache_read',1);
 		$name   = sqlite_escape_string($name);
         $sql = 'SELECT '.$this->options['value'].
                ' FROM '.$this->options['table'].
-               ' WHERE '.$this->options['var'].'=\''.$name.'\' AND ('.$this->options['expire'].'=-1 OR '.$this->options['expire'].'>'.time().
+               ' WHERE '.$this->options['var'].'=\''.$name.'\' AND ('.$this->options['expire'].'=0 OR '.$this->options['expire'].'>'.time().
                ') LIMIT 1';
         $result = sqlite_query($this->handler, $sql);
         if (sqlite_num_rows($result)) {
@@ -108,17 +104,18 @@ class CacheSqlite extends Cache
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      * @param mixed $value  存储数据
+     * @param integer $expire  有效时间（秒）
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name, $value,$expireTime=0)
-    {
+    public function set($name, $value,$expire=null) {
         N('cache_write',1);
         $expire =  !empty($expireTime)? $expireTime : C('DATA_CACHE_TIME');
         $name  = sqlite_escape_string($name);
         $value = sqlite_escape_string(serialize($value));
-        $expire =  ($expireTime==-1)?-1: (time()+$expire);
+        $expire =  !empty($expire)? $expire : $this->options['expire'];
+        $expire	=	($expire==0)?0: (time()+$expire) ;//缓存有效期为0表示永久缓存
         if( C('DATA_CACHE_COMPRESS') && function_exists('gzcompress')) {
             //数据压缩
             $value   =   gzcompress($value,3);
@@ -141,8 +138,7 @@ class CacheSqlite extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function rm($name)
-    {
+    public function rm($name) {
         $name  = sqlite_escape_string($name);
         $sql  = 'DELETE FROM '.$this->options['table'].
                ' WHERE '.$this->options['var'].'=\''.$name.'\'';
@@ -159,9 +155,8 @@ class CacheSqlite extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function clear()
-    {
-        $sql  = 'delete from `'.$this->options['table'].'`';
+    public function clear() {
+        $sql  = 'DELETE FROM `'.$this->options['table'].'`';
         sqlite_query($this->handler, $sql);
         return ;
     }

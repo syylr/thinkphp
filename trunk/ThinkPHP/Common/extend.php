@@ -594,9 +594,10 @@ function url($url,$vars='',$redirect=false,$suffix=true) {
             $url .= $depr.str_replace(array('=','&'),$depr,$vars);
         }
         if($suffix && C('URL_HTML_SUFFIX')) {// URL伪静态后缀
-            $url .= '.'.trim(C('URL_HTML_SUFFIX'),'.');
+            $url .= '.'.ltrim(C('URL_HTML_SUFFIX'),'.');
         }
     }
+    $url   =  'http://'.$_SERVER['HTTP_HOST'].$url;
     if($redirect) // 直接跳转URL
         redirect($url);
     else

@@ -13,7 +13,7 @@
 /**
  +------------------------------------------------------------------------------
  * 数据库类型缓存类
-     CREATE TABLE THINK_CACHE (
+     CREATE TABLE think_cache (
        cachekey varchar(255) NOT NULL,
        expire int(11) NOT NULL,
        data blob,
@@ -50,8 +50,7 @@ class CacheDb extends Cache
      */
     function __construct($options='') {
         if(empty($options)){
-            $options= array
-            (
+            $options= array (
                 'db'        => C('DB_NAME'),
                 'table'     => C('DATA_CACHE_TABLE'),
                 'expire'    => C('DATA_CACHE_TIME'),
@@ -93,7 +92,7 @@ class CacheDb extends Cache
     public function get($name) {
         $name  =  addslashes($name);
         N('cache_read',1);
-        $result  =  $this->db->query('SELECT `data`,`datacrc` FROM `'.$this->options['table'].'` WHERE `cachekey`=\''.$name.'\' AND (`expire` =-1 OR `expire`>'.time().') LIMIT 0,1');
+        $result  =  $this->db->query('SELECT `data`,`datacrc` FROM `'.$this->options['table'].'` WHERE `cachekey`=\''.$name.'\' AND (`expire` =0 OR `expire`>'.time().') LIMIT 0,1');
         if(false !== $result ) {
             $result   =  $result[0];
             if(C('DATA_CACHE_CHECK')) {//开启数据校验
@@ -127,7 +126,7 @@ class CacheDb extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name, $value,$expireTime=0) {
+    public function set($name, $value,$expire=null) {
         $data   =   serialize($value);
         $name  =  addslashes($name);
         N('cache_write',1);
@@ -136,12 +135,12 @@ class CacheDb extends Cache
             $data   =   gzcompress($data,3);
         }
         if(C('DATA_CACHE_CHECK')) {//开启数据校验
-        	$crc  =  md5($data);
+            $crc  =  md5($data);
         }else {
-        	$crc  =  '';
+            $crc  =  '';
         }
-        $expire =  !empty($expireTime)? $expireTime : $this->options['expire'];
-        $expire	=	($expire==-1)?-1: (time()+$expire) ;//缓存有效期为－1表示永久缓存
+        $expire =  !empty($expire)? $expire : $this->options['expire'];
+        $expire	=	($expire==0)?0: (time()+$expire) ;//缓存有效期为0表示永久缓存
         $result  =  $this->db->query('select `cachekey` from `'.$this->options['table'].'` where `cachekey`=\''.$name.'\' limit 0,1');
         if(!empty($result) ) {
         	//更新记录
@@ -153,7 +152,7 @@ class CacheDb extends Cache
         if($result) {
             return true;
         }else {
-        	return false;
+            return false;
         }
     }
 

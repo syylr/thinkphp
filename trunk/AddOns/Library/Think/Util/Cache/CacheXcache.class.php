@@ -31,13 +31,12 @@ class CacheXcache extends Cache
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($options='')
-    {
+    public function __construct($options='') {
         if ( !function_exists('xcache_info') ) {
             throw_exception(L('_NOT_SUPPERT_').':Xcache');
         }
         $this->type = strtoupper(substr(__CLASS__,6));
-		$this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
+        $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
     }
 
     /**
@@ -51,12 +50,11 @@ class CacheXcache extends Cache
      * @return mixed
      +----------------------------------------------------------
      */
-    public function get($name)
-    {
+    public function get($name) {
         N('cache_read',1);
-		if (xcache_isset($name)) {
-			return xcache_get($name);
-		}
+        if (xcache_isset($name)) {
+            return xcache_get($name);
+        }
         return false;
     }
 
@@ -68,17 +66,17 @@ class CacheXcache extends Cache
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      * @param mixed $value  存储数据
+     * @param integer $expire  有效时间（秒）
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name, $value,$expire='')
-    {
+    public function set($name, $value,$expire=null) {
         N('cache_write',1);
-		if(empty($expire)) {
-			$expire = $this->expire ;
-		}
-		return xcache_set($name, $value, $expire);
+        if(is_null($expire)) {
+            $expire = $this->expire ;
+        }
+        return xcache_set($name, $value, $expire);
     }
 
     /**
@@ -92,9 +90,8 @@ class CacheXcache extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function rm($name)
-    {
-		return xcache_unset($name);
+    public function rm($name) {
+        return xcache_unset($name);
     }
 
 }//类定义结束
