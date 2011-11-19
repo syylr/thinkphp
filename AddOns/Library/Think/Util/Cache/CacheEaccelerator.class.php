@@ -31,8 +31,8 @@ class CacheEaccelerator extends Cache
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($options='')
-    {
+    public function __construct($options='') {
+        $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
         $this->type = strtoupper(substr(__CLASS__,6));
     }
 
@@ -47,12 +47,10 @@ class CacheEaccelerator extends Cache
      * @return mixed
      +----------------------------------------------------------
      */
-     public function get($name)
-     {
+     public function get($name) {
         N('cache_read',1);
          return eaccelerator_get($name);
      }
-
 
     /**
      +----------------------------------------------------------
@@ -62,19 +60,18 @@ class CacheEaccelerator extends Cache
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      * @param mixed $value  存储数据
+     * @param integer $expire  有效时间（秒）
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
      */
-     public function set($name, $value, $ttl = null)
-     {
+     public function set($name, $value, $expire = null) {
         N('cache_write',1);
-        if(isset($ttl) && is_int($ttl))
-            $expire = $ttl;
-        else
-            $expire = $this->expire;
-         eaccelerator_lock($name);
-         return eaccelerator_put ($name, $value, $expire);
+        if(is_null($expire)) {
+            $expire  =  $this->expire;
+        }
+        eaccelerator_lock($name);
+        return eaccelerator_put ($name, $value, $expire);
      }
 
 
@@ -89,8 +86,7 @@ class CacheEaccelerator extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-     public function rm($name)
-     {
+     public function rm($name) {
          return eaccelerator_rm($name);
      }
 

@@ -32,8 +32,7 @@ class CacheApachenote extends Cache
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($options='')
-    {
+    public function __construct($options='') {
         if(empty($options)){
             $options = array(
                 'host' => '127.0.0.1',
@@ -57,8 +56,7 @@ class CacheApachenote extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function isConnected()
-    {
+    public function isConnected() {
         return $this->connected;
     }
 
@@ -74,8 +72,7 @@ class CacheApachenote extends Cache
      * @return mixed
      +----------------------------------------------------------
      */
-     public function get($name)
-     {
+     public function get($name) {
          $this->open();
          $s = 'F' . pack('N', strlen($name)) . $name;
          fwrite($this->handler, $s);
@@ -100,10 +97,9 @@ class CacheApachenote extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name, $value)
-    {
+    public function set($name, $value) {
         N('cache_write',1);
-		$this->open();
+        $this->open();
         $value = serialize($value);
         $s = 'S' . pack('NN', strlen($name), strlen($value)) . $name . $value;
 
@@ -125,14 +121,12 @@ class CacheApachenote extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-     public function rm($name)
-     {
+     public function rm($name) {
          $this->open();
          $s = 'D' . pack('N', strlen($name)) . $name;
          fwrite($this->handler, $s);
          $ret = fgets($this->handler);
          $this->close();
-
          return $ret === "OK\n";
      }
 
@@ -143,8 +137,7 @@ class CacheApachenote extends Cache
      * @access private
      +----------------------------------------------------------
      */
-     private function close()
-     {
+     private function close() {
          fclose($this->handler);
          $this->handler = false;
      }
@@ -156,8 +149,7 @@ class CacheApachenote extends Cache
      * @access private
      +----------------------------------------------------------
      */
-     private function open()
-     {
+     private function open() {
          if (!is_resource($this->handler)) {
              $this->handler = fsockopen($this->options['host'], $this->options['port'], $_, $_, $this->options['timeout']);
              $this->connected = is_resource($this->handler);

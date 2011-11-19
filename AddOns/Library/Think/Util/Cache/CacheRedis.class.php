@@ -90,19 +90,17 @@ class CacheRedis extends Cache
      +----------------------------------------------------------
      * @param string $name 缓存变量名
      * @param mixed $value  存储数据
+     * @param integer $expire  有效时间（秒）
      +----------------------------------------------------------
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name, $value, $ttl = null) {
+    public function set($name, $value, $expire = null) {
         N('cache_write',1);
-
-        if(isset($ttl) && is_int($ttl))
-            $expire = $ttl;
-        else
-            $expire = $this->expire;
-
-        if(isset($expire) && is_int($expire)) {
+        if(is_null($expire)) {
+            $expire  =  $this->expire;
+        }
+        if(is_int($expire)) {
         	return $this->handler->setex($name, $expire, $value);
         }else{
         	return $this->handler->set($name, $value);

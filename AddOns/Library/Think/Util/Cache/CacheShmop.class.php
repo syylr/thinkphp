@@ -31,8 +31,7 @@ class CacheShmop extends Cache
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($options='')
-    {
+    public function __construct($options='') {
         if ( !extension_loaded('shmop') ) {
             throw_exception(L('_NOT_SUPPERT_').':shmop');
         }
@@ -59,8 +58,7 @@ class CacheShmop extends Cache
      * @return mixed
      +----------------------------------------------------------
      */
-    public function get($name = false)
-    {
+    public function get($name = false) {
         N('cache_read',1);
         $id = shmop_open($this->handler, 'c', 0600, 0);
         if ($id !== false) {
@@ -78,7 +76,7 @@ class CacheShmop extends Cache
                 }
                 return $content;
             }else {
-            	return null;
+                return null;
             }
         }else {
             return false;
@@ -97,8 +95,7 @@ class CacheShmop extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name, $value)
-    {
+    public function set($name, $value) {
         N('cache_write',1);
         $lh = $this->_lock();
         $val = $this->get();
@@ -123,8 +120,7 @@ class CacheShmop extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function rm($name)
-    {
+    public function rm($name) {
         $lh = $this->_lock();
         $val = $this->get();
         if (!is_array($val)) $val = array();
@@ -144,8 +140,7 @@ class CacheShmop extends Cache
      * @return integer
      +----------------------------------------------------------
      */
-    private function _ftok($project)
-    {
+    private function _ftok($project) {
         if (function_exists('ftok'))   return ftok(__FILE__, $project);
         if(strtoupper(PHP_OS) == 'WINNT'){
             $s = stat(__FILE__);
@@ -169,8 +164,7 @@ class CacheShmop extends Cache
      * @return integer|boolen
      +----------------------------------------------------------
      */
-    private function _write(&$val, &$lh)
-    {
+    private function _write(&$val, &$lh) {
         $id  = shmop_open($this->handler, 'c', 0600, $this->options['size']);
         if ($id) {
            $ret = shmop_write($id, $val, 0) == strlen($val);
@@ -193,8 +187,7 @@ class CacheShmop extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    private function _lock()
-    {
+    private function _lock() {
         if (function_exists('sem_get')) {
             $fp = sem_get($this->handler, 1, 0600, 1);
             sem_acquire ($fp);
@@ -216,8 +209,7 @@ class CacheShmop extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    private function _unlock(&$fp)
-    {
+    private function _unlock(&$fp) {
         if (function_exists('sem_release')) {
             sem_release($fp);
         } else {
