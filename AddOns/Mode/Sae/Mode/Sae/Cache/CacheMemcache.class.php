@@ -83,15 +83,12 @@ class CacheMemcache extends Cache
      * @return boolen
      +----------------------------------------------------------
      */
-    public function set($name, $value, $ttl = null)
+    public function set($name, $value, $expire = null)
     {
         N('cache_write',1);
-        if(isset($ttl) && is_int($ttl))
-            $expire = $ttl;
-        else
-            $expire = $this->expire;
-        if($expire==-1)
-            $expire=0;//为-1时表示永不过期
+        if(is_null($expire)) {
+            $expire  =  $this->expire;
+        }
         return $this->handler->set($name, $value, 0, $expire);
     }
 
