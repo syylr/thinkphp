@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id: View.class.php 208 2011-11-18 08:04:40Z luofei614@126.com $
+// $Id: View.class.php 243 2011-11-19 02:56:28Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -19,7 +19,7 @@
  * @package  Think
  * @subpackage  Core
  * @author liu21st <liu21st@gmail.com>
- * @version  $Id: View.class.php 208 2011-11-18 08:04:40Z luofei614@126.com $
+ * @version  $Id: View.class.php 243 2011-11-19 02:56:28Z luofei614@126.com $
  +------------------------------------------------------------------------------
  */
 class View extends Think{
@@ -462,7 +462,8 @@ class View extends Think{
         $_trace =   is_file($traceFile)? include $traceFile : array();
          // 系统默认显示信息
         $this->trace('当前页面',    __SELF__);
-        $this->trace('模板缓存',    C('CACHE_PATH').md5($this->templateFile).C('TMPL_CACHFILE_SUFFIX'));
+        //显示sae下， 模版缓存的MC名称
+        $this->trace('模板MC缓存',    'Tpl/'.md5($this->templateFile).C('TMPL_CACHFILE_SUFFIX').'_'.$_SERVER["HTTP_APPVERSION"]);
         $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
         $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
         $this->trace('请求时间',    date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
