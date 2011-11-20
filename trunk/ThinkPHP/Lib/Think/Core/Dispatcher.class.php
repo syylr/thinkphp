@@ -220,7 +220,7 @@ class Dispatcher extends Think
     }
 
     static private function parseUrl($route) {
-        if(0=== strpos($route,'/')) { // 路由重定向
+        if(0=== strpos($route,'/') || 0===strpos($route,'http')) { // 路由重定向
             return $route;
         }
         $array   =  explode('/',$route);
