@@ -285,7 +285,7 @@ class Dispatcher extends Think
     }
 
     // 解析规则路由
-    // '路由规则'=>array('路由地址','路由参数','提交方式','资源类型')
+    // '路由规则'=>array('路由地址','路由参数')
     // 路由规则中 :开头 表示动态变量
     // 'news/:month/:day/:id'=>array('News/read','status=1'), 
     // 'new/:id'=>array('/new.php?id=:1'), 重定向
@@ -335,29 +335,34 @@ class Dispatcher extends Think
     }
 
     // 解析正则路由
-    // '路由正则'=>array('路由地址','路由参数','提交方式','资源类型')
-    // '/new\/(\d+)\/(\d+)/'=>array('News/read','id,page'),
-    // '/new\/(\d+)\/(\d+)/'=>array('/new.php?id=:1&page=:2','status=1'), 重定向
+    // '路由正则'=>array('路由地址','路由参数')
+    // '/new\/(\d+)\/(\d+)/'=>array('News/read/id/:1/page/:2','status=1'),
+    // '/new\/(\d+)\/(\d+)/'=>array('/new.php?id=:1&page=:2&status=1','301'), 重定向
     static private function parseRegex($matches,$route,$regx) {
-        // 解析路由地址
-        $var  =  self::parseUrl($route[0]);
-        if(is_string($var)) { // 路由重定向URL
-            if(strpos($var,':')) { // 传递动态参数
-                $var  =  preg_replace('/:(\d)/e','$matches[\\1]',$var);
+        if(0=== strpos($route[0],'/') || 0===strpos($route[0],'http')) { // 路由重定向
+            if(strpos($route[0],':')) { // 传递动态参数
+                $url   =  preg_replace('/:(\d)/e','$matches[\\1]',$route[0]);
             }
-            header("Location: $var", true,302);
+            header("Location: $url", true,isset($route[1])?$route[1]:301);
             exit;
         }else{
-            //  获取当前路由参数对应的变量
-            $vars    =   explode(',',$route[1]);
-            $count   =  count($vars);
-            for($i=0;$i<$count;$i++)
-                $var[$vars[$i]]     =   $matches[$i+1];
-
+            $pos =  strrpos(substr($route[0],0,strpos($route[0],':')-3),'/');
+            $url   =  substr($route[0],0,$pos);
+            $params = substr($route[0],$pos+1);
+            // 解析路由地址
+            $var  =  self::parseUrl($url);
+            if(strpos($params,':')) { // 传递动态参数
+                $regx   .=  preg_replace('/:(\d)/e','$matches[\\1]',$params);
+            }
             // 解析剩余的URL参数
             $regx = str_replace($matches[0],'',$regx);
             if($regx) {
                 preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]="\\2";', $regx);
+            }
+            // 解析路由自动传人参数
+            if(isset($route[1])) {
+                parse_str($route[1],$params);
+                $var   =   array_merge($var,$params);
             }
             $_GET   =  array_merge($var,$_GET);
         }
