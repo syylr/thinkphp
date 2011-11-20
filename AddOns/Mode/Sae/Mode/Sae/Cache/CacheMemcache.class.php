@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id: CacheMemcache.class.php 234 2011-11-18 13:53:15Z luofei614@126.com $
+// $Id: CacheMemcache.class.php 244 2011-11-19 05:17:26Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
  * @package  Think
  * @subpackage  Util
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id: CacheMemcache.class.php 234 2011-11-18 13:53:15Z luofei614@126.com $
+ * @version   $Id: CacheMemcache.class.php 244 2011-11-19 05:17:26Z luofei614@126.com $
  +------------------------------------------------------------------------------
  */
 class CacheMemcache extends Cache

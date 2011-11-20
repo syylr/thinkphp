@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id: App.class.php 253 2011-11-19 15:01:55Z luofei614@126.com $
+// $Id: App.class.php 302 2011-11-20 04:00:08Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
  * @package  Think
  * @subpackage  Core
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id: App.class.php 253 2011-11-19 15:01:55Z luofei614@126.com $
+ * @version   $Id: App.class.php 302 2011-11-20 04:00:08Z luofei614@126.com $
  +------------------------------------------------------------------------------
  */
 class App
@@ -80,8 +80,6 @@ class App
         // 加载项目配置文件
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
-        //SEA模式的一些固定配置
-        C(include THINK_PATH.'/Mode/Sae/saeConfig.php');
         $common   = '';
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
@@ -105,7 +103,11 @@ class App
             if(is_file(CONFIG_PATH.'debug.php'))
                 // 允许项目增加开发模式配置定义
                 C(include CONFIG_PATH.'debug.php');
+            //SEA模式的一些固定配置
+             C(include THINK_PATH.'/Mode/Sae/saeConfig.php');
         }else{
+            //SEA模式的一些固定配置
+             C(include THINK_PATH.'/Mode/Sae/saeConfig.php');
             // 部署模式下面生成编译文件
             build_runtime_cache($common);
         }
