@@ -203,40 +203,16 @@ class Dispatcher extends Think
         // 路由处理
         if(!empty($routes)) {
             $depr = C('URL_PATHINFO_DEPR');
-            foreach ($routes as $key=>$route){
-                // 检测路由跳转
-                self::checkRedirect($route,$regx);
-                if(0 === stripos($regx.$depr,$route[0].$depr)) {
-                    // 简单路由定义：array('路由定义','分组/模块/操作名', '路由对应变量','额外参数'),
-                    $var  =  self::parseUrl($route[1]);
-                    //  获取当前路由参数对应的变量
-                    $paths = explode($depr,trim(substr_replace($regx, '', 0, strlen($route[0])),$depr));
-                    $vars    =   explode(',',$route[2]);
-                    for($i=0;$i<count($vars);$i++)
-                        $var[$vars[$i]]     =   array_shift($paths);
-                    // 解析剩余的URL参数
-                    $res = preg_replace('@(\w+)\/([^,\/]+)@e', '$var[\'\\1\']="\\2";', implode('/',$paths));
-                    $_GET   =  array_merge($var,$_GET);
-                    if(isset($route[3])) {
-                        parse_str($route[3],$params);
-                        $_GET   =   array_merge($_GET,$params);
-                    }
-                    return true;
-                }elseif(1 < substr_count($route[0],'/') && preg_match($route[0],$regx,$matches)) {
-                    // 路由定义规则：array('正则定义','分组/模块/操作名', '路由对应变量','额外参数'),
-                    $var  =  self::parseUrl($route[1]);
-                    //  获取当前路由参数对应的变量
-                    $vars    =   explode(',',$route[2]);
-                    for($i=0;$i<count($vars);$i++)
-                        $var[$vars[$i]]     =   $matches[$i+1];
-                    // 解析剩余的URL参数
-                    $res = preg_replace('@(\w+)\/([^,\/]+)@e', '$var[\'\\1\']="\\2";', str_replace($matches[0],'',$regx));
-                    $_GET   =  array_merge($var,$_GET);
-                    if(isset($route[3])) {
-                        parse_str($route[3],$params);
-                        $_GET   =   array_merge($_GET,$params);
-                    }
-                    return true;
+            // 分隔符替换 确保路由定义使用统一的分隔符
+            $regx = str_replace($depr,'/',$regx);
+            $rules = array_keys($routes);
+            foreach ($rules as $rule){
+                if(0 === strpos($regx.'/',substr($rule,0,strpos($rule,'/'))) && substr_count($regx,'/') >= substr_count($rule,'/')) { 
+                    // 规则路由
+                    return self::parseRule($rule,$routes[$rule],$regx);
+                }elseif(0===strpos($rule,'/') && preg_match($rule,$regx,$matches)) { 
+                    // 正则路由
+                    return self::parseRegex($matches,$routes[$rule],$regx);
                 }
             }
         }
@@ -244,6 +220,9 @@ class Dispatcher extends Think
     }
 
     static private function parseUrl($route) {
+        if(0=== strpos($route,'/')) { // 路由重定向
+            return $route;
+        }
         $array   =  explode('/',$route);
         $var  =  array();
         $var[C('VAR_ACTION')] = array_pop($array);
@@ -305,26 +284,84 @@ class Dispatcher extends Think
         return ucfirst(strtolower($group));
     }
 
-    // 检测路由跳转
-    static private function checkRedirect($route,$regx) {
-         // 跳转路由定义规则：array('简单路由或者正则定义','[redirect]','跳转地址','状态码'),
-        if('[redirect]' == $route[1]) {
-            $depr = C('URL_PATHINFO_DEPR');
-            $location = '';
-            if(0 === strpos($regx.$depr,$route[0].$depr)){
-                $location = $route[2];
-            }elseif(strstr($route[0],'/') && preg_match($route[0],$regx,$matches)){
-                //  获取当前路由参数对应的变量
-                $count    =   count($matches);
-                for($i=1;$i<$count+1;$i++)
-                    $route[2]     =   str_replace('{'.$i.'}',$matches[$i],$route[2]);
-                $location = $route[2];
-            }
-            if(!empty($location)) {
-                header("Location: $location", true, isset($route[3])?$route[3]:302);
-                exit;
+    // 解析规则路由
+    // '路由规则'=>array('路由地址','路由参数','提交方式','资源类型')
+    // 路由规则中 :开头 表示动态变量
+    // 'news/:month/:day/:id'=>array('News/read','status=1'), 
+    // 'new/:id'=>array('/new.php?id=:1'), 重定向
+    static private function parseRule($rule,$route,$regx) {
+        // 获取URL地址中的参数
+        $paths = explode('/',$regx);
+        // 解析路由规则
+        $matches  =  array();
+        $rule =  explode('/',$rule);
+        foreach ($rule as $item){
+            if(0===strpos($item,':')) { // 动态变量获取
+                $matches[substr($item,1)] = array_shift($paths);
+            }else{ // 过滤URL中的静态变量
+                array_shift($paths);
             }
         }
+        // 解析路由地址
+        $var  =  self::parseUrl($route[0]);
+        if(is_string($var)) { // 路由重定向URL
+            if(strpos($var,':')) { // 传递动态参数
+                $values  =  array_values($matches);
+                $var  =  preg_replace('/:(\d)/e','$values[\\1-1]',$var);
+            }
+            header("Location: $var", true,302);
+            exit;
+        }else{
+            // 解析路由地址里面的动态参数
+            $values  =  array_values($matches);
+            foreach ($var as $key=>$val){
+                if(0===strpos($val,':')) {
+                    $var[$key] =  $values[substr($val,1)-1];
+                }
+            }
+            $var   =   array_merge($matches,$var);
+            // 解析剩余的URL参数
+            if($paths) {
+                preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]="\\2";', implode('/',$paths));
+            }
+            // 解析路由自动传人参数
+            if(isset($route[1])) {
+                parse_str($route[1],$params);
+                $var   =   array_merge($var,$params);
+            }
+            $_GET   =  array_merge($var,$_GET);
+        }
+        return true;
+    }
+
+    // 解析正则路由
+    // '路由正则'=>array('路由地址','路由参数','提交方式','资源类型')
+    // '/new\/(\d+)\/(\d+)/'=>array('News/read','id,page'),
+    // '/new\/(\d+)\/(\d+)/'=>array('/new.php?id=:1&page=:2','status=1'), 重定向
+    static private function parseRegex($matches,$route,$regx) {
+        // 解析路由地址
+        $var  =  self::parseUrl($route[0]);
+        if(is_string($var)) { // 路由重定向URL
+            if(strpos($var,':')) { // 传递动态参数
+                $var  =  preg_replace('/:(\d)/e','$matches[\\1]',$var);
+            }
+            header("Location: $var", true,302);
+            exit;
+        }else{
+            //  获取当前路由参数对应的变量
+            $vars    =   explode(',',$route[1]);
+            $count   =  count($vars);
+            for($i=0;$i<$count;$i++)
+                $var[$vars[$i]]     =   $matches[$i+1];
+
+            // 解析剩余的URL参数
+            $regx = str_replace($matches[0],'',$regx);
+            if($regx) {
+                preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]="\\2";', $regx);
+            }
+            $_GET   =  array_merge($var,$_GET);
+        }
+        return true;
     }
 }//类定义结束
 ?>
