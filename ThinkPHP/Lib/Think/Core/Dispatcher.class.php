@@ -352,7 +352,7 @@ class Dispatcher extends Think
             // 解析路由地址
             $var  =  self::parseUrl($url);
             if(strpos($params,':')) { // 传递动态参数
-                $regx   .=  preg_replace('/:(\d)/e','$matches[\\1]',$params);
+                $regx   .=  '/'.preg_replace('/:(\d)/e','$matches[\\1]',$params);
             }
             // 解析剩余的URL参数
             $regx = str_replace($matches[0],'',$regx);
