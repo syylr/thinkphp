@@ -9,7 +9,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id$
+// $Id: UploadFile_sae.class.php 305 2011-11-20 04:11:51Z luofei614@126.com $
 
 /**
   +------------------------------------------------------------------------------
@@ -19,7 +19,7 @@
  * @package  ORG
  * @subpackage  Net
  * @author    liu21st <liu21st@gmail.com>
- * @version   $Id$
+ * @version   $Id: UploadFile_sae.class.php 305 2011-11-20 04:11:51Z luofei614@126.com $
   +------------------------------------------------------------------------------
  */
 class UploadFile extends Think {//类定义开始
@@ -111,7 +111,7 @@ class UploadFile extends Think {//类定义开始
             $this->saveRule = C('UPLOAD_FILE_RULE');
         }
         $this->savePath = $savePath;
-        $this->storage = new SaeStorage();
+        $this->storage = Think::instance('SaeStorage');
     }
 
     /**

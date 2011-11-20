@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id: View.class.php 243 2011-11-19 02:56:28Z luofei614@126.com $
+// $Id: View.class.php 306 2011-11-20 04:12:10Z luofei614@126.com $
 
 /**
  +------------------------------------------------------------------------------
@@ -19,7 +19,7 @@
  * @package  Think
  * @subpackage  Core
  * @author liu21st <liu21st@gmail.com>
- * @version  $Id: View.class.php 243 2011-11-19 02:56:28Z luofei614@126.com $
+ * @version  $Id: View.class.php 306 2011-11-20 04:12:10Z luofei614@126.com $
  +------------------------------------------------------------------------------
  */
 class View extends Think{
@@ -262,16 +262,14 @@ class View extends Think{
      * @return string
      +----------------------------------------------------------
      */
-    //TODU sae下支持生成静态
     public function buildHtml($htmlfile,$htmlpath='',$templateFile='',$charset='',$contentType='') {
+        //sae下生成静态。
+        $s=Think::instance('SaeStorage');
         $content = $this->fetch($templateFile,$charset,$contentType);
-        $htmlpath   = !empty($htmlpath)?$htmlpath:HTML_PATH;
+        $htmlpath   = !empty($htmlpath)?$htmlpath:'html/';
         $htmlfile =  $htmlpath.$htmlfile.C('HTML_FILE_SUFFIX');
-        if(!is_dir(dirname($htmlfile)))
-            // 如果静态目录不存在 则创建
-            mk_dir(dirname($htmlfile));
-        if(false === file_put_contents($htmlfile,$content))
-            throw_exception(L('_CACHE_WRITE_ERROR_').':'.$htmlfile);
+        if(false === $s->write(C('SAE_THINK_DOMAIN'),$htmlfile,$content))
+            throw_exception(L('_CACHE_WRITE_ERROR_').':'.$htmlfile.'请检查是否已建立domin'.C('SAE_THINK_DOMAIN').'为的storage');
         return $content;
     }
 
@@ -288,7 +286,7 @@ class View extends Think{
      +----------------------------------------------------------
      */
     protected function output($content,$display) {
-        if(C('HTML_CACHE_ON'))  HtmlCache::writeHTMLCache($content);//TODU sae下支持静态缓存。
+        if(C('HTML_CACHE_ON'))  HtmlCache::writeHTMLCache($content);
         if($display) {
             if(C('SHOW_RUN_TIME')){
                 if(false !== strpos($content,'{__NORUNTIME__}')) {

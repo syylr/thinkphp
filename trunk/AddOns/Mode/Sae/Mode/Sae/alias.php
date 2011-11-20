@@ -8,13 +8,13 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-// $Id: alias.php 208 2011-11-18 08:04:40Z luofei614@126.com $
+// $Id: alias.php 289 2011-11-19 18:44:37Z luofei614@126.com $
 
 // 导入别名定义
 alias_import(array(
     'Model'         => THINK_PATH.'/Lib/Think/Core/Model.class.php',
     'Dispatcher'    => THINK_PATH.'/Lib/Think/Core/Dispatcher.class.php',
-    'HtmlCache'     => THINK_PATH.'/Lib/Think/Util/HtmlCache.class.php',
+    'HtmlCache'     => THINK_PATH.'/Mode/Sae/HtmlCache.class.php',
     'Db'            => THINK_PATH.'/Lib/Think/Db/Db.class.php',
     'ThinkTemplate' => THINK_PATH.'/Mode/Sae/ThinkTemplate.class.php',
     'Template'      => THINK_PATH.'/Lib/Think/Util/Template.class.php',

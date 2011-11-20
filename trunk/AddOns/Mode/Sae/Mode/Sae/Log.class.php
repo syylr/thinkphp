@@ -81,7 +81,7 @@ class Log extends Think {//类定义开始
      */
     static function save($type=self::FILE, $destination='', $extra='') {
         //sae下将日志写在storage中
-        $storage = new SaeStorage();
+        $storage = Think::instance('SaeStorage');
         if (empty($destination))
             $destination = 'log/' . date('y_m_d') . ".log";
         //检测日志文件大小，超过配置大小则备份日志文件重新生成
@@ -96,7 +96,7 @@ class Log extends Think {//类定义开始
             }
         }
         $storage->write(C('SAE_THINK_DOMAIN'), $destination, $content . implode("", self::$log));
-        if ($storage->errno() == -7 && C('SAE_SHOW_LOG_ERR'))
+        if ($storage->errno() == -7)
             halt('domain [ ' . C('SAE_THINK_DOMAIN') . ' ] 不存在！请在SAE控制台的Storage服务中添加一个domain');
         // 保存后清空日志缓存
         self::$log = array();
@@ -120,7 +120,7 @@ class Log extends Think {//类定义开始
      */
     static function write($message, $level=self::ERR, $type=self::FILE, $destination='', $extra='') {
         //sae下将日志写在storage中
-        $storage = new SaeStorage();
+        $storage = Think::instance('SaeStorage');
         if (empty($destination))
             $destination = 'log/' . date('y_m_d') . ".log";
         //检测日志文件大小，超过配置大小则备份日志文件重新生成
@@ -135,7 +135,7 @@ class Log extends Think {//类定义开始
             }
         }
         $storage->write(C('SAE_THINK_DOMAIN'), $destination, $content . "{$now} " . $_SERVER['REQUEST_URI'] . " | {$level}: {$message}\r\n");
-        if ($storage->errno() == -7 && C('SAE_SHOW_LOG_ERR'))
+        if ($storage->errno() == -7)
             halt('domain [ ' . C('SAE_THINK_DOMAIN') . ' ] 不存在！请在SAE控制台的Storage服务中添加一个domain');
     }
 

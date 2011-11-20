@@ -10,7 +10,9 @@ return array(
 	'DB_RW_SEPARATE'=>true,
         'DB_DEPLOY_TYPE'=> 1, // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
         'DATA_CACHE_TYPE'=> 'Memcache',//S缓存类型为Memcache
-        //以下为SAE专有配置，本地环境不不需要设置下列配置。
+        'HTML_FILE_SUFFIX'=>'.html',//默认静态文件后缀为html，在storage只有html文件能被直接浏览。
         'SAE_THINK_DOMAIN'=>'think',//ThinkPHP系统所需storage的domain名称。用于存储日志和静态缓存等。
-        'SAE_SHOW_LOG_ERR'=>false //当日志写入失败时，是否需要报错。默认不报错，不强制用户建立系统storage
+        //sae下，默认不记录日志，如果要开启日志，请注释下面两行。开启日志功能后需要建立系统所需的storage。
+        'LOG_EXCEPTION_RECORD'=>false,
+        'LOG_RECORD'=>false
         );
