@@ -338,6 +338,8 @@ class Dispatcher extends Think
     // '路由正则'=>array('路由地址','路由参数')
     // '/new\/(\d+)\/(\d+)/'=>array('News/read/id/:1/page/:2','status=1'),
     // '/new\/(\d+)\/(\d+)/'=>array('/new.php?id=:1&page=:2&status=1','301'), 重定向
+    // '/new\/(\d+)\/(\d+)/'=>array(':Think','myRule'), 调用myRule函数自定义路由正则解析
+    // '/new\/(\d+)\/(\d+)/'=>array(':Think',array('Rule','check')), 调用Rule类的check方法自定义路由正则解析
     static private function parseRegex($matches,$route,$regx) {
         if(0=== strpos($route[0],'/') || 0===strpos($route[0],'http')) { // 路由重定向
             if(strpos($route[0],':')) { // 传递动态参数
@@ -345,6 +347,8 @@ class Dispatcher extends Think
             }
             header("Location: $url", true,isset($route[1])?$route[1]:301);
             exit;
+        }elseif(':Think'==$route[0]){ // 自定义正则解析
+            return is_callable($route[1])?call_user_func($route[1],$regx,$matches):false;
         }else{
             $pos =  strrpos(substr($route[0],0,strpos($route[0],':')-3),'/');
             $url   =  substr($route[0],0,$pos);
@@ -356,7 +360,6 @@ class Dispatcher extends Think
             }
             // 解析剩余的URL参数
             $regx =  substr_replace($regx,'',0,strlen($matches[0]));
-            //$regx = str_replace($matches[0],'',$regx);
             if($regx) {
                 preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]="\\2";', $regx);
             }
