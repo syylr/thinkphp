@@ -352,15 +352,13 @@ class Dispatcher extends Think
                 $result   =  call_user_func($route[1],$regx,$matches);
                 if(is_array($result)){
                     $_GET   =  array_merge($result,$_GET);
+                    return true;
                 }elseif(is_string($result)){
                     header("Location: $result", true,301);
                     exit;
-                }else{
-                    return false;
                 }
-            }else{
-                return false;
             }
+            return false;
         }else{
             $pos =  strrpos(substr($route[0],0,strpos($route[0],':')-3),'/');
             $url   =  substr($route[0],0,$pos);
