@@ -348,7 +348,19 @@ class Dispatcher extends Think
             header("Location: $url", true,isset($route[1])?$route[1]:301);
             exit;
         }elseif(':Think'==$route[0]){ // 自定义正则解析
-            return is_callable($route[1])?call_user_func($route[1],$regx,$matches):false;
+            if(is_callable($route[1])) {
+                $result   =  call_user_func($route[1],$regx,$matches);
+                if(is_array($result)){
+                    $_GET   =  array_merge($result,$_GET);
+                }elseif(is_string($result)){
+                    header("Location: $result", true,301);
+                    exit;
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
+            }
         }else{
             $pos =  strrpos(substr($route[0],0,strpos($route[0],':')-3),'/');
             $url   =  substr($route[0],0,$pos);
