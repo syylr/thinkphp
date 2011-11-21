@@ -355,7 +355,8 @@ class Dispatcher extends Think
                 $regx   .=  '/'.preg_replace('/:(\d)/e','$matches[\\1]',$params);
             }
             // 解析剩余的URL参数
-            $regx = str_replace($matches[0],'',$regx);
+            $regx =  substr_replace($regx,'',0,strlen($matches[0]));
+            //$regx = str_replace($matches[0],'',$regx);
             if($regx) {
                 preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]="\\2";', $regx);
             }
