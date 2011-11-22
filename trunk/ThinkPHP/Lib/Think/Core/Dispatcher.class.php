@@ -344,7 +344,7 @@ class Dispatcher extends Think
                 preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]="\\2";', implode('/',$paths));
             }
             // 解析路由自动传人参数
-            if(isset($route[1])) {
+            if(is_array($route) && isset($route[1])) {
                 parse_str($route[1],$params);
                 $var   =   array_merge($var,$params);
             }
