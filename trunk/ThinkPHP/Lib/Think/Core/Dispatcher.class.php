@@ -355,7 +355,7 @@ class Dispatcher extends Think
 
     // 解析正则路由
     // '路由正则'=>'[分组/模块/操作]?参数1=值1&参数2=值2...'
-    // '路由正则'=>array('[分组/模块/操作]','参数1=值1&参数2=值2...')
+    // '路由正则'=>array('[分组/模块/操作]?参数1=值1&参数2=值2...','额外参数1=值1&额外参数2=值2...')
     // '路由正则'=>'外部地址'
     // '路由正则'=>array('外部地址','重定向代码')
     // 参数值和外部地址中可以用动态变量 采用 :1 :2 的方式
@@ -377,7 +377,7 @@ class Dispatcher extends Think
                 preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]="\\2";', $regx);
             }
             // 解析路由自动传人参数
-            if(isset($route[1])) {
+            if(is_array($route) && isset($route[1])) {
                 parse_str($route[1],$params);
                 $var   =   array_merge($var,$params);
             }
