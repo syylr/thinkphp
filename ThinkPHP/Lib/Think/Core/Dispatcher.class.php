@@ -219,6 +219,8 @@ class Dispatcher extends Think
         return false;
     }
 
+    // 解析规范的路由地址
+    // 地址格式 [分组/模块/操作?]参数1=值1&参数2=值2...
     static private function parseUrl($url) {
         $var  =  array();
         if(false !== strpos($url,'?')) { // [分组/模块/操作?]参数1=值1&参数2=值2...
