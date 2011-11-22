@@ -219,15 +219,26 @@ class Dispatcher extends Think
         return false;
     }
 
-    static private function parseUrl($route) {
-        if(0=== strpos($route,'/') || 0===strpos($route,'http')) { // 路由重定向
-            return $route;
-        }
-        $array   =  explode('/',$route);
+    static private function parseUrl($url) {
         $var  =  array();
-        $var[C('VAR_ACTION')] = array_pop($array);
-        $var[C('VAR_MODULE')] = array_pop($array);
-        if(!empty($array)) $var[C('VAR_GROUP')]  = array_pop($array);
+        if(false !== strpos($url,'?')) { // [分组/模块/操作?]参数1=值1&参数2=值2...
+            $info   =  parse_url($url);
+            $path = explode('/',$info['path']);
+            parse_str($info['query'],$var);
+        }elseif(strpos($url,'/')){ // [分组/模块/操作]
+            $path = explode('/',$url);
+        }else{ // 参数1=值1&参数2=值2...
+            parse_str($url,$var);
+        }
+        if(isset($path)) {
+            $var[C('VAR_ACTION')] = array_pop($path);
+            if(!empty($path)) {
+                $var[C('VAR_MODULE')] = array_pop($path);
+            }
+            if(!empty($path)) {
+                $var[C('VAR_GROUP')]  = array_pop($path);
+            }
+        }
         return $var;
     }
 
@@ -285,11 +296,17 @@ class Dispatcher extends Think
     }
 
     // 解析规则路由
-    // '路由规则'=>array('路由地址','路由参数')
+    // '路由规则'=>'[分组/模块/操作]?额外参数1=值1&额外参数2=值2...'
+    // '路由规则'=>array('[分组/模块/操作]','额外参数1=值1&额外参数2=值2...')
+    // '路由规则'=>'外部地址'
+    // '路由规则'=>array('外部地址','重定向代码')
     // 路由规则中 :开头 表示动态变量
-    // 'news/:month/:day/:id'=>array('News/read','status=1'), 
-    // 'new/:id'=>array('/new.php?id=:1'), 重定向
+    // 外部地址中可以用动态变量 采用 :1 :2 的方式
+    // 'news/:month/:day/:id'=>array('News/read?cate=1','status=1'), 
+    // 'new/:id'=>array('/new.php?id=:1',301), 重定向
     static private function parseRule($rule,$route,$regx) {
+        // 获取路由地址规则
+        $url   =  is_array($route)?$route[0]:$route;
         // 获取URL地址中的参数
         $paths = explode('/',$regx);
         // 解析路由规则
@@ -302,16 +319,16 @@ class Dispatcher extends Think
                 array_shift($paths);
             }
         }
-        // 解析路由地址
-        $var  =  self::parseUrl($route[0]);
-        if(is_string($var)) { // 路由重定向URL
-            if(strpos($var,':')) { // 传递动态参数
+        if(0=== strpos($url,'/') || 0===strpos($url,'http')) { // 路由重定向跳转
+            if(strpos($url,':')) { // 传递动态参数
                 $values  =  array_values($matches);
-                $var  =  preg_replace('/:(\d)/e','$values[\\1-1]',$var);
+                $url  =  preg_replace('/:(\d)/e','$values[\\1-1]',$url);
             }
-            header("Location: $var", true,302);
+            header("Location: $url", true,(is_array($route) && isset($route[1]))?$route[1]:301);
             exit;
         }else{
+            // 解析路由地址
+            $var  =  self::parseUrl($url);
             // 解析路由地址里面的动态参数
             $values  =  array_values($matches);
             foreach ($var as $key=>$val){
@@ -335,39 +352,23 @@ class Dispatcher extends Think
     }
 
     // 解析正则路由
-    // '路由正则'=>array('路由地址','路由参数')
-    // '/new\/(\d+)\/(\d+)/'=>array('News/read/id/:1/page/:2','status=1'),
-    // '/new\/(\d+)\/(\d+)/'=>array('/new.php?id=:1&page=:2&status=1','301'), 重定向
-    // '/new\/(\d+)\/(\d+)/'=>array(':Think','myRule'), 调用myRule函数自定义路由正则解析
-    // '/new\/(\d+)\/(\d+)/'=>array(':Think',array('Rule','check')), 调用Rule类的check方法自定义路由正则解析
+    // '路由正则'=>'[分组/模块/操作]?参数1=值1&参数2=值2...'
+    // '路由正则'=>array('[分组/模块/操作]','参数1=值1&参数2=值2...')
+    // '路由正则'=>'外部地址'
+    // '路由正则'=>array('外部地址','重定向代码')
+    // 参数值和外部地址中可以用动态变量 采用 :1 :2 的方式
+    // '/new\/(\d+)\/(\d+)/'=>array('News/read?id=:1&page=:2&cate=1','status=1'),
+    // '/new\/(\d+)/'=>array('/new.php?id=:1&page=:2&status=1','301'), 重定向
     static private function parseRegex($matches,$route,$regx) {
-        if(0=== strpos($route[0],'/') || 0===strpos($route[0],'http')) { // 路由重定向
-            if(strpos($route[0],':')) { // 传递动态参数
-                $url   =  preg_replace('/:(\d)/e','$matches[\\1]',$route[0]);
-            }
-            header("Location: $url", true,isset($route[1])?$route[1]:301);
+        // 获取路由地址规则
+        $url   =  is_array($route)?$route[0]:$route;
+        $url   =  preg_replace('/:(\d)/e','$matches[\\1]',$url);
+        if(0=== strpos($url,'/') || 0===strpos($url,'http')) { // 路由重定向跳转
+            header("Location: $url", true,(is_array($route) && isset($route[1]))?$route[1]:301);
             exit;
-        }elseif(':Think'==$route[0]){ // 自定义正则解析
-            if(is_callable($route[1])) {
-                $result   =  call_user_func($route[1],$regx,$matches);
-                if(is_array($result)){
-                    $_GET   =  array_merge($result,$_GET);
-                    return true;
-                }elseif(is_string($result)){
-                    header("Location: $result", true,301);
-                    exit;
-                }
-            }
-            return false;
         }else{
-            $pos =  strrpos(substr($route[0],0,strpos($route[0],':')-3),'/');
-            $url   =  substr($route[0],0,$pos);
-            $params = substr($route[0],$pos+1);
             // 解析路由地址
             $var  =  self::parseUrl($url);
-            if(strpos($params,':')) { // 传递动态参数
-                $regx   .=  '/'.preg_replace('/:(\d)/e','$matches[\\1]',$params);
-            }
             // 解析剩余的URL参数
             $regx =  substr_replace($regx,'',0,strlen($matches[0]));
             if($regx) {
