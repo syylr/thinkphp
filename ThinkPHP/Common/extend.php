@@ -566,31 +566,38 @@ function url($url,$vars='',$redirect=false,$suffix=true) {
         '__ACTION__'    => __ACTION__,     // 操作地址
     );
     $url = str_replace(array_keys($replace),array_values($replace),$url);
-    $url   =  str_replace(__APP__,'',$url);
+    $url   =  substr_replace($url,'',0,strlen(__APP__));
+    if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
+        parse_str($vars,$vars);
+    }
+    // 分析URL地址
+    $info =  parse_url($url);
+    $url   =  $info['path'];
+    if(isset($info['query'])) { // 解析地址里面参数 合并到vars
+        parse_str($info['query'],$params);
+        $vars = array_merge($params,$vars);
+    }
     $depr = C('URL_PATHINFO_DEPR');
     if('/' != $depr) {
         // 安全替换
         $url   =  str_replace('/',$depr,$url);
-        if(0===strpos($url,$depr)) { // 恢复第一个 /
-            $url   =  '/'.substr($url,strlen($depr));
-        }
     }
-    $url   =  rtrim($url,$depr);
+    $url   =  trim($url,$depr);
     if(C('URL_MODEL') == 0) { // 普通模式URL转换
-        $path = explode($depr,ltrim($url,'/'));
+        $path = explode($depr,$url);
         $var  =  array();
         $var[C('VAR_ACTION')] = array_pop($path);
-        $var[C('VAR_MODULE')] = array_pop($path);
+        if(!empty($path)) $var[C('VAR_MODULE')] = array_pop($path);
         if(!empty($path)) $var[C('VAR_GROUP')]  = array_pop($path);
         $url   =  __APP__.'?'.http_build_query($var);
         if(!empty($vars)) {
-            if(is_array($vars)) $vars = http_build_query($vars);
+            $vars = http_build_query($vars);
             $url   .= '&'.$vars;
         }
     }else{ // PATHINFO模式或者兼容URL模式
-        $url   =  __APP__.'/'.str_replace(__APP__,'',ltrim($url,'/'));
+        $url   =  __APP__.'/'.str_replace(__APP__,'',$url);
         if(!empty($vars)) { // 添加参数
-            if(is_array($vars)) $vars = http_build_query($vars);
+            $vars = http_build_query($vars);
             $url .= $depr.str_replace(array('=','&'),$depr,$vars);
         }
         if($suffix && C('URL_HTML_SUFFIX')) {// URL伪静态后缀
