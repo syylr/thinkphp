@@ -558,7 +558,7 @@ function send_http_status($code) {
 // URL组装 支持不同模式和路由
 // 格式： U('/Admin/User/add/','aaa=1&bbb=2');
 // U('__URL__/add/','aaa=1&bbb=2');
-function url($url,$vars='',$redirect=false,$suffix='') {
+function url($url,$vars='',$redirect=false,$suffix=true) {
     $replace =  array(
         '__APP__'       => __APP__,        // 项目地址
         '__GROUP__'   =>   defined('GROUP_NAME')?__GROUP__:__APP__, // 分组地址
@@ -603,8 +603,8 @@ function url($url,$vars='',$redirect=false,$suffix='') {
             $vars = http_build_query($vars);
             $url .= $depr.str_replace(array('=','&'),$depr,$vars);
         }
-        if(is_string($suffix)) {
-            $suffix   =  $suffix===''?C('URL_HTML_SUFFIX'):$suffix;
+        if($suffix) {
+            $suffix   =  $suffix===true?C('URL_HTML_SUFFIX'):$suffix;
             $url  .=  '.'.ltrim($suffix,'.');
         }
     }
