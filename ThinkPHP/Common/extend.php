@@ -558,7 +558,7 @@ function send_http_status($code) {
 // URL组装 支持不同模式和路由
 // 格式： U('/Admin/User/add/','aaa=1&bbb=2');
 // U('__URL__/add/','aaa=1&bbb=2');
-function url($url,$vars='',$redirect=false,$suffix=true) {
+function url($url,$vars='',$suffix=true,$redirect=false) {
     $replace =  array(
         '__APP__'       => __APP__,        // 项目地址
         '__GROUP__'   =>   defined('GROUP_NAME')?__GROUP__:__APP__, // 分组地址
@@ -570,12 +570,23 @@ function url($url,$vars='',$redirect=false,$suffix=true) {
     if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
         parse_str($vars,$vars);
     }
+
     // 分析URL地址
     $info =  parse_url($url);
     $url   =  $info['path'];
+    if (C('APP_SUB_DOMAIN_DEPLOY')) { // 子域名解析
+        $rules = C('APP_SUB_DOMAIN_RULES');
+        foreach ($rules as $key=>$rule){
+            if(0===strpos($url,$rule[0])) {
+                $url   =  substr_replace($url,'',0,strlen($rule[0]));
+                break;
+            }
+        }
+    }
     if(substr_count($url,'/') == 2 && substr($url,0,strpos($url,'/')) ==C('DEFAULT_GROUP') ) { // 处理默认分组
         $url   =  strstr($url,'/');
     }
+
     if(isset($info['query'])) { // 解析地址里面参数 合并到vars
         parse_str($info['query'],$params);
         $vars = array_merge($params,$vars);
