@@ -573,6 +573,9 @@ function url($url,$vars='',$redirect=false,$suffix=true) {
     // 分析URL地址
     $info =  parse_url($url);
     $url   =  $info['path'];
+    if(substr_count($url,'/') == 2 && substr($url,0,strpos($url,'/')) ==C('DEFAULT_GROUP') ) { // 处理默认分组
+        $url   =  strstr($url,'/');
+    }
     if(isset($info['query'])) { // 解析地址里面参数 合并到vars
         parse_str($info['query'],$params);
         $vars = array_merge($params,$vars);
@@ -588,7 +591,7 @@ function url($url,$vars='',$redirect=false,$suffix=true) {
         $var  =  array();
         $var[C('VAR_ACTION')] = array_pop($path);
         if(!empty($path)) $var[C('VAR_MODULE')] = array_pop($path);
-        if(!empty($path)) $var[C('VAR_GROUP')]  = array_pop($path);
+        if(!empty($path)) $var[C('VAR_GROUP')]   = array_pop($path);
         $url   =  __APP__.'?'.http_build_query($var);
         if(!empty($vars)) {
             $vars = http_build_query($vars);
