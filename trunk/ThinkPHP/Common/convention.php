@@ -68,6 +68,9 @@ return  array(
     'DB_DEPLOY_TYPE'        => 0, // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
     'DB_RW_SEPARATE'        => false,       // 数据库读写是否分离 主从式有效
     'DB_MASTER_NUM'       =>  1, // 读写分离后 主服务器数量
+    'DB_SQL_BUILD_CACHE'      =>   false, // 数据库查询的SQL创建缓存
+    'DB_SQL_BUILD_QUEUE'       =>   'file',   // SQL缓存队列的缓存方式 支持 file xcache和apc
+    'DB_SQL_BUILD_LENGTH'      =>  20, // SQL缓存的队列长度
 
     /* 数据缓存设置 */
     'DATA_CACHE_TIME'		=> 0,      // 数据缓存有效期 0表示永久缓存
