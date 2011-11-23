@@ -210,18 +210,24 @@ class Dispatcher extends Think
                 if(0===strpos($rule,'/') && preg_match($rule,$regx,$matches)) { // 正则路由
                     return self::parseRegex($matches,$routes[$rule],$regx);
                 }elseif(substr_count($regx,'/') >= substr_count($rule,'/')){ // 规则路由
-                    // 进一步匹配规则
-                    $match1 = explode('/',$regx);
-                    $match2 = explode('/',$rule);
+                    $m1 = explode('/',$regx);
+                    $m2 = explode('/',$rule);
                     $match = true; // 是否匹配
-                    foreach ($match2 as $key=>$val){
-                        if(':' != substr($val,0,1) && $val != $match1[$key]){
+                    foreach ($m2 as $key=>$val){
+                        if(':' == substr($val,0,1)) {// 动态变量
+                            if(strpos($val,'|')) {
+                                $type = substr($val,-1);
+                                if('d'==$type && !is_numeric($m1[$key])) {
+                                    $match = false;
+                                    break;
+                                }
+                            }
+                        }elseif($val != $m1[$key]){
                             $match = false;
                             break;
                         }
                     }
-                    if($match)  
-                        return self::parseRule($rule,$routes[$rule],$regx);
+                    if($match)  return self::parseRule($rule,$routes[$rule],$regx);
                 }
             }
         }
@@ -325,7 +331,8 @@ class Dispatcher extends Think
         $rule =  explode('/',$rule);
         foreach ($rule as $item){
             if(0===strpos($item,':')) { // 动态变量获取
-                $matches[substr($item,1)] = array_shift($paths);
+                $var  =  strpos($item,'|')?substr($item,1,-2):substr($item,1);
+                $matches[$var] = array_shift($paths);
             }else{ // 过滤URL中的静态变量
                 array_shift($paths);
             }
