@@ -215,7 +215,7 @@ class Dispatcher extends Think
                     $match2 = explode('/',$rule);
                     $match = true; // 是否匹配
                     foreach ($match2 as $key=>$val){
-                        if(':' != substr($val,0,1) && $match2[$key] != $match1[$key]){
+                        if(':' != substr($val,0,1) && $val != $match1[$key]){
                             $match = false;
                             break;
                         }
