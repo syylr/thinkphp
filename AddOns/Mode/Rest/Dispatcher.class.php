@@ -221,12 +221,18 @@ class Dispatcher extends Think
                 if(isset($route[3]) && !in_array(__EXT__,explode(',',$route[3]),true)) {
                     continue; // 如果设置了扩展名则过滤
                 }
-                if(0 === strpos($regx.'/',substr($rule,0,strpos($rule,'/'))) && substr_count($regx,'/') >= substr_count($rule,'/')) { 
-                    // 规则路由
-                    return self::parseRule($rule,$route,$regx);
-                }elseif(0===strpos($rule,'/') && preg_match($rule,$regx,$matches)) { 
-                    // 正则路由
+                if(0===strpos($rule,'/') && preg_match($rule,$regx,$matches)) { // 正则路由
                     return self::parseRegex($matches,$route,$regx);
+                }elseif(substr_count($regx,'/') >= substr_count($rule,'/')){ // 规则路由
+                    // 进一步匹配规则
+                    $match1 = explode('/',$regx);
+                    $match2 = explode('/',$rule);
+                    $match = true; // 是否匹配
+                    foreach ($match2 as $key=>$val){
+                        if(':' != substr($val,0,1) && $match2[$key] != $match1[$key])
+                            $match = false;
+                    }
+                    if($match)  return self::parseRule($rule,$route,$regx);
                 }
             }
         }
