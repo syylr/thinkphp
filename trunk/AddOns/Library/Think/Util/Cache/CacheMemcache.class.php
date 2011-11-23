@@ -100,11 +100,14 @@ class CacheMemcache extends Cache
         if(is_null($expire)) {
             $expire  =  $this->options['expire'];
         }
-        if($this->options['length']>0) {
-            // 记录缓存队列
-            $this->queue($name);
+        if($this->handler->set($name, $value, 0, $expire)) {
+            if($this->options['length']>0) {
+                // 记录缓存队列
+                $this->queue($name);
+            }
+            return true;
         }
-        return $this->handler->set($name, $value, 0, $expire);
+        return false;
     }
 
     /**

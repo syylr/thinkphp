@@ -79,11 +79,14 @@ class CacheXcache extends Cache
         if(is_null($expire)) {
             $expire = $this->options['expire'] ;
         }
-        if($this->options['length']>0) {
-            // 记录缓存队列
-            $this->queue($name);
+        if(xcache_set($name, $value, $expire)) {
+            if($this->options['length']>0) {
+                // 记录缓存队列
+                $this->queue($name);
+            }
+            return true;
         }
-        return xcache_set($name, $value, $expire);
+        return false;
     }
 
     /**

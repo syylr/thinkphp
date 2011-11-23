@@ -122,12 +122,14 @@ class CacheSqlite extends Cache
         $sql  = 'REPLACE INTO '.$this->options['table'].
                 ' ('.$this->options['var'].', '.$this->options['value'].','.$this->options['expire'].
                 ') VALUES (\''.$name.'\', \''.$value.'\', \''.$expire.'\')';
-        sqlite_query($this->handler, $sql);
-        if($this->options['length']>0) {
-            // 记录缓存队列
-            $this->queue($name);
+        if(sqlite_query($this->handler, $sql)){
+            if($this->options['length']>0) {
+                // 记录缓存队列
+                $this->queue($name);
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
