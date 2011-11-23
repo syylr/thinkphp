@@ -789,8 +789,7 @@ function array_define($array) {
     $content = '';
     foreach ($array as $key => $val) {
         $key = strtoupper($key);
-        if (in_array($key, array('THINK_PATH', 'APP_NAME', 'APP_PATH', 'APP_DEBUG','MEMORY_LIMIT_ON', 'RUNTIME_PATH', 'THINK_MODE')))
-            $content .= 'if(!defined(\'' . $key . '\')) ';
+        $content .= 'if(!defined(\'' . $key . '\')) ';
         if (is_int($val) || is_float($val)) {
             $content .= "define('" . $key . "'," . $val . ");";
         } elseif (is_bool($val)) {
