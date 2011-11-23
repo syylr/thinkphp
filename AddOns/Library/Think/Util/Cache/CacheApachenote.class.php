@@ -103,12 +103,14 @@ class CacheApachenote extends Cache
         fwrite($this->handler, $s);
         $ret = fgets($this->handler);
         $this->close();
-        $this->setTime[$name] = time();
-        if($this->options['length']>0) {
-            // 记录缓存队列
-            $this->queue($name);
+        if($ret === "OK\n") {
+            if($this->options['length']>0) {
+                // 记录缓存队列
+                $this->queue($name);
+            }
+            return true;
         }
-        return $ret === "OK\n";
+        return false;
     }
 
     /**

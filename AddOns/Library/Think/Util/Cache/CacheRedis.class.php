@@ -100,15 +100,16 @@ class CacheRedis extends Cache
         if(is_null($expire)) {
             $expire  =  $this->options['expire'];
         }
-        if($this->options['length']>0) {
+        if(is_int($expire)) {
+            $result = $this->handler->setex($name, $expire, $value);
+        }else{
+            $result = $this->handler->set($name, $value);
+        }
+        if($result && $this->options['length']>0) {
             // 记录缓存队列
             $this->queue($name);
         }
-        if(is_int($expire)) {
-            return $this->handler->setex($name, $expire, $value);
-        }else{
-            return $this->handler->set($name, $value);
-        }
+        return $result;
     }
 
     /**
