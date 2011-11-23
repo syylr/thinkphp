@@ -658,11 +658,11 @@ function W($name, $data=array(), $return=false) {
 }
 
 // 全局缓存设置和读取
-function S($name, $value='', $expire='', $type='') {
+function S($name, $value='', $expire='', $type='',$options=null) {
     static $_cache = array();
     alias_import('Cache');
     //取得缓存对象实例
-    $cache = Cache::getInstance($type);
+    $cache = Cache::getInstance($type,$options);
     if ('' !== $value) {
         if (is_null($value)) {
             // 删除缓存

@@ -46,16 +46,6 @@ class Cache extends Think
 
     /**
      +----------------------------------------------------------
-     * 缓存存储前缀
-     +----------------------------------------------------------
-     * @var string
-     * @access protected
-     +----------------------------------------------------------
-     */
-    protected $prefix='~@';
-
-    /**
-     +----------------------------------------------------------
      * 缓存连接参数
      +----------------------------------------------------------
      * @var integer
@@ -63,31 +53,6 @@ class Cache extends Think
      +----------------------------------------------------------
      */
     protected $options = array();
-
-    /**
-     +----------------------------------------------------------
-     * 缓存类型
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
-    protected $type       ;
-
-    /**
-     +----------------------------------------------------------
-     * 缓存过期时间
-     +----------------------------------------------------------
-     * @var integer
-     * @access protected
-     +----------------------------------------------------------
-     */
-    protected $expire     ;
-
-    // 缓存队列长度 0表示不限制
-    protected $queueLength = 0;
-    // 缓存队列的缓存方式 支持xcache apc file
-    protected $queueCacheType  =  'file';
 
     /**
      +----------------------------------------------------------
@@ -156,14 +121,15 @@ class Cache extends Think
             'xcache'=>array('xcache_get','xcache_set'),
             'apc'=>array('apc_fetch','apc_store'),
         );
-        $fun  =  $_handler[$this->queueCacheType];
+        $queue  =  isset($this->options['queue'])?$this->options['queue']:'file';
+        $fun  =  $_handler[];
         $value   =  $fun[0]('think_queue');
         if(!$value) {
             $value   =  array();
         }
         // 进列
         array_push($value,$key);
-        if(count($value)>$this->queueLength) {
+        if(count($value) > $this->options['length']) {
             // 出列
             $key =  array_shift($value);
             // 删除缓存
