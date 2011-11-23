@@ -39,12 +39,12 @@ class CacheShmop extends Cache
             $options = array(
                 'size' => C('SHARE_MEM_SIZE'),
                 'tmp'  => TEMP_PATH,
-                'project' => 's'
+                'project' => 's',
+                'length'   =>0,
                 );
         }
         $this->options = $options;
         $this->handler = $this->_ftok($this->options['project']);
-        $this->type = strtoupper(substr(__CLASS__,6));
     }
 
     /**
@@ -106,6 +106,10 @@ class CacheShmop extends Cache
         }
         $val[$name] = $value;
         $val = serialize($val);
+        if($this->options['length']>0) {
+            // 记录缓存队列
+            $this->queue($name);
+        }
         return $this->_write($val, $lh);
     }
 

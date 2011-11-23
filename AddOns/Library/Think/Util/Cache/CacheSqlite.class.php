@@ -42,15 +42,14 @@ class CacheSqlite extends Cache
                 'var'       => 'var',
                 'value'     => 'value',
                 'expire'    => 'expire',
-                'persistent'=> false
+                'persistent'=> false,
+                'length'   =>0,
             );
         }
         $this->options = $options;
         $func = $this->options['persistent'] ? 'sqlite_popen' : 'sqlite_open';
         $this->handler = $func($this->options['db']);
         $this->connected = is_resource($this->handler);
-        $this->type = strtoupper(substr(__CLASS__,6));
-
     }
 
     /**
@@ -124,6 +123,10 @@ class CacheSqlite extends Cache
                 ' ('.$this->options['var'].', '.$this->options['value'].','.$this->options['expire'].
                 ') VALUES (\''.$name.'\', \''.$value.'\', \''.$expire.'\')';
         sqlite_query($this->handler, $sql);
+        if($this->options['length']>0) {
+            // 记录缓存队列
+            $this->queue($name);
+        }
         return true;
     }
 

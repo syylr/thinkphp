@@ -26,24 +26,35 @@ class CacheFile extends Cache
 
     /**
      +----------------------------------------------------------
+     * 缓存存储前缀
+     +----------------------------------------------------------
+     * @var string
+     * @access protected
+     +----------------------------------------------------------
+     */
+    protected $prefix='~@';
+
+    /**
+     +----------------------------------------------------------
      * 架构函数
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
      */
     public function __construct($options='') {
+        if(!empty($options)) {
+            $this->options =  $options;
+        }
         if(!empty($options['temp'])){
             $this->options['temp'] = $options['temp'];
         }else {
             $this->options['temp'] = C('DATA_CACHE_PATH');
         }
-        $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
-        $this->queueLength  =  isset($options['length'])?$options['length']:0;
+        $this->options['expire'] = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
+        $this->options['length']  =  isset($options['length'])?$options['length']:0;
         if(substr($this->options['temp'], -1) != "/")    $this->options['temp'] .= "/";
         $this->connected = is_dir($this->options['temp']) && is_writeable($this->options['temp']);
-        $this->type = strtoupper(substr(__CLASS__,6));
         $this->init();
-
     }
 
     /**
@@ -172,7 +183,7 @@ class CacheFile extends Cache
     public function set($name,$value,$expire=null) {
         N('cache_write',1);
         if(is_null($expire)) {
-            $expire =  $this->expire;
+            $expire =  $this->options['expire'];
         }
         $filename   =   $this->filename($name);
         $data   =   serialize($value);
@@ -188,7 +199,7 @@ class CacheFile extends Cache
         $data    = "<?php\n//".sprintf('%012d',$expire).$check.$data."\n?>";
         $result  =   file_put_contents($filename,$data);
         if($result) {
-            if($this->queueLength>0) {
+            if($this->options['length']>0) {
                 // 记录缓存队列
                 $this->queue($name);
             }

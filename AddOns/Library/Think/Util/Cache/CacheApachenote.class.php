@@ -24,7 +24,6 @@
 class CacheApachenote extends Cache
 {//类定义开始
 
-
     /**
      +----------------------------------------------------------
      * 架构函数
@@ -38,13 +37,12 @@ class CacheApachenote extends Cache
                 'host' => '127.0.0.1',
                 'port' => 1042,
                 'timeout' => 10
-        );
+                'length'   =>0
+            );
         }
         $this->handler = null;
         $this->open();
         $this->options = $options;
-        $this->type = strtoupper(substr(__CLASS__,6));
-
     }
 
     /**
@@ -59,7 +57,6 @@ class CacheApachenote extends Cache
     public function isConnected() {
         return $this->connected;
     }
-
 
     /**
      +----------------------------------------------------------
@@ -107,6 +104,10 @@ class CacheApachenote extends Cache
         $ret = fgets($this->handler);
         $this->close();
         $this->setTime[$name] = time();
+        if($this->options['length']>0) {
+            // 记录缓存队列
+            $this->queue($name);
+        }
         return $ret === "OK\n";
     }
 

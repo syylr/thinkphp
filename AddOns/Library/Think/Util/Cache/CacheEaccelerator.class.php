@@ -32,8 +32,11 @@ class CacheEaccelerator extends Cache
      +----------------------------------------------------------
      */
     public function __construct($options='') {
-        $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
-        $this->type = strtoupper(substr(__CLASS__,6));
+        if(!empty($options)) {
+            $this->options =  $options;
+        }
+        $this->options['expire'] = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
+        $this->options['length']  =  isset($options['length'])?$options['length']:0;
     }
 
     /**
@@ -68,7 +71,11 @@ class CacheEaccelerator extends Cache
      public function set($name, $value, $expire = null) {
         N('cache_write',1);
         if(is_null($expire)) {
-            $expire  =  $this->expire;
+            $expire  =  $this->options['expire'];
+        }
+        if($this->options['length']>0) {
+            // 记录缓存队列
+            $this->queue($name);
         }
         eaccelerator_lock($name);
         return eaccelerator_put ($name, $value, $expire);

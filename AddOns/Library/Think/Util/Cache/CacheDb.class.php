@@ -54,14 +54,13 @@ class CacheDb extends Cache
                 'db'        => C('DB_NAME'),
                 'table'     => C('DATA_CACHE_TABLE'),
                 'expire'    => C('DATA_CACHE_TIME'),
+                'length'    => 0,
             );
         }
         $this->options = $options;
         import('Db');
         $this->db  = DB::getInstance();
         $this->connected = is_resource($this->db);
-        $this->type = strtoupper(substr(__CLASS__,6));
-
     }
 
     /**
@@ -76,7 +75,6 @@ class CacheDb extends Cache
     private function isConnected() {
         return $this->connected;
     }
-
 
     /**
      +----------------------------------------------------------
@@ -150,6 +148,10 @@ class CacheDb extends Cache
              $result  =  $this->db->execute('INSERT INTO '.$this->options['table'].' (`cachekey`,`data`,`datacrc`,`expire`) VALUES (\''.$name.'\',\''.$data.'\',\''.$crc.'\','.$expire.')');
         }
         if($result) {
+            if($this->options['length']>0) {
+                // 记录缓存队列
+                $this->queue($name);
+            }
             return true;
         }else {
             return false;

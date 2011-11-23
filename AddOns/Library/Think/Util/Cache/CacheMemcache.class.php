@@ -40,16 +40,17 @@ class CacheMemcache extends Cache
                 'host'  => C('MEMCACHE_HOST') ? C('MEMCACHE_HOST') : '127.0.0.1',
                 'port'  => C('MEMCACHE_PORT') ? C('MEMCACHE_PORT') : 11211,
                 'timeout' => C('DATA_CACHE_TIME') ? C('DATA_CACHE_TIME') : false,
-                'persistent' => false
+                'persistent' => false,
+                'expire'   =>C('DATA_CACHE_TIME'),
+                'length'   =>0,
             );
         }
+        $this->options =  $options;
         $func = $options['persistent'] ? 'pconnect' : 'connect';
-        $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
         $this->handler  = new Memcache;
         $this->connected = $options['timeout'] === false ?
             $this->handler->$func($options['host'], $options['port']) :
             $this->handler->$func($options['host'], $options['port'], $options['timeout']);
-        $this->type = strtoupper(substr(__CLASS__,6));
     }
 
     /**
@@ -97,7 +98,11 @@ class CacheMemcache extends Cache
     public function set($name, $value, $expire = null) {
         N('cache_write',1);
         if(is_null($expire)) {
-            $expire  =  $this->expire;
+            $expire  =  $this->options['expire'];
+        }
+        if($this->options['length']>0) {
+            // 记录缓存队列
+            $this->queue($name);
         }
         return $this->handler->set($name, $value, 0, $expire);
     }

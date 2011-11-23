@@ -35,8 +35,11 @@ class CacheXcache extends Cache
         if ( !function_exists('xcache_info') ) {
             throw_exception(L('_NOT_SUPPERT_').':Xcache');
         }
-        $this->type = strtoupper(substr(__CLASS__,6));
-        $this->expire = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
+        if(!empty($options)) {
+            $this->options =  $options;
+        }
+        $this->options['expire'] = isset($options['expire'])?$options['expire']:C('DATA_CACHE_TIME');
+        $this->options['length']  =  isset($options['length'])?$options['length']:0;
     }
 
     /**
@@ -74,7 +77,11 @@ class CacheXcache extends Cache
     public function set($name, $value,$expire=null) {
         N('cache_write',1);
         if(is_null($expire)) {
-            $expire = $this->expire ;
+            $expire = $this->options['expire'] ;
+        }
+        if($this->options['length']>0) {
+            // 记录缓存队列
+            $this->queue($name);
         }
         return xcache_set($name, $value, $expire);
     }
