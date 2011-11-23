@@ -207,7 +207,8 @@ class Dispatcher extends Think
             $regx = str_replace($depr,'/',$regx);
             $rules = array_keys($routes);
             foreach ($rules as $rule){
-                if(0 === strpos($regx.'/',substr($rule,0,strpos($rule,'/'))) && substr_count($regx,'/') >= substr_count($rule,'/')) { 
+                if( (false === strpos($rule,'/') && 0=== strpos($regx.'/',$rule.'/')) || 
+                    (0 === strpos($regx.'/',substr($rule,0,strpos($rule,'/'))) && substr_count($regx,'/') >= substr_count($rule,'/')) ) { 
                     // 规则路由
                     return self::parseRule($rule,$routes[$rule],$regx);
                 }elseif(0===strpos($rule,'/') && preg_match($rule,$regx,$matches)) { 
