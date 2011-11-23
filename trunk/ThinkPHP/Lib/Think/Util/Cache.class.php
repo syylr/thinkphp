@@ -122,7 +122,7 @@ class Cache extends Think
             'apc'=>array('apc_fetch','apc_store'),
         );
         $queue  =  isset($this->options['queue'])?$this->options['queue']:'file';
-        $fun  =  $_handler[];
+        $fun  =  $_handler[$queue];
         $value   =  $fun[0]('think_queue');
         if(!$value) {
             $value   =  array();
