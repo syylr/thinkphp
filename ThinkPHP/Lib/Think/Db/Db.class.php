@@ -23,7 +23,6 @@
  */
 class Db extends Think
 {
-
     // 数据库类型
     protected $dbType           = null;
     // 是否自动释放查询结果
@@ -882,6 +881,13 @@ class Db extends Think
             $offset  =  $listRows*((int)$page-1);
             $options['limit'] =  $offset.','.$listRows;
         }
+        if(C('DB_SQL_BUILD_CACHE')) { // SQL创建缓存
+            $key =  md5(serialize($options));
+            $value   =  S($key);
+            if(false !== $value) {
+                return $value;
+            }
+        }
         $sql   = str_replace(
             array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%','%UNION%'),
             array(
@@ -897,6 +903,9 @@ class Db extends Think
                 $this->parseUnion(isset($options['union'])?$options['union']:'')
             ),$this->selectSql);
         $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
+        if(isset($key)) { // 写入SQL创建缓存
+            S($key,$sql,'','',array('length'=>C('DB_SQL_BUILD_LENGTH'),'queue'=>C('DB_SQL_BUILD_QUEUE')));
+        }
         return $sql;
     }
 
