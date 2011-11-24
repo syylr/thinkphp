@@ -567,7 +567,7 @@ function url($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
     );
     $url = str_replace(array_keys($replace),array_values($replace),$url,$count);
     if($count>0) {
-            $url   =  substr_replace($url,'',0,strlen(__APP__)); 
+        $url   =  substr_replace($url,'',0,strlen(__APP__)); 
     }
 
     if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
@@ -584,12 +584,9 @@ function url($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
             $domain = $domain=='localhost'?'localhost':'www'.strstr($_SERVER['HTTP_HOST'],'.');
             // '子域名'=>array('项目[/分组]');
             foreach (C('APP_SUB_DOMAIN_RULES') as $key => $rule) {
-                dump($rule);dump($url);
                 if(false === strpos($key,'*') && 0=== strpos($url,$rule[0])) {
                     $domain = $key.strstr($domain,'.'); // 生成对应子域名
-                    dump($domain);
                     $url   =  substr_replace($url,'',0,strlen($rule[0]));
-                    dump($url);
                     break;
                 }
             }
