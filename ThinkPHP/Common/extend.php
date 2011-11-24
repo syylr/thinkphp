@@ -572,6 +572,8 @@ function url($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
 
     if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
         parse_str($vars,$vars);
+    }elseif(!is_array($vars)){
+        $vars = array();
     }
 
     // 分析URL地址
