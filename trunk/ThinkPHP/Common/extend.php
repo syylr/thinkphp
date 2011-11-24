@@ -565,8 +565,11 @@ function url($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
         '__URL__'       => __URL__, // 模块地址
         '__ACTION__'    => __ACTION__,     // 操作地址
     );
-    $url = str_replace(array_keys($replace),array_values($replace),$url);
-    $url   =  substr_replace($url,'',0,strlen(__APP__));
+    $url = str_replace(array_keys($replace),array_values($replace),$url,$count);
+    if($count>0) {
+            $url   =  substr_replace($url,'',0,strlen(__APP__)); 
+    }
+
     if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
         parse_str($vars,$vars);
     }
@@ -575,15 +578,23 @@ function url($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
     $info =  parse_url($url);
     $url   =  $info['path'];
     // 子域名解析
-    $domain = $_SERVER['HTTP_HOST']=='localhost'?'localhost':'www'.strstr($_SERVER['HTTP_HOST'],'.');
-    if(C('APP_SUB_DOMAIN_DEPLOY')) { // 开启子域名部署
-        // '子域名'=>array('项目[/分组]');
-        foreach (C('APP_SUB_DOMAIN_RULES') as $key => $rule) {
-            if(false === strpos($key,'*') && 0=== strpos($url,$rule[0])) {
-                $domain = $key.strstr($domain,'.'); // 生成对应子域名
-                $url   =  substr_replace($url,'',0,strlen($rule[0]));
-                break;
+    if($domain===true){
+        $domain = $_SERVER['HTTP_HOST'];
+        if(C('APP_SUB_DOMAIN_DEPLOY') ) { // 开启子域名部署
+            $domain = $domain=='localhost'?'localhost':'www'.strstr($_SERVER['HTTP_HOST'],'.');
+            // '子域名'=>array('项目[/分组]');
+            foreach (C('APP_SUB_DOMAIN_RULES') as $key => $rule) {
+                dump($rule);dump($url);
+                if(false === strpos($key,'*') && 0=== strpos($url,$rule[0])) {
+                    $domain = $key.strstr($domain,'.'); // 生成对应子域名
+                    dump($domain);
+                    $url   =  substr_replace($url,'',0,strlen($rule[0]));
+                    dump($url);
+                    break;
+                }
             }
+        }else{
+            $domain = $_SERVER['HTTP_HOST'];
         }
     }
     if(substr_count($url,'/') == 2 && substr($url,0,strpos($url,'/')) ==C('DEFAULT_GROUP') ) { // 处理默认分组
