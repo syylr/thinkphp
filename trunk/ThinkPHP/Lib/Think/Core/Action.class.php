@@ -301,8 +301,6 @@ abstract class Action extends Think
      +----------------------------------------------------------
      */
     protected function ajaxReturn($data,$info='',$status=1,$type='') {
-        // 保证AJAX返回后也能保存日志
-        if(C('LOG_RECORD')) Log::save();
         $result  =  array();
         $result['status']  =  $status;
         $result['info'] =  $info;
@@ -343,7 +341,6 @@ abstract class Action extends Think
      +----------------------------------------------------------
      */
     protected function redirect($url,$params=array(),$delay=0,$msg='') {
-        if(C('LOG_RECORD')) Log::save();
         $url    =   U($url,$params);
         redirect($url,$delay,$msg);
     }
@@ -390,7 +387,6 @@ abstract class Action extends Think
             if(!$this->view->get('jumpUrl')) $this->assign('jumpUrl',"javascript:history.back(-1);");
             $this->display(C('TMPL_ACTION_ERROR'));
             // 中止执行  避免出错后继续执行
-            if(C('LOG_RECORD')) Log::save();
             exit ;
         }
     }
@@ -407,6 +403,8 @@ abstract class Action extends Think
      +----------------------------------------------------------
      */
     public function __destruct() {
+        // 保存日志
+        if(C('LOG_RECORD')) Log::save();
         // 执行后续操作
         if(C('APP_PLUGIN_ON')) tag('action_end');
     }
