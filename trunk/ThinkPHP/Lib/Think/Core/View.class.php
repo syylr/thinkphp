@@ -174,6 +174,7 @@ class View extends Think{
         G('viewStartTime');
         // 使用null参数作为模版名直接返回不做任何输出
         if(null===$templateFile) return;
+        if(C('APP_PLUGIN_ON')) tag('view_begin');
         // 网页字符编码
         if(empty($charset))  $charset = C('DEFAULT_CHARSET');
         if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
@@ -288,6 +289,7 @@ class View extends Think{
     protected function output($content,$display) {
         if(C('HTML_CACHE_ON'))  HtmlCache::writeHTMLCache($content);
         if($display) {
+            if(C('APP_PLUGIN_ON')) tag('view_end',$content);
             if(C('SHOW_RUN_TIME')){
                 if(false !== strpos($content,'{__NORUNTIME__}')) {
                     $content   =  str_replace('{__NORUNTIME__}','',$content);
