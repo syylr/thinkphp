@@ -293,41 +293,6 @@ function get_instance_of($name, $method='', $args=array()) {
     return $_instance[$identify];
 }
 
-/**
- +----------------------------------------------------------
- * 系统自动加载ThinkPHP基类库和当前项目的model和Action对象
- * 并且支持配置自动加载路径
- +----------------------------------------------------------
- * @param string $name 对象类名
- +----------------------------------------------------------
- * @return void
- +----------------------------------------------------------
- */
-function __autoload($name) {
-    // 检查是否存在别名定义
-    if(alias_import($name)) return ;
-    // 自动加载当前项目的行为类、Action类和Model类
-    if(substr($classname,-8)=="Behavior") {
-        require_cache(LIB_PATH.'Behavior/'.$classname.'.class.php');
-    }elseif(substr($name,-5)=="Model") {
-        require_cache(LIB_PATH.'Model/'.$name.'.class.php');
-    }elseif(substr($name,-6)=="Action"){
-        require_cache(LIB_PATH.'Action/'.$name.'.class.php');
-    }else {
-        // 根据自动加载路径设置进行尝试搜索
-        if(C('APP_AUTOLOAD_PATH')) {
-            $paths  =   explode(',',C('APP_AUTOLOAD_PATH'));
-            foreach ($paths as $path){
-                if(import($path.$name)) {
-                    // 如果加载类成功则返回
-                    return ;
-                }
-            }
-        }
-    }
-    return ;
-}
-
 // 优化的require_once
 function require_cache($filename) {
     static $_importFiles = array();

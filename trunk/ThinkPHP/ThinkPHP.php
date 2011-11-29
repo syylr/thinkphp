@@ -28,7 +28,7 @@ if(!APP_DEBUG && is_file(RUNTIME_PATH.$runtime)) {
     // 部署模式直接载入allinone缓存
     require RUNTIME_PATH.$runtime;
 }else{
-    if(version_compare(PHP_VERSION,'5.0.0','<'))  die('require PHP > 5.0 !');
+    if(version_compare(PHP_VERSION,'5.2.0','<'))  die('require PHP > 5.2.0 !');
     // ThinkPHP系统目录定义
     if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__).'/');
     if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
