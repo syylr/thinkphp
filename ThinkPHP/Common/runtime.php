@@ -93,7 +93,7 @@ function build_runtime_cache($append='') {
     $files =  scandir(EXTEND_PATH.'Behavior/');
     foreach ($files as $file){
         if($file == '.' || $file == '..') continue;
-        $content .= compile($file);
+        $content .= compile(EXTEND_PATH.'Behavior/'.$file);
     }
     $content .= $append."\nC(".var_export(C(),true).');';
     $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
