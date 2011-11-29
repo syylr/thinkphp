@@ -430,7 +430,7 @@ function load($name, $baseUrl='', $ext='.php') {
             $name = substr($name, 2);
         } else {
             //加载ThinkPHP 系统函数库
-            $baseUrl = THINK_PATH . 'Common/';
+            $baseUrl = EXTEND_PATH . 'Function/';
         }
     }
     if (substr($baseUrl, -1) != "/")
