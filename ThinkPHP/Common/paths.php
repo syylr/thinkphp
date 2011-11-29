@@ -31,6 +31,7 @@ define('LANG_PATH',     APP_PATH.'/'.LANG_DIR.'/'); //
 define('TEMP_PATH',      RUNTIME_PATH.TEMP_DIR.'/'); //
 define('DATA_PATH', RUNTIME_PATH.'Data/'); //
 define('VENDOR_PATH',THINK_PATH.'/Vendor/');
+define('EXTEND_PATH',THINK_PATH.'/Extend/');
 //[/RUNTIME]
 // 为了方便导入第三方类库 设置Vendor目录到include_path
 set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
