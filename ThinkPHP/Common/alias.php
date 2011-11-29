@@ -12,6 +12,7 @@
 
 // 导入别名定义
 alias_import(array(
+    // 系统核心类
     'Model'         => THINK_PATH.'Lib/Think/Core/Model.class.php',
     'Dispatcher'    => THINK_PATH.'Lib/Think/Core/Dispatcher.class.php',
     'HtmlCache'     => THINK_PATH.'Lib/Think/Util/HtmlCache.class.php',
@@ -28,6 +29,14 @@ alias_import(array(
     'AdvModel'      => THINK_PATH.'Lib/Think/Core/Model/AdvModel.class.php',
     'RelationModel' => THINK_PATH.'Lib/Think/Core/Model/RelationModel.class.php',
     'MongoModel'  => THINK_PATH.'Lib/Think/Core/Model/MongoModel.class.php',
+    // 系统行为扩展
+    'CheckLangBehavior'=>EXTEND_PATH.'Behavior/CheckLangBehavior.class.php',
+    'CheckTemplateBehavior'=>EXTEND_PATH.'Behavior/CheckTemplateBehavior.class.php',
+    'ReadHTMLCacheBehavior'=>EXTEND_PATH.'Behavior/ReadHTMLCacheBehavior.class.php',
+    'WriteHTMLCacheBehavior'=>EXTEND_PATH.'Behavior/WriteHTMLCacheBehavior.class.php',
+    'ShowRuntimeBehavior'=>EXTEND_PATH.'Behavior/ShowRuntimeBehavior.class.php',
+    'ShowPageTraceBehavior'=>EXTEND_PATH.'Behavior/ShowPageTraceBehavior.class.php',
+    'ContentReplaceBehavior'=>EXTEND_PATH.'Behavior/ContentReplaceBehavior.class.php',
     )
 );
 ?>

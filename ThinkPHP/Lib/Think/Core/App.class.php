@@ -53,14 +53,6 @@ class App
 
         // URL调度
         Dispatcher::dispatch();
-
-        // 系统检查
-        App::checkLanguage();     //语言检查
-        App::checkTemplate();     //模板检查
-
-        // 开启静态缓存
-        if(C('HTML_CACHE_ON'))  HtmlCache::readHTMLCache();
-
         return ;
     }
     //[RUNTIME]
@@ -110,103 +102,6 @@ class App
         return ;
     }
     //[/RUNTIME]
-
-    /**
-     +----------------------------------------------------------
-     * 语言检查
-     * 检查浏览器支持语言，并自动加载语言包
-     +----------------------------------------------------------
-     * @access private
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    static private function checkLanguage() {
-        $langSet = C('DEFAULT_LANG');
-        // 不开启语言包功能，仅仅加载框架语言文件直接返回
-        if (!C('LANG_SWITCH_ON')){
-            L(include THINK_PATH.'Lang/'.$langSet.'.php');
-            return;
-        }
-        // 启用了语言包功能
-        // 根据是否启用自动侦测设置获取语言选择
-        if (C('LANG_AUTO_DETECT')){
-            if(isset($_GET[C('VAR_LANGUAGE')])){
-                $langSet = $_GET[C('VAR_LANGUAGE')];// url中设置了语言变量
-                cookie('think_language',$langSet,3600);
-            }elseif(cookie('think_language')){// 获取上次用户的选择
-                $langSet = cookie('think_language');
-            }elseif(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){// 自动侦测浏览器语言
-                preg_match('/^([a-z\-]+)/i', $_SERVER['HTTP_ACCEPT_LANGUAGE'], $matches);
-                $langSet = $matches[1];
-                cookie('think_language',$langSet,3600);
-            }
-            if(false === stripos(C('LANG_LIST'),$langSet)) { // 非法语言参数
-                $langSet = C('DEFAULT_LANG');
-            }
-        }
-        // 定义当前语言
-        define('LANG_SET',strtolower($langSet));
-        // 加载框架语言包
-        if(is_file(THINK_PATH.'Lang/'.LANG_SET.'.php'))
-            L(include THINK_PATH.'Lang/'.LANG_SET.'.php');
-        // 读取项目公共语言包
-        if (is_file(LANG_PATH.LANG_SET.'/common.php'))
-            L(include LANG_PATH.LANG_SET.'/common.php');
-        $group = '';
-        // 读取当前分组公共语言包
-        if (defined('GROUP_NAME')){
-            $group = GROUP_NAME.C('TMPL_FILE_DEPR');
-            if (is_file(LANG_PATH.LANG_SET.'/'.$group.'lang.php'))
-                L(include LANG_PATH.LANG_SET.'/'.$group.'lang.php');
-        }
-        // 读取当前模块语言包
-        if (is_file(LANG_PATH.LANG_SET.'/'.$group.strtolower(MODULE_NAME).'.php'))
-            L(include LANG_PATH.LANG_SET.'/'.$group.strtolower(MODULE_NAME).'.php');
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 模板检查，如果不存在使用默认
-     +----------------------------------------------------------
-     * @access private
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    static private function checkTemplate() {
-        /* 获取模板主题名称 */
-        $templateSet =  C('DEFAULT_THEME');
-        if(C('TMPL_DETECT_THEME')) {// 自动侦测模板主题
-            $t = C('VAR_TEMPLATE');
-            if (isset($_GET[$t])){
-                $templateSet = $_GET[$t];
-            }elseif(cookie('think_template')){
-                $templateSet = cookie('think_template');
-            }
-            // 主题不存在时仍改回使用默认主题
-            if(!is_dir(TMPL_PATH.$templateSet))
-                $templateSet = C('DEFAULT_THEME');
-            cookie('think_template',$templateSet);
-        }
-
-        /* 模板相关目录常量 */
-        define('TEMPLATE_NAME',   $templateSet);                  // 当前模板主题名称
-        define('APP_TMPL_PATH',   __ROOT__.'/'.APP_NAME.(APP_NAME?'/':'').TMPL_DIR.'/'.TEMPLATE_NAME.(TEMPLATE_NAME?'/':''));// 当前项目模板目录
-        define('TEMPLATE_PATH',   TMPL_PATH.TEMPLATE_NAME.(TEMPLATE_NAME?'/':''));       // 当前模版路径
-        define('__CURRENT__',     APP_TMPL_PATH.MODULE_NAME);     // 当前默认模板目录
-        define('WEB_PUBLIC_PATH', __ROOT__.'/Public');            // 网站公共文件目录
-        define('APP_PUBLIC_PATH', APP_TMPL_PATH.'Public');        // 项目公共文件目录
-
-        if(defined('GROUP_NAME')) {
-            C('TMPL_FILE_NAME',TEMPLATE_PATH.GROUP_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
-            C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
-        }else{
-            C('TMPL_FILE_NAME',TEMPLATE_PATH.MODULE_NAME.'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
-            C('CACHE_PATH',CACHE_PATH);
-        }
-        return ;
-    }
 
     /**
      +----------------------------------------------------------
