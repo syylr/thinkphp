@@ -76,7 +76,7 @@ class App
      */
     static private function build() {
         // 加载惯例配置文件
-        C(include THINK_PATH.'/Common/convention.php');
+        C(include THINK_PATH.'Common/convention.php');
         // 加载项目配置文件
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
@@ -99,15 +99,15 @@ class App
         C('APP_CONFIG_LIST',''); // 清除配置参数
         if(APP_DEBUG) {
             // 调试模式加载系统默认的开发模式配置文件
-            C(include THINK_PATH.'/Common/debug.php');
+            C(include THINK_PATH.'Common/debug.php');
             if(is_file(CONFIG_PATH.'debug.php'))
                 // 允许项目增加开发模式配置定义
                 C(include CONFIG_PATH.'debug.php');
             //SEA模式的一些固定配置
-             C(include THINK_PATH.'/Mode/Sae/saeConfig.php');
+             C(include MODE_PATH.'Sae/saeConfig.php');
         }else{
             //SEA模式的一些固定配置
-             C(include THINK_PATH.'/Mode/Sae/saeConfig.php');
+             C(include MODE_PATH.'Sae/saeConfig.php');
             // 部署模式下面生成编译文件
             build_runtime_cache($common);
         }
@@ -152,8 +152,8 @@ class App
         // 定义当前语言
         define('LANG_SET',strtolower($langSet));
         // 加载框架语言包
-        if(is_file(THINK_PATH.'/Lang/'.LANG_SET.'.php'))
-            L(include THINK_PATH.'/Lang/'.LANG_SET.'.php');
+        if(is_file(THINK_PATH.'Lang/'.LANG_SET.'.php'))
+            L(include THINK_PATH.'Lang/'.LANG_SET.'.php');
         // 读取项目公共语言包
         if (is_file(LANG_PATH.LANG_SET.'/common.php'))
             L(include LANG_PATH.LANG_SET.'/common.php');

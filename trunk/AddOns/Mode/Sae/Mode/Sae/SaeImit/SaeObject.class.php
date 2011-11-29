@@ -19,7 +19,7 @@ class SaeObject extends Think {
     	//只初始化一次
     	if($inited) return;
     	//载入语言包
-    	L(include(THINK_PATH.'/Mode/Sae/SaeImit/Lang.php'));
+    	L(include(MODE_PATH.'Sae/SaeImit/Lang.php'));
     	$this->errmsg=L("_SAE_OK_");
         if (C("DB_NAME") == '') {
             //如果没有配置数据库，抛出异常

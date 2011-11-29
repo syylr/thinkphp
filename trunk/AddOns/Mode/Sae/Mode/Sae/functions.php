@@ -387,11 +387,11 @@ function import($class, $baseUrl = '', $ext='.class.php') {
         } elseif (in_array(strtolower($class_strut[0]), array('think', 'org', 'com'))) {
             //加载ThinkPHP基类库或者公共类库
             // think 官方基类库 org 第三方公共类库 com 企业公共类库
-            $baseUrl = THINK_PATH . '/Lib/';
+            $baseUrl = THINK_PATH . 'Lib/';
         } else {
             // 加载其他项目应用类库
             $class = substr_replace($class, '', 0, strlen($class_strut[0]) + 1);
-            $baseUrl = APP_PATH . '/../' . $class_strut[0] . '/' . LIB_DIR . '/';
+            $baseUrl = APP_PATH . '../' . $class_strut[0] . '/' . LIB_DIR . '/';
         }
     }
     if (substr($baseUrl, -1) != "/")
@@ -426,11 +426,11 @@ function load($name, $baseUrl='', $ext='.php') {
     if (empty($baseUrl)) {
         if (0 === strpos($name, '@/')) {
             //加载当前项目函数库
-            $baseUrl = APP_PATH . '/Common/';
+            $baseUrl = APP_PATH . 'Common/';
             $name = substr($name, 2);
         } else {
             //加载ThinkPHP 系统函数库
-            $baseUrl = THINK_PATH . '/Common/';
+            $baseUrl = THINK_PATH . 'Common/';
         }
     }
     if (substr($baseUrl, -1) != "/")
@@ -771,8 +771,7 @@ function array_define($array) {
     $content = '';
     foreach ($array as $key => $val) {
         $key = strtoupper($key);
-        if (in_array($key, array('THINK_PATH', 'APP_NAME', 'APP_PATH', 'APP_DEBUG','MEMORY_LIMIT_ON', 'RUNTIME_PATH', 'THINK_MODE')))
-            $content .= 'if(!defined(\'' . $key . '\')) ';
+        $content .= 'if(!defined(\'' . $key . '\')) ';
         if (is_int($val) || is_float($val)) {
             $content .= "define('" . $key . "'," . $val . ");";
         } elseif (is_bool($val)) {
