@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class CacheEaccelerator extends Cache
-{
+class CacheEaccelerator extends Cache {
 
     /**
      +----------------------------------------------------------
