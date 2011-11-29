@@ -79,7 +79,8 @@ class App
         // 加载项目配置文件
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
-
+        // 加载系统默认标签扩展文件
+        C('tags',include THINK_PATH.'Common/tags.php');
         $common   = '';
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
@@ -89,9 +90,8 @@ class App
         }
         // 加载动态配置文件
         $configs =  C('APP_CONFIG_LIST');
-        if(is_string($configs)) 
-            $configs =  explode(',',$configs);
-        foreach ($configs as $config){
+        if(is_string($configs)) $configs =  explode(',',$configs);
+        foreach ($configs as $config) {
             $file   = CONFIG_PATH.$config.'.php';
             if(is_file($file))
                 C($config,array_change_key_case(include $file));
