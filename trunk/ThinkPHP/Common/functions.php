@@ -617,12 +617,12 @@ function C($name=null, $value=null) {
     return null; // 避免非法参数
 }
 
-// 处理标签
-function tag($name, $params=array()) {
+// 处理标签扩展
+function tag($name, &$params=NULL) {
     $tags = C('TAGS.' . $name);
     if (!empty($tags)) {
         foreach ($tags as $key => $call) {
-            $result = B($call, $params);
+            B($call, $params);
         }
     }
 }
@@ -635,12 +635,17 @@ function filter($name, &$content) {
     $content = $filter->run($content);
 }
 
-// 执行行为
-function B($name, $params=array()) {
-    $class = $name . 'Behavior';
-    require_cache(LIB_PATH . 'Behavior/' . $class . '.class.php');
-    $behavior = new $class();
-    return $behavior->run($params);
+// 执行行为 系统行为优先
+function B($name, &$params=NULL) {
+    if(is_file(EXTEND_PATH.'Behavior/'.$name.'.class.php')) {
+        $file   = EXTEND_PATH.'Behavior'.DS.$name.'.class.php';
+    }else{
+        $file   = LIB_PATH.'Behavior/'.$name.'.class.php';
+    }
+    if(require_cache($file)){
+        $behavior = new $class();
+        $behavior->run($params);
+    }
 }
 
 // 渲染输出Widget
