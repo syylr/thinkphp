@@ -72,7 +72,7 @@ class App
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
         // 加载系统默认标签扩展文件
-        C('tags',include THINK_PATH.'Common/tags.php');
+        C('extends',include THINK_PATH.'Common/tags.php');
         $common   = '';
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
