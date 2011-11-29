@@ -12,13 +12,13 @@
 
 // 导入别名定义
 alias_import(array(
-    'Dispatcher'         =>   THINK_PATH.'/Mode/Lite/Dispatcher.class.php',
-    'Model'         =>   THINK_PATH.'/Mode/Lite/Model.class.php',
-    'Db'                  =>    THINK_PATH.'/Mode/Lite/Db.class.php',
-    'Debug'              =>    THINK_PATH.'/Lib/Think/Util/Debug.class.php',
-    'Session'             =>   THINK_PATH.'/Lib/Think/Util/Session.class.php',
-    'ThinkTemplateLite'   =>    THINK_PATH.'/Mode/Lite/ThinkTemplateLite.class.php',
-    'ThinkTemplateCompiler'   =>    THINK_PATH.'/Mode/Lite/ThinkTemplateCompiler.class.php',
+    'Dispatcher'         =>   MODE_PATH.'Lite/Dispatcher.class.php',
+    'Model'         =>   MODE_PATH.'Lite/Model.class.php',
+    'Db'                  =>    MODE_PATH.'Lite/Db.class.php',
+    'Debug'              =>    THINK_PATH.'Lib/Think/Util/Debug.class.php',
+    'Session'             =>   THINK_PATH.'Lib/Think/Util/Session.class.php',
+    'ThinkTemplateLite'   =>    MODE_PATH.'Lite/ThinkTemplateLite.class.php',
+    'ThinkTemplateCompiler'   =>    MODE_PATH.'Lite/ThinkTemplateCompiler.class.php',
     )
 );
 ?>

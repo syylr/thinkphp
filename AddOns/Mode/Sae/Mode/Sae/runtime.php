@@ -16,23 +16,23 @@ load_think_mode();
 // 加载模式列表文件
 function load_think_mode() {
     // 加载常量定义文件
-    require THINK_PATH.'/Common/defines.php';
+    require THINK_PATH.'Common/defines.php';
     // 加载路径定义文件
-    require defined('PATH_DEFINE_FILE')?PATH_DEFINE_FILE:THINK_PATH.'/Common/paths.php';
+    require defined('PATH_DEFINE_FILE')?PATH_DEFINE_FILE:THINK_PATH.'Common/paths.php';
     // 读取核心编译文件列表
     if(is_file(CONFIG_PATH.'core.php')) {
         // 加载项目自定义的核心编译文件列表
         $list   =  include CONFIG_PATH.'core.php';
     }elseif(defined('THINK_MODE')) {
         // 根据设置的运行模式加载不同的核心编译文件
-        $list   =  include THINK_PATH.'/Mode/'.strtolower(THINK_MODE).'.php';
+        $list   =  include MODE_PATH.''.strtolower(THINK_MODE).'.php';
     }else{
         // 默认核心
-        $list = include THINK_PATH.'/Common/core.php';
+        $list = include THINK_PATH.'Common/core.php';
     }
      // 加载兼容函数
     if(version_compare(PHP_VERSION,'5.2.0','<') )
-        $list[]	= THINK_PATH.'/Common/compat.php';
+        $list[]	= THINK_PATH.'Common/compat.php';
     // 加载模式文件列表
     foreach ($list as $key=>$file){
         if(is_file($file))  require $file;
@@ -48,14 +48,14 @@ function build_runtime_cache($append='') {
         $list   =  include CONFIG_PATH.'core.php';
     }elseif(defined('THINK_MODE')) {
         // 根据设置的运行模式加载不同的核心编译文件
-        $list   =  include THINK_PATH.'/Mode/'.strtolower(THINK_MODE).'.php';
+        $list   =  include MODE_PATH.''.strtolower(THINK_MODE).'.php';
     }else{
         // 默认核心
-        $list = include THINK_PATH.'/Common/core.php';
+        $list = include THINK_PATH.'Common/core.php';
     }
      // 加载兼容函数
     if(version_compare(PHP_VERSION,'5.2.0','<') )
-        $list[]	= THINK_PATH.'/Common/compat.php';
+        $list[]	= THINK_PATH.'Common/compat.php';
 
     // 生成编译文件
     $defs = get_defined_constants(TRUE);

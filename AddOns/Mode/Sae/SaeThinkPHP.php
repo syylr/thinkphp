@@ -18,9 +18,9 @@
 if (!isset($_SERVER["HTTP_APPNAME"])) {//sae特殊处理，非SAE平台下运行，加载普通核心
     define("IS_SAE",FALSE);
     if (!defined('THINK_PATH'))
-        define('THINK_PATH', dirname(__FILE__));
-    require THINK_PATH . '/ThinkPHP.php';
-    require THINK_PATH.'/Mode/Sae/SaeImit.php';//载入SAE模拟器
+        define('THINK_PATH', dirname(__FILE__).'/');
+    require THINK_PATH . 'ThinkPHP.php';
+    require MODE_PATH.'Sae/SaeImit.php';//载入SAE模拟器
     App::run();
     exit();
 }
@@ -111,12 +111,12 @@ G('beginTime');
 define('MEMORY_LIMIT_ON',function_exists('memory_get_usage'));
 // 记录内存初始使用
 if(MEMORY_LIMIT_ON) $GLOBALS['_startUseMems'] = memory_get_usage();
-if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
-if (!is_dir(APP_PATH . "/Lib/")){
+if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']).'/');
+if (!is_dir(APP_PATH . "Lib/")){
     header("Content-Type:text/html; charset=utf-8");
     exit('<div style=\'font-weight:bold;float:left;width:430px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>sae环境下请手动生成项目目录~</div>');
 }
-if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'/Runtime/');
+if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'Runtime/');
 if(!defined('APP_DEBUG')) define('APP_DEBUG',false); // 是否调试模式
 $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
 $cache = Tplcache::getInstance();
@@ -127,10 +127,10 @@ if(!APP_DEBUG && $content !== false) {
 }else{
     if(version_compare(PHP_VERSION,'5.0.0','<'))  die('require PHP > 5.0 !');
     // ThinkPHP系统目录定义
-    if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__));
+    if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__).'/');
     if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
     // 加载运行时文件
-    require THINK_PATH."/Mode/Sae/runtime.php";//sae下加载专用runtime
+    require EXTEND_PATH."Mode/Sae/runtime.php";//sae下加载专用runtime
 }
 // 记录加载文件时间
 G('loadTime');

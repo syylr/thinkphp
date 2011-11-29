@@ -318,7 +318,7 @@ class  ThinkTemplate extends Think
         if(!import($className)) {
            // require_cache(dirname(__FILE__).'/TagLib/'.$className.'.class.php');
             //sae下加载解析类库。
-            require_cache(THINK_PATH.'/Lib/Think/Template/TagLib/TagLib'.ucwords($tagLib).'.class.php');
+            require_cache(THINK_PATH.'Lib/Think/Template/TagLib/TagLib'.ucwords($tagLib).'.class.php');
         }
         $tLib =  Think::instance($className);
         foreach ($tLib->tags as $name=>$val){

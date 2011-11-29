@@ -72,7 +72,7 @@ abstract class Widget extends Think {
             include $templateFile;
         }else{
             $className   = 'Template'.ucwords($template);
-            require_cache(THINK_PATH.'/Lib/Think/Util/Template/'.$className.'.class.php');
+            require_cache(THINK_PATH.'Lib/Think/Util/Template/'.$className.'.class.php');
             $tpl   =  new $className;
             $tpl->fetch($templateFile,$var,$charset);
         }

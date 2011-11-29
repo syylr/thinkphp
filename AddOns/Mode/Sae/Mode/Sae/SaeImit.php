@@ -104,15 +104,15 @@ define("SAE_Font_MicroHei", "/usr/share/fonts/chinese/TrueType/wqy-microhei.ttc"
  * 如果实例化这些类的时候类不存在时、自动导入对应的地址。
  */
 alias_import(array(
-    'SaeObject'=>THINK_PATH.'/Mode/Sae/SaeImit/SaeObject.class.php',
-    'SaeCounter'         => THINK_PATH.'/Mode/Sae/SaeImit/SaeCounter.class.php',
-    'SaeRank'=>THINK_PATH.'/Mode/Sae/SaeImit/SaeRank.class.php',
-    'SaeTaskQueue'=>THINK_PATH.'/Mode/Sae/SaeImit/SaeTaskQueue.class.php',
-    'SaeStorage'=>THINK_PATH.'/Mode/Sae/SaeImit/SaeStorage.class.php',
-    'SaeKVClient'=>THINK_PATH.'/Mode/Sae/SaeImit/SaeKVClient.class.php',
-    'Memcache'=>THINK_PATH.'/Mode/Sae/SaeImit/Memcache.class.php',
-    'CacheFile'=>THINK_PATH.'/Lib/Think/Util/Cache/CacheFile.class.php',
-	'SaeMail'=>THINK_PATH.'/Mode/Sae/SaeImit/SaeMail.class.php'
+    'SaeObject'=>MODE_PATH.'Sae/SaeImit/SaeObject.class.php',
+    'SaeCounter'         => MODE_PATH.'Sae/SaeImit/SaeCounter.class.php',
+    'SaeRank'=>MODE_PATH.'Sae/SaeImit/SaeRank.class.php',
+    'SaeTaskQueue'=>MODE_PATH.'Sae/SaeImit/SaeTaskQueue.class.php',
+    'SaeStorage'=>MODE_PATH.'Sae/SaeImit/SaeStorage.class.php',
+    'SaeKVClient'=>MODE_PATH.'Sae/SaeImit/SaeKVClient.class.php',
+    'Memcache'=>MODE_PATH.'Sae/SaeImit/Memcache.class.php',
+    'CacheFile'=>THINK_PATH.'Lib/Think/Util/Cache/CacheFile.class.php',
+	'SaeMail'=>MODE_PATH.'Sae/SaeImit/SaeMail.class.php'
     )
 );
 //以下是SAE专有函数。
