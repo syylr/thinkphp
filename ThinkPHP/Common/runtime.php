@@ -49,9 +49,6 @@ function load_think_mode() {
         // 默认核心
         $list = include THINK_PATH.'Common/core.php';
     }
-     // 加载兼容函数
-    if(version_compare(PHP_VERSION,'5.2.0','<') )
-        $list[]	= THINK_PATH.'Common/compat.php';
     // 加载模式文件列表
     foreach ($list as $key=>$file){
         if(is_file($file))  require $file;
@@ -79,10 +76,6 @@ function build_runtime_cache($append='') {
         // 默认核心
         $list = include THINK_PATH.'Common/core.php';
     }
-     // 加载兼容函数
-    if(version_compare(PHP_VERSION,'5.2.0','<') )
-        $list[]	= THINK_PATH.'Common/compat.php';
-
     // 生成编译文件
     $defs = get_defined_constants(TRUE);
     $content  = array_define($defs['user']);
