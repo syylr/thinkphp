@@ -89,6 +89,12 @@ function build_runtime_cache($append='') {
     foreach ($list as $file){
         $content .= compile($file);
     }
+    // 系统行为扩展文件统一编译
+    $files =  scandir(EXTEND_PATH.'Behavior/');
+    foreach ($files as $file){
+        if($file == '.' || $file == '..') continue;
+        $content .= compile($file);
+    }
     $content .= $append."\nC(".var_export(C(),true).');';
     $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
     file_put_contents(RUNTIME_PATH.$runtime,strip_whitespace('<?php '.$content));
