@@ -40,13 +40,16 @@ class App
         //[RUNTIME]
         App::build();         // 预编译项目
         //[/RUNTIME]
-
+        
         // 注册AUTOLOAD方法
         if(function_exists('spl_autoload_register'))  spl_autoload_register(array('Think', 'autoload'));
         // 设置系统时区 PHP5支持
         if(function_exists('date_default_timezone_set'))  date_default_timezone_set(C('DEFAULT_TIMEZONE'));
         // 加载动态项目公共文件
         if(is_file(COMMON_PATH.'extend.php')) include COMMON_PATH.'extend.php';
+
+        // 项目初始化标签
+        tag('app_init');
 
         // URL调度
         Dispatcher::dispatch();
@@ -263,9 +266,8 @@ class App
      */
     static public function run() {
         App::init();
-        $plugin   =  C('APP_PLUGIN_ON');
         // 项目开始标签
-        if($plugin)   tag('app_begin');
+        tag('app_begin');
          // Session初始化 支持其他客户端
         if(isset($_REQUEST[C("VAR_SESSION_ID")]))
             session_id($_REQUEST[C("VAR_SESSION_ID")]);
@@ -274,7 +276,7 @@ class App
         if(C('SHOW_RUN_TIME')) G('initTime');
         App::exec();
         // 项目结束标签
-        if($plugin)   tag('app_end');
+        tag('app_end');
         // 保存日志记录
         if(C('LOG_RECORD')) Log::save();
         return ;
