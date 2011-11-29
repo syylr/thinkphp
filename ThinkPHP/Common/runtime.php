@@ -44,7 +44,7 @@ function load_think_mode() {
         $list   =  include CONFIG_PATH.'core.php';
     }elseif(defined('THINK_MODE')) {
         // 根据设置的运行模式加载不同的核心编译文件
-        $list   =  include EXTEND_PATH.'/Mode/'.strtolower(THINK_MODE).'.php';
+        $list   =  include EXTEND_PATH.'Mode/'.strtolower(THINK_MODE).'.php';
     }else{
         // 默认核心
         $list = include THINK_PATH.'/Common/core.php';
@@ -74,7 +74,7 @@ function build_runtime_cache($append='') {
         $list   =  include CONFIG_PATH.'core.php';
     }elseif(defined('THINK_MODE')) {
         // 根据设置的运行模式加载不同的核心编译文件
-        $list   =  include EXTEND_PATH.'/Mode/'.strtolower(THINK_MODE).'.php';
+        $list   =  include EXTEND_PATH.'Mode/'.strtolower(THINK_MODE).'.php';
     }else{
         // 默认核心
         $list = include THINK_PATH.'/Common/core.php';
