@@ -637,10 +637,11 @@ function filter($name, &$content) {
 
 // 执行行为 系统行为优先
 function B($name, &$params=NULL) {
-    if(is_file(EXTEND_PATH.'Behavior/'.$name.'.class.php')) {
-        $file   = EXTEND_PATH.'Behavior'.DS.$name.'.class.php';
+    $class = $name.'Behavior';
+    if(is_file(EXTEND_PATH.'Behavior/'.$class.'.class.php')) {
+        $file   = EXTEND_PATH.'Behavior'.DS.$class.'.class.php';
     }else{
-        $file   = LIB_PATH.'Behavior/'.$name.'.class.php';
+        $file   = LIB_PATH.'Behavior/'.$class.'.class.php';
     }
     if(require_cache($file)){
         $behavior = new $class();
