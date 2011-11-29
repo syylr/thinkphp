@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class CacheApc extends Cache
-{//类定义开始
+class CacheApc extends Cache {
 
 
     /**
