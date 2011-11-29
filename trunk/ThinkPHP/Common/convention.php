@@ -28,7 +28,6 @@ return  array(
 
     /* 项目设定 */
     'APP_SUB_DOMAIN_DEPLOY' => false,   // 是否开启子域名
-    'APP_PLUGIN_ON'         => false,   // 是否开启插件机制
     'APP_FILE_CASE'         => false,   // 是否检查文件的大小写 对Windows平台有效
     'APP_GROUP_DEPR'        => '.',     // 模块分组之间的分割符
     'APP_GROUP_LIST'        => '',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'

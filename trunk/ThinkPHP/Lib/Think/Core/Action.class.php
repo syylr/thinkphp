@@ -37,7 +37,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      */
     public function __construct() {
-        if(C('APP_PLUGIN_ON')) tag('action_begin');
+        tag('action_begin');
         //实例化视图类
         $this->view       = Think::instance('View');
         //控制器初始化
@@ -406,7 +406,7 @@ abstract class Action extends Think
         // 保存日志
         if(C('LOG_RECORD')) Log::save();
         // 执行后续操作
-        if(C('APP_PLUGIN_ON')) tag('action_end');
+        tag('action_end');
     }
 }//类定义结束
 ?>
