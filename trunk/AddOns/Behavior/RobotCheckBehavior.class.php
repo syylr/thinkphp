@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-class RobotCheckBehavior extends Behavior {
+class RobotCheckBehavior {
     public function run() {
         // 机器人访问检测
         if(C('LIMIT_ROBOT_VISIT') && self::isRobot()) {
