@@ -307,8 +307,10 @@ function get_instance_of($name, $method='', $args=array()) {
 function __autoload($name) {
     // 检查是否存在别名定义
     if(alias_import($name)) return ;
-    // 自动加载当前项目的Actioon类和Model类
-    if(substr($name,-5)=="Model") {
+    // 自动加载当前项目的行为类、Action类和Model类
+    if(substr($classname,-8)=="Behavior") {
+        require_cache(LIB_PATH.'Behavior/'.$classname.'.class.php');
+    }elseif(substr($name,-5)=="Model") {
         require_cache(LIB_PATH.'Model/'.$name.'.class.php');
     }elseif(substr($name,-6)=="Action"){
         require_cache(LIB_PATH.'Action/'.$name.'.class.php');
@@ -638,15 +640,8 @@ function filter($name, &$content) {
 // 执行行为 系统行为优先
 function B($name, &$params=NULL) {
     $class = $name.'Behavior';
-    if(is_file(EXTEND_PATH.'Behavior/'.$class.'.class.php')) {
-        $file   = EXTEND_PATH.'Behavior'.DS.$class.'.class.php';
-    }else{
-        $file   = LIB_PATH.'Behavior/'.$class.'.class.php';
-    }
-    if(require_cache($file)){
-        $behavior = new $class();
-        $behavior->run($params);
-    }
+    $behavior = new $class();
+    $behavior->run($params);
 }
 
 // 渲染输出Widget
