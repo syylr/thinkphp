@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-class AgentCheckBehavior extends Behavior {
+class AgentCheckBehavior {
     public function run() {
         // 代理访问检测
         if(C('LIMIT_PROXY_VISIT') && ($_SERVER['HTTP_X_FORWARDED_FOR'] || $_SERVER['HTTP_VIA'] || $_SERVER['HTTP_PROXY_CONNECTION'] || $_SERVER['HTTP_USER_AGENT_VIA'])) {

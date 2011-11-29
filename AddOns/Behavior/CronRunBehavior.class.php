@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-class CronRunBehavior extends Behavior {
+class CronRunBehavior {
     public function run() {
         // 锁定自动执行
         $lockfile	 =	 RUNTIME_PATH.'cron.lock';
