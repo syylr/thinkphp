@@ -16,7 +16,7 @@
 return array(
     // 陆续添加
     'app_init'=>array(),
-        'app_begin'=>array('CheckLang', // 语言检测
+    'app_begin'=>array('CheckLang', // 语言检测
         'CheckTemplate', // 模板检测
         // 'ReadHTMLCache', // 静态缓存读取
     ),
