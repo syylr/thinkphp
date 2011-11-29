@@ -620,7 +620,15 @@ function C($name=null, $value=null) {
 
 // 处理标签扩展
 function tag($name, &$params=NULL) {
-    $tags = C('TAGS.' . $name);
+    // 系统标签扩展
+    $tags = C('extends.' . $name);
+    if (!empty($tags)) {
+        foreach ($tags as $key => $call) {
+            B($call, $params);
+        }
+    }
+    // 应用标签扩展
+    $tags = C('tags.' . $name);
     if (!empty($tags)) {
         foreach ($tags as $key => $call) {
             B($call, $params);
