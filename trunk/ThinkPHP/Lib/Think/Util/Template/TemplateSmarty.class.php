@@ -30,12 +30,11 @@ class TemplateSmarty{
      +----------------------------------------------------------
      * @param string $templateFile 模板文件名
      * @param array $var 模板变量
-     * @param string $charset 模板输出字符集
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function fetch($templateFile,$var,$charset) {
+    public function fetch($templateFile,$var) {
         $templateFile=substr($templateFile,strlen(TMPL_PATH));
         vendor('Smarty.Smarty#class');
         $tpl = new Smarty();

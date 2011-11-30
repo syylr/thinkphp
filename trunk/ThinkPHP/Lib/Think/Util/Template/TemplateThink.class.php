@@ -30,17 +30,15 @@ class TemplateThink{
      +----------------------------------------------------------
      * @param string $templateFile 模板文件名
      * @param array $var 模板变量
-     * @param string $charset 模板输出字符集
-     * @param string $varPrefix 模板变量前缀
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public function fetch($templateFile,$var,$charset) {
+    public function fetch($templateFile,$var) {
         // 缓存无效 重新编译
         $tpl = Think::instance('ThinkTemplate');
         // 编译并加载模板文件
-        $tpl->load($templateFile,$var,$charset);
+        $tpl->load($templateFile,$var);
     }
 
 }
