@@ -584,20 +584,24 @@ function C($name=null, $value=null) {
 }
 
 // 处理标签扩展
-function tag($name, &$params=NULL) {
+function tag($tag, &$params=NULL) {
     // 系统标签扩展
-    $tags = C('extends.' . $name);
-    if (!empty($tags)) {
-        foreach ($tags as $key => $call) {
-            B($call, $params);
-        }
-    }
+    $extends = C('extends.' . $tag);
     // 应用标签扩展
-    $tags = C('tags.' . $name);
+    $tags = C('tags.' . $tag);
     if (!empty($tags)) {
-        foreach ($tags as $key => $call) {
-            B($call, $params);
+        if(empty($tags['_overlay']) && !empty($extends)) { // 合并扩展
+            $tags = array_unique(array_merge($extends,$tags));
+            $overlay = true;
+        }elseif(isset($tags['_overlay'])){ // 通过设置 '_overlay'=>1 覆盖系统标签
+            unset($tags['_overlay']);
         }
+    }elseif(!empty($extends)) {
+        $tags = $extends;
+    }
+    // 执行扩展
+    foreach ($tags as $name) {
+        B($name, $params);
     }
 }
 
