@@ -124,7 +124,8 @@ class View extends Think{
         ob_start();
         ob_implicit_flush(0);
         // 视图解析标签
-        tag('view_parse',array('var'=>$this->tVar,'file'=>$templateFile));
+        $params = array('var'=>$this->tVar,'file'=>$templateFile);
+        tag('view_parse',$params);
         // 获取并清空缓存
         $content = ob_get_clean();
         // 视图结束标签
