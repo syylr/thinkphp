@@ -23,7 +23,12 @@ return array(
     'app_end'=>array(),
     'action_begin'=>array(),
     'action_end'=>array(),
-    'view_begin'=>array(),
+    'view_begin'=>array(
+        'LocationTemplate', // 自动定位模板文件
+    ),
+    'view_parse'=>array(
+        'ParseTemplate', // 模板解析 支持PHP、内置模板引擎和第三方模板引擎
+    ),
     'view_end'=>array('ContentReplace', // 模板输出替换
         //'WriteHTMLCache', // 静态缓存写入
         'ShowRuntime', // 运行时间显示
