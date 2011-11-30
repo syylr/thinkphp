@@ -599,9 +599,11 @@ function tag($tag, &$params=NULL) {
     }elseif(!empty($extends)) {
         $tags = $extends;
     }
-    // 执行扩展
-    foreach ($tags as $name) {
-        B($name, $params);
+    if($tags) {
+        // 执行扩展
+        foreach ($tags as $name) {
+            B($name, $params);
+        }
     }
 }
 
