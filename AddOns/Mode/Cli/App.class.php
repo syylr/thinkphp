@@ -76,7 +76,7 @@ class App
      */
     static private function build() {
         // 加载惯例配置文件
-        C(include THINK_PATH.'Common/convention.php');
+        C(include THINK_PATH.'/Common/convention.php');
         // 加载项目配置文件
         if(is_file(CONFIG_PATH.'config.php')) {
             C(include CONFIG_PATH.'config.php');
@@ -85,11 +85,11 @@ class App
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
-            if(!APP_DEBUG)  $common   .= compile(COMMON_PATH.'common.php');
+            if(!C('APP_DEBUG'))  $common   .= compile(COMMON_PATH.'common.php');
         }
-        if(APP_DEBUG) {
+        if(C('APP_DEBUG')) {
             // 调试模式可以加载调试配置文件
-            C(include THINK_PATH.'Common/debug.php');
+            C(include THINK_PATH.'/Common/debug.php');
             if(is_file(CONFIG_PATH.'debug.php')) {
                 // 允许项目增加调试模式配置定义
                 C(include CONFIG_PATH.'debug.php');

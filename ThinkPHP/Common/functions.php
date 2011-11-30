@@ -1,4 +1,5 @@
 <?php
+
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK IT ]
 // +----------------------------------------------------------------------
@@ -153,7 +154,7 @@ function halt($error) {
     if (IS_CLI)
         exit($error);
     $e = array();
-    if (APP_DEBUG) {
+    if (C('APP_DEBUG')) {
         //调试模式下输出错误信息
         if (!is_array($error)) {
             $trace = debug_backtrace();
@@ -293,6 +294,39 @@ function get_instance_of($name, $method='', $args=array()) {
     return $_instance[$identify];
 }
 
+/**
+ +----------------------------------------------------------
+ * 系统自动加载ThinkPHP基类库和当前项目的model和Action对象
+ * 并且支持配置自动加载路径
+ +----------------------------------------------------------
+ * @param string $name 对象类名
+ +----------------------------------------------------------
+ * @return void
+ +----------------------------------------------------------
+ */
+function __autoload($name) {
+    // 检查是否存在别名定义
+    if(alias_import($name)) return ;
+    // 自动加载当前项目的Actioon类和Model类
+    if(substr($name,-5)=="Model") {
+        require_cache(LIB_PATH.'Model/'.$name.'.class.php');
+    }elseif(substr($name,-6)=="Action"){
+        require_cache(LIB_PATH.'Action/'.$name.'.class.php');
+    }else {
+        // 根据自动加载路径设置进行尝试搜索
+        if(C('APP_AUTOLOAD_PATH')) {
+            $paths  =   explode(',',C('APP_AUTOLOAD_PATH'));
+            foreach ($paths as $path){
+                if(import($path.$name)) {
+                    // 如果加载类成功则返回
+                    return ;
+                }
+            }
+        }
+    }
+    return ;
+}
+
 // 优化的require_once
 function require_cache($filename) {
     static $_importFiles = array();
@@ -353,11 +387,11 @@ function import($class, $baseUrl = '', $ext='.class.php') {
         } elseif (in_array(strtolower($class_strut[0]), array('think', 'org', 'com'))) {
             //加载ThinkPHP基类库或者公共类库
             // think 官方基类库 org 第三方公共类库 com 企业公共类库
-            $baseUrl = THINK_PATH . 'Lib/';
+            $baseUrl = THINK_PATH . '/Lib/';
         } else {
             // 加载其他项目应用类库
             $class = substr_replace($class, '', 0, strlen($class_strut[0]) + 1);
-            $baseUrl = APP_PATH . '../' . $class_strut[0] . '/' . LIB_DIR . '/';
+            $baseUrl = APP_PATH . '/../' . $class_strut[0] . '/' . LIB_DIR . '/';
         }
     }
     if (substr($baseUrl, -1) != "/")
@@ -391,11 +425,11 @@ function load($name, $baseUrl='', $ext='.php') {
     if (empty($baseUrl)) {
         if (0 === strpos($name, '@/')) {
             //加载当前项目函数库
-            $baseUrl = APP_PATH . 'Common/';
+            $baseUrl = APP_PATH . '/Common/';
             $name = substr($name, 2);
         } else {
             //加载ThinkPHP 系统函数库
-            $baseUrl = EXTEND_PATH . 'Function/';
+            $baseUrl = THINK_PATH . '/Common/';
         }
     }
     if (substr($baseUrl, -1) != "/")
@@ -473,16 +507,15 @@ function D($name='', $app='') {
  * M函数用于实例化一个没有模型文件的Model
   +----------------------------------------------------------
  * @param string name Model名称
- * @param string tablePrefix 表前缀
  * @param string class 要实例化的模型类名
   +----------------------------------------------------------
  * @return Model
   +----------------------------------------------------------
  */
-function M($name='', $tablePrefix='',$class='Model') {
+function M($name='', $class='Model') {
     static $_model = array();
     if (!isset($_model[$name . '_' . $class]))
-        $_model[$name . '_' . $class] = new $class($name,$tablePrefix);
+        $_model[$name . '_' . $class] = new $class($name);
     return $_model[$name . '_' . $class];
 }
 
@@ -583,25 +616,13 @@ function C($name=null, $value=null) {
     return null; // 避免非法参数
 }
 
-// 处理标签扩展
-function tag($tag, &$params=NULL) {
-    // 系统标签扩展
-    $extends = C('extends.' . $tag);
-    // 应用标签扩展
-    $tags = C('tags.' . $tag);
+// 处理标签
+function tag($name, $params=array()) {
+    $tags = C('TAGS.' . $name);
     if (!empty($tags)) {
-        if(empty($tags['_overlay']) && !empty($extends)) { // 合并扩展
-            $tags = array_unique(array_merge($extends,$tags));
-            $overlay = true;
-        }elseif(isset($tags['_overlay'])){ // 通过设置 '_overlay'=>1 覆盖系统标签
-            unset($tags['_overlay']);
+        foreach ($tags as $key => $call) {
+            $result = B($call, $params);
         }
-    }elseif(!empty($extends)) {
-        $tags = $extends;
-    }
-    // 执行扩展
-    foreach ($tags as $name) {
-        B($name, $params);
     }
 }
 
@@ -613,11 +634,12 @@ function filter($name, &$content) {
     $content = $filter->run($content);
 }
 
-// 执行行为 系统行为优先
-function B($name, &$params=NULL) {
-    $class = $name.'Behavior';
+// 执行行为
+function B($name, $params=array()) {
+    $class = $name . 'Behavior';
+    require_cache(LIB_PATH . 'Behavior/' . $class . '.class.php');
     $behavior = new $class();
-    $behavior->run($params);
+    return $behavior->run($params);
 }
 
 // 渲染输出Widget
@@ -903,24 +925,5 @@ function cookie($name, $value='', $option=null) {
             $_COOKIE[$name] = $value;
         }
     }
-}
-
-// 获取客户端IP地址
-function get_client_ip() {
-    static $ip = NULL;
-    if ($ip !== NULL) return $ip;
-    if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        $pos =  array_search('unknown',$arr);
-        if(false !== $pos) unset($arr[$pos]);
-        $ip   =  trim($arr[0]);
-    }elseif (isset($_SERVER['HTTP_CLIENT_IP'])) {
-        $ip = $_SERVER['HTTP_CLIENT_IP'];
-    }elseif (isset($_SERVER['REMOTE_ADDR'])) {
-        $ip = $_SERVER['REMOTE_ADDR'];
-    }
-    // IP地址合法验证
-    $ip = (false !== ip2long($ip)) ? $ip : '0.0.0.0';
-    return $ip;
 }
 ?>

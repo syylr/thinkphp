@@ -73,30 +73,23 @@ class Model extends Think
      * 取得DB类的实例对象 字段检查
      +----------------------------------------------------------
      * @param string $name 模型名称
-     * @param string $tablePrefix 表前缀
      * @param mixed $connection 数据库连接信息
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($name='',$tablePrefix='',$connection='') {
+    public function __construct($name='',$connection='') {
         // 模型初始化
         $this->_initialize();
         // 获取模型名称
         if(!empty($name)) {
-            if(strpos($name,'.')) { // 支持 数据库名.模型名的 定义
-                list($this->dbName,$this->name) = explode('.',$name);
-            }else{
-                $this->name   =  $name;
-            }
+            $this->name   =  $name;
         }elseif(empty($this->name)){
             $this->name =   $this->getModelName();
         }
-        if(!empty($tablePrefix)) {
-            $this->tablePrefix =  $tablePrefix;
-        }
         // 设置表前缀
         $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
+        $this->tableSuffix = $this->tableSuffix?$this->tableSuffix:C('DB_SUFFIX');
         // 数据库初始化操作
         // 获取数据库操作对象
         // 当前模型有独立的数据库连接信息
@@ -120,8 +113,7 @@ class Model extends Think
         if(empty($this->fields)) {
             // 如果数据表字段没有定义则自动获取
             if(C('DB_FIELDS_CACHE')) {
-                $db   =  $this->dbName?$this->dbName:C('DB_NAME');
-                $this->fields = F('_fields/'.$db.'.'.$this->name);
+                $this->fields = F('_fields/'.$this->name);
                 if(!$this->fields)   $this->flush();
             }else{
                 // 每次都会读取数据表信息
@@ -161,8 +153,7 @@ class Model extends Think
         // 2008-3-7 增加缓存开关控制
         if(C('DB_FIELDS_CACHE')){
             // 永久缓存数据表信息
-            $db   =  $this->dbName?$this->dbName:C('DB_NAME');
-            F('_fields/'.$db.'.'.$this->name,$this->fields);
+            F('_fields/'.$this->name,$this->fields);
         }
     }
 
@@ -280,11 +271,6 @@ class Model extends Think
             $field   =   parse_name(substr($method,5));
             $where[$field] =  $args[0];
             return $this->where($where)->find();
-        }elseif(strtolower(substr($method,0,10))=='getfieldby') {
-            // 根据某个字段获取记录的某个值
-            $name   =   parse_name(substr($method,10));
-            $where[$name] =$args[0];
-            return $this->where($where)->getField($args[1]);
         }else{
             throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             return;
@@ -542,11 +528,6 @@ class Model extends Think
             }
             $options =  array();
             $options['where'] =  $where;
-        }elseif(false === $options){ // 用于子查询 不查询只返回SQL
-            $options =  array();
-            // 分析表达式
-            $options =  $this->_parseOptions($options);
-            return  '( '.$this->db->buildSelectSql($options).' )';
         }
         // 分析表达式
         $options =  $this->_parseOptions($options);
@@ -563,23 +544,10 @@ class Model extends Think
     // 查询成功后的回调方法
     protected function _after_select(&$resultSet,$options) {}
 
-    /**
-     +----------------------------------------------------------
-     * 生成查询SQL 可用于子查询
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $options 表达式参数
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function buildSql($options=array()) {
-        // 分析表达式
-        $options =  $this->_parseOptions($options);
-        return  '( '.$this->db->buildSelectSql($options).' )';
+    // findAll方法作为兼容考虑 作为select方法的别名
+    public function findAll($options=array()) {
+        return $this->select($options);
     }
-
     /**
      +----------------------------------------------------------
      * 分析表达式
@@ -878,7 +846,6 @@ class Model extends Think
      }
 
     // 自动表单令牌验证
-    // TODO  ajax无刷新多次提交暂不能满足
     public function autoCheckToken($data) {
         if(C('TOKEN_ON')){
             $name   = C('TOKEN_NAME');
@@ -1121,23 +1088,6 @@ class Model extends Think
                 return $value>=$min && $value<=$max;
             case 'equal': // 验证是否等于某个值
                 return $value == $rule;
-            case 'length': // 验证长度
-                $length  =  mb_strlen($value,'utf-8'); // 当前数据长度
-                if(strpos($rule,',')) { // 长度区间
-                    list($min,$max)   =  explode(',',$rule);
-                    return $length >= $min && $length <= $max;
-                }else{// 指定长度
-                    return $length == $rule;
-                }
-            case 'expire':
-                list($start,$end)   =  explode(',',$rule);
-                if(!is_numeric($start)) $start   =  strtotime($start);
-                if(!is_numeric($end)) $end   =  strtotime($end);
-                return $_SERVER['REQUEST_TIME'] >= $start && $_SERVER['REQUEST_TIME'] <= $end;
-            case 'ip_allow': // IP 操作许可验证
-                return in_array(get_client_ip(),explode(',',$rule));
-            case 'ip_deny': // IP 操作禁止验证
-                return !in_array(get_client_ip(),explode(',',$rule));
             case 'regex':
             default:    // 默认使用正则验证 可以使用验证类中定义的验证名称
                 // 检查附加规则
@@ -1221,11 +1171,8 @@ class Model extends Think
         }
         // 切换数据库连接
         $this->db   =    $_db[$linkNum];
-        $this->_after_db();
         return $this;
     }
-    // 数据库切换后回调方法
-    protected function _after_db() {}
 
     /**
      +----------------------------------------------------------
@@ -1259,6 +1206,7 @@ class Model extends Think
             }else{
                 $tableName .= parse_name($this->name);
             }
+            $tableName .= !empty($this->tableSuffix) ? $this->tableSuffix : '';
             $this->trueTableName    =   strtolower($tableName);
         }
         return (!empty($this->dbName)?$this->dbName.'.':'').$this->trueTableName;
@@ -1356,10 +1304,6 @@ class Model extends Think
     public function getLastSql() {
         return $this->db->getLastSql();
     }
-    // 鉴于getLastSql比较常用 增加_sql 别名
-    public function _sql(){
-        return $this->getLastSql();
-    }
 
     /**
      +----------------------------------------------------------
@@ -1431,56 +1375,6 @@ class Model extends Think
 
     /**
      +----------------------------------------------------------
-     * 查询SQL组装 union
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param array $union
-     +----------------------------------------------------------
-     * @return Model
-     +----------------------------------------------------------
-     */
-    public function union($union) {
-        if(empty($union)) return $this;
-        // 转换union表达式
-        if($union instanceof Model) {
-            $options   =  $union->getProperty('options');
-            if(!isset($options['table'])){
-                // 自动获取表名
-                $options['table'] =$union->getTableName();
-            }
-            if(!isset($options['field'])) {
-                $options['field'] =$this->options['field'];
-            }
-        }elseif(is_object($union)) {
-            $options   =  get_object_vars($union);
-        }elseif(!is_array($union)){
-            throw_exception(L('_DATA_TYPE_INVALID_'));
-        }
-        $this->options['union'][]  =   $options;
-        return $this;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 查询缓存
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $key
-     * @param integer $expire
-     * @param string $type
-     +----------------------------------------------------------
-     * @return Model
-     +----------------------------------------------------------
-     */
-    public function cache($key=true,$expire='',$type=''){
-        $this->options['cache']  =  array('key'=>$key,'expire'=>$expire,'type'=>$type);
-        return $this;
-    }
-
-    /**
-     +----------------------------------------------------------
      * 设置模型的属性值
      +----------------------------------------------------------
      * @access public
@@ -1497,22 +1391,5 @@ class Model extends Think
         return $this;
     }
 
-    /**
-     +----------------------------------------------------------
-     * 获取模型的属性值
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $name 名称
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    public function getProperty($name){
-        if(property_exists($this,$name))
-            return $this->$name;
-        else
-            return NULL;
-    }
 };
 ?>

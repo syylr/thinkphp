@@ -56,7 +56,7 @@ class Db extends Think
     // 数据库表达式
     protected $comparison      = array('eq'=>'=','neq'=>'!=','gt'=>'>','egt'=>'>=','lt'=>'<','elt'=>'<=','notlike'=>'NOT LIKE','like'=>'LIKE');
     // 查询表达式
-    protected $selectSql  =     'SELECT%DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT% %UNION%';
+    protected $selectSql  =     'SELECT%DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%%LIMIT%';
 
     /**
      +----------------------------------------------------------
@@ -119,7 +119,7 @@ class Db extends Think
                 $db->dbType = strtoupper($this->dbType);
             else
                 $db->dbType = $this->_getDsnType($db_config['dsn']);
-            if(APP_DEBUG)  $db->debug    = true;
+            if(C('APP_DEBUG'))  $db->debug    = true;
         }else {
             // 类没有定义
             throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
@@ -229,11 +229,11 @@ class Db extends Think
         if(C('DB_RW_SEPARATE')){
             // 主从式采用读写分离
             if($master)
-                // 主服务器写入
-                $r  =   floor(mt_rand(0,C('DB_MASTER_NUM')-1));
+                // 默认主服务器是连接第一个数据库配置
+                $r  =   0;
             else
                 // 读操作连接从服务器
-                $r = floor(mt_rand(C('DB_MASTER_NUM'),count($_config['hostname'])-1));   // 每次随机连接的数据库
+                $r = floor(mt_rand(1,count($_config['hostname'])-1));   // 每次随机连接的数据库
         }else{
             // 读写操作不区分服务器
             $r = floor(mt_rand(0,count($_config['hostname'])-1));   // 每次随机连接的数据库
@@ -476,27 +476,11 @@ class Db extends Think
                     $whereStr   .= $this->parseThinkWhere($key,$val);
                 }else{
                     // 查询字段的安全过滤
-                    if(!preg_match('/^[A-Z_\|\&\-.a-z0-9]+$/',trim($key))){
+                    if(!preg_match('/^[A-Z_\-.a-z0-9]+$/',trim($key))){
                         throw_exception(L('_EXPRESS_ERROR_').':'.$key);
                     }
                     $key = trim($key);
-                    if(strpos($key,'|')) { // 支持 name|title|nickname 方式定义查询字段
-                        $array   =  explode('|',$key);
-                        $str   = array();
-                        foreach ($array as $k){
-                            $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$val).')';
-                        }
-                        $whereStr .= implode(' OR ',$str);
-                    }elseif(strpos($key,'&')){
-                        $array   =  explode('&',$key);
-                        $str   = array();
-                        foreach ($array as $k){
-                            $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$val).')';
-                        }
-                        $whereStr .= implode(' AND ',$str);
-                    }else{
-                        $whereStr   .= $this->parseWhereItem($this->parseKey($key),$val);
-                    }
+                    $whereStr   .= $this->parseWhereItem($this->parseKey($key),$val);
                 }
                 $whereStr .= ' )'.$operate;
             }
@@ -720,25 +704,6 @@ class Db extends Think
 
     /**
      +----------------------------------------------------------
-     * union分析
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param mixed $union
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    protected function parseUnion($union) {
-        if(empty($union)) return '';
-        foreach ($union as $u){
-            $sql[] = 'UNION '.$this->buildSelectSql($u);
-        }
-        return implode(' ',$sql);
-    }
-
-    /**
-     +----------------------------------------------------------
      * 插入记录
      +----------------------------------------------------------
      * @access public
@@ -842,18 +807,7 @@ class Db extends Think
      */
     public function select($options=array()) {
         $sql   = $this->buildSelectSql($options);
-        $cache  =  isset($options['cache'])?$options['cache']:false;
-        if($cache) { // 查询缓存检测
-            $key =  is_string($cache['key'])?$cache['key']:md5($sql);
-            $value   =  S($key,'','',$cache['type']);
-            if(false !== $value) {
-                return $value;
-            }
-        }
         $result   = $this->query($sql);
-        if($cache && false !== $result ) { // 查询缓存写入
-            S($key,$result,$cache['expire'],$cache['type']);
-        }
         return $result;
     }
 
@@ -881,15 +835,8 @@ class Db extends Think
             $offset  =  $listRows*((int)$page-1);
             $options['limit'] =  $offset.','.$listRows;
         }
-        if(C('DB_SQL_BUILD_CACHE')) { // SQL创建缓存
-            $key =  md5(serialize($options));
-            $value   =  S($key);
-            if(false !== $value) {
-                return $value;
-            }
-        }
         $sql   = str_replace(
-            array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%','%UNION%'),
+            array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%'),
             array(
                 $this->parseTable($options['table']),
                 $this->parseDistinct(isset($options['distinct'])?$options['distinct']:false),
@@ -899,13 +846,9 @@ class Db extends Think
                 $this->parseGroup(isset($options['group'])?$options['group']:''),
                 $this->parseHaving(isset($options['having'])?$options['having']:''),
                 $this->parseOrder(isset($options['order'])?$options['order']:''),
-                $this->parseLimit(isset($options['limit'])?$options['limit']:''),
-                $this->parseUnion(isset($options['union'])?$options['union']:'')
+                $this->parseLimit(isset($options['limit'])?$options['limit']:'')
             ),$this->selectSql);
         $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
-        if(isset($key)) { // 写入SQL创建缓存
-            S($key,$sql,'','',array('length'=>C('DB_SQL_BUILD_LENGTH'),'queue'=>C('DB_SQL_BUILD_QUEUE')));
-        }
         return $sql;
     }
 

@@ -12,9 +12,9 @@
 
 // 导入别名定义
 alias_import(array(
-    'Model'         =>   MODE_PATH.'Thin/Model.class.php',
-    'Db'                  =>    MODE_PATH.'Thin/Db.class.php',
-    'Debug'              =>    THINK_PATH.'Lib/Think/Util/Debug.class.php',
+    'Model'         =>   THINK_PATH.'/Mode/Thin/Model.class.php',
+    'Db'                  =>    THINK_PATH.'/Mode/Thin/Db.class.php',
+    'Debug'              =>    THINK_PATH.'/Lib/Think/Util/Debug.class.php',
     )
 );
 ?>

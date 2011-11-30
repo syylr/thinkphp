@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: ZhangXuehun <zhangxuehun@sohu.com>
 // +----------------------------------------------------------------------
-// $Id: DbOracle.class.php,v 1.1 2008/12/23 10:06:30 wangyufeng Exp $
+// $Id$
 
 /**
 +------------------------------------------------------------------------------
@@ -18,7 +18,7 @@
 * @package  Think
 * @subpackage  Db
 * @author    ZhangXuehun <zhangxuehun@sohu.com>
-* @version   $Id: DbOracle.class.php,v 1.1 2008/12/23 10:06:30 wangyufeng Exp $
+* @version   $Id$
 +------------------------------------------------------------------------------
 */
 class DbOracle extends Db{

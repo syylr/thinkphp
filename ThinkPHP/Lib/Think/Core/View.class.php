@@ -24,6 +24,7 @@
  */
 class View extends Think{
     protected $tVar        =  array(); // 模板输出变量
+    protected $trace       = array();  // 页面trace变量
     protected $templateFile  = '';      // 模板文件名
 
     /**
@@ -45,6 +46,23 @@ class View extends Think{
         }else {
             $this->tVar[$name] = $value;
         }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * Trace变量赋值
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $name
+     * @param mixed $value
+     +----------------------------------------------------------
+     */
+    public function trace($title,$value='') {
+        if(is_array($title))
+            $this->trace   =  array_merge($this->trace,$title);
+        else
+            $this->trace[$title] = $value;
     }
 
     /**
@@ -156,8 +174,6 @@ class View extends Think{
         G('viewStartTime');
         // 使用null参数作为模版名直接返回不做任何输出
         if(null===$templateFile) return;
-        // 视图开始标签
-        tag('view_begin');
         // 网页字符编码
         if(empty($charset))  $charset = C('DEFAULT_CHARSET');
         if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
@@ -185,17 +201,17 @@ class View extends Think{
             // 模板文件需要重新编译 支持第三方模板引擎
             // 调用模板引擎解析和输出
             $className   = 'Template'.ucwords($engine);
-            require_cache(THINK_PATH.'Lib/Think/Util/Template/'.$className.'.class.php');
+            require_cache(THINK_PATH.'/Lib/Think/Util/Template/'.$className.'.class.php');
             $tpl   =  new $className;
             $tpl->fetch($templateFile,$this->tVar,$charset);
         }
         $this->templateFile   =  $templateFile;
         // 获取并清空缓存
         $content = ob_get_clean();
+        // 模板内容替换
+        $content = $this->templateContentReplace($content);
         // 布局模板解析
         $content = $this->layout($content,$charset,$contentType);
-        // 视图结束标签
-        tag('view_end',$content);
         // 输出模板文件
         return $this->output($content,$display);
     }
@@ -270,12 +286,99 @@ class View extends Think{
      +----------------------------------------------------------
      */
     protected function output($content,$display) {
+        if(C('HTML_CACHE_ON'))  HtmlCache::writeHTMLCache($content);
         if($display) {
+            if(C('SHOW_RUN_TIME')){
+                if(false !== strpos($content,'{__NORUNTIME__}')) {
+                    $content   =  str_replace('{__NORUNTIME__}','',$content);
+                }else{
+                    $runtime = $this->showTime();
+                     if(strpos($content,'{__RUNTIME__}'))
+                         $content   =  str_replace('{__RUNTIME__}',$runtime,$content);
+                     else
+                         $content   .=  $runtime;
+                }
+            }else{
+                $content   =  str_replace(array('{__NORUNTIME__}','{__RUNTIME__}'),'',$content);
+            }
             echo $content;
+            if(C('SHOW_PAGE_TRACE'))   $this->showTrace();
             return null;
         }else {
             return $content;
         }
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 模板内容替换
+     +----------------------------------------------------------
+     * @access protected
+     +----------------------------------------------------------
+     * @param string $content 模板内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function templateContentReplace($content) {
+        // 系统默认的特殊变量替换
+        $replace =  array(
+            '../Public'     => APP_PUBLIC_PATH,// 项目公共目录
+            '__PUBLIC__'    => WEB_PUBLIC_PATH,// 站点公共目录
+            '__TMPL__'      => APP_TMPL_PATH,  // 项目模板目录
+            '__ROOT__'      => __ROOT__,       // 当前网站地址
+            '__APP__'       => __APP__,        // 当前项目地址
+            '__GROUP__'   =>   defined('GROUP_NAME')?__GROUP__:__APP__,
+            '__UPLOAD__'    => __ROOT__.'/Uploads',
+            '__ACTION__'    => __ACTION__,     // 当前操作地址
+            '__SELF__'      => __SELF__,       // 当前页面地址
+            '__URL__'       => __URL__,
+            '__INFO__'      => __INFO__,
+        );
+        if(C('TOKEN_ON')) {
+            if(strpos($content,'{__TOKEN__}')) {
+                // 指定表单令牌隐藏域位置
+                $replace['{__TOKEN__}'] =  $this->buildFormToken();
+            }elseif(strpos($content,'{__NOTOKEN__}')){
+                // 标记为不需要令牌验证
+                $replace['{__NOTOKEN__}'] =  $this->buildFormToken();
+            }elseif(preg_match('/<\/form(\s*)>/is',$content,$match)) {
+                // 智能生成表单令牌隐藏域
+                $replace[$match[0]] = $this->buildFormToken().$match[0];
+            }
+        }
+        // 允许用户自定义模板的字符串替换
+        if(is_array(C('TMPL_PARSE_STRING')) )
+            $replace =  array_merge($replace,array_change_key_case(C('TMPL_PARSE_STRING'),CASE_UPPER));
+        $content = str_replace(array_keys($replace),array_values($replace),$content);
+        return $content;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 创建表单令牌隐藏域
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    private function buildFormToken() {
+        $tokenName   = C('TOKEN_NAME');
+        $tokenType = C('TOKEN_TYPE');
+        if(!isset($_SESSION[$tokenName])) {
+            $_SESSION[$tokenName]  = array();
+        }
+        // 标识当前页面唯一性
+        $tokenKey  =  md5(__SELF__);
+        if(isset($_SESSION[$tokenName][$tokenKey])) {// 相同页面不重复生成session
+            $tokenValue = $_SESSION[$tokenName][$tokenKey];
+        }else{
+            $tokenValue = $tokenType(microtime(TRUE));
+            $_SESSION[$tokenName][$tokenKey]   =  $tokenValue;
+        }
+        $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenKey.'_'.$tokenValue.'" />';
+        return $token;
     }
 
     /**
@@ -308,5 +411,66 @@ class View extends Think{
         return $templateFile;
     }
 
-}//
+    /**
+     +----------------------------------------------------------
+     * 显示运行时间、数据库操作、缓存次数、内存使用信息
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    private function showTime() {
+        // 显示运行时间
+        G('viewEndTime');
+        $showTime   =   'Process: '.G('beginTime','viewEndTime').'s ';
+        if(C('SHOW_ADV_TIME')) {
+            // 显示详细运行时间
+            $showTime .= '( Load:'.G('beginTime','loadTime').'s Init:'.G('loadTime','initTime').'s Exec:'.G('initTime','viewStartTime').'s Template:'.G('viewStartTime','viewEndTime').'s )';
+        }
+        if(C('SHOW_DB_TIMES') && class_exists('Db',false) ) {
+            // 显示数据库操作次数
+            $showTime .= ' | DB :'.N('db_query').' queries '.N('db_write').' writes ';
+        }
+        if(C('SHOW_CACHE_TIMES') && class_exists('Cache',false)) {
+            // 显示缓存读写次数
+            $showTime .= ' | Cache :'.N('cache_read').' gets '.N('cache_write').' writes ';
+        }
+        if(MEMORY_LIMIT_ON && C('SHOW_USE_MEM')) {
+            // 显示内存开销
+            $showTime .= ' | UseMem:'. number_format((memory_get_usage() - $GLOBALS['_startUseMems'])/1024).' kb';
+        }
+        return $showTime;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 显示页面Trace信息
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     */
+    private function showTrace() {
+        // 显示页面Trace信息 读取Trace定义文件
+        // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
+        $traceFile  =   CONFIG_PATH.'trace.php';
+        $_trace =   is_file($traceFile)? include $traceFile : array();
+         // 系统默认显示信息
+        $this->trace('当前页面',    __SELF__);
+        $this->trace('模板缓存',    C('CACHE_PATH').md5($this->templateFile).C('TMPL_CACHFILE_SUFFIX'));
+        $this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
+        $this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
+        $this->trace('请求时间',    date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
+        $this->trace('用户代理',    $_SERVER['HTTP_USER_AGENT']);
+        $this->trace('会话ID'   ,   session_id());
+        $log    =   Log::$log;
+        $this->trace('日志记录',count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录');
+        $files =  get_included_files();
+        $this->trace('加载文件',    count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2)));
+        $_trace =   array_merge($_trace,$this->trace);
+        // 调用Trace页面模板
+        include C('TMPL_TRACE_FILE');
+    }
+
+}
 ?>

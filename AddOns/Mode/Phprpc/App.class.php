@@ -57,7 +57,7 @@ class App
 			$methods = get_class_methods($temp);
 			$server->add($methods,new $temp);
 		}
-        if(APP_DEBUG) {
+        if(C('APP_DEBUG')) {
             $server->setDebugMode(true);
         }
         $server->setEnableGZIP(true);
@@ -90,9 +90,9 @@ class App
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
             include COMMON_PATH.'common.php';
-            if(!APP_DEBUG)  $common   .= compile(COMMON_PATH.'common.php');
+            if(!C('APP_DEBUG'))  $common   .= compile(COMMON_PATH.'common.php');
         }
-        if(APP_DEBUG) {
+        if(C('APP_DEBUG')) {
             // 调试模式可以加载调试配置文件
             C(include THINK_PATH.'/Common/debug.php');
             if(is_file(CONFIG_PATH.'debug.php')) {

@@ -12,10 +12,10 @@
 
 // 导入别名定义
 alias_import(array(
-    'Model'         =>   MODE_PATH.'Amf/Model.class.php',
-    'Db'                  =>    MODE_PATH.'Amf/Db.class.php',
-    'Debug'              =>    THINK_PATH.'Lib/Think/Util/Debug.class.php',
-    'Session'             =>   THINK_PATH.'Lib/Think/Util/Session.class.php',
+    'Model'         =>   THINK_PATH.'/Mode/Amf/Model.class.php',
+    'Db'                  =>    THINK_PATH.'/Mode/Amf/Db.class.php',
+    'Debug'              =>    THINK_PATH.'/Lib/Think/Util/Debug.class.php',
+    'Session'             =>   THINK_PATH.'/Lib/Think/Util/Session.class.php',
     )
 );
 ?>

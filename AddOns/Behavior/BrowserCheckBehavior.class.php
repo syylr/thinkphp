@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-class BrowserCheckBehavior {
+class BrowserCheckBehavior extends Behavior {
     public function run() {
         if($_SERVER['REQUEST_METHOD'] == 'GET') {
             C('LIMIT_REFLESH_TIMES',10);

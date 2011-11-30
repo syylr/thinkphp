@@ -27,14 +27,14 @@ if (!defined('THINK_PATH')) exit();
 return  array(
 
     /* 项目设定 */
-    'APP_SUB_DOMAIN_DEPLOY' => false,   // 是否开启子域名部署
-    'APP_SUB_DOMAIN_RULES'=>array(), // 子域名部署规则
-    'APP_SUB_DOMAIN_DENY'=>array(), //  子域名禁用列表
+    'APP_DEBUG'   => false,   // 是否开启调试模式
+    'APP_SUB_DOMAIN_DEPLOY' => false,   // 是否开启子域名
+    'APP_PLUGIN_ON'         => false,   // 是否开启插件机制
     'APP_FILE_CASE'         => false,   // 是否检查文件的大小写 对Windows平台有效
     'APP_GROUP_DEPR'        => '.',     // 模块分组之间的分割符
     'APP_GROUP_LIST'        => '',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
     'APP_AUTOLOAD_PATH'     => 'Think.Util.',// __autoLoad 机制额外检测路径设置,注意搜索顺序
-    'APP_CONFIG_LIST'    =>   'routes,tags,htmls', // 项目动态配置文件列表
+    'APP_CONFIG_LIST'    =>   'routes,tags,htmls,modules,actions', // 项目动态配置文件列表
 
     /* Cookie设置 */
     'COOKIE_EXPIRE'         => 3600,    // Coodie有效期
@@ -52,7 +52,6 @@ return  array(
     'DEFAULT_AJAX_RETURN'   => 'JSON',  // 默认AJAX 数据返回格式,可选JSON XML ...
     'DEFAULT_THEME'    => 'default',	// 默认模板主题名称
     'DEFAULT_LANG'          => 'zh-cn', // 默认语言
-    'DEFAULT_FILTER' =>'htmlspecialchars', // 默认参数过滤方法 用于 $this->get('变量名');$this->post('变量名')...
 
     /* 数据库设置 */
     'DB_TYPE'               => 'mysql',     // 数据库类型
@@ -68,10 +67,6 @@ return  array(
     'DB_CHARSET'            => 'utf8',      // 数据库编码默认采用utf8
     'DB_DEPLOY_TYPE'        => 0, // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
     'DB_RW_SEPARATE'        => false,       // 数据库读写是否分离 主从式有效
-    'DB_MASTER_NUM'       =>  1, // 读写分离后 主服务器数量
-    'DB_SQL_BUILD_CACHE'      =>   false, // 数据库查询的SQL创建缓存
-    'DB_SQL_BUILD_QUEUE'       =>   'file',   // SQL缓存队列的缓存方式 支持 file xcache和apc
-    'DB_SQL_BUILD_LENGTH'      =>  20, // SQL缓存的队列长度
 
     /* 数据缓存设置 */
     'DATA_CACHE_TIME'		=> 0,      // 数据缓存有效期 0表示永久缓存
@@ -131,10 +126,10 @@ return  array(
     'TMPL_STRIP_SPACE'      => true,       // 是否去除模板文件里面的html空格与换行
     'TMPL_CACHE_ON'			=> true,        // 是否开启模板编译缓存,设为false则每次都会重新编译
     'TMPL_CACHE_TIME'		=>	-1,         // 模板缓存有效期 -1 为永久，(以数字为值，单位:秒)
-    'TMPL_ACTION_ERROR'     => THINK_PATH.'Tpl/dispatch_jump.html', // 默认错误跳转对应的模板文件
-    'TMPL_ACTION_SUCCESS'   => THINK_PATH.'Tpl/dispatch_jump.html', // 默认成功跳转对应的模板文件
-    'TMPL_TRACE_FILE'       => THINK_PATH.'Tpl/PageTrace.tpl.php',     // 页面Trace的模板文件
-    'TMPL_EXCEPTION_FILE'   => THINK_PATH.'Tpl/ThinkException.tpl.php',// 异常页面的模板文件
+    'TMPL_ACTION_ERROR'     => THINK_PATH.'/Tpl/dispatch_jump.html', // 默认错误跳转对应的模板文件
+    'TMPL_ACTION_SUCCESS'   => THINK_PATH.'/Tpl/dispatch_jump.html', // 默认成功跳转对应的模板文件
+    'TMPL_TRACE_FILE'       => THINK_PATH.'/Tpl/PageTrace.tpl.php',     // 页面Trace的模板文件
+    'TMPL_EXCEPTION_FILE'   => THINK_PATH.'/Tpl/ThinkException.tpl.php',// 异常页面的模板文件
     'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
 
     // Think模板引擎标签库相关设定

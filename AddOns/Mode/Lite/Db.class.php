@@ -64,7 +64,7 @@ class Db extends Think
             throw_exception(L('_NOT_SUPPERT_').':mysql');
         }
         $this->config   =   $this->parseConfig($config);
-        if(APP_DEBUG) {
+        if(C('APP_DEBUG')) {
             $this->debug  =  true;
         }
     }

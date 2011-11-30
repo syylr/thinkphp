@@ -37,7 +37,6 @@ abstract class Action extends Think
      +----------------------------------------------------------
      */
     public function __construct() {
-        tag('action_begin');
         //实例化视图类
         $this->view       = Think::instance('View');
         //控制器初始化
@@ -207,15 +206,27 @@ abstract class Action extends Think
      */
     public function __call($method,$args) {
         if( 0 === strcasecmp($method,ACTION_NAME)) {
+            // 检查扩展操作方法
+            $_action = C('actions');
+            if($_action) {
+                // 'module:action'=>'callback'
+                if(isset($_action[MODULE_NAME.':'.ACTION_NAME])) {
+                    $action  =  $_action[MODULE_NAME.':'.ACTION_NAME];
+                }elseif(isset($_action[ACTION_NAME])){
+                    // 'action'=>'callback'
+                    $action  =  $_action[ACTION_NAME];
+                }
+                if(!empty($action)) {
+                    call_user_func($action);
+                    return ;
+                }
+            }
             if(method_exists($this,'_empty')) {
                 // 如果定义了_empty操作 则调用
                 $this->_empty($method,$args);
             }elseif(file_exists_case(C('TMPL_FILE_NAME'))){
                 // 检查是否存在默认模版 如果有直接输出模版
                 $this->display();
-            }elseif(function_exists('__hack_action')) {
-                // hack 方式定义扩展操作
-                __hack_action();
             }else{
                 // 抛出异常
                 throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
@@ -229,26 +240,9 @@ abstract class Action extends Think
                 case 'isdelete':
                 case 'isput':
                     return strtolower($_SERVER['REQUEST_METHOD']) == strtolower(substr($method,2));
-                // 获取变量 支持过滤和默认值 调用方式 $this->_post($key,$filter,$default);
-                case '_get':      $input =& $_GET;break;
-                case '_post':$input =& $_POST;break;
-                case '_put': parse_str(file_get_contents('php://input'), $input);break;
-                case '_request': $input =& $_REQUEST;break;
-                case '_session': $input =& $_SESSION;break;
-                case '_cookie':  $input =& $_COOKIE;break;
-                case '_server':  $input =& $_SERVER;break;
-                case '_globals':  $input =& $GLOBALS;break;
                 default:
                     throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             }
-            if(isset($input[$args[0]])) { // 取值操作
-                $data	 =	 $input[$args[0]];
-                $fun  =  $args[1]?$args[1]:C('DEFAULT_FILTER');
-                $data	 =	 $fun($data); // 参数过滤
-            }else{ // 变量默认值
-                $data	 =	 isset($args[2])?$args[2]:NULL;
-            }
-            return $data;
         }
     }
 
@@ -405,8 +399,6 @@ abstract class Action extends Think
     public function __destruct() {
         // 保存日志
         if(C('LOG_RECORD')) Log::save();
-        // 执行后续操作
-        tag('action_end');
     }
 }//类定义结束
 ?>

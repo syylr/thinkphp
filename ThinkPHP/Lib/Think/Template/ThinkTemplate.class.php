@@ -316,14 +316,7 @@ class  ThinkTemplate extends Think
         $end   = $this->config['taglib_end'];
         $className = 'TagLib'.ucwords($tagLib);
         if(!import($className)) {
-            if(is_file(EXTEND_PATH.'TagLib/'.$className.'.class.php')) {
-                // 扩展标签库优先识别
-                $file   = EXTEND_PATH.'TagLib/'.$className.'.class.php';
-            }else{
-                // 系统目录下面的标签库
-                $file   = dirname(__FILE__).'/TagLib/'.$className.'.class.php';
-            }
-            require_cache($file);
+            require_cache(dirname(__FILE__).'/TagLib/'.$className.'.class.php');
         }
         $tLib =  Think::instance($className);
         foreach ($tLib->tags as $name=>$val){

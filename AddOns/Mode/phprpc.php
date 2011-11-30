@@ -12,13 +12,13 @@
 
 // 简洁模式核心定义文件列表
 return array(
-    THINK_PATH.'Common/functions.php',   // 系统函数库
-    THINK_PATH.'Lib/Think/Core/Think.class.php',
-    THINK_PATH.'Lib/Think/Exception/ThinkException.class.php',// 异常处理
-    THINK_PATH.'Lib/Think/Core/Log.class.php',// 日志处理
-    MODE_PATH.'Phprpc/App.class.php', // 应用程序类
-    MODE_PATH.'Phprpc/Action.class.php',// 控制器类
-    THINK_PATH.'Lib/Think/Core/Model.class.php', // 模型类
-    MODE_PATH.'Phprpc/alias.php', // 加载别名
+     THINK_PATH.'/Common/functions.php',   // 系统函数库
+    THINK_PATH.'/Lib/Think/Core/Think.class.php',
+    THINK_PATH.'/Lib/Think/Exception/ThinkException.class.php',// 异常处理
+    THINK_PATH.'/Lib/Think/Core/Log.class.php',// 日志处理
+    THINK_PATH.'/Mode/Phprpc/App.class.php', // 应用程序类
+    THINK_PATH.'/Mode/Phprpc/Action.class.php',// 控制器类
+    THINK_PATH.'/Lib/Think/Core/Model.class.php', // 模型类
+    THINK_PATH.'/Mode/Phprpc/alias.php', // 加载别名
 );
 ?>
