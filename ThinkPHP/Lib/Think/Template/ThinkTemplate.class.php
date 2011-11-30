@@ -89,7 +89,7 @@ class  ThinkTemplate extends Think
     }
 
     // 加载模板
-    public function load($templateFile,$templateVar,$charset) {
+    public function load($templateFile,$templateVar) {
         $this->tVar = $templateVar;
         $templateCacheFile  =  $this->loadTemplate($templateFile);
         // 模板阵列变量分解成为独立变量
