@@ -96,11 +96,7 @@ abstract class Action extends Think
      +----------------------------------------------------------
      */
     protected function display($templateFile='',$charset='',$contentType='text/html') {
-        if(false === $templateFile) {
-            $this->showTrace();
-        }else{
-            $this->view->display($templateFile,$charset,$contentType);
-        }
+        $this->view->display($templateFile,$charset,$contentType);
     }
 
     /**
@@ -175,22 +171,6 @@ abstract class Action extends Think
      */
     public function __get($name) {
         return $this->view->get($name);
-    }
-
-    /**
-     +----------------------------------------------------------
-     * Trace变量赋值
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param mixed $name 要显示的模板变量
-     * @param mixed $value 变量的值
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    protected function trace($name,$value='') {
-        $this->view->trace($name,$value);
     }
 
     /**
@@ -389,10 +369,6 @@ abstract class Action extends Think
             // 中止执行  避免出错后继续执行
             exit ;
         }
-    }
-
-    protected function showTrace() {
-        $this->view->traceVar();
     }
 
    /**
