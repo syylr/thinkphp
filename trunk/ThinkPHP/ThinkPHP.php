@@ -35,11 +35,11 @@ if(!APP_DEBUG && is_file(RUNTIME_PATH.$runtime)) {
     // 加载运行时文件
     require THINK_PATH."Common/runtime.php";
 }
+// 记录加载文件时间
+G('loadTime');
 // 执行应用
 App::run();
 
-// 记录加载文件时间
-G('loadTime');
 // 记录和统计时间（微秒）
 function G($start,$end='',$dec=3) {
     static $_info = array();
