@@ -59,6 +59,6 @@ if(!IS_CLI) {
     define('URL_COMPAT',      3);   // 兼容模式
 }
 //  版本信息
-define('THINK_VERSION', '2.1');
+define('THINK_VERSION', '2.2');
 //[/RUNTIME]
 ?>
