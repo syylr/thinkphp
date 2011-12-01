@@ -19,6 +19,5 @@ return array(
     MODE_PATH.'Amf/App.class.php', // 应用程序类
     MODE_PATH.'Amf/Action.class.php',// 控制器类
     MODE_PATH.'Amf/alias.php', // 加载别名
-
 );
 ?>
