@@ -80,6 +80,12 @@ class App
             // 编译文件
             if(!APP_DEBUG)  $common   .= compile(COMMON_PATH.'common.php');
         }
+        // 加载应用别名定义
+        if(is_file(CONFIG_PATH.'alias.php')) {
+            $alias = include CONFIG_PATH.'alias.php';
+            alias_import($alias);
+            if(!APP_DEBUG) $common .= 'alias_import('.var_export($alias,true).');';
+        }
         // 加载动态配置文件
         $configs =  C('APP_CONFIG_LIST');
         if(is_string($configs)) $configs =  explode(',',$configs);

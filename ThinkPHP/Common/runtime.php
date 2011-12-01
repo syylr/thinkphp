@@ -49,6 +49,8 @@ function load_think_mode() {
         // 默认核心
         $list = include THINK_PATH.'Common/core.php';
     }
+    // 加载系统别名定义
+    alias_import(include THINK_PATH.'Common/alias.php');
     // 加载模式文件列表
     foreach ($list as $key=>$file){
         if(is_file($file))  require $file;
@@ -82,6 +84,8 @@ function build_runtime_cache($append='') {
     foreach ($list as $file){
         $content .= compile($file);
     }
+    // 加载核心别名定义
+    $content .= 'alias_import('.var_export(include THINK_PATH.'Common/alias.php',true).');';
     // 系统行为扩展文件统一编译
     $files =  scandir(EXTEND_PATH.'Behavior/');
     foreach ($files as $file){

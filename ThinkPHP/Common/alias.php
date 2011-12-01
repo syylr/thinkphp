@@ -11,7 +11,7 @@
 // $Id$
 
 // 导入别名定义
-alias_import(array(
+return array(
     // 系统核心类
     'Model'         => THINK_PATH.'Lib/Think/Core/Model.class.php',
     'Dispatcher'    => THINK_PATH.'Lib/Think/Core/Dispatcher.class.php',
@@ -37,6 +37,5 @@ alias_import(array(
     'ShowRuntimeBehavior'=>EXTEND_PATH.'Behavior/ShowRuntimeBehavior.class.php',
     'ShowPageTraceBehavior'=>EXTEND_PATH.'Behavior/ShowPageTraceBehavior.class.php',
     'ContentReplaceBehavior'=>EXTEND_PATH.'Behavior/ContentReplaceBehavior.class.php',
-    )
-);
-?>
+    'LocationTemplateBehavior'=>EXTEND_PATH.'Behavior/LocationTemplateBehavior.class.php',
+    );
