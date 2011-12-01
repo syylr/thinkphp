@@ -18,7 +18,6 @@ return array(
     'app_init'=>array(),
     'app_begin'=>array('CheckLang', // 语言检测
         'CheckTemplate', // 模板检测
-        // 'ReadHTMLCache', // 静态缓存读取
     ),
     'app_end'=>array(),
     'action_begin'=>array(),
@@ -29,10 +28,12 @@ return array(
     'view_parse'=>array(
         'ParseTemplate', // 模板解析 支持PHP、内置模板引擎和第三方模板引擎
     ),
-    'view_end'=>array('ContentReplace', // 模板输出替换
-        //'WriteHTMLCache', // 静态缓存写入
+    'view_filter'=>array(
+        'ContentReplace', // 模板输出替换
         'ShowRuntime', // 运行时间显示
         'ShowPageTrace', // 页面Trace显示
+    ),
+    'view_end'=>array(
     ),
 );
 ?>
