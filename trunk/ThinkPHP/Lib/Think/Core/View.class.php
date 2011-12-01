@@ -24,7 +24,6 @@
  */
 class View extends Think{
     protected $tVar        =  array(); // 模板输出变量
-    protected $templateFile  = '';      // 模板文件名
 
     /**
      +----------------------------------------------------------
@@ -131,7 +130,12 @@ class View extends Think{
         // 视图结束标签
         tag('view_end',$content);
         // 输出模板文件
-        return $this->output($content,$display);
+        if($display) {
+            echo $content;
+            return null;
+        }else {
+            return $content;
+        }
     }
 
 
@@ -161,27 +165,6 @@ class View extends Think{
         if(false === file_put_contents($htmlfile,$content))
             throw_exception(L('_CACHE_WRITE_ERROR_').':'.$htmlfile);
         return $content;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 输出模板
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @param string $content 模板内容
-     * @param boolean $display 是否直接显示
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    protected function output($content,$display) {
-        if($display) {
-            echo $content;
-            return null;
-        }else {
-            return $content;
-        }
     }
 
 }
