@@ -23,6 +23,8 @@ return array(
     'action_begin'=>array(),
     'action_end'=>array(),
     'view_begin'=>array(
+    ),
+    'view_template'=>array(
         'LocationTemplate', // 自动定位模板文件
     ),
     'view_parse'=>array(

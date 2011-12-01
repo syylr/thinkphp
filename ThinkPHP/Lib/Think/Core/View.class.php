@@ -136,8 +136,10 @@ class View extends Think{
      +----------------------------------------------------------
      */
     public function fetch($templateFile='') {
+        // 模板文件解析标签
+        tag('view_template',$templateFile);
         // 使用null参数作为模版名直接返回不做任何输出
-        if(null===$templateFile) return;
+        if(!is_file($templateFile)) return NULL;
         // 页面缓存
         ob_start();
         ob_implicit_flush(0);
