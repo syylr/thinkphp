@@ -81,7 +81,7 @@ class View extends Think{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $templateFile 模板文件名 留空为自动获取
+     * @param string $templateFile 模板文件名
      * @param string $charset 模板输出字符集
      * @param string $contentType 输出类型
      +----------------------------------------------------------
@@ -89,7 +89,16 @@ class View extends Think{
      +----------------------------------------------------------
      */
     public function display($templateFile='',$charset='',$contentType='') {
-        $this->fetch($templateFile,$charset,$contentType,true);
+        // 视图开始标签
+        tag('view_begin',$templateFile);
+        if(empty($charset))  $charset = C('DEFAULT_CHARSET');
+        if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
+        header("Content-Type:".$contentType."; charset=".$charset);
+        header("Cache-control: private");  //支持页面回跳
+        header("X-Powered-By:ThinkPHP".THINK_VERSION);
+        $this->fetch($templateFile,true);
+        // 视图结束标签
+        tag('view_end');
     }
 
     /**
@@ -98,20 +107,16 @@ class View extends Think{
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $templateFile 模板文件名 留空为自动获取
-     * @param string $charset 模板输出字符集
-     * @param string $contentType 输出类型
+     * @param string $templateFile 模板文件名
      * @param string $display 是否直接显示
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function fetch($templateFile='',$charset='',$contentType='',$display=false) {
+    public function fetch($templateFile='',$display=false) {
         G('viewStartTime');
         // 使用null参数作为模版名直接返回不做任何输出
         if(null===$templateFile) return;
-        // 视图开始标签
-        tag('view_begin',$templateFile);
         // 页面缓存
         ob_start();
         ob_implicit_flush(0);
@@ -120,15 +125,10 @@ class View extends Think{
         tag('view_parse',$params);
         // 获取并清空缓存
         $content = ob_get_clean();
-        // 视图结束标签
-        tag('view_end',$content);
+        // 内容过滤标签
+        tag('view_filter',$content);
         // 输出模板文件
         if($display) {
-            if(empty($charset))  $charset = C('DEFAULT_CHARSET');
-            if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
-            header("Content-Type:".$contentType."; charset=".$charset);
-            header("Cache-control: private");  //支持页面回跳
-            header("X-Powered-By:ThinkPHP".THINK_VERSION);
             echo $content;
             return null;
         }else {
