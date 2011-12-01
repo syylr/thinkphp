@@ -49,12 +49,12 @@ function load_think_mode() {
         // 默认核心
         $list = include THINK_PATH.'Common/core.php';
     }
-    // 加载系统别名定义
-    alias_import(include THINK_PATH.'Common/alias.php');
     // 加载模式文件列表
     foreach ($list as $key=>$file){
         if(is_file($file))  require $file;
     }
+    // 加载系统别名定义
+    alias_import(include THINK_PATH.'Common/alias.php');
     // 检查项目目录结构 如果不存在则自动创建
     if(!is_dir(RUNTIME_PATH)) {
         // 创建项目目录结构
