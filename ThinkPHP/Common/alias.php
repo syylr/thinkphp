@@ -38,4 +38,5 @@ return array(
     'ShowPageTraceBehavior'=>EXTEND_PATH.'Behavior/ShowPageTraceBehavior.class.php',
     'ContentReplaceBehavior'=>EXTEND_PATH.'Behavior/ContentReplaceBehavior.class.php',
     'LocationTemplateBehavior'=>EXTEND_PATH.'Behavior/LocationTemplateBehavior.class.php',
+    'ParseTemplateBehavior'=>EXTEND_PATH.'Behavior/ParseTemplateBehavior.class.php',
     );
