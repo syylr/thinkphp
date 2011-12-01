@@ -89,32 +89,53 @@ class View extends Think{
      +----------------------------------------------------------
      */
     public function display($templateFile='',$charset='',$contentType='') {
+        G('viewStartTime');
         // 视图开始标签
         tag('view_begin',$templateFile);
-        if(empty($charset))  $charset = C('DEFAULT_CHARSET');
-        if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
-        header("Content-Type:".$contentType."; charset=".$charset);
-        header("Cache-control: private");  //支持页面回跳
-        header("X-Powered-By:ThinkPHP".THINK_VERSION);
-        $this->fetch($templateFile,true);
+        // 解析并获取模板内容
+        $content = $this->fetch($templateFile);
+        // 输出模板内容
+        $this->show($content,$charset,$contentType);
         // 视图结束标签
         tag('view_end');
     }
 
     /**
      +----------------------------------------------------------
-     * 加载模板和页面输出
+     * 输出内容文本可以包括Html
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param string $templateFile 模板文件名
-     * @param string $display 是否直接显示
+     * @param string $content 输出内容
+     * @param string $charset 模板输出字符集
+     * @param string $contentType 输出类型
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function fetch($templateFile='',$display=false) {
-        G('viewStartTime');
+    public function show($content,$charset='',$contentType=''){
+        if(empty($charset))  $charset = C('DEFAULT_CHARSET');
+        if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
+        // 网页字符编码
+        header("Content-Type:".$contentType."; charset=".$charset);
+        header("Cache-control: private");  //支持页面回跳
+        header("X-Powered-By:TOPThink/".THINK_VERSION);
+        // 输出模板文件
+        echo $content;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 解析和获取模板内容 用于输出
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $templateFile 模板文件名
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function fetch($templateFile='') {
         // 使用null参数作为模版名直接返回不做任何输出
         if(null===$templateFile) return;
         // 页面缓存
@@ -128,39 +149,6 @@ class View extends Think{
         // 内容过滤标签
         tag('view_filter',$content);
         // 输出模板文件
-        if($display) {
-            echo $content;
-            return null;
-        }else {
-            return $content;
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
-     *  创建静态页面
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @htmlfile 生成的静态文件名称
-     * @htmlpath 生成的静态文件路径
-     * @param string $templateFile 指定要调用的模板文件
-     * 默认为空 由系统自动定位模板文件
-     * @param string $charset 输出编码
-     * @param string $contentType 输出类型
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function buildHtml($htmlfile,$htmlpath='',$templateFile='',$charset='',$contentType='') {
-        $content = $this->fetch($templateFile,$charset,$contentType);
-        $htmlpath   = !empty($htmlpath)?$htmlpath:HTML_PATH;
-        $htmlfile =  $htmlpath.$htmlfile.C('HTML_FILE_SUFFIX');
-        if(!is_dir(dirname($htmlfile)))
-            // 如果静态目录不存在 则创建
-            mk_dir(dirname($htmlfile));
-        if(false === file_put_contents($htmlfile,$content))
-            throw_exception(L('_CACHE_WRITE_ERROR_').':'.$htmlfile);
         return $content;
     }
 

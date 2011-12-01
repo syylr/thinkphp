@@ -108,14 +108,12 @@ abstract class Action extends Think
      +----------------------------------------------------------
      * @param string $templateFile 指定要调用的模板文件
      * 默认为空 由系统自动定位模板文件
-     * @param string $charset 输出编码
-     * @param string $contentType 输出类型
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    protected function fetch($templateFile='',$charset='',$contentType='text/html') {
-        return $this->view->fetch($templateFile,$charset,$contentType);
+    protected function fetch($templateFile='') {
+        return $this->view->fetch($templateFile);
     }
 
     /**
@@ -128,14 +126,20 @@ abstract class Action extends Think
      * @htmlpath 生成的静态文件路径
      * @param string $templateFile 指定要调用的模板文件
      * 默认为空 由系统自动定位模板文件
-     * @param string $charset 输出编码
-     * @param string $contentType 输出类型
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    protected function buildHtml($htmlfile='',$htmlpath='',$templateFile='',$charset='',$contentType='text/html') {
-        return $this->view->buildHtml($htmlfile,$htmlpath,$templateFile,$charset,$contentType);
+    protected function buildHtml($htmlfile='',$htmlpath='',$templateFile='') {
+        $content = $this->fetch($templateFile);
+        $htmlpath   = !empty($htmlpath)?$htmlpath:HTML_PATH;
+        $htmlfile =  $htmlpath.$htmlfile.C('HTML_FILE_SUFFIX');
+        if(!is_dir(dirname($htmlfile)))
+            // 如果静态目录不存在 则创建
+            mk_dir(dirname($htmlfile));
+        if(false === file_put_contents($htmlfile,$content))
+            throw_exception(L('_CACHE_WRITE_ERROR_').':'.$htmlfile);
+        return $content;
     }
 
     /**
