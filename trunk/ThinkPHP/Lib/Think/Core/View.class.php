@@ -112,12 +112,6 @@ class View extends Think{
         if(null===$templateFile) return;
         // 视图开始标签
         tag('view_begin',$templateFile);
-        // 网页字符编码
-        if(empty($charset))  $charset = C('DEFAULT_CHARSET');
-        if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
-        header("Content-Type:".$contentType."; charset=".$charset);
-        header("Cache-control: private");  //支持页面回跳
-        header("X-Powered-By:ThinkPHP".THINK_VERSION);
         // 页面缓存
         ob_start();
         ob_implicit_flush(0);
@@ -130,13 +124,17 @@ class View extends Think{
         tag('view_end',$content);
         // 输出模板文件
         if($display) {
+            if(empty($charset))  $charset = C('DEFAULT_CHARSET');
+            if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
+            header("Content-Type:".$contentType."; charset=".$charset);
+            header("Cache-control: private");  //支持页面回跳
+            header("X-Powered-By:ThinkPHP".THINK_VERSION);
             echo $content;
             return null;
         }else {
             return $content;
         }
     }
-
 
     /**
      +----------------------------------------------------------
