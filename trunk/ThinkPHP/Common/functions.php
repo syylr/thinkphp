@@ -635,7 +635,7 @@ function filter($name, &$content) {
     $content = $filter->run($content);
 }
 
-// 执行行为 系统行为优先
+// 执行行为
 function B($name, &$params=NULL) {
     $class = $name.'Behavior';
     G('behaviorStart');
