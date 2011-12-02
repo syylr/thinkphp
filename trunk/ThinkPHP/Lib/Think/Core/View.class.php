@@ -146,7 +146,7 @@ class View extends Think{
         // 视图解析标签
         $params = array('var'=>$this->tVar,'file'=>$templateFile);
         $result   =  tag('view_parse',$params);
-        if(false === $result) { // 未执行标签 则采用PHP原生模板
+        if(false === $result) { // 未定义行为 则采用PHP原生模板
             // 模板阵列变量分解成为独立变量
             extract($this->tVar, EXTR_OVERWRITE);
             // 直接载入PHP模板
