@@ -17,6 +17,5 @@ return array(
     MODE_PATH.'Cli/Log.class.php',
     MODE_PATH.'Cli/App.class.php',
     MODE_PATH.'Cli/Action.class.php',
-    MODE_PATH.'Cli/alias.php', // 加载别名
 );
 ?>
