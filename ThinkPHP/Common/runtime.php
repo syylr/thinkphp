@@ -44,7 +44,7 @@ function load_think_mode() {
         $list   =  include CONFIG_PATH.'core.php';
     }elseif(defined('THINK_MODE')) {
         // 根据设置的运行模式加载不同的核心编译文件
-        $list   =  include EXTEND_PATH.'Mode/'.strtolower(THINK_MODE).'.php';
+        $list   =  include MODE_PATH.strtolower(THINK_MODE).'.php';
     }else{
         // 默认核心
         $list = include THINK_PATH.'Common/core.php';
@@ -54,7 +54,11 @@ function load_think_mode() {
         if(is_file($file))  require $file;
     }
     // 加载系统别名定义
-    alias_import(include THINK_PATH.'Common/alias.php');
+    if(defined('THINK_MODE')) {
+        alias_import(include MODE_PATH.ucwords(strtolower(THINK_MODE)).'alias.php');
+    }else{
+        alias_import(include THINK_PATH.'Common/alias.php');
+    }
     // 检查项目目录结构 如果不存在则自动创建
     if(!is_dir(RUNTIME_PATH)) {
         // 创建项目目录结构
@@ -85,7 +89,12 @@ function build_runtime_cache($append='') {
         $content .= compile($file);
     }
     // 加载核心别名定义
-    $content .= 'alias_import('.var_export(include THINK_PATH.'Common/alias.php',true).');';
+    if(defined('THINK_MODE') && is_file(MODE_PATH.ucwords(strtolower(THINK_MODE)).'alias.php')) {
+        $content .= 'alias_import('.var_export(include MODE_PATH.ucwords(strtolower(THINK_MODE)).'alias.php',true).');';
+    }else{
+        $content .= 'alias_import('.var_export(include THINK_PATH.'Common/alias.php',true).');';
+    }
+
     // 系统行为扩展文件统一编译
     if(C('APP_TAGS_ON')) {
         $files =  scandir(EXTEND_PATH.'Behavior/');

@@ -72,9 +72,9 @@ class App
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
         if(C('APP_TAGS_ON')) {
-            if(defined('THINK_MODE') && is_file(EXTEND_PATH.'Mode/'.ucwords(strtolower(THINK_MODE)).'/tags.php')) {
+            if(defined('THINK_MODE') && is_file(MODE_PATH.ucwords(strtolower(THINK_MODE)).'/tags.php')) {
                 // 模式可以单独定义系统的行为扩展
-                C('extends',include EXTEND_PATH.'Mode/'.ucwords(strtolower(THINK_MODE)).'/tags.php');
+                C('extends',include MODE_PATH.ucwords(strtolower(THINK_MODE)).'/tags.php');
             }else{ // 加载系统默认行为扩展定义文件
                 C('extends',include THINK_PATH.'Common/tags.php');
             }
