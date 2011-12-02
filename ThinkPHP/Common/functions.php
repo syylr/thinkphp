@@ -601,7 +601,11 @@ function tag($tag, &$params=NULL) {
     }
     if($tags) {
         // 执行扩展
-        foreach ($tags as $name) {
+        foreach ($tags as $key=>$name) {
+            if(!is_int($key)) { // 指定行为类的完整路径 用于模式扩展
+                require_cache($name);
+                $name   = $key;
+            }
             B($name, $params);
         }
     }else{ // 未执行任何行为 返回false
