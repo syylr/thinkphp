@@ -35,6 +35,7 @@ return  array(
     'APP_GROUP_LIST'        => '',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
     'APP_AUTOLOAD_PATH'     => '@.Action,@.Model,@.Behavior,Think.Util',// 自动加载机制的自动搜索路径,注意搜索顺序
     'APP_CONFIG_LIST'    =>   'routes,tags,htmls', // 项目动态配置文件列表
+    'APP_TAGS_ON'   => true, // 系统标签扩展开关
 
     /* Cookie设置 */
     'COOKIE_EXPIRE'         => 3600,    // Coodie有效期
