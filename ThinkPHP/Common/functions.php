@@ -600,6 +600,10 @@ function tag($tag, &$params=NULL) {
         $tags = $extends;
     }
     if($tags) {
+        if(APP_DEBUG) {
+            G($tag.'Start');
+            Log::record('Tag[ '.$tag.' ] --START--',Log::DEBUG);
+        }
         // 执行扩展
         foreach ($tags as $key=>$name) {
             if(!is_int($key)) { // 指定行为类的完整路径 用于模式扩展
@@ -607,6 +611,9 @@ function tag($tag, &$params=NULL) {
                 $name   = $key;
             }
             B($name, $params);
+        }
+        if(APP_DEBUG) { // 记录行为的执行日志
+            Log::record('Tag[ '.$tag.' ] --END-- [ RunTime:'.G($tag.'Start',$tag.'End',6).'s ]',Log::DEBUG);
         }
     }else{ // 未执行任何行为 返回false
         return false;
