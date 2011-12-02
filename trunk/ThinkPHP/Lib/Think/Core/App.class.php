@@ -71,9 +71,13 @@ class App
         // 加载项目配置文件
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
-        // 加载系统默认标签扩展文件
         if(C('APP_TAGS_ON')) {
-            C('extends',include THINK_PATH.'Common/tags.php');
+            if(defined('THINK_MODE') && is_file(EXTEND_PATH.'Mode/'.ucwords(strtolower(THINK_MODE)).'/tags.php')) {
+                // 模式可以单独定义系统的行为扩展
+                C('extends',include EXTEND_PATH.'Mode/'.ucwords(strtolower(THINK_MODE)).'/tags.php');
+            }else{ // 加载系统默认行为扩展定义文件
+                C('extends',include THINK_PATH.'Common/tags.php');
+            }
         }
         $common   = '';
         // 加载项目公共文件
