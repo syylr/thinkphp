@@ -55,7 +55,7 @@ function load_think_mode() {
     }
     // 加载系统别名定义
     if(defined('THINK_MODE')) {
-        alias_import(include MODE_PATH.ucwords(strtolower(THINK_MODE)).'alias.php');
+        alias_import(include MODE_PATH.ucwords(strtolower(THINK_MODE)).'/alias.php');
     }else{
         alias_import(include THINK_PATH.'Common/alias.php');
     }
@@ -89,8 +89,8 @@ function build_runtime_cache($append='') {
         $content .= compile($file);
     }
     // 加载核心别名定义
-    if(defined('THINK_MODE') && is_file(MODE_PATH.ucwords(strtolower(THINK_MODE)).'alias.php')) {
-        $content .= 'alias_import('.var_export(include MODE_PATH.ucwords(strtolower(THINK_MODE)).'alias.php',true).');';
+    if(defined('THINK_MODE') && is_file(MODE_PATH.ucwords(strtolower(THINK_MODE)).'/alias.php')) {
+        $content .= 'alias_import('.var_export(include MODE_PATH.ucwords(strtolower(THINK_MODE)).'/alias.php',true).');';
     }else{
         $content .= 'alias_import('.var_export(include THINK_PATH.'Common/alias.php',true).');';
     }
