@@ -18,13 +18,9 @@
  */
 class ShowPageTraceBehavior {
     // 行为扩展的执行入口必须是run
-    public function run(&$content){
-        if(C('SHOW_PAGE_TRACE'))   {
-            $trace = $this->showTrace();
-             if(strpos($content,'{__TRACE__}'))
-                 $content   =  str_replace('{__TRACE__}',$trace,$content);
-             else
-                 $content   .=  $trace;
+    public function run(){
+        if(C('SHOW_PAGE_TRACE')) {
+            echo $this->showTrace();
         }
     }
 
