@@ -19,6 +19,5 @@ return array(
     MODE_PATH.'Phprpc/App.class.php', // 应用程序类
     MODE_PATH.'Phprpc/Action.class.php',// 控制器类
     THINK_PATH.'Lib/Think/Core/Model.class.php', // 模型类
-    MODE_PATH.'Phprpc/alias.php', // 加载别名
 );
 ?>

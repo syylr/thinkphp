@@ -18,6 +18,5 @@ return array(
     THINK_PATH.'Lib/Think/Core/Log.class.php',// 日志处理
     MODE_PATH.'Lite/App.class.php', // 应用程序类
     MODE_PATH.'Lite/Action.class.php',// 控制器类
-    MODE_PATH.'Lite/alias.php', // 加载别名
 );
 ?>

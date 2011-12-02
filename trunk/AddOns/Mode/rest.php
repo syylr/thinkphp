@@ -19,7 +19,6 @@ return array(
     THINK_PATH.'Lib/Think/Core/App.class.php', // 应用程序类
     MODE_PATH.'Rest/Dispatcher.class.php',// URL路由
     MODE_PATH.'Rest/Action.class.php',// 控制器类
-    MODE_PATH.'Rest/alias.php', // 加载别名
     MODE_PATH.'Rest/common.php', // 加载REST公共函数
 );
 ?>
