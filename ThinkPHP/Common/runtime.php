@@ -97,15 +97,28 @@ function build_runtime_cache($append='') {
 
     // 系统行为扩展文件统一编译
     if(C('APP_TAGS_ON')) {
+        $content .= build_tags_cache();
+        /*
         $files =  scandir(EXTEND_PATH.'Behavior/');
         foreach ($files as $file){
             if($file == '.' || $file == '..') continue;
             $content .= compile(EXTEND_PATH.'Behavior/'.$file);
-        }
+        }*/
     }
     $content .= $append."\nC(".var_export(C(),true).');';
     $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
     file_put_contents(RUNTIME_PATH.$runtime,strip_whitespace('<?php '.$content));
+}
+
+function build_tags_cache() {
+    $tags = C('extends');
+    $content = '';
+    foreach ($tags as $tag=>$item){
+        foreach ($item as $key=>$name) {
+            $content .= is_int($key)?compile(EXTEND_PATH.'Behavior/'.$name.'Behavior.class.php'):compile($name);
+        }
+    }
+    return $content;
 }
 
 // 批量创建目录
