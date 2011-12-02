@@ -176,4 +176,3 @@ function build_first_action() {
     $content = file_get_contents(THINK_PATH.'Tpl/'.(defined('BUILD_MODE')?BUILD_MODE:'AutoIndex').'.tpl.php');
     file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
 }
-?>

@@ -103,5 +103,4 @@ class Think {
         return self::$_instance[$identify];
     }
 
-}//类定义结束
-?>
+}

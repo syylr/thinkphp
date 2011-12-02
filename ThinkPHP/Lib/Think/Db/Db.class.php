@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Db extends Think
-{
+class Db extends Think {
     // 数据库类型
     protected $dbType           = null;
     // 是否自动释放查询结果
@@ -949,5 +948,4 @@ class Db extends Think
 
     // 关闭数据库 由驱动类定义
     public function close(){}
-}//类定义结束
-?>
+}

@@ -424,5 +424,4 @@ class DbMysqli extends Db{
         }
         return $key;
     }
-}//类定义结束
-?>
+}

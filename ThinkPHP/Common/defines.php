@@ -61,4 +61,3 @@ if(!IS_CLI) {
 //  版本信息
 define('THINK_VERSION', '3.0beta');
 //[/RUNTIME]
-?>

@@ -118,4 +118,3 @@ HTML;
         $moban .="</tbody></table></body></html>";
         return $moban;
     }
-?>

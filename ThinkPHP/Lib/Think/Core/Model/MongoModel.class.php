@@ -362,6 +362,4 @@ class MongoModel extends Model{
         }
         return $this->trueTableName;
     }
-
-};
-?>
+}

@@ -22,4 +22,3 @@ return array(
     //THINK_PATH.'Lib/Think/Core/Model.class.php', // 模型类
     THINK_PATH.'Lib/Think/Core/View.class.php',  // 视图类
 );
-?>

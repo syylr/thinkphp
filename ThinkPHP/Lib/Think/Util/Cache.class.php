@@ -137,5 +137,4 @@ class Cache extends Think
         }
         return $fun[1]('think_queue',$value);
     }
-}//类定义结束
-?>
+}

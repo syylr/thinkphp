@@ -22,8 +22,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Dispatcher extends Think
-{//类定义开始
+class Dispatcher extends Think {
 
     /**
      +----------------------------------------------------------
@@ -401,5 +400,4 @@ class Dispatcher extends Think
         }
         return true;
     }
-}//类定义结束
-?>
+}

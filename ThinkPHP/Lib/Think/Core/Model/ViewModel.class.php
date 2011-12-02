@@ -285,4 +285,3 @@ class ViewModel extends Model {
         return $fields;
     }
 }
-?>

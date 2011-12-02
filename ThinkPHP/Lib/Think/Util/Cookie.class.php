@@ -63,4 +63,3 @@ class Cookie extends Think
         unset($_COOKIE);
     }
 }
-?>

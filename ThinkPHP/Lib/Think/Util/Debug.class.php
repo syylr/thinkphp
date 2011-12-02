@@ -108,5 +108,4 @@ class Debug extends Think
             self::$marker['peak'][$end] = function_exists('memory_get_peak_usage')?memory_get_peak_usage(): memory_get_usage();
         return number_format(max(self::$marker['peak'][$start],self::$marker['peak'][$end])/1024);
     }
-}//类定义结束
-?>
+}

@@ -126,4 +126,3 @@ HTML;
         return $moban;
     }
 }
-?>
