@@ -33,92 +33,86 @@ function N($key, $step=0) {
 }
 
 // URL组装 支持不同模式和路由
-function U($url, $params=array(), $redirect=false, $suffix=true) {
-    if (0 === strpos($url, '/'))
-        $url = substr($url, 1);
-    if (!strpos($url, '://')) // 没有指定项目名 使用当前项目名
-        $url = APP_NAME . '://' . $url;
-    if (stripos($url, '@?')) { // 给路由传递参数
-        $url = str_replace('@?', '@think?', $url);
-    } elseif (stripos($url, '@')) { // 没有参数的路由
-        $url = $url . MODULE_NAME;
-    }
-    // 分析URL地址
-    $array = parse_url($url);
-    $app = isset($array['scheme']) ? $array['scheme'] : APP_NAME;
-    $route = isset($array['user']) ? $array['user'] : '';
-    if (defined('GROUP_NAME') && strcasecmp(GROUP_NAME, C('DEFAULT_GROUP')))
-        $group = GROUP_NAME;
-    if (isset($array['path'])) {
-        $action = substr($array['path'], 1);
-        if (!isset($array['host'])) {
-            // 没有指定模块名
-            $module = MODULE_NAME;
-        } else {// 指定模块
-            if (strpos($array['host'], '-')) {
-                list($group, $module) = explode('-', $array['host']);
-            } else {
-                $module = $array['host'];
-            }
-        }
-    } else { // 只指定操作
-        $module = MODULE_NAME;
-        $action = $array['host'];
-    }
-    if (isset($array['query'])) {
-        parse_str($array['query'], $query);
-        $params = array_merge($query, $params);
-    }
-    //对二级域名的支持,待完善对*号子域名的支持
-    if (C('APP_SUB_DOMAIN_DEPLOY')) {
-        foreach (C('APP_SUB_DOMAIN_RULES') as $key => $rule) {
-            if (in_array($group . "/", $rule))
-                $flag = true;
-            if (in_array($group . "/" . $module, $rule)) {
-                $flag = true;
-                unset($module);
-            }
-            if (!isset($group) && in_array(GROUP_NAME . "/" . $module, $rule) && in_array($key,array(SUB_DOMAIN,"*")))
-                unset($module);
-            if ($flag) {
-                unset($group);
-                if ($key != SUB_DOMAIN && $key != "*") {
-                    $sub_domain = $key;
-                }
-                break;
-            }
-        }
+// 格式： U('/Admin/User/add/','aaa=1&bbb=2');
+// U('__URL__/add/','aaa=1&bbb=2');
+function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
+    $replace =  array(
+        '__APP__'       => __APP__,        // 项目地址
+        '__GROUP__'   =>   defined('GROUP_NAME')?__GROUP__:__APP__, // 分组地址
+        '__URL__'       => __URL__, // 模块地址
+        '__ACTION__'    => __ACTION__,     // 操作地址
+    );
+    $url = str_replace(array_keys($replace),array_values($replace),$url,$count);
+    if($count>0) {
+        $url   =  substr_replace($url,'',0,strlen(__APP__)); 
     }
 
-    if (C('URL_MODEL') > 0) {
-        $depr = C('URL_PATHINFO_DEPR');
-        $str = $depr;
-        foreach ($params as $var => $val)
-            $str .= $var . $depr . $val . $depr;
-        $str = substr($str, 0, -1);
-        $group = isset($group) ? $group . $depr : '';
-        $module = isset($module) ? $module . $depr : "";
-        if (!empty($route)) {
-            $url = str_replace(APP_NAME, $app, __APP__) . '/' . $group . $route . $str;
-        } else {
-            $url = str_replace(APP_NAME, $app, __APP__) . '/' . $group . $module . $action . $str;
-        }
-        if ($suffix && C('URL_HTML_SUFFIX'))
-            $url .= C('URL_HTML_SUFFIX');
-    }else {
-        $params = http_build_query($params);
-        $params = !empty($params) ? '&' . $params : '';
-        if (isset($group)) {
-            $url = str_replace(APP_NAME, $app, __APP__) . '?' . C('VAR_GROUP') . '=' . $group . '&' . C('VAR_MODULE') . '=' . $module . '&' . C('VAR_ACTION') . '=' . $action . $params;
-        } else {
-            $url = str_replace(APP_NAME, $app, __APP__) . '?' . C('VAR_MODULE') . '=' . $module . '&' . C('VAR_ACTION') . '=' . $action . $params;
+    if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
+        parse_str($vars,$vars);
+    }elseif(!is_array($vars)){
+        $vars = array();
+    }
+
+    // 分析URL地址
+    $info =  parse_url($url);
+    $url   =  $info['path'];
+    // 子域名解析
+    if($domain===true){
+        $domain = $_SERVER['HTTP_HOST'];
+        if(C('APP_SUB_DOMAIN_DEPLOY') ) { // 开启子域名部署
+            $domain = $domain=='localhost'?'localhost':'www'.strstr($_SERVER['HTTP_HOST'],'.');
+            // '子域名'=>array('项目[/分组]');
+            foreach (C('APP_SUB_DOMAIN_RULES') as $key => $rule) {
+                if(false === strpos($key,'*') && 0=== strpos($url,$rule[0])) {
+                    $domain = $key.strstr($domain,'.'); // 生成对应子域名
+                    $url   =  substr_replace($url,'',0,strlen($rule[0]));
+                    break;
+                }
+            }
+        }else{
+            $domain = $_SERVER['HTTP_HOST'];
         }
     }
-    if (isset($sub_domain)) {
-        $domain = str_replace(SUB_DOMAIN, $sub_domain, $_SERVER['HTTP_HOST']);
-        $url = "http://" . $domain . $url;
+    if(substr_count($url,'/') == 2 && substr($url,0,strpos($url,'/')) ==C('DEFAULT_GROUP') ) { // 处理默认分组
+        $url   =  strstr($url,'/');
     }
-    if ($redirect)
+
+    if(isset($info['query'])) { // 解析地址里面参数 合并到vars
+        parse_str($info['query'],$params);
+        $vars = array_merge($params,$vars);
+    }
+    $depr = C('URL_PATHINFO_DEPR');
+    if('/' != $depr) {
+        // 安全替换
+        $url   =  str_replace('/',$depr,$url);
+    }
+    $url   =  trim($url,$depr);
+    if(C('URL_MODEL') == 0) { // 普通模式URL转换
+        $path = explode($depr,$url);
+        $var  =  array();
+        $var[C('VAR_ACTION')] = array_pop($path);
+        if(!empty($path)) $var[C('VAR_MODULE')] = array_pop($path);
+        if(!empty($path)) $var[C('VAR_GROUP')]   = array_pop($path);
+        $url   =  __APP__.'?'.http_build_query($var);
+        if(!empty($vars)) {
+            $vars = http_build_query($vars);
+            $url   .= '&'.$vars;
+        }
+    }else{ // PATHINFO模式或者兼容URL模式
+        $url   =  __APP__.'/'.str_replace(__APP__,'',$url);
+        if(!empty($vars)) { // 添加参数
+            $vars = http_build_query($vars);
+            $url .= $depr.str_replace(array('=','&'),$depr,$vars);
+        }
+        if($suffix) {
+            $suffix   =  $suffix===true?C('URL_HTML_SUFFIX'):$suffix;
+            $url  .=  '.'.ltrim($suffix,'.');
+        }
+    }
+    if($domain) {
+        $url   =  'http://'.$domain.$url;
+    }
+    if($redirect) // 直接跳转URL
         redirect($url);
     else
         return $url;
