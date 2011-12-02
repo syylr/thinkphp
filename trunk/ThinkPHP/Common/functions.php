@@ -638,8 +638,13 @@ function filter($name, &$content) {
 // 执行行为 系统行为优先
 function B($name, &$params=NULL) {
     $class = $name.'Behavior';
+    G('behaviorStart');
     $behavior = new $class();
     $behavior->run($params);
+    if(APP_DEBUG) { // 记录行为的执行日志
+        G('behaviorEnd');
+        Log::record('Run '.$name.' Behavior [ RunTime:'.G('behaviorStart','behaviorEnd',6).'s ]',Log::DEBUG);
+    }
 }
 
 // 渲染输出Widget
