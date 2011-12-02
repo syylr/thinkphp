@@ -613,6 +613,20 @@ function tag($tag, &$params=NULL) {
     }
 }
 
+// 动态添加行为扩展到某个标签
+function add_tag_behavior($tag,$behavior,$path='') {
+    $array   =  C('tags.'.$tag);
+    if(!$array) {
+        $array   =  array();
+    }
+    if($path) {
+        $array[$behavior] = $path;
+    }else{
+        $array[] =  $behavior;
+    }
+    C('tags.'.$tag,$array);
+}
+
 // 过滤器方法
 function filter($name, &$content) {
     $class = $name . 'Filter';
