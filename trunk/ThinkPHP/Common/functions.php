@@ -604,6 +604,8 @@ function tag($tag, &$params=NULL) {
         foreach ($tags as $name) {
             B($name, $params);
         }
+    }else{ // 未执行任何行为 返回false
+        return false;
     }
 }
 
