@@ -19,7 +19,9 @@ return array(
     'app_begin'=>array('CheckLang', // 语言检测
         'CheckTemplate', // 模板检测
     ),
-    'app_end'=>array(),
+    'app_end'=>array(
+        'ShowPageTrace', // 页面Trace显示
+    ),
     'action_begin'=>array(),
     'action_end'=>array(),
     'view_begin'=>array(
@@ -33,7 +35,6 @@ return array(
     'view_filter'=>array(
         'ContentReplace', // 模板输出替换
         'ShowRuntime', // 运行时间显示
-        'ShowPageTrace', // 页面Trace显示
     ),
     'view_end'=>array(
     ),
