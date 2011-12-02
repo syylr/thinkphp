@@ -145,7 +145,13 @@ class View extends Think{
         ob_implicit_flush(0);
         // 视图解析标签
         $params = array('var'=>$this->tVar,'file'=>$templateFile);
-        tag('view_parse',$params);
+        $result   =  tag('view_parse',$params);
+        if(false === $result) { // 未执行标签 则采用PHP原生模板
+            // 模板阵列变量分解成为独立变量
+            extract($this->tVar, EXTR_OVERWRITE);
+            // 直接载入PHP模板
+            include $templateFile;
+        }
         // 获取并清空缓存
         $content = ob_get_clean();
         // 内容过滤标签
