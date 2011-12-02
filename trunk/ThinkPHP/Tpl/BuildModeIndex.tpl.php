@@ -7,4 +7,3 @@ class IndexAction extends Action
         echo "引导式布署模式，流程待添加";
     }
 }
-?>

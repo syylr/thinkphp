@@ -951,4 +951,3 @@ function get_client_ip() {
     $ip = (false !== ip2long($ip)) ? $ip : '0.0.0.0';
     return $ip;
 }
-?>

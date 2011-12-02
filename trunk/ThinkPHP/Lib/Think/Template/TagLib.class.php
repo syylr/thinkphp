@@ -241,5 +241,4 @@ class TagLib extends Think
         return $parseStr;
     }
 
-}//类定义结束
-?>
+}

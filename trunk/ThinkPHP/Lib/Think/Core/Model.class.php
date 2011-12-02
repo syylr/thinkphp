@@ -26,8 +26,7 @@ define('MANY_TO_MANY',4);
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Model extends Think
-{
+class Model extends Think {
     // 操作状态
     const MODEL_INSERT      =   1;      //  插入模型数据
     const MODEL_UPDATE    =   2;      //  更新模型数据
@@ -1514,5 +1513,4 @@ class Model extends Think
         else
             return NULL;
     }
-};
-?>
+}

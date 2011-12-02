@@ -554,4 +554,3 @@ function send_http_status($code) {
         header('HTTP/1.1 '.$code.' '.$_status[$code]);
     }
 }
-?>

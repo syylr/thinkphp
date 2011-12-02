@@ -797,4 +797,3 @@ class AdvModel extends Model {
         }
     }
 }
-?>

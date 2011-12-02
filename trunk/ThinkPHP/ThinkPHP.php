@@ -39,7 +39,6 @@ if(!APP_DEBUG && is_file(RUNTIME_PATH.$runtime)) {
 G('loadTime');
 // 执行应用
 App::run();
-
 // 记录和统计时间（微秒）
 function G($start,$end='',$dec=3) {
     static $_info = array();
@@ -52,4 +51,3 @@ function G($start,$end='',$dec=3) {
         $_info[$start]  =  microtime(TRUE);
     }
 }
-?>

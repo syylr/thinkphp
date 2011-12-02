@@ -80,4 +80,3 @@ abstract class Widget extends Think {
         return $content;
     }
 }
-?>

@@ -162,4 +162,3 @@ class HtmlCache extends Think
         return !method_exists($class,$action);
     }
 }
-?>

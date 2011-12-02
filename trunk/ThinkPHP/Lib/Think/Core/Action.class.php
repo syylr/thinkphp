@@ -21,8 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-abstract class Action extends Think
-{//类定义开始
+abstract class Action extends Think {
 
     // 视图实例对象
     protected $view   =  null;
@@ -388,5 +387,4 @@ abstract class Action extends Think
         // 执行后续操作
         tag('action_end');
     }
-}//类定义结束
-?>
+}

@@ -39,4 +39,3 @@ return array(
     'view_end'=>array(
     ),
 );
-?>

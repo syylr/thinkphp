@@ -54,4 +54,3 @@ return array(
     '_RECORD_HAS_UPDATE_'=>'记录已经更新',
     '_NOT_ALLOW_PHP_'=>'模板禁用PHP代码',
 );
-?>

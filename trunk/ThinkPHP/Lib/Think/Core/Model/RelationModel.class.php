@@ -400,4 +400,3 @@ class RelationModel extends Model {
         return $this->getRelation($this->data,$name,true);
     }
 }
-?>

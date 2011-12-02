@@ -159,5 +159,4 @@ class View extends Think{
         // 输出模板文件
         return $content;
     }
-
 }

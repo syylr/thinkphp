@@ -627,4 +627,3 @@ class Session extends Think
 
 }//类定义结束
 Session::_init();
-?>

@@ -652,5 +652,4 @@ class  ThinkTemplate extends Think
         return $this->parse($parseStr);
     }
 
-}//类定义结束
-?>
+}

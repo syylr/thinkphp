@@ -102,5 +102,4 @@ class ThinkException extends Exception
         return $error ;
     }
 
-}//类定义结束
-?>
+}

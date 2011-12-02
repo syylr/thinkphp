@@ -244,5 +244,4 @@ class CacheFile extends Cache {
         }
     }
 
-}//类定义结束
-?>
+}
