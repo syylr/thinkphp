@@ -144,12 +144,11 @@ class App {
             }else{
                 // 是否定义Empty模块
                 $module = A("Empty");
-                if(!$module)
-                    // 模块不存在 抛出异常
-                    throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
             }
+            if(!$module)
+                // 模块不存在 抛出异常
+                throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
         }
-
         //获取当前操作名
         $action = ACTION_NAME;
         if (method_exists($module,'_before_'.$action)) {
