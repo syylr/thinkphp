@@ -106,7 +106,9 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
         }
         if($suffix) {
             $suffix   =  $suffix===true?C('URL_HTML_SUFFIX'):$suffix;
-            $url  .=  '.'.ltrim($suffix,'.');
+            if($suffix) {
+                $url  .=  '.'.ltrim($suffix,'.');
+            }
         }
     }
     if($domain) {
