@@ -31,7 +31,7 @@ if(!APP_DEBUG && is_file(RUNTIME_PATH.$runtime)) {
     if(version_compare(PHP_VERSION,'5.2.0','<'))  die('require PHP > 5.2.0 !');
     // ThinkPHP系统目录定义
     if(!defined('THINK_PATH')) define('THINK_PATH', dirname(__FILE__).'/');
-    if(!defined('APP_NAME')) define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
+    if(!defined('APP_NAME')) define('APP_NAME', realpath(APP_PATH) == dirname(realpath(THINK_PATH))?basename(dirname($_SERVER['SCRIPT_FILENAME'])):'');
     // 加载运行时文件
     require THINK_PATH."Common/runtime.php";
 }
