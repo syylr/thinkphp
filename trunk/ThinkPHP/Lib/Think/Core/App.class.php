@@ -135,19 +135,19 @@ class App {
         $module  =  A($group.MODULE_NAME);
         if(!$module) {
             if(function_exists('__hack_module')) {
-                // hack 方式定义扩展模块 返回Action对象或者false
+                // hack 方式定义扩展模块 返回Action对象
                 $module = __hack_module();
-                if(false === $module) {
+                if(!is_object($module)) {
                     // 不再继续执行 直接返回
                     return ;
                 }
             }else{
                 // 是否定义Empty模块
                 $module = A("Empty");
+                if(!$module)
+                    // 模块不存在 抛出异常
+                    throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
             }
-            if(!$module)
-                // 模块不存在 抛出异常
-                throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
         }
         //获取当前操作名
         $action = ACTION_NAME;
