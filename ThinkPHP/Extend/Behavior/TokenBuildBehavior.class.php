@@ -48,4 +48,3 @@ class TokenBuildBehavior {
         return $token;
     }
 }
-?>
