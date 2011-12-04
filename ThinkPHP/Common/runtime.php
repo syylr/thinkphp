@@ -109,7 +109,7 @@ function build_tags_cache() {
     $content = '';
     foreach ($tags as $tag=>$item){
         foreach ($item as $key=>$name) {
-            $content .= is_int($key)?compile(EXTEND_PATH.'Behavior/'.$name.'Behavior.class.php'):compile($name);
+            $content .= is_int($key)?compile(CORE_PATH.'Behavior/'.$name.'Behavior.class.php'):compile($name);
         }
     }
     return $content;
@@ -173,6 +173,6 @@ function build_app_dir() {
 
 // 创建测试Action
 function build_first_action() {
-    $content = file_get_contents(THINK_PATH.'Tpl/'.(defined('BUILD_MODE')?BUILD_MODE:'AutoIndex').'.tpl.php');
+    $content = file_get_contents(THINK_PATH.'Common/DefaultIndex.tpl.php');
     file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
 }
