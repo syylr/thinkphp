@@ -12,7 +12,7 @@
 
 /**
  +------------------------------------------------------------------------------
- * 系统行为扩展 模板内容输出替换 包含令牌自动生成
+ * 系统行为扩展 模板内容输出替换
  * 增加配置参数如下：
  +------------------------------------------------------------------------------
  */
@@ -45,18 +45,6 @@ class ContentReplaceBehavior {
             '__URL__'       => __URL__,
             '__INFO__'      => __INFO__,
         );
-        if(C('TOKEN_ON')) {
-            if(strpos($content,'{__TOKEN__}')) {
-                // 指定表单令牌隐藏域位置
-                $replace['{__TOKEN__}'] =  $this->buildFormToken();
-            }elseif(strpos($content,'{__NOTOKEN__}')){
-                // 标记为不需要令牌验证
-                $replace['{__NOTOKEN__}'] =  $this->buildFormToken();
-            }elseif(preg_match('/<\/form(\s*)>/is',$content,$match)) {
-                // 智能生成表单令牌隐藏域
-                $replace[$match[0]] = $this->buildFormToken().$match[0];
-            }
-        }
         // 允许用户自定义模板的字符串替换
         if(is_array(C('TMPL_PARSE_STRING')) )
             $replace =  array_merge($replace,array_change_key_case(C('TMPL_PARSE_STRING'),CASE_UPPER));
@@ -64,30 +52,4 @@ class ContentReplaceBehavior {
         return $content;
     }
 
-    /**
-     +----------------------------------------------------------
-     * 创建表单令牌隐藏域
-     +----------------------------------------------------------
-     * @access private
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    private function buildFormToken() {
-        $tokenName   = C('TOKEN_NAME');
-        $tokenType = C('TOKEN_TYPE');
-        if(!isset($_SESSION[$tokenName])) {
-            $_SESSION[$tokenName]  = array();
-        }
-        // 标识当前页面唯一性
-        $tokenKey  =  md5(__SELF__);
-        if(isset($_SESSION[$tokenName][$tokenKey])) {// 相同页面不重复生成session
-            $tokenValue = $_SESSION[$tokenName][$tokenKey];
-        }else{
-            $tokenValue = $tokenType(microtime(TRUE));
-            $_SESSION[$tokenName][$tokenKey]   =  $tokenValue;
-        }
-        $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenKey.'_'.$tokenValue.'" />';
-        return $token;
-    }
 }
