@@ -40,11 +40,11 @@ class LocationTemplateBehavior {
     private function parseTemplateFile($templateFile) {
         if(''==$templateFile) {
             // 如果模板文件名为空 按照默认规则定位
-            $templateFile = C('TMPL_FILE_NAME');
+            $templateFile = C('TEMPLATE_NAME');
         }elseif(false === strpos($templateFile,'.')){
             $templateFile  = str_replace(array('@',':'),'/',$templateFile);
             $count   =  substr_count($templateFile,'/');
-            $path   = dirname(C('TMPL_FILE_NAME'));
+            $path   = dirname(C('TEMPLATE_NAME'));
             for($i=0;$i<$count;$i++)
                 $path   = dirname($path);
             $templateFile =  $path.'/'.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
