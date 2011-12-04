@@ -173,6 +173,6 @@ function build_app_dir() {
 
 // 创建测试Action
 function build_first_action() {
-    $content = file_get_contents(THINK_PATH.'Common/DefaultIndex.tpl.php');
+    $content = file_get_contents(THINK_PATH.'Common/default_index.tpl');
     file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
 }
