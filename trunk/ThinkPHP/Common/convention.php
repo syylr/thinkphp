@@ -33,7 +33,7 @@ return  array(
     'APP_FILE_CASE'         => false,   // 是否检查文件的大小写 对Windows平台有效
     'APP_GROUP_DEPR'        => '.',     // 模块分组之间的分割符
     'APP_GROUP_LIST'        => '',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
-    'APP_AUTOLOAD_PATH'     => 'Think.Behavior,@.Action,@.Model,@.Behavior,Think.Util',// 自动加载机制的自动搜索路径,注意搜索顺序
+    'APP_AUTOLOAD_PATH'     => '@.Action,@.Model,@.Behavior,Think.Util',// 自动加载机制的自动搜索路径,注意搜索顺序
     'APP_CONFIG_LIST'    =>   'routes,tags,htmls', // 项目动态配置文件列表
     'APP_TAGS_ON'   => true, // 系统标签扩展开关
 
