@@ -506,7 +506,7 @@ function A($name, $app='@') {
         $className = $name . 'Action';
         import($app . '.Action.' . $className);
     }
-    if (class_exists($className)) {
+    if (class_exists($className,false)) {
         $action = new $className();
         $_action[$app . $OriClassName] = $action;
         return $action;
