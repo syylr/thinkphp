@@ -8,7 +8,11 @@ class IndexAction extends Action
     +----------------------------------------------------------
     */
     public function index() {
-        $this->display(THINK_PATH.'Tpl/Autoindex/hello.html');
+        if(IS_CLI) {
+            echo ("hello, ThinkPHP!");
+        }else{
+            $this->display(THINK_PATH.'Tpl/Autoindex/hello.html');
+        }
     }
 
     /**
