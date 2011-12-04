@@ -34,6 +34,7 @@ return array(
     ),
     'view_filter'=>array(
         'ContentReplace', // 模板输出替换
+        'TokenBuild',   // 表单令牌
         'ShowRuntime', // 运行时间显示
     ),
     'view_end'=>array(

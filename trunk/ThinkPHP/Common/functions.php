@@ -455,7 +455,7 @@ function D($name='', $app='') {
         $className = $name . 'Model';
         import($app . '.Model.' . $className);
     }
-    if (class_exists($className,false)) {
+    if (class_exists($className)) {
         $model = new $className();
     } else {
         $model = new Model($name);
