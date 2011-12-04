@@ -68,7 +68,7 @@ class  ThinkTemplate extends Think
         $this->config['taglib_end']          =  $this->stripPreg(C('TAGLIB_END'));
         $this->config['tmpl_begin']         =  $this->stripPreg(C('TMPL_L_DELIM'));
         $this->config['tmpl_end']           =  $this->stripPreg(C('TMPL_R_DELIM'));
-        $this->config['default_tmpl']       =  C('TMPL_FILE_NAME');
+        $this->config['default_tmpl']       =  C('TEMPLATE_NAME');
         $this->config['tag_level']            =  C('TAG_NESTED_LEVEL');
     }
 
@@ -600,7 +600,7 @@ class  ThinkTemplate extends Think
                     $parseStr = 'THINK_VERSION';
                     break;
                 case 'TEMPLATE':
-                    $parseStr = 'C("TMPL_FILE_NAME")';
+                    $parseStr = 'C("TEMPLATE_NAME")';
                     break;
                 case 'LDELIM':
                     $parseStr = 'C("TMPL_L_DELIM")';
@@ -639,7 +639,7 @@ class  ThinkTemplate extends Think
         }else {
             $tmplPublicName  = str_replace(array('@',':'),'/',$tmplPublicName);
             $count   =  substr_count($tmplPublicName,'/'); 
-            $path   = dirname(C('TMPL_FILE_NAME'));
+            $path   = dirname(C('TEMPLATE_NAME'));
             for($i=0;$i<$count;$i++)
                 $path   = dirname($path);
             $templateFile =  $path.'/'.$tmplPublicName.$this->config['template_suffix'];

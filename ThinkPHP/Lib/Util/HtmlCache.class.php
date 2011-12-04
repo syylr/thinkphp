@@ -142,7 +142,7 @@ class HtmlCache extends Think
     static public function checkHTMLCache($cacheFile='',$cacheTime='') {
         if(!is_file($cacheFile)){
             return false;
-        }elseif (filemtime(C('TMPL_FILE_NAME')) > filemtime($cacheFile)) {
+        }elseif (filemtime(C('TEMPLATE_NAME')) > filemtime($cacheFile)) {
             // 模板文件如果更新静态文件需要更新
             return false;
         }elseif(!is_numeric($cacheTime) && function_exists($cacheTime)){

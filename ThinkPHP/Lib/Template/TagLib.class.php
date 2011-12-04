@@ -232,7 +232,7 @@ class TagLib extends Think
             switch($vars[1]){
                 case 'NOW':       $parseStr = "date('Y-m-d g:i a',time())";break;
                 case 'VERSION':  $parseStr = 'THINK_VERSION';break;
-                case 'TEMPLATE':$parseStr = 'C("TMPL_FILE_NAME")';break;
+                case 'TEMPLATE':$parseStr = 'C("TEMPLATE_NAME")';break;
                 case 'LDELIM':    $parseStr = 'C("TMPL_L_DELIM")';break;
                 case 'RDELIM':    $parseStr = 'C("TMPL_R_DELIM")';break;
                 default:  if(defined($vars[1])) $parseStr = $vars[1];
