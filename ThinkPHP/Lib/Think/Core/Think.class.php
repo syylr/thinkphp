@@ -78,7 +78,6 @@ class Think {
                 // 如果加载类成功则返回
                 return ;
         }
-        return ;
     }
 
     /**
