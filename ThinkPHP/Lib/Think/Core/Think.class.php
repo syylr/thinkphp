@@ -67,6 +67,10 @@ class Think {
     public static function autoload($classname) {
         // 检查是否存在别名定义
         if(alias_import($classname)) return ;
+        // 系统行为自动加载
+        if(substr($classname,-8)=="Behavior" && require_cache(EXTEND_PATH.'Behavior/'.$classname.'.class.php')) {
+            return ;
+        }
         // 根据自动加载路径设置进行尝试搜索
         $paths  =   explode(',',C('APP_AUTOLOAD_PATH'));
         foreach ($paths as $path){

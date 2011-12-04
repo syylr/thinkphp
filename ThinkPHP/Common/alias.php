@@ -29,15 +29,4 @@ return array(
     'AdvModel'      => THINK_PATH.'Lib/Think/Core/Model/AdvModel.class.php',
     'RelationModel' => THINK_PATH.'Lib/Think/Core/Model/RelationModel.class.php',
     'MongoModel'  => THINK_PATH.'Lib/Think/Core/Model/MongoModel.class.php',
-    // 系统行为扩展
-    'CheckLangBehavior'=>EXTEND_PATH.'Behavior/CheckLangBehavior.class.php',
-    'CheckTemplateBehavior'=>EXTEND_PATH.'Behavior/CheckTemplateBehavior.class.php',
-    'ReadHTMLCacheBehavior'=>EXTEND_PATH.'Behavior/ReadHTMLCacheBehavior.class.php',
-    'WriteHTMLCacheBehavior'=>EXTEND_PATH.'Behavior/WriteHTMLCacheBehavior.class.php',
-    'ShowRuntimeBehavior'=>EXTEND_PATH.'Behavior/ShowRuntimeBehavior.class.php',
-    'ShowPageTraceBehavior'=>EXTEND_PATH.'Behavior/ShowPageTraceBehavior.class.php',
-    'ContentReplaceBehavior'=>EXTEND_PATH.'Behavior/ContentReplaceBehavior.class.php',
-    'LocationTemplateBehavior'=>EXTEND_PATH.'Behavior/LocationTemplateBehavior.class.php',
-    'ParseTemplateBehavior'=>EXTEND_PATH.'Behavior/ParseTemplateBehavior.class.php',
-    'TokenBuildBehavior'=>EXTEND_PATH.'Behavior/TokenBuildBehavior.class.php',
     );
