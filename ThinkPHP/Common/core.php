@@ -13,12 +13,12 @@
 // 系统默认的核心列表文件
 return array(
     THINK_PATH.'Common/functions.php',   // 系统函数库
-    CORE_PATH.'Think.class.php',
-    CORE_PATH.'ThinkException.class.php',  // 异常处理类
-    CORE_PATH.'Log.class.php',    // 日志处理类
-    CORE_PATH.'Dispatcher.class.php', // URL调度和路由类
-    CORE_PATH.'App.class.php',   // 应用程序类
-    CORE_PATH.'Action.class.php', // 控制器类
-    //CORE_PATH.'Model.class.php', // 模型类
-    CORE_PATH.'View.class.php',  // 视图类
+    CORE_PATH.'Core/Think.class.php',
+    CORE_PATH.'Core/ThinkException.class.php',  // 异常处理类
+    CORE_PATH.'Core/Log.class.php',    // 日志处理类
+    CORE_PATH.'Core/Dispatcher.class.php', // URL调度和路由类
+    CORE_PATH.'Core/App.class.php',   // 应用程序类
+    CORE_PATH.'Core/Action.class.php', // 控制器类
+    //CORE_PATH.'Core/Model.class.php', // 模型类
+    CORE_PATH.'Core/View.class.php',  // 视图类
 );

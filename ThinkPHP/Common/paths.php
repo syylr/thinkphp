@@ -30,7 +30,7 @@ define('LOG_PATH',       RUNTIME_PATH.LOG_DIR.'/'); //
 define('LANG_PATH',     APP_PATH.LANG_DIR.'/'); //
 define('TEMP_PATH',      RUNTIME_PATH.TEMP_DIR.'/'); //
 define('DATA_PATH', RUNTIME_PATH.'Data/'); //
-define('CORE_PATH',THINK_PATH.'Core/');
+define('CORE_PATH',THINK_PATH.'Lib/');
 define('EXTEND_PATH',THINK_PATH.'Extend/');
 define('MODE_PATH',EXTEND_PATH.'Mode/');
 define('VENDOR_PATH',EXTEND_PATH.'Vendor/');
