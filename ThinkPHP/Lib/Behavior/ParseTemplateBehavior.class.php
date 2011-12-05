@@ -33,13 +33,22 @@ class ParseTemplateBehavior {
         }else{
             // 模板文件需要重新编译 支持第三方模板引擎
             // 调用模板引擎解析和输出
-            $className   = 'Template'.ucwords($engine);
-            require_cache(CORE_PATH.'Util/Template/'.$className.'.class.php');
-            $tpl   =  new $className;
-            $tpl->fetch($_data['file'],$_data['var']);
+            $class   = 'Template'.ucwords($engine);
+            if(is_file(CORE_PATH.'Util/Template/'.$class.'.class.php')) {
+                // 内置驱动
+                $path = CORE_PATH.'Util/Template/';
+            }else{ // 扩展驱动
+                $path = EXTEND_PATH.'Driver/Template/';
+            }
+            if(require_cache($path.$class.'.class.php')) {
+                $tpl   =  new $class;
+                $tpl->fetch($_data['file'],$_data['var']);
+            }else {
+                // 类没有定义
+                throw_exception(L('_NOT_SUPPERT_').': ' . $class);
+            }
         }
     }
-
 
     /**
      +----------------------------------------------------------

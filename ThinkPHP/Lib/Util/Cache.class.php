@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Cache extends Think
-{//类定义开始
+class Cache extends Think {
 
     /**
      +----------------------------------------------------------
@@ -70,11 +69,16 @@ class Cache extends Think
      */
     public function connect($type='',$options=array()) {
         if(empty($type))  $type = C('DATA_CACHE_TYPE');
-        $cachePath = dirname(__FILE__).'/Cache/';
-        $cacheClass = 'Cache'.ucwords(strtolower(trim($type)));
-        require_cache($cachePath.$cacheClass.'.class.php');
-        if(class_exists($cacheClass))
-            $cache = new $cacheClass($options);
+        $type = strtolower(trim($type));
+        $class = 'Cache'.ucwords($type);
+        if(is_file(dirname(__FILE__).'/Cache/'.$class.'.class.php')) {
+            // 内置驱动
+            $path = dirname(__FILE__).'/Cache/';
+        }else{ // 扩展驱动
+            $path = EXTEND_PATH.'Driver/Cache/';
+        }
+        if(require_cache($path.$class.'.class.php'))
+            $cache = new $class($options);
         else
             throw_exception(L('_CACHE_TYPE_INVALID_').':'.$type);
         return $cache;
