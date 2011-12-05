@@ -51,7 +51,7 @@ function load_think_mode() {
     }
     // 加载模式文件列表
     foreach ($list as $key=>$file){
-        if(is_file($file))  require_cache($file);
+        if(is_file($file))  require $file;
     }
     // 加载系统别名定义
     if(defined('THINK_MODE')) {
