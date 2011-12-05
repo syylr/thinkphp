@@ -43,8 +43,7 @@ class ParseTemplateBehavior {
             if(require_cache($path.$class.'.class.php')) {
                 $tpl   =  new $class;
                 $tpl->fetch($_data['file'],$_data['var']);
-            }else {
-                // 类没有定义
+            }else {  // 类没有定义
                 throw_exception(L('_NOT_SUPPERT_').': ' . $class);
             }
         }
