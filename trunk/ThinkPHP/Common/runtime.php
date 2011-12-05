@@ -17,7 +17,7 @@ load_think_mode();
 function check_runtime() {
     if(!is_writeable(RUNTIME_PATH)) {
         header("Content-Type:text/html; charset=utf-8");
-        exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>目录 [ '.RUNTIME_PATH.' ] 不可写！</div>');
+        exit('目录 [ '.RUNTIME_PATH.' ] 不可写！');
     }
     if(!is_dir(CACHE_PATH)) {
         mkdir(CACHE_PATH);  // 模板缓存目录
@@ -167,7 +167,7 @@ function build_app_dir() {
             build_first_action();
     }else{
         header("Content-Type:text/html; charset=utf-8");
-        exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>项目目录不可写，目录无法自动生成！<BR>请使用项目生成器或者手动生成项目目录~</div>');
+        exit('项目目录不可写，目录无法自动生成！<BR>请使用项目生成器或者手动生成项目目录~');
     }
 }
 
