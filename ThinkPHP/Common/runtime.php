@@ -50,7 +50,7 @@ function load_think_mode() {
         $list[]	= THINK_PATH.'/Common/compat.php';
     // 加载模式文件列表
     foreach ($list as $key=>$file){
-        if(is_file($file))  require $file;
+        if(is_file($file))  require_cache($file);
     }
     // 检查项目目录结构 如果不存在则自动创建
     if(!is_dir(RUNTIME_PATH)) {
