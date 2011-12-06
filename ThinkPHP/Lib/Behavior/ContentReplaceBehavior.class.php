@@ -44,6 +44,8 @@ class ContentReplaceBehavior {
             '__SELF__'      => __SELF__,       // 当前页面地址
             '__URL__'       => __URL__,
             '__INFO__'      => __INFO__,
+            '../Public'   => APP_TMPL_PATH.'/Public',// 项目公共模板目录
+            '__PUBLIC__'  => __ROOT__.'/Public',// 站点公共目录
         );
         // 允许用户自定义模板的字符串替换
         if(is_array(C('TMPL_PARSE_STRING')) )
