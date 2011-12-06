@@ -90,7 +90,8 @@ function U($url, $params=array(), $redirect=false, $suffix=true) {
             }
         }
     }
-
+    // 默认分组不显示
+    if(0 == strcasecmp($group, C('DEFAULT_GROUP')))  unset($group);
     if (C('URL_MODEL') > 0) {
         $depr = C('URL_PATHINFO_DEPR');
         $str = $depr;
@@ -434,7 +435,7 @@ function load($name, $baseUrl='', $ext='.php') {
     }
     if (substr($baseUrl, -1) != "/")
         $baseUrl .= "/";
-    include $baseUrl . $name . $ext;
+    require_cache($baseUrl . $name . $ext);
 }
 
 // 快速导入第三方框架类库
