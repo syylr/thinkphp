@@ -397,7 +397,7 @@ function load($name, $baseUrl='', $ext='.php') {
     }
     if (substr($baseUrl, -1) != "/")
         $baseUrl .= "/";
-    include $baseUrl . $name . $ext;
+    require_cache($baseUrl . $name . $ext);
 }
 
 // 快速导入第三方框架类库
