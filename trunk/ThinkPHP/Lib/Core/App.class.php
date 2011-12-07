@@ -44,8 +44,8 @@ class App {
         spl_autoload_register(array('Think', 'autoload'));
         // 设置系统时区
         date_default_timezone_set(C('DEFAULT_TIMEZONE'));
-        // 加载动态项目公共文件
-        if(is_file(COMMON_PATH.'extend.php')) include COMMON_PATH.'extend.php';
+        // 加载动态项目公共文件和配置
+        load_ext_file();
 
         // 项目初始化标签
         tag('app_init');
