@@ -94,7 +94,7 @@ abstract class Action extends Think
      * @return void
      +----------------------------------------------------------
      */
-    protected function display($templateFile='',$charset='',$contentType='text/html') {
+    protected function display($templateFile='',$charset='',$contentType='') {
         if(false === $templateFile) {
             $this->showTrace();
         }else{
