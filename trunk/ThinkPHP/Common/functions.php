@@ -408,9 +408,8 @@ function alias_import($alias, $classfile='') {
         $_alias[$alias] = $classfile;
         return;
     }
-    if (is_string($alias)) {
-        if (isset($_alias[$alias]))
-            return require_cache($_alias[$alias]);
+    if (is_string($alias) && isset($_alias[$alias])) {
+        return require_cache($_alias[$alias]);
     }elseif (is_array($alias)) {
         foreach ($alias as $key => $val)
             $_alias[$key] = $val;
