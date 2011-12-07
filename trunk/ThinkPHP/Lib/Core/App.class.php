@@ -91,6 +91,15 @@ class App {
             alias_import($alias);
             if(!APP_DEBUG) $common .= 'alias_import('.var_export($alias,true).');';
         }
+        // 加载项目编译文件列表
+        if(is_file(CONFIG_PATH.'app.php')) {
+            $list   =  include CONFIG_PATH.'app.php';
+            foreach ($list as $file){
+                // 加载并编译文件
+                require_cache($file);
+                if(!APP_DEBUG) $common   .= compile($file);
+            }
+        }
         // 加载动态配置文件
         $configs =  C('APP_CONFIG_LIST');
         if(is_string($configs)) $configs =  explode(',',$configs);
