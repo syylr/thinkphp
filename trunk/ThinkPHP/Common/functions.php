@@ -292,7 +292,6 @@ function get_instance_of($name, $method='', $args=array()) {
 // 优化的require_once
 function require_cache($filename) {
     static $_importFiles = array();
-    $filename = realpath($filename);
     if (!isset($_importFiles[$filename])) {
         if (file_exists_case($filename)) {
             require $filename;
