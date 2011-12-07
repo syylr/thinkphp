@@ -935,6 +935,29 @@ function cookie($name, $value='', $option=null) {
     }
 }
 
+// 加载扩展配置文件
+function load_ext_file() {
+    // 加载自定义外部文件
+    if(C('LOAD_EXT_FILE')) {
+        $files =  explode(',',C('LOAD_EXT_FILE'));
+        foreach ($files as $file){
+            $file   = COMMON_PATH.$file.'.php';
+            if(is_file($file)) include $file;
+        }
+    }
+    // 加载自定义的动态配置文件
+    if(C('LOAD_EXT_CONFIG')) {
+        $configs =  C('LOAD_EXT_CONFIG');
+        if(is_string($configs)) $configs =  explode(',',$configs);
+        foreach ($configs as $key=>$config){
+            $file   = CONFIG_PATH.$config.'.php';
+            if(is_file($file)) {
+                is_numeric($key)?C(include $file):C($key,include $file);
+            }
+        }
+    }
+}
+
 // 获取客户端IP地址
 function get_client_ip() {
     static $ip = NULL;
