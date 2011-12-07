@@ -23,8 +23,7 @@ function check_runtime() {
         mkdir(CACHE_PATH);  // 模板缓存目录
     }elseif(APP_DEBUG){
         // 调试模式切换删除编译缓存
-        $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
-        if(is_file(RUNTIME_PATH.$runtime)) unlink(RUNTIME_PATH.$runtime);
+        if(is_file(RUNTIME_FILE)) unlink(RUNTIME_FILE);
     }
     if(!is_dir(LOG_PATH))	mkdir(LOG_PATH);    // 日志目录
     if(!is_dir(TEMP_PATH))  mkdir(TEMP_PATH);	// 数据缓存目录
@@ -100,8 +99,7 @@ function build_runtime_cache($append='') {
         $content .= build_tags_cache();
     }
     $content .= $append."\nC(".var_export(C(),true).');';
-    $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
-    file_put_contents(RUNTIME_PATH.$runtime,strip_whitespace('<?php '.$content));
+    file_put_contents(RUNTIME_FILE,strip_whitespace('<?php '.$content));
 }
 
 function build_tags_cache() {
@@ -173,6 +171,6 @@ function build_app_dir() {
 
 // 创建测试Action
 function build_first_action() {
-    $content = file_get_contents(THINK_PATH.'Common/default_index.tpl');
+    $content = file_get_contents(THINK_PATH.'Common/Tpl/default_index.tpl');
     file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
 }

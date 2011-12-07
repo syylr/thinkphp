@@ -24,9 +24,10 @@ if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME'])
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'Runtime/');
 if(!defined('APP_DEBUG')) define('APP_DEBUG',false); // 是否调试模式
 $runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
-if(!APP_DEBUG && is_file(RUNTIME_PATH.$runtime)) {
+if(!defined('RUNTIME_FILE')) define('RUNTIME_FILE',RUNTIME_PATH.$runtime);
+if(!APP_DEBUG && is_file(RUNTIME_FILE)) {
     // 部署模式直接载入allinone缓存
-    require RUNTIME_PATH.$runtime;
+    require RUNTIME_FILE;
 }else{
     if(version_compare(PHP_VERSION,'5.2.0','<'))  die('require PHP > 5.2.0 !');
     // ThinkPHP系统目录定义
