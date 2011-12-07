@@ -329,12 +329,11 @@ function file_exists_case($filename) {
  */
 function import($class, $baseUrl = '', $ext='.class.php') {
     static $_file = array();
-    static $_class = array();
     $class = str_replace(array('.', '#'), array('/', '.'), $class);
     if ('' === $baseUrl && false === strpos($class, '/')) {
         // 检查别名导入
         return alias_import($class);
-    }    //echo('<br>'.$class.$baseUrl);
+    }
     if (isset($_file[$class . $baseUrl]))
         return true;
     else
@@ -345,13 +344,13 @@ function import($class, $baseUrl = '', $ext='.class.php') {
             //加载当前项目应用类库
             $baseUrl = dirname(LIB_PATH);
             $class = substr_replace($class, 'Lib/', 0, strlen($class_strut[0]) + 1);
-        }elseif('think' == strtolower($class_strut[0])){ // think 官方基类库
+        }elseif ('think' == strtolower($class_strut[0])){ // think 官方基类库
             $baseUrl = CORE_PATH;
             $class = substr($class,6);
         }elseif (in_array(strtolower($class_strut[0]), array('org', 'com'))) {
             // org 第三方公共类库 com 企业公共类库
             $baseUrl = LIBRARY_PATH;
-        } else { // 加载其他项目应用类库
+        }else { // 加载其他项目应用类库
             $class = substr_replace($class, '', 0, strlen($class_strut[0]) + 1);
             $baseUrl = APP_PATH . '../' . $class_strut[0] . '/' . LIB_DIR . '/';
         }
@@ -359,13 +358,6 @@ function import($class, $baseUrl = '', $ext='.class.php') {
     if (substr($baseUrl, -1) != "/")
         $baseUrl .= "/";
     $classfile = $baseUrl . $class . $ext;
-    if ($ext == '.class.php' && is_file($classfile)) {
-        // 冲突检测
-        $class = basename($classfile, $ext);
-        if (isset($_class[$class]))
-            throw_exception(L('_CLASS_CONFLICT_') . ':' . $_class[$class] . ' ' . $classfile);
-        $_class[$class] = $classfile;
-    }
     //导入目录下的指定类库文件
     return require_cache($classfile);
 }
