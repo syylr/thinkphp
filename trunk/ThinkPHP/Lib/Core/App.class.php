@@ -67,6 +67,7 @@ class App {
     static private function build() {
         // 加载惯例配置文件
         C(include THINK_PATH.'Common/convention.php');
+
         // 加载项目配置文件
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
@@ -76,7 +77,6 @@ class App {
             C(include MODE_PATH.ucwords(strtolower(THINK_MODE)).'/config.php');
         }
 
-        //----------------------------------------START
         // 读取行为集合Collection 模式扩展也可以定义行为集合
         $collection   = C('COLLECTION_NAME')?
             include EXTEND_PATH.'Collection/'.strtolower(C('COLLECTION_NAME')).'.php':
@@ -88,20 +88,24 @@ class App {
         if(isset($collection['config'])) {
             C( is_array($collection['config'])?$collection['config']:include $collection['config'] );
         }
+
         // 加载系统行为定义
         if(isset($collection['extends']) && C('APP_TAGS_ON')) {
             C('extends',is_array($collection['extends'])?$collection['extends']:include $collection['extends']);
         }
+
         // 加载应用行为定义
         if(isset($collection['tags'])) {
             C('tags',is_array($collection['tags'])?$collection['tags']:include $collection['tags']);
         }
+
         // 加载公共文件
         if(isset($collection['common']) && is_file($collection['common'])) {
             include $collection['common'];
             // 编译文件
             if(!APP_DEBUG)  $compile   .= compile($collection['common']);
         }
+
         // 加载应用别名定义
         if(isset($collection['alias'])) {
             $alias = is_array($collection['alias'])?$collection['alias']:include $collection['alias'];
@@ -109,6 +113,7 @@ class App {
             // 编译文件
             if(!APP_DEBUG) $compile .= 'alias_import('.var_export($alias,true).');';
         }
+
         // 加载项目编译文件列表
         if(isset($collection['app'])) {
             $list   =   is_array($collection['app'])?$collection['app']:include $collection['app'];
@@ -118,48 +123,7 @@ class App {
                 if(!APP_DEBUG) $compile   .= compile($file);
             }
         }
-        // ----------------------------------------------END
-        /*
-        if(C('APP_TAGS_ON')) {
-            if(defined('THINK_MODE') && is_file(MODE_PATH.ucwords(strtolower(THINK_MODE)).'/tags.php')) {
-                // 模式可以单独定义系统的行为扩展
-                C('extends',include MODE_PATH.ucwords(strtolower(THINK_MODE)).'/tags.php');
-            }else{ // 加载系统默认行为扩展定义文件
-                C('extends',include THINK_PATH.'Common/tags.php');
-            }
-        }
-        $common   = '';
-        // 加载项目公共文件
-        if(is_file(COMMON_PATH.'common.php')) {
-            include COMMON_PATH.'common.php';
-            // 编译文件
-            if(!APP_DEBUG)  $common   .= compile(COMMON_PATH.'common.php');
-        }
-        // 加载应用别名定义
-        if(is_file(CONFIG_PATH.'alias.php')) {
-            $alias = include CONFIG_PATH.'alias.php';
-            alias_import($alias);
-            if(!APP_DEBUG) $common .= 'alias_import('.var_export($alias,true).');';
-        }
-        // 加载项目编译文件列表
-        if(is_file(CONFIG_PATH.'app.php')) {
-            $list   =  include CONFIG_PATH.'app.php';
-            foreach ($list as $file){
-                // 加载并编译文件
-                require_cache($file);
-                if(!APP_DEBUG) $common   .= compile($file);
-            }
-        }
-        // 加载动态配置文件
-        $configs =  C('APP_CONFIG_LIST');
-        if(is_string($configs)) $configs =  explode(',',$configs);
-        foreach ($configs as $config) {
-            $file   = CONFIG_PATH.$config.'.php';
-            if(is_file($file))
-                C($config,array_change_key_case(include $file));
-        }
-        C('APP_CONFIG_LIST',''); // 清除配置参数
-        */
+
         if(APP_DEBUG) {
             // 调试模式加载系统默认的开发模式配置文件
             C(include THINK_PATH.'Common/debug.php');
