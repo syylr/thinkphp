@@ -79,7 +79,7 @@ class App {
         //----------------------------------------START
         // 读取行为集合Collection 模式扩展也可以定义行为集合
         $collection   = C('COLLECTION_NAME')?
-            include EXTEND_PATH.'Collection/'.strtolower(C('COLLECTION_NAME')).'.php'):
+            include EXTEND_PATH.'Collection/'.strtolower(C('COLLECTION_NAME')).'.php':
             include THINK_PATH.'Common/collection.php');
 
         // 解析行为集合
