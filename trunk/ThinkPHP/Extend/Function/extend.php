@@ -37,8 +37,7 @@
  * @return string
  +----------------------------------------------------------
  */
-function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true)
-{
+function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true) {
     if(function_exists("mb_substr"))
         $slice = mb_substr($str, $start, $length, $charset);
     elseif(function_exists('iconv_substr')) {
@@ -124,8 +123,7 @@ function build_verify ($length=4,$mode=1) {
  * @return string
  +----------------------------------------------------------
  */
-function byte_format($size, $dec=2)
-{
+function byte_format($size, $dec=2) {
 	$a = array("B", "KB", "MB", "GB", "TB", "PB");
 	$pos = 0;
 	while ($size >= 1024) {
@@ -144,18 +142,17 @@ function byte_format($size, $dec=2)
  * @return Boolean
  +----------------------------------------------------------
  */
-function is_utf8($string)
-{
-	return preg_match('%^(?:
-		 [\x09\x0A\x0D\x20-\x7E]            # ASCII
-	   | [\xC2-\xDF][\x80-\xBF]             # non-overlong 2-byte
-	   |  \xE0[\xA0-\xBF][\x80-\xBF]        # excluding overlongs
-	   | [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}  # straight 3-byte
-	   |  \xED[\x80-\x9F][\x80-\xBF]        # excluding surrogates
-	   |  \xF0[\x90-\xBF][\x80-\xBF]{2}     # planes 1-3
-	   | [\xF1-\xF3][\x80-\xBF]{3}          # planes 4-15
-	   |  \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
-   )*$%xs', $string);
+function is_utf8($string) {
+    return preg_match('%^(?:
+         [\x09\x0A\x0D\x20-\x7E]            # ASCII
+       | [\xC2-\xDF][\x80-\xBF]             # non-overlong 2-byte
+       |  \xE0[\xA0-\xBF][\x80-\xBF]        # excluding overlongs
+       | [\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}  # straight 3-byte
+       |  \xED[\x80-\x9F][\x80-\xBF]        # excluding surrogates
+       |  \xF0[\x90-\xBF][\x80-\xBF]{2}     # planes 1-3
+       | [\xF1-\xF3][\x80-\xBF]{3}          # planes 4-15
+       |  \xF4[\x80-\x8F][\x80-\xBF]{2}     # plane 16
+    )*$%xs', $string);
 }
 /**
  +----------------------------------------------------------
@@ -167,8 +164,7 @@ function is_utf8($string)
  * @return String
  +----------------------------------------------------------
  */
-function highlight_code($str,$show=false)
-{
+function highlight_code($str,$show=false) {
     if(file_exists($str)) {
         $str    =   file_get_contents($str);
     }
@@ -219,8 +215,9 @@ function highlight_code($str,$show=false)
         return $result;
     }
 }
+
 //输出安全的html
-function h($text, $tags = null){
+function h($text, $tags = null) {
 	$text	=	trim($text);
 	//完全过滤注释
 	$text	=	preg_replace('/<!--?.*-->/','',$text);
@@ -401,8 +398,7 @@ function remove_xss($val) {
  * @return array
  +----------------------------------------------------------
  */
-function list_to_tree($list, $pk='id',$pid = 'pid',$child = '_child',$root=0)
-{
+function list_to_tree($list, $pk='id',$pid = 'pid',$child = '_child',$root=0) {
     // 创建Tree
     $tree = array();
     if(is_array($list)) {
