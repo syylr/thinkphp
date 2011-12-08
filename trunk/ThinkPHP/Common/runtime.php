@@ -98,8 +98,10 @@ function build_runtime_cache($append='') {
     if(C('APP_TAGS_ON')) {
         $content .= build_tags_cache();
     }
-    $content .= $append."\nC(".var_export(C(),true).');';
+    $content .= $append."\nC(".var_export(C(),true).');G(\'loadTime\');App::run();';
     file_put_contents(RUNTIME_FILE,strip_whitespace('<?php '.$content));
+    // 生成新的入口文件 便于入口定义 可以拷贝到任意位置 供入口文件引入 无需再导入原来的ThinkPHP.php
+    file_put_contents(RUNTIME_PATH.'ThinkPHP.php',strip_whitespace('<?php function G($start,$end='',$dec=3) {static $_info = array();if(!empty($end)) {if(!isset($_info[$end])) {$_info[$end] = microtime(TRUE);}return number_format(($_info[$end]-$_info[$start]),$dec);}else{$_info[$start] = microtime(TRUE);}}G(\'beginTime\');'.$content));
 }
 
 function build_tags_cache() {
