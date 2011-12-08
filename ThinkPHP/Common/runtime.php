@@ -135,7 +135,7 @@ function build_app_dir() {
             LANG_PATH,
             CACHE_PATH,
             TMPL_PATH,
-            TMPL_PATH.'default/',
+            TMPL_PATH.C('DEFAULT_THEME').'/',
             LOG_PATH,
             TEMP_PATH,
             DATA_PATH,
