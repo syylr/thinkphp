@@ -160,8 +160,8 @@ class Dispatcher extends Think {
                 $path = $pathInfo;
         }elseif (!empty($_SERVER['REDIRECT_PATH_INFO'])){
             $path = $_SERVER['REDIRECT_PATH_INFO'];
-        }elseif(!empty($_SERVER["REDIRECT_Url"])){
-            $path = $_SERVER["REDIRECT_Url"];
+        }elseif(!empty($_SERVER["REDIRECT_URL"])){
+            $path = $_SERVER["REDIRECT_URL"];
             if(empty($_SERVER['QUERY_STRING']) || $_SERVER['QUERY_STRING'] == $_SERVER["REDIRECT_QUERY_STRING"]) {
                 $parsedUrl = parse_url($_SERVER["REQUEST_URI"]);
                 if(!empty($parsedUrl['query'])) {
