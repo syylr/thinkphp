@@ -19,6 +19,8 @@ return array(
     'app_begin'=>array('CheckLang', // 语言检测
         'CheckTemplate', // 模板检测
     ),
+    'route_check'=>array('CheckRoute', // 路由检测
+    ), 
     'app_end'=>array(
         'ShowPageTrace', // 页面Trace显示
     ),
