@@ -101,7 +101,7 @@ function build_runtime_cache($append='') {
     $content .= $append."\nC(".var_export(C(),true).');G(\'loadTime\');App::run();';
     file_put_contents(RUNTIME_FILE,strip_whitespace('<?php '.$content));
     // 生成新的入口文件 便于入口定义 可以拷贝到任意位置 供入口文件引入 无需再导入原来的ThinkPHP.php
-    file_put_contents(RUNTIME_PATH.'ThinkPHP.php',strip_whitespace('<?php function G($start,$end=\'\',$dec=3) { static $_info= array(); if(!empty($end)) { if(!isset($_end[$end])) { $_info[$end] = microtime(TRUE); } return number_format(($_info[$end]-$_info[$start]),$dec); }else{ $_info[$start]= microtime(TRUE); } } G(\'beginTime\');'.$content));
+    file_put_contents(RUNTIME_PATH.'ThinkPHP.php',strip_whitespace('<?php function G($start,$end=\'\',$dec=3) { static $_info= array(); if(!empty($end)) { if(!isset($_end[$end])) { $_info[$end] = microtime(TRUE); } return number_format(($_info[$end]-$_info[$start]),$dec); }else{ $_info[$start]= microtime(TRUE); } } G(\'beginTime\');'.$content).' /* Copyright (c) 2011 ThinkPHP All rights reserved */');
 }
 
 function build_tags_cache() {
@@ -163,7 +163,7 @@ function build_app_dir() {
         if(!is_file(CONFIG_PATH.'config.php'))
             file_put_contents(CONFIG_PATH.'config.php',"<?php\nreturn array(\n\t//'配置项'=>'配置值'\n);\n?>");
         // 写入测试Action
-        if(!is_file(LIB_PATH.'Action/IndexAction.class.php'))
+        if(C('APP_GROUP_LIST') && !is_file(LIB_PATH.'Action/IndexAction.class.php'))
             build_first_action();
     }else{
         header("Content-Type:text/html; charset=utf-8");
