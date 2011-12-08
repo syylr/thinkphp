@@ -18,5 +18,5 @@ return array(
     'alias'=>CONFIG_PATH.'alias.php', // 项目别名定义文件 [支持数组直接定义或者文件名定义]
     'common'=>COMMON_PATH.'common.php', // 项目公共文件
     'app'=>CONFIG_PATH.'app.php', // 项目合并编译列表文件 [支持数组直接定义或者文件名定义]
-    //'config'=>'' // 集合配置文件（如有相同则覆盖项目配置文件中的配置）
+    'config'=>array('LOAD_EXT_CONFIG'=>'routes'), // 集合配置文件（如有相同则覆盖项目配置文件中的配置）
 );
