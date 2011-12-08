@@ -163,7 +163,7 @@ function build_app_dir() {
         if(!is_file(CONFIG_PATH.'config.php'))
             file_put_contents(CONFIG_PATH.'config.php',"<?php\nreturn array(\n\t//'配置项'=>'配置值'\n);\n?>");
         // 写入测试Action
-        if(C('APP_GROUP_LIST') && !is_file(LIB_PATH.'Action/IndexAction.class.php'))
+        if(C('APP_GROUP_LIST')=='' && !is_file(LIB_PATH.'Action/IndexAction.class.php'))
             build_first_action();
     }else{
         header("Content-Type:text/html; charset=utf-8");
