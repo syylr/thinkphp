@@ -43,6 +43,10 @@ class Dispatcher extends Think {
             define('PHP_FILE',$url);
         }elseif($urlMode == URL_COMPAT){
             define('PHP_FILE',_PHP_FILE_.'?'.C('VAR_PATHINFO').'=');
+            if(!empty($_GET[C('VAR_PATHINFO')])) {
+                $_SERVER['PATH_INFO']   = $_GET[C('VAR_PATHINFO')];
+                unset($_GET[C('VAR_PATHINFO')]);
+            }
         }else {
             //当前项目地址
             define('PHP_FILE',_PHP_FILE_);
@@ -78,9 +82,15 @@ class Dispatcher extends Think {
                 }
             }
         }
-        $depr = C('URL_PATHINFO_DEPR');
         // 分析PATHINFO信息
-        self::getPathInfo();
+        tag('path_info');
+        // 分析PATHINFO信息
+        $depr = C('URL_PATHINFO_DEPR');
+        if(!empty($_SERVER['PATH_INFO'])) {
+            if(C('URL_HTML_SUFFIX') && !empty($_SERVER['PATH_INFO'])) {
+                $_SERVER['PATH_INFO'] = preg_replace('/\.'.trim(C('URL_HTML_SUFFIX'),'.').'$/', '', $_SERVER['PATH_INFO']);
+            }
+        }
         if(!self::routerCheck()){   // 检测路由规则 如果没有则按默认规则调度URL
             $paths = explode($depr,trim($_SERVER['PATH_INFO'],'/'));
             $var  =  array();
@@ -124,56 +134,6 @@ class Dispatcher extends Think {
         define('__ACTION__',__URL__.$depr.ACTION_NAME);
         //保证$_REQUEST正常取值
         $_REQUEST = array_merge($_POST,$_GET);
-    }
-
-    /**
-    +----------------------------------------------------------
-    * 获得服务器的PATH_INFO信息
-    +----------------------------------------------------------
-    * @access public
-    +----------------------------------------------------------
-    * @return void
-    +----------------------------------------------------------
-    */
-    public static function getPathInfo() {
-        if(!empty($_GET[C('VAR_PATHINFO')])) {
-            // 兼容PATHINFO 参数
-            $path = $_GET[C('VAR_PATHINFO')];
-            unset($_GET[C('VAR_PATHINFO')]);
-        }elseif(!empty($_SERVER['PATH_INFO'])){
-            $pathInfo = $_SERVER['PATH_INFO'];
-            if(0 === strpos($pathInfo,$_SERVER['SCRIPT_NAME']))
-                $path = substr($pathInfo, strlen($_SERVER['SCRIPT_NAME']));
-            else
-                $path = $pathInfo;
-        }elseif(!empty($_SERVER['ORIG_PATH_INFO'])) {
-            $pathInfo = $_SERVER['ORIG_PATH_INFO'];
-            if(0 === strpos($pathInfo, $_SERVER['SCRIPT_NAME']))
-                $path = substr($pathInfo, strlen($_SERVER['SCRIPT_NAME']));
-            else
-                $path = $pathInfo;
-        }elseif (!empty($_SERVER['REDIRECT_PATH_INFO'])){
-            $path = $_SERVER['REDIRECT_PATH_INFO'];
-        }elseif(!empty($_SERVER["REDIRECT_URL"])){
-            $path = $_SERVER["REDIRECT_URL"];
-            if(empty($_SERVER['QUERY_STRING']) || $_SERVER['QUERY_STRING'] == $_SERVER["REDIRECT_QUERY_STRING"]) {
-                $parsedUrl = parse_url($_SERVER["REQUEST_URI"]);
-                if(!empty($parsedUrl['query'])) {
-                    $_SERVER['QUERY_STRING'] = $parsedUrl['query'];
-                    parse_str($parsedUrl['query'], $GET);
-                    $_GET = array_merge($_GET, $GET);
-                    reset($_GET);
-                }else {
-                    unset($_SERVER['QUERY_STRING']);
-                }
-                reset($_SERVER);
-            }
-        }
-        
-        if(C('URL_HTML_SUFFIX') && !empty($path)) {
-            $path = preg_replace('/\.'.trim(C('URL_HTML_SUFFIX'),'.').'$/', '', $path);
-        }
-        $_SERVER['PATH_INFO'] = empty($path) ? '/' : $path;
     }
 
     /**
