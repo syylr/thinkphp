@@ -21,8 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-abstract class RestAction extends Think
-{//类定义开始
+abstract class RestAction extends Think {
 
     // 当前Action名称
     private $name =  '';
@@ -366,5 +365,4 @@ abstract class RestAction extends Think
         }
         return false;
     }
-}//类定义结束
-?>
+}

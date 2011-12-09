@@ -14,5 +14,4 @@
 return array(
     'extends'=>COLLECTION_PATH.'Rest/tags.php',
     'config'=>COLLECTION_PATH.'Rest/config.php',
-)
-?>
+);
