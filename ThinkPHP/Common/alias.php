@@ -14,16 +14,14 @@
 return array(
     // 系统核心类
     'Model'         => CORE_PATH.'Core/Model.class.php',
-    'HtmlCache'     => CORE_PATH.'Util/HtmlCache.class.php',
     'Db'            => CORE_PATH.'Db/Db.class.php',
     'ThinkTemplate' => CORE_PATH.'Template/ThinkTemplate.class.php',
-    'Template'      => CORE_PATH.'Util/Template.class.php',
     'TagLib'        => CORE_PATH.'Template/TagLib.class.php',
-    'Cache'         => CORE_PATH.'Util/Cache.class.php',
+    'Cache'         => CORE_PATH.'Cache/Cache.class.php',
     'Debug'         => CORE_PATH.'Util/Debug.class.php',
     'Session'       => CORE_PATH.'Util/Session.class.php',
+    'HtmlCache'     => CORE_PATH.'Util/HtmlCache.class.php',
     'TagLibCx'      => CORE_PATH.'Template/TagLib/TagLibCx.class.php',
-    'TagLibHtml'    => CORE_PATH.'Template/TagLib/TagLibHtml.class.php',
     'ViewModel'     => CORE_PATH.'Model/ViewModel.class.php',
     'AdvModel'      => CORE_PATH.'Model/AdvModel.class.php',
     'RelationModel' => CORE_PATH.'Model/RelationModel.class.php',
