@@ -71,9 +71,9 @@ class Cache extends Think {
         if(empty($type))  $type = C('DATA_CACHE_TYPE');
         $type = strtolower(trim($type));
         $class = 'Cache'.ucwords($type);
-        if(is_file(dirname(__FILE__).'/Cache/'.$class.'.class.php')) {
+        if(is_file(dirname(__FILE__).'/Driver/'.$class.'.class.php')) {
             // 内置驱动
-            $path = dirname(__FILE__).'/Cache/';
+            $path = dirname(__FILE__).'/Driver/';
         }else{ // 扩展驱动
             $path = EXTEND_PATH.'Driver/Cache/';
         }
