@@ -39,7 +39,7 @@ class CheckLangBehavior {
         $langSet = C('DEFAULT_LANG');
         // 不开启语言包功能，仅仅加载框架语言文件直接返回
         if (!C('LANG_SWITCH_ON')){
-            L(include EXTEND_PATH.'Lang/'.$langSet.'.php');
+            L(include THINK_PATH.'Common/Lang/'.$langSet.'.php');
             return;
         }
         // 启用了语言包功能
@@ -62,8 +62,8 @@ class CheckLangBehavior {
         // 定义当前语言
         define('LANG_SET',strtolower($langSet));
         // 加载框架语言包
-        if(is_file(EXTEND_PATH.'Lang/'.LANG_SET.'.php'))
-            L(include EXTEND_PATH.'Lang/'.LANG_SET.'.php');
+        if(is_file(THINK_PATH.'Common/Lang/'.LANG_SET.'.php'))
+            L(include THINK_PATH.'Common/Lang/'.LANG_SET.'.php');
         // 读取项目公共语言包
         if (is_file(LANG_PATH.LANG_SET.'/common.php'))
             L(include LANG_PATH.LANG_SET.'/common.php');
