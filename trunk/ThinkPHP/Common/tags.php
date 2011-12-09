@@ -11,7 +11,6 @@
 // $Id$
 
 // 系统默认的核心行为扩展列表文件
-// CheckLang行为 对应 Think/Extend/Behavior/CheckLangBehavior.class.php 
 
 return array(
     // 陆续添加
