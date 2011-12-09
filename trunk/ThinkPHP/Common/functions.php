@@ -782,11 +782,11 @@ function compile($filename) {
 }
 
 // 根据数组生成常量定义
-function array_define($array) {
+function array_define($array,$check=true) {
     $content = '';
     foreach ($array as $key => $val) {
         $key = strtoupper($key);
-        $content .= 'if(!defined(\'' . $key . '\')) ';
+        if($check)   $content .= 'if(!defined(\'' . $key . '\')) ';
         if (is_int($val) || is_float($val)) {
             $content .= "define('" . $key . "'," . $val . ");";
         } elseif (is_bool($val)) {
