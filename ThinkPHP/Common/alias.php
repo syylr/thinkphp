@@ -22,8 +22,4 @@ return array(
     'Session'       => CORE_PATH.'Util/Session.class.php',
     'HtmlCache'     => CORE_PATH.'Util/HtmlCache.class.php',
     'TagLibCx'      => CORE_PATH.'Template/TagLib/TagLibCx.class.php',
-    'ViewModel'     => CORE_PATH.'Model/ViewModel.class.php',
-    'AdvModel'      => CORE_PATH.'Model/AdvModel.class.php',
-    'RelationModel' => CORE_PATH.'Model/RelationModel.class.php',
-    'MongoModel'  => CORE_PATH.'Model/MongoModel.class.php',
     );
