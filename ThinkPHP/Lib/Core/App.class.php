@@ -36,22 +36,29 @@ class App {
         // 设定错误和异常处理
         set_error_handler(array('App','appError'));
         set_exception_handler(array('App','appException'));
+        // 注册AUTOLOAD方法
+        spl_autoload_register(array('Think', 'autoload'));
         //[RUNTIME]
         App::build();         // 预编译项目
         //[/RUNTIME]
-        
-        // 注册AUTOLOAD方法
-        spl_autoload_register(array('Think', 'autoload'));
+
         // 设置系统时区
         date_default_timezone_set(C('DEFAULT_TIMEZONE'));
         // 加载动态项目公共文件和配置
         load_ext_file();
-
         // 项目初始化标签
         tag('app_init');
-
         // URL调度
         Dispatcher::dispatch();
+
+        if(defined('GROUP_NAME')) {
+            // 加载分组配置文件
+            if(is_file(CONFIG_PATH.GROUP_NAME.'/config.php'))
+                C(include CONFIG_PATH.GROUP_NAME.'/config.php');
+            // 加载分组函数文件
+            if(is_file(COMMON_PATH.GROUP_NAME.'/function.php'))
+                include COMMON_PATH.GROUP_NAME.'/function.php';
+        }
         return ;
     }
     //[RUNTIME]

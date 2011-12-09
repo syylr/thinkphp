@@ -103,12 +103,6 @@ class Dispatcher extends Think {
         // 获取分组 模块和操作名称
         if (C('APP_GROUP_LIST')) {
             define('GROUP_NAME', self::getGroup(C('VAR_GROUP')));
-            // 加载分组配置文件
-            if(is_file(CONFIG_PATH.GROUP_NAME.'/config.php'))
-                C(include CONFIG_PATH.GROUP_NAME.'/config.php');
-            // 加载分组函数文件
-            if(is_file(COMMON_PATH.GROUP_NAME.'/function.php'))
-                include COMMON_PATH.GROUP_NAME.'/function.php';
         }
         define('MODULE_NAME',self::getModule(C('VAR_MODULE')));
         define('ACTION_NAME',self::getAction(C('VAR_ACTION')));
