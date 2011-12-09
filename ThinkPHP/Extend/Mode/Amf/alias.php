@@ -14,8 +14,7 @@
 alias_import(array(
     'Model'         =>   MODE_PATH.'Amf/Model.class.php',
     'Db'                  =>    MODE_PATH.'Amf/Db.class.php',
-    'Debug'              =>    THINK_PATH.'Lib/Think/Util/Debug.class.php',
-    'Session'             =>   THINK_PATH.'Lib/Think/Util/Session.class.php',
+    'Debug'              =>    CORE_PATH.'Util/Debug.class.php',
+    'Session'             =>   CORE_PATH.'Util/Session.class.php',
     )
 );
-?>

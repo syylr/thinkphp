@@ -12,18 +12,16 @@
 
 // 导入别名定义
 alias_import(array(
-    'View' =>THINK_PATH.'Lib/Think/Core/View.class.php',
-    'Model'         => THINK_PATH.'Lib/Think/Core/Model.class.php',
-    'HtmlCache'     => THINK_PATH.'Lib/Think/Util/HtmlCache.class.php',
-    'Db'            => THINK_PATH.'Lib/Think/Db/Db.class.php',
-    'ThinkTemplate' => THINK_PATH.'Lib/Think/Template/ThinkTemplate.class.php',
-    'Template'      => THINK_PATH.'Lib/Think/Util/Template.class.php',
-    'TagLib'        => THINK_PATH.'Lib/Think/Template/TagLib.class.php',
-    'Cache'         => THINK_PATH.'Lib/Think/Util/Cache.class.php',
-    'Debug'         => THINK_PATH.'Lib/Think/Util/Debug.class.php',
-    'Session'       => THINK_PATH.'Lib/Think/Util/Session.class.php',
-    'TagLibCx'      => THINK_PATH.'Lib/Think/Template/TagLib/TagLibCx.class.php',
-    'TagLibHtml'    => THINK_PATH.'Lib/Think/Template/TagLib/TagLibHtml.class.php',
+    'View' =>CORE_PATH.'Core/View.class.php',
+    'Model'         => CORE_PATH.'Core/Model.class.php',
+    'HtmlCache'     => CORE_PATH.'Util/HtmlCache.class.php',
+    'Db'            => CORE_PATH.'Db/Db.class.php',
+    'ThinkTemplate' => CORE_PATH.'Template/ThinkTemplate.class.php',
+    'Template'      => CORE_PATH.'Util/Template.class.php',
+    'TagLib'        => CORE_PATH.'Template/TagLib.class.php',
+    'Cache'         => CORE_PATH.'Util/Cache.class.php',
+    'Debug'         => CORE_PATH.'Util/Debug.class.php',
+    'Session'       => CORE_PATH.'Util/Session.class.php',
+    'TagLibCx'      => CORE_PATH.'Template/TagLib/TagLibCx.class.php',
     )
 );
-?>

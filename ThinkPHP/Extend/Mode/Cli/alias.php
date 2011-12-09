@@ -14,7 +14,6 @@
 alias_import(array(
     'Model'         =>   MODE_PATH.'Thin/Model.class.php',
     'Db'                  =>    MODE_PATH.'Thin/Db.class.php',
-    'Debug'              =>    THINK_PATH.'Lib/Think/Util/Debug.class.php',
+    'Debug'              =>    CORE_PATH.'Util/Debug.class.php',
     )
 );
-?>
