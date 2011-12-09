@@ -13,9 +13,9 @@
 // 简洁模式核心定义文件列表
 return array(
     THINK_PATH.'Common/functions.php',   // 系统函数库
-    THINK_PATH.'Lib/Think/Core/Think.class.php',
-    THINK_PATH.'Lib/Think/Exception/ThinkException.class.php',// 异常处理
-    THINK_PATH.'Lib/Think/Core/Log.class.php',// 日志处理
+    CORE_PATH.'Core/Think.class.php',
+    CORE_PATH.'Core/ThinkException.class.php',// 异常处理
+    CORE_PATH.'Core/Log.class.php',// 日志处理
     MODE_PATH.'Lite/App.class.php', // 应用程序类
     MODE_PATH.'Lite/Action.class.php',// 控制器类
 );

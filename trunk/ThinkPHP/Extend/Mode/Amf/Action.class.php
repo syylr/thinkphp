@@ -15,9 +15,7 @@
  * ThinkPHP AMF模式Action控制器基类
  +------------------------------------------------------------------------------
  */
-abstract class Action extends Think
-{//类定义开始
-
+abstract class Action extends Think {
 
     /**
      +----------------------------------------------------------
