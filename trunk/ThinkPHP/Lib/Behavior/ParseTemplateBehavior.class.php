@@ -34,9 +34,9 @@ class ParseTemplateBehavior {
             // 模板文件需要重新编译 支持第三方模板引擎
             // 调用模板引擎解析和输出
             $class   = 'Template'.ucwords($engine);
-            if(is_file(CORE_PATH.'Util/Template/'.$class.'.class.php')) {
+            if(is_file(CORE_PATH.'Template/Driver/'.$class.'.class.php')) {
                 // 内置驱动
-                $path = CORE_PATH.'Util/Template/';
+                $path = CORE_PATH.'Template/Driver/';
             }else{ // 扩展驱动
                 $path = EXTEND_PATH.'Driver/Template/';
             }
