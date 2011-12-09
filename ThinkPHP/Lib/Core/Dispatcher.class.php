@@ -209,13 +209,13 @@ class Dispatcher extends Think {
      */
     static private function getModule($var) {
         $module = (!empty($_GET[$var])? $_GET[$var]:C('DEFAULT_MODULE'));
+        unset($_GET[$var]);
         if(C('URL_CASE_INSENSITIVE')) {
             // URL地址不区分大小写
             define('P_MODULE_NAME',strtolower($module));
             // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
             $module = ucfirst(parse_name(P_MODULE_NAME,1));
         }
-        unset($_GET[$var]);
         return $module;
     }
 
@@ -233,6 +233,7 @@ class Dispatcher extends Think {
             $_POST[$var] :
             (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
         unset($_POST[$var],$_GET[$var]);
+        define('P_ACTION_NAME',$action);
         return C('URL_CASE_INSENSITIVE')?strtolower($action):$action;
     }
 
