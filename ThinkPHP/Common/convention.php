@@ -31,6 +31,17 @@ return  array(
     'APP_FILE_CASE'         => false,   // 是否检查文件的大小写 对Windows平台有效
     'APP_AUTOLOAD_PATH'     => '@.Action,@.Model,@.Behavior,Think.Util',// 自动加载机制的自动搜索路径,注意搜索顺序
     'APP_TAGS_ON'   => true, // 系统标签扩展开关
+    'APP_SUB_DOMAIN_DEPLOY' => false,   // 是否开启子域名部署
+    'APP_SUB_DOMAIN_RULES'=>array(), // 子域名部署规则
+    'APP_SUB_DOMAIN_DENY'=>array(), //  子域名禁用列表
+    'APP_GROUP_DEPR'        => '.',     // 模块分组之间的分割符
+    'APP_GROUP_LIST'        => '',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
+
+    /* Cookie设置 */
+    'COOKIE_EXPIRE'         => 3600,    // Coodie有效期
+    'COOKIE_DOMAIN'         => '',      // Cookie有效域名
+    'COOKIE_PATH'           => '/',     // Cookie路径
+    'COOKIE_PREFIX'         => '',      // Cookie前缀 避免冲突
 
     /* 默认设定 */
     'DEFAULT_APP'           => '@',     // 默认项目名称，@表示当前项目
