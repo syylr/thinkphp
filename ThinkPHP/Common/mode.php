@@ -50,7 +50,5 @@ return array(
     'common'   =>    COMMON_PATH.'common.php', 
 
     // 模式配置文件  [支持数组直接定义或者文件名定义]（如有相同则覆盖项目配置文件中的配置）
-    'config'       =>   array(
-        'LOAD_EXT_CONFIG'=>'routes'
-    ), 
+    'config'       =>   array(), 
 );
