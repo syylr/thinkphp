@@ -23,8 +23,7 @@ if(MEMORY_LIMIT_ON) $GLOBALS['_startUseMems'] = memory_get_usage();
 if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']).'/');
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'Runtime/');
 if(!defined('APP_DEBUG')) define('APP_DEBUG',false); // 是否调试模式
-$runtime = defined('THINK_MODE')?'~'.strtolower(THINK_MODE).'_runtime.php':'~runtime.php';
-if(!defined('RUNTIME_FILE')) define('RUNTIME_FILE',RUNTIME_PATH.$runtime);
+if(!defined('RUNTIME_FILE')) define('RUNTIME_FILE',RUNTIME_PATH.'~runtime.php');
 if(!APP_DEBUG && is_file(RUNTIME_FILE)) {
     // 部署模式直接载入allinone缓存
     require RUNTIME_FILE;
@@ -37,8 +36,8 @@ if(!APP_DEBUG && is_file(RUNTIME_FILE)) {
     require THINK_PATH."Common/runtime.php";
     // 记录加载文件时间
     G('loadTime');
-    // 执行应用
-    App::run();
+    // 执行入口
+    Portal::Start();
 }
 
 // 记录和统计时间（微秒）
