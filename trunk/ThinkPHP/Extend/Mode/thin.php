@@ -12,11 +12,30 @@
 
 // 简洁模式核心定义文件列表
 return array(
-    THINK_PATH.'Common/functions.php',   // 系统函数库
-    CORE_PATH.'Core/Think.class.php',
-    CORE_PATH.'Core/ThinkException.class.php',// 异常处理
-    CORE_PATH.'Core/Log.class.php',// 日志处理
-    MODE_PATH.'Thin/App.class.php', // 应用程序类
-    MODE_PATH.'Thin/Action.class.php',// 控制器类
+
+    'core'         =>   array(
+        THINK_PATH.'Common/functions.php',   // 系统函数库
+        CORE_PATH.'Core/Log.class.php',// 日志处理
+        MODE_PATH.'Thin/App.class.php', // 应用程序类
+        MODE_PATH.'Thin/Action.class.php',// 控制器类
+    ),
+
+    // 项目别名定义文件 [支持数组直接定义或者文件名定义]
+    'alias'         =>    array(
+        'Model'         =>   MODE_PATH.'Thin/Model.class.php',
+        'Db'                  =>    MODE_PATH.'Thin/Db.class.php',
+    ), 
+
+    // 系统行为定义文件 [必须 支持数组直接定义或者文件名定义 ]
+    'extends'    =>    array(), 
+
+    // 项目应用行为定义文件 [支持数组直接定义或者文件名定义]
+    'tags'         =>   array(), 
+
+    // 项目公共文件
+    'common'   =>    COMMON_PATH.'common.php', 
+
+    // 模式配置文件  [支持数组直接定义或者文件名定义]（如有相同则覆盖项目配置文件中的配置）
+    'config'       =>   array(), 
 );
 ?>

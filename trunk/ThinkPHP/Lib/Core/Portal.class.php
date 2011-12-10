@@ -103,7 +103,6 @@ class Portal {
         // 加载应用别名定义
         $alias = is_array($mode['alias'])?$mode['alias']:include $mode['alias'];
         alias_import($alias);
-        // 编译文件
         if(!APP_DEBUG) $compile .= 'alias_import('.var_export($alias,true).');';
 
         if(APP_DEBUG) {

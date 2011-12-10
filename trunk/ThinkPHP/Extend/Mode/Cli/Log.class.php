@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Log extends Think
-{//类定义开始
+class Log extends Think {
 
     // 日志级别 从上到下，由低到高
     const EMERG   = 'EMERG';  // 严重错误: 导致系统崩溃无法使用

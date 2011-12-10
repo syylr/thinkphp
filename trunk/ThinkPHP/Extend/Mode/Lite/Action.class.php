@@ -15,8 +15,7 @@
  * ThinkPHP 精简模式Action控制器基类
  +------------------------------------------------------------------------------
  */
-abstract class Action extends Think
-{//类定义开始
+abstract class Action extends Think {
 
     protected $tVar        =  array(); // 模板输出变量
     protected $trace       = array();  // 页面trace变量
