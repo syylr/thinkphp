@@ -62,18 +62,18 @@ class Portal {
         // 加载底层惯例配置文件
         C(include THINK_PATH.'Common/convention.php');
 
-        // 加载项目配置文件
-        if(is_file(CONFIG_PATH.'config.php'))
-            C(include CONFIG_PATH.'config.php');
-
         // 读取运行模式
         $mode   = include THINK_PATH.'Common/mode.php';
-        if(C('MODE_NAME')) { // 模式的设置并入核心模式
-            $mode   = array_merge($mode,include EXTEND_PATH.'Mode/'.strtolower(C('MODE_NAME')).'.php');
+        if(defined('MODE_NAME')) { // 模式的设置并入核心模式
+            $mode   = array_merge($mode,include MODE_PATH.strtolower(MODE_NAME).'.php');
         }
 
         // 加载模式配置文件
         C( is_array($mode['config'])?$mode['config']:include $mode['config'] );
+
+        // 加载项目配置文件
+        if(is_file(CONFIG_PATH.'config.php'))
+            C(include CONFIG_PATH.'config.php');
 
         // 加载模式系统行为定义
         if(C('APP_TAGS_ON')) {
