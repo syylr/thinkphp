@@ -13,11 +13,12 @@
 /**
  +------------------------------------------------------------------------------
  * 系统行为扩展 路由检测
- * 增加配置参数如下：
-    'URL_ROUTER_ON'         => false,   // 是否开启URL路由
-    'URL_ROUTE_RULES'       => array(), // 默认路由规则，注：分组配置无法替代
  +------------------------------------------------------------------------------
  */
+C(array(
+    'URL_ROUTER_ON'         => false,   // 是否开启URL路由
+    'URL_ROUTE_RULES'       => array(), // 默认路由规则，注：分组配置无法替代
+));
 class CheckRouteBehavior {
     // 行为扩展的执行入口必须是run
     public function run(&$return){
@@ -27,7 +28,6 @@ class CheckRouteBehavior {
         if(empty($regx)) $return = false;
         // 路由定义文件优先于config中的配置定义
         $routes = C('URL_ROUTE_RULES');
-        if(is_array(C('routes')))  $routes = C('routes');
         // 路由处理
         if(!empty($routes)) {
             $depr = C('URL_PATHINFO_DEPR');

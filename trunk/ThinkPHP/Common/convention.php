@@ -25,8 +25,6 @@
  */
 if (!defined('THINK_PATH')) exit();
 return  array(
-    'MODE_NAME'=>'', // 模式名称
-
     /* 项目设定 */
     'APP_FILE_CASE'         => false,   // 是否检查文件的大小写 对Windows平台有效
     'APP_AUTOLOAD_PATH'     => '@.Action,@.Model,@.Behavior,Think.Util',// 自动加载机制的自动搜索路径,注意搜索顺序
@@ -51,7 +49,6 @@ return  array(
     'DEFAULT_CHARSET'       => 'utf-8', // 默认输出编码
     'DEFAULT_TIMEZONE'      => 'PRC',	// 默认时区
     'DEFAULT_AJAX_RETURN'   => 'JSON',  // 默认AJAX 数据返回格式,可选JSON XML ...
-    'DEFAULT_THEME'    => 'default',	// 默认模板主题名称
     'DEFAULT_FILTER' =>'htmlspecialchars', // 默认参数过滤方法 用于 $this->_get('变量名');$this->_post('变量名')...
 
     /* 数据库设置 */
@@ -98,32 +95,11 @@ return  array(
     'VAR_SESSION_ID'=>'session_id',     //sessionID的提交变量
 
     /* 模板引擎设置 */
-    'TMPL_ENGINE_TYPE'		=> 'Think',     // 默认模板引擎 以下设置仅对使用Think模板引擎有效
-    'TMPL_TEMPLATE_SUFFIX'  => '.html',     // 默认模板文件后缀
     'TMPL_CONTENT_TYPE'     => 'text/html', // 默认模板输出类型
-    'TMPL_CACHFILE_SUFFIX'  => '.php',      // 默认模板缓存后缀
-    'TMPL_DENY_FUNC_LIST'	=> 'echo,exit',	// 模板引擎禁用函数
-    'TMPL_DENY_PHP'  =>false, // 默认模板引擎是否禁用PHP原生代码
-    'TMPL_PARSE_STRING'     => '',          // 模板引擎要自动替换的字符串，必须是数组形式。
-    'TMPL_L_DELIM'          => '{',			// 模板引擎普通标签开始标记
-    'TMPL_R_DELIM'          => '}',			// 模板引擎普通标签结束标记
-    'TMPL_VAR_IDENTIFY'     => 'array',     // 模板变量识别。留空自动判断,参数为'obj'则表示对象
-    'TMPL_STRIP_SPACE'      => true,       // 是否去除模板文件里面的html空格与换行
-    'TMPL_CACHE_ON'			=> true,        // 是否开启模板编译缓存,设为false则每次都会重新编译
-    'TMPL_CACHE_TIME'		=>	-1,         // 模板缓存有效期 -1 为永久，(以数字为值，单位:秒)
     'TMPL_ACTION_ERROR'     => THINK_PATH.'Common/Tpl/dispatch_jump.tpl', // 默认错误跳转对应的模板文件
     'TMPL_ACTION_SUCCESS'   => THINK_PATH.'Common/Tpl/dispatch_jump.tpl', // 默认成功跳转对应的模板文件
-    'TMPL_TRACE_FILE'       => THINK_PATH.'Common/Tpl/page_trace.tpl',     // 页面Trace的模板文件
     'TMPL_EXCEPTION_FILE'   => THINK_PATH.'Common/Tpl/think_exception.tpl',// 异常页面的模板文件
     'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
-
-    // Think模板引擎标签库相关设定
-    'TAGLIB_BEGIN'          => '<',  // 标签库标签开始标记
-    'TAGLIB_END'            => '>',  // 标签库标签结束标记
-    'TAGLIB_LOAD'           => true, // 是否使用内置标签库之外的其它标签库，默认自动检测
-    'TAGLIB_BUILD_IN'       => 'cx', // 内置标签库名称(标签使用不必指定标签库名称),以逗号分隔 注意解析顺序
-    'TAGLIB_PRE_LOAD'       => '',   // 需要额外加载的标签库(须指定标签库名称)，多个以逗号分隔
-    'TAG_NESTED_LEVEL'		=> 3,    // 标签嵌套级别
 
     /* URL设置 */
 	'URL_CASE_INSENSITIVE'  => false,   // 默认false 表示URL区分大小写 true则表示不区分大小写
@@ -137,8 +113,6 @@ return  array(
     'VAR_MODULE'            => 'm',		// 默认模块获取变量
     'VAR_ACTION'            => 'a',		// 默认操作获取变量
    	'VAR_PAGE'              => 'p',		// 默认分页跳转变量
-    'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
-	'VAR_LANGUAGE'          => 'l',		// 默认语言切换变量
     'VAR_AJAX_SUBMIT'       => 'ajax',  // 默认的AJAX提交变量
     'VAR_PATHINFO'          => 's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于URL_PATHINFO_DEPR
 );
