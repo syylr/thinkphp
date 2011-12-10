@@ -11,7 +11,6 @@
 // $Id$
 
 // 系统默认的核心行为扩展列表文件
-
 return array(
     // 陆续添加
     'app_init'=>array(),

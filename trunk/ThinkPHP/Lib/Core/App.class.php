@@ -13,6 +13,7 @@
 /**
  +------------------------------------------------------------------------------
  * ThinkPHP 应用程序类 执行应用过程管理
+ * 可以在模式扩展中重新定义 但是必须具有Run方法接口
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Think
@@ -33,14 +34,6 @@ class App {
      +----------------------------------------------------------
      */
     static public function init() {
-        // 设定错误和异常处理
-        set_error_handler(array('App','appError'));
-        set_exception_handler(array('App','appException'));
-        // 注册AUTOLOAD方法
-        spl_autoload_register(array('Think', 'autoload'));
-        //[RUNTIME]
-        App::build();         // 预编译项目
-        //[/RUNTIME]
 
         // 设置系统时区
         date_default_timezone_set(C('DEFAULT_TIMEZONE'));
@@ -61,89 +54,6 @@ class App {
         }
         return ;
     }
-    //[RUNTIME]
-    /**
-     +----------------------------------------------------------
-     * 读取配置信息 编译项目
-     +----------------------------------------------------------
-     * @access private
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    static private function build() {
-        // 加载惯例配置文件
-        C(include THINK_PATH.'Common/convention.php');
-
-        // 加载项目配置文件
-        if(is_file(CONFIG_PATH.'config.php'))
-            C(include CONFIG_PATH.'config.php');
-
-        // 如果是模式扩展 首先载入模式配置文件 可覆盖项目配置文件中的参数
-        if(defined('THINK_MODE') && is_file(MODE_PATH.ucwords(strtolower(THINK_MODE)).'/config.php')) {
-            C(include MODE_PATH.ucwords(strtolower(THINK_MODE)).'/config.php');
-        }
-
-        // 读取行为集合Collection 模式扩展也可以定义行为集合
-        $collection   = C('COLLECTION_NAME')?
-            include EXTEND_PATH.'Collection/'.strtolower(C('COLLECTION_NAME')).'.php':
-            include THINK_PATH.'Common/collection.php';
-
-        // 解析行为集合
-        $compile   = '';
-        // 加载行为集合配置文件
-        if(isset($collection['config'])) {
-            C( is_array($collection['config'])?$collection['config']:include $collection['config'] );
-        }
-
-        // 加载系统行为定义
-        if(isset($collection['extends']) && C('APP_TAGS_ON')) {
-            C('extends',is_array($collection['extends'])?$collection['extends']:include $collection['extends']);
-        }
-
-        // 加载应用行为定义
-        if(isset($collection['tags'])) {
-            C('tags',is_array($collection['tags'])?$collection['tags']:include $collection['tags']);
-        }
-
-        // 加载公共文件
-        if(isset($collection['common']) && is_file($collection['common'])) {
-            include $collection['common'];
-            // 编译文件
-            if(!APP_DEBUG)  $compile   .= compile($collection['common']);
-        }
-
-        // 加载应用别名定义
-        if(isset($collection['alias'])) {
-            $alias = is_array($collection['alias'])?$collection['alias']:include $collection['alias'];
-            alias_import($alias);
-            // 编译文件
-            if(!APP_DEBUG) $compile .= 'alias_import('.var_export($alias,true).');';
-        }
-
-        // 加载项目编译文件列表
-        if(isset($collection['app'])) {
-            $list   =   is_array($collection['app'])?$collection['app']:include $collection['app'];
-            foreach ($list as $file){
-                // 加载并编译文件
-                require_cache($file);
-                if(!APP_DEBUG) $compile   .= compile($file);
-            }
-        }
-
-        if(APP_DEBUG) {
-            // 调试模式加载系统默认的开发模式配置文件
-            C(include THINK_PATH.'Common/debug.php');
-            if(is_file(CONFIG_PATH.'debug.php'))
-                // 允许项目增加开发模式配置定义
-                C(include CONFIG_PATH.'debug.php');
-        }else{
-            // 部署模式下面生成编译文件
-            build_runtime_cache($compile);
-        }
-        return ;
-    }
-    //[/RUNTIME]
 
     /**
      +----------------------------------------------------------
@@ -222,48 +132,4 @@ class App {
         return ;
     }
 
-    /**
-     +----------------------------------------------------------
-     * 自定义异常处理
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $e 异常对象
-     +----------------------------------------------------------
-     */
-    static public function appException($e) {
-        halt($e->__toString());
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 自定义错误处理
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param int $errno 错误类型
-     * @param string $errstr 错误信息
-     * @param string $errfile 错误文件
-     * @param int $errline 错误行数
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    static public function appError($errno, $errstr, $errfile, $errline) {
-      switch ($errno) {
-          case E_ERROR:
-          case E_USER_ERROR:
-            $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
-            if(C('LOG_RECORD')) Log::write($errorStr,Log::ERR);
-            halt($errorStr);
-            break;
-          case E_STRICT:
-          case E_USER_WARNING:
-          case E_USER_NOTICE:
-          default:
-            $errorStr = "[$errno] $errstr ".basename($errfile)." 第 $errline 行.";
-            Log::record($errorStr,Log::NOTICE);
-            break;
-      }
-    }
 }

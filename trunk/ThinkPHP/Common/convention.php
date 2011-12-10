@@ -25,23 +25,12 @@
  */
 if (!defined('THINK_PATH')) exit();
 return  array(
+    'MODE_NAME'=>'', // 模式名称
 
     /* 项目设定 */
-    'APP_SUB_DOMAIN_DEPLOY' => false,   // 是否开启子域名部署
-    'APP_SUB_DOMAIN_RULES'=>array(), // 子域名部署规则
-    'APP_SUB_DOMAIN_DENY'=>array(), //  子域名禁用列表
     'APP_FILE_CASE'         => false,   // 是否检查文件的大小写 对Windows平台有效
-    'APP_GROUP_DEPR'        => '.',     // 模块分组之间的分割符
-    'APP_GROUP_LIST'        => '',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
     'APP_AUTOLOAD_PATH'     => '@.Action,@.Model,@.Behavior,Think.Util',// 自动加载机制的自动搜索路径,注意搜索顺序
     'APP_TAGS_ON'   => true, // 系统标签扩展开关
-    'COLLECTION_NAME'=>'', // 行为集合名称
-
-    /* Cookie设置 */
-    'COOKIE_EXPIRE'         => 3600,    // Coodie有效期
-    'COOKIE_DOMAIN'         => '',      // Cookie有效域名
-    'COOKIE_PATH'           => '/',     // Cookie路径
-    'COOKIE_PREFIX'         => '',      // Cookie前缀 避免冲突
 
     /* 默认设定 */
     'DEFAULT_APP'           => '@',     // 默认项目名称，@表示当前项目
@@ -86,17 +75,7 @@ return  array(
     /* 错误设置 */
     'ERROR_MESSAGE' => '您浏览的页面暂时发生了错误！请稍后再试～',//错误显示信息,非调试模式有效
     'ERROR_PAGE'    => '',	// 错误定向页面
-
-    /* 静态缓存设置 */
-    'HTML_CACHE_ON'			=> false,   // 默认关闭静态缓存
-    'HTML_CACHE_TIME'		=> 60,      // 静态缓存有效期
-    'HTML_READ_TYPE'        => 0,       // 静态缓存读取方式 0 readfile 1 redirect
-    'HTML_FILE_SUFFIX'      => '.shtml',// 默认静态文件后缀
-
-    /* 语言设置 */
-    'LANG_SWITCH_ON'        => false,   // 默认关闭语言包功能
-    'LANG_AUTO_DETECT'      => true,   // 自动侦测语言 开启多语言功能后有效
-    'LANG_LIST' => 'zh-cn', // 允许切换的语言列表 用逗号分隔
+    'SHOW_ERROR_MSG'        => false,    // 显示错误信息
 
     /* 日志设置 */
     'LOG_EXCEPTION_RECORD'  => true,    // 是否记录异常信息日志(默认为开启状态)
@@ -108,18 +87,8 @@ return  array(
     'SESSION_AUTO_START'    => true,    // 是否自动开启Session
     'VAR_SESSION_ID'=>'session_id',     //sessionID的提交变量
 
-    /* 运行时间设置 */
-    'SHOW_RUN_TIME'			=> false,   // 运行时间显示
-    'SHOW_ADV_TIME'			=> false,   // 显示详细的运行时间
-    'SHOW_DB_TIMES'			=> false,   // 显示数据库查询和写入次数
-    'SHOW_CACHE_TIMES'		=> false,   // 显示缓存操作次数
-    'SHOW_USE_MEM'			=> false,   // 显示内存开销
-    'SHOW_PAGE_TRACE'		=> false,   // 显示页面Trace信息 由Trace文件定义和Action操作赋值
-    'SHOW_ERROR_MSG'        => false,    // 显示错误信息
-
     /* 模板引擎设置 */
     'TMPL_ENGINE_TYPE'		=> 'Think',     // 默认模板引擎 以下设置仅对使用Think模板引擎有效
-    'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
     'TMPL_TEMPLATE_SUFFIX'  => '.html',     // 默认模板文件后缀
     'TMPL_CONTENT_TYPE'     => 'text/html', // 默认模板输出类型
     'TMPL_CACHFILE_SUFFIX'  => '.php',      // 默认模板缓存后缀
@@ -146,16 +115,8 @@ return  array(
     'TAGLIB_PRE_LOAD'       => '',   // 需要额外加载的标签库(须指定标签库名称)，多个以逗号分隔
     'TAG_NESTED_LEVEL'		=> 3,    // 标签嵌套级别
 
-    /* 表单令牌验证 */
-    'TOKEN_ON'              => true,     // 开启令牌验证
-    'TOKEN_NAME'            => '__hash__',    // 令牌验证的表单隐藏字段名称
-    'TOKEN_TYPE'            => 'md5',   // 令牌验证哈希规则
-    'TOKEN_RESET'               =>   true, // 令牌错误后是否重置
-
     /* URL设置 */
 	'URL_CASE_INSENSITIVE'  => false,   // 默认false 表示URL区分大小写 true则表示不区分大小写
-    'URL_ROUTER_ON'         => false,   // 是否开启URL路由
-    'URL_ROUTE_RULES'       => array(), // 默认路由规则，注：分组配置无法替代
     'URL_MODEL'      => 1,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：
     // 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式)  默认为PATHINFO 模式，提供最好的用户体验和SEO支持
     'URL_PATHINFO_DEPR'     => '/',	// PATHINFO模式下，各参数之间的分割符号
@@ -170,5 +131,4 @@ return  array(
 	'VAR_LANGUAGE'          => 'l',		// 默认语言切换变量
     'VAR_AJAX_SUBMIT'       => 'ajax',  // 默认的AJAX提交变量
     'VAR_PATHINFO'          => 's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于URL_PATHINFO_DEPR
-
 );
