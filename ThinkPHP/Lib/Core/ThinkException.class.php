@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class ThinkException extends Exception
-{//类定义开始
+class ThinkException extends Exception {
 
     /**
      +----------------------------------------------------------

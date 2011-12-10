@@ -38,7 +38,7 @@ abstract class Action extends Think {
     public function __construct() {
         tag('action_begin');
         //实例化视图类
-        $this->view       = Think::instance('View');
+        $this->view       = Portal::instance('View');
         //控制器初始化
         if(method_exists($this,'_initialize'))
             $this->_initialize();
