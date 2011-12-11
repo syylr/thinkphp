@@ -15,10 +15,12 @@
  * 系统行为扩展 模板内容输出替换
  +------------------------------------------------------------------------------
  */
-C(array(
-    'TMPL_PARSE_STRING'=>array(),
-));
-class ContentReplaceBehavior {
+class ContentReplaceBehavior extends Behavior {
+    // 行为参数定义
+    protected $options   =  array(
+        'TMPL_PARSE_STRING'=>array(),
+    );
+
     // 行为扩展的执行入口必须是run
     public function run(&$content){
         $content = $this->templateContentReplace($content);

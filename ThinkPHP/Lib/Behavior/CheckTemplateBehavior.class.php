@@ -15,15 +15,16 @@
  * 系统行为扩展 模板检测
  +------------------------------------------------------------------------------
  */
-
-C(array(
-    'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
-     'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
-    'DEFAULT_THEME'    => 'default',	// 默认模板主题名称
-));
 class CheckTemplateBehavior {
+    // 行为参数定义（默认值） 可在项目配置中覆盖
+    protected $options   =  array(
+            'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
+            'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
+            'DEFAULT_THEME'    => 'default',	// 默认模板主题名称
+        );
+
     // 行为扩展的执行入口必须是run
-    public function run(){
+    public function run(&$params=''){
         // 开启静态缓存
         $this->checkTemplate();
     }

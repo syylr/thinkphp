@@ -15,14 +15,15 @@
  * 系统行为扩展 页面Trace显示输出
  +------------------------------------------------------------------------------
  */
+class ShowPageTraceBehavior extends Behavior {
+    // 行为参数定义
+    protected $options   =  array(
+        'SHOW_PAGE_TRACE'		=> false,   // 显示页面Trace信息 由Trace文件定义和Action操作赋值
+        'TMPL_TRACE_FILE'       => THINK_PATH.'Common/Tpl/page_trace.tpl',     // 页面Trace的模板文件
+    );
 
-C(array(
-    'SHOW_PAGE_TRACE'		=> false,   // 显示页面Trace信息 由Trace文件定义和Action操作赋值
-    'TMPL_TRACE_FILE'       => THINK_PATH.'Common/Tpl/page_trace.tpl',     // 页面Trace的模板文件
-));
-class ShowPageTraceBehavior {
     // 行为扩展的执行入口必须是run
-    public function run(){
+    public function run(&$params=''){
         if(C('SHOW_PAGE_TRACE')) {
             echo $this->showTrace();
         }

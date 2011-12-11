@@ -15,7 +15,7 @@
  * 系统行为扩展 自动定位模板文件
  +------------------------------------------------------------------------------
  */
-class LocationTemplateBehavior {
+class LocationTemplateBehavior extends Behavior {
     // 行为扩展的执行入口必须是run
     public function run(&$templateFile){
         // 自动定位模板文件
