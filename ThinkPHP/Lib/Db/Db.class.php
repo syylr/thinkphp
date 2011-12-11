@@ -106,14 +106,14 @@ class Db extends Think {
         // 数据库类型
         $this->dbType = ucwords(strtolower($db_config['dbms']));
         $class = 'Db'. $this->dbType;
-        if(is_file(dirname(__FILE__).'/Driver/'.$class.'.class.php')) {
+        if(is_file(CORE_PATH.'Driver/Db/'.$class.'.class.php')) {
             // 内置驱动
-            $path = dirname(__FILE__).'/Driver/';
+            $path = CORE_PATH;
         }else{ // 扩展驱动
-            $path = EXTEND_PATH.'Driver/Db/';
+            $path = EXTEND_PATH;
         }
         // 检查驱动类
-        if(require_cache($path.$class.'.class.php')) {
+        if(require_cache($path.'Driver/Db/'.$class.'.class.php')) {
             $db = new $class($db_config);
             // 获取当前的数据库类型
             if( 'pdo' != strtolower($db_config['dbms']) )
