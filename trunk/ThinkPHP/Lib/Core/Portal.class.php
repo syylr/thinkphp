@@ -62,6 +62,9 @@ class Portal {
         // 加载底层惯例配置文件
         C(include THINK_PATH.'Common/Conf/convention.php');
 
+        // 加载框架底层语言包
+        L(include THINK_PATH.'Common/Lang/'.$langSet.'.php');
+
         // 读取运行模式
         $mode   = include THINK_PATH.'Common/Conf/mode.php';
         if(defined('MODE_NAME')) { // 模式的设置并入核心模式
@@ -106,6 +109,8 @@ class Portal {
             alias_import($alias);
             if(!APP_DEBUG) $compile .= 'alias_import('.var_export($alias,true).');';
         }
+        // 加载框架底层语言包
+        L(include THINK_PATH.'Common/Lang/'.strtolower(C('DEFAULT_LANG')).'.php');
 
         if(APP_DEBUG) {
             // 调试模式加载系统默认的开发模式配置文件

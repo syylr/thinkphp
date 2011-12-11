@@ -18,7 +18,6 @@
 class CheckLangBehavior extends Behavior {
     // 行为参数定义（默认值） 可在项目配置中覆盖
     protected $options   =  array(
-            'DEFAULT_LANG'          => 'zh-cn', // 默认语言
             'LANG_SWITCH_ON'        => false,   // 默认关闭语言包功能
             'LANG_AUTO_DETECT'      => true,   // 自动侦测语言 开启多语言功能后有效
             'LANG_LIST' => 'zh-cn', // 允许切换的语言列表 用逗号分隔
@@ -42,12 +41,11 @@ class CheckLangBehavior extends Behavior {
      +----------------------------------------------------------
      */
     private function checkLanguage() {
-        $langSet = C('DEFAULT_LANG');
         // 不开启语言包功能，仅仅加载框架语言文件直接返回
         if (!C('LANG_SWITCH_ON')){
-            L(include THINK_PATH.'Common/Lang/'.$langSet.'.php');
             return;
         }
+        $langSet = C('DEFAULT_LANG');
         // 启用了语言包功能
         // 根据是否启用自动侦测设置获取语言选择
         if (C('LANG_AUTO_DETECT')){
@@ -67,9 +65,6 @@ class CheckLangBehavior extends Behavior {
         }
         // 定义当前语言
         define('LANG_SET',strtolower($langSet));
-        // 加载框架语言包
-        if(is_file(THINK_PATH.'Common/Lang/'.LANG_SET.'.php'))
-            L(include THINK_PATH.'Common/Lang/'.LANG_SET.'.php');
         // 读取项目公共语言包
         if (is_file(LANG_PATH.LANG_SET.'/common.php'))
             L(include LANG_PATH.LANG_SET.'/common.php');
