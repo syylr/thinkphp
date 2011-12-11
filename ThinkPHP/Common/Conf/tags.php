@@ -14,7 +14,7 @@
 return array(
     // 陆续添加
     'app_init'=>array(),
-    'app_begin'=>array('CheckLang', // 语言检测
+    'app_begin'=>array(
         'CheckTemplate', // 模板检测
     ),
     'route_check'=>array('CheckRoute', // 路由检测

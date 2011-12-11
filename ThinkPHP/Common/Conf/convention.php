@@ -43,6 +43,7 @@ return  array(
 
     /* 默认设定 */
     'DEFAULT_APP'           => '@',     // 默认项目名称，@表示当前项目
+    'DEFAULT_LANG'          => 'zh-cn', // 默认语言
     'DEFAULT_GROUP'         => 'Home',  // 默认分组
     'DEFAULT_MODULE'        => 'Index', // 默认模块名称
     'DEFAULT_ACTION'        => 'index', // 默认操作名称
