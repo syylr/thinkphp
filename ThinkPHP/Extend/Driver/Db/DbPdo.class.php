@@ -505,5 +505,4 @@ class DbPdo extends Db{
         }
     }
 
-}//类定义结束
-?>
+}

@@ -386,5 +386,4 @@ class DbPgsql extends Db{
         return $limitStr;
     }
 
-}//类定义结束
-?>
+}

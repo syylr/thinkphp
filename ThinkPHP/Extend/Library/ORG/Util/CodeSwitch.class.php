@@ -238,4 +238,3 @@ class CodeSwitch extends Think
         return self::$info;
     }
 }
-?>

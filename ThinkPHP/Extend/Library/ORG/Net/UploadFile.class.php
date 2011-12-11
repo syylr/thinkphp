@@ -610,5 +610,4 @@ class UploadFile extends Think
         return $this->error;
     }
 
-}//类定义结束
-?>
+}

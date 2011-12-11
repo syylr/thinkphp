@@ -206,5 +206,4 @@ class DbSessionBehavior extends Behavior {
        return mysql_affected_rows($this->dbHandle); 
    } 
 
-}//类定义结束
-?>
+}

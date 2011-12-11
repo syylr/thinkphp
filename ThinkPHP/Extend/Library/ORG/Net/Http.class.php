@@ -536,5 +536,3 @@ if(!function_exists('image_type_to_extension')){
    }
 
 }
-
-?>

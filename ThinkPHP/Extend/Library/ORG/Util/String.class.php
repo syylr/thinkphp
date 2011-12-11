@@ -254,4 +254,3 @@ class String extends Think
 		return sprintf("%0".strlen($max)."d", mt_rand($min,$max));
 	}
 }
-?>

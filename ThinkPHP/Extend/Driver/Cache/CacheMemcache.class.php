@@ -139,5 +139,4 @@ class CacheMemcache extends Cache {
     public function clear() {
         return $this->handler->flush();
     }
-}//类定义结束
-?>
+}

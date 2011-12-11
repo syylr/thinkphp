@@ -284,5 +284,4 @@ class HashMap extends Think  implements IteratorAggregate
         return array_values($this->_values);
     }
 
-}//类定义结束
-?>
+}

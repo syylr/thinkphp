@@ -347,5 +347,4 @@ class ArrayList extends Think implements IteratorAggregate
         natsort($this->_elements);
     }
 
-}//类定义结束
-?>
+}

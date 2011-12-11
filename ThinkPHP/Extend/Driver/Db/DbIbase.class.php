@@ -420,5 +420,4 @@ where a.rdb$constraint_type=\'PRIMARY KEY\' and a.rdb$relation_name=UPPER(\''.$t
 		return $limitStr;
 	}
 
-}//类定义结束
-?>
+}

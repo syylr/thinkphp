@@ -135,4 +135,3 @@ class Page extends Think {
     }
 
 }
-?>

@@ -572,6 +572,3 @@ class Image extends Think {//类定义开始
     }
 
 }
-
-//类定义结束
-?>

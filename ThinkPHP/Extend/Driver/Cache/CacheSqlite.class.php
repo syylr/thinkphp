@@ -164,5 +164,4 @@ class CacheSqlite extends Cache {
         sqlite_query($this->handler, $sql);
         return ;
     }
-}//类定义结束
-?>
+}

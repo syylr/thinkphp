@@ -520,4 +520,3 @@ class Dir extends Think implements IteratorAggregate
 if(!class_exists('DirectoryIterator')) {
 	class DirectoryIterator extends Dir {}
 }
-?>

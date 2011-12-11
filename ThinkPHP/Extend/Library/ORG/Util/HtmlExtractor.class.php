@@ -220,4 +220,3 @@ class HtmlExtractor{
         return $divlist;
     }
 }
-?>

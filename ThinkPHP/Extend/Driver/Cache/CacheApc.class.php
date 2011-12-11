@@ -115,5 +115,4 @@ class CacheApc extends Cache {
         return apc_clear_cache();
     }
 
-}//类定义结束
-?>
+}

@@ -844,5 +844,4 @@ class DbMongo extends Db{
         $query[$key]  =  $val;
         return $query;
     }
-}//类定义结束
-?>
+}

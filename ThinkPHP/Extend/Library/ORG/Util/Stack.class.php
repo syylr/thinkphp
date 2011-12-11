@@ -72,5 +72,4 @@ class Stack extends ArrayList
         return $value;
     }
 
-}//类定义结束
-?>
+}

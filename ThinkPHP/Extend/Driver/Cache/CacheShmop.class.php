@@ -223,5 +223,4 @@ class CacheShmop extends Cache {
         }
     }
 
-}//类定义结束
-?>
+}
