@@ -19,7 +19,6 @@ class ShowPageTraceBehavior extends Behavior {
     // 行为参数定义
     protected $options   =  array(
         'SHOW_PAGE_TRACE'		=> false,   // 显示页面Trace信息 由Trace文件定义和Action操作赋值
-        'TMPL_TRACE_FILE'       => THINK_PATH.'Common/Tpl/page_trace.tpl',     // 页面Trace的模板文件
     );
 
     // 行为扩展的执行入口必须是run
@@ -58,7 +57,7 @@ class ShowPageTraceBehavior extends Behavior {
         }
         // 调用Trace页面模板
         ob_start();
-        include C('TMPL_TRACE_FILE');
+        include C('TMPL_TRACE_FILE')?C('TMPL_TRACE_FILE'):THINK_PATH.'Common/Tpl/page_trace.tpl';
         return ob_get_clean();
     }
 }
