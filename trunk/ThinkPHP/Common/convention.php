@@ -99,7 +99,6 @@ return  array(
     'TMPL_ACTION_ERROR'     => THINK_PATH.'Common/Tpl/dispatch_jump.tpl', // 默认错误跳转对应的模板文件
     'TMPL_ACTION_SUCCESS'   => THINK_PATH.'Common/Tpl/dispatch_jump.tpl', // 默认成功跳转对应的模板文件
     'TMPL_EXCEPTION_FILE'   => THINK_PATH.'Common/Tpl/think_exception.tpl',// 异常页面的模板文件
-    'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
 
     /* URL设置 */
 	'URL_CASE_INSENSITIVE'  => false,   // 默认false 表示URL区分大小写 true则表示不区分大小写
