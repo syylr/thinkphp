@@ -60,10 +60,10 @@ class Portal {
      */
     static private function buildApp() {
         // 加载底层惯例配置文件
-        C(include THINK_PATH.'Common/convention.php');
+        C(include THINK_PATH.'Common/Conf/convention.php');
 
         // 读取运行模式
-        $mode   = include THINK_PATH.'Common/mode.php';
+        $mode   = include THINK_PATH.'Common/Conf/mode.php';
         if(defined('MODE_NAME')) { // 模式的设置并入核心模式
             $mode   = array_merge($mode,include MODE_PATH.strtolower(MODE_NAME).'.php');
         }
@@ -107,7 +107,7 @@ class Portal {
 
         if(APP_DEBUG) {
             // 调试模式加载系统默认的开发模式配置文件
-            C(include THINK_PATH.'Common/debug.php');
+            C(include THINK_PATH.'Common/Conf/debug.php');
             if(is_file(CONFIG_PATH.'debug.php'))
                 // 允许项目增加开发模式配置定义
                 C(include CONFIG_PATH.'debug.php');
