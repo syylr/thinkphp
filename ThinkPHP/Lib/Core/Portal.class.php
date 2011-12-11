@@ -62,9 +62,6 @@ class Portal {
         // 加载底层惯例配置文件
         C(include THINK_PATH.'Conf/convention.php');
 
-        // 加载框架底层语言包
-        L(include THINK_PATH.'Lang/'.$langSet.'.php');
-
         // 读取运行模式
         $mode   = include THINK_PATH.'Conf/mode.php';
         if(defined('MODE_NAME')) { // 模式的设置并入核心模式
@@ -77,6 +74,9 @@ class Portal {
         // 加载项目配置文件
         if(is_file(CONFIG_PATH.'config.php'))
             C(include CONFIG_PATH.'config.php');
+
+        // 加载框架底层语言包
+        L(include THINK_PATH.'Lang/'.strtolower(C('DEFAULT_LANG')).'.php');
 
         // 加载模式系统行为定义
         if(C('APP_TAGS_ON')) {
