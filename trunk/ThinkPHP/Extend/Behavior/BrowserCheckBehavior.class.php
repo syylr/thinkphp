@@ -31,4 +31,3 @@ class BrowserCheckBehavior extends Behavior {
         }
     }
 }
-?>

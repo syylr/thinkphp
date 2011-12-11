@@ -89,4 +89,3 @@ class Base64
         return base64_decode($str);
     }
 }
-?>

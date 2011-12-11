@@ -139,5 +139,4 @@ class CacheRedis extends Cache {
     public function clear() {
         return $this->handler->flushDB();
     }
-}//类定义结束
-?>
+}

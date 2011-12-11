@@ -103,5 +103,4 @@ class CacheXcache extends Cache {
         return xcache_unset($name);
     }
 
-}//类定义结束
-?>
+}

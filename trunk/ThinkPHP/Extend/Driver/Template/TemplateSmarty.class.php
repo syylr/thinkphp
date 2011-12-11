@@ -56,4 +56,3 @@ class TemplateSmarty
         $tpl->display($templateFile);
     }
 }
-?>

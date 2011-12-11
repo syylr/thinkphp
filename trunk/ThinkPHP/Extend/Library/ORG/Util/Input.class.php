@@ -475,4 +475,3 @@ class Input extends Think
         return $string;
     }
 }
-?>

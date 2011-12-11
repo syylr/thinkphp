@@ -54,4 +54,3 @@ class TemplateLite
         $tpl->display($templateFile);
     }
 }
-?>

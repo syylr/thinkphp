@@ -360,5 +360,4 @@ class DbSqlite extends Db
         return $limitStr;
     }
 
-}//类定义结束
-?>
+}

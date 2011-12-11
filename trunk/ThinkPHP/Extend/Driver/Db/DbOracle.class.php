@@ -426,5 +426,4 @@ class DbOracle extends Db{
         }
         return $limitStr?' WHERE '.$limitStr:'';
     }
-}//类定义结束
-?>
+}

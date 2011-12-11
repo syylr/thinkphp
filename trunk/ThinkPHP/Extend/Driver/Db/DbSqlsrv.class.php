@@ -381,5 +381,4 @@ class DbSqlsrv extends Db{
         return addslashes($str);
     }
 
-}//类定义结束
-?>
+}

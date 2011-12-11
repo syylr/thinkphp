@@ -99,5 +99,4 @@ class CacheEaccelerator extends Cache {
          return eaccelerator_rm($name);
      }
 
-}//类定义结束
-?>
+}

@@ -186,5 +186,4 @@ class CacheDb extends Cache {
         return $this->db->execute('TRUNCATE TABLE `'.$this->options['table'].'`');
     }
 
-}//类定义结束
-?>
+}

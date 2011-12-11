@@ -38,4 +38,3 @@ class RobotCheckBehavior extends Behavior {
         return $_robot;
     }
 }
-?>

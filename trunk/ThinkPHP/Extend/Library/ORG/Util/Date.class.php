@@ -731,5 +731,4 @@ class Date extends Think
     {
         return $this->format();
     }
-}//类定义结束
-?>
+}

@@ -35,4 +35,3 @@ return array(
     // 模式配置文件  [支持数组直接定义或者文件名定义]（如有相同则覆盖项目配置文件中的配置）
     'config'   =>   MODE_PATH.'Rest/config.php',
 );
-?>

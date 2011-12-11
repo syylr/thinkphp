@@ -295,5 +295,4 @@ class RBAC extends Think
         }
 		return $access;
 	}
-}//end class
-?>
+}

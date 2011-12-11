@@ -96,4 +96,3 @@ class Socket extends Think {
  	}
 
 }
-?>

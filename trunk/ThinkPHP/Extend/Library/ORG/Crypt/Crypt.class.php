@@ -104,4 +104,3 @@ class Crypt
       return $v;
    }
 }
-?>

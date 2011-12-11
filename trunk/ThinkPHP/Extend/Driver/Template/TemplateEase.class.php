@@ -56,4 +56,3 @@ class TemplateEase
         $tpl->p();
     }
 }
-?>
