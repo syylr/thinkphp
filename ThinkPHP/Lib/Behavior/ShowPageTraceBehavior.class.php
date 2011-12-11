@@ -57,7 +57,7 @@ class ShowPageTraceBehavior extends Behavior {
         }
         // 调用Trace页面模板
         ob_start();
-        include C('TMPL_TRACE_FILE')?C('TMPL_TRACE_FILE'):THINK_PATH.'Common/Tpl/page_trace.tpl';
+        include C('TMPL_TRACE_FILE')?C('TMPL_TRACE_FILE'):THINK_PATH.'Tpl/page_trace.tpl';
         return ob_get_clean();
     }
 }
