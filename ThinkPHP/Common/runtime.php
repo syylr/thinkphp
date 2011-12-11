@@ -74,11 +74,11 @@ define('LANG_PATH',     APP_PATH.LANG_DIR.'/'); //
 define('TEMP_PATH',      RUNTIME_PATH.TEMP_DIR.'/'); //
 define('DATA_PATH', RUNTIME_PATH.'Data/'); //
 define('CORE_PATH',THINK_PATH.'Lib/');
-define('EXTEND_PATH',THINK_PATH.'Extend/');
-define('MODE_PATH',EXTEND_PATH.'Mode/');
-define('VENDOR_PATH',EXTEND_PATH.'Vendor/');
-define('LIBRARY_PATH',EXTEND_PATH.'Library/');
-define('COLLECTION_PATH',EXTEND_PATH.'Collection/');
+// 可在入口文件中重新定义的常量
+if(!defined('EXTEND_PATH')) define('EXTEND_PATH',THINK_PATH.'Extend/');
+if(!defined('MODE_PATH')) define('MODE_PATH',EXTEND_PATH.'Mode/');
+if(!defined('VENDOR_PATH')) define('VENDOR_PATH',EXTEND_PATH.'Vendor/');
+if(!defined('LIBRARY_PATH')) define('LIBRARY_PATH',EXTEND_PATH.'Library/');
 // 为了方便导入第三方类库 设置Vendor目录到include_path
 set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
 
