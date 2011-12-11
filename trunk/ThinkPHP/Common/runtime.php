@@ -91,7 +91,7 @@ function load_think_mode() {
         CORE_PATH.'Core/Portal.class.php',
         CORE_PATH.'Core/Think.class.php',
         CORE_PATH.'Core/ThinkException.class.php',  // 异常处理类
-        CORE_PATH.'Util/Behavior.class.php',
+        CORE_PATH.'Core/Behavior.class.php',
     );
     // 加载模式文件列表
     foreach ($list as $key=>$file){
@@ -104,7 +104,7 @@ function load_think_mode() {
         'Log'          =>   CORE_PATH.'Core/Log.class.php',
         'ThinkTemplate' => CORE_PATH.'Template/ThinkTemplate.class.php',
         'TagLib'        => CORE_PATH.'Template/TagLib.class.php',
-        'Cache'         => CORE_PATH.'Cache/Cache.class.php',
+        'Cache'         => CORE_PATH.'Core/Cache.class.php',
         'Debug'         => CORE_PATH.'Util/Debug.class.php',
         'Session'       => CORE_PATH.'Util/Session.class.php',
         'TagLibCx'      => CORE_PATH.'Template/TagLib/TagLibCx.class.php',
@@ -153,7 +153,7 @@ function build_runtime_cache($append='') {
         CORE_PATH.'Core/Portal.class.php',
         CORE_PATH.'Core/Think.class.php',
         CORE_PATH.'Core/ThinkException.class.php',
-        CORE_PATH.'Util/Behavior.class.php',
+        CORE_PATH.'Core/Behavior.class.php',
     );
     foreach ($list as $file){
         $content .= compile($file);

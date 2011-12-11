@@ -71,13 +71,13 @@ class Cache extends Think {
         if(empty($type))  $type = C('DATA_CACHE_TYPE');
         $type = strtolower(trim($type));
         $class = 'Cache'.ucwords($type);
-        if(is_file(dirname(__FILE__).'/Driver/'.$class.'.class.php')) {
+        if(is_file(CORE_PATH.'Driver/Cache/'.$class.'.class.php')) {
             // 内置驱动
-            $path = dirname(__FILE__).'/Driver/';
+            $path = CORE_PATH;
         }else{ // 扩展驱动
-            $path = EXTEND_PATH.'Driver/Cache/';
+            $path = EXTEND_PATH;
         }
-        if(require_cache($path.$class.'.class.php'))
+        if(require_cache($path.'Driver/Cache/'.$class.'.class.php'))
             $cache = new $class($options);
         else
             throw_exception(L('_CACHE_TYPE_INVALID_').':'.$type);
