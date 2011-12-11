@@ -15,6 +15,9 @@
  * ThinkPHP 运行时文件 编译后不再加载
  +------------------------------------------------------------------------------
  */
+
+//  版本信息
+define('THINK_VERSION', '3.0beta');
 //   系统信息
 if(version_compare(PHP_VERSION,'5.4.0','<') ) {
     @set_magic_quotes_runtime (0);
@@ -51,29 +54,24 @@ if(!IS_CLI) {
     define('URL_REWRITE',     2);   //REWRITE模式
     define('URL_COMPAT',      3);   // 兼容模式
 }
-//  版本信息
-define('THINK_VERSION', '3.0beta');
+
 // 目录设置
-define('CACHE_DIR',  'Cache');
 define('HTML_DIR',    'Html');
-define('CONF_DIR',    'Conf');
-define('LIB_DIR',      'Lib');
-define('LOG_DIR',     'Logs');
-define('LANG_DIR',    'Lang');
-define('TEMP_DIR',    'Temp');
 define('TMPL_DIR',     'Tpl');
+
 // 路径设置
 define('TMPL_PATH',APP_PATH.TMPL_DIR.'/');
 define('HTML_PATH',APP_PATH.HTML_DIR.'/'); //
 define('COMMON_PATH',   APP_PATH.'Common/'); // 项目公共目录
-define('LIB_PATH',         APP_PATH.LIB_DIR.'/'); //
-define('CACHE_PATH',   RUNTIME_PATH.CACHE_DIR.'/'); //
-define('CONFIG_PATH',  APP_PATH.CONF_DIR.'/'); //
-define('LOG_PATH',       RUNTIME_PATH.LOG_DIR.'/'); //
-define('LANG_PATH',     APP_PATH.LANG_DIR.'/'); //
-define('TEMP_PATH',      RUNTIME_PATH.TEMP_DIR.'/'); //
+define('LIB_PATH',         APP_PATH.'Lib/'); //
+define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); //
+define('CONFIG_PATH',  APP_PATH.'Conf/'); //
+define('LOG_PATH',       RUNTIME_PATH.'Logs/'); //
+define('LANG_PATH',     APP_PATH.'Lang/'); //
+define('TEMP_PATH',      RUNTIME_PATH.'Temp/'); //
 define('DATA_PATH', RUNTIME_PATH.'Data/'); //
 define('CORE_PATH',THINK_PATH.'Lib/');
+
 // 可在入口文件中重新定义的常量
 if(!defined('EXTEND_PATH')) define('EXTEND_PATH',THINK_PATH.'Extend/');
 if(!defined('MODE_PATH')) define('MODE_PATH',EXTEND_PATH.'Mode/');
@@ -100,7 +98,7 @@ function load_think_mode() {
     // 加载系统类库别名定义
     $alias = array(
         'Model'         => CORE_PATH.'Core/Model.class.php',
-        'Db'            => CORE_PATH.'Db/Db.class.php',
+        'Db'            => CORE_PATH.'Core/Db.class.php',
         'Log'          =>   CORE_PATH.'Core/Log.class.php',
         'ThinkTemplate' => CORE_PATH.'Template/ThinkTemplate.class.php',
         'TagLib'        => CORE_PATH.'Template/TagLib.class.php',
