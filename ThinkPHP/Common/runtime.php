@@ -55,13 +55,9 @@ if(!IS_CLI) {
     define('URL_COMPAT',      3);   // 兼容模式
 }
 
-// 目录设置
-define('HTML_DIR',    'Html');
-define('TMPL_DIR',     'Tpl');
-
 // 路径设置
-define('TMPL_PATH',APP_PATH.TMPL_DIR.'/');
-define('HTML_PATH',APP_PATH.HTML_DIR.'/'); //
+define('TMPL_PATH',APP_PATH.'Tpl/');
+define('HTML_PATH',APP_PATH.'Html/'); //
 define('COMMON_PATH',   APP_PATH.'Common/'); // 项目公共目录
 define('LIB_PATH',         APP_PATH.'Lib/'); //
 define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); //
