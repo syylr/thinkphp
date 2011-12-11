@@ -325,7 +325,7 @@ class  ThinkTemplate extends Think
             }
             require_cache($file);
         }
-        $tLib =  Think::instance($className);
+        $tLib =  Portal::instance($className);
         foreach ($tLib->tags as $name=>$val){
             $tags = array();
             if(isset($val['alias'])) {// 别名设置

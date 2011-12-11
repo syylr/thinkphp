@@ -47,7 +47,6 @@ class ContentReplaceBehavior extends Behavior {
             '__ACTION__'    => __ACTION__,     // 当前操作地址
             '__SELF__'      => __SELF__,       // 当前页面地址
             '__URL__'       => __URL__,
-            '__INFO__'      => __INFO__,
             '../Public'   => APP_TMPL_PATH.'/Public',// 项目公共模板目录
             '__PUBLIC__'  => __ROOT__.'/Public',// 站点公共目录
         );
