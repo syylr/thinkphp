@@ -91,6 +91,7 @@ function load_think_mode() {
         CORE_PATH.'Core/Portal.class.php',
         CORE_PATH.'Core/Think.class.php',
         CORE_PATH.'Core/ThinkException.class.php',  // 异常处理类
+        CORE_PATH.'Util/Behavior.class.php',
     );
     // 加载模式文件列表
     foreach ($list as $key=>$file){
@@ -152,6 +153,7 @@ function build_runtime_cache($append='') {
         CORE_PATH.'Core/Portal.class.php',
         CORE_PATH.'Core/Think.class.php',
         CORE_PATH.'Core/ThinkException.class.php',
+        CORE_PATH.'Util/Behavior.class.php',
     );
     foreach ($list as $file){
         $content .= compile($file);
