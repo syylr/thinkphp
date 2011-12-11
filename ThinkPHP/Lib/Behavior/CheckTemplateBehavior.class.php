@@ -15,7 +15,7 @@
  * 系统行为扩展 模板检测
  +------------------------------------------------------------------------------
  */
-class CheckTemplateBehavior {
+class CheckTemplateBehavior extends Behavior {
     // 行为参数定义（默认值） 可在项目配置中覆盖
     protected $options   =  array(
             'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
