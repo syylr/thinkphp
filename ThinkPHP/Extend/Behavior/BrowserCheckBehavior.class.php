@@ -10,10 +10,12 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-class BrowserCheckBehavior {
-    public function run() {
+class BrowserCheckBehavior extends Behavior {
+    protected $options   =  array(
+            'LIMIT_REFLESH_TIMES'=>10,
+        );
+    public function run(&$params='') {
         if($_SERVER['REQUEST_METHOD'] == 'GET') {
-            C('LIMIT_REFLESH_TIMES',10);
             //	启用页面防刷新机制
             $guid	=	md5($_SERVER['PHP_SELF']);
             // 检查页面刷新间隔

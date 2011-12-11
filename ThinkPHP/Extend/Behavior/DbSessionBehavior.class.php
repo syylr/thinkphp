@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class DbSessionBehavior {
+class DbSessionBehavior extends Behavior {
 
     /**
      +----------------------------------------------------------
@@ -60,7 +60,7 @@ class DbSessionBehavior {
      * @access public 
      +----------------------------------------------------------
      */
-    public function run() {
+    public function run(&$params='') {
         // 更改Session 处理机制
         session_set_save_handler(array(&$this,"open"), 
                          array(&$this,"close"), 
