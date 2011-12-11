@@ -102,8 +102,10 @@ class Portal {
 
         // 加载应用别名定义
         $alias = is_array($mode['alias'])?$mode['alias']:include $mode['alias'];
-        alias_import($alias);
-        if(!APP_DEBUG) $compile .= 'alias_import('.var_export($alias,true).');';
+        if(is_array($alias)) {
+            alias_import($alias);
+            if(!APP_DEBUG) $compile .= 'alias_import('.var_export($alias,true).');';
+        }
 
         if(APP_DEBUG) {
             // 调试模式加载系统默认的开发模式配置文件
