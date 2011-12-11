@@ -222,7 +222,7 @@ function import($class, $baseUrl = '', $ext='.class.php') {
             $baseUrl = LIBRARY_PATH;
         }else { // 加载其他项目应用类库
             $class = substr_replace($class, '', 0, strlen($class_strut[0]) + 1);
-            $baseUrl = APP_PATH . '../' . $class_strut[0] . '/' . LIB_DIR . '/';
+            $baseUrl = APP_PATH . '../' . $class_strut[0] . '/Lib/';
         }
     }
     if (substr($baseUrl, -1) != "/")
