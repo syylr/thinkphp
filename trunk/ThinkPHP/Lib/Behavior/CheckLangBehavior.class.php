@@ -15,17 +15,16 @@
  * 系统行为扩展 语言检测 并自动加载语言包
  +------------------------------------------------------------------------------
  */
+class CheckLangBehavior extends Behavior {
+    // 行为参数定义（默认值） 可在项目配置中覆盖
+    protected $options   =  array(
+            'DEFAULT_LANG'          => 'zh-cn', // 默认语言
+            'LANG_SWITCH_ON'        => false,   // 默认关闭语言包功能
+            'LANG_AUTO_DETECT'      => true,   // 自动侦测语言 开启多语言功能后有效
+            'LANG_LIST' => 'zh-cn', // 允许切换的语言列表 用逗号分隔
+            'VAR_LANGUAGE'          => 'l',		// 默认语言切换变量
+        );
 
-// 添加默认配置
-C(array(
-    'DEFAULT_LANG'          => 'zh-cn', // 默认语言
-    'LANG_SWITCH_ON'        => false,   // 默认关闭语言包功能
-    'LANG_AUTO_DETECT'      => true,   // 自动侦测语言 开启多语言功能后有效
-    'LANG_LIST' => 'zh-cn', // 允许切换的语言列表 用逗号分隔
-	'VAR_LANGUAGE'          => 'l',		// 默认语言切换变量
-    ));
-
-class CheckLangBehavior {
     // 行为扩展的执行入口必须是run
     public function run(){
         // 开启静态缓存
