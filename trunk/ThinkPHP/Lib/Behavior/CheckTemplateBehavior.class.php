@@ -21,6 +21,7 @@ class CheckTemplateBehavior extends Behavior {
             'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
             'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
             'DEFAULT_THEME'    => 'default',	// 默认模板主题名称
+            'TMPL_TEMPLATE_SUFFIX'  => '.html',     // 默认模板文件后缀
         );
 
     // 行为扩展的执行入口必须是run
