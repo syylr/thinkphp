@@ -62,7 +62,7 @@ class ParseTemplateBehavior extends Behavior {
             }else{ // 扩展驱动
                 $path = EXTEND_PATH;
             }
-            if(require_cache($path.'Driver/Template/'$class.'.class.php')) {
+            if(require_cache($path.'Driver/Template/'.$class.'.class.php')) {
                 $tpl   =  new $class;
                 $tpl->fetch($_data['file'],$_data['var']);
             }else {  // 类没有定义
