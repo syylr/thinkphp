@@ -16,9 +16,12 @@
  * 增加配置参数如下：
  +------------------------------------------------------------------------------
  */
-class WriteHtmlCacheBehavior {
+class WriteHtmlCacheBehavior extends Behavior {
+    protected $options   =  array(
+            'HTML_CACHE_ON'=>true,
+        );
     // 行为扩展的执行入口必须是run
-    public function run($content){
+    public function run(&$content){
         if(C('HTML_CACHE_ON'))  HtmlCache::writeHtmlCache($content);
     }
 

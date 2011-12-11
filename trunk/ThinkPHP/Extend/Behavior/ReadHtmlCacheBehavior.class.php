@@ -18,9 +18,12 @@
  *
  +------------------------------------------------------------------------------
  */
-class ReadHtmlCacheBehavior {
+class ReadHtmlCacheBehavior extends Behavior {
+    protected $options   =  array(
+            'HTML_CACHE_ON'=>true,
+        );
     // 行为扩展的执行入口必须是run
-    public function run(){
+    public function run(&$params=''){
         // 开启静态缓存
         if(C('HTML_CACHE_ON'))  HtmlCache::readHTMLCache();
     }
