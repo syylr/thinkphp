@@ -63,13 +63,16 @@ class Portal {
         C(include THINK_PATH.'Conf/convention.php');
 
         // 读取运行模式
-        $mode   = include THINK_PATH.'Conf/mode.php';
         if(defined('MODE_NAME')) { // 模式的设置并入核心模式
-            $mode   = array_merge($mode,include MODE_PATH.strtolower(MODE_NAME).'.php');
+            $mode   = include MODE_PATH.strtolower(MODE_NAME).'.php';
+        }else{
+            $mode   =  array();
         }
 
         // 加载模式配置文件
-        C( is_array($mode['config'])?$mode['config']:include $mode['config'] );
+        if(isset($mode['config'])) {
+            C( is_array($mode['config'])?$mode['config']:include $mode['config'] );
+        }
 
         // 加载项目配置文件
         if(is_file(CONFIG_PATH.'config.php'))
@@ -80,15 +83,35 @@ class Portal {
 
         // 加载模式系统行为定义
         if(C('APP_TAGS_ON')) {
-            C('extends',is_array($mode['extends'])?$mode['extends']:include $mode['extends']);
+            if(isset($mode['extends'])) {
+                C('extends',is_array($mode['extends'])?$mode['extends']:include $mode['extends']);
+            }else{ // 默认加载系统行为扩展定义
+                C('extends', include THINK_PATH.'Conf/tags.php');
+            }
         }
 
         // 加载应用行为定义
-        C('tags',is_array($mode['tags'])?$mode['tags']:include $mode['tags']);
+        if(isset($mode['tags'])) {
+            C('tags', is_array($mode['tags'])?$mode['tags']:include $mode['tags']);
+        }elseif(is_file(CONFIG_PATH.'tags.php')){
+            // 默认加载项目配置目录的tags文件定义
+            C('tags', include CONFIG_PATH.'tags.php');
+        }
 
         $compile   = '';
         // 读取核心编译文件列表
-        $list   =  is_array($mode['core'])?$mode['core']:include $mode['core'];
+        if(isset($mode['core'])) {
+            $list   =  $mode['core'];
+        }else{
+            $list  =  array(
+                THINK_PATH.'Common/functions.php', // 标准模式函数库
+                CORE_PATH.'Core/Log.class.php',    // 日志处理类
+                CORE_PATH.'Core/Dispatcher.class.php', // URL调度类
+                CORE_PATH.'Core/App.class.php',   // 应用程序类
+                CORE_PATH.'Core/Action.class.php', // 控制器类
+                CORE_PATH.'Core/View.class.php',  // 视图类
+            );
+        }
         foreach ($list as $file){
             if(is_file($file))  {
                 require_cache($file);
@@ -97,6 +120,9 @@ class Portal {
         }
 
         // 加载公共文件
+        if(!isset($mode['common'])) { // 默认加载项目公共文件
+            $mode['common'] =  COMMON_PATH.'common.php';
+        }
         if(is_file($mode['common'])) {
             include $mode['common'];
             // 编译文件
@@ -104,13 +130,16 @@ class Portal {
         }
 
         // 加载应用别名定义
-        $alias = is_array($mode['alias'])?$mode['alias']:include $mode['alias'];
+        if(isset($mode['alias'])) {
+            $alias = is_array($mode['alias'])?$mode['alias']:include $mode['alias'];
+        }elseif(is_file(CONFIG_PATH.'alias.php')){ 
+            // 没有定义 则获取项目配置目录的alias别名定义文件
+            $alias = include CONFIG_PATH.'alias.php';
+        }
         if(is_array($alias)) {
             alias_import($alias);
             if(!APP_DEBUG) $compile .= 'alias_import('.var_export($alias,true).');';
         }
-        // 加载框架底层语言包
-        L(include THINK_PATH.'Lang/'.strtolower(C('DEFAULT_LANG')).'.php');
 
         if(APP_DEBUG) {
             // 调试模式加载系统默认的开发模式配置文件
