@@ -59,11 +59,11 @@ class CheckTemplateBehavior extends Behavior {
         /* 模板相关目录常量 */
         define('THEME_NAME',   $templateSet);                  // 当前模板主题名称
         if(defined('GROUP_NAME')) {
-            define('APP_TMPL_PATH',   __ROOT__.'/'.APP_NAME.(APP_NAME?'/':'').TMPL_DIR.'/'.GROUP_NAME.(THEME_NAME?'/':'').THEME_NAME.'/');
+            define('APP_TMPL_PATH',   __ROOT__.'/'.APP_NAME.(APP_NAME?'/':'').'Tpl/'.GROUP_NAME.(THEME_NAME?'/':'').THEME_NAME.'/');
             C('TEMPLATE_NAME',TMPL_PATH.GROUP_NAME.(THEME_NAME?'/':'').THEME_NAME.'/'.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH.GROUP_NAME.'/');
         }else{
-            define('APP_TMPL_PATH',   __ROOT__.'/'.APP_NAME.(APP_NAME?'/':'').TMPL_DIR.'/'.THEME_NAME.(THEME_NAME?'/':''));
+            define('APP_TMPL_PATH',   __ROOT__.'/'.APP_NAME.(APP_NAME?'/':'').'Tpl/'.THEME_NAME.(THEME_NAME?'/':''));
             C('TEMPLATE_NAME',TMPL_PATH.THEME_NAME.(THEME_NAME?'/':'').MODULE_NAME.'/'.ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
             C('CACHE_PATH',CACHE_PATH);
         }
