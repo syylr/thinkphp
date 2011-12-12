@@ -35,17 +35,17 @@ class Dispatcher extends Think {
      */
     static public function dispatch() {
         $urlMode  =  C('URL_MODEL');
-        if($urlMode == URL_REWRITE ) {
+        if($urlMode == URL_COMPAT || !empty($_GET[C('VAR_PATHINFO')])){
+            // 兼容模式判断
+            define('PHP_FILE',_PHP_FILE_.'?'.C('VAR_PATHINFO').'=');
+            $_SERVER['PATH_INFO']   = $_GET[C('VAR_PATHINFO')];
+            unset($_GET[C('VAR_PATHINFO')]);
+        }elseif($urlMode == URL_REWRITE ) {
             //当前项目地址
             $url    =   dirname(_PHP_FILE_);
             if($url == '/' || $url == '\\')
                 $url    =   '';
             define('PHP_FILE',$url);
-        }elseif($urlMode == URL_COMPAT || !empty($_GET[C('VAR_PATHINFO')])){
-            // 兼容模式判断
-            define('PHP_FILE',_PHP_FILE_.'?'.C('VAR_PATHINFO').'=');
-            $_SERVER['PATH_INFO']   = $_GET[C('VAR_PATHINFO')];
-            unset($_GET[C('VAR_PATHINFO')]);
         }else {
             //当前项目地址
             define('PHP_FILE',_PHP_FILE_);
