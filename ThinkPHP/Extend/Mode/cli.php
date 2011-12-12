@@ -13,8 +13,7 @@
 // 命令行模式定义文件
 return array(
     'core'         =>   array(
-        THINK_PATH.'Common/functions.php',   // 系统函数库
-        CORE_PATH.'Core/Think.class.php',
+        MODE_PATH.'Cli/functions.php',   // 命令行系统函数库
         MODE_PATH.'Cli/Log.class.php',
         MODE_PATH.'Cli/App.class.php',
         MODE_PATH.'Cli/Action.class.php',
