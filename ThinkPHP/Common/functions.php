@@ -21,6 +21,83 @@
   +------------------------------------------------------------------------------
  */
 
+// 错误输出
+function halt($error) {
+    $e = array();
+    if (APP_DEBUG) {
+        //调试模式下输出错误信息
+        if (!is_array($error)) {
+            $trace = debug_backtrace();
+            $e['message'] = $error;
+            $e['file'] = $trace[0]['file'];
+            $e['class'] = $trace[0]['class'];
+            $e['function'] = $trace[0]['function'];
+            $e['line'] = $trace[0]['line'];
+            $traceInfo = '';
+            $time = date("y-m-d H:i:m");
+            foreach ($trace as $t) {
+                $traceInfo .= '[' . $time . '] ' . $t['file'] . ' (' . $t['line'] . ') ';
+                $traceInfo .= $t['class'] . $t['type'] . $t['function'] . '(';
+                $traceInfo .= implode(', ', $t['args']);
+                $traceInfo .=")<br/>";
+            }
+            $e['trace'] = $traceInfo;
+        } else {
+            $e = $error;
+        }
+        // 包含异常页面模板
+        include C('TMPL_EXCEPTION_FILE');
+    } else {
+        //否则定向到错误页面
+        $error_page = C('ERROR_PAGE');
+        if (!empty($error_page)) {
+            redirect($error_page);
+        } else {
+            if (C('SHOW_ERROR_MSG'))
+                $e['message'] = is_array($error) ? $error['message'] : $error;
+            else
+                $e['message'] = C('ERROR_MESSAGE');
+            // 包含异常页面模板
+            include C('TMPL_EXCEPTION_FILE');
+        }
+    }
+    exit;
+}
+
+// 自定义异常处理
+function throw_exception($msg, $type='ThinkException', $code=0) {
+    if (class_exists($type, false))
+        throw new $type($msg, $code, true);
+    else
+        halt($msg);        // 异常类型不存在则输出错误信息字串
+}
+
+// 浏览器友好的变量输出
+function dump($var, $echo=true, $label=null, $strict=true) {
+    $label = ($label === null) ? '' : rtrim($label) . ' ';
+    if (!$strict) {
+        if (ini_get('html_errors')) {
+            $output = print_r($var, true);
+            $output = "<pre>" . $label . htmlspecialchars($output, ENT_QUOTES) . "</pre>";
+        } else {
+            $output = $label . print_r($var, true);
+        }
+    } else {
+        ob_start();
+        var_dump($var);
+        $output = ob_get_clean();
+        if (!extension_loaded('xdebug')) {
+            $output = preg_replace("/\]\=\>\n(\s+)/m", "] => ", $output);
+            $output = '<pre>' . $label . htmlspecialchars($output, ENT_QUOTES) . '</pre>';
+        }
+    }
+    if ($echo) {
+        echo($output);
+        return null;
+    }else
+        return $output;
+}
+
  // 区间调试开始
 function debug_start($label='') {
     $GLOBALS[$label]['_beginTime'] = microtime(TRUE);
@@ -37,6 +114,174 @@ function debug_end($label='') {
         echo ' Memories ' . number_format(($GLOBALS[$label]['_endMem'] - $GLOBALS[$label]['_beginMem']) / 1024) . ' k';
     }
     echo '</div>';
+}
+
+// URL组装 支持不同模式和路由
+// 格式： U('/Admin/User/add/','aaa=1&bbb=2');
+// U('__URL__/add/','aaa=1&bbb=2');
+function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
+    $replace =  array(
+        '__APP__'       => __APP__,        // 项目地址
+        '__GROUP__'   =>   defined('GROUP_NAME')?__GROUP__:__APP__, // 分组地址
+        '__URL__'       => __URL__, // 模块地址
+        '__ACTION__'    => __ACTION__,     // 操作地址
+    );
+    $url = str_replace(array_keys($replace),array_values($replace),$url,$count);
+    if($count>0) {
+        $url   =  substr_replace($url,'',0,strlen(__APP__)); 
+    }
+
+    if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
+        parse_str($vars,$vars);
+    }elseif(!is_array($vars)){
+        $vars = array();
+    }
+
+    // 分析URL地址
+    $info =  parse_url($url);
+    $url   =  $info['path'];
+    // 子域名解析
+    if($domain===true){
+        $domain = $_SERVER['HTTP_HOST'];
+        if(C('APP_SUB_DOMAIN_DEPLOY') ) { // 开启子域名部署
+            $domain = $domain=='localhost'?'localhost':'www'.strstr($_SERVER['HTTP_HOST'],'.');
+            // '子域名'=>array('项目[/分组]');
+            foreach (C('APP_SUB_DOMAIN_RULES') as $key => $rule) {
+                if(false === strpos($key,'*') && 0=== strpos($url,$rule[0])) {
+                    $domain = $key.strstr($domain,'.'); // 生成对应子域名
+                    $url   =  substr_replace($url,'',0,strlen($rule[0]));
+                    break;
+                }
+            }
+        }else{
+            $domain = $_SERVER['HTTP_HOST'];
+        }
+    }
+    if(substr_count($url,'/') == 2 && substr($url,0,strpos($url,'/')) ==C('DEFAULT_GROUP') ) { // 处理默认分组
+        $url   =  strstr($url,'/');
+    }
+
+    if(isset($info['query'])) { // 解析地址里面参数 合并到vars
+        parse_str($info['query'],$params);
+        $vars = array_merge($params,$vars);
+    }
+    $depr = C('URL_PATHINFO_DEPR');
+    if('/' != $depr) {
+        // 安全替换
+        $url   =  str_replace('/',$depr,$url);
+    }
+    $url   =  trim($url,$depr);
+    if(C('URL_MODEL') == 0) { // 普通模式URL转换
+        $path = explode($depr,$url);
+        $var  =  array();
+        $var[C('VAR_ACTION')] = array_pop($path);
+        if(!empty($path)) $var[C('VAR_MODULE')] = array_pop($path);
+        if(!empty($path)) $var[C('VAR_GROUP')]   = array_pop($path);
+        $url   =  __APP__.'?'.http_build_query($var);
+        if(!empty($vars)) {
+            $vars = http_build_query($vars);
+            $url   .= '&'.$vars;
+        }
+    }else{ // PATHINFO模式或者兼容URL模式
+        $url   =  __APP__.'/'.str_replace(__APP__,'',$url);
+        if(!empty($vars)) { // 添加参数
+            $vars = http_build_query($vars);
+            $url .= $depr.str_replace(array('=','&'),$depr,$vars);
+        }
+        if($suffix) {
+            $suffix   =  $suffix===true?C('URL_HTML_SUFFIX'):$suffix;
+            if($suffix) {
+                $url  .=  '.'.ltrim($suffix,'.');
+            }
+        }
+    }
+    if($domain) {
+        $url   =  'http://'.$domain.$url;
+    }
+    if($redirect) // 直接跳转URL
+        redirect($url);
+    else
+        return $url;
+}
+
+// URL重定向
+function redirect($url, $time=0, $msg='') {
+    //多行URL地址支持
+    $url = str_replace(array("\n", "\r"), '', $url);
+    if (empty($msg))
+        $msg = "系统将在{$time}秒之后自动跳转到{$url}！";
+    if (!headers_sent()) {
+        // redirect
+        if (0 === $time) {
+            header("Location: " . $url);
+        } else {
+            header("refresh:{$time};url={$url}");
+            echo($msg);
+        }
+        exit();
+    } else {
+        $str = "<meta http-equiv='Refresh' content='{$time};URL={$url}'>";
+        if ($time != 0)
+            $str .= $msg;
+        exit($str);
+    }
+}
+
+// 全局缓存设置和读取
+function S($name, $value='', $expire='', $type='',$options=null) {
+    static $_cache = array();
+    alias_import('Cache');
+    //取得缓存对象实例
+    $cache = Cache::getInstance($type,$options);
+    if ('' !== $value) {
+        if (is_null($value)) {
+            // 删除缓存
+            $result = $cache->rm($name);
+            if ($result)
+                unset($_cache[$type . '_' . $name]);
+            return $result;
+        }else {
+            // 缓存数据
+            $cache->set($name, $value, $expire);
+            $_cache[$type . '_' . $name] = $value;
+        }
+        return;
+    }
+    if (isset($_cache[$type . '_' . $name]))
+        return $_cache[$type . '_' . $name];
+    // 获取缓存数据
+    $value = $cache->get($name);
+    $_cache[$type . '_' . $name] = $value;
+    return $value;
+}
+
+// 快速文件数据读取和保存 针对简单类型数据 字符串、数组
+function F($name, $value='', $path=DATA_PATH) {
+    static $_cache = array();
+    $filename = $path . $name . '.php';
+    if ('' !== $value) {
+        if (is_null($value)) {
+            // 删除缓存
+            return unlink($filename);
+        } else {
+            // 缓存数据
+            $dir = dirname($filename);
+            // 目录不存在则创建
+            if (!is_dir($dir))
+                mkdir($dir);
+            return file_put_contents($filename, strip_whitespace("<?php\nreturn " . var_export($value, true) . ";\n?>"));
+        }
+    }
+    if (isset($_cache[$name]))
+        return $_cache[$name];
+    // 获取缓存数据
+    if (is_file($filename)) {
+        $value = include $filename;
+        $_cache[$name] = $value;
+    } else {
+        $value = false;
+    }
+    return $value;
 }
 
 // 取得对象实例 支持调用类的静态方法
