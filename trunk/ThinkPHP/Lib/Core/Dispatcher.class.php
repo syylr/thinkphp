@@ -41,17 +41,16 @@ class Dispatcher extends Think {
             if($url == '/' || $url == '\\')
                 $url    =   '';
             define('PHP_FILE',$url);
-        }elseif($urlMode == URL_COMPAT){
+        }elseif($urlMode == URL_COMPAT || !empty($_GET[C('VAR_PATHINFO')])){
+            // 兼容模式判断
             define('PHP_FILE',_PHP_FILE_.'?'.C('VAR_PATHINFO').'=');
+            $_SERVER['PATH_INFO']   = $_GET[C('VAR_PATHINFO')];
+            unset($_GET[C('VAR_PATHINFO')]);
         }else {
             //当前项目地址
             define('PHP_FILE',_PHP_FILE_);
         }
-        // 兼容模式判断
-        if(!empty($_GET[C('VAR_PATHINFO')])) {
-            $_SERVER['PATH_INFO']   = $_GET[C('VAR_PATHINFO')];
-            unset($_GET[C('VAR_PATHINFO')]);
-        }
+
         // 开启子域名部署
         if(C('APP_SUB_DOMAIN_DEPLOY')) {
             $rules = C('APP_SUB_DOMAIN_RULES');
