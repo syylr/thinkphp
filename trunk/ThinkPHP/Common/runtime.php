@@ -56,13 +56,13 @@ if(!IS_CLI) {
 }
 
 // 路径设置
-define('COMMON_PATH',   APP_PATH.'Common/'); // 项目公共目录
-define('LIB_PATH',         APP_PATH.'Lib/'); //
+define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
+define('LIB_PATH',    APP_PATH.'Lib/'); //
 define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); //
 define('CONFIG_PATH',  APP_PATH.'Conf/'); //
-define('LOG_PATH',       RUNTIME_PATH.'Logs/'); //
-define('LANG_PATH',     APP_PATH.'Lang/'); //
-define('TEMP_PATH',      RUNTIME_PATH.'Temp/'); //
+define('LOG_PATH',  RUNTIME_PATH.'Logs/'); //
+define('LANG_PATH', APP_PATH.'Lang/'); //
+define('TEMP_PATH', RUNTIME_PATH.'Temp/'); //
 define('DATA_PATH', RUNTIME_PATH.'Data/'); //
 
 
@@ -205,7 +205,6 @@ function build_app_dir() {
             LIB_PATH.'Action/',
             LIB_PATH.'Behavior/',
             LIB_PATH.'Widget/',
-            LIB_PATH.'Filter/',
             );
         mkdirs($dirs);
         // 目录安全写入
