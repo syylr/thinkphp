@@ -121,7 +121,7 @@ function debug_end($label='') {
 function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
     // 解析URL
     $info =  parse_url($url);
-    $url   =  isset($info['path'])?$info['path']:ACTION_NAME;
+    $url   =  !empty($info['path'])?$info['path']:ACTION_NAME;
     // 解析子域名
     if($domain===true){
         $domain = $_SERVER['HTTP_HOST'];
