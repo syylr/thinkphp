@@ -135,8 +135,6 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
                     break;
                 }
             }
-        }else{
-            $domain = $_SERVER['HTTP_HOST'];
         }
     }
     if(substr_count($url,'/') == 2 && substr($url,0,strpos($url,'/')) ==C('DEFAULT_GROUP') ) { // 处理默认分组
@@ -166,7 +164,10 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
         $var[C('VAR_ACTION')] = !empty($path)?array_pop($path):ACTION_NAME;
         $var[C('VAR_MODULE')] = !empty($path)?array_pop($path):MODULE_NAME;
         if(C('APP_GROUP_LIST')) {
-            $var[C('VAR_GROUP')]   = !empty($path)?array_pop($path):GROUP_NAME;
+            $group   = !empty($path)?array_pop($path):GROUP_NAME;
+            if($group != C('DEFAULT_GROUP')) {
+                $var[C('VAR_GROUP')]  =   $group;
+            }
         }
     }
 
