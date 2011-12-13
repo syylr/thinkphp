@@ -119,7 +119,7 @@ function debug_end($label='') {
 // URL组装 支持不同模式
 // 格式：U('[分组/模块/操作]?参数','参数','伪静态后缀','是否跳转','显示域名')
 function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
-    // 解析分组、模块和操作
+    // 解析URL
     $info =  parse_url($url);
     $url   =  isset($info['path'])?$info['path']:'';
     // 解析子域名
@@ -155,6 +155,7 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
         if('/' != $depr) { // 安全替换
             $url   =  str_replace('/',$depr,$url);
         }
+        // 解析分组、模块和操作
         $url   =  trim($url,$depr);
         $path = explode($depr,$url);
         $var  =  array();
