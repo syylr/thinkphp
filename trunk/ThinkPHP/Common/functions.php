@@ -117,7 +117,7 @@ function debug_end($label='') {
 }
 
 // URL组装 支持不同模式
-// 格式：U('[分组/模块/]操作?参数','参数','伪静态后缀','是否跳转','显示域名')
+// 格式：U('[分组/模块/操作]?参数','参数','伪静态后缀','是否跳转','显示域名')
 function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
     // 解析分组、模块和操作
     $info =  parse_url($url);
@@ -163,10 +163,10 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
         $url   =  trim($url,$depr);
         $path = explode($depr,$url);
         $var  =  array();
-        $var[C('VAR_ACTION')] = !empty($path)?array_pop($path):C('DEFAULT_ACTION');
-        $var[C('VAR_MODULE')] = !empty($path)?array_pop($path):C('DEFAULT_MODULE');
-        if(C('APP_GROUP_LIST') && !empty($path)) {
-            $var[C('VAR_GROUP')]   = array_pop($path);
+        $var[C('VAR_ACTION')] = !empty($path)?array_pop($path):ACTION_NAME;
+        $var[C('VAR_MODULE')] = !empty($path)?array_pop($path):MODULE_NAME;
+        if(C('APP_GROUP_LIST')) {
+            $var[C('VAR_GROUP')]   = !empty($path)?array_pop($path):GROUP_NAME;
         }
     }
 
