@@ -116,31 +116,13 @@ function debug_end($label='') {
     echo '</div>';
 }
 
-// URL组装 支持不同模式和路由
-// 格式： U('/Admin/User/add/','aaa=1&bbb=2');
-// U('__URL__/add/','aaa=1&bbb=2');
+// URL组装 支持不同模式
+// 格式：U('[分组/模块/]操作?参数','参数','伪静态后缀','是否跳转','显示域名')
 function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
-    $replace =  array(
-        '__APP__'       => __APP__,        // 项目地址
-        '__GROUP__'   =>   defined('GROUP_NAME')?__GROUP__:__APP__, // 分组地址
-        '__URL__'       => __URL__, // 模块地址
-        '__ACTION__'    => __ACTION__,     // 操作地址
-    );
-    $url = str_replace(array_keys($replace),array_values($replace),$url,$count);
-    if($count>0) {
-        $url   =  substr_replace($url,'',0,strlen(__APP__)); 
-    }
-
-    if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
-        parse_str($vars,$vars);
-    }elseif(!is_array($vars)){
-        $vars = array();
-    }
-
-    // 分析URL地址
+    // 解析分组、模块和操作
     $info =  parse_url($url);
-    $url   =  $info['path'];
-    // 子域名解析
+    $url   =  isset($info['path'])?$info['path']:'';
+    // 解析子域名
     if($domain===true){
         $domain = $_SERVER['HTTP_HOST'];
         if(C('APP_SUB_DOMAIN_DEPLOY') ) { // 开启子域名部署
@@ -161,29 +143,41 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
         $url   =  strstr($url,'/');
     }
 
+    // 解析参数
+    if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
+        parse_str($vars,$vars);
+    }elseif(!is_array($vars)){
+        $vars = array();
+    }
     if(isset($info['query'])) { // 解析地址里面参数 合并到vars
         parse_str($info['query'],$params);
         $vars = array_merge($params,$vars);
     }
+
+    // URL组装
     $depr = C('URL_PATHINFO_DEPR');
-    if('/' != $depr) {
-        // 安全替换
-        $url   =  str_replace('/',$depr,$url);
-    }
-    $url   =  trim($url,$depr);
-    if(C('URL_MODEL') == 0) { // 普通模式URL转换
+    if($url) {
+        if('/' != $depr) { // 安全替换
+            $url   =  str_replace('/',$depr,$url);
+        }
+        $url   =  trim($url,$depr);
         $path = explode($depr,$url);
         $var  =  array();
-        $var[C('VAR_ACTION')] = array_pop($path);
-        if(!empty($path)) $var[C('VAR_MODULE')] = array_pop($path);
-        if(!empty($path)) $var[C('VAR_GROUP')]   = array_pop($path);
+        $var[C('VAR_ACTION')] = !empty($path)?array_pop($path):C('DEFAULT_ACTION');
+        $var[C('VAR_MODULE')] = !empty($path)?array_pop($path):C('DEFAULT_MODULE');
+        if(C('APP_GROUP_LIST') && !empty($path)) {
+            $var[C('VAR_GROUP')]   = array_pop($path);
+        }
+    }
+
+    if(C('URL_MODEL') == 0) { // 普通模式URL转换
         $url   =  __APP__.'?'.http_build_query($var);
         if(!empty($vars)) {
             $vars = http_build_query($vars);
             $url   .= '&'.$vars;
         }
     }else{ // PATHINFO模式或者兼容URL模式
-        $url   =  __APP__.'/'.str_replace(__APP__,'',$url);
+        $url   =  __APP__.'/'.implode($depr,array_reverse($var));
         if(!empty($vars)) { // 添加参数
             $vars = http_build_query($vars);
             $url .= $depr.str_replace(array('=','&'),$depr,$vars);
