@@ -48,12 +48,11 @@ abstract class Widget extends Think {
      +----------------------------------------------------------
      * @param string $templateFile  模板文件
      * @param mixed $var  模板变量
-     * @param string $charset  模板编码
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    protected function renderFile($templateFile='',$var='',$charset='utf-8') {
+    protected function renderFile($templateFile='',$var='') {
         ob_start();
         ob_implicit_flush(0);
         if(!file_exists_case($templateFile)){
@@ -74,7 +73,7 @@ abstract class Widget extends Think {
             $className   = 'Template'.ucwords($template);
             require_cache(CORE_PATH.'Template/Driver/'.$className.'.class.php');
             $tpl   =  new $className;
-            $tpl->fetch($templateFile,$var,$charset);
+            $tpl->fetch($templateFile,$var);
         }
         $content = ob_get_clean();
         return $content;
