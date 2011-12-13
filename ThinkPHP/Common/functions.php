@@ -137,9 +137,6 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
             }
         }
     }
-    if(substr_count($url,'/') == 2 && substr($url,0,strpos($url,'/')) ==C('DEFAULT_GROUP') ) { // 处理默认分组
-        $url   =  strstr($url,'/');
-    }
 
     // 解析参数
     if(is_string($vars)) { // aaa=1&bbb=2 转换成数组
