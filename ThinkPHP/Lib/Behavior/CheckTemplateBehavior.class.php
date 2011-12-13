@@ -20,7 +20,7 @@ class CheckTemplateBehavior extends Behavior {
     protected $options   =  array(
             'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
             'TMPL_DETECT_THEME'     => false,       // 自动侦测模板主题
-            'DEFAULT_THEME'    => 'default',	// 默认模板主题名称
+            'DEFAULT_THEME'    => '',	// 默认模板主题名称
             'TMPL_TEMPLATE_SUFFIX'  => '.html',     // 默认模板文件后缀
             'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
         );
