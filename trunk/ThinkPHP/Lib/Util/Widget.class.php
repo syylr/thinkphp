@@ -70,9 +70,15 @@ abstract class Widget extends Think {
             // 直接载入PHP模板
             include $templateFile;
         }else{
-            $className   = 'Template'.ucwords($template);
-            require_cache(CORE_PATH.'Template/Driver/'.$className.'.class.php');
-            $tpl   =  new $className;
+            $class   = 'Template'.ucwords($template);
+            if(is_file(CORE_PATH.'Driver/Template/'.$class.'.class.php')) {
+                // 内置驱动
+                $path = CORE_PATH;
+            }else{ // 扩展驱动
+                $path = EXTEND_PATH;
+            }
+            require_cache($path.$class.'.class.php');
+            $tpl   =  new $class;
             $tpl->fetch($templateFile,$var);
         }
         $content = ob_get_clean();
