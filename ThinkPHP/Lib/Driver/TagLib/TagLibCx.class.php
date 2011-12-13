@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class TagLibCx extends TagLib
-{//类定义开始
+class TagLibCx extends TagLib {
 
     // 标签定义
     protected $tags   =  array(
@@ -145,10 +144,6 @@ class TagLibCx extends TagLib
             return $parseStr;
         }
         return ;
-    }
-
-    public function _iterate($attr,$content) {
-        return $this->_volist($attr,$content);
     }
 
     public function _foreach($attr,$content) {
