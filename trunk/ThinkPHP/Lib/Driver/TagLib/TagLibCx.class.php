@@ -692,5 +692,47 @@ class TagLibCx extends TagLib {
         $parseStr  = '<?php define('.$name.', '.$value.'); ?>';
         return $parseStr;
     }
+    
+    /**
+     +----------------------------------------------------------
+     * for标签解析
+     * 格式： <for start="" end="" comparison="" step="" value="" />
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $attr 标签属性
+     * @param string $content  标签内容
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function _for($attr, $content){
+    	//设置默认值
+    	$start 		= 0;
+    	$end   		= 0;
+    	$step 		= 1;
+    	$comparison = 'lt';
+    	$value		= 'i';
+    	//获取属性
+    	foreach ($this->parseXmlAttr($attr, 'for') as $key => $val){
+    		$var = trim($val);
+    		if(':'==substr($val,0,1))
+    			$val = substr($val,1);
+    		elseif('$'==substr($val,0,1))
+    			$val = $this->autoBuildVar(substr($val,1));
+    		switch ($key){
+    			case 'start': $start = $val; break;
+    			case 'end' : $end = $val; break;
+    			case 'step': $step = $val; break;
+    			case 'comparison':$comparison = $val;break;
+    			case 'value':$value = $val;break;
+    		}
+    	}
+    
+    	$parseStr  	= '<?php for($'.$value.'='.$start.';'.$this->parseCondition('$'.$value.' '.$comparison.' '.$end).';$'.$value.'+='.$step.'){ ?>';
+    	$parseStr  .= $content;
+    	$parseStr  .= '<?php } ?>';
+    	return $parseStr;
+    }
 
 }
