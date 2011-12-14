@@ -462,9 +462,8 @@ class DbPdo extends Db{
      * @return string
      +----------------------------------------------------------
      */
-    public function escape_string($str) {
-         switch($this->dbType)
-         {
+    public function escapeString($str) {
+         switch($this->dbType) {
             case 'PGSQL':
             case 'MSSQL':
             case 'SQLSRV':

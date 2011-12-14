@@ -403,7 +403,7 @@ class DbMysql extends Db{
      * @return string
      +----------------------------------------------------------
      */
-    public function escape_string($str) {
+    public function escapeString($str) {
         if($this->_linkID) {
             return mysql_real_escape_string($str,$this->_linkID);
         }else{

@@ -371,9 +371,9 @@ class Db extends Think {
      */
     protected function parseValue($value) {
         if(is_string($value)) {
-            $value = '\''.$this->escape_string($value).'\'';
+            $value = '\''.$this->escapeString($value).'\'';
         }elseif(isset($value[0]) && is_string($value[0]) && strtolower($value[0]) == 'exp'){
-            $value   =  $this->escape_string($value[1]);
+            $value   =  $this->escapeString($value[1]);
         }elseif(is_array($value)) {
             $value   =  array_map(array($this, 'parseValue'),$value);
         }elseif(is_null($value)){
@@ -934,6 +934,21 @@ class Db extends Think {
      */
     public function getError() {
         return $this->error;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * SQL指令安全过滤
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $str  SQL字符串
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function escapeString($str) {
+        return addslashes($str);
     }
 
    /**

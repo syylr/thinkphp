@@ -396,7 +396,7 @@ class DbMysqli extends Db{
      * @return string
      +----------------------------------------------------------
      */
-    function escape_string($str) {
+    function escapeString($str) {
         if($this->_linkID) {
             return  $this->_linkID->real_escape_string($str);
         }else{
