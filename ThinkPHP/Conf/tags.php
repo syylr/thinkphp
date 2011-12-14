@@ -28,6 +28,7 @@ return array(
     ),
     'view_template'=>array(
         'LocationTemplate', // 自动定位模板文件
+        'LayoutTemplate', // 布局模板解析
     ),
     'view_parse'=>array(
         'ParseTemplate', // 模板解析 支持PHP、内置模板引擎和第三方模板引擎
