@@ -16,8 +16,7 @@
  * 只支持CURD和连贯操作 以及常用查询 去掉回调接口
  +------------------------------------------------------------------------------
  */
-class Model extends Think
-{
+class Model extends Think {
     // 当前数据库操作对象
     protected $db = null;
     // 主键名称
