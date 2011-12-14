@@ -363,7 +363,7 @@ class DbOracle extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function escape_string($str) {
+    public function escapeString($str) {
         return str_ireplace("'", "''", $str);
     }
 

@@ -360,7 +360,7 @@ class DbPgsql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function escape_string($str) {
+    public function escapeString($str) {
         return pg_escape_string($str);
     }
 

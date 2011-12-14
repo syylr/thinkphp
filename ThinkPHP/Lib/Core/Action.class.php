@@ -249,7 +249,7 @@ abstract class Action extends Think {
      +----------------------------------------------------------
      */
     protected function error($message,$jumpUrl='',$ajax=false) {
-        $this->_dispatch_jump($message,0,$jumpUrl,$ajax);
+        $this->dispatchJump($message,0,$jumpUrl,$ajax);
     }
 
     /**
@@ -266,7 +266,7 @@ abstract class Action extends Think {
      +----------------------------------------------------------
      */
     protected function success($message,$jumpUrl='',$ajax=false) {
-        $this->_dispatch_jump($message,1,$jumpUrl,$ajax);
+        $this->dispatchJump($message,1,$jumpUrl,$ajax);
     }
 
     /**
@@ -344,7 +344,7 @@ abstract class Action extends Think {
      * @return void
      +----------------------------------------------------------
      */
-    private function _dispatch_jump($message,$status=1,$jumpUrl='',$ajax=false) {
+    private function dispatchJump($message,$status=1,$jumpUrl='',$ajax=false) {
         // 判断是否为AJAX返回
         if($ajax || $this->isAjax()) $this->ajaxReturn($ajax,$message,$status);
         if(!empty($jumpUrl)) $this->assign('jumpUrl',$jumpUrl);

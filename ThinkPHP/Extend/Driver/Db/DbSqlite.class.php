@@ -334,7 +334,7 @@ class DbSqlite extends Db
      * @return string
      +----------------------------------------------------------
      */
-    public function escape_string($str) {
+    public function escapeString($str) {
         return sqlite_escape_string($str);
     }
 
