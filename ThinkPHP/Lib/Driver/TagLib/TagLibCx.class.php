@@ -728,8 +728,9 @@ class TagLibCx extends TagLib {
     			case 'value':$value = $val;break;
     		}
     	}
-    
-    	$parseStr  	= '<?php for($'.$value.'='.$start.';'.$this->parseCondition('$'.$value.' '.$comparison.' '.$end).';$'.$value.'+='.$step.'){ ?>';
+    	
+    	$parseStr   = '<?php $__FOR_START__='.$start.';$__FOR_END__='.$end.';';
+    	$parseStr  .= 'for($'.$value.'=$__FOR_START__;'.$this->parseCondition('$'.$value.' '.$comparison.' $__FOR_END__').';$'.$value.'+='.$step.'){ ?>';
     	$parseStr  .= $content;
     	$parseStr  .= '<?php } ?>';
     	return $parseStr;
