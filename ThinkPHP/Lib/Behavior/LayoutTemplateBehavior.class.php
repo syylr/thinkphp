@@ -17,15 +17,14 @@
  */
 class LayoutTemplateBehavior extends Behavior {
     protected $options  =   array(
-            'LAYOUT_ON'           => true, // 是否启用布局
+            'LAYOUT_ON'           => false, // 是否启用布局
             'LAYOUT_NAME'       => 'layout', // 当前布局名称 默认为layout
         );
 
     public function run(&$templateFile) {
         // 读取布局模板
         if(C('LAYOUT_ON')) {
-            $layoutName  =  C('LAYOUT_NAME');
-            $layoutFile  =  APP_TMPL_PATH.$layoutName.C('TMPL_TEMPLATE_SUFFIX');
+            $layoutFile  =  APP_TMPL_PATH.C('LAYOUT_NAME').C('TMPL_TEMPLATE_SUFFIX');
             if(is_file($layoutFile)) {
                 $layoutCacheFile   = C('CACHE_PATH').md5($templateFile).C('TMPL_TEMPLATE_SUFFIX');
                 if(!is_file($layoutCacheFile) || filemtime($templateFile) > filemtime($layoutCacheFile)) {
