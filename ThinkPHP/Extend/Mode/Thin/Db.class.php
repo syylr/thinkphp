@@ -17,8 +17,7 @@ define('CLIENT_MULTI_RESULTS', 131072);
  * 只支持mysql
  +------------------------------------------------------------------------------
  */
-class Db extends Think
-{
+class Db extends Think {
 
     static private $_instance = null;
     // 是否自动释放查询结果
@@ -331,7 +330,7 @@ class Db extends Think
      * @return string
      +----------------------------------------------------------
      */
-    public function escape_string($str) {
+    public function escapeString($str) {
         return mysql_escape_string($str);
     }
 

@@ -22,8 +22,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class IpLocation
-{
+class IpLocation {
     /**
      * QQWry.Dat文件指针
      *
@@ -153,7 +152,7 @@ class IpLocation
      */
     public function getlocation($ip='') {
         if (!$this->fp) return null;            // 如果数据文件没有被正确打开，则直接返回空
-		if(empty($ip)) $ip = $this->get_client_ip();
+		if(empty($ip)) $ip = get_client_ip();
         $location['ip'] = gethostbyname($ip);   // 将输入的域名转化为IP地址
         $ip = $this->packip($location['ip']);   // 将输入的IP地址转化为可比较的IP地址
                                                 // 不合法的IP地址会被转化为255.255.255.255
@@ -239,17 +238,4 @@ class IpLocation
         $this->fp = 0;
     }
 
-	function get_client_ip(){
-	   if (getenv("HTTP_CLIENT_IP") && strcasecmp(getenv("HTTP_CLIENT_IP"), "unknown"))
-		   $ip = getenv("HTTP_CLIENT_IP");
-	   else if (getenv("HTTP_X_FORWARDED_FOR") && strcasecmp(getenv("HTTP_X_FORWARDED_FOR"), "unknown"))
-		   $ip = getenv("HTTP_X_FORWARDED_FOR");
-	   else if (getenv("REMOTE_ADDR") && strcasecmp(getenv("REMOTE_ADDR"), "unknown"))
-		   $ip = getenv("REMOTE_ADDR");
-	   else if (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'] && strcasecmp($_SERVER['REMOTE_ADDR'], "unknown"))
-		   $ip = $_SERVER['REMOTE_ADDR'];
-	   else
-		   $ip = "unknown";
-	   return($ip);
-	}
 }

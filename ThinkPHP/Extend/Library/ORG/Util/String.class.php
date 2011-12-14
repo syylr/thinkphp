@@ -10,8 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-class String extends Think
-{
+class String extends Think {
 
     /**
      +----------------------------------------------------------
@@ -22,8 +21,7 @@ class String extends Think
      * @return string
      +----------------------------------------------------------
      */
-	 static public function uuid()
-    {
+	 static public function uuid() {
         $charid = md5(uniqid(mt_rand(), true));
         $hyphen = chr(45);// "-"
         $uuid = chr(123)// "{"
@@ -56,7 +54,7 @@ class String extends Think
 	 * @return Boolean
 	 +----------------------------------------------------------
 	 */
-	static public function is_utf8($str) {
+	static public function isUtf8($str) {
 		$c=0; $b=0;
 		$bits=0;
 		$len=strlen($str);
@@ -98,8 +96,7 @@ class String extends Think
 	 * @return string
 	 +----------------------------------------------------------
 	 */
-	static public function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true)
-    {
+	static public function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true) {
         if(function_exists("mb_substr"))
             $slice = mb_substr($str, $start, $length, $charset);
         elseif(function_exists('iconv_substr')) {
@@ -128,7 +125,7 @@ class String extends Think
 	 * @return string
 	 +----------------------------------------------------------
 	 */
-	static public function rand_string($len=6,$type='',$addChars='') {
+	static public function randString($len=6,$type='',$addChars='') {
 		$str ='';
 		switch($type) {
 			case 0:
@@ -178,14 +175,14 @@ class String extends Think
 	 * @return string
 	 +----------------------------------------------------------
 	 */
-	static public function build_count_rand ($number,$length=4,$mode=1) {
+	static public function buildCountRand ($number,$length=4,$mode=1) {
 			if($mode==1 && $length<strlen($number) ) {
 				//不足以生成一定数量的不重复数字
 				return false;
 			}
 			$rand   =  array();
 			for($i=0; $i<$number; $i++) {
-				$rand[] =   rand_string($length,$mode);
+				$rand[] =   self::randString($length,$mode);
 			}
 			$unqiue = array_unique($rand);
 			if(count($unqiue)==count($rand)) {
@@ -193,7 +190,7 @@ class String extends Think
 			}
 			$count   = count($rand)-count($unqiue);
 			for($i=0; $i<$count*3; $i++) {
-				$rand[] =   rand_string($length,$mode);
+				$rand[] =   self::randString($length,$mode);
 			}
 			$rand = array_slice(array_unique ($rand),0,$number);
 			return $rand;
@@ -211,8 +208,7 @@ class String extends Think
 	 * @return string | array
 	 +----------------------------------------------------------
 	 */
-	static public function build_format_rand($format,$number=1)
-	{
+	static public function buildFormatRand($format,$number=1) {
 		$str  =  array();
 		$length =  strlen($format);
 		for($j=0; $j<$number; $j++) {
@@ -221,13 +217,13 @@ class String extends Think
 				$char = substr($format,$i,1);
 				switch($char){
 					case "*"://字母和数字混合
-						$strtemp   .= String::rand_string(1);
+						$strtemp   .= String::randString(1);
 						break;
 					case "#"://数字
-						$strtemp  .= String::rand_string(1,1);
+						$strtemp  .= String::randString(1,1);
 						break;
 					case "$"://大写字母
-						$strtemp .=  String::rand_string(1,2);
+						$strtemp .=  String::randString(1,2);
 						break;
 					default://其他格式均不转换
 						$strtemp .=   $char;
@@ -250,7 +246,7 @@ class String extends Think
 	 * @return string
 	 +----------------------------------------------------------
 	 */
-	static public function rand_number ($min, $max) {
+	static public function randNumber ($min, $max) {
 		return sprintf("%0".strlen($max)."d", mt_rand($min,$max));
 	}
 }

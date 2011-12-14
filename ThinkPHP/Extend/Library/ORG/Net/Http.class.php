@@ -22,8 +22,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Http
-{//类定义开始
+class Http {
 
     /**
      +----------------------------------------------------------
@@ -37,7 +36,7 @@ class Http
      * @return mixed
      +----------------------------------------------------------
      */
-    static public function curl_download($remote,$local) {
+    static public function curlDownload($remote,$local) {
         $cp = curl_init($remote);
         $fp = fopen($local,"w");
         curl_setopt($cp, CURLOPT_FILE, $fp);
@@ -68,7 +67,7 @@ class Http
     * @return mixed
     +-----------------------------------------------------------
     */
-    static public function fsockopen_download($url, $conf = array()) {
+    static public function fsockopenDownload($url, $conf = array()) {
         $return = '';
         if(!is_array($conf)) return $return;
 
@@ -214,7 +213,7 @@ class Http
      * @return string
      +----------------------------------------------------------
      */
-    static function get_header_info($header='',$echo=true) {
+    static function getHeaderInfo($header='',$echo=true) {
         ob_start();
         $headers   = getallheaders();
         if(!empty($header)) {
@@ -238,7 +237,7 @@ class Http
      * HTTP Protocol defined status codes
      * @param int $num
      */
-	static function send_http_status($code) {
+	static function sendHttpStatus($code) {
 		static $_status = array(
 			// Informational 1xx
 			100 => 'Continue',
