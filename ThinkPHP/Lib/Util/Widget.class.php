@@ -77,7 +77,7 @@ abstract class Widget extends Think {
             }else{ // 扩展驱动
                 $path = EXTEND_PATH;
             }
-            require_cache($path.$class.'.class.php');
+            require_cache($path.'Driver/Template/'.$class.'.class.php');
             $tpl   =  new $class;
             $tpl->fetch($templateFile,$var);
         }
