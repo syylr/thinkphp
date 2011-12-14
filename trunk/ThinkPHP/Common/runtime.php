@@ -103,7 +103,7 @@ function load_think_mode() {
         'Cache'         => CORE_PATH.'Core/Cache.class.php',
         'Debug'         => CORE_PATH.'Util/Debug.class.php',
         'Session'       => CORE_PATH.'Util/Session.class.php',
-        'TagLibCx'      => CORE_PATH.'Template/TagLib/TagLibCx.class.php',
+        'TagLibCx'      => CORE_PATH.'Driver/TagLib/TagLibCx.class.php',
         );
     alias_import($alias);
 
