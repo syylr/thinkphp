@@ -52,7 +52,7 @@ class App {
         }
 
         // 执行操作
-        R(MODULE_NAME,ACTION_NAME);
+        R(MODULE_NAME.'/'.ACTION_NAME);
         // 保存日志记录
         if(C('LOG_RECORD')) Log::save();
         return ;
