@@ -26,6 +26,7 @@ class DbOracle extends Db{
     private $mode = OCI_COMMIT_ON_SUCCESS;
     private $table  =  '';
     protected $selectSql  =     'SELECT * FROM (SELECT thinkphp.*, rownum AS numrow FROM (SELECT  %DISTINCT% %FIELDS% FROM %TABLE%%JOIN%%WHERE%%GROUP%%HAVING%%ORDER%) thinkphp ) %LIMIT%';
+
     /**
      +----------------------------------------------------------
      * 架构函数 读取数据库配置信息
@@ -160,7 +161,7 @@ class DbOracle extends Db{
             return false;
         } else {
             $this->numRows = oci_num_rows($stmt);
-            $this->lastInsID = $flag?$this->insert_last_id():0;//modify by wyfeng at 2009.08.28
+            $this->lastInsID = $flag?$this->insertLastId():0;//modify by wyfeng at 2009.08.28
             return $this->numRows;
         }
     }
@@ -200,11 +201,11 @@ class DbOracle extends Db{
      */
     public function commit(){
         if ($this->transTimes > 0) {
-                $result = oci_commit($this->_linkID);
-                if(!$result){
-                    throw_exception($this->error());
-                }
-                $this->transTimes = 0;
+            $result = oci_commit($this->_linkID);
+            if(!$result){
+                throw_exception($this->error());
+            }
+            $this->transTimes = 0;
         }
         return true;
     }
@@ -247,13 +248,11 @@ class DbOracle extends Db{
         $result = array();
         $this->numRows = oci_fetch_all($this->queryID, $result, 0, -1, OCI_FETCHSTATEMENT_BY_ROW);
 		//add by wyfeng at 2008-12-23 强制将字段名转换为小写，以配合Model类函数如count等
-		if(C("DB_CASE_LOWER"))
-		{
-			foreach($result as $k=>$v)
-			{
-				$result[$k] = array_change_key_case($result[$k], CASE_LOWER);
-			}
-		}
+        if(C("DB_CASE_LOWER")) {
+            foreach($result as $k=>$v) {
+                $result[$k] = array_change_key_case($result[$k], CASE_LOWER);
+            }
+        }
         return $result;
     }
 
@@ -397,7 +396,7 @@ class DbOracle extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function insert_last_id() {
+    public function insertLastId() {
         if(empty($this->table)) {
             return 0;
         }
