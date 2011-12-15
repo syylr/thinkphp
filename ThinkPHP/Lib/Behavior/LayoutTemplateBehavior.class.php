@@ -27,7 +27,8 @@ class LayoutTemplateBehavior extends Behavior {
             $layoutFile  =  APP_TMPL_PATH.C('LAYOUT_NAME').C('TMPL_TEMPLATE_SUFFIX');
             if(is_file($layoutFile)) {
                 $layoutCacheFile   = C('CACHE_PATH').md5($templateFile).C('TMPL_TEMPLATE_SUFFIX');
-                if(!is_file($layoutCacheFile) || filemtime($templateFile) > filemtime($layoutCacheFile)) {
+                // 模板和布局改动 都会重新缓存
+                if(!is_file($layoutCacheFile) || filemtime($templateFile) > filemtime($layoutCacheFile) || filemtime($layoutFile) > filemtime($layoutCacheFile)) {
                     // 检测缓存目录
                     if(!is_dir(C('CACHE_PATH')))   mk_dir(C('CACHE_PATH'));
                     // 写入布局缓存文件
