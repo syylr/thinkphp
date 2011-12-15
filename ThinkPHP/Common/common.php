@@ -289,15 +289,6 @@ function R($url,$vars='') {
         return false;
 }
 
-// 远程调用模块的操作方法
-// function R($module, $action, $app='@') {
-//     $class = A($module, $app);
-//     if ($class)
-//         return call_user_func(array(&$class, $action));
-//     else
-//         return false;
-// }
-
 // 获取和设置语言定义(不区分大小写)
 function L($name=null, $value=null) {
     static $_lang = array();
