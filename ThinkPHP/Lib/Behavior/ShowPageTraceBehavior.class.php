@@ -22,7 +22,7 @@ class ShowPageTraceBehavior extends Behavior {
     );
 
     // 行为扩展的执行入口必须是run
-    public function run(&$params=''){
+    public function run(&$params){
         if(C('SHOW_PAGE_TRACE')) {
             echo $this->showTrace();
         }
