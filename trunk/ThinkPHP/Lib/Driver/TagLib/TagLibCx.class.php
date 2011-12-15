@@ -48,6 +48,7 @@ class TagLibCx extends TagLib {
         'import'=>array('attr'=>'file,href,type,value,basepath','close'=>0,'alias'=>'load,css,js'),
         'assign'=>array('attr'=>'name,value','close'=>0),
         'define'=>array('attr'=>'name,value','close'=>0),
+    	'for'=>array('attr'=>'name,from,to,before,step', 'level'=>3),
         );
 
     /**
@@ -696,7 +697,7 @@ class TagLibCx extends TagLib {
     /**
      +----------------------------------------------------------
      * for标签解析
-     * 格式： <for start="" end="" comparison="" step="" value="" />
+     * 格式： <for start="" end="" comparison="" step="" name="" />
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
@@ -706,31 +707,31 @@ class TagLibCx extends TagLib {
      * @return string
      +----------------------------------------------------------
      */
-    public function _for($attr, $content){
+	public function _for($attr, $content){
     	//设置默认值
     	$start 		= 0;
     	$end   		= 0;
     	$step 		= 1;
     	$comparison = 'lt';
-    	$value		= 'i';
+    	$name		= 'i';
     	//获取属性
-    	foreach ($this->parseXmlAttr($attr, 'for') as $key => $val){
-    		$var = trim($val);
-    		if(':'==substr($val,0,1))
-    			$val = substr($val,1);
-    		elseif('$'==substr($val,0,1))
-    			$val = $this->autoBuildVar(substr($val,1));
+    	foreach ($this->parseXmlAttr($attr, 'for') as $key => $value){
+    		$value = trim($value);
+    		if(':'==substr($value,0,1))
+    			$value = substr($value,1);
+    		elseif('$'==substr($value,0,1))
+    			$value = $this->autoBuildVar(substr($value,1));
     		switch ($key){
-    			case 'start': $start = $val; break;
-    			case 'end' : $end = $val; break;
-    			case 'step': $step = $val; break;
-    			case 'comparison':$comparison = $val;break;
-    			case 'value':$value = $val;break;
+    			case 'start': $start = $value; break;
+    			case 'end' : $end = $value; break;
+    			case 'step': $step = $value; break;
+    			case 'comparison':$comparison = $value;break;
+    			case 'name':$name = $value;break;
     		}
     	}
     	
     	$parseStr   = '<?php $__FOR_START__='.$start.';$__FOR_END__='.$end.';';
-    	$parseStr  .= 'for($'.$value.'=$__FOR_START__;'.$this->parseCondition('$'.$value.' '.$comparison.' $__FOR_END__').';$'.$value.'+='.$step.'){ ?>';
+    	$parseStr  .= 'for($'.$name.'=$__FOR_START__;'.$this->parseCondition('$'.$name.' '.$comparison.' $__FOR_END__').';$'.$name.'+='.$step.'){ ?>';
     	$parseStr  .= $content;
     	$parseStr  .= '<?php } ?>';
     	return $parseStr;
