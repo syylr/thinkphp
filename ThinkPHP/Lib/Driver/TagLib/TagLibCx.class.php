@@ -44,7 +44,6 @@ class TagLibCx extends TagLib {
         'notpresent'=>array('attr'=>'name','level'=>3),
         'defined'=>array('attr'=>'name','level'=>3),
         'notdefined'=>array('attr'=>'name','level'=>3),
-        'layout' =>array('attr'=>'name,cache','close'=>0),
         'import'=>array('attr'=>'file,href,type,value,basepath','close'=>0,'alias'=>'load,css,js'),
         'assign'=>array('attr'=>'name,value','close'=>0),
         'define'=>array('attr'=>'name,value','close'=>0),
@@ -528,27 +527,6 @@ class TagLibCx extends TagLib {
         $tag        = $this->parseXmlAttr($attr,'_notdefined');
         $name     = $tag['name'];
         $parseStr = '<?php if(!defined("'.$name.'")): ?>'.$content.'<?php endif; ?>';
-        return $parseStr;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 布局标签解析
-     * 格式： <layout name=""  cache="30" />
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $attr 标签属性
-     * @param string $content  标签内容
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function _layout($attr,$content) {
-        $tag      = $this->parseXmlAttr($attr,'layout');
-        $name   =   $tag['name'];
-        $cache   =   isset($tag['cache'])?$tag['cache']:0;
-        $parseStr=   "<!-- layout::$name::$cache -->";
         return $parseStr;
     }
 

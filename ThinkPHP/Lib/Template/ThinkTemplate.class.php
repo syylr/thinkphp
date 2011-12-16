@@ -181,6 +181,8 @@ class  ThinkTemplate extends Think
         if(empty($content)) return '';
         // 检查PHP语法
         $content  =  $this->parsePhp($content);
+        // 解析布局
+        $content    =  $this->parseLayout($content);
 
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
@@ -225,6 +227,32 @@ class  ThinkTemplate extends Think
         }elseif(ini_get('short_open_tag')){
             // 开启短标签的情况要将<?标签用echo方式输出 否则无法正常输出xml标识
             $content = preg_replace('/(<\?(?!php|=|$))/i', '<?php echo \'\\1\'; ?>'."\n", $content );
+        }
+        return $content;
+    }
+
+    // 解析模板中的布局标签
+    protected function parseLayout($content) {
+        if(C('LAYOUT_ON')) {
+            // 读取模板中的布局标签
+            $find = preg_match('/'.$this->config['taglib_begin'].'layout\s(.+?)(\s*?)\/'.$this->config['taglib_end'].'\W/is',$content,$matches);
+            if($find) {
+                //替换Layout标签
+                $content = str_replace($matches[0],'',$content);
+                //解析Layout标签
+                $layout = $matches[1];
+                $xml =  '<tpl><tag '.$layout.' /></tpl>';
+                $xml = simplexml_load_string($xml);
+                if(!$xml)
+                    throw_exception(L('_XML_TAG_ERROR_'));
+                $xml = (array)($xml->tag->attributes());
+                $array = array_change_key_case($xml['@attributes']);
+                $layoutName = explode(',',$array['name']);
+                // 读取布局模板
+                $layoutFile  =  THEME_PATH.$layoutName.$this->config['template_suffix'];
+                // 替换布局的主体内容
+                $content = str_replace('{__CONTENT__}',$content,file_get_contents($layoutFile));
+            }
         }
         return $content;
     }
