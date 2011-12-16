@@ -33,7 +33,7 @@ class ParseTemplateBehavior extends Behavior {
         'TMPL_VAR_IDENTIFY'     => 'array',     // 模板变量识别。留空自动判断,参数为'obj'则表示对象
         'TMPL_STRIP_SPACE'      => true,       // 是否去除模板文件里面的html空格与换行
         'TMPL_CACHE_ON'			=> true,        // 是否开启模板编译缓存,设为false则每次都会重新编译
-        'TMPL_CACHE_TIME'		=>	-1,         // 模板缓存有效期 -1 为永久，(以数字为值，单位:秒)
+        'TMPL_CACHE_TIME'		=>	 0,         // 模板缓存有效期 0 为永久，(以数字为值，单位:秒)
         // Think模板引擎标签库相关设定
         'TAGLIB_BEGIN'          => '<',  // 标签库标签开始标记
         'TAGLIB_END'            => '>',  // 标签库标签结束标记
@@ -96,7 +96,7 @@ class ParseTemplateBehavior extends Behavior {
         }elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
             // 模板文件如果有更新则缓存需要更新
             return false;
-        }elseif (C('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) {
+        }elseif (C('TMPL_CACHE_TIME') != 0 && time() > filemtime($tmplCacheFile)+C('TMPL_CACHE_TIME')) {
             // 缓存是否在有效期
             return false;
         }
