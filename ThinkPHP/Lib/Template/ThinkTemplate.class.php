@@ -233,26 +233,24 @@ class  ThinkTemplate extends Think
 
     // 解析模板中的布局标签
     protected function parseLayout($content) {
-        if(C('LAYOUT_ON')) {
-            // 读取模板中的布局标签
-            $find = preg_match('/'.$this->config['taglib_begin'].'layout\s(.+?)(\s*?)\/'.$this->config['taglib_end'].'\W/is',$content,$matches);
-            if($find) {
-                //替换Layout标签
-                $content = str_replace($matches[0],'',$content);
-                //解析Layout标签
-                $layout = $matches[1];
-                $xml =  '<tpl><tag '.$layout.' /></tpl>';
-                $xml = simplexml_load_string($xml);
-                if(!$xml)
-                    throw_exception(L('_XML_TAG_ERROR_'));
-                $xml = (array)($xml->tag->attributes());
-                $array = array_change_key_case($xml['@attributes']);
-                $layoutName = explode(',',$array['name']);
-                // 读取布局模板
-                $layoutFile  =  THEME_PATH.$layoutName.$this->config['template_suffix'];
-                // 替换布局的主体内容
-                $content = str_replace('{__CONTENT__}',$content,file_get_contents($layoutFile));
-            }
+        // 读取模板中的布局标签
+        $find = preg_match('/'.$this->config['taglib_begin'].'layout\s(.+?)(\s*?)\/'.$this->config['taglib_end'].'\W/is',$content,$matches);
+        if($find) {
+            //替换Layout标签
+            $content = str_replace($matches[0],'',$content);
+            //解析Layout标签
+            $layout = $matches[1];
+            $xml =  '<tpl><tag '.$layout.' /></tpl>';
+            $xml = simplexml_load_string($xml);
+            if(!$xml)
+                throw_exception(L('_XML_TAG_ERROR_'));
+            $xml = (array)($xml->tag->attributes());
+            $array = array_change_key_case($xml['@attributes']);
+            $layoutName = explode(',',$array['name']);
+            // 读取布局模板
+            $layoutFile  =  THEME_PATH.$layoutName.$this->config['template_suffix'];
+            // 替换布局的主体内容
+            $content = str_replace('{__CONTENT__}',$content,file_get_contents($layoutFile));
         }
         return $content;
     }
