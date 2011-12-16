@@ -24,7 +24,8 @@ class LayoutTemplateBehavior extends Behavior {
     public function run(&$templateFile) {
         // 读取布局模板
         if(C('LAYOUT_ON')) {
-            $layoutFile  =  APP_TMPL_PATH.C('LAYOUT_NAME').C('TMPL_TEMPLATE_SUFFIX');
+            $layoutPath = TMPL_PATH.(defined('GROUP_NAME')?GROUP_NAME:'').(THEME_NAME?'/':'').THEME_NAME.'/';
+            $layoutFile  =  $layoutPath.C('LAYOUT_NAME').C('TMPL_TEMPLATE_SUFFIX');
             if(is_file($layoutFile)) {
                 $layoutCacheFile   = C('CACHE_PATH').md5($templateFile).C('TMPL_TEMPLATE_SUFFIX');
                 // 模板和布局改动 都会重新缓存
