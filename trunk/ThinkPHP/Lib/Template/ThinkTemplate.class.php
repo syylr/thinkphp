@@ -179,10 +179,10 @@ class  ThinkTemplate extends Think
     public function parse($content) {
         // 内容为空不解析
         if(empty($content)) return '';
-        // 检查PHP语法
-        $content  =  $this->parsePhp($content);
         // 解析布局
         $content    =  $this->parseLayout($content);
+        // 检查PHP语法
+        $content    =  $this->parsePhp($content);
 
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
