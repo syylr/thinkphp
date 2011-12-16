@@ -19,6 +19,10 @@
 class ParseTemplateBehavior extends Behavior {
     // 行为参数定义（默认值） 可在项目配置中覆盖
     protected $options   =  array(
+        // 布局设置
+        'LAYOUT_ON'           => false, // 是否启用布局
+        'LAYOUT_NAME'       => 'layout', // 当前布局名称 默认为layout
+
         'TMPL_ENGINE_TYPE'		=> 'Think',     // 默认模板引擎 以下设置仅对使用Think模板引擎有效
         'TMPL_CACHFILE_SUFFIX'  => '.php',      // 默认模板缓存后缀
         'TMPL_DENY_FUNC_LIST'	=> 'echo,exit',	// 模板引擎禁用函数
@@ -96,7 +100,14 @@ class ParseTemplateBehavior extends Behavior {
             // 缓存是否在有效期
             return false;
         }
-        //缓存有效
+        // 开启布局模板
+        if(C('LAYOUT_ON')) {
+            $layoutFile  =  THEME_PATH.C('LAYOUT_NAME').C('TMPL_TEMPLATE_SUFFIX');
+            if(filemtime($layoutFile) > filemtime($tmplCacheFile)) {
+                return false;
+            }
+        }
+        // 缓存有效
         return true;
     }
 }

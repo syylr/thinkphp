@@ -105,25 +105,27 @@ class  ThinkTemplate extends Think
      * @access public
      +----------------------------------------------------------
      * @param string $tmplTemplateFile 模板文件
-     * @param string $varPrefix  模板变量前缀
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function loadTemplate ($tmplTemplateFile='') {
-        if(empty($tmplTemplateFile))    $tmplTemplateFile = $this->config['default_tmpl'];
-        if(!is_file($tmplTemplateFile)){
-            $tmplTemplateFile =  dirname($this->config['default_tmpl']).'/'.$tmplTemplateFile.$this->config['template_suffix'];
-            if(!is_file($tmplTemplateFile))
-                throw_exception(L('_TEMPLATE_NOT_EXIST_').':'.$tmplTemplateFile);
-        }
+    public function loadTemplate ($tmplTemplateFile) {
         $this->templateFile    =  $tmplTemplateFile;
-
-        //根据模版文件名定位缓存文件
+        // 根据模版文件名定位缓存文件
         $tmplCacheFile = $this->config['cache_path'].md5($tmplTemplateFile).$this->config['cache_suffix'];
+        // 读取模板文件内容
         $tmplContent = file_get_contents($tmplTemplateFile);
+        // 判断是否启用布局
+        if(C('LAYOUT_ON')) {
+            if(false !== strpos($tmplContent,'{__NOLAYOUT__}')) { // 可以单独定义不使用布局
+                $tmplContent = str_replace('{__NOLAYOUT__}','',$tmplContent);
+            }else{ // 替换布局的主体内容
+                $layoutFile  =  THEME_PATH.C('LAYOUT_NAME').$this->config['template_suffix'];
+                $tmplContent = str_replace('{__CONTENT__}',$tmplContent,file_get_contents($layoutFile));
+            }
+        }
         //编译模板内容
         $tmplContent = $this->compiler($tmplContent);
         // 检测分组目录
