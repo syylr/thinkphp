@@ -246,9 +246,8 @@ class  ThinkTemplate extends Think
                 throw_exception(L('_XML_TAG_ERROR_'));
             $xml = (array)($xml->tag->attributes());
             $array = array_change_key_case($xml['@attributes']);
-            $layoutName = explode(',',$array['name']);
             // 读取布局模板
-            $layoutFile  =  THEME_PATH.$layoutName.$this->config['template_suffix'];
+            $layoutFile  =  THEME_PATH.$array['name'].$this->config['template_suffix'];
             // 替换布局的主体内容
             $content = str_replace('{__CONTENT__}',$content,file_get_contents($layoutFile));
         }
