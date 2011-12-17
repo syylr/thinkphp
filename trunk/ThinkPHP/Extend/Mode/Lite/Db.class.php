@@ -375,7 +375,7 @@ class Db {
      * @return string
      +----------------------------------------------------------
      */
-    public function escape_string($str) {
+    public function escapeString($str) {
         return mysql_escape_string($str);
     }
 
@@ -543,9 +543,9 @@ class Db {
      */
     protected function parseValue($value) {
         if(is_string($value)) {
-            $value = '\''.$this->escape_string($value).'\'';
+            $value = '\''.$this->escapeString($value).'\'';
         }elseif(isset($value[0]) && is_string($value[0]) && strtolower($value[0]) == 'exp'){
-            $value   =  $this->escape_string($value[1]);
+            $value   =  $this->escapeString($value[1]);
         }elseif(is_null($value)){
             $value   =  'null';
         }

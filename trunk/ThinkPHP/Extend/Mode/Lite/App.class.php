@@ -12,7 +12,13 @@
 
 /**
  +------------------------------------------------------------------------------
- * ThinkPHP 精简模式应用程序类
+ * ThinkPHP 应用程序类 精简模式
+ +------------------------------------------------------------------------------
+ * @category   Think
+ * @package  Think
+ * @subpackage  Core
+ * @author    liu21st <liu21st@gmail.com>
+ * @version   $Id$
  +------------------------------------------------------------------------------
  */
 class App {
@@ -26,65 +32,84 @@ class App {
      * @return void
      +----------------------------------------------------------
      */
-    static public function run() {
+    static public function init() {
 
-        // URL调度过滤器
+        // 设置系统时区
+        date_default_timezone_set(C('DEFAULT_TIMEZONE'));
+        // 加载动态项目公共文件和配置
+        load_ext_file();
+        // 项目初始化标签
+        tag('app_init');
+        // URL调度
         Dispatcher::dispatch();
-
-        // 取得模块和操作名称
-        // 可以在Dispatcher中定义获取规则
-        if(!defined('MODULE_NAME')) define('MODULE_NAME',   App::getModule());       // Module名称
-        if(!defined('ACTION_NAME')) define('ACTION_NAME',   App::getAction());        // Action操作
-
-        // 记录应用初始化时间
-        if(C('SHOW_RUN_TIME'))  $GLOBALS['_initTime'] = microtime(TRUE);
-        // 执行操作
-        R(MODULE_NAME,ACTION_NAME);
-        // 保存日志记录
-        if(C('LOG_RECORD')) Log::save();
         return ;
     }
 
     /**
      +----------------------------------------------------------
-     * 获得实际的模块名称
+     * 执行应用程序
      +----------------------------------------------------------
-     * @access private
+     * @access public
      +----------------------------------------------------------
-     * @return string
+     * @return void
+     +----------------------------------------------------------
+     * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    static private function getModule() {
-        $var  =  C('VAR_MODULE');
-        $module = !empty($_POST[$var]) ?
-            $_POST[$var] :
-            (!empty($_GET[$var])? $_GET[$var]:C('DEFAULT_MODULE'));
-        if(C('URL_CASE_INSENSITIVE')) {
-            // URL地址不区分大小写
-            define('P_MODULE_NAME',strtolower($module));
-            // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
-            $module = ucfirst(parse_name(strtolower($module),1));
+    static public function exec() {
+        // 安全检测
+        if(!preg_match('/^[A-Za-z_0-9]+$/',MODULE_NAME)){
+            throw_exception(L('_MODULE_NOT_EXIST_'));
         }
-        unset($_POST[$var],$_GET[$var]);
-        return $module;
+        //创建Action控制器实例
+        $group =  defined('GROUP_NAME') ? GROUP_NAME.C('APP_GROUP_DEPR') : '';
+        $module  =  A($group.MODULE_NAME);
+        if(!$module) {
+            if(function_exists('__hack_module')) {
+                // hack 方式定义扩展模块 返回Action对象
+                $module = __hack_module();
+                if(!is_object($module)) {
+                    // 不再继续执行 直接返回
+                    return ;
+                }
+            }else{
+                // 是否定义Empty模块
+                $module = A("Empty");
+                if(!$module)
+                    // 模块不存在 抛出异常
+                    throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+            }
+        }
+        //执行当前操作
+        call_user_func(array(&$module,ACTION_NAME));
+        return ;
     }
 
     /**
      +----------------------------------------------------------
-     * 获得实际的操作名称
+     * 运行应用实例 入口文件使用的快捷方法
      +----------------------------------------------------------
-     * @access private
+     * @access public
      +----------------------------------------------------------
-     * @return string
+     * @return void
      +----------------------------------------------------------
      */
-    static private function getAction() {
-        $var  =  C('VAR_ACTION');
-        $action   = !empty($_POST[$var]) ?
-            $_POST[$var] :
-            (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
-        unset($_POST[$var],$_GET[$var]);
-        return $action;
+    static public function run() {
+        App::init();
+        // 项目开始标签
+        tag('app_begin');
+         // Session初始化 支持其他客户端
+        if(isset($_REQUEST[C("VAR_SESSION_ID")]))
+            session_id($_REQUEST[C("VAR_SESSION_ID")]);
+        if(C('SESSION_AUTO_START'))  session_start();
+        // 记录应用初始化时间
+        if(C('SHOW_RUN_TIME')) G('initTime');
+        App::exec();
+        // 项目结束标签
+        tag('app_end');
+        // 保存日志记录
+        if(C('LOG_RECORD')) Log::save();
+        return ;
     }
 
-};
+}

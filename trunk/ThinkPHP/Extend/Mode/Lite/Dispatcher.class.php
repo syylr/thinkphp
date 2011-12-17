@@ -12,16 +12,17 @@
 
 /**
  +------------------------------------------------------------------------------
- * 精简模式的Dispatcher类
+ * ThinkPHP内置的Dispatcher类 用于精简模式
+ * 完成URL解析、路由和调度
  +------------------------------------------------------------------------------
  * @category   Think
  * @package  Think
- * @subpackage  Core
+ * @subpackage  Util
  * @author    liu21st <liu21st@gmail.com>
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Dispatcher extends Think {
+class Dispatcher {
 
     /**
      +----------------------------------------------------------
@@ -34,102 +35,139 @@ class Dispatcher extends Think {
      */
     static public function dispatch() {
         $urlMode  =  C('URL_MODEL');
-        if($urlMode == URL_REWRITE ) {
+        if($urlMode == URL_COMPAT || !empty($_GET[C('VAR_PATHINFO')])){
+            // 兼容模式判断
+            define('PHP_FILE',_PHP_FILE_.'?'.C('VAR_PATHINFO').'=');
+            $_SERVER['PATH_INFO']   = $_GET[C('VAR_PATHINFO')];
+            unset($_GET[C('VAR_PATHINFO')]);
+        }elseif($urlMode == URL_REWRITE ) {
             //当前项目地址
             $url    =   dirname(_PHP_FILE_);
             if($url == '/' || $url == '\\')
                 $url    =   '';
             define('PHP_FILE',$url);
-        }elseif($urlMode == URL_COMPAT){
-            define('PHP_FILE',_PHP_FILE_.'?'.C('VAR_PATHINFO').'=');
         }else {
             //当前项目地址
             define('PHP_FILE',_PHP_FILE_);
         }
-        if($urlMode) {
-			// 获取PATHINFO信息
-            self::getPathInfo();
-            if (!empty($_GET)) {
-                $_GET  =  array_merge (self :: parsePathInfo(),$_GET);
-                $_varModule =   C('VAR_MODULE');
-                $_varAction =   C('VAR_ACTION');
-                $_depr  =   C('URL_PATHINFO_DEPR');
-                // 设置默认模块和操作
-                if(empty($_GET[$_varModule])) $_GET[$_varModule] = C('DEFAULT_MODULE');
-                if(empty($_GET[$_varAction])) $_GET[$_varAction] = C('DEFAULT_ACTION');
-                // 组装新的URL地址
-                $_URL = '/';
-                // modelName/actionName/
-                $_URL .= $_GET[$_varModule].$_depr.$_GET[$_varAction].$_depr;
-                unset($_GET[$_varModule],$_GET[$_varAction]);
-                foreach ($_GET as $_VAR => $_VAL) {
-                    if('' != trim($_GET[$_VAR])) {
-                       $_URL .= $_VAR.$_depr.rawurlencode($_VAL).$_depr;
-                    }
+
+        // 分析PATHINFO信息
+        tag('path_info');
+        // 分析PATHINFO信息
+        $depr = C('URL_PATHINFO_DEPR');
+        if(!empty($_SERVER['PATH_INFO'])) {
+            if(C('URL_HTML_SUFFIX') && !empty($_SERVER['PATH_INFO'])) {
+                $_SERVER['PATH_INFO'] = preg_replace('/\.'.trim(C('URL_HTML_SUFFIX'),'.').'$/', '', $_SERVER['PATH_INFO']);
+            }
+            if(!self::routerCheck()){   // 检测路由规则 如果没有则按默认规则调度URL
+                $paths = explode($depr,trim($_SERVER['PATH_INFO'],'/'));
+                $var  =  array();
+                if (C('APP_GROUP_LIST') && !isset($_GET[C('VAR_GROUP')])){
+                    $var[C('VAR_GROUP')] = in_array(strtolower($paths[0]),explode(',',strtolower(C('APP_GROUP_LIST'))))? array_shift($paths) : '';
                 }
-                if($_depr==',') $_URL = substr($_URL, 0, -1).'/';
-                //重定向成规范的URL格式
-                redirect(PHP_FILE.$_URL);
-            }else{
-                //给_GET赋值 以保证可以按照正常方式取_GET值
-                $_GET = array_merge(self :: parsePathInfo(),$_GET);
-                //保证$_REQUEST正常取值
-                $_REQUEST = array_merge($_POST,$_GET);
+                if(!isset($_GET[C('VAR_MODULE')])) {// 还没有定义模块名称
+                    $var[C('VAR_MODULE')]  =   array_shift($paths);
+                }
+                $var[C('VAR_ACTION')]  =   array_shift($paths);
+                // 解析剩余的URL参数
+                $res = preg_replace('@(\w+)'.$depr.'([^'.$depr.'\/]+)@e', '$var[\'\\1\']="\\2";', implode($depr,$paths));
+                $_GET   =  array_merge($var,$_GET);
             }
         }
+
+        // 获取分组 模块和操作名称
+        if (C('APP_GROUP_LIST')) {
+            define('GROUP_NAME', self::getGroup(C('VAR_GROUP')));
+        }
+        define('MODULE_NAME',self::getModule(C('VAR_MODULE')));
+        define('ACTION_NAME',self::getAction(C('VAR_ACTION')));
+        // URL常量
+        define('__SELF__',$_SERVER['REQUEST_URI']);
+        // 当前项目地址
+        define('__APP__',PHP_FILE);
+        // 当前模块和分组地址
+        $module = defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
+        if(defined('GROUP_NAME')) {
+            $group   = C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME;
+            define('__GROUP__', GROUP_NAME == C('DEFAULT_GROUP') ?__APP__ : __APP__.'/'.$group);
+            define('__URL__', __GROUP__.$depr.$module);
+        }else{
+            define('__URL__',__APP__.'/'.$module);
+        }
+        // 当前操作地址
+        define('__ACTION__',__URL__.$depr.ACTION_NAME);
+        //保证$_REQUEST正常取值
+        $_REQUEST = array_merge($_POST,$_GET);
     }
 
     /**
      +----------------------------------------------------------
-     * 分析PATH_INFO的参数
+     * 路由检测
      +----------------------------------------------------------
-     * @access private
+     * @access public
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    private static function parsePathInfo() {
-        $pathInfo = array();
-        $paths = explode(C('URL_PATHINFO_DEPR'),trim($_SERVER['PATH_INFO'],'/'));
-        $pathInfo[C('VAR_MODULE')] = array_shift($paths);
-        $pathInfo[C('VAR_ACTION')] = array_shift($paths);
-        for($i = 0, $cnt = count($paths); $i <$cnt; $i++){
-            if(isset($paths[$i+1])) {
-                $pathInfo[$paths[$i]] = (string)$paths[++$i];
-            }elseif($i==0) {
-                $pathInfo[$pathInfo[C('VAR_ACTION')]] = (string)$paths[$i];
-            }
-        }
-        return $pathInfo;
+    static public function routerCheck() {
+        $return   =  false;
+        // 路由检测标签
+        tag('route_check',$return);
+        return $return;
     }
 
     /**
-    +----------------------------------------------------------
-    * 获得服务器的PATH_INFO信息
      +----------------------------------------------------------
-     * @access public
-    +----------------------------------------------------------
-    * @return void
-    +----------------------------------------------------------
-    */
-    public static function getPathInfo() {
-        if(!empty($_GET[C('VAR_PATHINFO')])) {
-            // 兼容PATHINFO 参数
-            $path = $_GET[C('VAR_PATHINFO')];
-            unset($_GET[C('VAR_PATHINFO')]);
-        }elseif(!empty($_SERVER['PATH_INFO'])){
-            $pathInfo = $_SERVER['PATH_INFO'];
-            if(0 === strpos($pathInfo,$_SERVER['SCRIPT_NAME']))
-                $path = substr($pathInfo, strlen($_SERVER['SCRIPT_NAME']));
-            else
-                $path = $pathInfo;
+     * 获得实际的模块名称
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static private function getModule($var) {
+        $module = (!empty($_GET[$var])? $_GET[$var]:C('DEFAULT_MODULE'));
+        unset($_GET[$var]);
+        if(C('URL_CASE_INSENSITIVE')) {
+            // URL地址不区分大小写
+            define('P_MODULE_NAME',strtolower($module));
+            // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
+            $module = ucfirst(parse_name(P_MODULE_NAME,1));
         }
-        if(C('HTML_URL_SUFFIX') && !empty($path)) {
-            $suffix =   substr(C('HTML_URL_SUFFIX'),1);
-            $path   =   preg_replace('/\.'.$suffix.'$/','',$path);
-        }
-        $_SERVER['PATH_INFO'] = empty($path) ? '/' : $path;
+        return $module;
     }
 
-}//类定义结束
-?>
+    /**
+     +----------------------------------------------------------
+     * 获得实际的操作名称
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static private function getAction($var) {
+        $action   = !empty($_POST[$var]) ?
+            $_POST[$var] :
+            (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
+        unset($_POST[$var],$_GET[$var]);
+        define('P_ACTION_NAME',$action);
+        return C('URL_CASE_INSENSITIVE')?strtolower($action):$action;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获得实际的分组名称
+     +----------------------------------------------------------
+     * @access private
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    static private function getGroup($var) {
+        $group   = (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_GROUP'));
+        unset($_GET[$var]);
+        return ucfirst(strtolower($group));
+    }
+
+}
