@@ -62,7 +62,7 @@ class ParseTemplateBehavior extends Behavior {
             }else{
                 $tpl = Think::instance('ThinkTemplate');
                 // 编译并加载模板文件
-                $tpl->load($_data['file'],$_data['var']);
+                $tpl->fetch($_data['file'],$_data['var']);
             }
         }else{
             // 调用第三方模板引擎解析和输出
