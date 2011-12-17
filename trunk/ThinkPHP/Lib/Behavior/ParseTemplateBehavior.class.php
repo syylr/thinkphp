@@ -34,6 +34,8 @@ class ParseTemplateBehavior extends Behavior {
         'TMPL_STRIP_SPACE'      => true,       // 是否去除模板文件里面的html空格与换行
         'TMPL_CACHE_ON'			=> true,        // 是否开启模板编译缓存,设为false则每次都会重新编译
         'TMPL_CACHE_TIME'		=>	 0,         // 模板缓存有效期 0 为永久，(以数字为值，单位:秒)
+        'TMPL_LAYOUT_ITEM'    =>   '{__CONTENT__}', // 布局模板的内容替换标识
+
         // Think模板引擎标签库相关设定
         'TAGLIB_BEGIN'          => '<',  // 标签库标签开始标记
         'TAGLIB_END'            => '>',  // 标签库标签结束标记
