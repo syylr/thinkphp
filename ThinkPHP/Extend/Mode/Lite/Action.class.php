@@ -25,7 +25,6 @@ abstract class Action {
 
     // 当前Action名称
     private $name =  '';
-
     protected $tVar        =  array(); // 模板输出变量
 
    /**
@@ -75,32 +74,6 @@ abstract class Action {
             // 判断Ajax方式提交
             return true;
         return false;
-    }
-
-    /**
-     +----------------------------------------------------------
-     *  创建静态页面
-     +----------------------------------------------------------
-     * @access protected
-     +----------------------------------------------------------
-     * @htmlfile 生成的静态文件名称
-     * @htmlpath 生成的静态文件路径
-     * @param string $templateFile 指定要调用的模板文件
-     * 默认为空 由系统自动定位模板文件
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    protected function buildHtml($htmlfile='',$htmlpath='',$templateFile='') {
-        $content = $this->fetch($templateFile);
-        $htmlpath   = !empty($htmlpath)?$htmlpath:HTML_PATH;
-        $htmlfile =  $htmlpath.$htmlfile.C('HTML_FILE_SUFFIX');
-        if(!is_dir(dirname($htmlfile)))
-            // 如果静态目录不存在 则创建
-            mk_dir(dirname($htmlfile));
-        if(false === file_put_contents($htmlfile,$content))
-            throw_exception(L('_CACHE_WRITE_ERROR_').':'.$htmlfile);
-        return $content;
     }
 
     /**
@@ -166,9 +139,6 @@ abstract class Action {
             }elseif(file_exists_case(C('TEMPLATE_NAME'))){
                 // 检查是否存在默认模版 如果有直接输出模版
                 $this->display();
-            }elseif(function_exists('__hack_action')) {
-                // hack 方式定义扩展操作
-                __hack_action();
             }else{
                 // 抛出异常
                 throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
@@ -270,12 +240,6 @@ abstract class Action {
             // 返回xml格式数据
             header("Content-Type:text/xml; charset=utf-8");
             exit(xml_encode($result));
-        }elseif(strtoupper($type)=='EVAL'){
-            // 返回可执行的js脚本
-            header("Content-Type:text/html; charset=utf-8");
-            exit($data);
-        }else{
-            // TODO 增加其它格式
         }
     }
 
@@ -412,7 +376,7 @@ abstract class Action {
         // 页面缓存
         ob_start();
         ob_implicit_flush(0);
-        if('php'==strtolower(C('TMPL_ENGINE_TYPE'))) {
+        if('php' == strtolower(C('TMPL_ENGINE_TYPE'))) {
             // 模板阵列变量分解成为独立变量
             extract($this->tVar, EXTR_OVERWRITE);
             // 直接载入PHP模板
