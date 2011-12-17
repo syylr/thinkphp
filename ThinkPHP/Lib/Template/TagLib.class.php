@@ -177,8 +177,13 @@ class TagLib extends Think {
             switch(strtolower(C('TMPL_VAR_IDENTIFY'))) {
                 case 'array': // 识别为数组
                     $name = '$'.$var;
-                    foreach ($vars as $key=>$val)
-                        $name .= '["{'.$val.'}"]';
+                    foreach ($vars as $key=>$val){
+                        if(0===strpos($val,'$')) {
+                            $name .= '["{'.$val.'}"]';
+                        }else{
+                            $name .= '["'.$val.'"]';
+                        }
+                    }
                     break;
                 case 'obj':  // 识别为对象
                     $name = '$'.$var;
@@ -186,7 +191,7 @@ class TagLib extends Think {
                         $name .= '->'.$val;
                     break;
                 default:  // 自动判断数组或对象 只支持二维
-                    $name = 'is_array($'.$var.')?$'.$var.'["{'.$vars[0].'}"]:$'.$var.'->'.$vars[0];
+                    $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
             }
         }elseif(strpos($name,':')){
             // 额外的对象方式支持
