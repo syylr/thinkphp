@@ -17,20 +17,22 @@ return array(
         CORE_PATH.'Core/Log.class.php',// 日志处理
         MODE_PATH.'Lite/App.class.php', // 应用程序类
         MODE_PATH.'Lite/Action.class.php',// 控制器类
+        MODE_PATH.'Lite/Dispatcher.class.php',
     ),
 
     // 项目别名定义文件 [支持数组直接定义或者文件名定义]
     'alias'         =>    array(
         'Model'         =>   MODE_PATH.'Lite/Model.class.php',
         'Db'                  =>    MODE_PATH.'Lite/Db.class.php',
-        'ThinkTemplateLite'   =>    MODE_PATH.'Lite/ThinkTemplateLite.class.php',
-        'ThinkTemplateCompiler'   =>    MODE_PATH.'Lite/ThinkTemplateCompiler.class.php',
+        'ThinkTemplate' => CORE_PATH.'Template/ThinkTemplate.class.php',
+        'TagLib'        => CORE_PATH.'Template/TagLib.class.php',
+        'Cache'         => CORE_PATH.'Core/Cache.class.php',
+        'Debug'         => CORE_PATH.'Util/Debug.class.php',
+        'Session'       => CORE_PATH.'Util/Session.class.php',
+        'TagLibCx'      => CORE_PATH.'Driver/TagLib/TagLibCx.class.php',
     ), 
 
     // 系统行为定义文件 [必须 支持数组直接定义或者文件名定义 ]
-    'extends'    =>    array(), 
-
-    // 项目应用行为定义文件 [支持数组直接定义或者文件名定义]
-    'tags'         =>   array(), 
+    'extends'    =>    MODE_PATH.'Lite/tags.php',
 
 );
