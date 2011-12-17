@@ -54,7 +54,7 @@ class DbMysql extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function connect($config='',$linkNum=0) {
+    public function connect($config='',$linkNum=0,$force=false) {
         if ( !isset($this->linkID[$linkNum]) ) {
             if(empty($config))  $config =   $this->config;
             // 处理不带端口号的socket连接情况
@@ -94,7 +94,7 @@ class DbMysql extends Db{
      +----------------------------------------------------------
      */
     public function free() {
-        @mysql_free_result($this->queryID);
+        mysql_free_result($this->queryID);
         $this->queryID = 0;
     }
 
@@ -112,6 +112,9 @@ class DbMysql extends Db{
      +----------------------------------------------------------
      */
     public function query($str) {
+        if(0===stripos($str, 'call')){ // 存储过程查询支持
+            $this->close();
+        }
         $this->initConnect(false);
         if ( !$this->_linkID ) return false;
         $this->queryStr = $str;

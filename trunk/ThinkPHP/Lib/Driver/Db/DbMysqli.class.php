@@ -107,6 +107,12 @@ class DbMysqli extends Db{
         // 记录开始执行时间
         G('queryStartTime');
         $this->queryID = $this->_linkID->query($str);
+        // 对存储过程改进
+        if( $this->_linkID->more_results() ){
+            while (($res = $this->_linkID->next_result()) != NULL) {
+                $res->free_result();
+            }
+        }
         $this->debug();
         if ( false === $this->queryID ) {
             $this->error();
