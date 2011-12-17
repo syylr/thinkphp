@@ -376,16 +376,14 @@ abstract class Action {
         // 页面缓存
         ob_start();
         ob_implicit_flush(0);
-        if('php' == strtolower(C('TMPL_ENGINE_TYPE'))) {
+        // 视图解析标签
+        $params = array('var'=>$this->tVar,'file'=>$templateFile);
+        $result   =  tag('view_parse',$params);
+        if(false === $result) { // 未定义行为 则采用PHP原生模板
             // 模板阵列变量分解成为独立变量
             extract($this->tVar, EXTR_OVERWRITE);
             // 直接载入PHP模板
             include $templateFile;
-        }else{
-            // 模板文件需要重新编译 支持第三方模板引擎
-            // 调用模板引擎解析和输出
-            $tpl   =  new ThinkTemplate;
-            $tpl->fetch($templateFile,$this->tVar);
         }
         // 获取并清空缓存
         $content = ob_get_clean();
