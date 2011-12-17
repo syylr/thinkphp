@@ -70,6 +70,7 @@ class  ThinkTemplate extends Think
         $this->config['tmpl_end']           =  $this->stripPreg(C('TMPL_R_DELIM'));
         $this->config['default_tmpl']       =  C('TEMPLATE_NAME');
         $this->config['tag_level']            =  C('TAG_NESTED_LEVEL');
+        $this->config['layout_item']        = C('TMPL_LAYOUT_ITEM');
     }
 
     private function stripPreg($str) {
@@ -123,7 +124,7 @@ class  ThinkTemplate extends Think
                 $tmplContent = str_replace('{__NOLAYOUT__}','',$tmplContent);
             }else{ // 替换布局的主体内容
                 $layoutFile  =  THEME_PATH.C('LAYOUT_NAME').$this->config['template_suffix'];
-                $tmplContent = str_replace('{__CONTENT__}',$tmplContent,file_get_contents($layoutFile));
+                $tmplContent = str_replace($this->config['layout_item'],$tmplContent,file_get_contents($layoutFile));
             }
         }
         //编译模板内容
@@ -250,7 +251,7 @@ class  ThinkTemplate extends Think
                 // 读取布局模板
                 $layoutFile  =  THEME_PATH.$array['name'].$this->config['template_suffix'];
                 // 替换布局的主体内容
-                $content = str_replace('{__CONTENT__}',$content,file_get_contents($layoutFile));
+                $content = str_replace($this->config['layout_item'],$content,file_get_contents($layoutFile));
             }
         }
         return $content;
