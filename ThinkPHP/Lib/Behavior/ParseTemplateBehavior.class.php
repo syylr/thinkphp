@@ -48,19 +48,24 @@ class ParseTemplateBehavior extends Behavior {
     // 行为扩展的执行入口必须是run
     public function run(&$_data){
         $engine  = strtolower(C('TMPL_ENGINE_TYPE'));
-        if('php'==$engine) {
+        if('php' == $engine) { // PHP 模板
             // 模板阵列变量分解成为独立变量
             extract($_data['var'], EXTR_OVERWRITE);
             // 直接载入PHP模板
             include $_data['file'];
-        }elseif('think'==$engine && $this->checkCache($_data['file'])) {
-            // 如果是Think模板引擎并且缓存有效 分解变量并载入模板缓存
-            extract($_data['var'], EXTR_OVERWRITE);
-            //载入模版缓存文件
-            include C('CACHE_PATH').md5($_data['file']).C('TMPL_CACHFILE_SUFFIX');
+        }elseif('think'==$engine){ // 采用Think模板引擎
+            if($this->checkCache($_data['file'])) { // 缓存有效
+                // 分解变量并载入模板缓存
+                extract($_data['var'], EXTR_OVERWRITE);
+                //载入模版缓存文件
+                include C('CACHE_PATH').md5($_data['file']).C('TMPL_CACHFILE_SUFFIX');
+            }else{
+                $tpl = Think::instance('ThinkTemplate');
+                // 编译并加载模板文件
+                $tpl->load($_data['file'],$_data['var']);
+            }
         }else{
-            // 模板文件需要重新编译 支持第三方模板引擎
-            // 调用模板引擎解析和输出
+            // 调用第三方模板引擎解析和输出
             $class   = 'Template'.ucwords($engine);
             if(is_file(CORE_PATH.'Driver/Template/'.$class.'.class.php')) {
                 // 内置驱动
