@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Cookie extends Think
-{
+class Cookie {
     // 判断Cookie是否存在
     static function is_set($name) {
         return isset($_COOKIE[C('COOKIE_PREFIX').$name]);

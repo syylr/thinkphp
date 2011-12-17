@@ -68,7 +68,7 @@ CREATE TABLE `think_auth_group_access` (
 
  */
 
-class Authority extends Think {
+class Authority {
 
     //默认配置
     protected $_config = array(

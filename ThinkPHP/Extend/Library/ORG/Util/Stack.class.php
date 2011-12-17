@@ -23,8 +23,7 @@ import("ORG.Util.ArrayList");
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Stack extends ArrayList
-{//类定义开始
+class Stack extends ArrayList {
 
     /**
      +----------------------------------------------------------

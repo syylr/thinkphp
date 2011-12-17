@@ -16,7 +16,7 @@
  * $str = $he->text($html);
  * 其中$html是某个网页的HTML代码，$str是返回的正文，正文编码是utf-8的
  */
-class HtmlExtractor{
+class HtmlExtractor {
 
     /*
      * 取得汉字的个数（目前不太精确)

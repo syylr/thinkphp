@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Debug extends Think
-{//类定义开始
+class Debug {
 
     static private $marker =  array();
     /**

@@ -15,7 +15,7 @@
  * ThinkPHP 简洁模式Action控制器基类
  +------------------------------------------------------------------------------
  */
-abstract class Action extends Think {
+abstract class Action {
 
    /**
      +----------------------------------------------------------
@@ -57,5 +57,4 @@ abstract class Action extends Think {
         }
     }
 
-}//类定义结束
-?>
+}

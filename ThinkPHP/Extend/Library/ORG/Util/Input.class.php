@@ -36,8 +36,7 @@
  * 特殊使用情况：
  *    字符串要在数据库进行搜索： $data = Input::forSearch($field);
  */
-class Input extends Think
-{
+class Input {
 
     private $filter =   null;   // 输入过滤
     private static $_input  =   array('get','post','request','env','server','cookie','session','globals','config','lang','call');
@@ -46,6 +45,7 @@ class Input extends Think
         'allow' => 'table|td|th|tr|i|b|u|strong|img|p|br|div|strong|em|ul|ol|li|dl|dd|dt|a',
         'ban' => 'html|head|meta|link|base|basefont|body|bgsound|title|style|script|form|iframe|frame|frameset|applet|id|ilayer|layer|name|script|style|xml',
     );
+
     static public function getInstance() {
         return get_instance_of(__CLASS__);
     }
@@ -136,8 +136,7 @@ class Input extends Think
      * @return void
      +----------------------------------------------------------
      */
-    static public function noGPC()
-    {
+    static public function noGPC() {
         if ( get_magic_quotes_gpc() ) {
            $_POST = stripslashes_deep($_POST);
            $_GET = stripslashes_deep($_GET);
@@ -157,8 +156,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function forSearch($string)
-    {
+    static public function forSearch($string) {
         return str_replace( array('%','_'), array('\%','\_'), $string );
     }
 
@@ -171,8 +169,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function forShow($string)
-    {
+    static public function forShow($string) {
         return self::nl2Br( self::hsc($string) );
     }
 
@@ -187,8 +184,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function forTarea($string)
-    {
+    static public function forTarea($string) {
         return str_ireplace(array('<textarea>','</textarea>'), array('&lt;textarea>','&lt;/textarea>'), $string);
     }
 
@@ -203,8 +199,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function forTag($string)
-    {
+    static public function forTag($string) {
         return str_replace(array('"',"'"), array('&quot;','&#039;'), $string);
     }
 
@@ -219,8 +214,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    function makeLink($string)
-    {
+    function makeLink($string) {
         $validChars = "a-z0-9\/\-_+=.~!%@?#&;:$\|";
         $patterns = array(
                         "/(^|[^]_a-z0-9-=\"'\/])([a-z]+?):\/\/([{$validChars}]+)/ei",
@@ -247,8 +241,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function truncate($string, $length = '50')
-    {
+    static public function truncate($string, $length = '50') {
         if ( empty($string) || empty($length) || strlen($string) < $length ) return $string;
         $len = floor( $length / 2 );
         $ret = substr($string, 0, $len) . " ... ". substr($string, 5 - $len);
@@ -266,8 +259,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function nl2Br($string)
-    {
+    static public function nl2Br($string) {
         return preg_replace("/(\015\012)|(\015)|(\012)/", "<br />", $string);
     }
 
@@ -282,8 +274,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function addSlashes($string)
-    {
+    static public function addSlashes($string) {
         if (!get_magic_quotes_gpc()) {
             $string = addslashes($string);
         }
@@ -301,8 +292,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function getVar($string)
-    {
+    static public function getVar($string) {
         return Input::stripSlashes($string);
     }
 
@@ -317,8 +307,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function stripSlashes($string)
-    {
+    static public function stripSlashes($string) {
         if (get_magic_quotes_gpc()) {
             $string = stripslashes($string);
         }
@@ -336,8 +325,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static function hsc($string)
-    {
+    static function hsc($string) {
         return preg_replace(array("/&amp;/i", "/&nbsp;/i"), array('&', '&amp;nbsp;'), htmlspecialchars($string, ENT_QUOTES));
     }
 
@@ -352,8 +340,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static function undoHsc($text)
-    {
+    static function undoHsc($text) {
         return preg_replace(array("/&gt;/i", "/&lt;/i", "/&quot;/i", "/&#039;/i", '/&amp;nbsp;/i'), array(">", "<", "\"", "'", "&nbsp;"), $text);
     }
 
@@ -369,8 +356,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function safeHtml($text, $tags = null)
-    {
+    static public function safeHtml($text, $tags = null) {
         $text =  trim($text);
         //完全过滤注释
         $text = preg_replace('/<!--?.*-->/','',$text);
@@ -439,8 +425,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function deleteHtmlTags($string, $br = false)
-    {
+    static public function deleteHtmlTags($string, $br = false) {
         while(strstr($string, '>'))
         {
             $currentBeg = strpos($string, '<');
@@ -465,8 +450,7 @@ class Input extends Think
      * @return string
      +----------------------------------------------------------
      */
-    static public function nl2($string, $br = '<br />')
-    {
+    static public function nl2($string, $br = '<br />') {
         if ($br == false) {
             $string = preg_replace("/(\015\012)|(\015)|(\012)/", '', $string);
         } elseif ($br != true){

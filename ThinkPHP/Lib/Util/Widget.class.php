@@ -21,7 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-abstract class Widget extends Think {
+abstract class Widget {
 
     // 使用的模板引擎 每个Widget可以单独配置不受系统影响
     protected $template =  '';

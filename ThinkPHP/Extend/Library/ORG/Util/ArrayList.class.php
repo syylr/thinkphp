@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class ArrayList extends Think implements IteratorAggregate
-{//类定义开始
+class ArrayList implements IteratorAggregate {
 
     /**
      +----------------------------------------------------------
@@ -43,8 +42,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @param string $elements  初始化数组元素
      +----------------------------------------------------------
      */
-    public function __construct($elements = array())
-    {
+    public function __construct($elements = array()) {
         if (!empty($elements)) {
             $this->_elements = $elements;
         }
@@ -59,8 +57,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @return ArrayObject
      +----------------------------------------------------------
      */
-    public function getIterator()
-    {
+    public function getIterator() {
         return new ArrayObject($this->_elements);
     }
 
@@ -75,20 +72,17 @@ class ArrayList extends Think implements IteratorAggregate
      * @return boolen
      +----------------------------------------------------------
      */
-    public function add($element)
-    {
+    public function add($element) {
         return (array_push($this->_elements, $element)) ? true : false;
     }
 
     //
-    public function unshift($element)
-    {
+    public function unshift($element) {
         return (array_unshift($this->_elements,$element))?true : false;
     }
 
     //
-    public function pop()
-    {
+    public function pop() {
         return array_pop($this->_elements);
     }
 
@@ -105,8 +99,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function addAll($list)
-    {
+    public function addAll($list) {
         $before = $this->size();
         foreach( $list as $element) {
             $this->add($element);
@@ -122,8 +115,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @access public
      +----------------------------------------------------------
      */
-    public function clear()
-    {
+    public function clear() {
         $this->_elements = array();
     }
 
@@ -138,8 +130,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @return string
      +----------------------------------------------------------
      */
-    public function contains($element)
-    {
+    public function contains($element) {
         return (array_search($element, $this->_elements) !== false );
     }
 
@@ -154,8 +145,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @return mixed
      +----------------------------------------------------------
      */
-    public function get($index)
-    {
+    public function get($index) {
         return $this->_elements[$index];
     }
 
@@ -173,8 +163,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function indexOf($element)
-    {
+    public function indexOf($element) {
         return array_search($element, $this->_elements);
     }
 
@@ -187,8 +176,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @return boolen
      +----------------------------------------------------------
      */
-    public function isEmpty()
-    {
+    public function isEmpty() {
         return empty($this->_elements);
     }
 
@@ -203,15 +191,13 @@ class ArrayList extends Think implements IteratorAggregate
      * @return integer
      +----------------------------------------------------------
      */
-    public function lastIndexOf($element)
-    {
+    public function lastIndexOf($element) {
         for ($i = (count($this->_elements) - 1); $i > 0; $i--) {
             if ($element == $this->get($i)) { return $i; }
         }
     }
 
-    public function toJson()
-    {
+    public function toJson() {
         return json_encode($this->_elements);
     }
 
@@ -227,8 +213,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @return mixed
      +----------------------------------------------------------
      */
-    public function remove($index)
-    {
+    public function remove($index) {
         $element = $this->get($index);
         if (!is_null($element)) { array_splice($this->_elements, $index, 1); }
         return $element;
@@ -244,8 +229,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @param integer $length  移除长度
      +----------------------------------------------------------
      */
-    public function removeRange($offset , $length)
-    {
+    public function removeRange($offset , $length) {
         array_splice($this->_elements, $offset , $length);
     }
 
@@ -270,8 +254,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @param integer $length  长度
      +----------------------------------------------------------
      */
-    public function range($offset,$length=null)
-    {
+    public function range($offset,$length=null) {
         return array_slice($this->_elements,$offset,$length);
     }
 
@@ -288,8 +271,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @return mixed
      +----------------------------------------------------------
      */
-    public function set($index, $element)
-    {
+    public function set($index, $element) {
         $previous = $this->get($index);
         $this->_elements[$index] = $element;
         return $previous;
@@ -304,8 +286,7 @@ class ArrayList extends Think implements IteratorAggregate
      * @return integer
      +----------------------------------------------------------
      */
-    public function size()
-    {
+    public function size() {
         return count($this->_elements);
     }
 
@@ -318,32 +299,27 @@ class ArrayList extends Think implements IteratorAggregate
      * @return array
      +----------------------------------------------------------
      */
-    public function toArray()
-    {
+    public function toArray() {
         return $this->_elements;
     }
 
     // 列表排序
-    public function ksort()
-    {
+    public function ksort() {
         ksort($this->_elements);
     }
 
     // 列表排序
-    public function asort()
-    {
+    public function asort() {
         asort($this->_elements);
     }
 
     // 逆向排序
-    public function rsort()
-    {
+    public function rsort() {
         rsort($this->_elements);
     }
 
     // 自然排序
-    public function natsort()
-    {
+    public function natsort() {
         natsort($this->_elements);
     }
 

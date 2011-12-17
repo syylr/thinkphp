@@ -24,6 +24,7 @@ class ShowRuntimeBehavior extends Behavior {
         'SHOW_CACHE_TIMES'		=> false,   // 显示缓存操作次数
         'SHOW_USE_MEM'			=> false,   // 显示内存开销
         'SHOW_LOAD_FILE'          => false,   // 显示加载文件数
+        'SHOW_FUN_TIMES'         => false ,  // 显示函数调用次数
     );
 
     // 行为扩展的执行入口必须是run
@@ -74,6 +75,10 @@ class ShowRuntimeBehavior extends Behavior {
         }
         if(C('SHOW_LOAD_FILE')) {
             $showTime .= ' | LoadFile:'.count(get_included_files());
+        }
+        if(C('SHOW_FUN_TIMES')) {
+            $fun  =  get_defined_functions();
+            $showTime .= ' | CallFun:'.count($fun['user']).','.count($fun['internal']);
         }
         return $showTime;
     }

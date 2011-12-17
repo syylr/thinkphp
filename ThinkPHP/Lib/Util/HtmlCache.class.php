@@ -22,8 +22,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-class HtmlCache extends Think
-{
+class HtmlCache {
     static private $cacheTime = null; // 缓存有效期（支持函数）
     static private $requireCache = false;    // 是否需要缓存
 

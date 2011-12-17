@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class TagLib extends Think {
+class TagLib {
 
     /**
      +----------------------------------------------------------
@@ -94,7 +94,7 @@ class TagLib extends Think {
      */
     public function __construct() {
         $this->tagLib  = strtolower(substr(get_class($this),6));
-        $this->tpl       = Portal::instance('ThinkTemplate');//ThinkTemplate::getInstance();
+        $this->tpl       = Think::instance('ThinkTemplate');//ThinkTemplate::getInstance();
     }
 
     /**
@@ -245,4 +245,8 @@ class TagLib extends Think {
         return $parseStr;
     }
 
+    // 获取标签定义
+    public function getTags(){
+        return $this->tags;
+    }
 }

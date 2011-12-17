@@ -21,7 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-class View extends Think {
+class View {
     protected $tVar        =  array(); // 模板输出变量
 
     /**

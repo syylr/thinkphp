@@ -21,7 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-abstract class Behavior extends Think {
+abstract class Behavior {
 
     // 行为参数 和配置参数设置相同
     protected $options =  array();
