@@ -10,15 +10,15 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-class Page extends Think {
+class Page {
     // 分页栏每页显示的页数
     public $rollPage = 5;
     // 页数跳转时要带的参数
     public $parameter  ;
     // 默认列表每页显示行数
-    protected $listRows = 20;
+    public $listRows = 20;
     // 起始行数
-    protected $firstRow	;
+    public $firstRow	;
     // 分页总页面数
     protected $totalPages  ;
     // 总行数

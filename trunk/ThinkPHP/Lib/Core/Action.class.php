@@ -21,7 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-abstract class Action extends Think {
+abstract class Action {
 
     // 视图实例对象
     protected $view   =  null;
@@ -38,7 +38,7 @@ abstract class Action extends Think {
     public function __construct() {
         tag('action_begin');
         //实例化视图类
-        $this->view       = Portal::instance('View');
+        $this->view       = Think::instance('View');
         //控制器初始化
         if(method_exists($this,'_initialize'))
             $this->_initialize();

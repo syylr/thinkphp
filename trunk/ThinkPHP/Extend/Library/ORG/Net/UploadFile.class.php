@@ -21,8 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class UploadFile extends Think
-{//类定义开始
+class UploadFile {//类定义开始
 
     // 上传文件的最大值
     public $maxSize = -1;

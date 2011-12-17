@@ -22,8 +22,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Date extends Think
-{//类定义开始
+class Date {
 
     /**
      +----------------------------------------------------------
@@ -187,8 +186,7 @@ class Date extends Think
      * @access public
      +----------------------------------------------------------
      */
-    public function __construct($date='')
-    {
+    public function __construct($date='') {
         //分析日期
         $this->date =   $this->parse($date);
         $this->setDate($this->date);
@@ -209,8 +207,7 @@ class Date extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function parse($date)
-    {
+    public function parse($date) {
         if (is_string($date)) {
             if (($date == "") || strtotime($date) == -1) {
                 //为空默认取得当前时间戳
@@ -253,8 +250,7 @@ class Date extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function valid($date)
-    {
+    public function valid($date) {
 
     }
 
@@ -273,8 +269,7 @@ class Date extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function setDate($date)
-    {
+    public function setDate($date) {
         $dateArray  =   getdate($date);
         $this->date         =   $dateArray[0];            //时间戳
         $this->second       =   $dateArray["seconds"];    //秒
@@ -326,8 +321,7 @@ class Date extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function isLeapYear($year='')
-    {
+    public function isLeapYear($year='') {
         if(empty($year)) {
             $year = $this->year;
         }
@@ -355,8 +349,7 @@ class Date extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function dateDiff($date, $elaps = "d")
-    {
+    public function dateDiff($date, $elaps = "d") {
         $__DAYS_PER_WEEK__       = (7);
         $__DAYS_PER_MONTH__       = (30);
         $__DAYS_PER_YEAR__       = (365);
@@ -514,8 +507,7 @@ class Date extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function maxDayOfMonth()
-    {
+    public function maxDayOfMonth() {
         $result = $this->dateDiff(strtotime($this->dateAdd(1,'m')),'d');
         return $result;
     }
@@ -545,8 +537,7 @@ class Date extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function dateAdd($number = 0, $interval = "d")
-    {
+    public function dateAdd($number = 0, $interval = "d") {
         $hours =  $this->hour;
         $minutes =  $this->minute;
         $seconds =  $this->second;
@@ -623,8 +614,7 @@ class Date extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function  numberToCh($number)
-    {
+    public function  numberToCh($number) {
         $number = intval($number);
         $array  = array('一','二','三','四','五','六','七','八','九','十');
         $str = '';
@@ -661,7 +651,7 @@ class Date extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function  yearToCh( $yearStr ,$flag=false ){
+    public function  yearToCh( $yearStr ,$flag=false ) {
         $array = array('零','一','二','三','四','五','六','七','八','九');
         $str = $flag? '公元' : '';
         for($i=0;$i<4;$i++){
@@ -686,8 +676,7 @@ class Date extends Think
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    public function magicInfo($type)
-    {
+    public function magicInfo($type) {
         $result = '';
         $m      =   $this->month;
         $y      =   $this->year;
@@ -727,8 +716,7 @@ class Date extends Think
     }
 
 
-    public function __toString()
-    {
+    public function __toString() {
         return $this->format();
     }
 }

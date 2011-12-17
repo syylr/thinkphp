@@ -10,8 +10,7 @@
 // +----------------------------------------------------------------------
 // $Id$
 
-class CodeSwitch extends Think
-{
+class CodeSwitch {
     // 错误信息
     static private $error = array();
     // 提示信息
@@ -39,8 +38,7 @@ class CodeSwitch extends Think
      * @return void
      +----------------------------------------------------------
      */
-	static function DetectAndSwitch($filename,$out_charset)
-	{
+	static function DetectAndSwitch($filename,$out_charset) {
 		$fpr = fopen($filename,"r");
 		$char1 = fread($fpr,1);
 		$char2 = fread($fpr,1);

@@ -23,8 +23,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-class  ThinkTemplate extends Think
-{//类定义开始
+class  ThinkTemplate {
 
     // 模板页面中引入的标签库列表
     protected $tagLib          =  array();
@@ -355,8 +354,8 @@ class  ThinkTemplate extends Think
             }
             require_cache($file);
         }
-        $tLib =  Portal::instance($className);
-        foreach ($tLib->tags as $name=>$val){
+        $tLib =  Think::instance($className);
+        foreach ($tLib->getTags() as $name=>$val){
             $tags = array();
             if(isset($val['alias'])) {// 别名设置
                 $tags = explode(',',$val['alias']);
@@ -411,7 +410,7 @@ class  ThinkTemplate extends Think
         //}
         if(ini_get('magic_quotes_sybase'))
             $attr =  str_replace('\"','\'',$attr);
-        $tLib =  get_instance_of('TagLib'.ucwords(strtolower($tagLib)));
+        $tLib =  Think::instance('TagLib'.ucwords(strtolower($tagLib)));
         $parse = '_'.$tag;
         $content = trim($content);
         return $tLib->$parse($attr,$content);

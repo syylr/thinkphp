@@ -78,8 +78,7 @@ CREATE TABLE IF NOT EXISTS `think_role_user` (
   KEY `user_id` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 */
-class RBAC extends Think
-{
+class RBAC {
     // 认证方法
     static public function authenticate($map,$model='')
     {

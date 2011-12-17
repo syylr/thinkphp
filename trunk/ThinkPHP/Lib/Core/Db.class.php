@@ -21,7 +21,7 @@
  * @version   $Id$
  +------------------------------------------------------------------------------
  */
-class Db extends Think {
+class Db {
     // 数据库类型
     protected $dbType           = null;
     // 是否自动释放查询结果
@@ -921,6 +921,19 @@ class Db extends Think {
      */
     public function getLastSql() {
         return $this->queryStr;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 获取最近插入的ID
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function getLastInsID(){
+        return $this->lastInsID;
     }
 
     /**

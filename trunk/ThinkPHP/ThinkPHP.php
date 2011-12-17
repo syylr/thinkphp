@@ -35,7 +35,7 @@ if(!APP_DEBUG && is_file(RUNTIME_FILE)) {
     // 记录加载文件时间
     G('loadTime');
     // 执行入口
-    Portal::Start();
+    Think::Start();
 }
 
 // 记录和统计时间（微秒）

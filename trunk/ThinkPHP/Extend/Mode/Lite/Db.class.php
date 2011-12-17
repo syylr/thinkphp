@@ -16,8 +16,7 @@ define('CLIENT_MULTI_RESULTS', 131072);
  * ThinkPHP 精简模式数据库中间层实现类 只支持Mysql
  +------------------------------------------------------------------------------
  */
-class Db extends Think
-{
+class Db {
 
     static private $_instance = null;
     // 是否自动释放查询结果
@@ -969,5 +968,16 @@ class Db extends Think
         return $this->queryStr;
     }
 
-}//类定义结束
-?>
+    /**
+     +----------------------------------------------------------
+     * 获取最近插入的ID
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function getLastInsID(){
+        return $this->lastInsID;
+    }
+}

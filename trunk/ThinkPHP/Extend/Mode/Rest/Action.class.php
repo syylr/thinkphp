@@ -41,7 +41,7 @@ abstract class Action extends Think {
      */
     public function __construct() {
         //实例化视图类
-        $this->view       = Portal::instance('View');
+        $this->view       = Think::instance('View');
 
         // 资源类型检测
         if(''==__EXT__) { // 自动检测资源类型

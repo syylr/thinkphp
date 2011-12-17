@@ -84,7 +84,6 @@ function load_think_mode() {
     require THINK_PATH.'Common/common.php';
     // 读取核心编译文件列表
     $list = array(
-        CORE_PATH.'Core/Portal.class.php',
         CORE_PATH.'Core/Think.class.php',
         CORE_PATH.'Core/ThinkException.class.php',  // 异常处理类
         CORE_PATH.'Core/Behavior.class.php',
@@ -135,7 +134,6 @@ function build_runtime_cache($append='') {
     // 读取核心编译文件列表
     $list = array(
         THINK_PATH.'Common/common.php',
-        CORE_PATH.'Core/Portal.class.php',
         CORE_PATH.'Core/Think.class.php',
         CORE_PATH.'Core/ThinkException.class.php',
         CORE_PATH.'Core/Behavior.class.php',
@@ -150,7 +148,7 @@ function build_runtime_cache($append='') {
     $alias = include THINK_PATH.'Conf/alias.php';
     $content .= 'alias_import('.var_export($alias,true).');';
     // 编译框架默认语言包和配置参数
-    $content .= $append."\nL(".var_export(L(),true).");C(".var_export(C(),true).');G(\'loadTime\');Portal::Start();';
+    $content .= $append."\nL(".var_export(L(),true).");C(".var_export(C(),true).');G(\'loadTime\');Think::Start();';
     file_put_contents(RUNTIME_FILE,strip_whitespace('<?php '.$content));
     // 生成新的入口文件 便于入口定义 可以拷贝到任意位置 供入口文件引入 无需再导入原来的ThinkPHP.php
     file_put_contents(RUNTIME_PATH.'ThinkPHP.php',strip_whitespace('<?php function G($start,$end=\'\',$dec=3) { static $_info= array(); if(!empty($end)) { if(!isset($_end[$end])) { $_info[$end] = microtime(TRUE); } return number_format(($_info[$end]-$_info[$start]),$dec); }else{ $_info[$start]= microtime(TRUE); } } G(\'beginTime\');'.$content).' /* Copyright (c) 2011 ThinkPHP All rights reserved */');
