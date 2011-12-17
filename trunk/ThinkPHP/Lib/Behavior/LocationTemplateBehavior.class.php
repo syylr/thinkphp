@@ -41,11 +41,15 @@ class LocationTemplateBehavior extends Behavior {
             // 如果模板文件名为空 按照默认规则定位
             $templateFile = C('TEMPLATE_NAME');
         }elseif(false === strpos($templateFile,'.')){
-            $templateFile  = str_replace(array('@',':'),'/',$templateFile);
+            $templateFile  = str_replace(':','/',$templateFile);
             $count   =  substr_count($templateFile,'/');
             $path   = dirname(C('TEMPLATE_NAME'));
-            for($i=0;$i<$count;$i++)
-                $path   = dirname($path);
+            if(0==$count && defined('GROUP_NAME') && '/' != C('TMPL_FILE_DEPR')) {
+                $tmplPublicName  =  MODULE_NAME.C('TMPL_FILE_DEPR').$tmplPublicName;
+            }else{
+                for($i=0;$i<$count;$i++)
+                    $path   = dirname($path);
+            }
             $templateFile =  $path.'/'.$templateFile.C('TMPL_TEMPLATE_SUFFIX');
         }
         if(!file_exists_case($templateFile))
