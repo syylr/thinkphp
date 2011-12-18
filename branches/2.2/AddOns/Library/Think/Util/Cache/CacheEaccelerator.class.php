@@ -75,10 +75,6 @@ class CacheEaccelerator extends Cache
         }
         eaccelerator_lock($name);
         if(eaccelerator_put($name, $value, $expire)) {
-            if($this->options['length']>0) {
-                // 记录缓存队列
-                $this->queue($name);
-            }
             return true;
         }
         return false;

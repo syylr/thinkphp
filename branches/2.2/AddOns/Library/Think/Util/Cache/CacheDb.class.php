@@ -148,10 +148,6 @@ class CacheDb extends Cache
              $result  =  $this->db->execute('INSERT INTO '.$this->options['table'].' (`cachekey`,`data`,`datacrc`,`expire`) VALUES (\''.$name.'\',\''.$data.'\',\''.$crc.'\','.$expire.')');
         }
         if($result) {
-            if($this->options['length']>0) {
-                // 记录缓存队列
-                $this->queue($name);
-            }
             return true;
         }else {
             return false;

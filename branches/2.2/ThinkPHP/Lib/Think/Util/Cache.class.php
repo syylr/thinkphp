@@ -114,28 +114,5 @@ class Cache extends Think
         return get_instance_of(__CLASS__,'connect',$param);
     }
 
-    // 队列缓存
-    protected function queue($key) {
-        static $_handler = array(
-            'file'=>array('F','F'),
-            'xcache'=>array('xcache_get','xcache_set'),
-            'apc'=>array('apc_fetch','apc_store'),
-        );
-        $queue  =  isset($this->options['queue'])?$this->options['queue']:'file';
-        $fun  =  $_handler[$queue];
-        $value   =  $fun[0]('think_queue');
-        if(!$value) {
-            $value   =  array();
-        }
-        // 进列
-        array_push($value,$key);
-        if(count($value) > $this->options['length']) {
-            // 出列
-            $key =  array_shift($value);
-            // 删除缓存
-            $this->rm($key);
-        }
-        return $fun[1]('think_queue',$value);
-    }
 }//类定义结束
 ?>
