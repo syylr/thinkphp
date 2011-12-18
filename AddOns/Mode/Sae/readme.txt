@@ -63,6 +63,14 @@ require THINK_PATH."/SaeThinkPHP.php";//包含Sae核心文件
 App::run();
 ?>
 
+  请先登录SAE管理平台，初始化以下服务：
+
+	Memcache（用于储存编译缓存，S缓存等）
+	KVDB（存储F缓存）
+	Storage 建立一个名为"think"的域（日志文件，静态缓存等会放在think域下）
+
+  注：SAE下默认关闭了系统日志，如需开启，请配置 Mode/Sae/saeConfig.php中 'LOG_EXCEPTION_RECORD'和'LOG_RECORD'改为true。  在SAE下开启日志项目运行比较慢， 建议需要调试的时候才开启日志， 一般情况下关闭。 系统日志为保存在Storage中。
+
   在SAE平台下上传文件，只需要把UploadFile_sae.class.php文件放在和普通上传类UploadFile.class.php 同一个文件夹即可。
 
   上传代码不变。 如：
@@ -80,5 +88,6 @@ if(!$upload->upload()){
 
   在SAE平台下，会导入UploadFile_sae.class.php文件，存储到domain为Upload的storage下。 
 SAE平台下会把上传目录当作storage的domain， 如上传到./Public/Upload/下，domain就为Upload， 上传到 ./Public/Upload/img/下 domain就为img
+
 
   建议反馈：请关注我的微博http://weibo.com/luofei614
