@@ -78,13 +78,7 @@ class CacheApc extends Cache
         if(is_null($expire)) {
             $expire  =  $this->options['expire'];
         }
-        if($result = apc_store($name, $value, $expire)) {
-            if($this->options['length']>0) {
-                // 记录缓存队列
-                $this->queue($name);
-            }
-        }
-        return $result;
+        return apc_store($name, $value, $expire);
      }
 
     /**

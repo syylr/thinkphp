@@ -195,10 +195,6 @@ class CacheFile extends Cache
         $data    = "<?php\n//".sprintf('%012d',$expire).$check.$data."\n?>";
         $result  =   file_put_contents($filename,$data);
         if($result) {
-            if($this->options['length']>0) {
-                // 记录缓存队列
-                $this->queue($name);
-            }
             clearstatcache();
             return true;
         }else {
