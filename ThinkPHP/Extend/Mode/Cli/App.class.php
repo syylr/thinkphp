@@ -52,7 +52,16 @@ class App {
         }
 
         // 执行操作
-        R(MODULE_NAME.'/'.ACTION_NAME);
+        $module  =  A(MODULE_NAME);
+        if(!$module) {
+            // 是否定义Empty模块
+            $module = A("Empty");
+            if(!$module){
+                // 模块不存在 抛出异常
+                throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+            }
+        }
+        call_user_func(array(&$module,ACTION_NAME));
         // 保存日志记录
         if(C('LOG_RECORD')) Log::save();
         return ;
