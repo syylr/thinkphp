@@ -273,13 +273,8 @@ function A($name, $app='@') {
 }
 
 // 远程调用模块的操作方法
-// URL 调用格式 [项目://][分组/]模块/操作 
-function R($url,$vars='') {
-    if (!strpos($url, '://')) // 没有指定项目名 使用当前项目名
-        $url = APP_NAME . '://' . $url;
-    $info =  parse_url($url);
-    $app =  $info['scheme'];
-    $url   =  $info['host'].$info['path'];
+// URL 参数格式 [分组/]模块/操作 
+function R($url,$app='@',$vars='') {
     $array   =  explode('/',$url);
     $action  =  array_pop($array);
     $class = A(implode('.',$array),$app);
