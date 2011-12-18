@@ -21,8 +21,8 @@ return array(
 
     // 项目别名定义文件 [支持数组直接定义或者文件名定义]
     'alias'         =>    array(
-        'Model'    =>   CORE_PATH.'Core/Model.class.php',
-        'Db'        =>    CORE_PATH.'Core/Db.class.php',
+        'Model'    =>   MODE_PATH.'Cli/Model.class.php',
+        'Db'        =>    MODE_PATH.'Cli/Db.class.php',
         'Cache'         => CORE_PATH.'Core/Cache.class.php',
         'Debug'         => CORE_PATH.'Util/Debug.class.php',
     ), 
