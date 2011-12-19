@@ -760,7 +760,9 @@ class Model extends Think
         if(strpos($field,',')) { // 多字段
             $resultSet = $this->db->select($options);
             if(!empty($resultSet)) {
-                $field  =   explode(',',$field);
+                $_field = explode(',', $field);
+                $field  = array_keys($resultSet[0]);
+                if($_field[0] == $_field[1]) $field = array_merge(array($field[0]), $field);
                 $key =  array_shift($field);
                 $cols   =   array();
                 foreach ($resultSet as $result){
