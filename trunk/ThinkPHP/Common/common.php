@@ -22,7 +22,7 @@
  */
 
 // 记录和统计时间（微秒）
-function G($start,$end='',$dec=3) {
+function G($start,$end='',$dec=4) {
     static $_info = array();
     if(is_float($end)) { // 记录时间
         $_info[$start]  =  $end;
