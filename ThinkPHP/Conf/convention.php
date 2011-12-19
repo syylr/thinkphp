@@ -111,7 +111,6 @@ return  array(
     'VAR_GROUP'             => 'g',     // 默认分组获取变量
     'VAR_MODULE'            => 'm',		// 默认模块获取变量
     'VAR_ACTION'            => 'a',		// 默认操作获取变量
-   	'VAR_PAGE'              => 'p',		// 默认分页跳转变量
     'VAR_AJAX_SUBMIT'       => 'ajax',  // 默认的AJAX提交变量
     'VAR_PATHINFO'          => 's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于URL_PATHINFO_DEPR
 );
