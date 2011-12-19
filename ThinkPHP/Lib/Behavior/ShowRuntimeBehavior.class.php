@@ -55,6 +55,7 @@ class ShowRuntimeBehavior extends Behavior {
      */
     private function showTime() {
         // 显示运行时间
+        G('beginTime',$GLOBALS['_beginTime']);
         G('viewEndTime');
         $showTime   =   'Process: '.G('beginTime','viewEndTime').'s ';
         if(C('SHOW_ADV_TIME')) {
