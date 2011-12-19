@@ -20,6 +20,20 @@
  * @version  $Id$
   +------------------------------------------------------------------------------
  */
+
+// 记录和统计时间（微秒）
+function G($start,$end='',$dec=3) {
+    static $_info = array();
+    if(is_float($end)) { // 记录时间
+        $_info[$start]  =  $end;
+    }elseif(!empty($end)){ // 统计时间
+        if(!isset($_info[$end])) $_info[$end]   =  microtime(TRUE);
+        return number_format(($_info[$end]-$_info[$start]),$dec);
+    }else{ // 记录时间
+        $_info[$start]  =  microtime(TRUE);
+    }
+}
+
 // 设置和获取统计数据
 function N($key, $step=0) {
     static $_num = array();
