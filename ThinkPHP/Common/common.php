@@ -186,38 +186,31 @@ function alias_import($alias, $classfile='') {
 
 /**
   +----------------------------------------------------------
- * D函数用于实例化Model
-  +----------------------------------------------------------
- * @param string name Model名称
- * @param string app Model所在项目
+ * D函数用于实例化Model 格式 项目://分组/模块
+ +----------------------------------------------------------
+ * @param string name Model资源地址
   +----------------------------------------------------------
  * @return Model
   +----------------------------------------------------------
  */
-function D($name='', $app='') {
+function D($name='') {
+    if(empty($name)) return new Model;
     static $_model = array();
-    if (empty($name))
-        return new Model;
-    if (empty($app))
-        $app = C('DEFAULT_APP');
-    if (isset($_model[$app . $name]))
-        return $_model[$app . $name];
-    $OriClassName = $name;
-    if (strpos($name, '.')) {
-        $array = explode('.', $name);
-        $name = array_pop($array);
-        $className = $name . 'Model';
-        import($app . '.Model.' . implode('.', $array) . '.' . $className);
-    } else {
-        $className = $name . 'Model';
-        import($app . '.Model.' . $className);
+    if(isset($_model[$name]))
+        return $_model[$name];
+    if(strpos($name,'://')) {// 指定项目
+        $name   =  str_replace('://','/Model/',$name);
+    }else{
+        $name   =  C('DEFAULT_APP').'/Model/'.$name;
     }
-    if (class_exists($className)) {
-        $model = new $className();
-    } else {
-        $model = new Model($name);
+    import($name.'Model');
+    $class   =   basename($name.'Model');
+    if(class_exists($class)) {
+        $model = new $class();
+    }else {
+        $model  = new Model(basename($name));
     }
-    $_model[$app . $OriClassName] = $model;
+    $_model[$name]  =  $model;
     return $model;
 }
 
@@ -241,45 +234,42 @@ function M($name='', $tablePrefix='',$class='Model') {
 
 /**
   +----------------------------------------------------------
- * A函数用于实例化Action
+ * A函数用于实例化Action 格式：项目://分组/操作
   +----------------------------------------------------------
- * @param string name Action名称
- * @param string app Model所在项目
+ * @param string name Action资源地址
   +----------------------------------------------------------
  * @return Action
   +----------------------------------------------------------
  */
-function A($name, $app='@') {
+function A($name) {
     static $_action = array();
-    if (isset($_action[$app . $name]))
-        return $_action[$app . $name];
-    $OriClassName = $name;
-    if (strpos($name, '.')) {
-        $array = explode('.', $name);
-        $name = array_pop($array);
-        $className = $name . 'Action';
-        import($app . '.Action.' . implode('.', $array) . '.' . $className);
-    } else {
-        $className = $name . 'Action';
-        import($app . '.Action.' . $className);
+    if(isset($_action[$name]))
+        return $_action[$name];
+    if(strpos($name,'://')) {// 指定项目
+        $name   =  str_replace('://','/Action/',$name);
+    }else{
+        $name   =  '@/Action/'.$name;
     }
-    if (class_exists($className,false)) {
-        $action = new $className();
-        $_action[$app . $OriClassName] = $action;
+    import($name.'Action');
+    $class   =   basename($name.'Action');
+    if(class_exists($class,false)) {
+        $action = new $class();
+        $_action[$name]  =  $action;
         return $action;
-    } else {
+    }else {
         return false;
     }
 }
 
 // 远程调用模块的操作方法
-// URL 参数格式 [分组/]模块/操作 
-function R($url,$app='@',$vars='') {
-    $array   =  explode('/',$url);
-    $action  =  array_pop($array);
-    $class = A(implode('.',$array),$app);
+// URL 参数格式 [项目://][分组/]模块/操作 
+function remote($url,$vars='') {
+    $info =  pathinfo($url);
+    $action  =  $info['basename'];
+    $module =  $info['dirname'];
+    $class = A($module);
     if($class)
-        return call_user_func(array(&$class,$action),$vars);
+        return call_user_func_array(array(&$class,$action),$vars);
     else
         return false;
 }
