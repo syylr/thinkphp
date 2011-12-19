@@ -74,7 +74,7 @@ class App {
             throw_exception(L('_MODULE_NOT_EXIST_'));
         }
         //创建Action控制器实例
-        $group =  defined('GROUP_NAME') ? GROUP_NAME.C('APP_GROUP_DEPR') : '';
+        $group =  defined('GROUP_NAME') ? GROUP_NAME.'/' : '';
         $module  =  A($group.MODULE_NAME);
         if(!$module) {
             // 是否定义Empty模块
