@@ -123,8 +123,7 @@ class Dispatcher {
         // 当前模块和分组地址
         $module = defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
         if(defined('GROUP_NAME')) {
-            $group   = C('URL_CASE_INSENSITIVE') ?strtolower(GROUP_NAME):GROUP_NAME;
-            define('__GROUP__',(!empty($domainGroup) || GROUP_NAME == C('DEFAULT_GROUP') )?__APP__ : __APP__.'/'.$group);
+            define('__GROUP__',(!empty($domainGroup) || strtolower(GROUP_NAME) == strtolower(C('DEFAULT_GROUP')) )?__APP__ : __APP__.'/'.GROUP_NAME);
             define('__URL__',!empty($domainModule)?__GROUP__.$depr : __GROUP__.$depr.$module);
         }else{
             define('__URL__',!empty($domainModule)?__APP__.'/' : __APP__.'/'.$module);
@@ -202,7 +201,7 @@ class Dispatcher {
     static private function getGroup($var) {
         $group   = (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_GROUP'));
         unset($_GET[$var]);
-        return ucfirst(strtolower($group));
+        return C('URL_CASE_INSENSITIVE') ?ucfirst(strtolower($group)):$group;
     }
 
 }
