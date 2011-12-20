@@ -166,7 +166,7 @@ class RelationModel extends Model {
                             $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:strtolower($this->name).'_id';     //  关联外键
                         }
                         // 获取关联模型对象
-                        $model = M($mappingClass);
+                        $model = D($mappingClass);
                         switch($mappingType) {
                             case HAS_ONE:
                                 $pk   =  $result[$this->getPk()];
@@ -278,7 +278,7 @@ class RelationModel extends Model {
                         }
                         $mappingCondition = !empty($val['condition'])?  $val['condition'] :  "{$mappingFk}='{$pk}'";
                         // 获取关联model对象
-                        $model = M($mappingClass);
+                        $model = D($mappingClass);
                         $mappingData    =   isset($data[$mappingName])?$data[$mappingName]:false;
                         if(!empty($mappingData) || $opType == 'DEL') {
                             switch($mappingType) {
