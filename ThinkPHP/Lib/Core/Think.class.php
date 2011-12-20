@@ -160,22 +160,37 @@ class Think {
      * 系统自动加载ThinkPHP类库
      * 并且支持配置自动加载路径
      +----------------------------------------------------------
-     * @param string $classname 对象类名
+     * @param string $class 对象类名
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    public static function autoload($classname) {
+    public static function autoload($class) {
         // 检查是否存在别名定义
-        if(alias_import($classname)) return ;
-        // 加载系统行为
-        if(substr($classname,-8)=="Behavior" && require_cache(CORE_PATH.'Behavior/'.$classname.'.class.php')){
-            return ;
+        if(alias_import($class)) return ;
+
+        if(substr($class,-8)=="Behavior") { // 加载行为
+            if(require_cache(CORE_PATH.'Behavior/'.$class.'.class.php') 
+                || require_cache(EXTEND_PATH.'Behavior/'.$class.'.class.php') 
+                || require_cache(LIB_PATH.'Behavior/'.$class.'.class.php')) {
+                return ;
+            }
+        }elseif(substr($class,-5)=="Model"){ // 加载模型
+            if(require_cache(LIB_PATH.'Model/'.$class.'.class.php')
+                || require_cache(EXTEND_PATH.'Model/'.$class.'.class.php') ) {
+                return ;
+            }
+        }elseif(substr($class,-6)=="Action"){ // 加载控制器
+            if(require_cache(LIB_PATH.'Action/'.$class.'.class.php')
+                || require_cache(EXTEND_PATH.'Action/'.$class.'.class.php') ) {
+                return ;
+            }
         }
+
         // 根据自动加载路径设置进行尝试搜索
         $paths  =   explode(',',C('APP_AUTOLOAD_PATH'));
         foreach ($paths as $path){
-            if(import($path.'.'.$classname))
+            if(import($path.'.'.$class))
                 // 如果加载类成功则返回
                 return ;
         }
