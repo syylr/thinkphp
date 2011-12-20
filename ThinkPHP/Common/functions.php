@@ -161,6 +161,9 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
         $var  =  array();
         $var[C('VAR_ACTION')] = !empty($path)?array_pop($path):ACTION_NAME;
         $var[C('VAR_MODULE')] = !empty($path)?array_pop($path):MODULE_NAME;
+        if(C('URL_CASE_INSENSITIVE')) {
+            $var[C('VAR_MODULE')] =  parse_name($var[C('VAR_MODULE')]);
+        }
         if(C('APP_GROUP_LIST')) {
             $group   = !empty($path)?array_pop($path):GROUP_NAME;
             if($group != C('DEFAULT_GROUP')) {

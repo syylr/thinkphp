@@ -14,8 +14,8 @@
 
 //记录开始运行时间
 $GLOBALS['_beginTime'] = microtime(TRUE);
-define('MEMORY_LIMIT_ON',function_exists('memory_get_usage'));
 // 记录内存初始使用
+define('MEMORY_LIMIT_ON',function_exists('memory_get_usage'));
 if(MEMORY_LIMIT_ON) $GLOBALS['_startUseMems'] = memory_get_usage();
 if(!defined('APP_PATH')) define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']).'/');
 if(!defined('RUNTIME_PATH')) define('RUNTIME_PATH',APP_PATH.'Runtime/');
