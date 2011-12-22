@@ -876,8 +876,12 @@ class Model {
             if(!isset($data[$name]) || !isset($_SESSION[$name])) { // 令牌数据无效
                 return false;
             }
+
             // 令牌验证
             list($key,$value)  =  explode('_',$data[$name]);
+            if($action   =  C('TOKEN_ACTION')){
+                if(isset($_SESSION[$action($key)])) return false;
+            }
             if($_SESSION[$name][$key] == $value) {
                 unset($_SESSION[$name][$key]); // 验证完成销毁session
                 return true;
