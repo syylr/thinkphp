@@ -44,7 +44,7 @@ abstract class Action {
         $this->view       = Think::instance('View');
 
         // 资源类型检测
-        if(''==__EXT__) { // 自动检测资源类型
+        if(!defined('__EXT__') || ''==__EXT__) { // 自动检测资源类型
             $this->_type   =  $this->getAcceptType();
         }elseif(false === stripos(C('REST_CONTENT_TYPE_LIST'),__EXT__)) {
             // 资源类型非法 则用默认资源类型访问

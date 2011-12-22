@@ -325,9 +325,6 @@ function xml_encode($data, $encoding='utf-8', $root="think") {
 }
 
 function data_to_xml($data) {
-    if (is_object($data)) {
-        $data = get_object_vars($data);
-    }
     $xml = '';
     foreach ($data as $key => $val) {
         is_numeric($key) && $key = "item id=\"$key\"";

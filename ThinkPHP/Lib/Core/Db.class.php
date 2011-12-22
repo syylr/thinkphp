@@ -461,7 +461,7 @@ class Db {
         if(is_string($where)) {
             // 直接使用字符串条件
             $whereStr = $where;
-        }else{ // 使用数组条件表达式
+        }else{ // 使用数组或者对象条件表达式
             if(array_key_exists('_logic',$where)) {
                 // 定义逻辑运算规则 例如 OR XOR AND NOT
                 $operate    =   ' '.strtoupper($where['_logic']).' ';
@@ -932,7 +932,7 @@ class Db {
      * @return string
      +----------------------------------------------------------
      */
-    public function getLastInsID(){
+    public function getLastInsID() {
         return $this->lastInsID;
     }
 
