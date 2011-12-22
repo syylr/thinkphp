@@ -117,7 +117,6 @@ function check_runtime() {
         // 调试模式切换删除编译缓存
         if(is_file(RUNTIME_FILE)) {
             unlink(RUNTIME_FILE);
-            unlink(RUNTIME_PATH.'ThinkPHP.php');
         }
     }
     if(!is_dir(LOG_PATH))	mkdir(LOG_PATH);    // 日志目录
