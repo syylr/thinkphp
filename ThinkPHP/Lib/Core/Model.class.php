@@ -885,9 +885,13 @@ class Model {
 
             // 令牌验证
             list($key,$value)  =  explode('_',$data[$name]);
-            if($action   =  C('TOKEN_ACTION')){ // 反正外部提交
+            if($action   =  C('TOKEN_ACTION')){ // 防止外部提交
                 $extName =   $action($key);
-                isset($_SESSION[$extName])?return false:unset($_SESSION[$extName]);
+                if(isset($_SESSION[$extName])) {
+                    return false;
+                }else{
+                    unset($_SESSION[$extName]);
+                }
             }
             if($_SESSION[$name][$key] == $value) { // 防止重复提交
                 unset($_SESSION[$name][$key]); // 验证完成销毁session
