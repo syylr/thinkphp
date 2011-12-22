@@ -484,15 +484,17 @@ class Db {
                     if(strpos($key,'|')) { // 支持 name|title|nickname 方式定义查询字段
                         $array   =  explode('|',$key);
                         $str   = array();
-                        foreach ($array as $k){
-                            $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$val).')';
+                        foreach ($array as $m=>$k){
+                            $v =  is_array($val)?$val[$m]:$val;
+                            $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$v).')';
                         }
                         $whereStr .= implode(' OR ',$str);
                     }elseif(strpos($key,'&')){
                         $array   =  explode('&',$key);
                         $str   = array();
-                        foreach ($array as $k){
-                            $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$val).')';
+                        foreach ($array as $m=>$k){
+                            $v =  is_array($val)?$val[$m]:$val;
+                            $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$v).')';
                         }
                         $whereStr .= implode(' AND ',$str);
                     }else{
