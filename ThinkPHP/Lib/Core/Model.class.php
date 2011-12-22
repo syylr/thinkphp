@@ -887,7 +887,7 @@ class Model {
             list($key,$value)  =  explode('_',$data[$name]);
             if($action   =  C('TOKEN_ACTION')){ // 防止外部提交
                 $extName =   $action($key);
-                if(isset($_SESSION[$extName])) {
+                if(!isset($_SESSION[$extName])) {
                     return false;
                 }else{
                     unset($_SESSION[$extName]);
