@@ -51,6 +51,10 @@ class TokenBuildBehavior extends Behavior {
             $tokenValue = $tokenType(microtime(TRUE));
             $_SESSION[$tokenName][$tokenKey]   =  $tokenValue;
         }
+        // 执行一次额外动作防止远程非法提交
+        if($action   =  C('TOKEN_ACTION')){
+            $_SESSION[$action($tokenKey)] = true;
+        }
         $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenKey.'_'.$tokenValue.'" />';
         return $token;
     }
