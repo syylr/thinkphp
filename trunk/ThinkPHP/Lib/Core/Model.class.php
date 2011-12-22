@@ -793,15 +793,15 @@ class Model {
             if(!empty($resultSet)) {
                 $_field = explode(',', $field);
                 $field  = array_keys($resultSet[0]);
-                if($_field[0] == $_field[1]) $field = array_merge(array($field[0]), $field);
+                $move   =  $_field[0]==$_field[1]?false:true;
                 $key =  array_shift($field);
                 $cols   =   array();
                 foreach ($resultSet as $result){
-                    $name   = $result[$key];
-                    $cols[$name] =  '';
-                    foreach ($field as $val)
-                        $cols[$name] .=  $result[$val].$sepa;
-                    $cols[$name]  = substr($cols[$name],0,-strlen($sepa));
+                    $name   =  $result[$key];
+                    if($move) { // 删除键值记录
+                        unset($result[$key]);
+                    }
+                    $cols[$name]   =  is_null($sepa)?$result:join($sepa,$result);
                 }
                 return $cols;
             }
