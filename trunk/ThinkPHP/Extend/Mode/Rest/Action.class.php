@@ -21,7 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-abstract class Action extends Think {
+abstract class Action {
 
     // 当前Action名称
     private $name =  '';
