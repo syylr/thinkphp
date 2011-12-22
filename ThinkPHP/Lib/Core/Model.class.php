@@ -775,7 +775,7 @@ class Model {
      * @return mixed
      +----------------------------------------------------------
      */
-    public function getField($field,$sepa=' ') {
+    public function getField($field,$sepa=null) {
         $options['field']    =  $field;
         $options =  $this->_parseOptions($options);
         if(strpos($field,',')) { // 多字段
@@ -785,13 +785,19 @@ class Model {
                 $field  = array_keys($resultSet[0]);
                 $move   =  $_field[0]==$_field[1]?false:true;
                 $key =  array_shift($field);
+                $key2 = array_shift($field);
                 $cols   =   array();
+                $count  =   count($_field);
                 foreach ($resultSet as $result){
                     $name   =  $result[$key];
                     if($move) { // 删除键值记录
                         unset($result[$key]);
                     }
-                    $cols[$name]   =  is_null($sepa)?$result:join($sepa,$result);
+                    if(2==$count) {
+                        $cols[$name]   =  $result[$key2];
+                    }else{
+                        $cols[$name]   =  is_null($sepa)?$result:implode($sepa,$result);
+                    }
                 }
                 return $cols;
             }
@@ -879,10 +885,11 @@ class Model {
 
             // 令牌验证
             list($key,$value)  =  explode('_',$data[$name]);
-            if($action   =  C('TOKEN_ACTION')){
-                if(isset($_SESSION[$action($key)])) return false;
+            if($action   =  C('TOKEN_ACTION')){ // 反正外部提交
+                $extName =   $action($key);
+                isset($_SESSION[$extName])?return false:unset($_SESSION[$extName]);
             }
-            if($_SESSION[$name][$key] == $value) {
+            if($_SESSION[$name][$key] == $value) { // 防止重复提交
                 unset($_SESSION[$name][$key]); // 验证完成销毁session
                 return true;
             }
