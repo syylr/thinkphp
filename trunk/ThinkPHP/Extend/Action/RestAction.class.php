@@ -21,7 +21,7 @@
  * @version  $Id$
  +------------------------------------------------------------------------------
  */
-abstract class RestAction extends Think {
+abstract class RestAction {
 
     // 当前Action名称
     private $name =  '';

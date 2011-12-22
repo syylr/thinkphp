@@ -32,7 +32,7 @@ class CheckUrlExtBehavior extends Behavior {
             $part =  pathinfo($_SERVER['PATH_INFO']);
             if(isset($part['extension'])) { // 判断扩展名
                 define('__EXT__', strtolower($part['extension']));
-                $_SERVER['PATH_INFO']   =   preg_replace('/.'.__EXT__.'$/','',$_SERVER['PATH_INFO']);
+                $_SERVER['PATH_INFO']   =   preg_replace('/.'.__EXT__.'$/i','',$_SERVER['PATH_INFO']);
             }else{
                 define('__EXT__', '');
             }
