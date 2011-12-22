@@ -717,22 +717,18 @@ class Model {
      +----------------------------------------------------------
      * @param string|array $field  字段名
      * @param string|array $value  字段值
-     * @param mixed $condition  条件
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setField($field,$value,$condition='') {
-        if(empty($condition) && isset($this->options['where']))
-            $condition   =  $this->options['where'];
-        $options['where'] =  $condition;
+    public function setField($field,$value) {
         if(is_array($field)) {
             foreach ($field as $key=>$val)
                 $data[$val]    = $value[$key];
         }else{
             $data[$field]   =  $value;
         }
-        return $this->save($data,$options);
+        return $this->save($data);
     }
 
     /**
@@ -742,14 +738,13 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
-     * @param mixed $condition  条件
      * @param integer $step  增长值
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setInc($field,$condition='',$step=1) {
-        return $this->setField($field,array('exp',$field.'+'.$step),$condition);
+    public function setInc($field,$step=1) {
+        return $this->setField($field,array('exp',$field.'+'.$step));
     }
 
     /**
@@ -759,14 +754,13 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
-     * @param mixed $condition  条件
      * @param integer $step  减少值
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setDec($field,$condition='',$step=1) {
-        return $this->setField($field,array('exp',$field.'-'.$step),$condition);
+    public function setDec($field,$step=1) {
+        return $this->setField($field,array('exp',$field.'-'.$step));
     }
 
     /**
@@ -776,16 +770,12 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
-     * @param mixed $condition  查询条件
-     * @param string $spea  字段数据间隔符号
+     * @param string $spea  字段数据间隔符号 NULL返回数组
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function getField($field,$condition='',$sepa=' ') {
-        if(empty($condition) && isset($this->options['where']))
-            $condition   =  $this->options['where'];
-        $options['where'] =  $condition;
+    public function getField($field,$sepa=' ') {
         $options['field']    =  $field;
         $options =  $this->_parseOptions($options);
         if(strpos($field,',')) { // 多字段
