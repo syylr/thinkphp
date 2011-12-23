@@ -497,7 +497,7 @@ function compile($filename) {
 
 // 根据数组生成常量定义
 function array_define($array,$check=true) {
-    $content = '';
+    $content = "\n";
     foreach ($array as $key => $val) {
         $key = strtoupper($key);
         if($check)   $content .= 'if(!defined(\'' . $key . '\')) ';
@@ -509,6 +509,7 @@ function array_define($array,$check=true) {
         } elseif (is_string($val)) {
             $content .= "define('" . $key . "','" . addslashes($val) . "');";
         }
+        $content    .= "\n";
     }
     return $content;
 }
