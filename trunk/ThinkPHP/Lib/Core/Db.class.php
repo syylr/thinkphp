@@ -480,12 +480,14 @@ class Db {
                     if(!preg_match('/^[A-Z_\|\&\-.a-z0-9]+$/',trim($key))){
                         throw_exception(L('_EXPRESS_ERROR_').':'.$key);
                     }
+                    // 多条件支持
+                    $multi = is_array($val) &&  array_key_exists('_multi',$val);
                     $key = trim($key);
                     if(strpos($key,'|')) { // 支持 name|title|nickname 方式定义查询字段
                         $array   =  explode('|',$key);
                         $str   = array();
                         foreach ($array as $m=>$k){
-                            $v =  is_array($val)?$val[$m]:$val;
+                            $v =  $multi?$val[$m]:$val;
                             $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$v).')';
                         }
                         $whereStr .= implode(' OR ',$str);
@@ -493,7 +495,7 @@ class Db {
                         $array   =  explode('&',$key);
                         $str   = array();
                         foreach ($array as $m=>$k){
-                            $v =  is_array($val)?$val[$m]:$val;
+                            $v =  $multi?$val[$m]:$val;
                             $str[]   = '('.$this->parseWhereItem($this->parseKey($k),$v).')';
                         }
                         $whereStr .= implode(' AND ',$str);
