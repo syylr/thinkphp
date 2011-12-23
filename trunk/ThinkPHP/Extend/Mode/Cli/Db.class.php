@@ -174,7 +174,7 @@ class Db {
         if ( $str != '' ) $this->queryStr = $str;
         //释放前次的查询结果
         if ( $this->queryID ) {    $this->free();    }
-        $this->W(1);
+        N('db_write',1);
         $result =   mysql_query($this->queryStr, $this->linkID) ;
         $this->debug();
         if ( false === $result) {
