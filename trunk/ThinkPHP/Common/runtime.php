@@ -129,7 +129,12 @@ function check_runtime() {
 function build_runtime_cache($append='') {
     // 生成编译文件
     $defs = get_defined_constants(TRUE);
-    $content  = array_define($defs['user']);
+    if(defined('RUNTIME_DEF_FILE')) { // 编译后的常量文件外部引入
+        file_put_contents(RUNTIME_DEF_FILE,array_define($defs['user']));
+        $content    =  'require '.RUNTIME_DEF_FILE.';';
+    }else{
+        $content  = array_define($defs['user']);
+    }
     // 读取核心编译文件列表
     $list = array(
         THINK_PATH.'Common/common.php',
