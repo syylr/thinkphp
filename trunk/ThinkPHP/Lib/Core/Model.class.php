@@ -266,7 +266,7 @@ class Model {
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('field','table','where','order','limit','page','alias','having','group','lock','distinct'),true)) {
+        if(in_array(strtolower($method),array('table','where','order','limit','page','alias','having','group','lock','distinct'),true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
@@ -1390,7 +1390,12 @@ class Model {
      +----------------------------------------------------------
      */
     public function getDbFields(){
-        return $this->fields;
+        if($this->fields) {
+            $fields   =  $this->fields;
+            unset($fields['_autoinc'],$fields['_pk'],$fields['_type']);
+            return $fields;
+        }
+        return false;
     }
 
     /**
@@ -1482,6 +1487,30 @@ class Model {
      */
     public function cache($key=true,$expire='',$type=''){
         $this->options['cache']  =  array('key'=>$key,'expire'=>$expire,'type'=>$type);
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 指定查询字段
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $field
+     * @param boolean $not
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function field($field,$not=false){
+        if($not) {// 字段排除
+            if(is_string($field)) {
+                $field =  explode(',',$field);
+            }
+            $fields   =  $this->getDbFields();
+            $field =  $fields?array_diff($fields,$field):$field;
+        }
+        $this->options['field']   =   $field;
         return $this;
     }
 
