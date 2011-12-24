@@ -56,7 +56,7 @@ class Dispatcher {
             $rules = C('APP_SUB_DOMAIN_RULES');
             $subDomain    = strtolower(substr($_SERVER['HTTP_HOST'],0,strpos($_SERVER['HTTP_HOST'],'.')));
             define('SUB_DOMAIN',$subDomain); // 二级域名定义
-            if($subDomain && array_key_exists($subDomain,$rules)) {
+            if($subDomain && isset($rules[$subDomain])) {
                 $rule =  $rules[$subDomain];
             }elseif(isset($rules['*'])){ // 泛域名支持
                 if('www' != $subDomain && !in_array($subDomain,C('APP_SUB_DOMAIN_DENY'))) {

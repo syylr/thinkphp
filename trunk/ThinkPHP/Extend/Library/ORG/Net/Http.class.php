@@ -291,7 +291,7 @@ class Http {
 			505 => 'HTTP Version Not Supported',
 			509 => 'Bandwidth Limit Exceeded'
 		);
-		if(array_key_exists($code,$_status)) {
+		if(isset($_status[$code])) {
 			header('HTTP/1.1 '.$code.' '.$_status[$code]);
 		}
 	}

@@ -776,7 +776,7 @@ class DbMongo extends Db{
         switch($key) {
             case '_query': // 字符串模式查询条件
                 parse_str($val,$query);
-                if(array_key_exists('_logic',$query) && strtolower($query['_logic']) == 'or' ) {
+                if(isset($query['_logic']) && strtolower($query['_logic']) == 'or' ) {
                     unset($query['_logic']);
                     $query['$or']   =  $query;
                 }
