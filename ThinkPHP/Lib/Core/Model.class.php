@@ -1492,18 +1492,18 @@ class Model {
 
     /**
      +----------------------------------------------------------
-     * 指定查询字段
+     * 指定查询字段 支持字段排除
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
      * @param mixed $field
-     * @param boolean $not
+     * @param boolean $except 是否排除
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
      */
-    public function field($field,$not=false){
-        if($not) {// 字段排除
+    public function field($field,$except=false){
+        if($except) {// 字段排除
             if(is_string($field)) {
                 $field =  explode(',',$field);
             }
