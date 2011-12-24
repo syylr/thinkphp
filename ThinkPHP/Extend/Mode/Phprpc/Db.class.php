@@ -621,7 +621,7 @@ class Db {
             // 直接使用字符串条件
             $whereStr = $where;
         }else{ // 使用数组条件表达式
-            if(array_key_exists('_logic',$where)) {
+            if(isset($where['_logic'])) {
                 // 定义逻辑运算规则 例如 OR XOR AND NOT
                 $operate    =   ' '.strtoupper($where['_logic']).' ';
                 unset($where['_logic']);
@@ -713,7 +713,7 @@ class Db {
             case '_query':
                 // 字符串模式查询条件
                 parse_str($val,$where);
-                if(array_key_exists('_logic',$where)) {
+                if(isset($where['_logic'])) {
                     $op   =  ' '.strtoupper($where['_logic']).' ';
                     unset($where['_logic']);
                 }else{

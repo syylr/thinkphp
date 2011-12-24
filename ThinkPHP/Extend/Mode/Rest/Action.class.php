@@ -324,7 +324,7 @@ abstract class Action {
             505 => 'HTTP Version Not Supported',
             509 => 'Bandwidth Limit Exceeded'
         );
-        if(array_key_exists($code,$_status)) {
+        if(isset($_status[$code])) {
             header('HTTP/1.1 '.$code.' '.$_status[$code]);
             // 确保FastCGI模式下正常
             header('Status:'.$code.' '.$_status[$code]);

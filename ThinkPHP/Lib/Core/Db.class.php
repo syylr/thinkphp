@@ -462,7 +462,7 @@ class Db {
             // 直接使用字符串条件
             $whereStr = $where;
         }else{ // 使用数组或者对象条件表达式
-            if(array_key_exists('_logic',$where)) {
+            if(isset($where['_logic'])) {
                 // 定义逻辑运算规则 例如 OR XOR AND NOT
                 $operate    =   ' '.strtoupper($where['_logic']).' ';
                 unset($where['_logic']);
@@ -481,7 +481,7 @@ class Db {
                         throw_exception(L('_EXPRESS_ERROR_').':'.$key);
                     }
                     // 多条件支持
-                    $multi = is_array($val) &&  array_key_exists('_multi',$val);
+                    $multi = is_array($val) &&  isset($val['_multi']);
                     $key = trim($key);
                     if(strpos($key,'|')) { // 支持 name|title|nickname 方式定义查询字段
                         $array   =  explode('|',$key);
@@ -592,7 +592,7 @@ class Db {
             case '_query':
                 // 字符串模式查询条件
                 parse_str($val,$where);
-                if(array_key_exists('_logic',$where)) {
+                if(isset($where['_logic'])) {
                     $op   =  ' '.strtoupper($where['_logic']).' ';
                     unset($where['_logic']);
                 }else{
