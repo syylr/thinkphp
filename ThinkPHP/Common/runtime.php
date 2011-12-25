@@ -78,8 +78,8 @@ if(!defined('LIBRARY_PATH')) define('LIBRARY_PATH',EXTEND_PATH.'Library/');
 // 为了方便导入第三方类库 设置Vendor目录到include_path
 set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
 
-// 加载模式列表文件
-function load_think_mode() {
+// 加载运行时所需要的文件 并负责自动目录生成
+function load_runtime_file() {
     // 加载系统基础函数库
     require THINK_PATH.'Common/common.php';
     // 读取核心编译文件列表
@@ -229,5 +229,5 @@ function build_first_action() {
     file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
 }
 
-// 加载模式列表文件
-load_think_mode();
+// 加载运行时所需文件
+load_runtime_file();
