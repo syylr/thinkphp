@@ -1153,26 +1153,6 @@ class Model {
 
     /**
      +----------------------------------------------------------
-     * 执行SQL 自动识别读写操作
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param mixed $sql  SQL指令
-     * @param boolean $parse  是否需要解析SQL
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    public function sql($sql,$parse=false){
-        if(0 === stripos(trim($sql),'select')) { // 查询SQL
-            return $this->query($sql,$parse);
-        }else{
-            return $this->execute($sql,$parse);
-        }
-    }
-
-    /**
-     +----------------------------------------------------------
      * SQL查询
      +----------------------------------------------------------
      * @access public
@@ -1184,19 +1164,8 @@ class Model {
      +----------------------------------------------------------
      */
     public function query($sql,$parse=false) {
-        if(!empty($sql)) {
-            // 分析表达式
-            if($parse) {
-                $options =  $this->_parseOptions();
-                $sql  =   $this->db->parseSql($sql,$options);
-            }else{
-                if(strpos($sql,'__TABLE__'))
-                    $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
-            }
-            return $this->db->query($sql);
-        }else{
-            return false;
-        }
+        $sql  =   $this->parseSql($sql,$parse);
+        return $this->db->query($sql);
     }
 
     /**
@@ -1212,19 +1181,32 @@ class Model {
      +----------------------------------------------------------
      */
     public function execute($sql,$parse=false) {
-        if(!empty($sql)) {
-            // 分析表达式
-            if($parse) {
-                $options =  $this->_parseOptions();
-                $sql  =   $this->db->parseSql($sql,$options);
-            }else{
-                if(strpos($sql,'__TABLE__'))
-                    $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
-            }
-            return $this->db->execute($sql);
-        }else {
-            return false;
+        $sql  =   $this->parseSql($sql,$parse);
+        return $this->db->execute($sql);
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 解析SQL语句
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $sql  SQL指令
+     * @param boolean $parse  是否需要解析SQL
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    protected function parseSql($sql,$parse) {
+        // 分析表达式
+        if($parse) {
+            $options =  $this->_parseOptions();
+            $sql  =   $this->db->parseSql($sql,$options);
+        }else{
+            if(strpos($sql,'__TABLE__'))
+                $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
         }
+        return $sql;
     }
 
     /**
