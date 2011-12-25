@@ -58,7 +58,7 @@ class CheckTemplateBehavior extends Behavior {
 
         /* 模板相关目录常量 */
         define('THEME_NAME',   $templateSet);                  // 当前模板主题名称
-        define('THEME_PATH',   TMPL_PATH.(defined('GROUP_NAME')?GROUP_NAME:'').(THEME_NAME?'/':'').THEME_NAME.'/');
+        define('THEME_PATH',   TMPL_PATH.(defined('GROUP_NAME')?GROUP_NAME.'/':'').(THEME_NAME?THEME_NAME.'/':''));
         if(defined('GROUP_NAME')) {
             define('APP_TMPL_PATH',   __ROOT__.'/'.APP_NAME.(APP_NAME?'/':'').'Tpl/'.GROUP_NAME.(THEME_NAME?'/':'').THEME_NAME.'/');
             C('TEMPLATE_NAME',THEME_PATH.MODULE_NAME.C('TMPL_FILE_DEPR').ACTION_NAME.C('TMPL_TEMPLATE_SUFFIX'));
