@@ -181,7 +181,8 @@ class Think {
                 return ;
             }
         }elseif(substr($class,-6)=="Action"){ // 加载控制器
-            if(require_cache(LIB_PATH.'Action/'.$class.'.class.php')
+            if((defined('GROUP_NAME') && require_cache(LIB_PATH.'Action/'.GROUP_NAME.'/'.$class.'.class.php'))
+                || require_cache(LIB_PATH.'Action/'.$class.'.class.php')
                 || require_cache(EXTEND_PATH.'Action/'.$class.'.class.php') ) {
                 return ;
             }
