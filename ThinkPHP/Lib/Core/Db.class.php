@@ -894,21 +894,6 @@ class Db {
             }
         }
         $sql  =   $this->parseSql($this->selectSql,$options);
-        /*
-        $sql   = str_replace(
-            array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%','%UNION%'),
-            array(
-                $this->parseTable($options['table']),
-                $this->parseDistinct(isset($options['distinct'])?$options['distinct']:false),
-                $this->parseField(isset($options['field'])?$options['field']:'*'),
-                $this->parseJoin(isset($options['join'])?$options['join']:''),
-                $this->parseWhere(isset($options['where'])?$options['where']:''),
-                $this->parseGroup(isset($options['group'])?$options['group']:''),
-                $this->parseHaving(isset($options['having'])?$options['having']:''),
-                $this->parseOrder(isset($options['order'])?$options['order']:''),
-                $this->parseLimit(isset($options['limit'])?$options['limit']:''),
-                $this->parseUnion(isset($options['union'])?$options['union']:'')
-            ),$this->selectSql);*/
         $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
         if(isset($key)) { // 写入SQL创建缓存
             S($key,$sql,'','',array('length'=>C('DB_SQL_BUILD_LENGTH'),'queue'=>C('DB_SQL_BUILD_QUEUE')));
