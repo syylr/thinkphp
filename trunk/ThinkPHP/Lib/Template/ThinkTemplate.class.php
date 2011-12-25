@@ -662,10 +662,7 @@ class  ThinkTemplate {
             //支持加载变量文件名
             $tmplPublicName = $this->get(substr($tmplPublicName,1));
 
-        if(is_file($tmplPublicName)) {
-            // 直接包含文件
-            $parseStr = file_get_contents($tmplPublicName);
-        }else {
+        if(false === strpos($tmplPublicName,$this->config['template_suffix'])) {
             // 解析规则为 模板主题:模块:操作 不支持 跨项目和跨分组调用
             $path   =  explode(':',$tmplPublicName);
             $action = array_pop($path);
@@ -676,9 +673,10 @@ class  ThinkTemplate {
                 $path = APP_TMPL_PATH;
             }
             $depr = defined('GROUP_NAME')?C('TMPL_FILE_DEPR'):'/';
-            $templateFile  =  $path.$module.$depr.$action.$this->config['template_suffix'];
-            $parseStr = file_get_contents($templateFile);
+            $tmplPublicName  =  $path.$module.$depr.$action.$this->config['template_suffix'];
         }
+        // 获取模板文件内容
+        $parseStr = file_get_contents($tmplPublicName);
         foreach ($vars as $key=>$val) {
             $parseStr = str_replace('['.$key.']',$val,$parseStr);
         }
