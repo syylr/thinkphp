@@ -46,9 +46,9 @@ class LocationTemplateBehavior extends Behavior {
             $action = array_pop($path);
             $module = !empty($path)?array_pop($path):MODULE_NAME;
             if(!empty($path)) {// 设置模板主题
-                $path = dirname(APP_TMPL_PATH).'/'.array_pop($path).'/';
+                $path = dirname(THEME_PATH).'/'.array_pop($path).'/';
             }else{
-                $path = APP_TMPL_PATH;
+                $path = THEME_PATH;
             }
             $depr = defined('GROUP_NAME')?C('TMPL_FILE_DEPR'):'/';
             $templateFile  =  $path.$module.$depr.$action.C('TMPL_TEMPLATE_SUFFIX');
