@@ -666,16 +666,17 @@ class  ThinkTemplate {
             // 直接包含文件
             $parseStr = file_get_contents($tmplPublicName);
         }else {
-            $tmplPublicName  = str_replace(':','/',$tmplPublicName);
-            $count   =  substr_count($tmplPublicName,'/');
-            $path   = dirname(C('TEMPLATE_NAME'));
-            if(0==$count && defined('GROUP_NAME') && '/' != C('TMPL_FILE_DEPR')) {
-                $tmplPublicName  =  MODULE_NAME.C('TMPL_FILE_DEPR').$tmplPublicName;
+            // 解析规则为 模板主题:模块:操作 不支持 跨项目和跨分组调用
+            $path   =  explode(':',$tmplPublicName);
+            $action = array_pop($path);
+            $module = !empty($path)?array_pop($path):MODULE_NAME;
+            if(!empty($path)) {// 设置模板主题
+                $path = dirname(APP_TMPL_PATH).'/'.array_pop($path).'/';
             }else{
-                for($i=0;$i<$count;$i++)
-                    $path   = dirname($path);
+                $path = APP_TMPL_PATH;
             }
-            $templateFile =  $path.'/'.$tmplPublicName.$this->config['template_suffix'];
+            $depr = defined('GROUP_NAME')?C('TMPL_FILE_DEPR'):'/';
+            $templateFile  =  $path.$module.$depr.$action.$this->config['template_suffix'];
             $parseStr = file_get_contents($templateFile);
         }
         foreach ($vars as $key=>$val) {
