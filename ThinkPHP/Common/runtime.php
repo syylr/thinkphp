@@ -96,10 +96,10 @@ function load_think_mode() {
     alias_import(include THINK_PATH.'Conf/alias.php');
 
     // 检查项目目录结构 如果不存在则自动创建
-    if(!is_dir(RUNTIME_PATH)) {
+    if(!is_dir(LIB_PATH)) {
         // 创建项目目录结构
         build_app_dir();
-    }else{
+    }elseif(!is_dir(CACHE_PATH)){
         // 检查缓存目录
         check_runtime();
     }
@@ -107,7 +107,9 @@ function load_think_mode() {
 
 // 检查缓存目录(Runtime) 如果不存在则自动创建
 function check_runtime() {
-    if(!is_writeable(RUNTIME_PATH)) {
+    if(!is_dir(RUNTIME_PATH)) {
+        mkdir(RUNTIME_PATH);
+    }elseif(!is_writeable(RUNTIME_PATH)) {
         header("Content-Type:text/html; charset=utf-8");
         exit('目录 [ '.RUNTIME_PATH.' ] 不可写！');
     }
@@ -115,9 +117,7 @@ function check_runtime() {
         mkdir(CACHE_PATH);  // 模板缓存目录
     }elseif(APP_DEBUG){
         // 调试模式切换删除编译缓存
-        if(is_file(RUNTIME_FILE)) {
-            unlink(RUNTIME_FILE);
-        }
+        if(is_file(RUNTIME_FILE))   unlink(RUNTIME_FILE);
     }
     if(!is_dir(LOG_PATH))	mkdir(LOG_PATH);    // 日志目录
     if(!is_dir(TEMP_PATH))  mkdir(TEMP_PATH);	// 数据缓存目录
@@ -215,7 +215,7 @@ function build_app_dir() {
         if(!is_file(CONFIG_PATH.'config.php'))
             file_put_contents(CONFIG_PATH.'config.php',"<?php\nreturn array(\n\t//'配置项'=>'配置值'\n);\n?>");
         // 写入测试Action
-        if(C('APP_GROUP_LIST')=='' && !is_file(LIB_PATH.'Action/IndexAction.class.php'))
+        if(!is_file(LIB_PATH.'Action/IndexAction.class.php'))
             build_first_action();
     }else{
         header("Content-Type:text/html; charset=utf-8");
