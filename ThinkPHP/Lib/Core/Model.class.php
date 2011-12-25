@@ -1158,15 +1158,21 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param mixed $sql  SQL指令
+     * @param boolean $parse  是否需要解析SQL
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function query($sql) {
+    public function query($sql,$parse=false) {
         if(!empty($sql)) {
             // 分析表达式
-            $options =  $this->_parseOptions();
-            $sql  =   $this->db->fetchSql($sql,$options);
+            if($parse) {
+                $options =  $this->_parseOptions();
+                $sql  =   $this->db->fetchSql($sql,$options);
+            }else{
+                if(strpos($sql,'__TABLE__'))
+                    $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
+            }
             return $this->db->query($sql);
         }else{
             return false;
@@ -1180,14 +1186,21 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param string $sql  SQL指令
+     * @param boolean $parse  是否需要解析SQL
      +----------------------------------------------------------
      * @return false | integer
      +----------------------------------------------------------
      */
-    public function execute($sql) {
+    public function execute($sql,$parse=false) {
         if(!empty($sql)) {
-            if(strpos($sql,'__TABLE__'))
-                $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
+            // 分析表达式
+            if($parse) {
+                $options =  $this->_parseOptions();
+                $sql  =   $this->db->fetchSql($sql,$options);
+            }else{
+                if(strpos($sql,'__TABLE__'))
+                    $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
+            }
             return $this->db->execute($sql);
         }else {
             return false;
