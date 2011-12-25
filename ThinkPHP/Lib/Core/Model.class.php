@@ -1164,8 +1164,9 @@ class Model {
      */
     public function query($sql) {
         if(!empty($sql)) {
-            if(strpos($sql,'__TABLE__'))
-                $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
+            // 分析表达式
+            $options =  $this->_parseOptions();
+            $sql  =   $this->db->fetchSql($sql,$options);
             return $this->db->query($sql);
         }else{
             return false;
