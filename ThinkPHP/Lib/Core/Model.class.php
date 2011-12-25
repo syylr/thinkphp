@@ -1168,7 +1168,7 @@ class Model {
             // 分析表达式
             if($parse) {
                 $options =  $this->_parseOptions();
-                $sql  =   $this->db->fetchSql($sql,$options);
+                $sql  =   $this->db->parseSql($sql,$options);
             }else{
                 if(strpos($sql,'__TABLE__'))
                     $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
@@ -1196,7 +1196,7 @@ class Model {
             // 分析表达式
             if($parse) {
                 $options =  $this->_parseOptions();
-                $sql  =   $this->db->fetchSql($sql,$options);
+                $sql  =   $this->db->parseSql($sql,$options);
             }else{
                 if(strpos($sql,'__TABLE__'))
                     $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
