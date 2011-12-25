@@ -45,7 +45,7 @@ class LocationTemplateBehavior extends Behavior {
             $count   =  substr_count($templateFile,'/');
             $path   = dirname(C('TEMPLATE_NAME'));
             if(0==$count && defined('GROUP_NAME') && '/' != C('TMPL_FILE_DEPR')) {
-                $tmplPublicName  =  MODULE_NAME.C('TMPL_FILE_DEPR').$tmplPublicName;
+                $templateFile  =  MODULE_NAME.C('TMPL_FILE_DEPR').$templateFile;
             }else{
                 for($i=0;$i<$count;$i++)
                     $path   = dirname($path);
