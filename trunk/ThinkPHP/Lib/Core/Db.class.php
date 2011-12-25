@@ -893,7 +893,7 @@ class Db {
                 return $value;
             }
         }
-        $sql  =   $this->fetchSql($this->selectSql,$options);
+        $sql  =   $this->parseSql($this->selectSql,$options);
         /*
         $sql   = str_replace(
             array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%','%UNION%'),
@@ -927,7 +927,7 @@ class Db {
      * @return string
      +----------------------------------------------------------
      */
-    public function fetchSql($sql,$options=array()){
+    public function parseSql($sql,$options=array()){
         $sql   = str_replace(
             array('%TABLE%','%DISTINCT%','%FIELDS%','%JOIN%','%WHERE%','%GROUP%','%HAVING%','%ORDER%','%LIMIT%','%UNION%'),
             array(
