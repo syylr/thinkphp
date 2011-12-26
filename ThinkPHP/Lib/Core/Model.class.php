@@ -601,6 +601,8 @@ class Model {
         if(!empty($options['alias'])) {
             $options['table']   .= ' '.$options['alias'];
         }
+        // 记录操作的模型名称
+        $options['model'] =  $this->name;
         // 字段类型验证
         if(C('DB_FIELDTYPE_CHECK')) {
             if(isset($options['where']) && is_array($options['where'])) {
@@ -885,14 +887,6 @@ class Model {
 
             // 令牌验证
             list($key,$value)  =  explode('_',$data[$name]);
-            if($action   =  C('TOKEN_ACTION')){ // 防止外部提交
-                $extName =   $action($key);
-                if(!isset($_SESSION[$extName])) {
-                    return false;
-                }else{
-                    unset($_SESSION[$extName]);
-                }
-            }
             if($_SESSION[$name][$key] == $value) { // 防止重复提交
                 unset($_SESSION[$name][$key]); // 验证完成销毁session
                 return true;
@@ -1376,7 +1370,11 @@ class Model {
      +----------------------------------------------------------
      */
     public function getLastSql() {
-        return $this->db->getLastSql();
+        if($this->name) {
+            return $this->db->getLastModelSql($this->name);
+        }else{
+            return $this->db->getLastSql();
+        }
     }
     // 鉴于getLastSql比较常用 增加_sql 别名
     public function _sql(){
