@@ -1370,11 +1370,7 @@ class Model {
      +----------------------------------------------------------
      */
     public function getLastSql() {
-        if($this->name) {
-            return $this->db->getLastModelSql($this->name);
-        }else{
-            return $this->db->getLastSql();
-        }
+        return $this->db->getLastSql($this->name);
     }
     // 鉴于getLastSql比较常用 增加_sql 别名
     public function _sql(){
