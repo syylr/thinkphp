@@ -140,6 +140,7 @@ class Model {
      */
     public function flush() {
         // 缓存不存在则查询数据表信息
+        $this->db->setModel($this->name);
         $fields =   $this->db->getFields($this->getTableName());
         if(!$fields) { // 无法获取字段信息
             return false;
