@@ -303,6 +303,7 @@ class Db {
      */
     protected function debug() {
         $this->modelSql[$this->model]   =  $this->queryStr;
+        $this->model  =   '_think_';
         // 记录操作结束时间
         if ( $this->debug ) {
             G('queryEndTime');
