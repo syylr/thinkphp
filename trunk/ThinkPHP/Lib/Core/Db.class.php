@@ -28,10 +28,13 @@ class Db {
     protected $autoFree         = false;
     // 是否显示调试信息 如果启用会在日志文件记录sql语句
     public $debug             = false;
+    // 当前操作所属的模型名
+    protected $model =  '_think_';
     // 是否使用永久连接
     protected $pconnect         = false;
     // 当前SQL指令
     protected $queryStr          = '';
+    protected $modelSql         =  array();
     // 最后插入ID
     protected $lastInsID         = null;
     // 返回或者影响记录数
@@ -299,6 +302,7 @@ class Db {
      +----------------------------------------------------------
      */
     protected function debug() {
+        $this->modelSql[$this->model]   =  $this->queryStr;
         // 记录操作结束时间
         if ( $this->debug ) {
             G('queryEndTime');
@@ -757,6 +761,7 @@ class Db {
      */
     public function insert($data,$options=array(),$replace=false) {
         $values  =  $fields    = array();
+        $this->model  =   $options['model'];
         foreach ($data as $key=>$val){
             $value   =  $this->parseValue($val);
             if(is_scalar($value)) { // 过滤非标量数据
@@ -783,6 +788,7 @@ class Db {
      +----------------------------------------------------------
      */
     public function selectInsert($fields,$table,$options=array()) {
+        $this->model  =   $options['model'];
         if(is_string($fields))   $fields    = explode(',',$fields);
         array_walk($fields, array($this, 'parseKey'));
         $sql   =    'INSERT INTO '.$this->parseTable($table).' ('.implode(',', $fields).') ';
@@ -803,6 +809,7 @@ class Db {
      +----------------------------------------------------------
      */
     public function update($data,$options) {
+        $this->model  =   $options['model'];
         $sql   = 'UPDATE '
             .$this->parseTable($options['table'])
             .$this->parseSet($data)
@@ -825,6 +832,7 @@ class Db {
      +----------------------------------------------------------
      */
     public function delete($options=array()) {
+        $this->model  =   $options['model'];
         $sql   = 'DELETE FROM '
             .$this->parseTable($options['table'])
             .$this->parseWhere(isset($options['where'])?$options['where']:'')
@@ -846,6 +854,7 @@ class Db {
      +----------------------------------------------------------
      */
     public function select($options=array()) {
+        $this->model  =   $options['model'];
         $sql   = $this->buildSelectSql($options);
         $cache  =  isset($options['cache'])?$options['cache']:false;
         if($cache) { // 查询缓存检测
@@ -932,15 +941,17 @@ class Db {
 
     /**
      +----------------------------------------------------------
-     * 获取最近一次查询的sql语句
+     * 获取最近一次查询的sql语句 
+     +----------------------------------------------------------
+     * @param string $model  模型名
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function getLastSql() {
-        return $this->queryStr;
+    public function getLastSql($model='') {
+        return $model?$this->modelSql[$model]:$this->queryStr;
     }
 
     /**
