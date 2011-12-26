@@ -996,6 +996,10 @@ class Db {
         return addslashes($str);
     }
 
+    public function setModel($model){
+        $this->model  =   $model;
+    }
+
    /**
      +----------------------------------------------------------
      * 析构方法
