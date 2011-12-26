@@ -1200,6 +1200,7 @@ class Model {
             if(strpos($sql,'__TABLE__'))
                 $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
         }
+        $this->db->setModel($this->name);
         return $sql;
     }
 
