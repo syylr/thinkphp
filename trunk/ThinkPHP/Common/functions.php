@@ -152,22 +152,29 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
     // URL组装
     $depr = C('URL_PATHINFO_DEPR');
     if($url) {
-        if('/' != $depr) { // 安全替换
-            $url   =  str_replace('/',$depr,$url);
-        }
-        // 解析分组、模块和操作
-        $url   =  trim($url,$depr);
-        $path = explode($depr,$url);
-        $var  =  array();
-        $var[C('VAR_ACTION')] = !empty($path)?array_pop($path):ACTION_NAME;
-        $var[C('VAR_MODULE')] = !empty($path)?array_pop($path):MODULE_NAME;
-        if(C('URL_CASE_INSENSITIVE')) {
-            $var[C('VAR_MODULE')] =  parse_name($var[C('VAR_MODULE')]);
-        }
-        if(C('APP_GROUP_LIST')) {
-            $group   = !empty($path)?array_pop($path):GROUP_NAME;
-            if($group != C('DEFAULT_GROUP')) {
-                $var[C('VAR_GROUP')]  =   $group;
+        if(0=== strpos($url,'/')) {// 定义路由
+            $route   =  true;
+            if('/' != $depr) {
+                $url   =  str_replace('/',$depr,substr($url,1));
+            }
+        }else{
+            if('/' != $depr) { // 安全替换
+                $url   =  str_replace('/',$depr,$url);
+            }
+            // 解析分组、模块和操作
+            $url   =  trim($url,$depr);
+            $path = explode($depr,$url);
+            $var  =  array();
+            $var[C('VAR_ACTION')] = !empty($path)?array_pop($path):ACTION_NAME;
+            $var[C('VAR_MODULE')] = !empty($path)?array_pop($path):MODULE_NAME;
+            if(C('URL_CASE_INSENSITIVE')) {
+                $var[C('VAR_MODULE')] =  parse_name($var[C('VAR_MODULE')]);
+            }
+            if(C('APP_GROUP_LIST')) {
+                $group   = !empty($path)?array_pop($path):GROUP_NAME;
+                if($group != C('DEFAULT_GROUP')) {
+                    $var[C('VAR_GROUP')]  =   $group;
+                }
             }
         }
     }
@@ -179,7 +186,11 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
             $url   .= '&'.$vars;
         }
     }else{ // PATHINFO模式或者兼容URL模式
-        $url   =  __APP__.'/'.implode($depr,array_reverse($var));
+        if(isset($route)) {
+            $url   =  __APP__.'/'.$url;
+        }else{
+            $url   =  __APP__.'/'.implode($depr,array_reverse($var));
+        }
         if(!empty($vars)) { // 添加参数
             $vars = http_build_query($vars);
             $url .= $depr.str_replace(array('=','&'),$depr,$vars);
