@@ -154,8 +154,9 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
     if($url) {
         if(0=== strpos($url,'/')) {// 定义路由
             $route   =  true;
+            $url   =  substr($url,1);
             if('/' != $depr) {
-                $url   =  str_replace('/',$depr,substr($url,1));
+                $url   =  str_replace('/',$depr,$url);
             }
         }else{
             if('/' != $depr) { // 安全替换
