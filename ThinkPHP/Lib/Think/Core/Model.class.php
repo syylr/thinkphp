@@ -43,6 +43,8 @@ class Model extends Think
     protected $pk  = 'id';
     // 数据表前缀
     protected $tablePrefix  =   '';
+    // 数据表后缀
+    protected $tableSuffix  =  '';
     // 模型名称
     protected $name = '';
     // 数据库名称
