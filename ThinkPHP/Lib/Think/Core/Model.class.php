@@ -602,7 +602,7 @@ class Model extends Think
      */
     protected function _parseType(&$data,$key) {
         $fieldType = strtolower($this->fields['_type'][$key]);
-        if(false !== strpos($fieldType,'int')) {
+        if(false === strpos($fieldType,'bigint') && false !== strpos($fieldType,'int')) {
             $data[$key]   =  intval($data[$key]);
         }elseif(false !== strpos($fieldType,'float') || false !== strpos($fieldType,'double')){
             $data[$key]   =  floatval($data[$key]);
