@@ -315,9 +315,12 @@ class  ThinkTemplate extends Think
         $begin = $this->config['taglib_begin'];
         $end   = $this->config['taglib_end'];
         $className = 'TagLib'.ucwords($tagLib);
-        if(!import($className)) {
-            require_cache(dirname(__FILE__).'/TagLib/'.$className.'.class.php');
+        if(is_file(LIB_PATH.'TagLib/'.$className.'.class.php')) {
+            $path = LIB_PATH.'TagLib/';
+        }else{
+            $path = dirname(__FILE__).'/TagLib/';
         }
+        require_cache($path.$className.'.class.php');
         $tLib =  Think::instance($className);
         foreach ($tLib->tags as $name=>$val){
             $tags = array();
