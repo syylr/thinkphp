@@ -65,7 +65,6 @@ define('LANG_PATH', APP_PATH.'Lang/'); //
 define('TEMP_PATH', RUNTIME_PATH.'Temp/'); //
 define('DATA_PATH', RUNTIME_PATH.'Data/'); //
 
-
 // 可在入口文件中重新定义的常量
 if(!defined('CORE_PATH')) define('CORE_PATH',THINK_PATH.'Lib/');
 if(!defined('TMPL_PATH')) define('TMPL_PATH',APP_PATH.'Tpl/');
