@@ -405,18 +405,99 @@ class  ThinkTemplate extends Think
             return C('TMPL_L_DELIM') . $tagStr .C('TMPL_R_DELIM');
         $flag =  substr($tagStr,0,1);
         $name   = substr($tagStr,1);
-        if('$' == $flag){ //解析模板变量 格式 {$varName}
+        if('$' == $flag){
+            //解析模板变量 格式 {$varName}
             return $this->parseVar($name);
-        }elseif(':' == $flag){ // 输出某个函数的结果
+        }elseif(':' == $flag){
+            // 输出某个函数的结果
             return  '<?php echo '.$name.';?>';
-        }elseif('~' == $flag){ // 执行某个函数
+        }elseif('~' == $flag){
+            // 执行某个函数
             return  '<?php '.$name.';?>';
-        }elseif(substr($tagStr,0,2)=='//' || (substr($tagStr,0,2)=='/*' && substr($tagStr,-2)=='*/')){
+        }elseif('&' == $flag){
+            // 输出配置参数
+            return '<?php echo C("'.$name.'");?>';
+        }elseif('%' == $flag){
+            // 输出语言变量
+            return '<?php echo L("'.$name.'");?>';
+		}elseif('@' == $flag){
+			// 输出SESSION变量
+            if(strpos($name,'.')) {
+                $array   =  explode('.',$name);
+	    		return '<?php echo $_SESSION["'.$array[0].'"]["'.$array[1].'"];?>';
+            }else{
+    			return '<?php echo $_SESSION["'.$name.'"];?>';
+            }
+		}elseif('#' == $flag){
+			// 输出COOKIE变量
+            if(strpos($name,'.')) {
+                $array   =  explode('.',$name);
+	    		return '<?php echo $_COOKIE["'.$array[0].'"]["'.$array[1].'"];?>';
+            }else{
+    			return '<?php echo $_COOKIE["'.$name.'"];?>';
+            }
+		}elseif('.' == $flag){
+            // 输出GET变量
+            return '<?php echo $_GET["'.$name.'"];?>';
+        }elseif('^' == $flag){
+            // 输出POST变量
+            return '<?php echo $_POST["'.$name.'"];?>';
+        }elseif('*' == $flag){
+            // 输出常量
+            return '<?php echo constant("'.$name.'");?>';
+        }
+
+        $tagStr = trim($tagStr);
+        if(substr($tagStr,0,2)=='//' || (substr($tagStr,0,2)=='/*' && substr($tagStr,-2)=='*/'))
             //注释标签
             return '';
+
+        //解析标签内容
+        if(!empty($args)) {
+            $tag  =  strtolower($tag);
+            switch($tag){
+                case 'include':
+                    return $this->parseInclude($args);
+                    break;
+                case 'load':
+                    return $this->parseLoad($args);
+                    break;
+                //这里扩展其它标签
+                //…………
+                default:
+                    if(C('TAG_EXTEND_PARSE')) {
+                        $method = C('TAG_EXTEND_PARSE');
+                        if(array_key_exists($tag,$method))
+                            return $method[$tag]($args);
+                    }
+            }
         }
         // 未识别的标签直接返回
         return C('TMPL_L_DELIM') . $tagStr .C('TMPL_R_DELIM');
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 加载js或者css文件
+     * {load:__PUBLIC__/Js/Think/ThinkAjax.js} 加载js文件
+     * {load:__PUBLIC__/Css/style.css} 加载css文件
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param string $params  参数
+     +----------------------------------------------------------
+     * @return string
+     +----------------------------------------------------------
+     */
+    public function parseLoad($str) {
+        $type       = strtolower(substr(strrchr($str, '.'),1));
+        $parseStr = '';
+        if($type=='js') {
+            $parseStr .= '<script type="text/javascript" src="'.$str.'"></script>';
+        }elseif($type=='css') {
+            $parseStr .= '<link rel="stylesheet" type="text/css" href="'.$str.'" />';
+        }
+        return $parseStr;
     }
 
     /**
