@@ -329,6 +329,8 @@ class Model extends Think
             // 没有传递数据，获取当前数据对象的值
             if(!empty($this->data)) {
                 $data    =   $this->data;
+                // 重置数据
+                $this->data = array();
             }else{
                 $this->error = L('_DATA_TYPE_INVALID_');
                 return false;
@@ -425,6 +427,8 @@ class Model extends Think
             // 没有传递数据，获取当前数据对象的值
             if(!empty($this->data)) {
                 $data    =   $this->data;
+                // 重置数据
+                $this->data = array();
             }else{
                 $this->error = L('_DATA_TYPE_INVALID_');
                 return false;
