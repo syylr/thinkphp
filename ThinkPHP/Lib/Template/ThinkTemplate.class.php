@@ -440,6 +440,8 @@ class  ThinkTemplate {
         $name   = substr($tagStr,1);
         if('$' == $flag){ //解析模板变量 格式 {$varName}
             return $this->parseVar($name);
+        }elseif('-' == $flag || '+'== $flag){ // 输出计算
+            return  '<?php echo '.$flag.$name.';?>';
         }elseif(':' == $flag){ // 输出某个函数的结果
             return  '<?php echo '.$name.';?>';
         }elseif('~' == $flag){ // 执行某个函数
