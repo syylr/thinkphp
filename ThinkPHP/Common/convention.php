@@ -145,6 +145,10 @@ return  array(
     'TOKEN_TYPE'            => 'md5',   // 令牌验证哈希规则
     'TOKEN_RESET'               =>   true, // 令牌错误后是否重置
 
+    /* 分页设置 */
+    'PAGE_ROLLPAGE'         => 5,      // 分页显示页数
+    'PAGE_LISTROWS'         => 20,     // 分页每页显示记录数
+
     /* URL设置 */
 	'URL_CASE_INSENSITIVE'  => false,   // 默认false 表示URL区分大小写 true则表示不区分大小写
     'URL_ROUTER_ON'         => false,   // 是否开启URL路由
