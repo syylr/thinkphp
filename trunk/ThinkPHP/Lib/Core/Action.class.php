@@ -200,6 +200,7 @@ abstract class Action {
                 // hack 方式定义扩展操作
                 __hack_action();
             }else{
+                send_http_status(404);
                 // 抛出异常
                 throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
             }
