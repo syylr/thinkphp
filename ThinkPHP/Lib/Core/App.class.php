@@ -85,9 +85,11 @@ class App {
             }else{
                 // 是否定义Empty模块
                 $module = A("Empty");
-                if(!$module)
+                if(!$module){
+                    send_http_status(404);
                     // 模块不存在 抛出异常
                     throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+                }
             }
         }
         //获取当前操作名
