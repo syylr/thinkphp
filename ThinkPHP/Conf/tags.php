@@ -20,7 +20,7 @@ return array(
     'route_check'=>array('CheckRoute', // 路由检测
     ), 
     'app_end'=>array(
-        'ShowPageTrace', // 页面Trace显示
+
     ),
     'action_begin'=>array(),
     'action_end'=>array(),
@@ -38,5 +38,6 @@ return array(
         'ShowRuntime', // 运行时间显示
     ),
     'view_end'=>array(
+        'ShowPageTrace', // 页面Trace显示
     ),
 );
