@@ -229,6 +229,8 @@ abstract class Action extends Think
                 $this->display();
             }else{
                 // 抛出异常
+                header('HTTP/1.1 404 Not Found');
+                header('Status:404 Not Found');
                 throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
             }
         }else{
