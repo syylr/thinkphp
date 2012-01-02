@@ -246,9 +246,12 @@ class App
                 // 是否定义Empty模块
                 $module = A("Empty");
             }
-            if(!$module)
+            if(!$module) {
                 // 模块不存在 抛出异常
+                header('HTTP/1.1 404 Not Found');
+                header('Status:404 Not Found');
                 throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+            }
         }
 
         //获取当前操作名
