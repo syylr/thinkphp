@@ -118,7 +118,6 @@ function build_app_dir() {
             LIB_PATH.'Action/',
             LIB_PATH.'Behavior/',
             LIB_PATH.'Widget/',
-            LIB_PATH.'Filter/',
             );
         mkdirs($dirs);
         // 目录安全写入

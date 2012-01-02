@@ -137,7 +137,7 @@ class CacheFile extends Cache
         $content    =   file_get_contents($filename);
         if( false !== $content) {
             $expire  =  (int)substr($content,8, 12);
-            if($expire != -1 && time() > filemtime($filename) + $expire) {
+            if($expire != 0 && time() > filemtime($filename) + $expire) {
                 //缓存过期删除缓存文件
                 unlink($filename);
                 return false;
