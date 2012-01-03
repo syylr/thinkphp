@@ -18,7 +18,6 @@ return array(
     'ThinkTemplate' => CORE_PATH.'Template/ThinkTemplate.class.php',
     'TagLib'        => CORE_PATH.'Template/TagLib.class.php',
     'Cache'         => CORE_PATH.'Core/Cache.class.php',
-    'Debug'         => CORE_PATH.'Util/Debug.class.php',
-    'Session'       => CORE_PATH.'Util/Session.class.php',
+    'Widget'         => CORE_PATH.'Core/Widget.class.php',
     'TagLibCx'      => CORE_PATH.'Driver/TagLib/TagLibCx.class.php',
 );

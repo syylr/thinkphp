@@ -35,7 +35,7 @@ class Dispatcher {
      */
     static public function dispatch() {
         $urlMode  =  C('URL_MODEL');
-        if(!empty($_GET[C('VAR_PATHINFO')])) {
+        if(!empty($_GET[C('VAR_PATHINFO')])) { // 判断URL里面是否有兼容模式参数
             $_SERVER['PATH_INFO']   = $_GET[C('VAR_PATHINFO')];
             unset($_GET[C('VAR_PATHINFO')]);
         }
