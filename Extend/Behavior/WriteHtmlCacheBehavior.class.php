@@ -22,7 +22,10 @@ class WriteHtmlCacheBehavior extends Behavior {
         );
     // 行为扩展的执行入口必须是run
     public function run(&$content){
-        if(C('HTML_CACHE_ON'))  HtmlCache::writeHtmlCache($content);
+        if(C('HTML_CACHE_ON'))  {
+            import('ORG.Util.HtmlCache');
+            HtmlCache::writeHtmlCache($content);
+        }
     }
 
 }

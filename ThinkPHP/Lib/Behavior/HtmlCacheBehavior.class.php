@@ -12,22 +12,21 @@
 
 /**
  +------------------------------------------------------------------------------
- * 系统行为扩展 静态缓存读取
+ * 系统行为扩展 静态缓存写入
  * 增加配置参数如下：
- *  HTML_CACHE_ON
- *
  +------------------------------------------------------------------------------
  */
-class ReadHtmlCacheBehavior extends Behavior {
-    protected $options   =  array(
-            'HTML_CACHE_ON'=>true,
-        );
-    // 行为扩展的执行入口必须是run
-    public function run(&$params=''){
-        // 开启静态缓存
-        if(C('HTML_CACHE_ON'))  {
-            import('ORG.Util.HtmlCache');
-            HtmlCache::readHTMLCache();
+class HtmlCacheBehavior extends Behavior {
+    // 行为参数定义（默认值） 可在项目配置中覆盖
+    public function run(&$content){
+        if(C('HTML_CACHE_ON') && defined('__HTML__')) {
+            define('HTML_FILE_NAME',HTML_PATH.__HTML__);
+            // 生成静态文件
+            $path = dirname(HTML_FILE_NAME);
+            if(!is_dir($path))   mk_dir($path);
+            if( false === file_put_contents( HTML_FILE_NAME , $content ))
+                throw_exception(L('_CACHE_WRITE_ERROR_').':'.HTML_FILE_NAME);
         }
     }
+
 }

@@ -12,7 +12,6 @@
 
 // 系统默认的核心行为扩展列表文件
 return array(
-    // 陆续添加
     'app_init'=>array(),
     'app_begin'=>array(
         'CheckTemplate', // 模板检测
@@ -21,6 +20,9 @@ return array(
     ), 
     'app_end'=>array(
 
+    ),
+    'path_info'=>array(
+        'HtmlCheck', // 静态缓存检测
     ),
     'action_begin'=>array(),
     'action_end'=>array(),
@@ -35,6 +37,7 @@ return array(
     'view_filter'=>array(
         'ContentReplace', // 模板输出替换
         'TokenBuild',   // 表单令牌
+        'HtmlCache',   // 静态缓存生成
         'ShowRuntime', // 运行时间显示
     ),
     'view_end'=>array(
