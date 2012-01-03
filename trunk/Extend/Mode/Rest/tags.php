@@ -15,9 +15,10 @@ return array(
     'app_begin'=>array(
         'CheckTemplate', // 模板检测
     ),
-    'route_check'=>array('CheckRestRoute'=>MODE_PATH.'Rest/Behavior/CheckRestRouteBehavior.class.php', // 路由检测
+    'route_check'=>array(
+        'CheckRestRoute'=>MODE_PATH.'Rest/Behavior/CheckRestRouteBehavior.class.php', // 路由检测
     ), 
-    'app_end'=>array(
+    'view_end'=>array(
         'ShowPageTrace', // 页面Trace显示
     ),
     'view_template'=>array(
@@ -31,5 +32,7 @@ return array(
         'TokenBuild',   // 表单令牌
         'ShowRuntime', // 运行时间显示
     ),
-    'path_info'=>array('CheckUrlExt'=>MODE_PATH.'Rest/Behavior/CheckUrlExtBehavior.class.php'),
+    'path_info'=>array(
+        'CheckUrlExt'=>MODE_PATH.'Rest/Behavior/CheckUrlExtBehavior.class.php'
+    ),
 );
