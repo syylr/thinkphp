@@ -49,7 +49,7 @@ class ShowPageTraceBehavior extends Behavior {
                 '请求时间'=>  date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']),
                 '当前页面'=>  __SELF__,
                 '请求协议'=>  $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'],
-                '运行信息'=>  $this->showTime();
+                '运行信息'=>  $this->showTime(),
                 '会话ID'    =>  session_id(),
                 '日志记录'=>  count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录',
                 '加载文件'=>  count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2)),
