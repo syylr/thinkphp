@@ -247,10 +247,15 @@ class App
                 $module = A("Empty");
             }
             if(!$module) {
-                // 模块不存在 抛出异常
-                header('HTTP/1.1 404 Not Found');
-                header('Status:404 Not Found');
-                throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+                if(C('APP_DEBUG')) {
+                    // 模块不存在 抛出异常
+                    throw_exception(L('_MODULE_NOT_EXIST_').MODULE_NAME);
+                }else{
+                    header('HTTP/1.1 404 Not Found');
+                    header('Status:404 Not Found');
+                    exit;
+                }
+
             }
         }
 

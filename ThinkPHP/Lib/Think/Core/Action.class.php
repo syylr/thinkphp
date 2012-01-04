@@ -117,7 +117,7 @@ abstract class Action extends Think
      * @return string
      +----------------------------------------------------------
      */
-    protected function fetch($templateFile='',$charset='',$contentType='text/html') {
+    protected function fetch($templateFile='',$charset='',$contentType='') {
         return $this->view->fetch($templateFile,$charset,$contentType);
     }
 
@@ -137,7 +137,7 @@ abstract class Action extends Think
      * @return string
      +----------------------------------------------------------
      */
-    protected function buildHtml($htmlfile='',$htmlpath='',$templateFile='',$charset='',$contentType='text/html') {
+    protected function buildHtml($htmlfile='',$htmlpath='',$templateFile='',$charset='',$contentType='') {
         return $this->view->buildHtml($htmlfile,$htmlpath,$templateFile,$charset,$contentType);
     }
 
@@ -228,10 +228,15 @@ abstract class Action extends Think
                 // 检查是否存在默认模版 如果有直接输出模版
                 $this->display();
             }else{
-                // 抛出异常
-                header('HTTP/1.1 404 Not Found');
-                header('Status:404 Not Found');
-                throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
+                if(C('APP_DEBUG')) {
+                    // 抛出异常
+                    throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
+                }else{
+                    header('HTTP/1.1 404 Not Found');
+                    header('Status:404 Not Found');
+                    exit;
+                }
+
             }
         }else{
             switch(strtolower($method)) {
