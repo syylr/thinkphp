@@ -18,8 +18,8 @@
 class HtmlCacheBehavior extends Behavior {
     // 行为参数定义（默认值） 可在项目配置中覆盖
     public function run(&$content){
-        if(C('HTML_CACHE_ON') && defined('__HTML__')) {
-            define('HTML_FILE_NAME',HTML_PATH.__HTML__);
+        if(C('HTML_CACHE_ON') && defined('HTML_FILE_NAME')) {
+            // define('HTML_FILE_NAME',HTML_PATH.__HTML__);
             // 生成静态文件
             $path = dirname(HTML_FILE_NAME);
             if(!is_dir($path))   mk_dir($path);
