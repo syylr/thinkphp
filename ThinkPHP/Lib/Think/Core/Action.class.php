@@ -227,16 +227,13 @@ abstract class Action extends Think
             }elseif(file_exists_case(C('TMPL_FILE_NAME'))){
                 // 检查是否存在默认模版 如果有直接输出模版
                 $this->display();
+            }elseif(C('APP_DEBUG')) {
+                // 抛出异常
+                throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
             }else{
-                if(C('APP_DEBUG')) {
-                    // 抛出异常
-                    throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
-                }else{
-                    header('HTTP/1.1 404 Not Found');
-                    header('Status:404 Not Found');
-                    exit;
-                }
-
+                header('HTTP/1.1 404 Not Found');
+                header('Status:404 Not Found');
+                exit;
             }
         }else{
             switch(strtolower($method)) {
