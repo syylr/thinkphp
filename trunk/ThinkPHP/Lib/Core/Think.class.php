@@ -142,11 +142,14 @@ class Think {
         }
 
         if(APP_DEBUG) {
-            // 调试模式加载系统默认的开发模式配置文件
+            // 调试模式加载系统默认的配置文件
             C(include THINK_PATH.'Conf/debug.php');
-            if(is_file(CONFIG_PATH.'debug.php'))
+            // 读取调试模式的应用状态
+            $status  =  C('APP_STATUS');
+            // 加载对应的项目配置文件
+            if(is_file(CONFIG_PATH.$status.'.php'))
                 // 允许项目增加开发模式配置定义
-                C(include CONFIG_PATH.'debug.php');
+                C(include CONFIG_PATH.$status.'.php');
         }else{
             // 部署模式下面生成编译文件
             build_runtime_cache($compile);
