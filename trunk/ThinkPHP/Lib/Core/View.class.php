@@ -117,9 +117,9 @@ class View {
         if(empty($charset))  $charset = C('DEFAULT_CHARSET');
         if(empty($contentType)) $contentType = C('TMPL_CONTENT_TYPE');
         // 网页字符编码
-        header("Content-Type:".$contentType."; charset=".$charset);
-        header("Cache-control: private");  //支持页面回跳
-        header("X-Powered-By:ThinkPHP/".THINK_VERSION);
+        header('Content-Type:'.$contentType.'; charset='.$charset);
+        header('Cache-control: private');  //支持页面回跳
+        header('X-Powered-By:ThinkPHP');
         // 输出模板文件
         echo $content;
     }
