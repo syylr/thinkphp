@@ -199,15 +199,12 @@ abstract class Action {
             }elseif(function_exists('__hack_action')) {
                 // hack 方式定义扩展操作
                 __hack_action();
+            }elseif(APP_DEBUG) {
+                // 抛出异常
+                throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
             }else{
-                if(APP_DEBUG) {
-                    // 抛出异常
-                    throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
-                }else{
-                    send_http_status(404);
-                    exit;
-                }
-
+                send_http_status(404);
+                exit;
             }
         }else{
             switch(strtolower($method)) {
