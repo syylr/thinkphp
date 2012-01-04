@@ -378,6 +378,15 @@ abstract class Action {
         }
     }
 
+    // 设置静态生成规则
+    // rule 的定义 就是实际的静态文件名称 不包含后缀
+    // 例如：$this->setHtml($year.$month.'/'.$id.'_'.$page);
+    protected function setHtml($rule) {
+        if(C('HTML_CACHE_ON') && defined('__HTML__')) {
+            define('HTML_FILE_NAME',HTML_PATH.$rule.C('HTML_FILE_SUFFIX'));
+        }
+    }
+
    /**
      +----------------------------------------------------------
      * 析构方法
