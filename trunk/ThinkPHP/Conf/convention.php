@@ -86,7 +86,7 @@ return  array(
     'SHOW_ERROR_MSG'        => false,    // 显示错误信息
 
     /* 日志设置 */
-    'LOG_EXCEPTION_RECORD'  => true,    // 是否记录异常信息日志(默认为开启状态)
+    'LOG_EXCEPTION_RECORD'  => false,    // 是否记录异常信息日志
     'LOG_RECORD'            => false,   // 默认不记录日志
     'LOG_FILE_SIZE'         => 2097152,	// 日志文件大小限制
     'LOG_RECORD_LEVEL'      => 'EMERG,ALERT,CRIT,ERR',// 允许记录的日志级别
