@@ -18,16 +18,11 @@ return array(
     ),
     'route_check'=>array('CheckRoute', // 路由检测
     ), 
-    'app_end'=>array(
-
-    ),
-    'path_info'=>array(
-        'HtmlCheck', // 静态缓存检测
-    ),
+    'app_end'=>array(),
+    'path_info'=>array(),
     'action_begin'=>array(),
     'action_end'=>array(),
-    'view_begin'=>array(
-    ),
+    'view_begin'=>array(),
     'view_template'=>array(
         'LocationTemplate', // 自动定位模板文件
     ),
@@ -37,7 +32,6 @@ return array(
     'view_filter'=>array(
         'ContentReplace', // 模板输出替换
         'TokenBuild',   // 表单令牌
-        'HtmlCache',   // 静态缓存生成
         'ShowRuntime', // 运行时间显示
     ),
     'view_end'=>array(
