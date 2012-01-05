@@ -719,15 +719,14 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param string|array $field  字段名
-     * @param string|array $value  字段值
+     * @param string $value  字段值
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setField($field,$value) {
+    public function setField($field,$value='') {
         if(is_array($field)) {
-            foreach ($field as $key=>$val)
-                $data[$val]    = $value[$key];
+            $data = $field;
         }else{
             $data[$field]   =  $value;
         }
