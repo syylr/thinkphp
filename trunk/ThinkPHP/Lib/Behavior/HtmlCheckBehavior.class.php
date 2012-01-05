@@ -21,7 +21,7 @@ class HtmlCheckBehavior extends Behavior {
             'HTML_FILE_SUFFIX' => '.shtml', // 静态URL后缀
             'HTML_CACHE_TIME' => 60,   // 静态缓存有效期 秒 仅在动态访问有效
         );
-    public function run(&$params='') {
+    public function run(&$params) {
         if(C('HTML_CACHE_ON') && $_SERVER['PATH_INFO']) {
             $part =  pathinfo($_SERVER['PATH_INFO']);
             if(isset($part['extension']) && $part['extension'] == ltrim(C('HTML_FILE_SUFFIX'),'.')) {
