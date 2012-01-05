@@ -680,6 +680,7 @@ function F($name, $value='', $path=DATA_PATH) {
             // 目录不存在则创建
             if (!is_dir($dir))
                 mkdir($dir);
+            $_cache[$name] =   $value;
             return file_put_contents($filename, strip_whitespace("<?php\nreturn " . var_export($value, true) . ";\n?>"));
         }
     }
