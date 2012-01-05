@@ -952,7 +952,7 @@ class Model {
                     switch($auto[3]) {
                         case 'function':    //  使用函数进行填充 字段的值作为参数
                         case 'callback': // 使用回调方法
-                            $args = isset($auto[4])?$auto[4]:array();
+                            $args = isset($auto[4])?(array)$auto[4]:array();
                             if(isset($data[$auto[0]])) {
                                 array_unshift($args,$data[$auto[0]]);
                             }
@@ -1069,7 +1069,7 @@ class Model {
         switch($val[4]) {
             case 'function':// 使用函数进行验证
             case 'callback':// 调用方法进行验证
-                $args = isset($val[6])?$val[6]:array();
+                $args = isset($val[6])?(array)$val[6]:array();
                 array_unshift($args,$data[$val[0]]);
                 if('function'==$val[4]) {
                     return call_user_func_array($val[1], $args);
