@@ -163,7 +163,7 @@ class Db {
         if ( !empty($db_config) && is_string($db_config)) {
             // 如果DSN字符串则进行解析
             $db_config = $this->parseDSN($db_config);
-        }elseif(is_array($db_config)){ // 数组配置
+        }elseif(is_array($db_config)) { // 数组配置
              $db_config = array(
                   'dbms'        => $db_config['db_type'],
                   'username'  => $db_config['db_user'],
@@ -174,9 +174,9 @@ class Db {
                   'dsn'         => $db_config['db_dsn'],
                   'params'   => $db_config['db_params'],
              );
-        }elseif(empty($db_config)){
+        }elseif(empty($db_config)) {
             // 如果配置为空，读取配置文件设置
-            if(C('DB_DSN')) { // 如果设置了DB_DSN 则优先
+            if( C('DB_DSN') && 'pdo' != strtolower(C('DB_TYPE')) ) { // 如果设置了DB_DSN 则优先
                 $db_config =  $this->parseDSN(C('DB_DSN'));
             }else{
                 $db_config = array (
