@@ -232,16 +232,20 @@ function D($name='') {
   +----------------------------------------------------------
  * M函数用于实例化一个没有模型文件的Model
   +----------------------------------------------------------
- * @param string name Model名称
+ * @param string name Model名称 支持指定基础模型 例如 MongoModel:User
  * @param string tablePrefix 表前缀
  * @param mixed $connection 数据库连接信息
- * @param string $class 实例化的基础模型类名 默认为Model
   +----------------------------------------------------------
  * @return Model
   +----------------------------------------------------------
  */
-function M($name='', $tablePrefix='',$connection='',$class='Model') {
+function M($name='', $tablePrefix='',$connection='') {
     static $_model = array();
+    if(strpos($name,':')) {
+        list($class,$name)    =  explode(':',$name);
+    }else{
+        $class   =   'Model';
+    }
     if (!isset($_model[$name . '_' . $class]))
         $_model[$name . '_' . $class] = new $class($name,$tablePrefix,$connection);
     return $_model[$name . '_' . $class];
