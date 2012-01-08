@@ -235,13 +235,13 @@ function D($name='') {
  * @param string name Model名称
  * @param string tablePrefix 表前缀
  * @param mixed $connection 数据库连接信息
+ * @param string $class 实例化的基础模型类名 默认为Model
   +----------------------------------------------------------
  * @return Model
   +----------------------------------------------------------
  */
-function M($name='', $tablePrefix='',$connection='') {
+function M($name='', $tablePrefix='',$connection='',$class='Model') {
     static $_model = array();
-    $class   =   C('DEFAULT_MODEL');
     if (!isset($_model[$name . '_' . $class]))
         $_model[$name . '_' . $class] = new $class($name,$tablePrefix,$connection);
     return $_model[$name . '_' . $class];
