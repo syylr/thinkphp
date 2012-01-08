@@ -643,7 +643,9 @@ class AdvModel extends Model {
                             unset($data[$name]);
                         }
                     }
-                    $data[$key] =   serialize($serialize);
+                    if(!empty($serialize)) {
+                        $data[$key] =   serialize($serialize);
+                    }
                 }
             }
         }
