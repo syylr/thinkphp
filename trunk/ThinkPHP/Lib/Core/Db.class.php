@@ -176,16 +176,20 @@ class Db {
              );
         }elseif(empty($db_config)){
             // 如果配置为空，读取配置文件设置
-            $db_config = array (
-                'dbms'        =>   C('DB_TYPE'),
-                'username'  =>   C('DB_USER'),
-                'password'   =>   C('DB_PWD'),
-                'hostname'  =>   C('DB_HOST'),
-                'hostport'    =>   C('DB_PORT'),
-                'database'   =>   C('DB_NAME'),
-                'dsn'          =>   C('DB_DSN'),
-                'params'     =>   C('DB_PARAMS'),
-            );
+            if(C('DB_DSN')) { // 如果设置了DB_DSN 则优先
+                $db_config =  $this->parseDSN(C('DB_DSN'));
+            }else{
+                $db_config = array (
+                    'dbms'        =>   C('DB_TYPE'),
+                    'username'  =>   C('DB_USER'),
+                    'password'   =>   C('DB_PWD'),
+                    'hostname'  =>   C('DB_HOST'),
+                    'hostport'    =>   C('DB_PORT'),
+                    'database'   =>   C('DB_NAME'),
+                    'dsn'          =>   C('DB_DSN'),
+                    'params'     =>   C('DB_PARAMS'),
+                );
+            }
         }
         return $db_config;
     }
