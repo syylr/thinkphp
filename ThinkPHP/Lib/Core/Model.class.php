@@ -689,7 +689,7 @@ class Model {
      * @param array $data 当前数据
      * @param integer $type 类型 0 写入 1 读取
      +----------------------------------------------------------
-     * @return void
+     * @return array
      +----------------------------------------------------------
      */
     public function parseFieldsMap(&$data,$type=1) {
@@ -709,6 +709,7 @@ class Model {
                 }
             }
         }
+        return $data;
     }
 
     /**
