@@ -692,7 +692,7 @@ class Model {
      * @return array
      +----------------------------------------------------------
      */
-    public function parseFieldsMap(&$data,$type=1) {
+    public function parseFieldsMap($data,$type=1) {
         // 检查字段映射
         if(!empty($this->_map)) {
             foreach ($this->_map as $key=>$val){
@@ -840,7 +840,7 @@ class Model {
         }
 
         // 检查字段映射
-        $this->parseFieldsMap($data,0);
+        $data = $this->parseFieldsMap($data,0);
 
         // 状态
         $type = $type?$type:(!empty($data[$this->getPk()])?self::MODEL_UPDATE:self::MODEL_INSERT);
