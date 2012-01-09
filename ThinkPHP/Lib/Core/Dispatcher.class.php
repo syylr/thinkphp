@@ -88,8 +88,8 @@ class Dispatcher {
         // 分析PATHINFO信息
         $depr = C('URL_PATHINFO_DEPR');
         if(!empty($_SERVER['PATH_INFO'])) {
-            if(C('URL_HTML_SUFFIX') && !empty($_SERVER['PATH_INFO'])) {
-                $_SERVER['PATH_INFO'] = preg_replace('/\.'.trim(C('URL_HTML_SUFFIX'),'.').'$/', '', $_SERVER['PATH_INFO']);
+            if(C('URL_HTML_SUFFIX')) {
+                $_SERVER['PATH_INFO'] = preg_replace('/\.'.trim(C('URL_HTML_SUFFIX'),'.').'$/i', '', $_SERVER['PATH_INFO']);
             }
             if(!self::routerCheck()){   // 检测路由规则 如果没有则按默认规则调度URL
                 $paths = explode($depr,trim($_SERVER['PATH_INFO'],'/'));
