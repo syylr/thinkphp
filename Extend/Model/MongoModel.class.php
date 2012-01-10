@@ -51,7 +51,7 @@ class MongoModel extends Model{
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('field','table','where','order','limit','page'),true)) {
+        if(in_array(strtolower($method),array('table','where','order','limit','page'),true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
@@ -163,7 +163,6 @@ class MongoModel extends Model{
 
     // 查询成功后的回调方法
     protected function _after_select(&$resultSet,$options) {
-        $resultSet   =  iterator_to_array($resultSet);
         array_walk($resultSet,array($this,'checkMongoId'));
     }
 
