@@ -142,7 +142,7 @@ class UploadFile {//类定义开始
             $this->error = '非法图像文件';
             return false;
         }
-        if(!move_uploaded_file($file['tmp_name'], auto_charset($filename,'utf-8','gbk'))) {
+        if(!move_uploaded_file($file['tmp_name'], $this->autoCharset($filename,'utf-8','gbk'))) {
             $this->error = '文件上传保存错误！';
             return false;
         }
@@ -236,7 +236,7 @@ class UploadFile {//类定义开始
                 if(!$this->save($file)) return false;
                 if(function_exists($this->hashType)) {
                     $fun =  $this->hashType;
-                    $file['hash']   =  $fun(auto_charset($file['savepath'].$file['savename'],'utf-8','gbk'));
+                    $file['hash']   =  $fun($this->autoCharset($file['savepath'].$file['savename'],'utf-8','gbk'));
                 }
                 //上传成功后保存文件信息，供其他地方调用
                 unset($file['tmp_name'],$file['error']);
@@ -312,7 +312,7 @@ class UploadFile {//类定义开始
                 if(!$this->save($file)) return false;
                 if(function_exists($this->hashType)) {
                     $fun =  $this->hashType;
-                    $file['hash']   =  $fun(auto_charset($file['savepath'].$file['savename'],'utf-8','gbk'));
+                    $file['hash']   =  $fun($this->autoCharset($file['savepath'].$file['savename'],'utf-8','gbk'));
                 }
                 unset($file['tmp_name'],$file['error']);
                 $info[] = $file;
@@ -500,6 +500,23 @@ class UploadFile {//类定义开始
             return false;
         }
         return true;
+    }
+
+    // 自动转换字符集 支持数组转换
+    private function autoCharset($fContents, $from='gbk', $to='utf-8') {
+        $from = strtoupper($from) == 'UTF8' ? 'utf-8' : $from;
+        $to = strtoupper($to) == 'UTF8' ? 'utf-8' : $to;
+        if (strtoupper($from) === strtoupper($to) || empty($fContents) || (is_scalar($fContents) && !is_string($fContents))) {
+            //如果编码相同或者非字符串标量则不转换
+            return $fContents;
+        }
+        if (function_exists('mb_convert_encoding')) {
+            return mb_convert_encoding($fContents, $to, $from);
+        } elseif (function_exists('iconv')) {
+            return iconv($from, $to, $fContents);
+        } else {
+            return $fContents;
+        }
     }
 
     /**
