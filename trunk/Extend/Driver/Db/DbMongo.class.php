@@ -498,6 +498,14 @@ class DbMongo extends Db{
         if(isset($options['table'])) {
             $this->switchCollection($options['table']);
         }
+        $cache  =  isset($options['cache'])?$options['cache']:false;
+        if($cache) { // 查询缓存检测
+            $key =  is_string($cache['key'])?$cache['key']:md5(serialize($options));
+            $value   =  S($key,'','',$cache['type']);
+            if(false !== $value) {
+                return $value;
+            }
+        }
         N('db_query',1);
         $query  =  $this->parseWhere($options['where']);
         $fields    = $this->parseField($options['field']);
@@ -512,6 +520,9 @@ class DbMongo extends Db{
             G('queryStartTime');
             $result   = $this->_collection->findOne($query,$fields);
             $this->debug();
+            if($cache && $result ) { // 查询缓存写入
+                S($key,$result,$cache['expire'],$cache['type']);
+            }
             return $result;
         } catch (MongoCursorException $e) {
             throw_exception($e->getMessage());
