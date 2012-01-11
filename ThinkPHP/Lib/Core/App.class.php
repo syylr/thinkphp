@@ -39,8 +39,6 @@ class App {
         date_default_timezone_set(C('DEFAULT_TIMEZONE'));
         // 加载动态项目公共文件和配置
         load_ext_file();
-        // 项目初始化标签
-        tag('app_init');
         // URL调度
         Dispatcher::dispatch();
 
@@ -123,6 +121,8 @@ class App {
      +----------------------------------------------------------
      */
     static public function run() {
+        // 项目初始化标签
+        tag('app_init');
         App::init();
         // 项目开始标签
         tag('app_begin');
