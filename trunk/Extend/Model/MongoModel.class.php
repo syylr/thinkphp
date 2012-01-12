@@ -152,7 +152,7 @@ class MongoModel extends Model{
         if($this->_autoInc && $this->_idType== self::TYPE_INT) { // 主键自动增长
             $pk   =  $this->getPk();
             if(!isset($data[$pk])) {
-                $data[$pk]   =  $this->db->mongo_last_id($pk);
+                $data[$pk]   =  $this->db->mongo_next_id($pk);
             }
         }
     }
