@@ -46,9 +46,15 @@ class CheckRouteBehavior extends Behavior {
                     $match = true; // 是否匹配
                     foreach ($m2 as $key=>$val){
                         if(':' == substr($val,0,1)) {// 动态变量
-                            if(strpos($val,'|')) {
+                            if(strpos($val,'\\')) {
                                 $type = substr($val,-1);
                                 if('d'==$type && !is_numeric($m1[$key])) {
+                                    $match = false;
+                                    break;
+                                }
+                            }elseif(strpos($val,'^')){
+                                $array   =  explode('|',substr(strstr($val,'^'),1));
+                                if(in_array($m1[$key],$array)) {
                                     $match = false;
                                     break;
                                 }
@@ -109,7 +115,13 @@ class CheckRouteBehavior extends Behavior {
         $rule =  explode('/',$rule);
         foreach ($rule as $item){
             if(0===strpos($item,':')) { // 动态变量获取
-                $var  =  strpos($item,'|')?substr($item,1,-2):substr($item,1);
+                if($pos = strpos($item,'^') ) {
+                    $var  =  substr($item,1,$pos-1);
+                }elseif($pos = strpos($item,'\\')){
+                    $var  =  substr($item,1,-2);
+                }else{
+                    $var  =  substr($item,1);
+                }
                 $matches[$var] = array_shift($paths);
             }else{ // 过滤URL中的静态变量
                 array_shift($paths);
