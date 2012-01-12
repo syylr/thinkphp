@@ -25,9 +25,9 @@ class CheckRouteBehavior extends Behavior {
     // 行为扩展的执行入口必须是run
     public function run(&$return){
         // 是否开启路由使用
-        if(!C('URL_ROUTER_ON')) $return = false;
+        if(!C('URL_ROUTER_ON')) return $return = false;// 即时return，以免继续执行
         $regx = trim($_SERVER['PATH_INFO'],'/');
-        if(empty($regx)) $return = false;
+        if(empty($regx)) return $return = true;// 为true才可以跳过判断
         // 路由定义文件优先于config中的配置定义
         $routes = C('URL_ROUTE_RULES');
         // 路由处理
@@ -96,7 +96,7 @@ class CheckRouteBehavior extends Behavior {
     // '路由规则'=>array('外部地址','重定向代码')
     // 路由规则中 :开头 表示动态变量
     // 外部地址中可以用动态变量 采用 :1 :2 的方式
-    // 'news/:month/:day/:id'=>array('News/read?cate=1','status=1'), 
+    // 'news/:month/:day/:id'=>array('News/read?cate=1','status=1'),
     // 'new/:id'=>array('/new.php?id=:1',301), 重定向
     private function parseRule($rule,$route,$regx) {
         // 获取路由地址规则
