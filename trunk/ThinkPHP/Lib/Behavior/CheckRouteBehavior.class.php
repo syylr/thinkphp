@@ -24,10 +24,11 @@ class CheckRouteBehavior extends Behavior {
 
     // 行为扩展的执行入口必须是run
     public function run(&$return){
-        // 是否开启路由使用
-        if(!C('URL_ROUTER_ON')) return $return = false;// 即时return，以免继续执行
+        // 优先检测是否存在PATH_INFO，更能为普通检测所用
         $regx = trim($_SERVER['PATH_INFO'],'/');
         if(empty($regx)) return $return = true;// 为true才可以跳过判断
+        // 是否开启路由使用
+        if(!C('URL_ROUTER_ON')) return $return = false;// 即时return，以免继续执行
         // 路由定义文件优先于config中的配置定义
         $routes = C('URL_ROUTE_RULES');
         // 路由处理
