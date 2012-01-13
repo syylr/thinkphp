@@ -124,7 +124,7 @@ class Dispatcher {
         // URL常量
         define('__SELF__',$_SERVER['REQUEST_URI']);
         // 当前项目地址
-        define('__APP__',PHP_FILE);
+        define('__APP__',strip_tags(PHP_FILE));
         // 当前模块和分组地址
         $module = defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
         if(defined('GROUP_NAME')) {
@@ -173,7 +173,7 @@ class Dispatcher {
             // 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
             $module = ucfirst(parse_name(P_MODULE_NAME,1));
         }
-        return $module;
+        return strip_tags($module);
     }
 
     /**
@@ -191,7 +191,7 @@ class Dispatcher {
             (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
         unset($_POST[$var],$_GET[$var]);
         define('P_ACTION_NAME',$action);
-        return C('URL_CASE_INSENSITIVE')?strtolower($action):$action;
+        return strip_tags(C('URL_CASE_INSENSITIVE')?strtolower($action):$action);
     }
 
     /**
@@ -206,7 +206,7 @@ class Dispatcher {
     static private function getGroup($var) {
         $group   = (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_GROUP'));
         unset($_GET[$var]);
-        return C('URL_CASE_INSENSITIVE') ?ucfirst(strtolower($group)):$group;
+        return strip_tags(C('URL_CASE_INSENSITIVE') ?ucfirst(strtolower($group)):$group);
     }
 
 }
