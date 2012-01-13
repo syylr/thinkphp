@@ -26,13 +26,13 @@
 if (!defined('THINK_PATH')) exit();
 return  array(
     /* 项目设定 */
-    'APP_STATUS'          =>   'debug',  // 应用调试模式状态 调试模式开启后有效 默认为debug 可扩展 并自动加载对应的配置文件
+    'APP_STATUS'            => 'debug',  // 应用调试模式状态 调试模式开启后有效 默认为debug 可扩展 并自动加载对应的配置文件
     'APP_FILE_CASE'         => false,   // 是否检查文件的大小写 对Windows平台有效
     'APP_AUTOLOAD_PATH'     => '',// 自动加载机制的自动搜索路径,注意搜索顺序
-    'APP_TAGS_ON'   => true, // 系统标签扩展开关
+    'APP_TAGS_ON'           => true, // 系统标签扩展开关
     'APP_SUB_DOMAIN_DEPLOY' => false,   // 是否开启子域名部署
-    'APP_SUB_DOMAIN_RULES'=>array(), // 子域名部署规则
-    'APP_SUB_DOMAIN_DENY'=>array(), //  子域名禁用列表
+    'APP_SUB_DOMAIN_RULES'  => array(), // 子域名部署规则
+    'APP_SUB_DOMAIN_DENY'   => array(), //  子域名禁用列表
     'APP_GROUP_LIST'        => '',      // 项目分组设定,多个组之间用逗号分隔,例如'Home,Admin'
 
     /* Cookie设置 */
@@ -50,7 +50,7 @@ return  array(
     'DEFAULT_CHARSET'       => 'utf-8', // 默认输出编码
     'DEFAULT_TIMEZONE'      => 'PRC',	// 默认时区
     'DEFAULT_AJAX_RETURN'   => 'JSON',  // 默认AJAX 数据返回格式,可选JSON XML ...
-    'DEFAULT_FILTER' =>'htmlspecialchars', // 默认参数过滤方法 用于 $this->_get('变量名');$this->_post('变量名')...
+    'DEFAULT_FILTER'        => 'htmlspecialchars', // 默认参数过滤方法 用于 $this->_get('变量名');$this->_post('变量名')...
 
     /* 数据库设置 */
     'DB_TYPE'               => 'mysql',     // 数据库类型
@@ -66,10 +66,10 @@ return  array(
     'DB_CHARSET'            => 'utf8',      // 数据库编码默认采用utf8
     'DB_DEPLOY_TYPE'        => 0, // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
     'DB_RW_SEPARATE'        => false,       // 数据库读写是否分离 主从式有效
-    'DB_MASTER_NUM'       =>  1, // 读写分离后 主服务器数量
-    'DB_SQL_BUILD_CACHE'      =>   false, // 数据库查询的SQL创建缓存
-    'DB_SQL_BUILD_QUEUE'       =>   'file',   // SQL缓存队列的缓存方式 支持 file xcache和apc
-    'DB_SQL_BUILD_LENGTH'      =>  20, // SQL缓存的队列长度
+    'DB_MASTER_NUM'         => 1, // 读写分离后 主服务器数量
+    'DB_SQL_BUILD_CACHE'    => false, // 数据库查询的SQL创建缓存
+    'DB_SQL_BUILD_QUEUE'    => 'file',   // SQL缓存队列的缓存方式 支持 file xcache和apc
+    'DB_SQL_BUILD_LENGTH'   => 20, // SQL缓存的队列长度
 
     /* 数据缓存设置 */
     'DATA_CACHE_TIME'		=> 0,      // 数据缓存有效期 0表示永久缓存
@@ -81,8 +81,8 @@ return  array(
     'DATA_PATH_LEVEL'       => 1,        // 子目录缓存级别
 
     /* 错误设置 */
-    'ERROR_MESSAGE' => '您浏览的页面暂时发生了错误！请稍后再试～',//错误显示信息,非调试模式有效
-    'ERROR_PAGE'    => '',	// 错误定向页面
+    'ERROR_MESSAGE'         => '您浏览的页面暂时发生了错误！请稍后再试～',//错误显示信息,非调试模式有效
+    'ERROR_PAGE'            => '',	// 错误定向页面
     'SHOW_ERROR_MSG'        => false,    // 显示错误信息
 
     /* 日志设置 */
@@ -93,7 +93,7 @@ return  array(
 
     /* SESSION设置 */
     'SESSION_AUTO_START'    => true,    // 是否自动开启Session
-    'VAR_SESSION_ID'=>'session_id',     //sessionID的提交变量
+    'VAR_SESSION_ID'        => 'session_id',     //sessionID的提交变量
 
     /* 模板引擎设置 */
     'TMPL_CONTENT_TYPE'     => 'text/html', // 默认模板输出类型
@@ -103,7 +103,7 @@ return  array(
 
     /* URL设置 */
 	'URL_CASE_INSENSITIVE'  => false,   // 默认false 表示URL区分大小写 true则表示不区分大小写
-    'URL_MODEL'      => 1,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：
+    'URL_MODEL'             => 1,       // URL访问模式,可选参数0、1、2、3,代表以下四种模式：
     // 0 (普通模式); 1 (PATHINFO 模式); 2 (REWRITE  模式); 3 (兼容模式)  默认为PATHINFO 模式，提供最好的用户体验和SEO支持
     'URL_PATHINFO_DEPR'     => '/',	// PATHINFO模式下，各参数之间的分割符号
     'URL_HTML_SUFFIX'       => '',  // URL伪静态后缀设置
