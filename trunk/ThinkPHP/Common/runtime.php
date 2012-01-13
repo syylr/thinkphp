@@ -74,9 +74,6 @@ if(!defined('MODE_PATH')) define('MODE_PATH',EXTEND_PATH.'Mode/');
 if(!defined('VENDOR_PATH')) define('VENDOR_PATH',EXTEND_PATH.'Vendor/');
 if(!defined('LIBRARY_PATH')) define('LIBRARY_PATH',EXTEND_PATH.'Library/');
 
-// 为了方便导入第三方类库 设置Vendor目录到include_path
-set_include_path(get_include_path() . PATH_SEPARATOR . VENDOR_PATH);
-
 // 加载运行时所需要的文件 并负责自动目录生成
 function load_runtime_file() {
     // 加载系统基础函数库
