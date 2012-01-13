@@ -122,7 +122,7 @@ class Dispatcher {
         define('MODULE_NAME',self::getModule(C('VAR_MODULE')));
         define('ACTION_NAME',self::getAction(C('VAR_ACTION')));
         // URL常量
-        define('__SELF__',$_SERVER['REQUEST_URI']);
+        define('__SELF__',strip_tags($_SERVER['REQUEST_URI']));
         // 当前项目地址
         define('__APP__',strip_tags(PHP_FILE));
         // 当前模块和分组地址
