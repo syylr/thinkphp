@@ -19,7 +19,7 @@
 [改进] SHOW_ERROR_MSG 默认由true改为false 开启调试模式后为true
 [改进] TMPL_STRIP_SPACE 默认改为true
 [改进] TMPL_ACTION_ERROR和TMPL_ACTION_SUCCESS 惯例设置更改为THINK_PATH.'/Tpl/dispatch_jump.html 采用内置模板
-[调整] APP_GROUP_LIST 配置参数用法改为字符串方式 用逗号分隔 并兼容原来数组方式定义
+[调整] APP_CONFIG_LIST 配置参数用法改为字符串方式 用逗号分隔 并兼容原来数组方式定义
 [调整] LOG_RECORD_LEVEL 配置参数用法改为字符串方式 用逗号分隔 并兼容原来数组方式定义
 [删除] 废除TAG_EXTEND_PARS 参数
 [删除] APP_AUTOLOAD_REG 参数废弃 改为自动检测
