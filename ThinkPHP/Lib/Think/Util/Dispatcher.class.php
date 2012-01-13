@@ -114,10 +114,10 @@ class Dispatcher extends Think
         define('MODULE_NAME',self::getModule(C('VAR_MODULE')));
         define('ACTION_NAME',self::getAction(C('VAR_ACTION')));
         // URL常量
-        define('__SELF__',$_SERVER['REQUEST_URI']);
+        define('__SELF__',strip_tags($_SERVER['REQUEST_URI']));
         define('__INFO__',$_SERVER['PATH_INFO']);
         // 当前项目地址
-        define('__APP__',PHP_FILE);
+        define('__APP__',strip_tags(PHP_FILE));
         // 当前模块和分组地址
         $module = defined('P_MODULE_NAME')?P_MODULE_NAME:MODULE_NAME;
         if(defined('GROUP_NAME')) {
@@ -269,7 +269,7 @@ class Dispatcher extends Think
             $module = ucfirst(parse_name(P_MODULE_NAME,1));
         }
         unset($_GET[$var]);
-        return $module;
+        return strip_tags($module);
     }
 
     /**
@@ -287,7 +287,7 @@ class Dispatcher extends Think
             (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_ACTION'));
         unset($_POST[$var],$_GET[$var]);
         define('P_ACTION_NAME',$action);
-        return C('URL_CASE_INSENSITIVE')?strtolower($action):$action;
+        return strip_tags(C('URL_CASE_INSENSITIVE')?strtolower($action):$action);
     }
 
     /**
@@ -302,7 +302,7 @@ class Dispatcher extends Think
     static private function getGroup($var) {
         $group   = (!empty($_GET[$var])?$_GET[$var]:C('DEFAULT_GROUP'));
         unset($_GET[$var]);
-        return ucfirst(strtolower($group));
+        return strip_tags(ucfirst(strtolower($group)));
     }
 
 }//类定义结束
