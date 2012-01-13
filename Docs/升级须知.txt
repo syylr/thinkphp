@@ -23,6 +23,7 @@
 [调整] TMPL_ACTION_ERROR和TMPL_ACTION_SUCCESS默认采用内置的错误提示模板
 [调整] TMPL_STRIP_SPACE 默认为true
 [调整] APP_AUTOLOAD_PATH参数设置最后不需要加. 例如 ORG.Util 原先为ORG.Util.
+[调整] DEFAULT_THEME 参数默认为空，升级原有项目需要设置为default
 [删除] 删除原调试模式配置参数APP_DEBUG
 [删除] 删除 APP_GROUP_DEPR 参数
 [删除] 删除APP_CONFIG_LIST 参数
