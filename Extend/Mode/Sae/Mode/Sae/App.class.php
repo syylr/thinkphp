@@ -42,7 +42,7 @@ class App
         //[/RUNTIME]
 
         // 加载动态项目配置文件
-        if(is_file(CONFIG_PATH.'extend.php'))  C(include CONFIG_PATH.'extend.php');
+        if(is_file(CONF_PATH.'extend.php'))  C(include CONF_PATH.'extend.php');
         // 加载动态项目公共文件
         if(is_file(COMMON_PATH.'extend.php')) include COMMON_PATH.'extend.php';
 
@@ -78,8 +78,8 @@ class App
         // 加载惯例配置文件
         C(include THINK_PATH.'Common/convention.php');
         // 加载项目配置文件
-        if(is_file(CONFIG_PATH.'config.php'))
-            C(include CONFIG_PATH.'config.php');
+        if(is_file(CONF_PATH.'config.php'))
+            C(include CONF_PATH.'config.php');
         $common   = '';
         // 加载项目公共文件
         if(is_file(COMMON_PATH.'common.php')) {
@@ -92,7 +92,7 @@ class App
         if(is_string($configs)) 
             $configs =  explode(',',$configs);
         foreach ($configs as $config){
-            $file   = CONFIG_PATH.$config.'.php';
+            $file   = CONF_PATH.$config.'.php';
             if(is_file($file))
                 C($config,array_change_key_case(include $file));
         }
@@ -100,9 +100,9 @@ class App
         if(APP_DEBUG) {
             // 调试模式加载系统默认的开发模式配置文件
             C(include THINK_PATH.'Common/debug.php');
-            if(is_file(CONFIG_PATH.'debug.php'))
+            if(is_file(CONF_PATH.'debug.php'))
                 // 允许项目增加开发模式配置定义
-                C(include CONFIG_PATH.'debug.php');
+                C(include CONF_PATH.'debug.php');
             //SEA模式的一些固定配置
              C(include MODE_PATH.'Sae/saeConfig.php');
         }else{

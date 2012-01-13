@@ -75,8 +75,8 @@ class Think {
         }
 
         // 加载项目配置文件
-        if(is_file(CONFIG_PATH.'config.php'))
-            C(include CONFIG_PATH.'config.php');
+        if(is_file(CONF_PATH.'config.php'))
+            C(include CONF_PATH.'config.php');
 
         // 加载框架底层语言包
         L(include THINK_PATH.'Lang/'.strtolower(C('DEFAULT_LANG')).'.php');
@@ -93,9 +93,9 @@ class Think {
         // 加载应用行为定义
         if(isset($mode['tags'])) {
             C('tags', is_array($mode['tags'])?$mode['tags']:include $mode['tags']);
-        }elseif(is_file(CONFIG_PATH.'tags.php')){
+        }elseif(is_file(CONF_PATH.'tags.php')){
             // 默认加载项目配置目录的tags文件定义
-            C('tags', include CONFIG_PATH.'tags.php');
+            C('tags', include CONF_PATH.'tags.php');
         }
 
         $compile   = '';
@@ -132,9 +132,9 @@ class Think {
         // 加载应用别名定义
         if(isset($mode['alias'])) {
             $alias = is_array($mode['alias'])?$mode['alias']:include $mode['alias'];
-        }elseif(is_file(CONFIG_PATH.'alias.php')){ 
+        }elseif(is_file(CONF_PATH.'alias.php')){ 
             // 没有定义 则获取项目配置目录的alias别名定义文件
-            $alias = include CONFIG_PATH.'alias.php';
+            $alias = include CONF_PATH.'alias.php';
         }
         if(is_array($alias)) {
             alias_import($alias);
@@ -147,9 +147,9 @@ class Think {
             // 读取调试模式的应用状态
             $status  =  C('APP_STATUS');
             // 加载对应的项目配置文件
-            if(is_file(CONFIG_PATH.$status.'.php'))
+            if(is_file(CONF_PATH.$status.'.php'))
                 // 允许项目增加开发模式配置定义
-                C(include CONFIG_PATH.$status.'.php');
+                C(include CONF_PATH.$status.'.php');
         }else{
             // 部署模式下面生成编译文件
             build_runtime_cache($compile);

@@ -456,7 +456,7 @@ class View extends Think{
     private function showTrace() {
         // 显示页面Trace信息 读取Trace定义文件
         // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
-        $traceFile  =   CONFIG_PATH.'trace.php';
+        $traceFile  =   CONF_PATH.'trace.php';
         $_trace =   is_file($traceFile)? include $traceFile : array();
          // 系统默认显示信息
         $this->trace('当前页面',    __SELF__);

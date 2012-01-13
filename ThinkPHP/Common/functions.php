@@ -425,7 +425,7 @@ function load_ext_file() {
         $configs =  C('LOAD_EXT_CONFIG');
         if(is_string($configs)) $configs =  explode(',',$configs);
         foreach ($configs as $key=>$config){
-            $file   = CONFIG_PATH.$config.'.php';
+            $file   = CONF_PATH.$config.'.php';
             if(is_file($file)) {
                 is_numeric($key)?C(include $file):C($key,include $file);
             }

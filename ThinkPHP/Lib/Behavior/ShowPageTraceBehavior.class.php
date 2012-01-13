@@ -37,7 +37,7 @@ class ShowPageTraceBehavior extends Behavior {
      */
     private function showTrace() {
         // 显示页面Trace信息 读取Trace定义文件
-        $traceFile  =   CONFIG_PATH.'trace.php';
+        $traceFile  =   CONF_PATH.'trace.php';
         if(is_file($traceFile)) {
             // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
             $_trace  =  include $traceFile;
