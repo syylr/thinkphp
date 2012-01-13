@@ -20,9 +20,9 @@ function load_think_mode() {
     // 加载路径定义文件
     require defined('PATH_DEFINE_FILE')?PATH_DEFINE_FILE:THINK_PATH.'Common/paths.php';
     // 读取核心编译文件列表
-    if(is_file(CONFIG_PATH.'core.php')) {
+    if(is_file(CONF_PATH.'core.php')) {
         // 加载项目自定义的核心编译文件列表
-        $list   =  include CONFIG_PATH.'core.php';
+        $list   =  include CONF_PATH.'core.php';
     }elseif(defined('THINK_MODE')) {
         // 根据设置的运行模式加载不同的核心编译文件
         $list   =  include MODE_PATH.''.strtolower(THINK_MODE).'.php';
@@ -43,9 +43,9 @@ function load_think_mode() {
 // 创建编译缓存
 function build_runtime_cache($append='') {
     // 读取核心编译文件列表
-    if(is_file(CONFIG_PATH.'core.php')) {
+    if(is_file(CONF_PATH.'core.php')) {
         // 加载项目自定义的核心编译文件列表
-        $list   =  include CONFIG_PATH.'core.php';
+        $list   =  include CONF_PATH.'core.php';
     }elseif(defined('THINK_MODE')) {
         // 根据设置的运行模式加载不同的核心编译文件
         $list   =  include MODE_PATH.''.strtolower(THINK_MODE).'.php';

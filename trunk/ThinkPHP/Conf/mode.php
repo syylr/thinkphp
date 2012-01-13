@@ -39,13 +39,13 @@ return array(
     ),*/
 
     // 项目别名定义文件 [支持数组直接定义或者文件名定义]
-    // 例如 'alias'         =>    CONFIG_PATH.'alias.php', 
+    // 例如 'alias'         =>    CONF_PATH.'alias.php', 
 
     // 系统行为定义文件 [必须 支持数组直接定义或者文件名定义 ]
     // 例如 'extends'    =>    THINK_PATH.'Conf/tags.php', 
 
     // 项目应用行为定义文件 [支持数组直接定义或者文件名定义]
-    // 例如 'tags'         =>   CONFIG_PATH.'tags.php', 
+    // 例如 'tags'         =>   CONF_PATH.'tags.php', 
 
     // 项目公共文件
     // 例如 'common'   =>    COMMON_PATH.'common.php', 
