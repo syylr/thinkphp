@@ -59,7 +59,7 @@ if(!IS_CLI) {
 define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
 define('LIB_PATH',    APP_PATH.'Lib/'); //
 define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); //
-define('CONFIG_PATH',  APP_PATH.'Conf/'); //
+define('CONF_PATH',  APP_PATH.'Conf/'); //
 define('LOG_PATH',  RUNTIME_PATH.'Logs/'); //
 define('LANG_PATH', APP_PATH.'Lang/'); //
 define('TEMP_PATH', RUNTIME_PATH.'Temp/'); //
