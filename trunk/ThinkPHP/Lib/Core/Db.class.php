@@ -910,7 +910,7 @@ class Db {
         $sql  =   $this->parseSql($this->selectSql,$options);
         $sql   .= $this->parseLock(isset($options['lock'])?$options['lock']:false);
         if(isset($key)) { // 写入SQL创建缓存
-            S($key,$sql,'','',array('length'=>C('DB_SQL_BUILD_LENGTH'),'queue'=>C('DB_SQL_BUILD_QUEUE')));
+            S($key,$sql,0,'',array('length'=>C('DB_SQL_BUILD_LENGTH'),'queue'=>C('DB_SQL_BUILD_QUEUE')));
         }
         return $sql;
     }
