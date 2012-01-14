@@ -176,7 +176,7 @@ class Think {
             if(require_cache(CORE_PATH.'Behavior/'.$class.'.class.php') 
                 || require_cache(EXTEND_PATH.'Behavior/'.$class.'.class.php') 
                 || require_cache(LIB_PATH.'Behavior/'.$class.'.class.php')
-                || (defined('MODE_NAME') && require_cache(MODE_PATH.ucwords(MODE_NAME).'/Behavior/'.$class.'.class.php')) {
+                || (defined('MODE_NAME') && require_cache(MODE_PATH.ucwords(MODE_NAME).'/Behavior/'.$class.'.class.php'))) {
                 return ;
             }
         }elseif(substr($class,-5)=="Model"){ // 加载模型
