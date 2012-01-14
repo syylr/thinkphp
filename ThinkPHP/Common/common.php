@@ -372,7 +372,7 @@ function tag($tag, &$params=NULL) {
         // 执行扩展
         foreach ($tags as $key=>$name) {
             if(!is_int($key)) { // 指定行为类的完整路径 用于模式扩展
-                require_cache($name);
+                //require_cache($name);
                 $name   = $key;
             }
             B($name, $params);
