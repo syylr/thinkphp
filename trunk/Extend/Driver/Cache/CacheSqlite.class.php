@@ -38,9 +38,7 @@ class CacheSqlite extends Cache {
             $options= array (
                 'db'        => ':memory:',
                 'table'     => 'sharedmemory',
-                'var'       => 'var',
-                'value'     => 'value',
-                'expire'    => 'expire',
+                'expire'    => C('DATA_CACHE_TIME'),
                 'persistent'=> false,
                 'length'   =>0,
             );
@@ -78,10 +76,7 @@ class CacheSqlite extends Cache {
     public function get($name) {
         N('cache_read',1);
 		$name   = sqlite_escape_string($name);
-        $sql = 'SELECT '.$this->options['value'].
-               ' FROM '.$this->options['table'].
-               ' WHERE '.$this->options['var'].'=\''.$name.'\' AND ('.$this->options['expire'].'=0 OR '.$this->options['expire'].'>'.time().
-               ') LIMIT 1';
+        $sql = 'SELECT value FROM '.$this->options['table'].' WHERE var=\''.$name.'\' AND (expire=0 OR expire >'.time().') LIMIT 1';
         $result = sqlite_query($this->handler, $sql);
         if (sqlite_num_rows($result)) {
             $content   =  sqlite_fetch_single($result);
@@ -118,9 +113,7 @@ class CacheSqlite extends Cache {
             //数据压缩
             $value   =   gzcompress($value,3);
         }
-        $sql  = 'REPLACE INTO '.$this->options['table'].
-                ' ('.$this->options['var'].', '.$this->options['value'].','.$this->options['expire'].
-                ') VALUES (\''.$name.'\', \''.$value.'\', \''.$expire.'\')';
+        $sql  = 'REPLACE INTO '.$this->options['table'].' (var, value,expire) VALUES (\''.$name.'\', \''.$value.'\', \''.$expire.'\')';
         if(sqlite_query($this->handler, $sql)){
             if($this->options['length']>0) {
                 // 记录缓存队列
@@ -144,8 +137,7 @@ class CacheSqlite extends Cache {
      */
     public function rm($name) {
         $name  = sqlite_escape_string($name);
-        $sql  = 'DELETE FROM '.$this->options['table'].
-               ' WHERE '.$this->options['var'].'=\''.$name.'\'';
+        $sql  = 'DELETE FROM '.$this->options['table'].' WHERE var=\''.$name.'\'';
         sqlite_query($this->handler, $sql);
         return true;
     }
@@ -160,7 +152,7 @@ class CacheSqlite extends Cache {
      +----------------------------------------------------------
      */
     public function clear() {
-        $sql  = 'DELETE FROM `'.$this->options['table'].'`';
+        $sql  = 'DELETE FROM '.$this->options['table'];
         sqlite_query($this->handler, $sql);
         return ;
     }
