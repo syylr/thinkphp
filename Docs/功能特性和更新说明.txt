@@ -53,6 +53,7 @@ U函数重新设计；
 [新增] 增加TMPL_DENY_PHP参数，用于设置模板是否禁用PHP代码
 [新增] 增加DEFAULT_FILTER参数，用于设置默认的参数过滤方法
 [新增] 增加VAR_SESSION_ID参数，用户可以指定session_id
+[新增] 增加VAR_URL_PARAMS参数
 [新增] 增加SHOW_LOAD_FILE 参数，用于控制是否显示加载文件数
 [新增] 增加TOKEN_RESET参数，用于设置令牌错误后是否重置 默认为true
 [新增] 惯例配置添加 APP_SUB_DOMAIN_RULES和APP_SUB_DOMAIN_DENY 默认设置
@@ -81,7 +82,7 @@ U函数重新设计；
 [新增] 增加 __hack_module 方法支持
 [新增] 增加规则路由支持
 [新增] 增加全新的静态缓存机制，无需定义任何静态缓存规则
-[新增] 增加 $_GET[1] $_GET[2]用法支持 
+[新增] 增加 $_GET['_URL_'][1] $_GET['_URL_'][2]用法支持 
 [修正] 修正Action类的display方法 配置TMPL_CONTENT_TYPE参数无效的bug
 [修正] 修正分组模块不存在 自动加载上层模块的bug
 [改进] 完善正则路由支持
