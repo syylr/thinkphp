@@ -738,6 +738,7 @@ $.TE.plugin( 'code', {
 				'			<span>选择语言：</span>'+
 				'			<select id="langType" name="">'+
 				'				<option value="None">其它类型</option>'+
+				'				<option value="PHP">PHP</option>'+
 				'				<option value="HTML">HTML</option>'+
 				'				<option value="JS">JS</option>'+
 				'				<option value="CSS">CSS</option>'+
