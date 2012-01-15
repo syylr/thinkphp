@@ -17,7 +17,7 @@
  */
 
 //  版本信息
-define('THINK_VERSION', '3.0beta');
+define('THINK_VERSION', '3.0RC1');
 //   系统信息
 if(version_compare(PHP_VERSION,'5.4.0','<') ) {
     @set_magic_quotes_runtime (0);
