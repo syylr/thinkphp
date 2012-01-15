@@ -93,8 +93,8 @@ class Dispatcher {
             }
             if(!self::routerCheck()){   // 检测路由规则 如果没有则按默认规则调度URL
                 $paths = explode($depr,trim($_SERVER['PATH_INFO'],'/'));
-                // 直接通过$_GET[1] $_GET[2] 获取URL参数 方便不用路由时参数获取
-                $_GET   =  array_merge($paths,$_GET);
+                // 直接通过$_GET['_URL_'][1] $_GET['_URL_'][2] 获取URL参数 方便不用路由时参数获取
+                $_GET[C('VAR_URL_PARAMS')]   =  $paths;
                 $var  =  array();
                 if (C('APP_GROUP_LIST') && !isset($_GET[C('VAR_GROUP')])){
                     $var[C('VAR_GROUP')] = in_array(strtolower($paths[0]),explode(',',strtolower(C('APP_GROUP_LIST'))))? array_shift($paths) : '';
@@ -108,8 +108,7 @@ class Dispatcher {
                 }
                 $var[C('VAR_ACTION')]  =   array_shift($paths);
                 // 解析剩余的URL参数
-                $res = preg_replace('@([^\d|'.$depr.']\w+)'.$depr.'([^'.$depr.'\/]+)@e', '$var[\'\\1\']="\\2";', implode($depr,$paths));
-                //$res = preg_replace('@(\w+)'.$depr.'([^'.$depr.'\/]+)@e', '$var[\'\\1\']="\\2";', implode($depr,$paths));
+                $res = preg_replace('@(\w+)'.$depr.'([^'.$depr.'\/]+)@e', '$var[\'\\1\']="\\2";', implode($depr,$paths));
                 $_GET   =  array_merge($var,$_GET);
             }
             define('__INFO__',$_SERVER['PATH_INFO']);
