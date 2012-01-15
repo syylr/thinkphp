@@ -12,8 +12,8 @@ return array(
     'db_pass'=>$appConfig['DB_PWD'],
     'db_name'=>$appConfig['DB_NAME'],
     'db_charset'=>$appConfig['DB_CHARSET'],
-    'storage_url'=>trim(dirname($_SERVER['SCRIPT_NAME']),'/\\').'/Public/',
-    'storage_dir'=>'./Public/',
+    'storage_url'=>trim(dirname($_SERVER['SCRIPT_NAME']),'/\\').'/',
+    'storage_dir'=>'./',
     'debug_file'=>APP_PATH."Runtime/Logs/sae_debug.log"
      
 );
