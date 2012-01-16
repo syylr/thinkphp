@@ -103,6 +103,8 @@ function build_runtime_cache($append='') {
     // 生成编译文件
     $defs = get_defined_constants(TRUE);
     $content    =  '$GLOBALS[\'_beginTime\'] = microtime(TRUE);';
+    //[sae]编译SaeMC核心
+    $content.=compile(THINK_PATH.'Sae/SaeMC.class.php');
     if(defined('RUNTIME_DEF_FILE')) { //[sae] 编译后的常量文件外部引入
         SaeMC::set(RUNTIME_DEF_FILE, '<?php '.array_define($defs['user']));
         $content  .=  'SaeMC::include_file(\''.RUNTIME_DEF_FILE.'\');';
