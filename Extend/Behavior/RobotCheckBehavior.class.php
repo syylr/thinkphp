@@ -14,7 +14,7 @@ class RobotCheckBehavior extends Behavior {
     protected $options   =  array(
             'LIMIT_ROBOT_VISIT'=>true,
         );
-    public function run(&$params='') {
+    public function run(&$params) {
         // 机器人访问检测
         if(C('LIMIT_ROBOT_VISIT') && self::isRobot()) {
             // 禁止机器人访问

@@ -14,7 +14,7 @@ class CronRunBehavior extends Behavior {
     protected $options   =  array(
             'CRON_MAX_TIME'=>60,
         );
-    public function run(&$params='') {
+    public function run(&$params) {
         // 锁定自动执行
         $lockfile	 =	 RUNTIME_PATH.'cron.lock';
         if(is_writable($lockfile) && filemtime($lockfile) > $_SERVER['REQUEST_TIME'] - C('CRON_MAX_TIME')) {

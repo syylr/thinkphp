@@ -14,7 +14,7 @@ class BrowserCheckBehavior extends Behavior {
     protected $options   =  array(
             'LIMIT_REFLESH_TIMES'=>10,
         );
-    public function run(&$params='') {
+    public function run(&$params) {
         if($_SERVER['REQUEST_METHOD'] == 'GET') {
             //	启用页面防刷新机制
             $guid	=	md5($_SERVER['PHP_SELF']);
