@@ -23,7 +23,7 @@ class ReadHtmlCacheBehavior extends Behavior {
             'HTML_CACHE_ON'=>true,
         );
     // 行为扩展的执行入口必须是run
-    public function run(&$params=''){
+    public function run(&$params){
         // 开启静态缓存
         if(C('HTML_CACHE_ON'))  {
             import('ORG.Util.HtmlCache');
