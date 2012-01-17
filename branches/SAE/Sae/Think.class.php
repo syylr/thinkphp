@@ -110,6 +110,7 @@ class Think {
         } else {
             $list = array(
                 THINK_PATH . 'Sae/functions.php', //[sae] 标准模式函数库
+                THINK_PATH.'Sae/sae_functions.php',//[sae]新增sae专用函数
                 THINK_PATH . 'Sae/Log.class.php', // 日志处理类
                 CORE_PATH . 'Core/Dispatcher.class.php', // URL调度类
                 CORE_PATH . 'Core/App.class.php', // 应用程序类

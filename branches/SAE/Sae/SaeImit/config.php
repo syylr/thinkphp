@@ -7,11 +7,11 @@
 // $Id$
 $appConfig=  include APP_PATH.'Conf/config.php';
 return array(
-    'db_host'=>$appConfig['DB_HOST'],
-    'db_user'=>$appConfig['DB_USER'],
-    'db_pass'=>$appConfig['DB_PWD'],
-    'db_name'=>$appConfig['DB_NAME'],
-    'db_charset'=>$appConfig['DB_CHARSET'],
+    'db_host'=>isset($appConfig['DB_HOST'])?$appConfig['DB_HOST']:'localhost',
+    'db_user'=>isset($appConfig['DB_USER'])?$appConfig['DB_USER']:'root',
+    'db_pass'=>isset($appConfig['DB_PWD'])?$appConfig['DB_PWD']:'',
+    'db_name'=>isset($appConfig['DB_NAME'])?$appConfig['DB_NAME']:'sae',
+    'db_charset'=>isset($appConfig['DB_CHARSET'])?$appConfig['DB_CHARSET']:'utf8',
     'storage_url'=>trim(dirname($_SERVER['SCRIPT_NAME']),'/\\').'/',
     'storage_dir'=>'./',
     'debug_file'=>APP_PATH."Runtime/Logs/sae_debug.log"

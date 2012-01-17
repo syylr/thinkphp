@@ -18,6 +18,8 @@ if (!isset($_SERVER["HTTP_APPNAME"])) {
         define('THINK_PATH', dirname(__FILE__) . '/');
     if (!defined('APP_PATH'))
         define('APP_PATH', dirname($_SERVER['SCRIPT_FILENAME']) . '/');
+    //加载平滑函数
+    require THINK_PATH.'Sae/sae_functions.php';
     //加载模拟器
     if (!defined('SAE_APPNAME'))
         require THINK_PATH . 'Sae/SaeImit.php';
