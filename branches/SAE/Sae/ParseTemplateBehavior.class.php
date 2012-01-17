@@ -55,10 +55,8 @@ class ParseTemplateBehavior extends Behavior {
             include $_data['file'];
         }elseif('think'==$engine){ // 采用Think模板引擎
             if($this->checkCache($_data['file'])) { // 缓存有效
-                // 分解变量并载入模板缓存
-                extract($_data['var'], EXTR_OVERWRITE);
                 //[sae]载入模版缓存文件
-                SaeMC::include_file(md5($_data['file']).C('TMPL_CACHFILE_SUFFIX'));
+                SaeMC::include_file(md5($_data['file']).C('TMPL_CACHFILE_SUFFIX'),$_data['var']);
             }else{
                 $tpl = Think::instance('ThinkTemplate');
                 // 编译并加载模板文件

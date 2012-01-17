@@ -22,15 +22,18 @@ if (!class_exists('SaeMC')) {
         }
 
         //载入文件
-        static public function include_file($filename) {
-            self::$current_include_file = 'saemc://' . $_SERVER['HTTP_APPVERSION'] . '/' . $filename;
-            $content = isset(self::$contents[$filename]) ? self::$contents[$filename] : self::getValue($filename, 'content');
-            if (!$content)
+        static public function include_file($_filename,$_vars=null) {
+            self::$current_include_file = 'saemc://' . $_SERVER['HTTP_APPVERSION'] . '/' . $_filename;
+            $_content = isset(self::$contents[$_filename]) ? self::$contents[$_filename] : self::getValue($_filename, 'content');
+            if(!is_null($_vars))
+                extract($_vars, EXTR_OVERWRITE);
+   
+            if (!$_content)
                 exit('<br /><b>SAE_Parse_error</b>: failed to open stream: No such file ' . self::$current_include_file);
-            if (@(eval(' ?>' . $content)) === false)
+            if (@(eval(' ?>' . $_content)) === false)
                 self::error();
             self::$current_include_file = null;
-            unset(self::$contents[$filename]); //释放内存
+            unset(self::$contents[$_filename]); //释放内存
         }
 
         static private function getValue($filename, $type='mtime') {
