@@ -249,8 +249,9 @@ class  ThinkTemplate {
             if(!C('LAYOUT_ON') || C('LAYOUT_NAME') !=$array['name'] ) {
                 // 读取布局模板
                 $layoutFile  =  THEME_PATH.$array['name'].$this->config['template_suffix'];
+                $replace =  isset($array['replace'])?$array['replace']:$this->config['layout_item'];
                 // 替换布局的主体内容
-                $content = str_replace($this->config['layout_item'],$content,file_get_contents($layoutFile));
+                $content = str_replace($replace,$content,file_get_contents($layoutFile));
             }
         }
         return $content;
