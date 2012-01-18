@@ -117,8 +117,6 @@ class  ThinkTemplate {
         $tmplCacheFile = $this->config['cache_path'].md5($tmplTemplateFile).$this->config['cache_suffix'];
         // 读取模板文件内容
         $tmplContent = file_get_contents($tmplTemplateFile);
-        //编译模板内容
-        $tmplContent = $this->compiler($tmplContent);
         // 判断是否启用布局
         if(C('LAYOUT_ON')) {
             if(false !== strpos($tmplContent,'{__NOLAYOUT__}')) { // 可以单独定义不使用布局
@@ -128,6 +126,8 @@ class  ThinkTemplate {
                 $tmplContent = str_replace($this->config['layout_item'],$tmplContent,file_get_contents($layoutFile));
             }
         }
+        //编译模板内容
+        $tmplContent = $this->compiler($tmplContent);
         // 检测分组目录
         if(!is_dir($this->config['cache_path']))
             mk_dir($this->config['cache_path']);
