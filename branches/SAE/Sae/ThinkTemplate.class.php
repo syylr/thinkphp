@@ -93,9 +93,8 @@ class  ThinkTemplate {
         $this->tVar = $templateVar;
         $templateCacheFile  =  $this->loadTemplate($templateFile);
         // 模板阵列变量分解成为独立变量
-        extract($templateVar, EXTR_OVERWRITE);
         //[sae]载入模版缓存文件
-        SaeMC::include_file($templateCacheFile);
+        SaeMC::include_file($templateCacheFile,$templateVar);
     }
 
     /**
