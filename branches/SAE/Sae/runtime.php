@@ -125,7 +125,8 @@ function build_runtime_cache($append='') {
     if(C('APP_TAGS_ON')) {
         $content .= build_tags_cache();
     }
-    $alias = include THINK_PATH.'Conf/alias.php';
+    //[sae] 编译SAE的alias
+    $alias = include THINK_PATH.'Sae/alias.php';
     $content .= 'alias_import('.var_export($alias,true).');';
     // 编译框架默认语言包和配置参数
     $content .= $append."\nL(".var_export(L(),true).");C(".var_export(C(),true).');G(\'loadTime\');Think::Start();';
