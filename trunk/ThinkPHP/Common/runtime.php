@@ -55,17 +55,15 @@ if(!IS_CLI) {
     define('URL_COMPAT',      3);   // 兼容模式
 }
 
-// 路径设置
-define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
-define('LIB_PATH',    APP_PATH.'Lib/'); //
-define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); //
-define('CONF_PATH',  APP_PATH.'Conf/'); //
-define('LOG_PATH',  RUNTIME_PATH.'Logs/'); //
-define('LANG_PATH', APP_PATH.'Lang/'); //
-define('TEMP_PATH', RUNTIME_PATH.'Temp/'); //
-define('DATA_PATH', RUNTIME_PATH.'Data/'); //
-
-// 可在入口文件中重新定义的常量
+// 路径设置 可在入口文件中重新定义 所有路径常量都必须以/ 结尾
+if(!defined('COMMON_PATH')) define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
+if(!defined('LIB_PATH')) define('LIB_PATH',    APP_PATH.'Lib/'); //
+if(!defined('CACHE_PATH')) define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); //
+if(!defined('CONF_PATH')) define('CONF_PATH',  APP_PATH.'Conf/'); //
+if(!defined('LOG_PATH')) define('LOG_PATH',  RUNTIME_PATH.'Logs/'); //
+if(!defined('LANG_PATH')) define('LANG_PATH', APP_PATH.'Lang/'); //
+if(!defined('TEMP_PATH')) define('TEMP_PATH', RUNTIME_PATH.'Temp/'); //
+if(!defined('DATA_PATH')) define('DATA_PATH', RUNTIME_PATH.'Data/'); //
 if(!defined('CORE_PATH')) define('CORE_PATH',THINK_PATH.'Lib/');
 if(!defined('TMPL_PATH')) define('TMPL_PATH',APP_PATH.'Tpl/');
 if(!defined('HTML_PATH')) define('HTML_PATH',APP_PATH.'Html/');
