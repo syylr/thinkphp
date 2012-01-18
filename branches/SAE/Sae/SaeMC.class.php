@@ -55,6 +55,11 @@ if (!class_exists('SaeMC')) {
                 return self::getValue($filename, 'mtime');
             return self::$filemtimes[$filename];
         }
+        //清空读取的缓存
+        static public function clearCache($filename){
+            if(isset(self::$contents[$filename])) unset(self::$contents[$filename]);
+            if(isset(self::$filemtimes[$filename])) unset(self::$filemtimes[$filename]);
+        }
 
         //删除文件
         static public function unlink($filename) {
