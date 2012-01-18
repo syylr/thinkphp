@@ -1445,10 +1445,11 @@ class Model {
      +----------------------------------------------------------
      */
     public function join($join) {
-        if(is_array($join))
+        if(is_array($join)) {
             $this->options['join'] =  $join;
-        else
+        }elseif(!empty($join)) {
             $this->options['join'][]  =   $join;
+        }
         return $this;
     }
 
