@@ -296,9 +296,9 @@ function showExt($ext,$pic=true) {
 		);
 	if($pic) {
 		if(array_key_exists(strtolower($ext),$_extPic)) {
-			$show = "<IMG SRC='".WEB_PUBLIC_PATH."/Images/extension/".$_extPic[strtolower($ext)]."' BORDER='0' alt='' align='absmiddle'>";
+			$show = "<IMG SRC='__PUBLIC__/Images/extension/".$_extPic[strtolower($ext)]."' BORDER='0' alt='' align='absmiddle'>";
 		}else{
-			$show = "<IMG SRC='".WEB_PUBLIC_PATH."/Images/extension/common.gif' WIDTH='16' HEIGHT='16' BORDER='0' alt='文件' align='absmiddle'>";
+			$show = "<IMG SRC='__PUBLIC__/Images/extension/common.gif' WIDTH='16' HEIGHT='16' BORDER='0' alt='文件' align='absmiddle'>";
 		}
 	}else{
 		if(array_key_exists(strtolower($ext),$_extTxt)) {
@@ -313,7 +313,7 @@ function showExt($ext,$pic=true) {
 function emot($emot)
 {
         //将WEB_PUBLIC_URL替换为WEB_PUBLIC_PATH解决编辑器小图片不解析的问题
-	return '<img src="'.WEB_PUBLIC_PATH.'/Images/emot/'.$emot.'.gif" align="absmiddle" style="border:none;margin:0px 1px">';
+	return '<img src="__PUBLIC__/Images/emot/'.$emot.'.gif" align="absmiddle" style="border:none;margin:0px 1px">';
 }
 function getShortTitle($title,$length=12)
 {
