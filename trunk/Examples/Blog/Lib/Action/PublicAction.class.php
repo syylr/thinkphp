@@ -53,7 +53,7 @@ class PublicAction extends Action {
                 $dao->setInc('downCount', "id=" . $id);
                 $_SESSION['attach_down_count_' . $id] = true;
             }
-            Http::download($filename, auto_charset($attach->name, 'utf-8', 'gbk'));
+            Http::download($filename, $attach->name);
         }
     }
 
