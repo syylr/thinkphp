@@ -1013,7 +1013,7 @@ class Db {
      */
     public function __destruct() {
         // 关闭连接
-        $this->close();
+        // $this->close();
     }
 
     // 关闭数据库 由驱动类定义
