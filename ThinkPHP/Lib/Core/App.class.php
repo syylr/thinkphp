@@ -131,7 +131,7 @@ class App {
             session_id($_REQUEST[C("VAR_SESSION_ID")]);
         if(C('SESSION_AUTO_START'))  session_start();
         // 记录应用初始化时间
-        if(C('SHOW_RUN_TIME')) G('initTime');
+        G('initTime');
         App::exec();
         // 项目结束标签
         tag('app_end');
