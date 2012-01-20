@@ -138,12 +138,10 @@ function import($class, $baseUrl = '', $ext='.class.php') {
     if (substr($baseUrl, -1) != "/")
         $baseUrl .= "/";
     $classfile = $baseUrl . $class . $ext;
-    if (class_exists(basename($class),false) ) {
-        // 冲突检测
-        throw_exception(L('_CLASS_CONFLICT_') . ':' . basename($class));
+    if (!class_exists(basename($class),false)) {
+        // 如果类不存在 则导入类库文件
+        return require_cache($classfile);
     }
-    //导入目录下的指定类库文件
-    return require_cache($classfile);
 }
 
 /**
