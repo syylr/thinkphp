@@ -87,11 +87,15 @@ class Model {
         }elseif(empty($this->name)){
             $this->name =   $this->getModelName();
         }
-        if(!empty($tablePrefix)) {
-            $this->tablePrefix =  $tablePrefix;
-        }
         // 设置表前缀
-        $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
+        if(is_null($tablePrefix)) {// 前缀为Null表示没有前缀
+            $this->tablePrefix = '';
+        }elseif('' != $tablePrefix) {
+            $this->tablePrefix = $tablePrefix;
+        }else{
+            $this->tablePrefix = $this->tablePrefix?$this->tablePrefix:C('DB_PREFIX');
+        }
+
         // 数据库初始化操作
         // 获取数据库操作对象
         // 当前模型有独立的数据库连接信息
