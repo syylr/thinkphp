@@ -159,7 +159,7 @@ function load($name, $baseUrl='', $ext='.php') {
     if (empty($baseUrl)) {
         if (0 === strpos($name, '@/')) {
             //加载当前项目函数库
-            $baseUrl = APP_PATH . 'Common/';
+            $baseUrl = COMMON_PATH;
             $name = substr($name, 2);
         } else {
             //加载ThinkPHP 系统函数库
