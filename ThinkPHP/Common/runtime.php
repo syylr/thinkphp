@@ -161,13 +161,6 @@ function build_tags_cache() {
     return $content;
 }
 
-// 批量创建目录
-function mkdirs($dirs,$mode=0777) {
-    foreach ($dirs as $dir){
-        if(!is_dir($dir))  mk_dir($dir,$mode);
-    }
-}
-
 // 创建项目目录结构
 function build_app_dir() {
     // 没有创建项目目录的话自动创建
@@ -190,7 +183,9 @@ function build_app_dir() {
             LIB_PATH.'Behavior/',
             LIB_PATH.'Widget/',
             );
-        mkdirs($dirs);
+        foreach ($dirs as $dir){
+            if(!is_dir($dir))  mk_dir($dir,0777);
+        }
         // 目录安全写入
         if(!defined('BUILD_DIR_SECURE')) define('BUILD_DIR_SECURE',false);
         if(BUILD_DIR_SECURE) {
