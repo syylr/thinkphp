@@ -96,8 +96,6 @@ class Model {
         // 获取数据库操作对象
         // 当前模型有独立的数据库连接信息
         $this->db(0,empty($this->connection)?$connection:$this->connection);
-        // 字段检测
-        if(!empty($this->name) && $this->autoCheckFields)    $this->_checkTableInfo();
     }
 
     /**
@@ -1240,6 +1238,8 @@ class Model {
         // 切换数据库连接
         $this->db   =    $_db[$linkNum];
         $this->_after_db();
+        // 字段检测
+        if(!empty($this->name) && $this->autoCheckFields)    $this->_checkTableInfo();
         return $this;
     }
     // 数据库切换后回调方法
