@@ -40,12 +40,12 @@ class ShowPageTraceBehavior extends Behavior {
         $traceFile  =   CONF_PATH.'trace.php';
         if(is_file($traceFile)) {
             // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
-            $_trace  =  include $traceFile;
+            $trace  =  include $traceFile;
         }else{
              // 系统默认显示信息
             $log  =   Log::$log;
             $files =  get_included_files();
-            $_trace   =  array(
+            $trace   =  array(
                 '请求时间'=>  date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']),
                 '当前页面'=>  __SELF__,
                 '请求协议'=>  $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'],
@@ -55,6 +55,8 @@ class ShowPageTraceBehavior extends Behavior {
                 '加载文件'=>  count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2)),
                 );
         }
+        // 设置trace信息
+        trace($trace);
         // 调用Trace页面模板
         ob_start();
         include C('TMPL_TRACE_FILE')?C('TMPL_TRACE_FILE'):THINK_PATH.'Tpl/page_trace.tpl';
