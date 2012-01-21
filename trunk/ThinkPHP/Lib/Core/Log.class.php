@@ -37,8 +37,8 @@ class Log {
     // 日志记录方式
     const SYSTEM = 0;
     const MAIL      = 1;
-    const TCP       = 2;
     const FILE       = 3;
+    const SAPI      = 4;
 
     // 日志信息
     static $log =   array();
@@ -61,7 +61,7 @@ class Log {
      +----------------------------------------------------------
      */
     static function record($message,$level=self::ERR,$record=false) {
-        if($record || strpos(C('LOG_RECORD_LEVEL'),$level)) {
+        if($record || strpos(C('LOG_LEVEL'),$level)) {
             $now = date(self::$format);
             self::$log[] =   "{$now} ".$_SERVER['REQUEST_URI']." | {$level}: {$message}\r\n";
         }
@@ -81,13 +81,17 @@ class Log {
      * @return void
      +----------------------------------------------------------
      */
-    static function save($type=self::FILE,$destination='',$extra='') {
-        if(empty($destination))
-            $destination = LOG_PATH.date('y_m_d').".log";
+    static function save($type='',$destination='',$extra='') {
+        $type = $type?$type:C('LOG_TYPE');
         if(self::FILE == $type) { // 文件方式记录日志信息
+            if(empty($destination))
+                $destination = LOG_PATH.date('y_m_d').".log";
             //检测日志文件大小，超过配置大小则备份日志文件重新生成
             if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) )
                   rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
+        }else{
+            $destination   =   $destination?$destination:C('LOG_DEST');
+            $extra   =  $extra?$extra:C('LOG_EXTRA');
         }
         error_log(implode("",self::$log), $type,$destination ,$extra);
         // 保存后清空日志缓存
@@ -111,14 +115,18 @@ class Log {
      * @return void
      +----------------------------------------------------------
      */
-    static function write($message,$level=self::ERR,$type=self::FILE,$destination='',$extra='') {
+    static function write($message,$level=self::ERR,$type='',$destination='',$extra='') {
         $now = date(self::$format);
-        if(empty($destination))
-            $destination = LOG_PATH.date('y_m_d').".log";
+        $type = $type?$type:C('LOG_TYPE');
         if(self::FILE == $type) { // 文件方式记录日志
+            if(empty($destination))
+                $destination = LOG_PATH.date('y_m_d').".log";
             //检测日志文件大小，超过配置大小则备份日志文件重新生成
             if(is_file($destination) && floor(C('LOG_FILE_SIZE')) <= filesize($destination) )
                   rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
+        }else{
+            $destination   =   $destination?$destination:C('LOG_DEST');
+            $extra   =  $extra?$extra:C('LOG_EXTRA');
         }
         error_log("{$now} ".$_SERVER['REQUEST_URI']." | {$level}: {$message}\r\n", $type,$destination,$extra );
         //clearstatcache();
