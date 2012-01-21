@@ -4,6 +4,7 @@
 		iOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 
     $.TE = {
+		version:'1.0', // 版本号
         debug: 1, //调试开关
         timeOut: 3000, //加载单个文件超时时间，单位为毫秒。
         defaults: {
