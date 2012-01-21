@@ -609,7 +609,7 @@ class  ThinkTemplate {
                     }
                     break;
                 case 'ENV':
-                    $parseStr = '$_ENV[\''.$vars[2].'\']';break;
+                    $parseStr = '$_ENV[\''.strtoupper($vars[2]).'\']';break;
                 case 'REQUEST':
                     $parseStr = '$_REQUEST[\''.$vars[2].'\']';break;
                 case 'CONST':
@@ -632,7 +632,7 @@ class  ThinkTemplate {
                     $parseStr = 'THINK_VERSION';
                     break;
                 case 'TEMPLATE':
-                    $parseStr = 'C("TEMPLATE_NAME")';
+                    $parseStr = "'".$this->templateFile."'";//'C("TEMPLATE_NAME")';
                     break;
                 case 'LDELIM':
                     $parseStr = 'C("TMPL_L_DELIM")';
