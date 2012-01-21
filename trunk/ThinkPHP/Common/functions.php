@@ -118,6 +118,7 @@ function debug_end($label='') {
 
 // 添加和获取页面Trace记录
 function trace($title='',$value='') {
+    if(!C('SHOW_PAGE_TRACE')) return;
     static $_trace =  array();
     if(is_array($title)) { // 批量赋值
         $_trace   =  array_merge($_trace,$title);
