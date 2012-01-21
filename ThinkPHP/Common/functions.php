@@ -116,6 +116,20 @@ function debug_end($label='') {
     echo '</div>';
 }
 
+// 添加和获取页面Trace记录
+function trace($title='',$value='') {
+    static $_trace =  array();
+    if(is_array($title)) { // 批量赋值
+        $_trace   =  array_merge($_trace,$title);
+    }elseif('' !== $value){ // 赋值
+        $_trace[$title] = $value;
+    }elseif('' !== $title){ // 取值
+        return $_trace[$title];
+    }else{ // 获取全部Trace数据
+        return $_trace;
+    }
+}
+
 // URL组装 支持不同模式
 // 格式：U('[分组/模块/操作]?参数','参数','伪静态后缀','是否跳转','显示域名')
 function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
