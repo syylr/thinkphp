@@ -143,14 +143,15 @@ class View {
         // 页面缓存
         ob_start();
         ob_implicit_flush(0);
-        // 视图解析标签
-        $params = array('var'=>$this->tVar,'file'=>$templateFile);
-        $result   =  tag('view_parse',$params);
-        if(false === $result) { // 未定义行为 则采用PHP原生模板
+        if('php' == strtolower(C('TMPL_ENGINE_TYPE'))) { // 使用PHP原生模板
             // 模板阵列变量分解成为独立变量
             extract($this->tVar, EXTR_OVERWRITE);
             // 直接载入PHP模板
             include $templateFile;
+        }else{
+            // 视图解析标签
+            $params = array('var'=>$this->tVar,'file'=>$templateFile);
+            tag('view_parse',$params);
         }
         // 获取并清空缓存
         $content = ob_get_clean();
