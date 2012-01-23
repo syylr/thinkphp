@@ -257,7 +257,7 @@ class DbMysqli extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getFields($tableName) {
+    public function getFields($tableName) {
         $result =   $this->query('SHOW COLUMNS FROM '.$this->parseKey($tableName));
         $info   =   array();
         if($result) {
@@ -284,7 +284,7 @@ class DbMysqli extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function getTables($dbName='') {
+    public function getTables($dbName='') {
         $sql    = !empty($dbName)?'SHOW TABLES FROM '.$dbName:'SHOW TABLES ';
         $result =   $this->query($sql);
         $info   =   array();
@@ -362,7 +362,7 @@ class DbMysqli extends Db{
      * @throws ThinkExecption
      +----------------------------------------------------------
      */
-    function close() {
+    public function close() {
         if (!empty($this->queryID))
             $this->queryID->free_result();
         if ($this->_linkID && !$this->_linkID->close()){
@@ -382,7 +382,7 @@ class DbMysqli extends Db{
      * @return string
      +----------------------------------------------------------
      */
-    function error() {
+    public function error() {
         $this->error = $this->_linkID->error;
         if($this->debug && '' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
@@ -402,7 +402,7 @@ class DbMysqli extends Db{
      * @return string
      +----------------------------------------------------------
      */
-    function escapeString($str) {
+    public function escapeString($str) {
         if($this->_linkID) {
             return  $this->_linkID->real_escape_string($str);
         }else{

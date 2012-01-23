@@ -251,7 +251,7 @@ class DbSqlsrv extends Db{
      * @return array
      +----------------------------------------------------------
      */
-    function getFields($tableName) {
+    public function getFields($tableName) {
         $result =   $this->query("SELECT   column_name,   data_type,   column_default,   is_nullable
         FROM    information_schema.tables AS t
         JOIN    information_schema.columns AS c
@@ -284,7 +284,7 @@ class DbSqlsrv extends Db{
      * @return array
      +----------------------------------------------------------
      */
-    function getTables($dbName='') {
+    public function getTables($dbName='') {
         $result   =  $this->query("SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
             WHERE TABLE_TYPE = 'BASE TABLE'
