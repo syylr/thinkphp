@@ -234,7 +234,7 @@ class Model {
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('field','table','where','order','limit','page','alias','having','group','lock','distinct'),true)) {
+        if(in_array(strtolower($method),array('table','where','order','limit','page','alias','having','group','lock','distinct'),true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
@@ -535,22 +535,17 @@ class Model {
      +----------------------------------------------------------
      * @param string|array $field  字段名
      * @param string|array $value  字段值
-     * @param mixed $condition  条件
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setField($field,$value,$condition='') {
-        if(empty($condition) && isset($this->options['where']))
-            $condition   =  $this->options['where'];
-        $options['where'] =  $condition;
+    public function setField($field,$value) {
         if(is_array($field)) {
-            foreach ($field as $key=>$val)
-                $data[$val]    = $value[$key];
+            $data = $field;
         }else{
             $data[$field]   =  $value;
         }
-        return $this->save($data,$options);
+        return $this->save($data);
     }
 
     /**
@@ -560,14 +555,13 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
-     * @param mixed $condition  条件
      * @param integer $step  增长值
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setInc($field,$condition='',$step=1) {
-        return $this->setField($field,array('exp',$field.'+'.$step),$condition);
+    public function setInc($field,$step=1) {
+        return $this->setField($field,array('exp',$field.'+'.$step));
     }
 
     /**
@@ -577,14 +571,13 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
-     * @param mixed $condition  条件
      * @param integer $step  减少值
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setDec($field,$condition='',$step=1) {
-        return $this->setField($field,array('exp',$field.'-'.$step),$condition);
+    public function setDec($field,$step=1) {
+        return $this->setField($field,array('exp',$field.'-'.$step));
     }
 
     /**
@@ -594,30 +587,34 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
-     * @param mixed $condition  查询条件
      * @param string $spea  字段数据间隔符号
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function getField($field,$condition='',$sepa=' ') {
-        if(empty($condition) && isset($this->options['where']))
-            $condition   =  $this->options['where'];
-        $options['where'] =  $condition;
+    public function getField($field,$sepa=null) {
         $options['field']    =  $field;
         $options =  $this->_parseOptions($options);
         if(strpos($field,',')) { // 多字段
             $resultSet = $this->db->select($options);
             if(!empty($resultSet)) {
-                $field  =   explode(',',$field);
+                $_field = explode(',', $field);
+                $field  = array_keys($resultSet[0]);
+                $move   =  $_field[0]==$_field[1]?false:true;
                 $key =  array_shift($field);
+                $key2 = array_shift($field);
                 $cols   =   array();
+                $count  =   count($_field);
                 foreach ($resultSet as $result){
-                    $name   = $result[$key];
-                    $cols[$name] =  '';
-                    foreach ($field as $val)
-                        $cols[$name] .=  $result[$val].$sepa;
-                    $cols[$name]  = substr($cols[$name],0,-strlen($sepa));
+                    $name   =  $result[$key];
+                    if($move) { // 删除键值记录
+                        unset($result[$key]);
+                    }
+                    if(2==$count) {
+                        $cols[$name]   =  $result[$key2];
+                    }else{
+                        $cols[$name]   =  is_null($sepa)?$result:implode($sepa,$result);
+                    }
                 }
                 return $cols;
             }
@@ -1168,7 +1165,36 @@ class Model {
      +----------------------------------------------------------
      */
     public function getDbFields(){
-        return $this->fields;
+        if($this->fields) {
+            $fields   =  $this->fields;
+            unset($fields['_autoinc'],$fields['_pk'],$fields['_type']);
+            return $fields;
+        }
+        return false;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 指定查询字段 支持字段排除
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $field
+     * @param boolean $except 是否排除
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function field($field,$except=false){
+        if($except) {// 字段排除
+            if(is_string($field)) {
+                $field =  explode(',',$field);
+            }
+            $fields   =  $this->getDbFields();
+            $field =  $fields?array_diff($fields,$field):$field;
+        }
+        $this->options['field']   =   $field;
+        return $this;
     }
 
     /**
