@@ -16,7 +16,7 @@ return array(
         'CheckTemplate', // 模板检测
     ),
     'route_check'=>array(
-        'CheckRestRoute'=>MODE_PATH.'Rest/Behavior/CheckRestRouteBehavior.class.php', // 路由检测
+        'CheckRestRoute', // 路由检测
     ), 
     'view_end'=>array(
         'ShowPageTrace', // 页面Trace显示
@@ -33,6 +33,6 @@ return array(
         'ShowRuntime', // 运行时间显示
     ),
     'path_info'=>array(
-        'CheckUrlExt'=>MODE_PATH.'Rest/Behavior/CheckUrlExtBehavior.class.php'
+        'CheckUrlExt'
     ),
 );
