@@ -48,12 +48,7 @@ class ParseTemplateBehavior extends Behavior {
     // 行为扩展的执行入口必须是run
     public function run(&$_data){
         $engine  = strtolower(C('TMPL_ENGINE_TYPE'));
-        if('php' == $engine) { // PHP 模板
-            // 模板阵列变量分解成为独立变量
-            extract($_data['var'], EXTR_OVERWRITE);
-            // 直接载入PHP模板
-            include $_data['file'];
-        }elseif('think'==$engine){ // 采用Think模板引擎
+        if('think'==$engine){ // 采用Think模板引擎
             if($this->checkCache($_data['file'])) { // 缓存有效
                 // 分解变量并载入模板缓存
                 extract($_data['var'], EXTR_OVERWRITE);
