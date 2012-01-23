@@ -23,7 +23,6 @@
  */
 class CacheApc extends Cache {
 
-
     /**
      +----------------------------------------------------------
      * 架构函数
@@ -31,7 +30,7 @@ class CacheApc extends Cache {
      * @access public
      +----------------------------------------------------------
      */
-    function __construct($options='') {
+    public function __construct($options='') {
         if(!function_exists('apc_cache_info')) {
             throw_exception(L('_NOT_SUPPERT_').':Apc');
         }
@@ -53,7 +52,7 @@ class CacheApc extends Cache {
      * @return mixed
      +----------------------------------------------------------
      */
-     function get($name) {
+     public function get($name) {
         N('cache_read',1);
          return apc_fetch($name);
      }
@@ -72,7 +71,7 @@ class CacheApc extends Cache {
      * @return boolen
      +----------------------------------------------------------
      */
-     function set($name, $value, $expire = null) {
+     public function set($name, $value, $expire = null) {
         N('cache_write',1);
         if(is_null($expire)) {
             $expire  =  $this->options['expire'];
@@ -98,7 +97,7 @@ class CacheApc extends Cache {
      * @return boolen
      +----------------------------------------------------------
      */
-     function rm($name) {
+     public function rm($name) {
          return apc_delete($name);
      }
 
@@ -111,7 +110,7 @@ class CacheApc extends Cache {
      * @return boolen
      +----------------------------------------------------------
      */
-    function clear() {
+    public function clear() {
         return apc_clear_cache();
     }
 

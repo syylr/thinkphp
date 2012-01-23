@@ -47,7 +47,7 @@ class CacheDb extends Cache {
      * @access public
      +----------------------------------------------------------
      */
-    function __construct($options='') {
+    public function __construct($options='') {
         if(empty($options)){
             $options= array (
                 'db'        => C('DB_NAME'),
