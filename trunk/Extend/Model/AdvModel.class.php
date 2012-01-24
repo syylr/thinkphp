@@ -22,9 +22,6 @@
  +------------------------------------------------------------------------------
  */
 class AdvModel extends Model {
-    // 数据库连接对象列表
-    private $_db = array();
-    private $_fields = null;
     protected $optimLock = 'lock_version';
     protected $returnType  =  'array';
     protected $blobFields     =   array();
@@ -33,18 +30,14 @@ class AdvModel extends Model {
     protected $readonlyField  = array();
     protected $_filter           = array();
 
-    public function __construct($name='') {
+    public function __construct($name='',$tablePrefix='',$connection='') {
         if('' !== $name || is_subclass_of($this,'AdvModel') ){
             // 如果是AdvModel子类或者有传入模型名称则获取字段缓存
         }else{
             // 空的模型 关闭字段缓存
             $this->autoCheckFields = false;
         }
-        parent::__construct($name);
-        // 设置默认的数据库连接
-        $this->_db[0]   =   $this->db;
-        // 备份当前的数据表字段信息
-        $this->_fields    =    $this->fields;
+        parent::__construct($name,$tablePrefix,$connection);
     }
 
     /**
@@ -536,16 +529,14 @@ class AdvModel extends Model {
      * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
-     * @param mixed $condition  条件
      * @param integer $step  增长值
      * @param integer $lazyTime  延时时间(s)
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setLazyInc($field,$condition='',$step=1,$lazyTime=0) {
-        if(empty($condition) && isset($this->options['where']))
-            $condition   =  $this->options['where'];
+    public function setLazyInc($field,$step=1,$lazyTime=0) {
+        $condition   =  $this->options['where'];
         if(empty($condition)) { // 没有条件不做任何更新
             return false;
         }
@@ -554,7 +545,7 @@ class AdvModel extends Model {
             $step = $this->lazyWrite($guid,$step,$lazyTime);
             if(false === $step ) return true; // 等待下次写入
         }
-        return $this->setField($field,array('exp',$field.'+'.$step),$condition);
+        return $this->setField($field,array('exp',$field.'+'.$step));
     }
 
     /**
@@ -564,16 +555,14 @@ class AdvModel extends Model {
      * @access public
      +----------------------------------------------------------
      * @param string $field  字段名
-     * @param mixed $condition  条件
      * @param integer $step  减少值
      * @param integer $lazyTime  延时时间(s)
      +----------------------------------------------------------
      * @return boolean
      +----------------------------------------------------------
      */
-    public function setLazyDec($field,$condition='',$step=1,$lazyTime=0) {
-        if(empty($condition) && isset($this->options['where']))
-            $condition   =  $this->options['where'];
+    public function setLazyDec($field,$step=1,$lazyTime=0) {
+        $condition   =  $this->options['where'];
         if(empty($condition)) { // 没有条件不做任何更新
             return false;
         }
@@ -582,7 +571,7 @@ class AdvModel extends Model {
             $step = $this->lazyWrite($guid,$step,$lazyTime);
             if(false === $step ) return true; // 等待下次写入
         }
-        return $this->setField($field,array('exp',$field.'-'.$step),$condition);
+        return $this->setField($field,array('exp',$field.'-'.$step));
     }
 
     /**
