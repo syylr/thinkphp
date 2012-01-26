@@ -370,7 +370,7 @@ function session($name,$value='') {
         if(isset($name['prefix'])) C('SESSION_PREFIX',$name['prefix']);
         if(isset($_REQUEST[C("VAR_SESSION_ID")])){
             session_id($_REQUEST[C("VAR_SESSION_ID")]);
-        }elseif(isset($name['name'])) {
+        }elseif(isset($name['id'])) {
             session_id($name['id']);
         }
         ini_set('session.auto_start', 0);
