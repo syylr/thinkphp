@@ -1,4 +1,6 @@
 <?php
 if (!defined('THINK_PATH')) exit();
-return require '../config.php';
+$config  = require '../config.php';
+$config['VAR_PAGE'] =  'p';
+return $config;
 ?>
