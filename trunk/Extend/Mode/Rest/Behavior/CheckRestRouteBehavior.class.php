@@ -42,25 +42,25 @@ class CheckRestRouteBehavior extends Behavior {
         if(!empty($routes)) {
             $depr = C('URL_PATHINFO_DEPR');
             foreach ($routes as $rule=>$route){
-                // 定义格式： '路由规则'=>array('路由地址','路由参数','提交类型','资源类型')
-                if(isset($route[2]) && strtolower($_SERVER['REQUEST_METHOD']) != strtolower($route[2])) {
+                // 定义格式： array('路由规则或者正则','路由地址','路由参数','提交类型','资源类型')
+                if(isset($route[3]) && strtolower($_SERVER['REQUEST_METHOD']) != strtolower($route[3])) {
                     continue; // 如果设置了提交类型则过滤
                 }
-                if(isset($route[3]) && !in_array(__EXT__,explode(',',$route[3]),true)) {
+                if(isset($route[4]) && !in_array(__EXT__,explode(',',$route[4]),true)) {
                     continue; // 如果设置了扩展名则过滤
                 }
-                if(0===strpos($rule,'/') && preg_match($rule,$regx,$matches)) { // 正则路由
+                if(0===strpos($route[0],'/') && preg_match($route[0],$regx,$matches)) { // 正则路由
                     return self::parseRegex($matches,$route,$regx);
-                }elseif(substr_count($regx,'/') >= substr_count($rule,'/')){ // 规则路由
+                }elseif(substr_count($regx,'/') >= substr_count($route[0],'/')){ // 规则路由
                     // 进一步匹配规则
                     $match1 = explode('/',$regx);
-                    $match2 = explode('/',$rule);
+                    $match2 = explode('/',$route[0]);
                     $match = true; // 是否匹配
                     foreach ($match2 as $key=>$val){
                         if(':' != substr($val,0,1) && $match2[$key] != $match1[$key])
                             $match = false;
                     }
-                    if($match)  return self::parseRule($rule,$route,$regx);
+                    if($match)  return self::parseRule($route,$regx);
                 }
             }
         }
@@ -91,20 +91,20 @@ class CheckRestRouteBehavior extends Behavior {
     }
 
     // 解析规则路由
-    // '路由规则'=>array('[分组/模块/操作]','额外参数1=值1&额外参数2=值2...','提交类型','资源类型')
-    // '路由规则'=>array('外部地址','重定向代码','提交类型','资源类型')
+    // array('路由规则','[分组/模块/操作]','额外参数1=值1&额外参数2=值2...','请求类型','资源类型')
+    // array('路由规则','外部地址','重定向代码','请求类型','资源类型')
     // 路由规则中 :开头 表示动态变量
     // 外部地址中可以用动态变量 采用 :1 :2 的方式
-    // 'news/:month/:day/:id'=>array('News/read?cate=1','status=1','post','html,xml'), 
-    // 'new/:id'=>array('/new.php?id=:1',301,'get','xml'), 重定向
-    static private function parseRule($rule,$route,$regx) {
+    // array('news/:month/:day/:id','News/read?cate=1','status=1','post','html,xml'), 
+    // array('new/:id','/new.php?id=:1',301,'get','xml'), 重定向
+    static private function parseRule($route,$regx) {
         // 获取路由地址规则
-        $url   =  $route[0];
+        $url   =  $route[1];
         // 获取URL地址中的参数
         $paths = explode('/',$regx);
         // 解析路由规则
         $matches  =  array();
-        $rule =  explode('/',$rule);
+        $rule =  explode('/',$route[0]);
         foreach ($rule as $item){
             if(0===strpos($item,':')) { // 动态变量获取
                 $matches[substr($item,1)] = array_shift($paths);
@@ -117,7 +117,7 @@ class CheckRestRouteBehavior extends Behavior {
                 $values  =  array_values($matches);
                 $url  =  preg_replace('/:(\d)/e','$values[\\1-1]',$url);
             }
-            header("Location: $url", true,isset($route[1])?$route[1]:301);
+            header("Location: $url", true,isset($route[2])?$route[2]:301);
             exit;
         }else{
             // 解析路由地址
@@ -135,8 +135,8 @@ class CheckRestRouteBehavior extends Behavior {
                 preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]="\\2";', implode('/',$paths));
             }
             // 解析路由自动传人参数
-            if(isset($route[1])) {
-                parse_str($route[1],$params);
+            if(isset($route[2])) {
+                parse_str($route[2],$params);
                 $var   =   array_merge($var,$params);
             }
             $_GET   =  array_merge($var,$_GET);
@@ -145,18 +145,16 @@ class CheckRestRouteBehavior extends Behavior {
     }
 
     // 解析正则路由
-    // '路由正则'=>'[分组/模块/操作]?参数1=值1&参数2=值2...'
-    // '路由正则'=>array('[分组/模块/操作]?参数1=值1&参数2=值2...','额外参数1=值1&额外参数2=值2...')
-    // '路由正则'=>'外部地址'
-    // '路由正则'=>array('外部地址','重定向代码')
+    // array('路由正则','[分组/模块/操作]?参数1=值1&参数2=值2...','额外参数','请求类型','资源类型')
+    // array('路由正则','外部地址','重定向代码','请求类型','资源类型')
     // 参数值和外部地址中可以用动态变量 采用 :1 :2 的方式
-    // '/new\/(\d+)\/(\d+)/'=>array('News/read?id=:1&page=:2&cate=1','status=1','post','html,xml'),
-    // '/new\/(\d+)/'=>array('/new.php?id=:1&page=:2&status=1','301','get','html,xml'), 重定向
+    // array('/new\/(\d+)\/(\d+)/','News/read?id=:1&page=:2&cate=1','status=1','post','html,xml'),
+    // array('/new\/(\d+)/','/new.php?id=:1&page=:2&status=1','301','get','html,xml'), 重定向
     static private function parseRegex($matches,$route,$regx) {
         // 获取路由地址规则
-        $url   =  preg_replace('/:(\d)/e','$matches[\\1]',$route[0]);
+        $url   =  preg_replace('/:(\d)/e','$matches[\\1]',$route[1]);
         if(0=== strpos($url,'/') || 0===strpos($url,'http')) { // 路由重定向跳转
-            header("Location: $url", true,isset($route[1])?$route[1]:301);
+            header("Location: $url", true,isset($route[1])?$route[2]:301);
             exit;
         }else{
             // 解析路由地址
@@ -167,8 +165,8 @@ class CheckRestRouteBehavior extends Behavior {
                 preg_replace('@(\w+)\/([^,\/]+)@e', '$var[strtolower(\'\\1\')]="\\2";', $regx);
             }
             // 解析路由自动传人参数
-            if(isset($route[1])) {
-                parse_str($route[1],$params);
+            if(isset($route[2])) {
+                parse_str($route[2],$params);
                 $var   =   array_merge($var,$params);
             }
             $_GET   =  array_merge($var,$_GET);
