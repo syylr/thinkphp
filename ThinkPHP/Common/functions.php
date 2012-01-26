@@ -375,7 +375,7 @@ function session($name,$value='') {
         }
         ini_set('session.auto_start', 0);
         if(isset($name['name'])) session_name($name['name']);
-        if(isset($name['domain'])) session_save_path($name['domain']);
+        if(isset($name['path'])) session_save_path($name['path']);
         if(isset($name['domain'])) ini_set('session.cookie_domain', $name['domain']);
         if(isset($name['expire'])) ini_set('session.gc_maxlifetime', $name['expire']);
         if(isset($name['use_trans_sid'])) ini_set('session.use_trans_sid', $name['use_trans_sid']?1:0);
