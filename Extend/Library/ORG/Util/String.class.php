@@ -157,7 +157,7 @@ class String {
 		}else{
 			// 中文随机字
 			for($i=0;$i<$len;$i++){
-			  $str.= self::msubstr($chars, floor(mt_rand(0,mb_strlen($chars,'utf-8')-1)),1);
+			  $str.= self::msubstr($chars, floor(mt_rand(0,mb_strlen($chars,'utf-8')-1)),1,'utf-8',false);
 			}
 		}
 		return $str;
