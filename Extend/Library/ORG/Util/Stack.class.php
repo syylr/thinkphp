@@ -34,8 +34,7 @@ class Stack extends ArrayList {
      * @param array $values  初始化数组元素
      +----------------------------------------------------------
      */
-    public function __construct($values = array())
-    {
+    public function __construct($values = array()) {
         parent::__construct($values);
     }
 
@@ -49,8 +48,7 @@ class Stack extends ArrayList {
      * @return mixed
      +----------------------------------------------------------
      */
-    public function peek()
-    {
+    public function peek() {
         return reset($this->toArray());
     }
 
@@ -65,8 +63,7 @@ class Stack extends ArrayList {
      * @return mixed
      +----------------------------------------------------------
      */
-    public function push($value)
-    {
+    public function push($value) {
         $this->add($value);
         return $value;
     }
