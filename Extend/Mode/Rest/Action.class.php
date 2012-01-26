@@ -43,8 +43,9 @@ abstract class Action {
         //实例化视图类
         $this->view       = Think::instance('View');
 
+        if(!defined('__EXT__')) define('__EXT__','');
         // 资源类型检测
-        if(!defined('__EXT__') || ''==__EXT__) { // 自动检测资源类型
+        if(''==__EXT__) { // 自动检测资源类型
             $this->_type   =  $this->getAcceptType();
         }elseif(false === stripos(C('REST_CONTENT_TYPE_LIST'),__EXT__)) {
             // 资源类型非法 则用默认资源类型访问
@@ -259,6 +260,7 @@ abstract class Action {
      */
     protected function encodeData($data,$type='') {
         if(empty($data))  return '';
+        if(empty($type)) $type =  C('REST_DEFAULT_TYPE');
         if('json' == $type) {
             // 返回JSON数据格式到客户端 包含状态信息
             $data = json_encode($data);
@@ -330,6 +332,7 @@ abstract class Action {
             header('Status:'.$code.' '.$_status[$code]);
         }
     }
+
     /**
      +----------------------------------------------------------
      * 获取当前请求的Accept头信息
