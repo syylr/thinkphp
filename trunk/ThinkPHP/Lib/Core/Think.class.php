@@ -119,24 +119,22 @@ class Think {
             }
         }
 
-        // 加载公共文件
-        if(!isset($mode['common'])) { // 默认加载项目公共文件
-            $mode['common'] =  COMMON_PATH.'common.php';
-        }
-        if(is_file($mode['common'])) {
-            include $mode['common'];
+        // 加载项目公共文件
+        if(is_file(COMMON_PATH.'common.php')) {
+            include COMMON_PATH.'common.php';
             // 编译文件
-            if(!APP_DEBUG)  $compile   .= compile($mode['common']);
+            if(!APP_DEBUG)  $compile   .= compile(COMMON_PATH.'common.php');
         }
 
-        // 加载应用别名定义
+        // 加载模式别名定义
         if(isset($mode['alias'])) {
             $alias = is_array($mode['alias'])?$mode['alias']:include $mode['alias'];
-        }elseif(is_file(CONF_PATH.'alias.php')){ 
-            // 没有定义 则获取项目配置目录的alias别名定义文件
-            $alias = include CONF_PATH.'alias.php';
+            alias_import($alias);
+            if(!APP_DEBUG) $compile .= 'alias_import('.var_export($alias,true).');';
         }
-        if(is_array($alias)) {
+        // 加载项目别名定义
+        if(is_file(CONF_PATH.'alias.php')){ 
+            $alias = include CONF_PATH.'alias.php';
             alias_import($alias);
             if(!APP_DEBUG) $compile .= 'alias_import('.var_export($alias,true).');';
         }
