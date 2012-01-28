@@ -30,10 +30,10 @@ class TagLibCx extends TagLib {
         'volist'=>array('attr'=>'name,id,offset,length,key,mod','level'=>3,'alias'=>'iterate'),
         'foreach' =>array('attr'=>'name,item,key','level'=>3),
         'include'=>array('attr'=>'file','close'=>0),
-        'if'=>array('attr'=>'condition'),
+        'if'=>array('attr'=>'condition','level'=>2),
         'elseif'=>array('attr'=>'condition','close'=>0),
         'else'=>array('attr'=>'','close'=>0),
-        'switch'=>array('attr'=>'name','level'=>3),
+        'switch'=>array('attr'=>'name','level'=>2),
         'case'=>array('attr'=>'value,break'),
         'default'=>array('attr'=>'','close'=>0),
         'compare'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'eq,equal,notequal,neq,gt,lt,egt,elt,heq,nheq'),
@@ -47,7 +47,7 @@ class TagLibCx extends TagLib {
         'import'=>array('attr'=>'file,href,type,value,basepath','close'=>0,'alias'=>'load,css,js'),
         'assign'=>array('attr'=>'name,value','close'=>0),
         'define'=>array('attr'=>'name,value','close'=>0),
-    	'for'=>array('attr'=>'name,from,to,before,step', 'level'=>3),
+    	'for'=>array('attr'=>'start,end,name,comparison,step', 'level'=>3),
         );
 
     /**
