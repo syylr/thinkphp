@@ -1482,7 +1482,9 @@ class Model {
             }
         }elseif(is_object($union)) {
             $options   =  get_object_vars($union);
-        }elseif(!is_array($union)){
+        }elseif(is_string($union) || is_array($union)) {
+            $options =  $union;
+        }else{
             throw_exception(L('_DATA_TYPE_INVALID_'));
         }
         $this->options['union'][]  =   $options;

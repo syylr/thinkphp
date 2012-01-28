@@ -746,7 +746,7 @@ class Db {
     protected function parseUnion($union) {
         if(empty($union)) return '';
         foreach ($union as $u){
-            $sql[] = 'UNION '.$this->buildSelectSql($u);
+            $sql[] = 'UNION '.(is_array($u)?$this->buildSelectSql($u):$u);
         }
         return implode(' ',$sql);
     }
