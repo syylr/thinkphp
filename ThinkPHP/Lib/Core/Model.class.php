@@ -1463,27 +1463,30 @@ class Model {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param array $union
+     * @param mixed $union
+     * @param boolean $all
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
      */
-    public function union($union) {
+    public function union($union,$all=false) {
         if(empty($union)) return $this;
+        if($all) {
+            $this->options['union']['_all']  =   true;
+        }
+        if(is_object($union)) {
+            $union   =  get_object_vars($union);
+        }
         // 转换union表达式
-        if($union instanceof Model) {
-            $options   =  $union->getProperty('options');
-            if(!isset($options['table'])){
-                // 自动获取表名
-                $options['table'] =$union->getTableName();
-            }
-            if(!isset($options['field'])) {
-                $options['field'] =$this->options['field'];
-            }
-        }elseif(is_object($union)) {
-            $options   =  get_object_vars($union);
-        }elseif(is_string($union) || is_array($union)) {
+        if(is_string($union) ) {
             $options =  $union;
+        }elseif(is_array($union)){
+            if(isset($union[0])) {
+                $this->options['union']  =  array_merge($this->options['union'],$union);
+                return $this;
+            }else{
+                $options =  $union;
+            }
         }else{
             throw_exception(L('_DATA_TYPE_INVALID_'));
         }
@@ -1551,21 +1554,4 @@ class Model {
         return $this;
     }
 
-    /**
-     +----------------------------------------------------------
-     * 获取模型的属性值
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $name 名称
-     +----------------------------------------------------------
-     * @return mixed
-     +----------------------------------------------------------
-     */
-    public function getProperty($name){
-        if(property_exists($this,$name))
-            return $this->$name;
-        else
-            return NULL;
-    }
 }
