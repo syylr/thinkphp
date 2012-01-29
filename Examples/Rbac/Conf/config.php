@@ -3,6 +3,7 @@
     $config	= require '../config.php';
     $array=array(
         'APP_AUTOLOAD_PATH'=>'@.TagLib',
+        'SESSION_AUTO_START'=>true,
         'USER_AUTH_ON'              =>true,
         'USER_AUTH_TYPE'			=>1,		// 默认认证类型 1 登录认证 2 实时认证
         'USER_AUTH_KEY'             =>'authId',	// 用户认证SESSION标记

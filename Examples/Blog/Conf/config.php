@@ -5,6 +5,7 @@ if (!defined('THINK_PATH'))	exit();
 $config = require("../config.php");
 $array = array(
 	'DEFAULT_MODULE' =>	'Blog',
+    'SESSION_AUTO_START'=>true,
     'APP_AUTOLOAD_PATH'=>'@.TagLib,@.ORG',
     'TOKEN_ON'  => false,
     'URL_ROUTER_ON' => true,
