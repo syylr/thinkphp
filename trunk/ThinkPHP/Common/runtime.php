@@ -18,6 +18,8 @@
 if (!defined('THINK_PATH')) exit();
 //  版本信息
 define('THINK_VERSION', '3.0RC1');
+define('THINK_RELEASE', '20120129');
+
 //   系统信息
 if(version_compare(PHP_VERSION,'5.4.0','<') ) {
     @set_magic_quotes_runtime (0);
@@ -57,7 +59,8 @@ if(!IS_CLI) {
 
 // 路径设置 可在入口文件中重新定义 所有路径常量都必须以/ 结尾
 if(!defined('COMMON_PATH')) define('COMMON_PATH',    APP_PATH.'Common/'); // 项目公共目录
-if(!defined('LIB_PATH')) define('LIB_PATH',    APP_PATH.'Lib/'); //
+if(!defined('LIB_DIR')) define('LIB_DIR',      'Lib');
+if(!defined('LIB_PATH')) define('LIB_PATH',    APP_PATH.LIB_DIR.'/'); //
 if(!defined('CACHE_PATH')) define('CACHE_PATH',   RUNTIME_PATH.'Cache/'); //
 if(!defined('CONF_PATH')) define('CONF_PATH',  APP_PATH.'Conf/'); //
 if(!defined('LOG_PATH')) define('LOG_PATH',  RUNTIME_PATH.'Logs/'); //
