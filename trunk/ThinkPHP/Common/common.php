@@ -284,7 +284,7 @@ function A($name) {
 
 // 远程调用模块的操作方法
 // URL 参数格式 [项目://][分组/]模块/操作 
-function R($url,$vars='') {
+function R($url,$vars=array()) {
     $info =  pathinfo($url);
     $action  =  $info['basename'];
     $module =  $info['dirname'];
