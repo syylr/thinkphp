@@ -131,6 +131,17 @@ function trace($title='',$value='') {
     }
 }
 
+// 设置当前页面的布局
+function layout($layout) {
+    if(false !== $layout) {
+        // 开启布局
+        C('LAYOUT_ON',true);
+        if(is_string($layout)) {
+            C('LAYOUT_NAME',$layout);
+        }
+    }
+}
+
 // URL组装 支持不同模式
 // 格式：U('[分组/模块/操作]?参数','参数','伪静态后缀','是否跳转','显示域名')
 function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
