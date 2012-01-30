@@ -185,16 +185,16 @@ function vendor($class, $baseUrl = '', $ext='.php') {
 // 快速定义和导入别名
 function alias_import($alias, $classfile='') {
     static $_alias = array();
-    if ('' !== $classfile) {
-        // 定义别名导入
-        $_alias[$alias] = $classfile;
-        return;
-    }
-    if (is_string($alias) && isset($_alias[$alias])) {
-        return require_cache($_alias[$alias]);
+    if (is_string($alias)) {
+        if(isset($_alias[$alias])) {
+            return require_cache($_alias[$alias]);
+        }elseif ('' !== $classfile) {
+            // 定义别名导入
+            $_alias[$alias] = $classfile;
+            return;
+        }
     }elseif (is_array($alias)) {
-        foreach ($alias as $key => $val)
-            $_alias[$key] = $val;
+        $_alias   =  array_merge($_alias,$alias);
         return;
     }
     return false;
