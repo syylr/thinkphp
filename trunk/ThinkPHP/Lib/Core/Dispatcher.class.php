@@ -85,7 +85,7 @@ class Dispatcher {
         }
         // 分析PATHINFO信息
         tag('path_info');
-        // 分析PATHINFO信息
+
         $depr = C('URL_PATHINFO_DEPR');
         if(!empty($_SERVER['PATH_INFO'])) {
             if(C('URL_HTML_SUFFIX')) {
