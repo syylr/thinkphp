@@ -359,7 +359,6 @@ function tag($tag, &$params=NULL) {
     if (!empty($tags)) {
         if(empty($tags['_overlay']) && !empty($extends)) { // 合并扩展
             $tags = array_unique(array_merge($extends,$tags));
-            $overlay = true;
         }elseif(isset($tags['_overlay'])){ // 通过设置 '_overlay'=>1 覆盖系统标签
             unset($tags['_overlay']);
         }
@@ -374,7 +373,6 @@ function tag($tag, &$params=NULL) {
         // 执行扩展
         foreach ($tags as $key=>$name) {
             if(!is_int($key)) { // 指定行为类的完整路径 用于模式扩展
-                //require_cache($name);
                 $name   = $key;
             }
             B($name, $params);
