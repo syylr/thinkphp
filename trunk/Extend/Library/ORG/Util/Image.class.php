@@ -67,9 +67,7 @@ class Image {
      * @param string $$savename  添加水印后的图片名
      * @param string $alpha  水印的透明度
       +----------------------------------------------------------
-     * @return string
-      +----------------------------------------------------------
-     * @throws ThinkExecption
+     * @return void
       +----------------------------------------------------------
      */
     static public function water($source, $water, $savename=null, $alpha=80) {
