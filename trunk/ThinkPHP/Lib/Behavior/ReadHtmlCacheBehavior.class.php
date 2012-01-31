@@ -13,9 +13,6 @@
 /**
  +------------------------------------------------------------------------------
  * 系统行为扩展 静态缓存读取
- * 增加配置参数如下：
- *  HTML_CACHE_ON
- *
  +------------------------------------------------------------------------------
  */
 class ReadHtmlCacheBehavior extends Behavior {
@@ -108,7 +105,7 @@ class ReadHtmlCacheBehavior extends Behavior {
             return false;
         }elseif(!is_numeric($cacheTime) && function_exists($cacheTime)){
             return $cacheTime($cacheFile);
-        }elseif ($cacheTime != -1 && time() > filemtime($cacheFile)+$cacheTime) {
+        }elseif ($cacheTime != 0 && time() > filemtime($cacheFile)+$cacheTime) {
             // 文件是否在有效期
             return false;
         }
