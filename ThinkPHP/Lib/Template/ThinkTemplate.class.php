@@ -357,33 +357,24 @@ class  ThinkTemplate {
         }
         $tLib =  Think::instance($className);
         foreach ($tLib->getTags() as $name=>$val){
-            $tags = array();
+            $tags = array($name);
             if(isset($val['alias'])) {// 别名设置
                 $tags = explode(',',$val['alias']);
                 $tags[]  =  $name;
-            }else{
-                $tags[] = $name;
             }
             $level = isset($val['level'])?$val['level']:1;
             $closeTag = isset($val['close'])?$val['close']:true;
             foreach ($tags as $tag){
-                // 实际要解析的标签名称
-                $parseTag = !$hide?$tagLib.':'.$tag:$tag;
-                if(empty($val['attr'])){
-                    // 无属性标签
-                    if(!$closeTag) {
-                        $content = preg_replace('/'.$begin.$parseTag.'(\s*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','')",$content);
-                    }else{
-                        for($i=0;$i<$level;$i++)
-                            $content = preg_replace('/'.$begin.$parseTag.'(\s*?)'.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','\\2')",$content);
-                    }
+                $parseTag = !$hide? $tagLib.':'.$tag: $tag;// 实际要解析的标签名称
+                $n1 = empty($val['attr'])?'(\s*?)':'\s(.*?)';
+                $patterns = '/'.$begin.$parseTag.$n1.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis';
+                $replacement = "\$this->parseXmlTag('$tagLib','$tag','$1','$2')";
+                if (!$closeTag){
+                    $patterns = '/'.$begin.$parseTag.$n1.'\/(\s*?)'.$end.'/eis';
+                    $replacement = "\$this->parseXmlTag('$tagLib','$tag','$1','')";
+                    $content = preg_replace($patterns, $replacement,$content);
                 }else{
-                    if(!$closeTag) {
-                        $content = preg_replace('/'.$begin.$parseTag.'\s(.*?)\/(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','')",$content);
-                    }else{
-                        for($i=0;$i<$level;$i++)
-                            $content = preg_replace('/'.$begin.$parseTag.'\s(.*?)'.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis',"\$this->parseXmlTag('$tagLib','$tag','\\1','\\2')",$content);
-                    }
+                    for($i=0;$i<$level;$i++) $content=preg_replace($patterns,$replacement,$content);
                 }
             }
         }
