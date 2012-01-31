@@ -367,13 +367,13 @@ class  ThinkTemplate {
             foreach ($tags as $tag){
                 $parseTag = !$hide? $tagLib.':'.$tag: $tag;// 实际要解析的标签名称
                 $n1 = empty($val['attr'])?'(\s*?)':'\s(.*?)';
-                $patterns = '/'.$begin.$parseTag.$n1.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis';
-                $replacement = "\$this->parseXmlTag('$tagLib','$tag','$1','$2')";
                 if (!$closeTag){
                     $patterns = '/'.$begin.$parseTag.$n1.'\/(\s*?)'.$end.'/eis';
                     $replacement = "\$this->parseXmlTag('$tagLib','$tag','$1','')";
                     $content = preg_replace($patterns, $replacement,$content);
                 }else{
+                    $patterns = '/'.$begin.$parseTag.$n1.$end.'(.*?)'.$begin.'\/'.$parseTag.'(\s*?)'.$end.'/eis';
+                    $replacement = "\$this->parseXmlTag('$tagLib','$tag','$1','$2')";
                     for($i=0;$i<$level;$i++) $content=preg_replace($patterns,$replacement,$content);
                 }
             }
