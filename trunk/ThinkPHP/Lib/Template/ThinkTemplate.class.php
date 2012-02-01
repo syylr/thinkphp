@@ -179,6 +179,8 @@ class  ThinkTemplate {
     public function parse($content) {
         // 内容为空不解析
         if(empty($content)) return '';
+        // 检查include语法
+        $content  = $this->parseInclude($content);
         // 解析布局
         $content    =  $this->parseLayout($content);
         // 检查PHP语法
@@ -234,7 +236,7 @@ class  ThinkTemplate {
     // 解析模板中的布局标签
     protected function parseLayout($content) {
         // 读取模板中的布局标签
-        $find = preg_match('/'.$this->config['taglib_begin'].'layout\s(.+?)(\s*?)\/'.$this->config['taglib_end'].'\W/is',$content,$matches);
+        $find = preg_match('/'.$this->config['taglib_begin'].'layout\s(.+?)(\s*?)\/'.$this->config['taglib_end'].'/is',$content,$matches);
         if($find) {
             //替换Layout标签
             $content = str_replace($matches[0],'',$content);
@@ -252,6 +254,27 @@ class  ThinkTemplate {
                 $replace =  isset($array['replace'])?$array['replace']:$this->config['layout_item'];
                 // 替换布局的主体内容
                 $content = str_replace($replace,$content,file_get_contents($layoutFile));
+            }
+        }
+        return $content;
+    }
+
+    // 解析模板中的include标签
+    protected function parseInclude($content) {
+        // 读取模板中的布局标签
+        $find = preg_match_all('/'.$this->config['taglib_begin'].'include\s(.+?)(\s*?)\/'.$this->config['taglib_end'].'/is',$content,$matches);
+        if($find) {
+            for($i=0;$i<=$find;$i++) {
+                $include = $matches[1][$i];
+                $xml =  '<tpl><tag '.$include.' /></tpl>';
+                $xml = simplexml_load_string($xml);
+                if(!$xml)
+                    throw_exception(L('_XML_TAG_ERROR_'));
+                $xml = (array)($xml->tag->attributes());
+                $array = array_change_key_case($xml['@attributes']);
+                $file  =  $array['file'];
+                unset($array['file']);
+                $content = str_replace($matches[0][$i],$this->parseIncludeItem($file,$array),$content);
             }
         }
         return $content;
@@ -651,7 +674,7 @@ class  ThinkTemplate {
      * @return string
      +----------------------------------------------------------
      */
-    public function parseInclude($tmplPublicName,$vars=array()){
+    protected function parseIncludeItem($tmplPublicName,$vars=array()){
         if(substr($tmplPublicName,0,1)=='$')
             //支持加载变量文件名
             $tmplPublicName = $this->get(substr($tmplPublicName,1));
