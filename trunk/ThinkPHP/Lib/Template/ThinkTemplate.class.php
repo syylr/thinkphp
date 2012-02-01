@@ -181,8 +181,6 @@ class  ThinkTemplate {
         if(empty($content)) return '';
         // 检查include语法
         $content  = $this->parseInclude($content);
-        // 解析布局
-        $content    =  $this->parseLayout($content);
         // 检查PHP语法
         $content    =  $this->parsePhp($content);
 
@@ -236,7 +234,7 @@ class  ThinkTemplate {
     // 解析模板中的布局标签
     protected function parseLayout($content) {
         // 读取模板中的布局标签
-        $find = preg_match('/'.$this->config['taglib_begin'].'layout\s(.+?)(\s*?)\/'.$this->config['taglib_end'].'/is',$content,$matches);
+        $find = preg_match('/'.$this->config['taglib_begin'].'layout\s(.+?)\s*?\/'.$this->config['taglib_end'].'/is',$content,$matches);
         if($find) {
             //替换Layout标签
             $content = str_replace($matches[0],'',$content);
@@ -261,10 +259,12 @@ class  ThinkTemplate {
 
     // 解析模板中的include标签
     protected function parseInclude($content) {
+        // 解析布局
+        $content    =  $this->parseLayout($content);
         // 读取模板中的布局标签
-        $find = preg_match_all('/'.$this->config['taglib_begin'].'include\s(.+?)(\s*?)\/'.$this->config['taglib_end'].'/is',$content,$matches);
+        $find = preg_match_all('/'.$this->config['taglib_begin'].'include\s(.+?)\s*?\/'.$this->config['taglib_end'].'/is',$content,$matches);
         if($find) {
-            for($i=0;$i<=$find;$i++) {
+            for($i=0;$i<$find;$i++) {
                 $include = $matches[1][$i];
                 $xml =  '<tpl><tag '.$include.' /></tpl>';
                 $xml = simplexml_load_string($xml);
@@ -698,7 +698,7 @@ class  ThinkTemplate {
             $parseStr = str_replace('['.$key.']',$val,$parseStr);
         }
         //再次对包含文件进行模板分析
-        return $this->parse($parseStr);
+        return $this->parseInclude($parseStr);
     }
 
 }
