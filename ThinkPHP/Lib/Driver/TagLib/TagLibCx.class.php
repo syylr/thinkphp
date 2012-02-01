@@ -29,7 +29,6 @@ class TagLibCx extends TagLib {
         'php'=>array(),
         'volist'=>array('attr'=>'name,id,offset,length,key,mod','level'=>3,'alias'=>'iterate'),
         'foreach' =>array('attr'=>'name,item,key','level'=>3),
-        'include'=>array('attr'=>'file','close'=>0),
         'if'=>array('attr'=>'condition','level'=>2),
         'elseif'=>array('attr'=>'condition','close'=>0),
         'else'=>array('attr'=>'','close'=>0),
@@ -49,25 +48,6 @@ class TagLibCx extends TagLib {
         'define'=>array('attr'=>'name,value','close'=>0),
     	'for'=>array('attr'=>'start,end,name,comparison,step', 'level'=>3),
         );
-
-    /**
-     +----------------------------------------------------------
-     * include标签解析
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $attr 标签属性
-     * @param string $content  标签内容
-     +----------------------------------------------------------
-     * @return string
-     +----------------------------------------------------------
-     */
-    public function _include($attr,$content) {
-        $tag    = $this->parseXmlAttr($attr,'include');
-        $file   =   $tag['file'];
-        unset($tag['file']);
-        return $this->tpl->parseInclude($file,$tag);
-    }
 
     /**
      +----------------------------------------------------------
