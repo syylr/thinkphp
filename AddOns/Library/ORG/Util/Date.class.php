@@ -563,7 +563,7 @@ class Date extends Think
 
             case "q":
                 //---Add $number to quarter
-                $year += ($number*3);
+                $month += ($number*3);
                 break;
 
             case "m":

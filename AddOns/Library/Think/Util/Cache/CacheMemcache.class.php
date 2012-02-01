@@ -39,7 +39,7 @@ class CacheMemcache extends Cache
             $options = array (
                 'host'  => C('MEMCACHE_HOST') ? C('MEMCACHE_HOST') : '127.0.0.1',
                 'port'  => C('MEMCACHE_PORT') ? C('MEMCACHE_PORT') : 11211,
-                'timeout' => C('DATA_CACHE_TIME') ? C('DATA_CACHE_TIME') : false,
+                'timeout' => C('DATA_CACHE_TIMEOUT') ? C('DATA_CACHE_TIMEOUT') : false,
                 'persistent' => false,
                 'expire'   =>C('DATA_CACHE_TIME'),
                 'length'   =>0,

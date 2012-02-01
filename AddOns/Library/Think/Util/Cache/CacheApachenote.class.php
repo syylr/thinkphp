@@ -36,7 +36,7 @@ class CacheApachenote extends Cache
             $options = array(
                 'host' => '127.0.0.1',
                 'port' => 1042,
-                'timeout' => 10
+                'timeout' => 10,
                 'length'   =>0
             );
         }
