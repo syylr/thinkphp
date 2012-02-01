@@ -36,7 +36,7 @@ class TagLibCx extends TagLib {
         'case'=>array('attr'=>'value,break'),
         'default'=>array('attr'=>'','close'=>0),
         'compare'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'eq,equal,notequal,neq,gt,lt,egt,elt,heq,nheq'),
-        'range'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'in,notin'),
+        'range'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'in,notin,between'),
         'empty'=>array('attr'=>'name','level'=>3),
         'notempty'=>array('attr'=>'name','level'=>3),
         'present'=>array('attr'=>'name','level'=>3),
@@ -392,16 +392,23 @@ class TagLibCx extends TagLib {
         $varArray = explode('|',$name);
         $name   =   array_shift($varArray);
         $name = $this->autoBuildVar($name);
-        $type    =   isset($tag['type'])?$tag['type']:$type;
-        $fun  =  ($type == 'in')? 'in_array'    :   '!in_array';
         if(count($varArray)>0)
             $name = $this->tpl->parseVarFunction($name,$varArray);
+
+        $type    =   isset($tag['type'])?$tag['type']:$type;
+        $fun  =  ($type == 'in')? 'in_array'    :   '!in_array';
+
         if('$' == substr($value,0,1)) {
             $value  =  $this->autoBuildVar(substr($value,1));
-            $parseStr = '<?php if('.$fun.'(('.$name.'), is_array('.$value.')?'.$value.':explode(\',\','.$value.'))): ?>'.$content.'<?php endif; ?>';
+            $str  =   'is_array('.$value.')?'.$value.':explode(\',\','.$value.')';
         }else{
             $value  =   '"'.$value.'"';
-            $parseStr = '<?php if('.$fun.'(('.$name.'), explode(\',\','.$value.'))): ?>'.$content.'<?php endif; ?>';
+            $str  =   'explode(\',\','.$value.')';
+        }
+        if($type=='between') {
+            $parseStr = '<?php $_RANGE_VAR_='.$str.';if('.$name.'>= $_RANGE_VAR_[0] && '.$name.'<= $_RANGE_VAR_[1]):?>'.$content.'<?php endif; ?>';
+        }else{
+            $parseStr = '<?php if('.$fun.'(('.$name.'), '.$str.')): ?>'.$content.'<?php endif; ?>';
         }
         return $parseStr;
     }
@@ -414,6 +421,10 @@ class TagLibCx extends TagLib {
     // range标签的别名 用于notin判断
     public function _notin($attr,$content) {
         return $this->_range($attr,$content,'notin');
+    }
+
+    public function _between($attr,$content){
+        return $this->_range($attr,$content,'between');
     }
 
     /**
