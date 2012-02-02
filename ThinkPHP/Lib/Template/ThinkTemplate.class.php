@@ -161,7 +161,9 @@ class  ThinkTemplate {
             $replace  = array("><",">");
             $tmplContent = preg_replace($find, $replace, $tmplContent);
         }
-        return trim($tmplContent);
+        // 优化生成的php代码
+        $tmplContent = str_replace('?><?php','',$tmplContent);
+        return strip_whitespace($tmplContent);
     }
 
     /**
