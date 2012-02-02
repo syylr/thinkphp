@@ -60,5 +60,6 @@ if(!IS_CLI) {
 }
 //  版本信息
 define('THINK_VERSION', '2.2');
+define('THINK_RELEASE', '20120202');
 //[/RUNTIME]
 ?>
