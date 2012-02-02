@@ -27,7 +27,7 @@ class TagLibCx extends TagLib {
     protected $tags   =  array(
         // 标签定义： attr 属性列表 close 是否闭合（0 或者1 默认1） alias 标签别名 level 嵌套层次
         'php'=>array(),
-        'volist'=>array('attr'=>'name,id,offset,length,key,mod','level'=>3,'alias'=>'iterate'),
+        'volist'=>array('attr'=>'name,id,offset,length,key,mod','level'=>3),
         'foreach' =>array('attr'=>'name,item,key','level'=>3),
         'if'=>array('attr'=>'condition','level'=>2),
         'elseif'=>array('attr'=>'condition','close'=>0),
@@ -36,7 +36,7 @@ class TagLibCx extends TagLib {
         'case'=>array('attr'=>'value,break'),
         'default'=>array('attr'=>'','close'=>0),
         'compare'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'eq,equal,notequal,neq,gt,lt,egt,elt,heq,nheq'),
-        'range'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'in,notin,between'),
+        'range'=>array('attr'=>'name,value,type','level'=>3,'alias'=>'in,notin,between,notbetween'),
         'empty'=>array('attr'=>'name','level'=>3),
         'notempty'=>array('attr'=>'name','level'=>3),
         'present'=>array('attr'=>'name','level'=>3),
@@ -407,6 +407,8 @@ class TagLibCx extends TagLib {
         }
         if($type=='between') {
             $parseStr = '<?php $_RANGE_VAR_='.$str.';if('.$name.'>= $_RANGE_VAR_[0] && '.$name.'<= $_RANGE_VAR_[1]):?>'.$content.'<?php endif; ?>';
+        }elseif($type=='notbetween'){
+            $parseStr = '<?php $_RANGE_VAR_='.$str.';if('.$name.'<$_RANGE_VAR_[0] && '.$name.'>$_RANGE_VAR_[1]):?>'.$content.'<?php endif; ?>';
         }else{
             $parseStr = '<?php if('.$fun.'(('.$name.'), '.$str.')): ?>'.$content.'<?php endif; ?>';
         }
@@ -425,6 +427,10 @@ class TagLibCx extends TagLib {
 
     public function _between($attr,$content){
         return $this->_range($attr,$content,'between');
+    }
+
+    public function _notbetween($attr,$content){
+        return $this->_range($attr,$content,'notbetween');
     }
 
     /**
