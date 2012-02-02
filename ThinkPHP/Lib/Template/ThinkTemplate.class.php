@@ -179,15 +179,16 @@ class  ThinkTemplate {
     public function parse($content) {
         // 内容为空不解析
         if(empty($content)) return '';
+        $begin = $this->config['taglib_begin'];
+        $end   = $this->config['taglib_end'];
+        // 首先替换literal标签内容
+        $content = preg_replace('/'.$begin.'literal'.$end.'(.*?)'.$begin.'\/literal'.$end.'/eis',"\$this->parseLiteral('\\1')",$content);
+
         // 检查include语法
         $content  = $this->parseInclude($content);
         // 检查PHP语法
         $content    =  $this->parsePhp($content);
 
-        $begin = $this->config['taglib_begin'];
-        $end   = $this->config['taglib_end'];
-        // 首先替换literal标签内容
-        $content = preg_replace('/'.$begin.'literal'.$end.'(.*?)'.$begin.'\/literal'.$end.'/eis',"\$this->parseLiteral('\\1')",$content);
         // 获取需要引入的标签库列表
         // 标签库只需要定义一次，允许引入多个一次
         // 一般放在文件的最前面
