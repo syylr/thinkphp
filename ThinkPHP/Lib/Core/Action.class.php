@@ -373,6 +373,8 @@ abstract class Action {
             // 默认发生错误的话自动返回上页
             if(!$this->view->get('jumpUrl')) $this->assign('jumpUrl',"javascript:history.back(-1);");
             $this->display(C('TMPL_ACTION_ERROR'));
+        }
+        if(C('ACTION_DISPATCH_EXIT')) {
             // 中止执行  避免出错后继续执行
             exit ;
         }
