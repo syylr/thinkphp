@@ -308,7 +308,7 @@ class Model {
             foreach ($data as $key=>$val){
                 if(!in_array($key,$this->fields,true)){
                     unset($data[$key]);
-                }elseif(C('DB_FIELDTYPE_CHECK') && is_scalar($val)) {
+                }elseif(is_scalar($val)) {
                     // 字段类型检查
                     $this->_parseType($data,$key);
                 }
@@ -606,17 +606,17 @@ class Model {
         }
         // 记录操作的模型名称
         $options['model'] =  $this->name;
+
         // 字段类型验证
-        if(C('DB_FIELDTYPE_CHECK')) {
-            if(isset($options['where']) && is_array($options['where'])) {
-                // 对数组查询条件进行字段类型检查
-                foreach ($options['where'] as $key=>$val){
-                    if(in_array($key,$this->fields,true) && is_scalar($val)){
-                        $this->_parseType($options['where'],$key);
-                    }
+        if(isset($options['where']) && is_array($options['where'])) {
+            // 对数组查询条件进行字段类型检查
+            foreach ($options['where'] as $key=>$val){
+                if(in_array($key,$this->fields,true) && is_scalar($val)){
+                    $this->_parseType($options['where'],$key);
                 }
             }
         }
+
         // 表达式过滤
         $this->_options_filter($options);
         return $options;
