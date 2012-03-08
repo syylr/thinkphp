@@ -128,6 +128,40 @@ class App {
             // 执行前置操作
             call_user_func(array(&$module,'_before_'.$action));
         }
+        try{
+            switch($_SERVER['REQUEST_METHOD']) {
+                case 'POST':
+                    $vars    =  $_POST;
+                    break;
+                case 'PUT':
+                    parse_str(file_get_contents('php://input'), $vars);
+                    break;
+                default:
+                    $vars  =  $_GET;
+            }
+            //执行当前操作
+            $method=new ReflectionMethod($module, $action);
+            if($method->getNumberOfParameters()>0){
+                $params =  $method->getParameters();
+                foreach ($params as $param){
+                    $name = $param->getName();
+                    if(isset($vars[$name])) {
+                        $args[]  =  $vars[$name];
+                    }elseif($param->isDefaultValueAvailable()){
+                        $args[] = $param->getDefaultValue();
+                    }else{
+                        throw_exception(L('_PARAM_ERROR_').':'.$name);
+                    }
+                }
+                $method->invokeArgs($module,$args);
+            }else{
+                $method->invoke($module);
+            }
+        } catch (ReflectionException $e) { 
+            // 操作方法不存在 引导到__call方法处理
+            $method = new ReflectionMethod($module,'__call');
+            $method->invokeArgs($module,array($action));
+        }
         //执行当前操作
         call_user_func(array(&$module,$action));
         if (method_exists($module,'_after_'.$action)) {
