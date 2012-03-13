@@ -1003,7 +1003,7 @@ class Db {
      +----------------------------------------------------------
      */
     public function escapeString($str) {
-        return addslashes($str);
+        return MAGIC_QUOTES_GPC? $str : addslashes($str);
     }
 
     public function setModel($model){
