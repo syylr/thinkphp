@@ -403,6 +403,9 @@ class DbMysql extends Db{
      +----------------------------------------------------------
      */
     public function escapeString($str) {
+        if(MAGIC_QUOTES_GPC) {
+            return $str;
+        }
         if($this->_linkID) {
             return mysql_real_escape_string($str,$this->_linkID);
         }else{
