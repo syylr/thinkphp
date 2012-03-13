@@ -398,6 +398,9 @@ class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     public function escapeString($str) {
+        if(MAGIC_QUOTES_GPC) {
+            return $str;
+        }
         if($this->_linkID) {
             return  $this->_linkID->real_escape_string($str);
         }else{
