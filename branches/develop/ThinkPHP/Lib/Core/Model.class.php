@@ -24,7 +24,7 @@
  */
 class Model {
     // 操作状态
-    const MODEL_INSERT      =   1;      //  插入模型数据
+    const MODEL_INSERT    =   1;      //  插入模型数据
     const MODEL_UPDATE    =   2;      //  更新模型数据
     const MODEL_BOTH      =   3;      //  包含上面两种方式
     const MUST_VALIDATE         =   1;// 必须验证
@@ -1120,7 +1120,12 @@ class Model {
                 $range   = is_array($rule)?$rule:explode(',',$rule);
                 return in_array($value ,$range);
             case 'between': // 验证是否在某个范围
-                list($min,$max)   =  explode(',',$rule);
+                if (is_array($rule)){
+                    $min    =    $rule[0];
+                    $max    =    $rule[1];
+                }else{
+                    list($min,$max)   =  explode(',',$rule);
+                }
                 return $value>=$min && $value<=$max;
             case 'equal': // 验证是否等于某个值
                 return $value == $rule;
