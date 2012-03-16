@@ -162,8 +162,6 @@ class App {
             $method = new ReflectionMethod($module,'__call');
             $method->invokeArgs($module,array($action));
         }
-        //执行当前操作
-        call_user_func(array(&$module,$action));
         if (method_exists($module,'_after_'.$action)) {
             //  执行后缀操作
             call_user_func(array(&$module,'_after_'.$action));
