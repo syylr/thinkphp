@@ -524,8 +524,20 @@ class Db {
         $whereStr = '';
         if(is_array($val)) {
             if(is_string($val[0])) {
-                if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT|NOTLIKE|LIKE)$/i',$val[0])) { // 比较运算
+                if(preg_match('/^(EQ|NEQ|GT|EGT|LT|ELT)$/i',$val[0])) { // 比较运算
                     $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
+                }elseif(preg_match('/^(NOTLIKE|LIKE)$/i',$val[0])){// 模糊查找
+                    if(is_array($val[1])) {
+                        $likeLogic  =   isset($val[2])?strtoupper($val[2]):'OR';
+                        $likeStr    =   $this->comparison[strtolower($val[0])];
+                        $like   =   array();
+                        foreach ($val[1] as $item){
+                            $like[] = $key.' '.$likeStr.' '.$this->parseValue($item);
+                        }
+                        $whereStr .= '('.implode($likeLogic,$like).')';
+                    }else{
+                        $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
+                    }
                 }elseif('exp'==strtolower($val[0])){ // 使用表达式
                     $whereStr .= ' ('.$key.' '.$val[1].') ';
                 }elseif(preg_match('/IN/i',$val[0])){ // IN 运算
