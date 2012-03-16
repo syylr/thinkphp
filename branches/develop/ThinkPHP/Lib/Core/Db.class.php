@@ -534,7 +534,7 @@ class Db {
                         foreach ($val[1] as $item){
                             $like[] = $key.' '.$likeStr.' '.$this->parseValue($item);
                         }
-                        $whereStr .= '('.implode($likeLogic,$like).')';
+                        $whereStr .= '('.implode(' '.$likeLogic.' ',$like).')';
                     }else{
                         $whereStr .= $key.' '.$this->comparison[strtolower($val[0])].' '.$this->parseValue($val[1]);
                     }
