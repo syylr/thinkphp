@@ -218,7 +218,7 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
         }
     }else{ // PATHINFO模式或者兼容URL模式
         if(isset($route)) {
-            $url   =  __APP__.'/'.$url;
+            $url   =  __APP__.'/'.rtrim($url,$depr);
         }else{
             $url   =  __APP__.'/'.implode($depr,array_reverse($var));
         }
