@@ -847,6 +847,23 @@ class Model {
         // 状态
         $type = $type?$type:(!empty($data[$this->getPk()])?self::MODEL_UPDATE:self::MODEL_INSERT);
 
+        // 检测提交字段的合法性
+        if($type == self::MODEL_INSERT && isset($this->insert_fields)) {
+            $fields =   $this->insert_fields;
+        }elseif($type == self::MODEL_UPDATE && isset($this->update_fields)) {
+            $fields =   $this->update_fields;
+        }
+        if(isset($fields)) {
+            if(is_string($fields)) {
+                $fields =   explode(',',$fields);
+            }
+            foreach ($data as $key=>$val){
+                if(!in_array($key,$fields)) {
+                    unset($data[$key]);
+                }
+            }
+        }
+
         // 数据自动验证
         if(!$this->autoValidation($data,$type)) return false;
 
