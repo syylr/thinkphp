@@ -875,25 +875,22 @@ class Model {
 
         // 验证完成生成数据对象
         if($this->autoCheckFields) { // 开启字段检测 则过滤非法字段数据
-            $vo   =  array();
-            foreach ($this->fields as $key=>$name){
-                if(substr($key,0,1)=='_') continue;
-                $val = isset($data[$name])?$data[$name]:null;
-                //保证赋值有效
-                if(!is_null($val)){
-                    $vo[$name] = (MAGIC_QUOTES_GPC && is_string($val))?   stripslashes($val)  :  $val;
+            $fields =   $this->getDbFields();
+            foreach ($data as $key=>$val){
+                if(!in_array($key,$fields)) {
+                    unset($data[$key]);
+                }elseif(MAGIC_QUOTES_GPC && is_string($val)){
+                    $data[$key] =   stripslashes($val);
                 }
             }
-        }else{
-            $vo   =  $data;
         }
 
         // 创建完成对数据进行自动处理
-        $this->autoOperation($vo,$type);
+        $this->autoOperation($data,$type);
         // 赋值当前数据对象
-        $this->data =   $vo;
+        $this->data =   $data;
         // 返回创建的数据以供其他调用
-        return $vo;
+        return $data;
      }
 
     // 自动表单令牌验证
