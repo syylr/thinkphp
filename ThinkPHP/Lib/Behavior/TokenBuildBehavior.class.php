@@ -33,6 +33,8 @@ class TokenBuildBehavior extends Behavior {
                 // 智能生成表单令牌隐藏域
                 $content = str_replace($match[0],$this->buildToken().$match[0],$content);
             }
+        }else{
+            $content = str_replace('{__TOKEN__}','',$content);
         }
     }
 
