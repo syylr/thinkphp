@@ -367,8 +367,11 @@ class DbMysql extends Db{
      +----------------------------------------------------------
      */
     public function close() {
-        if ($this->_linkID){
-            mysql_close($this->_linkID);
+        if(is_array($this->linkID) && !empty($this->linkID)){
+            foreach($this->linkID as $link){
+                mysql_close($link);
+            }
+            $this->linkID = null;
         }
         $this->_linkID = null;
     }
