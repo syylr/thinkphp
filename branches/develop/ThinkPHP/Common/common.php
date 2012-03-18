@@ -324,7 +324,7 @@ function C($name=null, $value=null) {
     // 优先执行设置获取或赋值
     if (is_string($name)) {
         if (!strpos($name, '.')) {
-            $name = strtolower($name);
+            $name = strtoupper($name);
             if (is_null($value))
                 return isset($_config[$name]) ? $_config[$name] : null;
             $_config[$name] = $value;
@@ -332,7 +332,7 @@ function C($name=null, $value=null) {
         }
         // 二维数组设置和获取支持
         $name = explode('.', $name);
-        $name[0]   =  strtolower($name[0]);
+        $name[0]   =  strtoupper($name[0]);
         if (is_null($value))
             return isset($_config[$name[0]][$name[1]]) ? $_config[$name[0]][$name[1]] : null;
         $_config[$name[0]][$name[1]] = $value;
@@ -340,7 +340,7 @@ function C($name=null, $value=null) {
     }
     // 批量设置
     if (is_array($name)){
-        return $_config = array_merge($_config, array_change_key_case($name));
+        return $_config = array_merge($_config, array_change_key_case($name,CASE_UPPER));
     }
     return null; // 避免非法参数
 }
