@@ -360,8 +360,11 @@ class DbMysqli extends Db{
      +----------------------------------------------------------
      */
     public function close() {
-        if ($this->_linkID){
-            $this->_linkID->close();
+        if(is_array($this->linkID) && !empty($this->linkID)){
+            foreach($this->linkID as $link){
+                $link->close();
+            }
+            $this->linkID = null;
         }
         $this->_linkID = null;
     }
