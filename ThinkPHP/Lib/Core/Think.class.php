@@ -182,7 +182,8 @@ class Think {
                 return ;
             }
         }elseif(substr($class,-5)=='Model'){ // 加载模型
-            if(require_cache(LIB_PATH.'Model/'.$class.'.class.php')
+            if((defined('GROUP_NAME') && require_cache(LIB_PATH.'Model/'.GROUP_NAME.'/'.$class.'.class.php')
+                || require_cache(LIB_PATH.'Model/'.$class.'.class.php')
                 || require_cache(EXTEND_PATH.'Model/'.$class.'.class.php') ) {
                 return ;
             }
