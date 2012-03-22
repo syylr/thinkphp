@@ -282,31 +282,23 @@ abstract class Action {
      * @access protected
      +----------------------------------------------------------
      * @param mixed $data 要返回的数据
-     * @param String $info 提示信息
-     * @param boolean $status 返回状态
      * @param String $status ajax返回类型 JSON XML
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    protected function ajaxReturn($data,$info='',$status=1,$type='') {
-        $result  =  array();
-        $result['status']  =  $status;
-        $result['info'] =  $info;
-        $result['data'] = $data;
-        //扩展ajax返回数据, 在Action中定义function ajaxAssign(&$result){} 方法 扩展ajax返回数据。
-        if(method_exists($this,'ajaxAssign')) 
-            $this->ajaxAssign($result);
+    protected function ajaxReturn($data,$type='') {
         if(empty($type)) $type  =   C('DEFAULT_AJAX_RETURN');
-        if(strtoupper($type)=='JSON') {
+        $type   =   strtoupper($type);
+        if('JSON' == $type) {
             // 返回JSON数据格式到客户端 包含状态信息
             header('Content-Type:text/html; charset=utf-8');
-            exit(json_encode($result));
-        }elseif(strtoupper($type)=='XML'){
+            exit(json_encode($data));
+        }elseif('XML' == $type){
             // 返回xml格式数据
             header('Content-Type:text/xml; charset=utf-8');
-            exit(xml_encode($result));
-        }elseif(strtoupper($type)=='EVAL'){
+            exit(xml_encode($data));
+        }elseif('EVAL' == $type){
             // 返回可执行的js脚本
             header('Content-Type:text/html; charset=utf-8');
             exit($data);
@@ -337,7 +329,6 @@ abstract class Action {
     /**
      +----------------------------------------------------------
      * 默认跳转操作 支持错误导向和正确跳转
-     * 调用模板显示 默认为public目录下面的success页面
      * 提示页面为可配置 支持模板标签
      +----------------------------------------------------------
      * @param string $message 提示信息
@@ -353,7 +344,7 @@ abstract class Action {
      */
     private function dispatchJump($message,$status=1,$jumpUrl='',$wait=0,$exit=true) {
         // 判断是否为AJAX返回
-        if($this->isAjax()) $this->ajaxReturn($ajax,$message,$status);
+        if($this->isAjax()) $this->ajaxReturn(array('info'=>$message,'status'=>$status));
         if(!empty($jumpUrl)) $this->assign('jumpUrl',$jumpUrl);
         if(!empty($wait)) $this->assign('waitSecond',$wait);
 
