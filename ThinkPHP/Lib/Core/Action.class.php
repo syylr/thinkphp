@@ -217,9 +217,26 @@ abstract class Action {
                 case 'isput':
                     return strtolower($_SERVER['REQUEST_METHOD']) == strtolower(substr($method,2));
                 // 获取变量 支持过滤和默认值 调用方式 $this->_post($key,$filter,$default);
-                case '_get':      $input =& $_GET;break;
+                case '_get':$input =& $_GET;break;
                 case '_post':$input =& $_POST;break;
                 case '_put': parse_str(file_get_contents('php://input'), $input);break;
+                case '_param':  
+                    switch($_SERVER['REQUEST_METHOD']) {
+                        case 'POST':
+                            $input    =  $_POST;
+                            break;
+                        case 'PUT':
+                            parse_str(file_get_contents('php://input'), $input);
+                            break;
+                        default:
+                            $input  =  $_GET;
+                    }
+                    if(C('VAR_URL_PARAMS')){
+                        $params = $_GET[C('VAR_URL_PARAMS')];
+                        unset($_GET[C('VAR_URL_PARAMS')]);
+                        $input  =   array_merge($input,$params);
+                    }
+                    break;
                 case '_request': $input =& $_REQUEST;break;
                 case '_session': $input =& $_SESSION;break;
                 case '_cookie':  $input =& $_COOKIE;break;
