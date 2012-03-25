@@ -103,13 +103,12 @@ class Dispatcher {
             if(C('URL_HTML_SUFFIX')) {
                 $_SERVER['PATH_INFO'] = preg_replace('/\.'.trim(C('URL_HTML_SUFFIX'),'.').'$/i', '', $_SERVER['PATH_INFO']);
             }
+            $paths = explode($depr,trim($_SERVER['PATH_INFO'],'/'));
+            if(C('VAR_URL_PARAMS')) {
+                // 直接通过$_GET['_URL_'][1] $_GET['_URL_'][2] 获取URL参数 方便不用路由时参数获取
+                $_GET[C('VAR_URL_PARAMS')]   =  $paths;
+            }
             if(!self::routerCheck()){   // 检测路由规则 如果没有则按默认规则调度URL
-                $paths = explode($depr,trim($_SERVER['PATH_INFO'],'/'));
-
-                if(C('VAR_URL_PARAMS')) {
-                    // 直接通过$_GET['_URL_'][1] $_GET['_URL_'][2] 获取URL参数 方便不用路由时参数获取
-                    $_GET[C('VAR_URL_PARAMS')]   =  $paths;
-                }
                 $var  =  array();
                 if (C('APP_GROUP_LIST') && !isset($_GET[C('VAR_GROUP')])){
                     $var[C('VAR_GROUP')] = in_array(strtolower($paths[0]),explode(',',strtolower(C('APP_GROUP_LIST'))))? array_shift($paths) : '';
