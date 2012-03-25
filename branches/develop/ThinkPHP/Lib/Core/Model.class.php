@@ -1444,7 +1444,10 @@ class Model {
      * @return Model
      +----------------------------------------------------------
      */
-    public function data($data){
+    public function data($data=''){
+        if('' === $data && !empty($this->data)) {
+            return $this->data;
+        }
         if(is_object($data)){
             $data   =   get_object_vars($data);
         }elseif(is_string($data)){
