@@ -236,12 +236,17 @@ class Db {
         // 数据库读写是否分离
         if(C('DB_RW_SEPARATE')){
             // 主从式采用读写分离
-            if($master)
+            if($master){
                 // 主服务器写入
                 $r  =   floor(mt_rand(0,C('DB_MASTER_NUM')-1));
-            else
-                // 读操作连接从服务器
-                $r = floor(mt_rand(C('DB_MASTER_NUM'),count($_config['hostname'])-1));   // 每次随机连接的数据库
+            }else{
+                if(is_numeric(C('DB_SLAVE_NO'))) {// 指定服务器读
+                    $r = C('DB_SLAVE_NO');
+                }else{
+                    // 读操作连接从服务器
+                    $r = floor(mt_rand(C('DB_MASTER_NUM'),count($_config['hostname'])-1));   // 每次随机连接的数据库
+                }
+            }
         }else{
             // 读写操作不区分服务器
             $r = floor(mt_rand(0,count($_config['hostname'])-1));   // 每次随机连接的数据库
