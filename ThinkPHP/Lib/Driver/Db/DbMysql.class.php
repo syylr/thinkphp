@@ -144,8 +144,6 @@ class DbMysql extends Db{
      +----------------------------------------------------------
      * @return integer
      +----------------------------------------------------------
-     * @throws ThinkExecption
-     +----------------------------------------------------------
      */
     public function execute($str) {
         $this->initConnect(true);
