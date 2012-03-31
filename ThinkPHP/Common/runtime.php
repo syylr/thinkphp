@@ -30,11 +30,6 @@ if(version_compare(PHP_VERSION,'5.4.0','<') ) {
 define('IS_CGI',    substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
 define('IS_WIN',    strstr(PHP_OS, 'WIN') ? 1 : 0 );
 define('IS_CLI',    PHP_SAPI=='cli'? 1   :   0);
-define('IS_GET',    strtolower($_SERVER['REQUEST_METHOD'])=='get' ? 1 : 0);
-define('IS_POST',   strtolower($_SERVER['REQUEST_METHOD'])=='post' ? 1 : 0);
-define('IS_PUT',    strtolower($_SERVER['REQUEST_METHOD'])=='put' ? 1 : 0);
-define('IS_DELETE', strtolower($_SERVER['REQUEST_METHOD'])=='delete' ? 1 : 0);
-define('IS_AJAX',   (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest') || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? 1 : 0);
 
 // 项目名称
 defined('APP_NAME') or define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
@@ -112,9 +107,9 @@ function load_runtime_file() {
     }elseif(!is_dir(CACHE_PATH)){
         // 检查缓存目录
         check_runtime();
-    }elseif(APP_DEBUG){
+    }elseif(APP_DEBUG && is_file(RUNTIME_FILE)){
         // 调试模式切换删除编译缓存
-        if(is_file(RUNTIME_FILE))   unlink(RUNTIME_FILE);
+        unlink(RUNTIME_FILE);
     }
 }
 
@@ -203,19 +198,8 @@ function build_app_dir() {
         foreach ($dirs as $dir){
             if(!is_dir($dir))  mk_dir($dir,0777);
         }
-        // 目录安全写入
-        defined('BUILD_DIR_SECURE') or define('BUILD_DIR_SECURE',false);
-        if(BUILD_DIR_SECURE) {
-            defined('DIR_SECURE_FILENAME') or define('DIR_SECURE_FILENAME','index.html');
-            defined('DIR_SECURE_CONTENT') or define('DIR_SECURE_CONTENT',' ');
-            // 自动写入目录安全文件
-            $content = DIR_SECURE_CONTENT;
-            $a = explode(',', DIR_SECURE_FILENAME);
-            foreach ($a as $filename){
-                foreach ($dirs as $dir)
-                    file_put_contents($dir.$filename,$content);
-            }
-        }
+        // 写入目录安全文件
+        build_dir_secure($dirs);
         // 写入配置文件
         if(!is_file(CONF_PATH.'config.php'))
             file_put_contents(CONF_PATH.'config.php',"<?php\nreturn array(\n\t//'配置项'=>'配置值'\n);\n?>");
@@ -232,6 +216,41 @@ function build_app_dir() {
 function build_first_action() {
     $content = file_get_contents(THINK_PATH.'Tpl/default_index.tpl');
     file_put_contents(LIB_PATH.'Action/IndexAction.class.php',$content);
+}
+
+// 生成目录安全文件
+function build_dir_secure($dirs='') {
+    // 目录安全写入
+    if(defined('BUILD_DIR_SECURE') && BUILD_DIR_SECURE) {
+        defined('DIR_SECURE_FILENAME') or define('DIR_SECURE_FILENAME','index.html');
+        defined('DIR_SECURE_CONTENT') or define('DIR_SECURE_CONTENT',' ');
+        // 自动写入目录安全文件
+        $content = DIR_SECURE_CONTENT;
+        $files = explode(',', DIR_SECURE_FILENAME);
+        foreach ($files as $filename){
+            foreach ($dirs as $dir)
+                file_put_contents($dir.$filename,$content);
+        }
+    }
+}
+
+// 获取目录树
+function get_dir_tree($directory,$level=2){
+    static $_dirs = array();
+    $dir = dir($directory);
+    while($file = $dir->read()){
+        if(($file!='.') && ($file!='..')){  //需要排除的
+            if((is_dir("$directory/$file"))){
+                $_dirs[]  =   "$directory/$file";
+                if($level) {
+                    get_dir_tree("$directory/$file",$level-1);
+                }
+
+            }
+        }
+    }
+    $dir->close();
+    return $_dirs;
 }
 
 // 加载运行时所需文件
