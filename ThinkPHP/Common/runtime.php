@@ -27,9 +27,14 @@ if(version_compare(PHP_VERSION,'5.4.0','<') ) {
     @set_magic_quotes_runtime (0);
     define('MAGIC_QUOTES_GPC',get_magic_quotes_gpc()?True:False);
 }
-define('IS_CGI',substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
-define('IS_WIN',strstr(PHP_OS, 'WIN') ? 1 : 0 );
-define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
+define('IS_CGI',    substr(PHP_SAPI, 0,3)=='cgi' ? 1 : 0 );
+define('IS_WIN',    strstr(PHP_OS, 'WIN') ? 1 : 0 );
+define('IS_CLI',    PHP_SAPI=='cli'? 1   :   0);
+define('IS_GET',    strtolower($_SERVER['REQUEST_METHOD'])=='get' ? 1 : 0);
+define('IS_POST',   strtolower($_SERVER['REQUEST_METHOD'])=='post' ? 1 : 0);
+define('IS_PUT',    strtolower($_SERVER['REQUEST_METHOD'])=='put' ? 1 : 0);
+define('IS_DELETE', strtolower($_SERVER['REQUEST_METHOD'])=='delete' ? 1 : 0);
+define('IS_AJAX',   (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest') || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? 1 : 0);
 
 // 项目名称
 defined('APP_NAME') or define('APP_NAME', basename(dirname($_SERVER['SCRIPT_FILENAME'])));
