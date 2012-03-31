@@ -314,6 +314,11 @@ class Model {
                 }
             }
         }
+        // 安全过滤
+        if(!empty($this->options['filter'])) {
+            $data = array_map($this->options['filter'],$data);
+            unset($this->options['filter']);
+        }
         $this->_before_write($data);
         return $data;
      }
@@ -1165,6 +1170,12 @@ class Model {
                 // 检查附加规则
                 return $this->regex($value,$rule);
         }
+    }
+    
+    // 对数据对象进行安全过滤
+    public function filter($filter){
+        $this->options['filter']    =   $filter;
+        return $this;
     }
 
     /**
