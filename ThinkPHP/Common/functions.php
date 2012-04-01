@@ -143,14 +143,14 @@ function layout($layout) {
 }
 
 // URL组装 支持不同模式
-// 格式：U('[http://域名/][分组/模块/操作]?参数','参数','伪静态后缀','是否跳转','显示域名')
+// 格式：U('[http://子域名/][分组/模块/操作]?参数','参数','伪静态后缀','是否跳转','显示域名')
 function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
     // 解析URL
     $info =  parse_url($url);
     $url   =  !empty($info['path'])?trim($info['path'],'/'):ACTION_NAME;
     // 解析子域名
     if(isset($info['host'])) {
-        $domain =   $info['host'];
+        $domain =   $info['host'].(strpos($info['host'],'.')?'':strstr($_SERVER['HTTP_HOST'],'.'));
     }elseif($domain===true){
         $domain = $_SERVER['HTTP_HOST'];
         if(C('APP_SUB_DOMAIN_DEPLOY') ) { // 开启子域名部署
