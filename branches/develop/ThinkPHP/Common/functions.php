@@ -143,7 +143,7 @@ function layout($layout) {
 }
 
 // URL组装 支持不同模式
-// 格式：U('[http://子域名/][分组/模块/操作]?参数','参数','伪静态后缀','是否跳转','显示域名')
+// 格式：U('[分组/模块/操作@域名]?参数','参数','伪静态后缀','是否跳转','显示域名')
 function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
     // 解析URL
     $info =  parse_url($url);
@@ -153,15 +153,7 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
     }
     // 解析子域名
     if(isset($host)) {
-        if(false !== strpos($host, '@')){
-            list($userinfo, $host) = explode('@', $host, 2);
-            list($host, $port) = explode(':', $host, 2);
-            $domain =   $host.(strpos($host,'.')?'':strstr($_SERVER['HTTP_HOST'],'.'));
-            if($userinfo) $domain = $userinfo.'@'.$domain;
-            if($port) $domain .= ':'.$port;
-        }else{
-            $domain = $host.(strpos($host,'.')?'':strstr($_SERVER['HTTP_HOST'],'.'));
-        }
+        $domain = $host.(strpos($host,'.')?'':strstr($_SERVER['HTTP_HOST'],'.'));
     }elseif($domain===true){
         $domain = $_SERVER['HTTP_HOST'];
         if(C('APP_SUB_DOMAIN_DEPLOY') ) { // 开启子域名部署
