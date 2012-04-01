@@ -147,10 +147,21 @@ function layout($layout) {
 function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
     // 解析URL
     $info =  parse_url($url);
-    $url   =  !empty($info['path'])?trim($info['path'],'/'):ACTION_NAME;
+    $url   =  !empty($info['path'])?$info['path']:ACTION_NAME;
+    if(false !== strpos($url,'@')) { // 解析域名
+        list($url,$host)    =   explode('@',$info['path'], 2);
+    }
     // 解析子域名
-    if(isset($info['host'])) {
-        $domain =   $info['host'].(strpos($info['host'],'.')?'':strstr($_SERVER['HTTP_HOST'],'.'));
+    if(isset($host)) {
+        if(false !== strpos($host, '@')){
+            list($userinfo, $host) = explode('@', $host, 2);
+            list($host, $port) = explode(':', $host, 2);
+            $domain =   $host.(strpos($host,'.')?'':strstr($_SERVER['HTTP_HOST'],'.'));
+            if($userinfo) $domain = $userinfo.'@'.$domain;
+            if($port) $domain .= ':'.$port;
+        }else{
+            $domain = $host.(strpos($host,'.')?'':strstr($_SERVER['HTTP_HOST'],'.'));
+        }
     }elseif($domain===true){
         $domain = $_SERVER['HTTP_HOST'];
         if(C('APP_SUB_DOMAIN_DEPLOY') ) { // 开启子域名部署
@@ -199,7 +210,7 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
             if(C('URL_CASE_INSENSITIVE')) {
                 $var[C('VAR_MODULE')] =  parse_name($var[C('VAR_MODULE')]);
             }
-            if(C('APP_GROUP_LIST')) {
+            if(!C('APP_SUB_DOMAIN_DEPLOY') && C('APP_GROUP_LIST')) {
                 if(!empty($path)) {
                     $group   =  array_pop($path);
                     $var[C('VAR_GROUP')]  =   $group;
