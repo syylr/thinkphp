@@ -246,7 +246,11 @@ class TagLib {
                 case 'REQUEST':  $parseStr = '$_REQUEST[\''.$vars[2].'\']';break;
                 case 'CONST':     $parseStr = strtoupper($vars[2]);break;
                 case 'LANG':       $parseStr = 'L("'.$vars[2].'")';break;
-                case 'CONFIG':    $parseStr = 'C("'.$vars[2].'")';break;
+                case 'CONFIG':    
+                    if(isset($vars[3])) {
+                        $vars[2] .= '.'.$vars[3];
+                    }                    
+                    $parseStr = 'C("'.$vars[2].'")';break;
             }
         }else if(count($vars)==2){
             switch($vars[1]){
