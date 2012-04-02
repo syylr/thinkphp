@@ -113,7 +113,7 @@ class Db {
             if(APP_DEBUG)  $db->debug    = true;
         }else {
             // 类没有定义
-            throw_exception(L('_NOT_SUPPORT_DB_').': ' . $db_config['dbms']);
+            throw_exception(L('_NO_DB_DRIVER_').': ' . $class);
         }
         return $db;
     }
