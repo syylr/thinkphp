@@ -94,7 +94,7 @@ class TagLib {
      */
     public function __construct() {
         $this->tagLib  = strtolower(substr(get_class($this),6));
-        $this->tpl       = Think::instance('ThinkTemplate');//ThinkTemplate::getInstance();
+        $this->tpl       = Think::instance('ThinkTemplate');
     }
 
     /**
