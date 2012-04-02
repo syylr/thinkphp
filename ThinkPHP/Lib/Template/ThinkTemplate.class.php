@@ -636,24 +636,13 @@ class  ThinkTemplate {
             }
         }else if(count($vars)==2){
             switch($vars[1]){
-                case 'NOW':
-                    $parseStr = "date('Y-m-d g:i a',time())";
-                    break;
-                case 'VERSION':
-                    $parseStr = 'THINK_VERSION';
-                    break;
-                case 'TEMPLATE':
-                    $parseStr = "'".$this->templateFile."'";//'C("TEMPLATE_NAME")';
-                    break;
-                case 'LDELIM':
-                    $parseStr = 'C("TMPL_L_DELIM")';
-                    break;
-                case 'RDELIM':
-                    $parseStr = 'C("TMPL_R_DELIM")';
-                    break;
+                case 'NOW':$parseStr = "date('Y-m-d g:i a',time())";break;
+                case 'VERSION':$parseStr = 'THINK_VERSION';break;
+                case 'TEMPLATE':$parseStr = "'".$this->templateFile."'";break;
+                case 'LDELIM':$parseStr = 'C("TMPL_L_DELIM")';break;
+                case 'RDELIM':$parseStr = 'C("TMPL_R_DELIM")';break;
                 default:
-                    if(defined($vars[1]))
-                        $parseStr = $vars[1];
+                    if(defined($vars[1]))   $parseStr = $vars[1];
             }
         }
         return $parseStr;
