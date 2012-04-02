@@ -40,9 +40,7 @@ class ShowPageTraceBehavior extends Behavior {
         $log  =   Log::$log;
         $files =  get_included_files();
         $trace   =  array(
-            '请求时间'=>  date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']),
-            '当前页面'=>  __SELF__,
-            '请求协议'=>  $_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'],
+            '当前请求'=>  date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']).' '.$_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].':'.__SELF__,
             '运行信息'=>  $this->showTime(),
             '会话ID'    =>  session_id(),
             '日志记录'=>  count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录',

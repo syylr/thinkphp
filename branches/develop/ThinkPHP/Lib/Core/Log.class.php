@@ -63,7 +63,7 @@ class Log {
     static function record($message,$level=self::ERR,$record=false) {
         if($record || strpos(C('LOG_LEVEL'),$level)) {
             $now = date(self::$format);
-            self::$log[] =   "{$now} | {$level}: {$message}\r\n";
+            self::$log[] =   "{$now} {$level}: {$message}\r\n";
         }
     }
 
