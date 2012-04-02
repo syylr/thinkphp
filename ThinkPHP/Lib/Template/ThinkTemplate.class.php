@@ -604,12 +604,17 @@ class  ThinkTemplate {
                 case 'COOKIE':
                     if(isset($vars[3])) {
                         $parseStr = '$_COOKIE[\''.$vars[2].'\'][\''.$vars[3].'\']';
+                    }elseif(C('COOKIE_PREFIX')){
+                        $parseStr = '$_COOKIE[\''.C('COOKIE_PREFIX').$vars[2].'\']';
                     }else{
                         $parseStr = '$_COOKIE[\''.$vars[2].'\']';
-                    }break;
+                    }
+                    break;
                 case 'SESSION':
                     if(isset($vars[3])) {
                         $parseStr = '$_SESSION[\''.$vars[2].'\'][\''.$vars[3].'\']';
+                    }elseif(C('SESSION_PREFIX')){
+                        $parseStr = '$_SESSION[\''.C('SESSION_PREFIX').'\'][\''.$vars[2].'\']';
                     }else{
                         $parseStr = '$_SESSION[\''.$vars[2].'\']';
                     }
