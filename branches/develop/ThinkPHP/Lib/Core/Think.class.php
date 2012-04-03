@@ -43,27 +43,9 @@ class Think {
         //[RUNTIME]
         Think::buildApp();         // 预编译项目
         //[/RUNTIME]
-        Think::defineVars();
         // 运行应用
         App::run();
         return ;
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 定义常量
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    static function defineVars(){
-        define('IS_GET',    strtolower($_SERVER['REQUEST_METHOD'])=='get' ? 1 : 0);
-        define('IS_POST',   strtolower($_SERVER['REQUEST_METHOD'])=='post' ? 1 : 0);
-        define('IS_PUT',    strtolower($_SERVER['REQUEST_METHOD'])=='put' ? 1 : 0);
-        define('IS_DELETE', strtolower($_SERVER['REQUEST_METHOD'])=='delete' ? 1 : 0);
-        define('IS_AJAX',   (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest') || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? 1 : 0);
     }
 
     //[RUNTIME]

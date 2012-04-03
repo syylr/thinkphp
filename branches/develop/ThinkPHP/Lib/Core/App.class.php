@@ -179,6 +179,8 @@ class App {
      +----------------------------------------------------------
      */
     static public function run() {
+        // 定义请求类型常量
+        App::defineVars();
         // 项目初始化标签
         tag('app_init');
         App::init();
@@ -196,4 +198,20 @@ class App {
         return ;
     }
 
+    /**
+     +----------------------------------------------------------
+     * 定义请求类型常量
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return void
+     +----------------------------------------------------------
+     */
+    static function defineVars(){
+        define('IS_GET',    strtolower($_SERVER['REQUEST_METHOD'])=='get' ? 1 : 0);
+        define('IS_POST',   strtolower($_SERVER['REQUEST_METHOD'])=='post' ? 1 : 0);
+        define('IS_PUT',    strtolower($_SERVER['REQUEST_METHOD'])=='put' ? 1 : 0);
+        define('IS_DELETE', strtolower($_SERVER['REQUEST_METHOD'])=='delete' ? 1 : 0);
+        define('IS_AJAX',   (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest') || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? 1 : 0);
+    }
 }
