@@ -56,7 +56,8 @@ class Model {
     protected $options  =   array();
     protected $_validate       = array();  // 自动验证定义
     protected $_auto           = array();  // 自动完成定义
-    protected $_map           = array();  // 字段映射定义
+    protected $_map            = array();  // 字段映射定义
+    protected $_scope          = array();  // 命名范围定义
     // 是否自动检测数据表字段信息
     protected $autoCheckFields   =   true;
     // 是否批处理验证
@@ -283,6 +284,18 @@ class Model {
             $name   =   parse_name(substr($method,10));
             $where[$name] =$args[0];
             return $this->where($where)->getField($args[1]);
+        }elseif(isset($this->_scope[$method])){
+            // 命名范围
+            $options = $this->_scope[$method];
+            $methods = array('table','where','order','limit','page','alias','having','group','lock','distinct');
+            if(is_array($options) && !empty($options)){
+                foreach($options as $key=>$option){
+                    if(in_array(strtolower($key), $methods, true)){
+                        $this->options[strtolower($key)] = $option;
+                    }
+                }
+                return $this;
+            }
         }else{
             throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             return;
