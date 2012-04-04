@@ -219,7 +219,7 @@ abstract class Action {
                 __hack_action();
             }elseif(APP_DEBUG) {
                 // 抛出异常
-                throw_exception(L('_ERROR_ACTION_').ACTION_NAME);
+                throw_exception(L('_ERROR_ACTION_').':'.ACTION_NAME);
             }else{
                 if(C('LOG_EXCEPTION_RECORD')) Log::write(L('_ERROR_ACTION_').ACTION_NAME);
                 send_http_status(404);
