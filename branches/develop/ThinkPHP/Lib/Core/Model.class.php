@@ -286,21 +286,8 @@ class Model {
             $name   =   parse_name(substr($method,10));
             $where[$name] =$args[0];
             return $this->where($where)->getField($args[1]);
-        }elseif(isset($this->_scope[$method])){
-            // 命名范围
-            $options = $this->_scope[$method];
-            // 合并传入scope配置
-            if(is_array($args[0]) && !empty($args[0])){
-                $options = $args[1] ? array_merge($args[0], $options) : array_merge($options, $args[0]);
-            }
-            if(is_array($options) && !empty($options)){
-                foreach($options as $key=>$option){
-                    if(in_array(strtolower($key), $this->methods, true)){
-                        $this->options[strtolower($key)] = $option;
-                    }
-                }
-                return $this;
-            }
+        }elseif(isset($this->_scope[$method])){// 命名范围的单独调用支持
+            return $this->scope($method);
         }else{
             throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             return;
