@@ -1031,12 +1031,12 @@ class Model {
                         case 'field':    // 用其它字段的值进行填充
                             $data[$auto[0]] = $data[$auto[1]];
                             break;
-                        case 'isempty':
-                            if(empty($data[$auto[0]]))
-                                $data[$auto[0]] = $auto[1];
-                            break;
                         case 'notexists':
                             if(!isset($data[$auto[0]]))
+                                $data[$auto[0]] = $auto[1];
+                            break;
+                        case 'isempty':
+                            if(empty($data[$auto[0]]))
                                 $data[$auto[0]] = $auto[1];
                             break;
                         case 'always':
@@ -1045,7 +1045,8 @@ class Model {
                             $data[$auto[0]] = $auto[1];
                             break;
                     }
-                    if(false === $data[$auto[0]] )   unset($data[$auto[0]]);
+                    if(false === $data[$auto[0]] )
+                        unset($data[$auto[0]]);
                 }
             }
         }
