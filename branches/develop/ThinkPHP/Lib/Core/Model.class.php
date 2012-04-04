@@ -62,6 +62,8 @@ class Model {
     protected $autoCheckFields   =   true;
     // 是否批处理验证
     protected $patchValidate   =  false;
+    // 链操作方法列表
+    protected $methods = array('table','where','order','limit','page','alias','having','group','lock','distinct');
 
     /**
      +----------------------------------------------------------
@@ -266,7 +268,7 @@ class Model {
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('table','where','order','limit','page','alias','having','group','lock','distinct'),true)) {
+        if(in_array(strtolower($method),$this->methods,true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
@@ -287,10 +289,9 @@ class Model {
         }elseif(isset($this->_scope[$method])){
             // 命名范围
             $options = $this->_scope[$method];
-            $methods = array('table','where','order','limit','page','alias','having','group','lock','distinct');
             if(is_array($options) && !empty($options)){
                 foreach($options as $key=>$option){
-                    if(in_array(strtolower($key), $methods, true)){
+                    if(in_array(strtolower($key), $this->methods, true)){
                         $this->options[strtolower($key)] = $option;
                     }
                 }
@@ -338,6 +339,38 @@ class Model {
 
     // 写入数据前的回调方法 包括新增和更新
     protected function _before_write(&$data) {}
+
+    /**
+     +----------------------------------------------------------
+     * 调用空间范围
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @return $this
+     +----------------------------------------------------------
+     */
+    public function scope(){
+        $num = func_num_args();
+        $args = func_get_args();
+        if(!$num){
+            return $this;
+        }
+        if($num == 1 && is_array($args)){
+            $args = $args[0];
+        }
+        foreach($args as $name){
+            if(!isset($this->_scope[$name])) continue;
+            $options = $this->_scope[$name];
+            if(is_array($options) && !empty($options)){
+                foreach($options as $key=>$option){
+                    if(in_array(strtolower($key), $this->methods, true)){
+                        $this->options[strtolower($key)] = $option;
+                    }
+                }
+            }
+        }
+        return $this;
+    }
 
     /**
      +----------------------------------------------------------
