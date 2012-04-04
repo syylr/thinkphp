@@ -291,7 +291,7 @@ class Model {
             $options = $this->_scope[$method];
             // 合并传入scope配置
             if(is_array($args[0]) && !empty($args[0])){
-                $options = !$args[1] ? array_merge($options, $args[0]) : array_merge($args[0], $options);
+                $options = $args[1] ? array_merge($args[0], $options) : array_merge($options, $args[0]);
             }
             if(is_array($options) && !empty($options)){
                 foreach($options as $key=>$option){
