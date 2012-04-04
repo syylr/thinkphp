@@ -1043,6 +1043,7 @@ class Model {
                         case 'string':
                         default: // 默认作为字符串填充
                             $data[$auto[0]] = $auto[1];
+                            break;
                     }
                     if(false === $data[$auto[0]] )   unset($data[$auto[0]]);
                 }
