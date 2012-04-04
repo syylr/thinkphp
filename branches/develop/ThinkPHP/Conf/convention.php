@@ -128,5 +128,6 @@ return  array(
     'VAR_PATHINFO'          => 's',	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于URL_PATHINFO_DEPR
     'VAR_URL_PARAMS'      => '_URL_', // PATHINFO URL参数变量
     'VAR_TEMPLATE'          => 't',		// 默认模板切换变量
+    'VAR_FILTERS'           =>  '',     // 全局系统变量的默认过滤方法 多个用逗号分割
 
 );
