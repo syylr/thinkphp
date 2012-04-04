@@ -287,7 +287,7 @@ class Model {
             $where[$name] =$args[0];
             return $this->where($where)->getField($args[1]);
         }elseif(isset($this->_scope[$method])){// 命名范围的单独调用支持
-            return $this->scope($method);
+            return $this->scope($method,$args[0]);
         }else{
             throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             return;
@@ -338,11 +338,12 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param mixed $scope 命名范围名称 支持多个 和直接定义
+     * @param array $args 参数
      +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
      */
-    public function scope($scope=''){
+    public function scope($scope='',$args=NULL){
         if('' === $scope) {
             if(isset($this->_scope['default'])) {
                 // 默认的命名范围
@@ -356,6 +357,9 @@ class Model {
             foreach ($scopes as $name){
                 if(!isset($this->_scope[$name])) continue;
                 $options    =   array_merge($options,$this->_scope[$name]);
+            }
+            if(!empty($args) && is_array($args)) {
+                $options    =   array_merge($options,$args);
             }
         }elseif(is_array($scope)){ // 直接传入命名范围定义
             $options    =   $scope;
