@@ -42,6 +42,23 @@ class App {
         // URL调度
         Dispatcher::dispatch();
 
+        // 定义当前请求类型常量
+        define('IS_GET',    $_SERVER['REQUEST_METHOD']=='GET' ? true : false);
+        define('IS_POST',   $_SERVER['REQUEST_METHOD']=='POST' ? true : false);
+        define('IS_PUT',    $_SERVER['REQUEST_METHOD']=='PUT' ? true : false);
+        define('IS_DELETE', $_SERVER['REQUEST_METHOD']=='DELETE' ? true : false);
+        define('IS_AJAX',   (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest') || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? true : false);
+
+        // 系统变量安全过滤
+        if(C('VAR_FILTERS')) {
+            $filters    =   explode(',',C('VAR_FILTERS'));
+            foreach($filters as $filter){
+                // 全局参数过滤
+                $_POST  =   array_map($filter,$_POST);
+                $_GET   =   array_map($filter,$_GET);
+            }
+        }
+
         if(defined('GROUP_NAME')) {
             // 加载分组配置文件
             if(is_file(CONF_PATH.GROUP_NAME.'/config.php'))
@@ -179,8 +196,6 @@ class App {
      +----------------------------------------------------------
      */
     static public function run() {
-        // 定义请求类型常量
-        App::defineVars();
         // 项目初始化标签
         tag('app_init');
         App::init();
@@ -198,20 +213,4 @@ class App {
         return ;
     }
 
-    /**
-     +----------------------------------------------------------
-     * 定义请求类型常量
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    static function defineVars(){
-        define('IS_GET',    strtolower($_SERVER['REQUEST_METHOD'])=='get' ? 1 : 0);
-        define('IS_POST',   strtolower($_SERVER['REQUEST_METHOD'])=='post' ? 1 : 0);
-        define('IS_PUT',    strtolower($_SERVER['REQUEST_METHOD'])=='put' ? 1 : 0);
-        define('IS_DELETE', strtolower($_SERVER['REQUEST_METHOD'])=='delete' ? 1 : 0);
-        define('IS_AJAX',   (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest') || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? 1 : 0);
-    }
 }
