@@ -105,7 +105,7 @@ class App {
      */
     static public function exec() {
         // 安全检测
-        if(!preg_match('/^[A-Za-z]\w+$/',MODULE_NAME.ACTION_NAME)){
+        if(!preg_match('/^[A-Za-z]\w+$/',MODULE_NAME) || !preg_match('/^[A-Za-z]\w+$/',ACTION_NAME)){
             $module =  false;
         }else{
             //创建Action控制器实例
