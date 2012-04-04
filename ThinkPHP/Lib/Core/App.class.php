@@ -49,6 +49,15 @@ class App {
         define('IS_DELETE', $_SERVER['REQUEST_METHOD']=='DELETE' ? true : false);
         define('IS_AJAX',   (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest') || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? true : false);
 
+        if(defined('GROUP_NAME')) {
+            // 加载分组配置文件
+            if(is_file(CONF_PATH.GROUP_NAME.'/config.php'))
+                C(include CONF_PATH.GROUP_NAME.'/config.php');
+            // 加载分组函数文件
+            if(is_file(COMMON_PATH.GROUP_NAME.'/function.php'))
+                include COMMON_PATH.GROUP_NAME.'/function.php';
+        }
+
         // 系统变量安全过滤
         if(C('VAR_FILTERS')) {
             $filters    =   explode(',',C('VAR_FILTERS'));
@@ -57,15 +66,6 @@ class App {
                 $_POST  =   array_map($filter,$_POST);
                 $_GET   =   array_map($filter,$_GET);
             }
-        }
-
-        if(defined('GROUP_NAME')) {
-            // 加载分组配置文件
-            if(is_file(CONF_PATH.GROUP_NAME.'/config.php'))
-                C(include CONF_PATH.GROUP_NAME.'/config.php');
-            // 加载分组函数文件
-            if(is_file(COMMON_PATH.GROUP_NAME.'/function.php'))
-                include COMMON_PATH.GROUP_NAME.'/function.php';
         }
 
         /* 获取模板主题名称 */
