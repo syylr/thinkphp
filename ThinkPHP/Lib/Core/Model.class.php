@@ -346,32 +346,36 @@ class Model {
 
     /**
      +----------------------------------------------------------
-     * 调用空间范围
+     * 调用命名范围
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @return $this
+     * @param mixed $scope 命名范围名称 支持多个 和直接定义
+     +----------------------------------------------------------
+     * @return Model
      +----------------------------------------------------------
      */
-    public function scope(){
-        $num = func_num_args();
-        $args = func_get_args();
-        if(!$num){
-            return $this;
-        }
-        if($num == 1 && is_array($args)){
-            $args = $args[0];
-        }
-        foreach($args as $name){
-            if(!isset($this->_scope[$name])) continue;
-            $options = $this->_scope[$name];
-            if(is_array($options) && !empty($options)){
-                foreach($options as $key=>$option){
-                    if(in_array(strtolower($key), $this->methods, true)){
-                        $this->options[strtolower($key)] = $option;
-                    }
-                }
+    public function scope($scope=''){
+        if('' === $scope) {
+            if(isset($this->_scope['default'])) {
+                // 默认的命名范围
+                $options    =   $this->_scope['default'];
+            }else{
+                return $this;
             }
+        }elseif(is_string($scope)){ // 支持多个命名范围调用 用逗号分割
+            $scopes    =   explode(',',$scope);
+            $options    =   array();
+            foreach ($scopes as $name){
+                if(!isset($this->_scope[$name])) continue;
+                $options    =   array_merge($options,$this->_scope[$name]);
+            }
+        }elseif(is_array($scope)){ // 直接传入命名范围定义
+            $options    =   $scope;
+        }
+        
+        if(is_array($options) && !empty($options)){
+            $this->options  =   array_merge($this->options,array_change_key_case($options));
         }
         return $this;
     }
