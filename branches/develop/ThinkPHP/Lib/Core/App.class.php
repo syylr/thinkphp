@@ -105,7 +105,7 @@ class App {
      */
     static public function exec() {
         // 安全检测
-        if(!preg_match('/^[A-Za-z]\w+$/',MODULE_NAME) || !preg_match('/^[A-Za-z]\w+$/',ACTION_NAME)){
+        if(!preg_match('/^[A-Za-z]\w+$/',MODULE_NAME)){
             $module =  false;
         }else{
             //创建Action控制器实例
@@ -125,7 +125,7 @@ class App {
                 // 是否定义Empty模块
                 $module = A('Empty');
                 if(!$module){
-                    $msg =  L('_MODULE_NOT_EXIST_').MODULE_NAME;
+                    $msg =  L('_MODULE_NOT_EXIST_').':'.MODULE_NAME;
                     if(APP_DEBUG) {
                         // 模块不存在 抛出异常
                         throw_exception($msg);
@@ -137,25 +137,31 @@ class App {
                 }
             }
         }
+
         //获取当前操作名
         $action = ACTION_NAME;
         // 获取操作方法名标签
         tag('action_name',$action);
+        if(!preg_match('/^[A-Za-z]\w+$/',$action)){
+            // 非法操作 引导到__call方法处理
+            call_user_func(array(&$module,'__call'),$action);
+        }
         if (method_exists($module,'_before_'.$action)) {
             // 执行前置操作
             call_user_func(array(&$module,'_before_'.$action));
         }
+
+        switch($_SERVER['REQUEST_METHOD']) {
+            case 'POST':
+                $vars    =  $_POST;
+                break;
+            case 'PUT':
+                parse_str(file_get_contents('php://input'), $vars);
+                break;
+            default:
+                $vars  =  $_GET;
+        }
         try{
-            switch($_SERVER['REQUEST_METHOD']) {
-                case 'POST':
-                    $vars    =  $_POST;
-                    break;
-                case 'PUT':
-                    parse_str(file_get_contents('php://input'), $vars);
-                    break;
-                default:
-                    $vars  =  $_GET;
-            }
             //执行当前操作
             $method=new ReflectionMethod($module, $action);
             if($method->getNumberOfParameters()>0){
