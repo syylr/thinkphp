@@ -1147,7 +1147,16 @@ class Model {
             case 'function':// 使用函数进行验证
             case 'callback':// 调用方法进行验证
                 $args = isset($val[6])?(array)$val[6]:array();
-                array_unshift($args,$data[$val[0]]);
+                if(is_string($val[0]) && strpos($val[0], ','))
+                    $val[0] = explode(',', $val[0]);
+                if(is_array($val[0])){
+                    // 支持多个字段验证
+                    foreach($val[0] as $field)
+                        $_data[$field] = $data[$field];
+                    array_unshift($args, $_data);
+                }else{
+                    array_unshift($args, $data[$val[0]]);
+                }
                 if('function'==$val[4]) {
                     return call_user_func_array($val[1], $args);
                 }else{
@@ -1169,8 +1178,10 @@ class Model {
                 if(!empty($data[$this->getPk()])) { // 完善编辑的时候验证唯一
                     $map[$this->getPk()] = array('neq',$data[$this->getPk()]);
                 }
-                if($this->field($this->getPk())->where($map)->find())   return false;
-                return true;
+                if($this->field($this->getPk())->where($map)->find())
+                    return false;
+                else
+                    return true;
             default:  // 检查附加规则
                 return $this->check($data[$val[0]],$val[1],$val[4]);
         }
