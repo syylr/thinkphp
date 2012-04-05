@@ -19,8 +19,7 @@ if (!defined('THINK_PATH')) exit();
 if(version_compare(PHP_VERSION,'5.2.0','<'))  die('require PHP > 5.2.0 !');
 
 //  版本信息
-define('THINK_VERSION', '3.1Develop');
-define('THINK_RELEASE', '20120305');
+define('THINK_VERSION', '3.0.1Dev');
 
 //   系统信息
 if(version_compare(PHP_VERSION,'5.4.0','<') ) {
