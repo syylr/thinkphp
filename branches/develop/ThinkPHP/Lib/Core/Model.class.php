@@ -413,6 +413,7 @@ class Model {
                 $this->_after_insert($data,$options);
                 return $insertId;
             }
+            $this->_after_insert($data,$options);
         }
         return $result;
     }
