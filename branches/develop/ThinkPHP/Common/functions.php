@@ -283,6 +283,7 @@ function cache($name,$value='',$expire=0) {
         $type   =   isset($name['type'])?$name['type']:C('DATA_CACHE_TYPE');
         unset($name['type']);
         $cache =   Cache::getInstance($type,$name);
+        return $cache;
     }elseif(''=== $value){ // 获取缓存值
         // 获取缓存数据
         return $cache->get($name);
