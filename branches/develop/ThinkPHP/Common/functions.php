@@ -273,6 +273,26 @@ function redirect($url, $time=0, $msg='') {
     }
 }
 
+// 缓存管理函数
+function cache($name,$value='',$expire=0) {
+    static $cache  =   '';
+    if(empty($cache)) { // 自动初始化
+        $cache =   Cache::getInstance();
+    }
+    if(is_array($name)) { // 缓存初始化
+        $type   =   isset($name['type'])?$name['type']:C('DATA_CACHE_TYPE');
+        unset($name['type']);
+        $cache =   Cache::getInstance($type,$name);
+    }elseif(''=== $value){ // 获取缓存值
+        // 获取缓存数据
+        return $cache->get($name);
+    }elseif(is_null($value)) { // 删除缓存
+        return $cache->rm($name);
+    }else { // 缓存数据
+        return $cache->set($name, $value, $expire);
+    }
+}
+
 // 全局缓存设置和读取
 function S($name, $value='', $expire=null, $type='',$options=null) {
     static $_cache = array();
