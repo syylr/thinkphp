@@ -42,7 +42,8 @@ class App {
         // URL调度
         Dispatcher::dispatch();
 
-        // 定义当前请求类型常量
+        // 定义当前请求的系统常量
+        define('NOW_TIME',$_SERVER['REQUEST_TIME']);
         define('IS_GET',    $_SERVER['REQUEST_METHOD']=='GET' ? true : false);
         define('IS_POST',   $_SERVER['REQUEST_METHOD']=='POST' ? true : false);
         define('IS_PUT',    $_SERVER['REQUEST_METHOD']=='PUT' ? true : false);
