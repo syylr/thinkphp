@@ -34,7 +34,7 @@ class Think {
      * @return void
      +----------------------------------------------------------
      */
-    static public function Start() {
+    static public function start() {
         // 设定错误和异常处理
         set_error_handler(array('Think','appError'));
         set_exception_handler(array('Think','appException'));

@@ -211,6 +211,9 @@ function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
                         $var[C('VAR_GROUP')]  =   GROUP_NAME;
                     }
                 }
+                if(C('URL_CASE_INSENSITIVE') && isset($var[C('VAR_GROUP')])) {
+                    $var[C('VAR_GROUP')] =  strtolower($var[C('VAR_GROUP')]);
+                }
             }
         }
     }
