@@ -137,7 +137,7 @@ class  ThinkTemplate {
         //模板解析
         $tmplContent = $this->parse($tmplContent);
         // 还原被替换的Literal标签
-        $tmplContent = preg_replace('/<!--###literal(\d)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
+        $tmplContent = preg_replace('/<!--###literal(\d+)###-->/eis',"\$this->restoreLiteral('\\1')",$tmplContent);
         // 添加安全代码
         $tmplContent  =  '<?php if (!defined(\'THINK_PATH\')) exit();?>'.$tmplContent;
         if(C('TMPL_STRIP_SPACE')) {
