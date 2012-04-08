@@ -63,7 +63,7 @@ class Model {
     // 是否批处理验证
     protected $patchValidate   =  false;
     // 链操作方法列表
-    protected $methods = array('table','where','order','limit','page','alias','having','group','lock','distinct');
+    protected $methods = array('table','where','order','limit','page','alias','having','group','lock','distinct','auto','filter','validate');
 
     /**
      +----------------------------------------------------------
@@ -901,6 +901,7 @@ class Model {
         // 检测提交字段的合法性
         if(isset($this->options['field'])) { // $this->field('field1,field2...')->create()
             $fields =   $this->options['field'];
+            unset($this->options['field']);
         }elseif($type == self::MODEL_INSERT && isset($this->insert_fields)) {
             $fields =   $this->insert_fields;
         }elseif($type == self::MODEL_UPDATE && isset($this->update_fields)) {
@@ -1012,8 +1013,14 @@ class Model {
      */
     private function autoOperation(&$data,$type) {
         // 自动填充
-        if(!empty($this->_auto)) {
-            foreach ($this->_auto as $auto){
+        if(!empty($this->options['auto'])) {
+            $_auto   =   $this->options['auto'];
+            unset($this->options['auto']);
+        }elseif(!empty($this->_auto)){
+            $_auto   =   $this->_auto;
+        }
+        if(isset($_auto)) {
+            foreach ($_auto as $auto){
                 // 填充因子定义格式
                 // array('field','填充内容','填充条件','附加规则',[额外参数])
                 if(empty($auto[2])) $auto[2] = self::MODEL_INSERT; // 默认为新增的时候自动填充
@@ -1034,15 +1041,6 @@ class Model {
                         case 'field':    // 用其它字段的值进行填充
                             $data[$auto[0]] = $data[$auto[1]];
                             break;
-                        case 'notexists':
-                            if(!isset($data[$auto[0]]))
-                                $data[$auto[0]] = $auto[1];
-                            break;
-                        case 'isempty':
-                            if(isset($data[$auto[0]]) && empty($data[$auto[0]]))
-                                $data[$auto[0]] = $auto[1];
-                            break;
-                        case 'always':
                         case 'string':
                         default: // 默认作为字符串填充
                             $data[$auto[0]] = $auto[1];
@@ -1069,12 +1067,18 @@ class Model {
      +----------------------------------------------------------
      */
     protected function autoValidation($data,$type) {
+        if(!empty($this->options['validate'])) {
+            $_validate   =   $this->options['validate'];
+            unset($this->options['validate']);
+        }elseif(!empty($this->_validate)){
+            $_validate   =   $this->_validate;
+        }
         // 属性验证
-        if(!empty($this->_validate)) { // 如果设置了数据自动验证则进行数据验证
+        if(isset($_validate)) { // 如果设置了数据自动验证则进行数据验证
             if($this->patchValidate) { // 重置验证错误信息
                 $this->error = array();
             }
-            foreach($this->_validate as $key=>$val) {
+            foreach($_validate as $key=>$val) {
                 // 验证因子定义格式
                 // array(field,rule,message,condition,type,when,params)
                 // 判断是否需要执行验证
@@ -1240,12 +1244,6 @@ class Model {
                 // 检查附加规则
                 return $this->regex($value,$rule);
         }
-    }
-    
-    // 对数据对象进行安全过滤
-    public function filter($filter){
-        $this->options['filter']    =   $filter;
-        return $this;
     }
 
     /**
