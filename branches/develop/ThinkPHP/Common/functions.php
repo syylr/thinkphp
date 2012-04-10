@@ -144,7 +144,7 @@ function layout($layout) {
 
 // URL组装 支持不同模式
 // 格式：U('[分组/模块/操作@域名]?参数','参数','伪静态后缀','是否跳转','显示域名')
-function U($url,$vars='',$suffix=true,$redirect=false,$domain=false) {
+function U($url='',$vars='',$suffix=true,$redirect=false,$domain=false) {
     // 解析URL
     $info =  parse_url($url);
     $url   =  !empty($info['path'])?$info['path']:ACTION_NAME;
