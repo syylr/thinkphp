@@ -124,7 +124,7 @@ class Model {
                 $fields = F('_fields/'.$db.'.'.$this->name);
                 if($fields) {
                     $version    =   C('DB_FIELD_VERISON');
-                    if(!$version || $fields['_version']== C('DB_FIELD_VERISON')) {
+                    if(empty($version) || $fields['_version']== $version) {
                         $this->fields   =   $fields;
                         return ;
                     }
