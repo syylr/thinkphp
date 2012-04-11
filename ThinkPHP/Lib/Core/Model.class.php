@@ -121,12 +121,16 @@ class Model {
             // 如果数据表字段没有定义则自动获取
             if(C('DB_FIELDS_CACHE')) {
                 $db   =  $this->dbName?$this->dbName:C('DB_NAME');
-                $this->fields = F('_fields/'.$db.'.'.$this->name);
-                if(!$this->fields)   $this->flush();
-            }else{
-                // 每次都会读取数据表信息
-                $this->flush();
+                $fields = F('_fields/'.$db.'.'.$this->name);
+                if($fields) {
+                    $version    =   C('DB_FIELD_VERISON');
+                    if(!$version || $fields['_version']== C('DB_FIELD_VERISON')) {
+                        $this->fields   =   $fields;
+                        return ;
+                    }
+                }
             }
+            $this->flush();
         }
     }
 
@@ -158,6 +162,7 @@ class Model {
         }
         // 记录字段类型信息
         if(C('DB_FIELDTYPE_CHECK'))   $this->fields['_type'] =  $type;
+        if(C('DB_FIELD_VERISON')) $this->fields['_version'] =   C('DB_FIELD_VERISON');
 
         // 2008-3-7 增加缓存开关控制
         if(C('DB_FIELDS_CACHE')){
@@ -1506,7 +1511,7 @@ class Model {
     public function getDbFields(){
         if($this->fields) {
             $fields   =  $this->fields;
-            unset($fields['_autoinc'],$fields['_pk'],$fields['_type']);
+            unset($fields['_autoinc'],$fields['_pk'],$fields['_type'],$fields['_version']);
             return $fields;
         }
         return false;
