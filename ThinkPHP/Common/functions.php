@@ -219,7 +219,7 @@ function U($url='',$vars='',$suffix=true,$redirect=false,$domain=false) {
     }
 
     if(C('URL_MODEL') == 0) { // 普通模式URL转换
-        $url   =  __APP__.'?'.http_build_query($var);
+        $url   =  __APP__.'?'.http_build_query(array_reverse($var));
         if(!empty($vars)) {
             $vars = http_build_query($vars);
             $url   .= '&'.$vars;
@@ -245,12 +245,22 @@ function U($url='',$vars='',$suffix=true,$redirect=false,$domain=false) {
         }
     }
     if($domain) {
-        $url   =  'http://'.$domain.$url;
+        $url   =  (is_ssl()?'https://':'http://').$domain.$url;
     }
     if($redirect) // 直接跳转URL
         redirect($url);
     else
         return $url;
+}
+
+// 判断是否SSL协议
+function is_ssl() {
+    if(isset($_SERVER['HTTPS']) && ('1' == $_SERVER['HTTPS'] || 'on' == strtolower($_SERVER['HTTPS'])){
+        return true;
+    }elseif(isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'] )) {
+        return true;
+    }
+    return false;
 }
 
 // URL重定向
