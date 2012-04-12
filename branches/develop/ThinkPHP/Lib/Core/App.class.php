@@ -146,6 +146,7 @@ class App {
         if(!preg_match('/^[A-Za-z]\w+$/',$action)){
             // 非法操作 引导到__call方法处理
             call_user_func(array(&$module,'__call'),$action);
+            return ;
         }
         if (method_exists($module,'_before_'.$action)) {
             // 执行前置操作
