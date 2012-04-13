@@ -48,7 +48,7 @@ class App {
         define('IS_POST',   $_SERVER['REQUEST_METHOD']=='POST' ? true : false);
         define('IS_PUT',    $_SERVER['REQUEST_METHOD']=='PUT' ? true : false);
         define('IS_DELETE', $_SERVER['REQUEST_METHOD']=='DELETE' ? true : false);
-        define('IS_AJAX',   (strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest') || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? true : false);
+        define('IS_AJAX',   ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest')) || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? true : false);
 
         if(defined('GROUP_NAME')) {
             // 加载分组配置文件
