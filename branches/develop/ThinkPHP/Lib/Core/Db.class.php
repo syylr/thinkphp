@@ -356,7 +356,7 @@ class Db {
      +----------------------------------------------------------
      */
     protected function parseKey(&$key) {
-        return $key;
+        return trim($key);
     }
     
     /**
