@@ -115,7 +115,7 @@ class  ThinkTemplate {
         $tmplContent = $this->compiler($tmplContent);
         // 检测分组目录
         if(!is_dir($this->config['cache_path']))
-            mk_dir($this->config['cache_path']);
+            mkdir($this->config['cache_path'],0777,true);
         //重写Cache文件
         if( false === file_put_contents($tmplCacheFile,trim($tmplContent)))
             throw_exception(L('_CACHE_WRITE_ERROR_').':'.$tmplCacheFile);

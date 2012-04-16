@@ -175,7 +175,7 @@ function build_tags_cache() {
 // 创建项目目录结构
 function build_app_dir() {
     // 没有创建项目目录的话自动创建
-    if(!is_dir(APP_PATH)) mk_dir(APP_PATH,0777);
+    if(!is_dir(APP_PATH)) mkdir(APP_PATH,0777,true);
     if(is_writeable(APP_PATH)) {
         $dirs  = array(
             LIB_PATH,
@@ -195,7 +195,7 @@ function build_app_dir() {
             LIB_PATH.'Widget/',
             );
         foreach ($dirs as $dir){
-            if(!is_dir($dir))  mk_dir($dir,0777);
+            if(!is_dir($dir))  mkdir($dir,0777,true);
         }
         // 写入目录安全文件
         build_dir_secure($dirs);
