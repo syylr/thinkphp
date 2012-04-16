@@ -161,7 +161,7 @@ class Model {
             }
         }
         // 记录字段类型信息
-        if(C('DB_FIELDTYPE_CHECK'))   $this->fields['_type'] =  $type;
+        $this->fields['_type'] =  $type;
         if(C('DB_FIELD_VERISON')) $this->fields['_version'] =   C('DB_FIELD_VERISON');
 
         // 2008-3-7 增加缓存开关控制
