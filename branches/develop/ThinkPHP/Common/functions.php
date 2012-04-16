@@ -506,7 +506,7 @@ function session($name,$value='') {
     }
 }
 
-// Cookie 设置、获取、删除
+// Cookie管理
 function cookie($name, $value='', $option=null) {
     // 默认设置
     $config = array(
@@ -523,11 +523,9 @@ function cookie($name, $value='', $option=null) {
             parse_str($option, $option);
         $config = array_merge($config, array_change_key_case($option));
     }
-    // 清除指定前缀的所有cookie
-    if (is_null($name)) {
-        if (empty($_COOKIE))
-            return;
-        // 要删除的cookie前缀，不指定则删除config设置的指定前缀
+    if(is_null($name)) { // 清除cookie
+        if (empty($_COOKIE))    return;
+        // 要删除的cookie前缀 可以用value参数指定
         $prefix = empty($value) ? $config['prefix'] : $value;
         if (!empty($prefix)) {// 如果前缀为空字符串将不作处理直接返回
             foreach ($_COOKIE as $key => $val) {
@@ -537,21 +535,18 @@ function cookie($name, $value='', $option=null) {
                 }
             }
         }
-        return;
+        return ;
     }
     $name = $config['prefix'] . $name;
-    if ('' === $value) {
-        return isset($_COOKIE[$name]) ? $_COOKIE[$name] : null; // 获取指定Cookie
-    } else {
-        if (is_null($value)) {
-            setcookie($name, '', time() - 3600, $config['path'], $config['domain']);
-            unset($_COOKIE[$name]); // 删除指定cookie
-        } else {
-            // 设置cookie
-            $expire = !empty($config['expire']) ? time() + intval($config['expire']) : 0;
-            setcookie($name, $value, $expire, $config['path'], $config['domain']);
-            $_COOKIE[$name] = $value;
-        }
+    if('' === $value){ // cookie获取
+        return isset($_COOKIE[$name]) ? $_COOKIE[$name] : null;
+    }elseif(is_null($value)) { // 删除cookie
+        setcookie($name, '', time() - 3600, $config['path'], $config['domain']);
+        unset($_COOKIE[$name]); 
+    }else{ // 设置cookie
+        $expire = !empty($config['expire']) ? time() + intval($config['expire']) : 0;
+        setcookie($name, $value, $expire, $config['path'], $config['domain']);
+        $_COOKIE[$name] = $value;
     }
 }
 
