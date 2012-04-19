@@ -270,7 +270,7 @@ abstract class Action {
                     $filters    =   explode(',',$filters);
                     foreach($filters as $filter){
                         if(function_exists($filter)) {
-                            $data	 =	 $filter($data); // 参数过滤
+                            $data   =   is_array($data)?array_map($filter,$data):$filter($data); // 参数过滤
                         }
                     }
                 }
