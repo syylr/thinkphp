@@ -265,7 +265,7 @@ abstract class Action {
             }
             if(isset($input[$args[0]])) { // 取值操作
                 $data	 =	 $input[$args[0]];
-                $filters  =  $args[1]?$args[1]:C('DEFAULT_FILTER');
+                $filters  =  isset($args[1])?$args[1]:C('DEFAULT_FILTER');
                 if($filters) {// 2012/3/23 增加多方法过滤支持
                     $filters    =   explode(',',$filters);
                     foreach($filters as $filter){
