@@ -839,7 +839,12 @@ class Model {
     public function getField($field,$sepa=null) {
         $options['field']    =  $field;
         $options =  $this->_parseOptions($options);
+        $field  =   trim($field);
         if(strpos($field,',')) { // 多字段
+            if(is_numeric($sepa)) {// 限定数量
+                $options['limit']   =   $sepa;
+                $sepa   =   null;// 重置为null 返回数组
+            }
             $resultSet = $this->db->select($options);
             if(!empty($resultSet)) {
                 $_field = explode(',', $field);
@@ -862,11 +867,18 @@ class Model {
                 }
                 return $cols;
             }
-        }else{   // 查找一条记录
-            $options['limit'] = 1;
+        }else{
+            // 返回数据个数
+            if(true !== $sepa) {// 当sepa指定为true的时候 返回所有数据
+                $options['limit']   =   is_numeric($sepa)?$sepa:1;
+            }
             $result = $this->db->select($options);
             if(!empty($result)) {
-                return reset($result[0]);
+                if(1==$options['limit']) return reset($result[0]);
+                foreach ($result as $val){
+                    $array[]    =   $val[$field];
+                }
+                return $array;
             }
         }
         return null;
