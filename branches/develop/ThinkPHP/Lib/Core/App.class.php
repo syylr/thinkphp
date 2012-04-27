@@ -148,11 +148,6 @@ class App {
             call_user_func(array(&$module,'__call'),$action);
             return ;
         }
-        if (method_exists($module,'_before_'.$action)) {
-            // 执行前置操作
-            call_user_func(array(&$module,'_before_'.$action));
-        }
-
         switch($_SERVER['REQUEST_METHOD']) {
             case 'POST':
                 $vars    =  $_POST;
@@ -164,8 +159,16 @@ class App {
                 $vars  =  $_GET;
         }
         try{
+            $class  =   new ReflectionClass($module);
+            // 前置操作
+            if($class->hasMethod('_before_'.$action)) {
+                $method =   $class->getMethod('_before_'.$action);
+                if($method->isPublic()) {
+                    $method->invoke($module);
+                }
+            }
             //执行当前操作
-            $method=new ReflectionMethod($module, $action);
+            $method =   new ReflectionMethod($module, $action);
             if($method->getNumberOfParameters()>0){
                 $params =  $method->getParameters();
                 foreach ($params as $param){
@@ -182,14 +185,17 @@ class App {
             }else{
                 $method->invoke($module);
             }
+            // 后置操作
+            if($class->hasMethod('_after_'.$action)) {
+                $method =   $class->getMethod('_after_'.$action);
+                if($method->isPublic()) {
+                    $method->invoke($module);
+                }
+            }
         } catch (ReflectionException $e) { 
             // 操作方法不存在 引导到__call方法处理
             $method = new ReflectionMethod($module,'__call');
             $method->invokeArgs($module,array($action));
-        }
-        if (method_exists($module,'_after_'.$action)) {
-            //  执行后缀操作
-            call_user_func(array(&$module,'_after_'.$action));
         }
         return ;
     }
