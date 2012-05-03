@@ -664,11 +664,15 @@ class Model {
         $options['model'] =  $this->name;
 
         // 字段类型验证
-        if(isset($options['where']) && is_array($options['where'])) {
+        if(isset($options['where']) && is_array($options['where']) && !empty($this->fields)) {
             // 对数组查询条件进行字段类型检查
             foreach ($options['where'] as $key=>$val){
-                if(in_array($key,$this->fields,true) && is_scalar($val)){
-                    $this->_parseType($options['where'],$key);
+                if(in_array($key,$this->fields,true)){
+                    if(is_scalar($val)) {
+                        $this->_parseType($options['where'],$key);
+                    }
+                }elseif('_' != substr($key,0,1)){
+                    unset($options['where'][$key]);
                 }
             }
         }
