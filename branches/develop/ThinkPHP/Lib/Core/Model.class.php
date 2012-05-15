@@ -121,7 +121,7 @@ class Model {
             // 如果数据表字段没有定义则自动获取
             if(C('DB_FIELDS_CACHE')) {
                 $db   =  $this->dbName?$this->dbName:C('DB_NAME');
-                $fields = F('_fields/'.$db.'.'.$this->name);
+                $fields = F('_fields/'.strtolower($db.'.'.$this->name));
                 if($fields) {
                     $version    =   C('DB_FIELD_VERISON');
                     if(empty($version) || $fields['_version']== $version) {
@@ -168,7 +168,7 @@ class Model {
         if(C('DB_FIELDS_CACHE')){
             // 永久缓存数据表信息
             $db   =  $this->dbName?$this->dbName:C('DB_NAME');
-            F('_fields/'.$db.'.'.$this->name,$this->fields);
+            F('_fields/'.strtolower($db.'.'.$this->name),$this->fields);
         }
     }
 

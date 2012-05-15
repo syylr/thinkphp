@@ -72,6 +72,21 @@ function throw_exception($msg, $type='ThinkException', $code=0) {
         halt($msg);        // 异常类型不存在则输出错误信息字串
 }
 
+// 404 处理
+function _404($msg='',$url='') {
+    APP_DEBUG && throw_exception($msg);
+    if($msg && C('LOG_EXCEPTION_RECORD')) Log::write($msg);
+    if(empty($url) && C('URL_404_REDIRECT')) {
+        $url    =   C('URL_404_REDIRECT');
+    }
+    if($url) {
+        redirect($url);
+    }else{
+        send_http_status(404);
+        exit;
+    }
+}
+
 // 浏览器友好的变量输出
 function dump($var, $echo=true, $label=null, $strict=true) {
     $label = ($label === null) ? '' : rtrim($label) . ' ';
