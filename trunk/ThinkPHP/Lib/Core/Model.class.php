@@ -1225,13 +1225,17 @@ class Model {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
-     * @param mixed $sql  SQL指令
-     * @param boolean $parse  是否需要解析SQL
+     * @param string $sql  SQL指令
+     * @param mixed $parse  是否需要解析SQL
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
     public function query($sql,$parse=false) {
+        if(!is_bool($parse) && !is_array($parse)) {
+            $parse = func_get_args();
+            array_shift($parse);
+        }
         $sql  =   $this->parseSql($sql,$parse);
         return $this->db->query($sql);
     }
@@ -1243,12 +1247,16 @@ class Model {
      * @access public
      +----------------------------------------------------------
      * @param string $sql  SQL指令
-     * @param boolean $parse  是否需要解析SQL
+     * @param mixed $parse  是否需要解析SQL
      +----------------------------------------------------------
      * @return false | integer
      +----------------------------------------------------------
      */
     public function execute($sql,$parse=false) {
+        if(!is_bool($parse) && !is_array($parse)) {
+            $parse = func_get_args();
+            array_shift($parse);
+        }
         $sql  =   $this->parseSql($sql,$parse);
         return $this->db->execute($sql);
     }
@@ -1267,9 +1275,11 @@ class Model {
      */
     protected function parseSql($sql,$parse) {
         // 分析表达式
-        if($parse) {
+        if(true === $parse) {
             $options =  $this->_parseOptions();
             $sql  =   $this->db->parseSql($sql,$options);
+        }elseif(is_array($parse)){ // SQL预处理
+            $sql  = vsprintf($sql,$parse);
         }else{
             if(strpos($sql,'__TABLE__'))
                 $sql    =   str_replace('__TABLE__',$this->getTableName(),$sql);
@@ -1665,20 +1675,21 @@ class Model {
      +----------------------------------------------------------
      * @access public
      +----------------------------------------------------------
+     * @param mixed $where 条件表达式
+     * @param mixed $parse 预处理参数
+     +----------------------------------------------------------
      * @return Model
      +----------------------------------------------------------
      */
-    public function where(){
-        $args = func_get_args();
-        if($args) {
-            $where  =   array_shift($args);
-            if(empty($args)) {
-                $this->options['where'] =   $where;
-            }elseif(is_string($where)){
-                array_unshift($args,$where);
-                $this->options['where'] =   call_user_func_array('sprintf',$args);
+    public function where($where,$parse=null){
+        if(!is_null($parse) && is_string($where)) {
+            if(!is_array($parse)) {
+                $parse = func_get_args();
+                array_shift($parse);
             }
+            $where =   vsprintf($where,$parse);
         }
+        $this->options['where'] =   $where;
         return $this;
     }
 
