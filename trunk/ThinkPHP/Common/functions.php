@@ -365,14 +365,14 @@ function F($name, $value='', $path=DATA_PATH) {
             if (!is_dir($dir))
                 mkdir($dir);
             $_cache[$name] =   $value;
-            return file_put_contents($filename, strip_whitespace("<?php\nreturn " . var_export($value, true) . ";\n?>"));
+            return file_put_contents($filename, json_encode($value));
         }
     }
     if (isset($_cache[$name]))
         return $_cache[$name];
     // 获取缓存数据
     if (is_file($filename)) {
-        $value = include $filename;
+        $value = json_decode(file_get_contents($filename),true);
         $_cache[$name] = $value;
     } else {
         $value = false;
