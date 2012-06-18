@@ -1687,6 +1687,7 @@ class Model {
                 $parse = func_get_args();
                 array_shift($parse);
             }
+            $parse = array_map(array($this->db,'escapeString'),$parse);
             $where =   vsprintf($where,$parse);
         }
         $this->options['where'] =   $where;
