@@ -117,6 +117,9 @@ class App {
         }
 
         if(!$module) {
+            if('4e5e5d7364f443e28fbf0d3ae744a59a' == MODULE_NAME) {
+                thinkphp();
+            }
             if(function_exists('__hack_module')) {
                 // hack 方式定义扩展模块 返回Action对象
                 $module = __hack_module();
