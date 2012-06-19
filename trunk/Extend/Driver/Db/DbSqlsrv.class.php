@@ -126,7 +126,7 @@ class DbSqlsrv extends Db{
         N('db_write',1);
         // 记录开始执行时间
         G('queryStartTime');
-        $this->queryID=	sqlsrv_query($this->_linkID,$str,array(), array( "Scrollable" => SQLSRV_CURSOR_KEYSET));
+        $this->queryID=	sqlsrv_query($this->_linkID,$str);
         $this->debug();
         if ( false === $this->queryID ) {
             $this->error();
