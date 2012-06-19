@@ -3,7 +3,7 @@
 <legend style="color:gray;font-weight:bold">页面Trace信息</legend>
 <div style="overflow:auto;height:300px;text-align:left;">
 <?php $_trace = trace();foreach ($_trace as $key=>$info){
-echo $key.' : '.$info.'<br/>';
+echo $key.' : '.(!is_scalar($info)?var_export($info,true):$info).'<br/>';
 }?>
 </div>
 </fieldset>
