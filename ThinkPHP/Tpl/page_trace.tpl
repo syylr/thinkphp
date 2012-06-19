@@ -6,10 +6,10 @@
 if(is_array($info)){
 echo $key.':<br/>';
  foreach ($info as $k=>$val){
- echo $k.' : '.(!is_scalar($val)?var_export($val,true):$val).'<br/>';
+ echo $k.' : '.(!is_scalar($val)?print_r($val,true):$val).'<br/>';
  }
 }else{
-echo $key.' : '.(!is_scalar($info)?var_export($info,true):$info).'<br/>';
+echo $key.' : '.(!is_scalar($info)?print_r($info,true):$info).'<br/>';
 }
 }?>
 </div>
