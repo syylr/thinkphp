@@ -321,7 +321,7 @@ abstract class Action {
      +----------------------------------------------------------
      */
     protected function ajaxReturn($data,$type='') {
-        if(func_num_args()>2) {
+        if(func_num_args()>2) {// 兼容3.0之前用法
             $args   =   func_get_args();
             array_shift($args);
             $info   =   array();
