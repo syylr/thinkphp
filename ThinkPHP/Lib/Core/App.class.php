@@ -34,7 +34,8 @@ class App {
      +----------------------------------------------------------
      */
     static public function init() {
-
+        // 页面压缩输出支持
+        if(!ini_get('zlib.output_compression')) ob_start('ob_gzhandler');
         // 设置系统时区
         date_default_timezone_set(C('DEFAULT_TIMEZONE'));
         // 加载动态项目公共文件和配置
