@@ -48,13 +48,13 @@ class ShowPageTraceBehavior extends Behavior {
         $base   =   array(
             '请求信息'=>  date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']).' '.$_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' : '.__SELF__,
             '运行时间'=> $this->showTime(),
-            '内存开销'=> $this->showMem(),
-            '查询信息'=> $this->showDb(),
-            '文件加载'=> $this->showFile(),
+            '内存开销'=> MEMORY_LIMIT_ON?number_format((memory_get_usage() - $GLOBALS['_startUseMems'])/1024,2).' kb':'不支持',
+            '查询信息'=> N('db_query').' queries '.N('db_write').' writes ',
+            '文件加载'=> count(get_included_files()),
+            '缓存信息'=> N('cache_read').' gets '.N('cache_write').' writes ',
+            '配置加载'=> count(c()),
             '函数调用'=> $this->showCall(),
-            '缓存信息'=> $this->showCache(),
-            '配置信息'=> $this->showConfig(),
-            '会话信息'    =>  'SESSION_ID:'.session_id(),
+            '会话信息'    =>  'SESSION_ID='.session_id(),
             );
         // 读取项目定义的Trace文件
         $traceFile  =   CONF_PATH.'trace.php';
@@ -90,54 +90,7 @@ class ShowPageTraceBehavior extends Behavior {
         $showTime .= '( Load:'.G('beginTime','loadTime').'s Init:'.G('loadTime','initTime').'s Exec:'.G('initTime','viewStartTime').'s Template:'.G('viewStartTime','viewEndTime').'s )';
         return $showTime;
     }
-    /**
-     +----------------------------------------------------------
-     * 获取数据库操作
-     +----------------------------------------------------------
-     */
-    private function showDb() {
-        // 显示数据库操作次数
-        if(class_exists('Db',false) ) {
-            return N('db_query').' queries '.N('db_write').' writes ';
-        }else{
-            return '';
-        }
-    }
-    /**
-     +----------------------------------------------------------
-     * 获取缓存操作次数
-     +----------------------------------------------------------
-     */
-    private function showCache() {
-        // 显示缓存读写次数
-        if( class_exists('Cache',false)) {
-            return N('cache_read').' gets '.N('cache_write').' writes ';
-        }else{
-            return '';
-        }
-    }
-    /**
-     +----------------------------------------------------------
-     * 获取内存开销
-     +----------------------------------------------------------
-     */
-    private function showMem() {
-        // 显示内存开销
-        if(MEMORY_LIMIT_ON ) {
-            return  number_format((memory_get_usage() - $GLOBALS['_startUseMems'])/1024,2).' kb';
-        }else{
-            return '';
-        }
-    }
-    /**
-     +----------------------------------------------------------
-     * 获取文件加载信息
-     +----------------------------------------------------------
-     */
-    private function showFile() {
-        // 显示文件加载数
-        return count(get_included_files());
-    }
+
     /**
      +----------------------------------------------------------
      * 获取函数调用信息
@@ -148,12 +101,5 @@ class ShowPageTraceBehavior extends Behavior {
         $fun  =  get_defined_functions();
         return (count($fun['user'])+count($fun['internal'])).' ( 用户:'.count($fun['user']).' , 内置:'.count($fun['internal']).' )';
     }
-    /**
-     +----------------------------------------------------------
-     * 获取配置信息
-     +----------------------------------------------------------
-     */
-    private function showConfig() {
-        return count(c());
-    }
+
 }
