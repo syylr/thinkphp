@@ -288,12 +288,7 @@ abstract class Action {
      +----------------------------------------------------------
      */
     protected function error($message,$jumpUrl='',$ajax=false) {
-        if($ajax) {// AJAX提交
-            $data   =   is_array($ajax)?$ajax:$this->view->get();
-            $this->ajaxReturn($data,$message,0);
-        }else{
-            $this->dispatchJump($message,0,$jumpUrl);
-        }
+        $this->dispatchJump($message,0,$jumpUrl,$ajax);
     }
 
     /**
@@ -310,12 +305,7 @@ abstract class Action {
      +----------------------------------------------------------
      */
     protected function success($message,$jumpUrl='',$ajax=false) {
-        if($ajax) {
-            $data   =   is_array($ajax)?$ajax:$this->view->get();
-            $this->ajaxReturn($data,$message,1);
-        }else{
-            $this->dispatchJump($message,1,$jumpUrl);
-        }
+        $this->dispatchJump($message,1,$jumpUrl,$ajax);
     }
 
     /**
@@ -325,30 +315,28 @@ abstract class Action {
      * @access protected
      +----------------------------------------------------------
      * @param mixed $data 要返回的数据
-     * @param String $info 提示信息
-     * @param boolean $status 返回状态
-     * @param String $status ajax返回类型 JSON XML
+     * @param String $type AJAX返回数据格式
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    protected function ajaxReturn($data,$info='',$status=1,$type='') {
-        $result  =  array();
-        $result['status']  =  $status;
-        $result['info'] =  $info;
-        $result['data'] = $data;
-        //扩展ajax返回数据, 在Action中定义function ajaxAssign(&$result){} 方法 扩展ajax返回数据。
-        if(method_exists($this,'ajaxAssign')) 
-            $this->ajaxAssign($result);
+    protected function ajaxReturn($data,$type='') {
+        if(func_num_args()>2) {
+            $args   =   func_get_args();
+            array_shift($args);
+            $data['info']   =   array_shift($args);
+            $data['status'] =   array_shift($args);
+            $type   =   $args?array_shift($args):'';
+        }
         if(empty($type)) $type  =   C('DEFAULT_AJAX_RETURN');
         if(strtoupper($type)=='JSON') {
             // 返回JSON数据格式到客户端 包含状态信息
             header('Content-Type:text/html; charset=utf-8');
-            exit(json_encode($result));
+            exit(json_encode($data));
         }elseif(strtoupper($type)=='XML'){
             // 返回xml格式数据
             header('Content-Type:text/xml; charset=utf-8');
-            exit(xml_encode($result));
+            exit(xml_encode($data));
         }elseif(strtoupper($type)=='EVAL'){
             // 返回可执行的js脚本
             header('Content-Type:text/html; charset=utf-8');
@@ -386,13 +374,18 @@ abstract class Action {
      * @param string $message 提示信息
      * @param Boolean $status 状态
      * @param string $jumpUrl 页面跳转地址
+     * @param Boolean|array $ajax 是否为Ajax方式
      +----------------------------------------------------------
      * @access private
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    private function dispatchJump($message,$status=1,$jumpUrl='') {
+    private function dispatchJump($message,$status=1,$jumpUrl='',$ajax=false) {
+        if($ajax) {
+            $data   =   is_array($ajax)?$ajax:$this->view->get();
+            $this->ajaxReturn($data,$message,$status);
+        }
         if(!empty($jumpUrl)) $this->assign('jumpUrl',$jumpUrl);
         // 提示标题
         $this->assign('msgTitle',$status? L('_OPERATION_SUCCESS_') : L('_OPERATION_FAIL_'));
