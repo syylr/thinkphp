@@ -45,23 +45,23 @@ class ShowPageTraceBehavior extends Behavior {
             $info .= $file.' ( '.number_format(filesize($file)/1024,2).' KB )<br/>';
         }
         $trace  =   array();
-        $trace['基本信息']    =   array(
+        $base   =   array(
             '请求信息'=>  date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']).' '.$_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' : '.__SELF__,
             '运行信息'=>  $this->showTime(),
             '会话信息'    =>  'SESSION_ID:'.session_id(),
             );
-        $trace['日志记录']  =   count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录';
-        $trace['文件信息']  =   count($files).'<br/>'.$info;
-        unset($files,$info,$log);
         // 读取项目定义的Trace文件
         $traceFile  =   CONF_PATH.'trace.php';
         if(is_file($traceFile)) {
-            $trace['自定义']    =   include $traceFile;
-            // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
+            $base    =   array_merge($base,include $traceFile);
         }
+        $trace[L('_BASE_')] =   $base;
+        $trace[L('_LOG_')]  =   count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录';
+        $trace[L('_FILE_')]  =   count($files).'<br/>'.$info;
+        unset($files,$info,$log,$base);
         $debug  =   trace();
         if($debug) {
-            $trace['调试输出']  =   $debug;
+            $trace[L('_DEBUG_')]  =   $debug;
         }
         // 调用Trace页面模板
         ob_start();
