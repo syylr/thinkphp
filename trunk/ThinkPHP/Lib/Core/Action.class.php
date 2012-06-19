@@ -282,13 +282,18 @@ abstract class Action {
      +----------------------------------------------------------
      * @param string $message 错误信息
      * @param string $jumpUrl 页面跳转地址
-     * @param Boolean $ajax 是否为Ajax方式
+     * @param Boolean|array $ajax 是否为Ajax方式
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
     protected function error($message,$jumpUrl='',$ajax=false) {
-        $this->dispatchJump($message,0,$jumpUrl,$ajax);
+        if($ajax) {// AJAX提交
+            $data   =   is_array($ajax)?$ajax:$this->view->get();
+            $this->ajaxReturn($data,$message,0);
+        }else{
+            $this->dispatchJump($message,0,$jumpUrl);
+        }
     }
 
     /**
@@ -299,13 +304,18 @@ abstract class Action {
      +----------------------------------------------------------
      * @param string $message 提示信息
      * @param string $jumpUrl 页面跳转地址
-     * @param Boolean $ajax 是否为Ajax方式
+     * @param Boolean|array $ajax 是否为Ajax方式
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
     protected function success($message,$jumpUrl='',$ajax=false) {
-        $this->dispatchJump($message,1,$jumpUrl,$ajax);
+        if($ajax) {
+            $data   =   is_array($ajax)?$ajax:$this->view->get();
+            $this->ajaxReturn($data,$message,1);
+        }else{
+            $this->dispatchJump($message,1,$jumpUrl);
+        }
     }
 
     /**
@@ -376,16 +386,13 @@ abstract class Action {
      * @param string $message 提示信息
      * @param Boolean $status 状态
      * @param string $jumpUrl 页面跳转地址
-     * @param Boolean $ajax 是否为Ajax方式
      +----------------------------------------------------------
      * @access private
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    private function dispatchJump($message,$status=1,$jumpUrl='',$ajax=false) {
-        // 判断是否为AJAX返回
-        if($ajax || $this->isAjax()) $this->ajaxReturn($ajax,$message,$status);
+    private function dispatchJump($message,$status=1,$jumpUrl='') {
         if(!empty($jumpUrl)) $this->assign('jumpUrl',$jumpUrl);
         // 提示标题
         $this->assign('msgTitle',$status? L('_OPERATION_SUCCESS_') : L('_OPERATION_FAIL_'));

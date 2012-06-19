@@ -56,11 +56,11 @@ class View {
      * @return mixed
      +----------------------------------------------------------
      */
-    public function get($name){
-        if(isset($this->tVar[$name]))
-            return $this->tVar[$name];
-        else
-            return false;
+    public function get($name=''){
+        if('' === $name) {
+            return $this->tVar;
+        }
+        return isset($this->tVar[$name])?$this->tVar[$name]:false;
     }
 
     /**
