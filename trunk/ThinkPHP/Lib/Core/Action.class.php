@@ -385,9 +385,11 @@ abstract class Action {
      +----------------------------------------------------------
      */
     private function dispatchJump($message,$status=1,$jumpUrl='',$ajax=false) {
-        if($ajax) {
+        if($ajax || $this->isAjax()) {// AJAX提交
             $data   =   is_array($ajax)?$ajax:$this->view->get();
-            $this->ajaxReturn($data,$message,$status);
+            $data['info']   =   $message;
+            $data['status'] =   $status;
+            $this->ajaxReturn($data);
         }
         if(!empty($jumpUrl)) $this->assign('jumpUrl',$jumpUrl);
         // 提示标题
