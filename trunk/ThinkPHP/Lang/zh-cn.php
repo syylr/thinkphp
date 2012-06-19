@@ -59,5 +59,6 @@ return array(
     '_LOG_'=>'日志',
     '_FILE_'=>'文件',
     '_DEBUG_'=>'调试',
+    '_CONFIG_'=>'配置',
 
 );
