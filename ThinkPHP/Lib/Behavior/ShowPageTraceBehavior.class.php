@@ -40,9 +40,9 @@ class ShowPageTraceBehavior extends Behavior {
          // 系统默认显示信息
         $log  =   Log::$log;
         $files =  get_included_files();
-        $info   =   '';
+        $info   =   array();
         foreach ($files as $key=>$file){
-            $info .= $file.' ( '.number_format(filesize($file)/1024,2).' KB )<br/>';
+            $info[] = $file.' ( '.number_format(filesize($file)/1024,2).' KB )';
         }
         $trace  =   array();
         $base   =   array(
@@ -56,8 +56,8 @@ class ShowPageTraceBehavior extends Behavior {
             $base    =   array_merge($base,include $traceFile);
         }
         $trace[L('_BASE_')] =   $base;
-        $trace[L('_LOG_')]  =   count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录';
-        $trace[L('_FILE_')]  =   count($files).'<br/>'.$info;
+        $trace[L('_LOG_')]  =   count($log).'<br/>'.implode('<br/>',$log);
+        $trace[L('_FILE_')]  =   count($files).'<br/>'.implode('<br/>',$info);
         unset($files,$info,$log,$base);
         $debug  =   trace();
         if($debug) {
