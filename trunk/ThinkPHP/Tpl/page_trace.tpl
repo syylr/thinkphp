@@ -2,8 +2,15 @@
 <fieldset id="querybox" style="margin:5px;">
 <legend style="color:gray;font-weight:bold">页面Trace信息</legend>
 <div style="overflow:auto;height:300px;text-align:left;">
-<?php $_trace = trace();foreach ($_trace as $key=>$info){
+<?php foreach ($trace as $key=>$info){
+if(is_array($info)){
+echo $key.':<br/>';
+ foreach ($info as $k=>$val){
+ echo $k.' : '.(!is_scalar($val)?var_export($val,true):$val).'<br/>';
+ }
+}else{
 echo $key.' : '.(!is_scalar($info)?var_export($info,true):$info).'<br/>';
+}
 }?>
 </div>
 </fieldset>

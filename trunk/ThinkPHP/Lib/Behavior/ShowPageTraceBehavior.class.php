@@ -40,22 +40,24 @@ class ShowPageTraceBehavior extends Behavior {
          // 系统默认显示信息
         $log  =   Log::$log;
         $files =  get_included_files();
-        $trace   =  array(
+        $trace  =   array();
+        $trace['基本信息']    =   array(
             '请求信息'=>  date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']).' '.$_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' : '.__SELF__,
             '运行信息'=>  $this->showTime(),
             '会话信息'    =>  'SESSION_ID:'.session_id(),
-            '日志信息'=>  count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录',
-            '文件文件'=>  count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2)),
             );
-
+        $trace['日志记录']  =   count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录';
+        $trace['文件信息']  =   count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2));
         // 读取项目定义的Trace文件
         $traceFile  =   CONF_PATH.'trace.php';
         if(is_file($traceFile)) {
+            $trace['配置定义']    =   include $traceFile;
             // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
-            $trace   =  array_merge(include $traceFile,$trace);
         }
-        // 设置trace信息
-        trace($trace);
+        $debug  =   trace();
+        if($debug) {
+            $trace['调试输出']  =   $debug;
+        }
         // 调用Trace页面模板
         ob_start();
         include C('TMPL_TRACE_FILE')?C('TMPL_TRACE_FILE'):THINK_PATH.'Tpl/page_trace.tpl';
