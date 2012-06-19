@@ -55,4 +55,9 @@ return array(
     '_RECORD_HAS_UPDATE_'=>'记录已经更新',
     '_NOT_ALLOW_PHP_'=>'模板禁用PHP代码',
     '_PARAM_ERROR_'=>'参数错误或者未定义',
+    '_BASE_'=>'基本',
+    '_LOG_'=>'日志',
+    '_FILE_'=>'文件',
+    '_DEBUG_'=>'调试',
+
 );
