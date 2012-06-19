@@ -40,6 +40,10 @@ class ShowPageTraceBehavior extends Behavior {
          // 系统默认显示信息
         $log  =   Log::$log;
         $files =  get_included_files();
+        $info   =   '';
+        foreach ($files as $key=>$file){
+            $info .= $file.' ( '.number_format(filesize($file)/1024,2).' KB )<br/>';
+        }
         $trace  =   array();
         $trace['基本信息']    =   array(
             '请求信息'=>  date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']).' '.$_SERVER['SERVER_PROTOCOL'].' '.$_SERVER['REQUEST_METHOD'].' : '.__SELF__,
@@ -47,11 +51,12 @@ class ShowPageTraceBehavior extends Behavior {
             '会话信息'    =>  'SESSION_ID:'.session_id(),
             );
         $trace['日志记录']  =   count($log)?count($log).'条日志<br/>'.implode('<br/>',$log):'无日志记录';
-        $trace['文件信息']  =   count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2));
+        $trace['文件信息']  =   count($files).'<br/>'.$info;
+        unset($files,$info,$log);
         // 读取项目定义的Trace文件
         $traceFile  =   CONF_PATH.'trace.php';
         if(is_file($traceFile)) {
-            $trace['配置定义']    =   include $traceFile;
+            $trace['自定义']    =   include $traceFile;
             // 定义格式 return array('当前页面'=>$_SERVER['PHP_SELF'],'通信协议'=>$_SERVER['SERVER_PROTOCOL'],...);
         }
         $debug  =   trace();
@@ -90,7 +95,7 @@ class ShowPageTraceBehavior extends Behavior {
         }
         // 显示内存开销
         if(MEMORY_LIMIT_ON ) {
-            $showTime .= ' | UseMem:'. number_format((memory_get_usage() - $GLOBALS['_startUseMems'])/1024).' kb';
+            $showTime .= ' | UseMem:'. number_format((memory_get_usage() - $GLOBALS['_startUseMems'])/1024,2).' kb';
         }
         // 显示文件加载数
         $showTime .= ' | LoadFile:'.count(get_included_files());

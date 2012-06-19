@@ -324,8 +324,11 @@ abstract class Action {
         if(func_num_args()>2) {
             $args   =   func_get_args();
             array_shift($args);
-            $data['info']   =   array_shift($args);
-            $data['status'] =   array_shift($args);
+            $info   =   array();
+            $info['data']   =   $data;
+            $info['info']   =   array_shift($args);
+            $info['status'] =   array_shift($args);
+            $data   =   $info;
             $type   =   $args?array_shift($args):'';
         }
         if(empty($type)) $type  =   C('DEFAULT_AJAX_RETURN');
