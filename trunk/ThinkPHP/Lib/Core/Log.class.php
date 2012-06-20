@@ -61,7 +61,7 @@ class Log {
      +----------------------------------------------------------
      */
     static function record($message,$level=self::ERR,$record=false) {
-        if($record || strpos(C('LOG_LEVEL'),$level)!==false) {
+        if($record || false !== strpos(C('LOG_LEVEL'),$level)) {
             self::$log[] =   "{$level}: {$message}\r\n";
         }
     }

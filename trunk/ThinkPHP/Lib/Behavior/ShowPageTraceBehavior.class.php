@@ -20,6 +20,7 @@ class ShowPageTraceBehavior extends Behavior {
     // 行为参数定义
     protected $options   =  array(
         'SHOW_PAGE_TRACE'        => false,   // 显示页面Trace信息
+        'TRACE_PAGE_TABS'        => array('base'=>'基本','log'=>'日志','file'=>'文件','debug'=>'调试','sql'=>'SQL'), // 页面Trace可定制的选项卡 
     );
 
     // 行为扩展的执行入口必须是run
@@ -61,14 +62,24 @@ class ShowPageTraceBehavior extends Behavior {
         if(is_file($traceFile)) {
             $base    =   array_merge($base,include $traceFile);
         }
-        $trace[L('_BASE_')] =   $base;
-        $trace[L('_LOG_')]  =   implode('<br/>',$log);
-        $trace[L('_FILE_')]  =   implode('<br/>',$info);
-        unset($files,$info,$log,$base);
         $debug  =   trace();
-        if($debug) {
-            $trace[L('_DEBUG_')]  =   $debug;
+        $tabs   =   C('TRACE_PAGE_TABS');
+        foreach ($tabs as $name=>$title){
+            switch($name) {
+                case 'base':// 基本信息
+                    $trace[$title]  =   $base;
+                    break;
+                case 'log':// 日志信息
+                    $trace[$title]   =   implode('<br/>',$log);
+                    break;
+                case 'file': // 文件信息
+                    $trace[$title]  =   implode('<br/>',$info);
+                    break;
+                default:// 调试信息
+                    $trace[$title]  =   $debug[$name];
+            }
         }
+        unset($files,$info,$log,$base);
         // 调用Trace页面模板
         ob_start();
         include C('TMPL_TRACE_FILE')?C('TMPL_TRACE_FILE'):THINK_PATH.'Tpl/page_trace.tpl';
@@ -84,10 +95,8 @@ class ShowPageTraceBehavior extends Behavior {
         // 显示运行时间
         G('beginTime',$GLOBALS['_beginTime']);
         G('viewEndTime');
-        $showTime   =   G('beginTime','viewEndTime').'s ';
         // 显示详细运行时间
-        $showTime .= '( Load:'.G('beginTime','loadTime').'s Init:'.G('loadTime','initTime').'s Exec:'.G('initTime','viewStartTime').'s Template:'.G('viewStartTime','viewEndTime').'s )';
-        return $showTime;
+        return G('beginTime','viewEndTime').'s ( Load:'.G('beginTime','loadTime').'s Init:'.G('loadTime','initTime').'s Exec:'.G('initTime','viewStartTime').'s Template:'.G('viewStartTime','viewEndTime').'s )';
     }
 
     /**
