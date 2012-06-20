@@ -64,7 +64,6 @@ class ShowPageTraceBehavior extends Behavior {
         $trace[L('_BASE_')] =   $base;
         $trace[L('_LOG_')]  =   implode('<br/>',$log);
         $trace[L('_FILE_')]  =   implode('<br/>',$info);
-        $trace[L('_CONFIG_')] = C();
         unset($files,$info,$log,$base);
         $debug  =   trace();
         if($debug) {
