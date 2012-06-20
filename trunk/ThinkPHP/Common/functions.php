@@ -136,9 +136,9 @@ function trace($value='',$label='') {
     if('' === $value && '' === $label){ // 获取trace信息
         return $_trace;
     }elseif('' === $label){
-        $_trace[]   =   $value;
+        $_trace[]   =   print_r($value,true);
     }else{ // 赋值
-        $_trace[$label] = $value;
+        $_trace[$label] = print_r($value,true);
     }
 }
 
