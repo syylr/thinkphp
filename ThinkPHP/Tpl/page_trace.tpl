@@ -12,10 +12,10 @@
                 if(is_array($info)){
                 	foreach ($info as $k=>$val){
 			if (!is_numeric($k)) echo $k.' : ';
-						echo (!is_scalar($val)?print_r($val,true):$val).'<br/>';
- 					}
+			echo $val.'<br/>';
+ 			}
                 }else{
-                	echo (!is_scalar($info)?print_r($info,true):$info).'<br/>';
+                	echo $info.'<br/>';
                 }
             ?>
             </div>
