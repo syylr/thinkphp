@@ -135,6 +135,8 @@ function trace($value='',$label='') {
     static $_trace =  array();
     if('' === $value && '' === $label){ // 获取trace信息
         return $_trace;
+    }elseif('' === $label){
+        $_trace[]   =   $value;
     }else{ // 赋值
         $_trace[$label] = $value;
     }
