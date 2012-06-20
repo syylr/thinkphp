@@ -130,17 +130,13 @@ function debug_end($label='') {
 }
 
 // 添加和获取页面Trace记录
-function trace($title='',$value='') {
+function trace($value='',$label='') {
     if(!C('SHOW_PAGE_TRACE')) return;
     static $_trace =  array();
-    if(is_array($title)) { // 批量赋值
-        $_trace   =  array_merge($_trace,$title);
-    }elseif('' !== $value){ // 赋值
-        $_trace[$title] = $value;
-    }elseif('' !== $title){ // 取值
-        return $_trace[$title];
-    }else{ // 获取全部Trace数据
+    if('' === $value && '' === $label){ // 获取trace信息
         return $_trace;
+    }else{ // 赋值
+        $_trace[$label] = $value;
     }
 }
 
