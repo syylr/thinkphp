@@ -62,8 +62,7 @@ class Log {
      */
     static function record($message,$level=self::ERR,$record=false) {
         if($record || strpos(C('LOG_LEVEL'),$level)!==false) {
-            $now = date(self::$format);
-            self::$log[] =   "{$now} {$level}: {$message}\r\n";
+            self::$log[] =   "{$level}: {$message}\r\n";
         }
     }
 
@@ -93,7 +92,8 @@ class Log {
             $destination   =   $destination?$destination:C('LOG_DEST');
             $extra   =  $extra?$extra:C('LOG_EXTRA');
         }
-        error_log('------'.get_client_ip().' REQUEST_URI:'.$_SERVER['REQUEST_URI']."------\r\n".implode('',self::$log)."\r\n", $type,$destination ,$extra);
+        $now = date(self::$format);
+        error_log($now.get_client_ip().' REQUEST_URI:'.$_SERVER['REQUEST_URI']."------\r\n".implode('',self::$log)."\r\n", $type,$destination ,$extra);
         // 保存后清空日志缓存
         self::$log = array();
         //clearstatcache();
