@@ -130,15 +130,16 @@ function debug_end($label='') {
 }
 
 // 添加和获取页面Trace记录
-function trace($value='',$label='') {
+function trace($value='[think]',$label='',$group='debug') {
     if(!C('SHOW_PAGE_TRACE')) return;
     static $_trace =  array();
-    if('' === $value && '' === $label){ // 获取trace信息
+    if('[think]' === $value){ // 获取trace信息
         return $_trace;
-    }elseif('' === $label){
-        $_trace[]   =   print_r($value,true);
-    }else{ // 赋值
-        $_trace[$label] = print_r($value,true);
+    }else{
+        if(!isset($_trace[$group])) {
+            $_trace[$group] =   array();
+        }
+        $_trace[$group][] = ($label?$label.':':'').print_r($value,true);
     }
 }
 
