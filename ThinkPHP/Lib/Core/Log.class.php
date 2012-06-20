@@ -81,6 +81,7 @@ class Log {
      +----------------------------------------------------------
      */
     static function save($type='',$destination='',$extra='') {
+        if(empty(self::$log)) return ;
         $type = $type?$type:C('LOG_TYPE');
         if(self::FILE == $type) { // 文件方式记录日志信息
             if(empty($destination))
@@ -93,7 +94,7 @@ class Log {
             $extra   =  $extra?$extra:C('LOG_EXTRA');
         }
         $now = date(self::$format);
-        error_log($now.get_client_ip().' REQUEST_URI:'.$_SERVER['REQUEST_URI']."------\r\n".implode('',self::$log)."\r\n", $type,$destination ,$extra);
+        error_log($now.get_client_ip().' '.$_SERVER['REQUEST_URI']."\r\n".implode('',self::$log)."\r\n", $type,$destination ,$extra);
         // 保存后清空日志缓存
         self::$log = array();
         //clearstatcache();
