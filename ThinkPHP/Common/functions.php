@@ -139,7 +139,7 @@ function trace($value='[think]',$label='',$group='debug') {
         if(!isset($_trace[$group])) {
             $_trace[$group] =   array();
         }
-        $_trace[$group][] = ($label?$label.':':'').print_r($value,true);
+        $_trace[$group][] = ($label?$label.':':'').htmlentities(print_r($value,true));
     }
 }
 
