@@ -363,7 +363,7 @@ function tag($tag, &$params=NULL) {
     if($tags) {
         if(APP_DEBUG) {
             G($tag.'Start');
-            trace('Tag[ '.$tag.' ] --START--');
+            trace('Tag[ '.$tag.' ] --START--','','think');
         }
         // 执行扩展
         foreach ($tags as $key=>$name) {
@@ -373,7 +373,7 @@ function tag($tag, &$params=NULL) {
             B($name, $params);
         }
         if(APP_DEBUG) { // 记录行为的执行日志
-            trace('Tag[ '.$tag.' ] --END-- [ RunTime:'.G($tag.'Start',$tag.'End',6).'s ]');
+            trace('Tag[ '.$tag.' ] --END-- [ RunTime:'.G($tag.'Start',$tag.'End',6).'s ]','','think');
         }
     }else{ // 未执行任何行为 返回false
         return false;
@@ -410,7 +410,7 @@ function B($name, &$params=NULL) {
     $behavior->run($params);
     if(APP_DEBUG) { // 记录行为的执行日志
         G('behaviorEnd');
-        trace('Run '.$name.' Behavior [ RunTime:'.G('behaviorStart','behaviorEnd',6).'s ]');
+        trace('Run '.$name.' Behavior [ RunTime:'.G('behaviorStart','behaviorEnd',6).'s ]','','think');
     }
 }
 

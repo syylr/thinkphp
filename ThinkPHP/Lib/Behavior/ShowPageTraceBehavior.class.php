@@ -19,8 +19,9 @@ defined('THINK_PATH') or exit();
 class ShowPageTraceBehavior extends Behavior {
     // 行为参数定义
     protected $options   =  array(
-        'SHOW_PAGE_TRACE'        => false,   // 显示页面Trace信息
-        'TRACE_PAGE_TABS'        => array('base'=>'基本','log'=>'日志','file'=>'文件','debug'=>'调试','sql'=>'SQL'), // 页面Trace可定制的选项卡 
+        'SHOW_PAGE_TRACE'=> false,   // 显示页面Trace信息
+        'TRACE_PAGE_TABS'=> array('base'=>'基本','file'=>'文件','think'=>'流程','log'=>'日志','sql'=>'SQL','debug'=>'调试'), // 页面Trace可定制的选项卡 
+        'PAGE_TRACE_SAVE'=> false,
     );
 
     // 行为扩展的执行入口必须是run
@@ -78,6 +79,21 @@ class ShowPageTraceBehavior extends Behavior {
                 default:// 调试信息
                     $trace[$title]  =   $debug[$name];
             }
+        }
+        if(C('PAGE_TRACE_SAVE')) { // 保存页面Trace日志
+            $content    =   "----------------------------------------------\r\n";
+            foreach ($trace as $key=>$val){
+                $content    .=  '[ '.$key." ]\r\n";
+                if(is_array($val)) {
+                    foreach ($val as $k=>$v){
+                        $content .= (!is_numeric($k)?$k.':':'').print_r($v,true)."\r\n";
+                    }
+                }else{
+                    $content .= print_r($val,true)."\r\n";
+                }
+                $content .= "\r\n";
+            }
+            error_log(str_replace('<br/>',"\r\n",$content), Log::FILE,LOG_PATH.date('y_m_d').'_trace.log');
         }
         unset($files,$info,$log,$base);
         // 调用Trace页面模板
