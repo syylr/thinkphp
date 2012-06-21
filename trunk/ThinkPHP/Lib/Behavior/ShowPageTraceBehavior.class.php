@@ -55,7 +55,8 @@ class ShowPageTraceBehavior extends Behavior {
             '缓存信息'=> N('cache_read').' gets '.N('cache_write').' writes ',
             '配置加载'=> count(c()),
             '函数调用'=> $this->showCall(),
-            '会话信息'    =>  'SESSION_ID='.session_id(),
+            '会话信息'=> 'SESSION_ID='.session_id(),
+            'Cookie'=>  print_r($_COOKIE,true),
             );
         // 读取项目定义的Trace文件
         $traceFile  =   CONF_PATH.'trace.php';
