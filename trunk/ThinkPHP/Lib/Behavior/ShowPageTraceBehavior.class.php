@@ -71,10 +71,10 @@ class ShowPageTraceBehavior extends Behavior {
                     $trace[$title]  =   $base;
                     break;
                 case 'log':// 日志信息
-                    $trace[$title]   =   implode('<br/>',$log);
+                    $trace[$title]   =  $log;
                     break;
                 case 'file': // 文件信息
-                    $trace[$title]  =   implode('<br/>',$info);
+                    $trace[$title]  =   $info;
                     break;
                 default:// 调试信息
                     $trace[$title]  =   $debug[$name];
