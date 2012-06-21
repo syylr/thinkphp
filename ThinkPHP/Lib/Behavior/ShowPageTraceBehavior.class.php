@@ -20,8 +20,8 @@ class ShowPageTraceBehavior extends Behavior {
     // 行为参数定义
     protected $options   =  array(
         'SHOW_PAGE_TRACE'=> false,   // 显示页面Trace信息
-        'TRACE_PAGE_TABS'=> array('base'=>'基本','file'=>'文件','think'=>'流程','log'=>'日志','sql'=>'SQL','debug'=>'调试'), // 页面Trace可定制的选项卡 
-        'PAGE_TRACE_SAVE'=> false,
+        'TRACE_PAGE_TABS'=> array('base'=>'基本','file'=>'文件','think'=>'流程','error'=>'错误','sql'=>'SQL','debug'=>'调试'), // 页面Trace可定制的选项卡 
+        'PAGE_TRACE_SAVE'=> true,
     );
 
     // 行为扩展的执行入口必须是run
@@ -40,7 +40,6 @@ class ShowPageTraceBehavior extends Behavior {
      */
     private function showTrace() {
          // 系统默认显示信息
-        $log  =   Log::$log;
         $files =  get_included_files();
         $info   =   array();
         foreach ($files as $key=>$file){
@@ -70,28 +69,34 @@ class ShowPageTraceBehavior extends Behavior {
                 case 'base':// 基本信息
                     $trace[$title]  =   $base;
                     break;
-                case 'log':// 日志信息
-                    $trace[$title]   =  $log;
-                    break;
                 case 'file': // 文件信息
                     $trace[$title]  =   $info;
                     break;
                 default:// 调试信息
-                    $trace[$title]  =   $debug[$name];
+                    $trace[$title]  =   isset($debug[$name])?$debug[$name]:'';
             }
         }
-        if(C('PAGE_TRACE_SAVE')) { // 保存页面Trace日志
-            $content    =   "----------------------------------------------\r\n";
-            foreach ($trace as $key=>$val){
-                $content    .=  '[ '.$key." ]\r\n";
-                if(is_array($val)) {
-                    foreach ($val as $k=>$v){
-                        $content .= (!is_numeric($k)?$k.':':'').print_r($v,true)."\r\n";
-                    }
-                }else{
-                    $content .= print_r($val,true)."\r\n";
+        if($save = C('PAGE_TRACE_SAVE')) { // 保存页面Trace日志
+            if(is_array($save)) {// 选择选项卡保存
+                $tabs   =   C('TRACE_PAGE_TABS');
+                $array  =   array();
+                foreach ($save as $tab){
+                    $array[] =   $tabs[$tab];
                 }
-                $content .= "\r\n";
+            }
+            $content    =   date('[ c ]').' '.get_client_ip().' '.$_SERVER['REQUEST_URI']."\r\n";
+            foreach ($trace as $key=>$val){
+                if(!isset($array) || in_array($key,$array)) {
+                    $content    .=  '[ '.$key." ]\r\n";
+                    if(is_array($val)) {
+                        foreach ($val as $k=>$v){
+                            $content .= (!is_numeric($k)?$k.':':'').print_r($v,true)."\r\n";
+                        }
+                    }else{
+                        $content .= print_r($val,true)."\r\n";
+                    }
+                    $content .= "\r\n";
+                }
             }
             error_log(str_replace('<br/>',"\r\n",$content), Log::FILE,LOG_PATH.date('y_m_d').'_trace.log');
         }
