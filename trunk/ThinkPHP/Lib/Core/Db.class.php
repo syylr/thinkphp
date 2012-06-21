@@ -300,7 +300,7 @@ class Db {
         // 记录操作结束时间
         if (C('DB_SQL_LOG')) {
             G('queryEndTime');
-            Log::record($this->queryStr.' [ RunTime:'.G('queryStartTime','queryEndTime',6).'s ]',Log::SQL);
+            trace($this->queryStr.' [ RunTime:'.G('queryStartTime','queryEndTime',6).'s ]','','sql');
         }
     }
 
