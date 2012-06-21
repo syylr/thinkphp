@@ -21,7 +21,7 @@ class ShowPageTraceBehavior extends Behavior {
     protected $options   =  array(
         'SHOW_PAGE_TRACE'=> false,   // 显示页面Trace信息
         'TRACE_PAGE_TABS'=> array('base'=>'基本','file'=>'文件','think'=>'流程','error'=>'错误','sql'=>'SQL','debug'=>'调试'), // 页面Trace可定制的选项卡 
-        'PAGE_TRACE_SAVE'=> true,
+        'PAGE_TRACE_SAVE'=> false,
     );
 
     // 行为扩展的执行入口必须是run
