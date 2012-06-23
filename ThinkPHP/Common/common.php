@@ -320,7 +320,12 @@ function L($name=null, $value=null) {
 function C($name=null, $value=null) {
     static $_config = array();
     // 无参数时获取所有
-    if (empty($name))   return $_config;
+    if (empty($name)) {
+        if(!empty($value) && $array = cache('c_'.$value)) {
+            $_config = array_merge($_config, array_change_key_case($array));
+        }
+        return $_config;
+    }
     // 优先执行设置获取或赋值
     if (is_string($name)) {
         if (!strpos($name, '.')) {
@@ -340,7 +345,11 @@ function C($name=null, $value=null) {
     }
     // 批量设置
     if (is_array($name)){
-        return $_config = array_merge($_config, array_change_key_case($name));
+        $_config = array_merge($_config, array_change_key_case($name));
+        if(!empty($value)) {// 保存配置值
+            cache('c_'.$value,$_config);
+        }
+        return;
     }
     return null; // 避免非法参数
 }
