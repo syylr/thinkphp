@@ -209,12 +209,13 @@ class  ThinkTemplate {
 
     // 检查PHP语法
     protected function parsePhp($content) {
+        if(ini_get('short_open_tag')){
+            // 开启短标签的情况要将<?标签用echo方式输出 否则无法正常输出xml标识
+            $content = preg_replace('/(<\?(?!php|=|$))/i', '<?php echo \'\\1\'; ?>'."\n", $content );
+        }
         // PHP语法检查
         if(C('TMPL_DENY_PHP') && false !== strpos($content,'<?php')) {
             throw_exception(L('_NOT_ALLOW_PHP_'));
-        }elseif(ini_get('short_open_tag')){
-            // 开启短标签的情况要将<?标签用echo方式输出 否则无法正常输出xml标识
-            $content = preg_replace('/(<\?(?!php|=|$))/i', '<?php echo \'\\1\'; ?>'."\n", $content );
         }
         return $content;
     }
