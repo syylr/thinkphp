@@ -264,13 +264,12 @@ function M($name='', $tablePrefix='',$connection='') {
  */
 function A($name) {
     static $_action = array();
-    if(isset($_action[$name]))
-        return $_action[$name];
     if(strpos($name,'://')) {// 指定项目
         $name   =  str_replace('://','/Action/',$name);
     }else{
         $name   =  '@/Action/'.$name;
     }
+    if(isset($_action[$name]))  return $_action[$name];
     import($name.'Action');
     $class   =   basename($name.'Action');
     if(class_exists($class,false)) {
