@@ -371,7 +371,7 @@ function tag($tag, &$params=NULL) {
     if($tags) {
         if(APP_DEBUG) {
             G($tag.'Start');
-            trace('Tag[ '.$tag.' ] --START--','','think');
+            trace('[ '.$tag.' ] --START--','','think');
         }
         // 执行扩展
         foreach ($tags as $key=>$name) {
@@ -381,7 +381,7 @@ function tag($tag, &$params=NULL) {
             B($name, $params);
         }
         if(APP_DEBUG) { // 记录行为的执行日志
-            trace('Tag[ '.$tag.' ] --END-- [ RunTime:'.G($tag.'Start',$tag.'End',6).'s ]','','think');
+            trace('[ '.$tag.' ] --END-- [ RunTime:'.G($tag.'Start',$tag.'End',6).'s ]','','think');
         }
     }else{ // 未执行任何行为 返回false
         return false;
