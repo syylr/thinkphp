@@ -210,9 +210,10 @@ function alias_import($alias, $classfile='') {
  * @return Model
   +----------------------------------------------------------
  */
-function D($name='',$layer='Model') {
+function D($name='',$layer='') {
     if(empty($name)) return new Model;
     static $_model = array();
+    $layer  =   $layer?$layer:C('DEFAULT_M_LAYER');
     if(strpos($name,'://')) {// 指定项目
         $name   =  str_replace('://','/'.$layer.'/',$name);
     }else{
@@ -258,20 +259,22 @@ function M($name='', $tablePrefix='',$connection='') {
  * A函数用于实例化Action 格式：[项目://][分组/]模块
   +----------------------------------------------------------
  * @param string name Action资源地址
+ * @param string layer 控制层名称
   +----------------------------------------------------------
  * @return Action
   +----------------------------------------------------------
  */
-function A($name) {
+function A($name,$layer='') {
     static $_action = array();
+    $layer  =   $layer?$layer:C('DEFAULT_C_LAYER');
     if(strpos($name,'://')) {// 指定项目
-        $name   =  str_replace('://','/Action/',$name);
+        $name   =  str_replace('://','/'.$layer.'/',$name);
     }else{
-        $name   =  '@/Action/'.$name;
+        $name   =  '@/'.$layer.'/'.$name;
     }
     if(isset($_action[$name]))  return $_action[$name];
-    import($name.'Action');
-    $class   =   basename($name.'Action');
+    import($name.$layer);
+    $class   =   basename($name.$layer);
     if(class_exists($class,false)) {
         $action = new $class();
         $_action[$name]  =  $action;
