@@ -493,9 +493,9 @@ function session($name,$value='') {
                 $_SESSION = array();
             }
         }elseif($prefix){ // 获取session
-            return $_SESSION[$prefix][$name];
+            return isset($_SESSION[$prefix][$name])?$_SESSION[$prefix][$name]:null;
         }else{
-            return $_SESSION[$name];
+            return isset($_SESSION[$name])?$_SESSION[$name]:null;
         }
     }elseif(is_null($value)){ // 删除session
         if($prefix){
