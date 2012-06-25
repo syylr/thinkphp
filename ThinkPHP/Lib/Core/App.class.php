@@ -34,8 +34,6 @@ class App {
      +----------------------------------------------------------
      */
     static public function init() {
-        // 页面压缩输出支持
-        if(!ini_get('zlib.output_compression')) ob_start('ob_gzhandler');
         // 设置系统时区
         date_default_timezone_set(C('DEFAULT_TIMEZONE'));
         // 加载动态项目公共文件和配置
@@ -59,7 +57,8 @@ class App {
             if(is_file(COMMON_PATH.GROUP_NAME.'/function.php'))
                 include COMMON_PATH.GROUP_NAME.'/function.php';
         }
-
+        // 页面压缩输出支持
+        if(!ini_get('zlib.output_compression') && C('OUTPUT_ENCODE')) ob_start('ob_gzhandler');
         // 系统变量安全过滤
         if(C('VAR_FILTERS')) {
             $filters    =   explode(',',C('VAR_FILTERS'));
