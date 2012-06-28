@@ -250,8 +250,8 @@ function M($name='', $tablePrefix='',$connection='') {
         $class   =   'Model';
     }
     if (!isset($_model[$name . '_' . $class]))
-        $_model[$name . '_' . $class] = new $class($name,$tablePrefix,$connection);
-    return $_model[$name . '_' . $class];
+        $_model[$tablePrefix . $name . '_' . $class] = new $class($name,$tablePrefix,$connection);
+    return $_model[$tablePrefix . $name . '_' . $class];
 }
 
 /**
