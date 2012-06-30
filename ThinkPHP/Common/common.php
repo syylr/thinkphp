@@ -517,3 +517,17 @@ function array_define($array,$check=true) {
     return $content;
 }
 //[/RUNTIME]
+
+// 添加和获取页面Trace记录
+function trace($value='[think]',$label='',$group='debug') {
+    if(!C('SHOW_PAGE_TRACE')) return;
+    static $_trace =  array();
+    if('[think]' === $value){ // 获取trace信息
+        return $_trace;
+    }else{
+        if(!isset($_trace[$group])) {
+            $_trace[$group] =   array();
+        }
+        $_trace[$group][] = ($label?$label.':':'').htmlentities(print_r($value,true));
+    }
+}
