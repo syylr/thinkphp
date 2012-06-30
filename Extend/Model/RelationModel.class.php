@@ -218,8 +218,8 @@ class RelationModel extends Model {
                                 $fields =   explode(',',$val['as_fields']);
                                 foreach ($fields as $field){
                                     if(strpos($field,':')) {
-                                        list($name,$nick) = explode(':',$field);
-                                        $result[$nick]  =  $relationData[$name];
+                                        list($relationName,$nick) = explode(':',$field);
+                                        $result[$nick]  =  $relationData[$relationName];
                                     }else{
                                         $result[$field]  =  $relationData[$field];
                                     }
