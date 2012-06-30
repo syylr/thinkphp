@@ -249,9 +249,10 @@ function M($name='', $tablePrefix='',$connection='') {
     }else{
         $class   =   'Model';
     }
-    if (!isset($_model[$name . '_' . $class]))
-        $_model[$tablePrefix . $name . '_' . $class] = new $class($name,$tablePrefix,$connection);
-    return $_model[$tablePrefix . $name . '_' . $class];
+    $guid   =   $tablePrefix . $name . '_' . $class;
+    if (!isset($_model[$guid]))
+        $_model[$guid] = new $class($name,$tablePrefix,$connection);
+    return $_model[$guid];
 }
 
 /**
