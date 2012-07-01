@@ -63,7 +63,7 @@ class Model {
     // 是否批处理验证
     protected $patchValidate   =  false;
     // 链操作方法列表
-    protected $methods = array('table','order','limit','page','alias','having','group','lock','distinct','auto','filter','validate');
+    protected $methods = array('table','order','alias','having','group','lock','distinct','auto','filter','validate');
 
     /**
      +----------------------------------------------------------
@@ -1708,6 +1708,23 @@ class Model {
      */
     public function limit($offset,$length=null){
         $this->options['limit'] =   is_null($length)?$offset:$offset.','.$length;
+        return $this;
+    }
+
+    /**
+     +----------------------------------------------------------
+     * 指定分页
+     +----------------------------------------------------------
+     * @access public
+     +----------------------------------------------------------
+     * @param mixed $page 页数
+     * @param mixed $listRows 每页数量
+     +----------------------------------------------------------
+     * @return Model
+     +----------------------------------------------------------
+     */
+    public function page($page,$listRows=null){
+        $this->options['page'] =   is_null($listRows)?$page:$page.','.$listRows;
         return $this;
     }
 
