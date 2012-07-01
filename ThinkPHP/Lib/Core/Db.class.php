@@ -148,6 +148,7 @@ class Db {
             // 如果DSN字符串则进行解析
             $db_config = $this->parseDSN($db_config);
         }elseif(is_array($db_config)) { // 数组配置
+             $db_config =   array_change_key_case($db_config);
              $db_config = array(
                   'dbms'        => $db_config['db_type'],
                   'username'  => $db_config['db_user'],
