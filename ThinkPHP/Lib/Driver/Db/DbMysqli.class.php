@@ -386,7 +386,7 @@ class DbMysqli extends Db{
         if('' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
-        trace($this->error,'','error');
+        trace($this->error,'','ERR');
         return $this->error;
     }
 
