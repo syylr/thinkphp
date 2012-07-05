@@ -525,7 +525,7 @@ function trace($value='[think]',$label='',$level='DEBUG') {
         return $_trace;
     }else{
         $info   =   ($label?$label.':':'').print_r($value,true);
-        if(IS_AJAX || !C('SHOW_PAGE_TRACE')) {
+        if((defined('IS_AJAX') && IS_AJAX) || !C('SHOW_PAGE_TRACE')) {
             Log::record($info,$level);
         }else{
             if(!isset($_trace[$level])) {
