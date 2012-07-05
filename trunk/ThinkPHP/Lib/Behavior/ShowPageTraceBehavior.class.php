@@ -20,13 +20,13 @@ class ShowPageTraceBehavior extends Behavior {
     // 行为参数定义
     protected $options   =  array(
         'SHOW_PAGE_TRACE'=> false,   // 显示页面Trace信息
-        'TRACE_PAGE_TABS'=> array('base'=>'基本','file'=>'文件','think'=>'流程','error'=>'错误','sql'=>'SQL','debug'=>'调试'), // 页面Trace可定制的选项卡 
+        'TRACE_PAGE_TABS'=> array('BASE'=>'基本','FILE'=>'文件','INFO'=>'流程','ERR'=>'错误','SQL'=>'SQL','DEBUG'=>'调试'), // 页面Trace可定制的选项卡 
         'PAGE_TRACE_SAVE'=> false,
     );
 
     // 行为扩展的执行入口必须是run
     public function run(&$params){
-        if(C('SHOW_PAGE_TRACE')) {
+        if(!IS_AJAX && C('SHOW_PAGE_TRACE')) {
             echo $this->showTrace();
         }
     }
@@ -54,9 +54,7 @@ class ShowPageTraceBehavior extends Behavior {
             '文件加载'=> count(get_included_files()),
             '缓存信息'=> N('cache_read').' gets '.N('cache_write').' writes ',
             '配置加载'=> count(c()),
-            '函数调用'=> $this->showCall(),
             '会话信息'=> 'SESSION_ID='.session_id(),
-            'Cookie'=>  print_r($_COOKIE,true),
             );
         // 读取项目定义的Trace文件
         $traceFile  =   CONF_PATH.'trace.php';
@@ -66,11 +64,11 @@ class ShowPageTraceBehavior extends Behavior {
         $debug  =   trace();
         $tabs   =   C('TRACE_PAGE_TABS');
         foreach ($tabs as $name=>$title){
-            switch($name) {
-                case 'base':// 基本信息
+            switch(strtoupper($name)) {
+                case 'BASE':// 基本信息
                     $trace[$title]  =   $base;
                     break;
-                case 'file': // 文件信息
+                case 'FILE': // 文件信息
                     $trace[$title]  =   $info;
                     break;
                 default:// 调试信息
@@ -119,17 +117,6 @@ class ShowPageTraceBehavior extends Behavior {
         G('viewEndTime');
         // 显示详细运行时间
         return G('beginTime','viewEndTime').'s ( Load:'.G('beginTime','loadTime').'s Init:'.G('loadTime','initTime').'s Exec:'.G('initTime','viewStartTime').'s Template:'.G('viewStartTime','viewEndTime').'s )';
-    }
-
-    /**
-     +----------------------------------------------------------
-     * 获取函数调用信息
-     +----------------------------------------------------------
-     */
-    private function showCall() {
-        // 显示函数调用次数 自定义函数,内置函数
-        $fun  =  get_defined_functions();
-        return (count($fun['user'])+count($fun['internal'])).' ( 用户:'.count($fun['user']).' , 内置:'.count($fun['internal']).' )';
     }
 
 }
