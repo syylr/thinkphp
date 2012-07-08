@@ -627,6 +627,7 @@ class Model {
         if(isset($options['where']) && is_array($options['where']) && !empty($this->fields)) {
             // 对数组查询条件进行字段类型检查
             foreach ($options['where'] as $key=>$val){
+                $key    =   trim($key);
                 if(in_array($key,$this->fields,true)){
                     if(is_scalar($val)) {
                         $this->_parseType($options['where'],$key);
