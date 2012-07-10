@@ -256,7 +256,9 @@ abstract class Action {
                 default:
                     throw_exception(__CLASS__.':'.$method.L('_METHOD_NOT_EXIST_'));
             }
-            if(isset($input[$args[0]])) { // 取值操作
+            if(!isset($args[0])) { // 获取全局变量
+                $data   =   $input; // 由VAR_FILTERS配置进行过滤
+            }elseif(isset($input[$args[0]])) { // 取值操作
                 $data	 =	 $input[$args[0]];
                 $filters  =  isset($args[1])?$args[1]:C('DEFAULT_FILTER');
                 if($filters) {// 2012/3/23 增加多方法过滤支持
