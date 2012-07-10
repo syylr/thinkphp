@@ -23,59 +23,50 @@
  */
 class UploadFile {//类定义开始
 
-    // 上传文件的最大值
-    public $maxSize = -1;
+    private $config =   array(
+        'maxSize' => -1,    // 上传文件的最大值
+        'supportMulti' => true,    // 是否支持多文件上传
+        'allowExts'=> array(),    // 允许上传的文件后缀 留空不作后缀检查
+        'allowTypes' => array(),    // 允许上传的文件类型 留空不做检查
+        'thumb'   =>  false,    // 使用对上传图片进行缩略图处理
+        'imageClassPath' => 'ORG.Util.Image',    // 图库类包路径
+        'thumbMaxWidth'   =>'',// 缩略图最大宽度
+        'thumbMaxHeight'    =>'',// 缩略图最大高度
+        'thumbPrefix'   =>  'thumb_',// 缩略图前缀
+        'thumbSuffix'  =>  '',
+        'thumbPath' => '',// 缩略图保存路径
+        'thumbFile'		=>'',// 缩略图文件名
+        'thumbRemoveOrigin' => false,// 是否移除原图
+        'zipImages' => false,// 压缩图片文件上传
+        'autoSub'   =>  false,// 启用子目录保存文件
+        'subType'   => 'hash',// 子目录创建方式 可以使用hash date
+        'dateFormat' => 'Ymd',
+        'hashLevel' =>  1, // hash的目录层次
+        'savePath' => '',// 上传文件保存路径
+        'autoCheck' => true, // 是否自动检查附件
+        'uploadReplace' => false,// 存在同名是否覆盖
+        'saveRule'=>'',// 上传文件命名规则
+        'hashType'=>'md5_file',// 上传文件Hash规则函数名
+        );
 
-    // 是否支持多文件上传
-    public $supportMulti = true;
+    // 错误信息
+    private $error = '';
 
-    // 允许上传的文件后缀
-    //  留空不作后缀检查
-    public $allowExts = array();
+    // 上传成功的文件信息
+    private $uploadFileInfo ;
 
-    // 允许上传的文件类型
-    // 留空不做检查
-    public $allowTypes = array();
+    public function __get($name){
+        if(isset($this->config[$name])) {
+            return $this->config[$name];
+        }
+        return null;
+    }
 
-    // 使用对上传图片进行缩略图处理
-    public $thumb   =  false;
-    // 图库类包路径
-    public $imageClassPath = 'ORG.Util.Image';
-    // 缩略图最大宽度
-    public $thumbMaxWidth;
-    // 缩略图最大高度
-    public $thumbMaxHeight;
-    // 缩略图前缀
-    public $thumbPrefix   =  'thumb_';
-    public $thumbSuffix  =  '';
-    // 缩略图保存路径
-    public $thumbPath = '';
-    // 缩略图文件名
-    public $thumbFile		=	'';
-    // 是否移除原图
-    public $thumbRemoveOrigin = false;
-    // 压缩图片文件上传
-    public $zipImages = false;
-    // 启用子目录保存文件
-    public $autoSub   =  false;
-    // 子目录创建方式 可以使用hash date
-    public $subType   = 'hash';
-    public $dateFormat = 'Ymd';
-    public $hashLevel =  1; // hash的目录层次
-    // 上传文件保存路径
-    public $savePath = '';
-    public $autoCheck = true; // 是否自动检查附件
-    // 存在同名是否覆盖
-    public $uploadReplace = false;
-
-    // 上传文件命名规则
-    // 例如可以是 time uniqid com_create_guid 等
-    // 必须是一个无需任何参数的函数名 可以使用自定义函数
-    public $saveRule = '';
-
-    // 上传文件Hash规则函数名
-    // 例如可以是 md5_file sha1_file 等
-    public $hashType = 'md5_file';
+    public function __set($name,$value){
+        if(isset($this->config[$name])) {
+            $this->config[$name]    =   $value;
+        }
+    }
 
     // 错误信息
     private $error = '';
@@ -160,7 +151,8 @@ class UploadFile {//类定义开始
                 import($this->imageClassPath);
                 $realFilename  =  $this->autoSub?basename($file['savename']):$file['savename'];
                 for($i=0,$len=count($thumbWidth); $i<$len; $i++) {
-                    $thumbname	=	$thumbPath.$thumbPrefix[$i].substr($realFilename,0,strrpos($realFilename, '.')).$thumbSuffix[$i].'.'.$file['extension'];
+                    $thumbfile  =   $thumbFile[$i]?$thumbFile[$i]:$thumbPrefix[$i].substr($realFilename,0,strrpos($realFilename, '.')).$thumbSuffix[$i];
+                    $thumbname	=	$thumbPath.$thumbfile.'.'.$file['extension'];
                     Image::thumb($filename,$thumbname,'',$thumbWidth[$i],$thumbHeight[$i],true);
                 }
                 if($this->thumbRemoveOrigin) {
