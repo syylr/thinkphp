@@ -107,8 +107,7 @@ class App {
      +----------------------------------------------------------
      */
     static public function exec() {
-        // 安全检测
-        if(!preg_match('/^[A-Za-z](\w)*$/',MODULE_NAME)){
+        if(!preg_match('/^[A-Za-z](\w)*$/',MODULE_NAME)){ // 安全检测
             $module =  false;
         }else{
             //创建Action控制器实例
@@ -130,7 +129,7 @@ class App {
                 }
             }else{
                 // 是否定义Empty模块
-                $module = A('Empty');
+                $module = A($group.'Empty');
                 if(!$module){
                     _404(L('_MODULE_NOT_EXIST_').':'.MODULE_NAME);
                 }
