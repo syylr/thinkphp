@@ -266,7 +266,7 @@ class Think {
           case E_COMPILE_ERROR:
           case E_USER_ERROR:
             ob_end_clean();
-            $errorStr = "$errstr ".basename($errfile)." 第 $errline 行.";
+            $errorStr = "$errstr ".$errfile." 第 $errline 行.";
             if(C('LOG_RECORD')) Log::write("[$errno] ".$errorStr,Log::ERR);
             function_exists('halt')?halt($errorStr):exit('ERROR:'.$errorStr);
             break;
