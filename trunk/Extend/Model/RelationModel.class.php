@@ -275,14 +275,10 @@ class RelationModel extends Model {
                         }else{
                             $mappingFk   =   !empty($val['foreign_key'])?$val['foreign_key']:strtolower($this->name).'_id';     //  关联外键
                         }
-                        if($opType == 'DEL') {
-                            if(!empty($val['condition'])) {
-                                $mappingCondition   =   $val['condition'];
-                            }else{
-                                $mappingCondition[$mappingFk]   =   $pk;
-                            }
+                        if(!empty($val['condition'])) {
+                            $mappingCondition   =   $val['condition'];
                         }else{
-                            $mappingCondition = !empty($val['condition'])?  $val['condition'] :  "{$mappingFk}='{$pk}'";
+                            $mappingCondition[$mappingFk]   =   $pk;
                         }
                         // 获取关联model对象
                         $model = D($mappingClass);
