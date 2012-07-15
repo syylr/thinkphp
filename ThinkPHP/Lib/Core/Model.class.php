@@ -521,6 +521,7 @@ class Model {
             }else{
                 $where[$pk]   =  $options;
             }
+            $pkValue    =   $where[$pk];
             $options =  array();
             $options['where'] =  $where;
         }
@@ -529,7 +530,7 @@ class Model {
         $result=    $this->db->delete($options);
         if(false !== $result) {
             $data = array();
-            if(isset($where[$pk])) $data[$pk]   =  $where[$pk];
+            if(isset($pkValue)) $data[$pk]   =  $pkValue;
             $this->_after_delete($data,$options);
         }
         // 返回删除记录个数
