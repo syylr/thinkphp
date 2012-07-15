@@ -520,7 +520,6 @@ class Model {
                 $where[$pk]   =  array('IN', $options);
             }else{
                 $where[$pk]   =  $options;
-                $pkValue = $options;
             }
             $options =  array();
             $options['where'] =  $where;
@@ -530,7 +529,7 @@ class Model {
         $result=    $this->db->delete($options);
         if(false !== $result) {
             $data = array();
-            if(isset($pkValue)) $data[$pk]   =  $pkValue;
+            if(isset($where[$pk])) $data[$pk]   =  $where[$pk];
             $this->_after_delete($data,$options);
         }
         // 返回删除记录个数
@@ -1003,7 +1002,7 @@ class Model {
                 // array('field','填充内容','填充条件','附加规则',[额外参数])
                 if(empty($auto[2])) $auto[2] = self::MODEL_INSERT; // 默认为新增的时候自动填充
                 if( $type == $auto[2] || $auto[2] == self::MODEL_BOTH) {
-                    switch($auto[3]) {
+                    switch(trim($auto[3])) {
                         case 'function':    //  使用函数进行填充 字段的值作为参数
                         case 'callback': // 使用回调方法
                             $args = isset($auto[4])?(array)$auto[4]:array();
@@ -1126,7 +1125,7 @@ class Model {
      +----------------------------------------------------------
      */
     protected function _validationFieldItem($data,$val) {
-        switch($val[4]) {
+        switch(strtolower(trim($val[4]))) {
             case 'function':// 使用函数进行验证
             case 'callback':// 调用方法进行验证
                 $args = isset($val[6])?(array)$val[6]:array();
@@ -1182,7 +1181,7 @@ class Model {
      +----------------------------------------------------------
      */
     public function check($value,$rule,$type='regex'){
-        switch(strtolower($type)) {
+        switch(strtolower(trim($type))) {
             case 'in': // 验证是否在某个指定范围之内 逗号分隔字符串或者数组
                 $range   = is_array($rule)?$rule:explode(',',$rule);
                 return in_array($value ,$range);
