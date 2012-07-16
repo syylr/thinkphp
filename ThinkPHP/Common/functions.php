@@ -236,8 +236,8 @@ function U($url='',$vars='',$suffix=true,$redirect=false,$domain=false) {
         }
         if($suffix) {
             $suffix   =  $suffix===true?C('URL_HTML_SUFFIX'):$suffix;
-            if(0 < strpos($suffix, '|')){
-                $suffix = strstr($suffix, '|', true);
+            if($pos = strpos($suffix, '|')){
+                $suffix = substr($suffix, 0, $pos);
             }
             if($suffix && $url[1]){
                 $url  .=  '.'.ltrim($suffix,'.');
