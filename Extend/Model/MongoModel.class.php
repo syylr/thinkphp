@@ -187,7 +187,7 @@ class MongoModel extends Model{
     // 表达式过滤回调方法
     protected function _options_filter(&$options) {
         $id = $this->getPk();
-        if(isset($options['where'][$id]) && $this->_idType== self::TYPE_OBJECT) {
+        if(isset($options['where'][$id]) && is_scalar($options['where'][$id]) && $this->_idType== self::TYPE_OBJECT) {
             $options['where'][$id] = new MongoId($options['where'][$id]);
         }
     }
