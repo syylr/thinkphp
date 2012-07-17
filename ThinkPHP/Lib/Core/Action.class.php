@@ -27,6 +27,8 @@ abstract class Action {
     protected $view   =  null;
     // 当前Action名称
     private $name =  '';
+    // 控制器参数
+    protected $config   =   array();
 
    /**
      +----------------------------------------------------------
@@ -36,7 +38,7 @@ abstract class Action {
      +----------------------------------------------------------
      */
     public function __construct() {
-        tag('action_begin');
+        tag('action_begin',$this->config);
         //实例化视图类
         $this->view       = Think::instance('View');
         //控制器初始化
@@ -391,6 +393,7 @@ abstract class Action {
             $data   =   is_array($ajax)?$ajax:$this->view->get();
             $data['info']   =   $message;
             $data['status'] =   $status;
+            $data['url']    =   $jumpUrl;
             $this->ajaxReturn($data);
         }
         if(!empty($jumpUrl)) $this->assign('jumpUrl',$jumpUrl);
