@@ -43,10 +43,11 @@ class App {
 
         // 定义当前请求的系统常量
         define('NOW_TIME',$_SERVER['REQUEST_TIME']);
-        define('IS_GET',    $_SERVER['REQUEST_METHOD']=='GET' ? true : false);
-        define('IS_POST',   $_SERVER['REQUEST_METHOD']=='POST' ? true : false);
-        define('IS_PUT',    $_SERVER['REQUEST_METHOD']=='PUT' ? true : false);
-        define('IS_DELETE', $_SERVER['REQUEST_METHOD']=='DELETE' ? true : false);
+        define('REQUEST_METHOD',$_SERVER['REQUEST_METHOD']);
+        define('IS_GET',    REQUEST_METHOD =='GET' ? true : false);
+        define('IS_POST',   REQUEST_METHOD =='POST' ? true : false);
+        define('IS_PUT',    REQUEST_METHOD =='PUT' ? true : false);
+        define('IS_DELETE', REQUEST_METHOD =='DELETE' ? true : false);
         define('IS_AJAX',   ((isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH'] == 'xmlhttprequest')) || !empty($_POST[C('VAR_AJAX_SUBMIT')]) || !empty($_GET[C('VAR_AJAX_SUBMIT')])) ? true : false);
 
         if(defined('GROUP_NAME')) {
@@ -135,10 +136,10 @@ class App {
                 }
             }
         }
-        //获取当前操作名
-        $action = ACTION_NAME;
-        // 获取操作方法名标签
-        tag('action_name',$action);
+        // 获取当前操作名 支持动态路由
+        $action = C('ACTION_NAME')?C('ACTION_NAME'):ACTION_NAME;
+        C('TEMPLATE_NAME',THEME_PATH.MODULE_NAME.(defined('GROUP_NAME')?C('TMPL_FILE_DEPR'):'/').$action.C('TMPL_TEMPLATE_SUFFIX'));
+        $action .=  C('ACTION_SUFFIX');
         try{
             if(!preg_match('/^[A-Za-z](\w)*$/',$action)){
                 // 非法操作
