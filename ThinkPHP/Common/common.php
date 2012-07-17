@@ -287,11 +287,11 @@ function A($name,$layer='') {
 
 // 远程调用模块的操作方法
 // URL 参数格式 [项目://][分组/]模块/操作 
-function R($url,$vars=array()) {
+function R($url,$vars=array(),$layer='') {
     $info =  pathinfo($url);
     $action  =  $info['basename'];
     $module =  $info['dirname'];
-    $class = A($module);
+    $class = A($module,$layer);
     if($class)
         return call_user_func_array(array(&$class,$action),$vars);
     else
