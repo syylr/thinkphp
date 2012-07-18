@@ -1690,6 +1690,8 @@ class Model {
             }
             $parse = array_map(array($this->db,'escapeString'),$parse);
             $where =   vsprintf($where,$parse);
+        }elseif(is_object($where)){
+            $where  =   get_object_vars($where);
         }
         $this->options['where'] =   $where;
         return $this;
