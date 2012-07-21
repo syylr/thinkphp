@@ -536,13 +536,14 @@ function cookie($name, $value='', $option=null) {
     }
     $name = $config['prefix'] . $name;
     if ('' === $value) {
-        return isset($_COOKIE[$name]) ? $_COOKIE[$name] : null; // 获取指定Cookie
+        return isset($_COOKIE[$name]) ? json_decode($_COOKIE[$name]) : null; // 获取指定Cookie
     } else {
         if (is_null($value)) {
             setcookie($name, '', time() - 3600, $config['path'], $config['domain']);
             unset($_COOKIE[$name]); // 删除指定cookie
         } else {
             // 设置cookie
+            $value  = json_encode($value);
             $expire = !empty($config['expire']) ? time() + intval($config['expire']) : 0;
             setcookie($name, $value, $expire, $config['path'], $config['domain']);
             $_COOKIE[$name] = $value;
