@@ -1494,6 +1494,10 @@ class Model {
      +----------------------------------------------------------
      */
     public function getDbFields(){
+        if(isset($this->options['table'])) {// 动态指定表名
+            $fields =   $this->db->getFields($this->options['table']);
+            return  $fields?array_keys($fields):false;
+        }
         if($this->fields) {
             $fields   =  $this->fields;
             unset($fields['_autoinc'],$fields['_pk'],$fields['_type'],$fields['_version']);
