@@ -368,7 +368,7 @@ where a.rdb$constraint_type=\'PRIMARY KEY\' and a.rdb$relation_name=UPPER(\''.$t
         if('' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
-        Log::record($this->error,Log::ERR);
+        trace($this->error,'','ERR');
         return $this->error;
     }
 

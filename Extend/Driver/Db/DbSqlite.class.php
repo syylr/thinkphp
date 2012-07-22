@@ -311,7 +311,7 @@ class DbSqlite extends Db {
         if('' != $this->queryStr){
             $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
         }
-        Log::record($this->error,Log::ERR);
+        trace($this->error,'','ERR');
         return $this->error;
     }
 
