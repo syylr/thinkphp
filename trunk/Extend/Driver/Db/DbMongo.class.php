@@ -203,7 +203,7 @@ class DbMongo extends Db{
      */
     public function error() {
         $this->error = $this->_mongo->lastError();
-        Log::record($this->error,Log::ERR);
+        trace($this->error,'','ERR');
         return $this->error;
     }
 
