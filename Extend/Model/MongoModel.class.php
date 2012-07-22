@@ -37,6 +37,8 @@ class MongoModel extends Model{
     protected $_autoInc =  false;
     // Mongo默认关闭字段检测 可以动态追加字段
     protected $autoCheckFields   =   false;
+    // 链操作方法列表
+    protected $methods = array('table','order','auto','filter','validate');
 
     /**
      +----------------------------------------------------------
@@ -51,7 +53,7 @@ class MongoModel extends Model{
      +----------------------------------------------------------
      */
     public function __call($method,$args) {
-        if(in_array(strtolower($method),array('table','where','order','limit','page'),true)) {
+        if(in_array(strtolower($method),$this->methods,true)) {
             // 连贯操作的实现
             $this->options[strtolower($method)] =   $args[0];
             return $this;
