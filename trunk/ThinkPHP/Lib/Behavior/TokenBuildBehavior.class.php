@@ -19,7 +19,7 @@ defined('THINK_PATH') or exit();
 class TokenBuildBehavior extends Behavior {
     // 行为参数定义
     protected $options   =  array(
-        'TOKEN_ON'              => true,     // 开启令牌验证
+        'TOKEN_ON'              => false,     // 开启令牌验证
         'TOKEN_NAME'            => '__hash__',    // 令牌验证的表单隐藏字段名称
         'TOKEN_TYPE'            => 'md5',   // 令牌验证哈希规则
         'TOKEN_RESET'               =>   true, // 令牌错误后是否重置
@@ -53,10 +53,6 @@ class TokenBuildBehavior extends Behavior {
         }else{
             $tokenValue = $tokenType(microtime(TRUE));
             $_SESSION[$tokenName][$tokenKey]   =  $tokenValue;
-        }
-        // 执行一次额外动作防止远程非法提交
-        if($action   =  C('TOKEN_ACTION')){
-            $_SESSION[$action($tokenKey)] = true;
         }
         $token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenKey.'_'.$tokenValue.'" />';
         return $token;
