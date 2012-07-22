@@ -158,6 +158,7 @@ class RelationModel extends Model {
                         $mappingClass  = !empty($val['class_name'])?$val['class_name']:$key;            //  关联类名
                         $mappingFields = !empty($val['mapping_fields'])?$val['mapping_fields']:'*';     // 映射字段
                         $mappingCondition = !empty($val['condition'])?$val['condition']:'1=1';          // 关联条件
+                        $mappingKey =!empty($val['mapping_key'])? $val['mapping_key'] : $this->getPk(); // 关联键名
                         if(strtoupper($mappingClass)==strtoupper($this->name)) {
                             // 自引用关联 获取父键名
                             $mappingFk   =   !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
@@ -168,7 +169,7 @@ class RelationModel extends Model {
                         $model = D($mappingClass);
                         switch($mappingType) {
                             case HAS_ONE:
-                                $pk   =  $result[$this->getPk()];
+                                $pk   =  $result[$mappingKey];
                                 $mappingCondition .= " AND {$mappingFk}='{$pk}'";
                                 $relationData   =  $model->where($mappingCondition)->field($mappingFields)->find();
                                 break;
@@ -184,7 +185,7 @@ class RelationModel extends Model {
                                 $relationData   =  $model->where($mappingCondition)->field($mappingFields)->find();
                                 break;
                             case HAS_MANY:
-                                $pk   =  $result[$this->getPk()];
+                                $pk   =  $result[$mappingKey];
                                 $mappingCondition .= " AND {$mappingFk}='{$pk}'";
                                 $mappingOrder =  !empty($val['mapping_order'])?$val['mapping_order']:'';
                                 $mappingLimit =  !empty($val['mapping_limit'])?$val['mapping_limit']:'';
@@ -192,7 +193,7 @@ class RelationModel extends Model {
                                 $relationData   =  $model->where($mappingCondition)->field($mappingFields)->order($mappingOrder)->limit($mappingLimit)->select();
                                 break;
                             case MANY_TO_MANY:
-                                $pk   =  $result[$this->getPk()];
+                                $pk   =  $result[$mappingKey];
                                 $mappingCondition = " {$mappingFk}='{$pk}'";
                                 $mappingOrder =  $val['mapping_order'];
                                 $mappingLimit =  $val['mapping_limit'];
@@ -267,8 +268,9 @@ class RelationModel extends Model {
                         // 操作制定的关联
                         $mappingType = !empty($val['mapping_type'])?$val['mapping_type']:$val;  //  关联类型
                         $mappingClass  = !empty($val['class_name'])?$val['class_name']:$key;            //  关联类名
+                        $mappingKey =!empty($val['mapping_key'])? $val['mapping_key'] : $this->getPk(); // 关联键名
                         // 当前数据对象主键值
-                        $pk =   $data[$this->getPk()];
+                        $pk =   $data[$mappingKey];
                         if(strtoupper($mappingClass)==strtoupper($this->name)) {
                             // 自引用关联 获取父键名
                             $mappingFk   =   !empty($val['parent_key'])? $val['parent_key'] : 'parent_id';
@@ -319,7 +321,7 @@ class RelationModel extends Model {
                                                 $mappingCondition   =  "$pk ={$vo[$pk]}";
                                                 $result   =  $model->where($mappingCondition)->save($vo);
                                             }else{ // 新增数据
-                                                $vo[$mappingFk] =  $data[$this->getPk()];
+                                                $vo[$mappingFk] =  $data[$mappingKey];
                                                 $result   =  $model->add($vo);
                                             }
                                         }
@@ -336,7 +338,7 @@ class RelationModel extends Model {
                                     if(is_array($mappingData)) {
                                         $ids   = array();
                                         foreach ($mappingData as $vo)
-                                            $ids[]   =   $vo[$model->getPk()];
+                                            $ids[]   =   $vo[$mappingKey];
                                         $relationId =   implode(',',$ids);
                                     }
                                     switch (strtoupper($opType)){
