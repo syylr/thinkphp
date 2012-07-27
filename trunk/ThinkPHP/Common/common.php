@@ -421,7 +421,6 @@ function B($name, &$params=NULL) {
     $behavior = new $class();
     $behavior->run($params);
     if(APP_DEBUG) { // 记录行为的执行日志
-        G('behaviorEnd');
         trace('Run '.$name.' Behavior [ RunTime:'.G('behaviorStart','behaviorEnd',6).'s ]','','INFO');
     }
 }

@@ -221,7 +221,7 @@ function U($url='',$vars='',$suffix=true,$redirect=false,$domain=false) {
     if(C('URL_MODEL') == 0) { // 普通模式URL转换
         $url   =  __APP__.'?'.http_build_query(array_reverse($var));
         if(!empty($vars)) {
-            $vars = http_build_query($vars);
+            $vars = urldecode(http_build_query($vars));
             $url   .= '&'.$vars;
         }
     }else{ // PATHINFO模式或者兼容URL模式
@@ -231,8 +231,8 @@ function U($url='',$vars='',$suffix=true,$redirect=false,$domain=false) {
             $url   =  __APP__.'/'.implode($depr,array_reverse($var));
         }
         if(!empty($vars)) { // 添加参数
-            $vars = http_build_query($vars);
-            $url .= $depr.str_replace(array('=','&'),$depr,$vars);
+            foreach ($vars as $var => $val)
+                $url .= $depr.$var . $depr . $val;
         }
         if($suffix) {
             $suffix   =  $suffix===true?C('URL_HTML_SUFFIX'):$suffix;
