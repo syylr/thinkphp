@@ -72,16 +72,17 @@ class View {
      * @param string $templateFile 模板文件名
      * @param string $charset 模板输出字符集
      * @param string $contentType 输出类型
+     * @param string $content 模板输出内容
      +----------------------------------------------------------
      * @return mixed
      +----------------------------------------------------------
      */
-    public function display($templateFile='',$charset='',$contentType='') {
+    public function display($templateFile='',$charset='',$contentType='',$content='') {
         G('viewStartTime');
         // 视图开始标签
         tag('view_begin',$templateFile);
         // 解析并获取模板内容
-        $content = $this->fetch($templateFile);
+        $content = $this->fetch($templateFile,$content);
         // 输出模板内容
         $this->show($content,$charset,$contentType);
         // 视图结束标签
@@ -119,15 +120,18 @@ class View {
      * @access public
      +----------------------------------------------------------
      * @param string $templateFile 模板文件名
+     * @param string $content 模板输出内容
      +----------------------------------------------------------
      * @return string
      +----------------------------------------------------------
      */
-    public function fetch($templateFile='') {
-        // 模板文件解析标签
-        tag('view_template',$templateFile);
-        // 模板文件不存在直接返回
-        if(!is_file($templateFile)) return NULL;
+    public function fetch($templateFile='',$content='') {
+        if(empty($content)) {
+            // 模板文件解析标签
+            tag('view_template',$templateFile);
+            // 模板文件不存在直接返回
+            if(!is_file($templateFile)) return NULL;
+        }
         // 页面缓存
         ob_start();
         ob_implicit_flush(0);
@@ -135,10 +139,10 @@ class View {
             // 模板阵列变量分解成为独立变量
             extract($this->tVar, EXTR_OVERWRITE);
             // 直接载入PHP模板
-            include $templateFile;
+            empty($content)?include $templateFile:eval('?>'.$content);
         }else{
             // 视图解析标签
-            $params = array('var'=>$this->tVar,'file'=>$templateFile);
+            $params = array('var'=>$this->tVar,'file'=>$templateFile,'content'=>$content);
             tag('view_parse',$params);
         }
         // 获取并清空缓存
@@ -148,4 +152,5 @@ class View {
         // 输出模板文件
         return $content;
     }
+
 }

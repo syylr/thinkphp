@@ -45,8 +45,9 @@ class ParseTemplateBehavior extends Behavior {
     // 行为扩展的执行入口必须是run
     public function run(&$_data){
         $engine  = strtolower(C('TMPL_ENGINE_TYPE'));
+        $_content   =   empty($_data['content'])?$_data['file']:$_data['content'];
         if('think'==$engine){ // 采用Think模板引擎
-            if($this->checkCache($_data['file'])) { // 缓存有效
+            if(empty($_data['content']) && $this->checkCache($_data['file'])) { // 缓存有效
                 // 分解变量并载入模板缓存
                 extract($_data['var'], EXTR_OVERWRITE);
                 //载入模版缓存文件
@@ -54,7 +55,7 @@ class ParseTemplateBehavior extends Behavior {
             }else{
                 $tpl = Think::instance('ThinkTemplate');
                 // 编译并加载模板文件
-                $tpl->fetch($_data['file'],$_data['var']);
+                $tpl->fetch($_content,$_data['var']);
             }
         }else{
             // 调用第三方模板引擎解析和输出
@@ -67,7 +68,7 @@ class ParseTemplateBehavior extends Behavior {
             }
             if(require_cache($path.'Driver/Template/'.$class.'.class.php')) {
                 $tpl   =  new $class;
-                $tpl->fetch($_data['file'],$_data['var']);
+                $tpl->fetch($_content,$_data['var']);
             }else {  // 类没有定义
                 throw_exception(L('_NOT_SUPPERT_').': ' . $class);
             }
