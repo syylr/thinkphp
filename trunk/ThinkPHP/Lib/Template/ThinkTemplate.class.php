@@ -487,8 +487,7 @@ class  ThinkTemplate {
             $var = array_shift($varArray);
             //非法变量过滤 不允许在变量里面使用 ->
             //TODO：还需要继续完善
-            if(preg_match('/->/is',$var))
-                return '';
+            //if(preg_match('/->/is',$var))   return '';
             if('Think.' == substr($var,0,6)){
                 // 所有以Think.打头的以特殊变量对待 无需模板赋值就可以输出
                 $name = $this->parseThinkVar($var);
@@ -510,12 +509,6 @@ class  ThinkTemplate {
                     default:  // 自动判断数组或对象 只支持二维
                         $name = 'is_array($'.$var.')?$'.$var.'["'.$vars[0].'"]:$'.$var.'->'.$vars[0];
                 }
-            }elseif(false !==strpos($var,'::')){
-                //支持 {$var:property} 方式输出对象的属性
-                $vars = explode('::',$var);
-                $var  =  str_replace('::','->',$var);
-                $name = "$".$var;
-                $var  = $vars[0];
             }elseif(false !== strpos($var,'[')) {
                 //支持 {$var['key']} 方式输出数组
                 $name = "$".$var;
