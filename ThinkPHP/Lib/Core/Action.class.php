@@ -92,12 +92,13 @@ abstract class Action {
      * 默认为空 由系统自动定位模板文件
      * @param string $charset 输出编码
      * @param string $contentType 输出类型
+     * @param string $content 输出内容
      +----------------------------------------------------------
      * @return void
      +----------------------------------------------------------
      */
-    protected function display($templateFile='',$charset='',$contentType='') {
-        $this->view->display($templateFile,$charset,$contentType);
+    protected function display($templateFile='',$charset='',$contentType='',$content='') {
+        $this->view->display($templateFile,$charset,$contentType,$content);
     }
 
     /**

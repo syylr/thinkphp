@@ -97,11 +97,16 @@ class  ThinkTemplate {
      +----------------------------------------------------------
      */
     public function loadTemplate ($tmplTemplateFile) {
-        $this->templateFile    =  $tmplTemplateFile;
-        // 根据模版文件名定位缓存文件
+        if(is_file($tmplTemplateFile)) {
+            $this->templateFile    =  $tmplTemplateFile;
+            // 读取模板文件内容
+            $tmplContent = file_get_contents($tmplTemplateFile);
+        }else{
+            $tmplContent    =   $tmplTemplateFile;
+        }
+         // 根据模版文件名定位缓存文件
         $tmplCacheFile = $this->config['cache_path'].md5($tmplTemplateFile).$this->config['cache_suffix'];
-        // 读取模板文件内容
-        $tmplContent = file_get_contents($tmplTemplateFile);
+
         // 判断是否启用布局
         if(C('LAYOUT_ON')) {
             if(false !== strpos($tmplContent,'{__NOLAYOUT__}')) { // 可以单独定义不使用布局
