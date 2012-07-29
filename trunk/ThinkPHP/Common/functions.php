@@ -426,7 +426,7 @@ function session($name,$value='') {
     $prefix   =  C('SESSION_PREFIX');
     if(is_array($name)) { // session初始化 在session_start 之前调用
         if(isset($name['prefix'])) C('SESSION_PREFIX',$name['prefix']);
-        if(isset($_REQUEST[C('VAR_SESSION_ID')])){
+        if(C('VAR_SESSION_ID') && isset($_REQUEST[C('VAR_SESSION_ID')])){
             session_id($_REQUEST[C('VAR_SESSION_ID')]);
         }elseif(isset($name['id'])) {
             session_id($name['id']);
