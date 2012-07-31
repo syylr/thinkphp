@@ -375,6 +375,8 @@ class Db {
             $value   =  $this->escapeString($value[1]);
         }elseif(is_array($value)) {
             $value   =  array_map(array($this, 'parseValue'),$value);
+        }elseif(is_bool($value)){
+            $value = $value ? '1' : '0';
         }elseif(is_null($value)){
             $value   =  'null';
         }
