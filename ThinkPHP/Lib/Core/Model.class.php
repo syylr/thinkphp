@@ -42,6 +42,8 @@ class Model {
     protected $name = '';
     // 数据库名称
     protected $dbName  = '';
+    //数据库配置
+    protected $connection='';
     // 数据表名（不包含表前缀）
     protected $tableName = '';
     // 实际数据表名（包含表前缀）
